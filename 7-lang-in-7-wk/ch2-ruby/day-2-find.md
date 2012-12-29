@@ -24,3 +24,15 @@ and array can be converted to hash table:
 [Array to Hash Ruby](http://stackoverflow.com/questions/4028329/array-to-hash-ruby)
 
 Task #3 in day-2-find-code.rb
+
+- Traverse through hash table
+
+Ruby is duck-typed, and if there's an 'each' method, we can achieve this task.
+
+Task #4 in day-2-find-code.rb
+
+- What else data structure can Array in Ruby be used as
+
+array can be used as queue
+
+Task #5 in day-2-find-code.rb

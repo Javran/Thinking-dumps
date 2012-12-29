@@ -54,3 +54,24 @@ puts "\t#{arr}"
 
 puts "to hash table:"
 puts "\t#{Hash[arr]}"
+
+puts "Task #4: Traverse through hash table"
+h = {1 => "one", 2 => "two", 3 => "three" }
+puts "The data is #{h}"
+h.each do | key, value |
+	puts "#{key} => #{value}"
+end
+
+
+puts "Task #5: Use array as queue"
+arr = []
+puts "Insert items ..."
+(1..5).each do | i |
+	arr.insert(0, i)
+	puts "push item: #{i}"
+end
+puts arr.to_s
+while arr.length > 0
+	item = arr.pop
+	puts "pop item: #{item}"
+end
