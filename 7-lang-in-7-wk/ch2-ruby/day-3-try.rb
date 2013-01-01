@@ -92,3 +92,50 @@ puts "XII= #{Roman.XII}"
 puts "X=   #{Roman.X}"
 
 putline
+
+puts "class: ActsAsCsv"
+
+class ActsAsCsv
+
+	def read
+		filename = self.class.to_s.downcase + '.txt'
+		puts "Make sure the file \"#{filename}\" exists and is formatted properly"
+
+		file = File.new filename
+		@headers = file.gets.chomp.split(', ')
+		
+		file.each do |row|
+			# the operator "<<" seems to append things into array
+			@result << row.chomp.split(', ')
+		end
+	end
+
+	def headers
+		@headers
+	end
+
+	def csv_contents
+		@result
+	end
+
+	def pretty_print
+		puts @headers.join("\t| ")
+		@result.each { |row| puts row.join("\t| ") }
+	end
+
+	def initialize
+		@result = []
+		read
+	end
+end
+
+class RubyCsv < ActsAsCsv
+end
+
+m = RubyCsv.new
+puts "Headers:"
+puts m.headers.inspect
+puts "Content:"
+puts m.csv_contents.inspect
+puts "Pretty print:"
+m.pretty_print
