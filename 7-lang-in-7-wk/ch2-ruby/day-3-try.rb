@@ -95,10 +95,23 @@ putline
 
 puts "class: ActsAsCsv"
 
+def testClass cls
+	m = cls.new
+	puts "="*10 + " class: #{m.class.to_s} " + "="*10
+	puts "The superclass of #{m.class.to_s} is #{m.class.superclass.to_s}"
+	puts "Headers:"
+	puts m.headers.inspect
+	puts "Content:"
+	puts m.csv_contents.inspect
+	puts "Pretty print:"
+	m.pretty_print
+end
+
+
 class ActsAsCsv
 
 	def read
-		filename = self.class.to_s.downcase + '.txt'
+		filename = 'rubycsv.txt'
 		puts "Make sure the file \"#{filename}\" exists and is formatted properly"
 
 		file = File.new filename
@@ -132,10 +145,95 @@ end
 class RubyCsv < ActsAsCsv
 end
 
-m = RubyCsv.new
-puts "Headers:"
-puts m.headers.inspect
-puts "Content:"
-puts m.csv_contents.inspect
-puts "Pretty print:"
-m.pretty_print
+testClass RubyCsv
+
+class ActsAsCsv2
+	def self.acts_as_csv
+
+		define_method 'read' do
+			filename = 'rubycsv.txt'
+			puts "Make sure the file \"#{filename}\" exists and is formatted properly"
+
+			file = File.new filename
+			@headers = file.gets.chomp.split(', ')
+
+			file.each do |row|
+				# the operator "<<" seems to append things into array
+				@result << row.chomp.split(', ')
+			end
+
+		end
+
+		define_method 'headers' do
+			@headers
+		end
+
+		define_method 'csv_contents' do
+			@result
+		end
+
+		define_method 'pretty_print' do
+			puts @headers.join("\t| ")
+			@result.each { |row| puts row.join("\t| ") }
+		end
+
+		define_method 'initialize' do
+			@result = []
+			read
+		end
+
+	end
+end
+
+class RubyCsv2 < ActsAsCsv2
+	acts_as_csv
+end
+
+testClass RubyCsv2
+
+module ActsAsCsv3
+
+	def self.included(base)
+		base.extend ClassMethods
+	end
+
+	module ClassMethods
+		def acts_as_csv
+			include InstanceMethods
+		end
+	end
+
+	module InstanceMethods
+
+		def read
+			@csv_contents = []
+			filename = 'rubycsv.txt'
+			puts "Make sure the file \"#{filename}\" exists and is formatted properly"
+			file = File.new filename
+			@headers = file.gets.chomp.split(', ')
+
+			file.each do |row|
+				# the operator "<<" seems to append things into array
+				@csv_contents << row.chomp.split(', ')
+			end
+		end
+
+		attr_accessor :headers, :csv_contents
+
+		def pretty_print
+			puts @headers.join("\t| ")
+			@csv_contents.each { |row| puts row.join("\t| ") }
+		end
+
+		def initialize
+			read
+		end
+	end
+end
+
+class RubyCsv3
+	include ActsAsCsv3
+	acts_as_csv
+end
+
+testClass RubyCsv3
