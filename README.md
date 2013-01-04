@@ -8,4 +8,4 @@ Author: Bruce A. Tate
 
 Version: Chinese translated version
 
-Directory: [7-lang-in-7-wk](./books/7-lang-in-7-wk/)
+Directory: `7-lang-in-7-wk`
