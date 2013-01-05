@@ -1,31 +1,56 @@
-#!/bin/env io
-"* say hello to everyone:\n" print
-"nice boat!\n" print
+#!/usr/bin/env io
+"* say hello to everyone:" println
+"nice boat!" println
 
-"* clone object:\n" print
+# I'm lazy and have googled how to make methods ...
+printObject := method(obj,
+	"======== Info Begin =========" println
+	"* print object info:" println
+	obj println
+
+	"* print object type:" println
+	obj type println
+
+	"* print object slots:" println
+	obj slotNames println
+	"======== Info End ===========" println)
+
+"* clone object ..." println
 Vehicle := Object clone
-Vehicle print
+printObject(Vehicle)
 
-"* use slots:\n" print
+"* use slots:" println
 # can only use ':=' because this slot has not yet been created
 Vehicle description := "Init description"
-Vehicle description print
-"\n" print
+Vehicle description println
 
-"* change slot content:\n" print
+"* change slot content:" println
 # both ':=' and '=' operators will do
 Vehicle description = "Something to take you places"
-Vehicle description print
-"\n" print
+Vehicle description println
 
-"* print slot names:\n" print
-Vehicle slotNames print
-"\n" print
+printObject(Vehicle)
 
-"* type of Vehicle:\n" print
-Vehicle type print
-"\n" print
+"* type of Object:" println
+Object type println
 
-"* type of Object:\n" print
-Object type print
-"\n" print
+"* inheritance:" println
+Car := Vehicle clone
+printObject(Car)
+
+"* try accessing 'description' of Car:" println
+Car description println
+
+"* clone Car:" println
+# type should be named with capitalized words
+# elsewise
+ferrari := Car clone
+ferrari print
+
+"* info about 'ferrari':" println
+printObject(ferrari)
+
+
+"* 'Ferrari' can be a type:" println
+Ferrari := Car clone
+printObject(Ferrari)
