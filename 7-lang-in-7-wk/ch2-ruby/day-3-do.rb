@@ -1,4 +1,4 @@
-#!/bin/env ruby
+#!/usr/bin/env ruby
 
 class RubyCsv
 	attr_accessor :headers, :csv_contents

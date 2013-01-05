@@ -1,4 +1,4 @@
-#!/bin/env ruby
+#!/usr/bin/env ruby
 
 puts "Task #1: print!"
 puts "nice boat!"

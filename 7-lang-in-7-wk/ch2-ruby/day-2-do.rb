@@ -1,4 +1,4 @@
-#!/bin/env ruby
+#!/usr/bin/env ruby
 
 puts "Task #1: each vs each_slice"
 arr = (1..16).to_a.collect { |i| i*4 } 
