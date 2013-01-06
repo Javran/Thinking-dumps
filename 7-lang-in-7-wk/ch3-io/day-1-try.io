@@ -160,3 +160,66 @@ elvis values println
 
 "size: " print
 elvis size println
+
+"===========" println
+
+(4 < 5) println
+# true
+
+(4 <= 3) println
+# false
+
+(true and false) println
+# false
+
+(true and true) println
+# true
+
+(true or false) println
+# true
+
+(4<5 and 6<7) println
+# true
+
+(true and nil) println
+# false
+
+(true and 0) println
+# notice: true !
+
+"* prototype of 'true':" println
+true proto println
+
+"* singletons: true, false, nil" println
+true clone println
+false clone println
+nil clone println
+
+"* make singleton:" println
+Highlander := Object clone
+Highlander println
+
+Highlander clone := Highlander
+
+"* test singleton:" println
+Highlander clone println
+
+fred := Highlander clone
+mike := Highlander clone
+(fred == mike) println
+# true
+
+one := Object clone
+two := Object clone
+(one == two) println
+# false
+
+"* test disabling clone" println
+Object2 := Object clone
+
+Object2 clone := "hosed"
+ObjectA := Object2 clone
+ObjectB := Object2 clone
+
+ObjectA println
+ObjectB println
