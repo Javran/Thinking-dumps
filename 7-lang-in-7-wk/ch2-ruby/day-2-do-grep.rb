@@ -1,4 +1,4 @@
-#!/bin/env ruby
+#!/usr/bin/env ruby
 
 def error(reason)
 	puts "Error: #{reason}"
