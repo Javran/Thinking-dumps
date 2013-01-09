@@ -121,3 +121,27 @@ messageViewer := method(
 "try to send 'messageViewer' from 'postOffice' to 'mailer'"
 postOffice fireViewer := method(mailer messageViewer(1,2,3))
 postOffice fireViewer
+
+
+
+myunless := method(
+	(call sender doMessage(call message argAt(0))) ifFalse(
+		call sender doMessage(call message argAt(1))) ifTrue(
+		call sender doMessage(call message argAt(2))))
+
+myunless( "this expression will be evaluated" println; true, 
+	"this is false" println, 
+	"this is true" println)
+
+# the argument list is: <expr>, <when false>, <when true>
+# expanded to:
+/*
+((<expr>) ifFalse(
+	call sender doMessage(call message argAt(1))) ifTrue(
+	call sender doMessage(call message argAt(2))))
+*/
+# if <expr> is evaluated to 'true':
+# myunless expanded to:
+# call sender doMessage(<when true>)
+# futher:
+# <when true>
