@@ -65,3 +65,42 @@ data println
 "Sum: " print
 listSum2D( data ) println
 # 1000
+
+"Task #4: add slot 'myAverage' to List" println
+
+mightFail := method( 
+	err := try(
+		call sender doMessage(call message argAt(0)))
+	err catch(Exception,
+		writeln(
+			"An exception raised, reason: ",
+			err error)))
+
+List myAverage := method(
+	if( self size == 0,
+		Exception raise("The list is empty"))
+	
+	if( self select(e, 
+		num := e asNumber;
+		(num == nil) or (num isNan)) size > 0,
+		Exception raise("Some element(s) are not number(s)"))
+	return (self sum) / (self size)
+	)
+
+testList := method(ls,
+	"==============" println
+	"Data: " println
+	ls println
+	"Result: " println
+	mightFail( ls myAverage println )
+	"==============" println)
+
+testList( list(1, 3, 5, 5, 6) )
+# 4
+
+testList( list() )
+# error: list is empty
+
+testList( list(1, "a", 2) )
+# some elements are not Numbers
+
