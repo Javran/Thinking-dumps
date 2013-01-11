@@ -47,3 +47,21 @@ Number / := method(y,
 
 "================ after" println
 testDiv
+
+"Task #3: add up all elements in a 2D array" println
+
+data := list(
+	list(1, 10, 100),
+	list(2, 20, 150),
+	list(3, 30, 290),
+	list(4, 40, 350))
+
+# luckly that 'map' and 'select'(filter) is avaliable in Io
+listSum2D := method(list2D,
+	return list2D map(ls, ls sum) sum)
+
+"Data: " println
+data println
+"Sum: " print
+listSum2D( data ) println
+# 1000
