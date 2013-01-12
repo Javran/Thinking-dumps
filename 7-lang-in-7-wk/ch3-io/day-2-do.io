@@ -104,3 +104,27 @@ testList( list() )
 testList( list(1, "a", 2) )
 # some elements are not Numbers
 
+"Task #5: make a prototype for 2-d arrays" println
+
+List2D := List clone
+
+# dim(x,y) assigns an array that contains y lists
+#   each of them contains x elements
+List2D dim := method(x, y, z,
+	target := list()
+	filler := if(z == nil, 
+			method(return nil),
+			z)
+	for(i, 1, y, 
+		subTarget := list()
+		for(j, 1, x,
+			subTarget append( filler(i,j) ))
+		target append(subTarget) )
+	return target
+)
+
+List2D dim(3,2) println
+
+#List2D dim(3,2, method(x,y, x*10 + y) ) println
+# this will cause problem, commented temporarily
+
