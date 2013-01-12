@@ -111,7 +111,7 @@ List2D := List clone
 # dim(x,y) assigns an array that contains y lists
 #   each of them contains x elements
 List2D dim := method(x, y, z,
-	target := list()
+	target := List2D clone
 	filler := if(z == nil, 
 			method(return nil),
 			z)
@@ -120,11 +120,59 @@ List2D dim := method(x, y, z,
 		for(j, 1, x,
 			subTarget append( filler(i,j) ))
 		target append(subTarget) )
+	target cols := y
+	target rows := x
 	return target
 )
 
-List2D dim(3,2) println
+data := List2D dim(3,2)
+
+"Result: " println
+data println
 
 #List2D dim(3,2, method(x,y, x*10 + y) ) println
 # this will cause problem, commented temporarily
 
+List2D set := method(x, y, newVal,
+	at(y) atPut(x, newVal))	
+
+List2D get := method(x, y,
+	at(y) at(x))
+
+"Elements -> <row, col>" println
+# set each element to tuple <row,col>
+
+for(i, 0, 2,
+	for(j, 0, 1,
+		data set(i,j,list(i,j))))
+
+"Use 'get' to print the list:" println
+for(j, 0, 1,
+	for(i, 0, 2,
+		element := data get(i,j)
+		write("<", element at(0), ",", element at(1), "> "))
+	"" println)
+
+# now overwrite println !
+List2D println := method( separator,
+	if (separator == nil, separator = " ")
+	writeln("col:", cols, ", row:",rows)
+	for(j, 0, cols-1,
+		for(i, 0, rows-1,
+			element := get(i,j)
+			element print
+			separator print)
+		"" println))
+
+"Use customed 'println':" println
+data println
+
+"Task #6:Matrix transposition:" println
+List2D transpose := method(
+	target := List2D dim(cols,rows)
+	for(j, 0, target cols-1,
+		for(i, 0, target rows-1,
+			target set(i,j, get(j,i))))
+	return target)
+
+data transpose println
