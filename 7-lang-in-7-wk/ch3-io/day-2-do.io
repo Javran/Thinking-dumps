@@ -268,6 +268,14 @@ file remove
 
 "Task #8: Guess numbers" println
 
+# some hints about this task:
+#     most information will be found at 
+#     http://iolanguage.org/scm/io/docs/reference/index.html
+# * use 'Random' to generate a random number
+# * use 'File standardInput' if you want some user interaction
+# * you can pass an argument to 'readLine' as a prompt,
+#     otherwise 'readLine' will print "nil" which is undesirable
+
 GuessNumberGame := Object clone
 
 GuessNumberGame newGame := method(retryTime,
