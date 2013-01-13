@@ -112,16 +112,16 @@ List2D := List clone
 #   each of them contains x elements
 List2D dim := method(x, y, z,
 	target := List2D clone
-	target filler := if(z == nil, 
+	filler := if(z == nil, 
 			"method(return nil)",
 			z)
 	# quick and dirty way :)
-	doString("target filler := " .. z)
+	doString("filler := " .. z)
 	for(i, 1, y, 
-		target subTarget := list()
+		subTarget := list()
 		for(j, 1, x,
-			target subTarget append( target filler(i,j) ))
-		target append(target subTarget) )
+			subTarget append(filler(i,j) ))
+		target append(subTarget) )
 	target cols := y
 	target rows := x
 	return target

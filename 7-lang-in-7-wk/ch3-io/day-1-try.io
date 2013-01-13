@@ -223,3 +223,14 @@ ObjectB := Object2 clone
 
 ObjectA println
 ObjectB println
+
+"* where is the variable inside a method assigned to?" println
+
+test := method(
+	testSlot := nil
+	"Inside the method:" println
+	slotNames select(item, item == "testSlot") println
+	"This is a test method" println)
+test
+"Outside the method:" println
+slotNames select(item, item == "testSlot") println
