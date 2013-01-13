@@ -182,4 +182,126 @@ List2D transpose := method(
 
 data transpose println
 
+transposeVerifier := method(matrixA, matrixB,
+	"Checking <rows, cols> ... " print
+	if ( 
+		(matrixA cols == matrixB rows) and
+		(matrixA rows == matrixB cols),
+		"ok" println,
+		"failed" println
+		return)
+	"Checking matrix elements ... " print
+
+	for (i, 0, matrixA rows-1,
+		for (j, 0, matrixA cols-1,
+			if (matrixA get(i,j) != matrixB get(j,i),
+				"failed" println
+				return)))
+	"ok" println) 
+
+transposeVerifier(data, data transpose)
+
 "Task #7: Write matrix to file, and read it from file." println
+
+List2D writeToFile := method(file,
+	# file format:
+	# "<row count>,<col count>" at first line
+	# following by each elements taking up a line
+	file remove
+	file openForUpdating
+	file write(rows asString, ",", cols asString, "\n")
+	for (i, 0, rows-1,
+		for (j, 0, cols-1,
+			file write(get(i,j) asString, "\n")))
+	file close)
+
+List2D readFromFile := method(file,
+	# currently only the raw string is stored
+	# in the corresponding position
+	file openForReading
+	rows_cols := file readLine split(",")
+	rows := rows_cols at(0) asNumber
+	cols := rows_cols at(1) asNumber
+	target := dim(rows, cols)
+	for (i, 0, rows-1,
+		for (j, 0, cols-1,
+			target set(i,j, file readLine)))
+
+	file close
+	return target)
+
+# please make sure not to put any important things
+#     in file 'day-2-do-matrix.txt'
+
+fileName := "day-2-do-matrix.txt"
+file := File with(fileName)
+data writeToFile(file)
+
+rawData := List2D readFromFile(file)
+"Reading done, print matrix:" println
+rawData println
+
+fileReadWriteVerifier := method(originMatrix, loadedMatrix,
+	"Checking rows and cols ... " print
+	if (
+		(originMatrix cols != loadedMatrix cols) or
+		(originMatrix rows != loadedMatrix rows),
+		"failed" println
+		return,
+		"ok" println)
+	"Checking elements in the matrix ... " print
+	for (i, 0, originMatrix rows-1,
+		for (j, 0, originMatrix cols-1,
+			# because only the string version of the original data is loaded
+			# we can only tell if the loaded data is identical to "(original data) asString"
+			if ( originMatrix get(i,j) asString != loadedMatrix get(i,j),
+				"failed" println
+				return)))
+	"ok" println
+	"Check done." println)
+
+fileReadWriteVerifier(data, rawData)
+
+write("This task is done, removing '", fileName, "' ... ")
+file remove
+"Removed" println
+
+"Task #8: Guess numbers" println
+
+GuessNumberGame := Object clone
+
+GuessNumberGame newGame := method(retryTime,
+	if (retryTime == nil,
+		retryTime = 10)
+	game := GuessNumberGame clone
+	game restRetryTime := retryTime
+	# will not use "Random value(1,100)" here
+	# for which the occurrence of '100' will be lower than expected
+	game targetNumber := (Random bytes(1) at(0) % 100) + 1 # 1 - 100
+	return game)
+
+GuessNumberGame play := method(
+	"==== Game start ====" println
+	userInput := File standardInput
+	while( restRetryTime > 0,
+		writeln( "Rest retry time: ", restRetryTime )
+		restRetryTime = restRetryTime-1
+		guess := userInput readLine("Guess a number between [1,100]: ") asNumber
+		if (guess == targetNumber,
+			"You got it!" println
+			break,
+			if (restRetryTime == 0,
+				"No more retry time, the target number is " print
+				targetNumber println,
+				writeln(
+					"Try again, the number is ",
+					if (targetNumber > guess,
+						"greater",
+						"smaller"),
+					" than you've guessed.")))
+	)
+	userInput close
+	"==== Game over ====" println
+)
+
+GuessNumberGame newGame play
