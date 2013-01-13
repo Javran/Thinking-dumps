@@ -112,14 +112,16 @@ List2D := List clone
 #   each of them contains x elements
 List2D dim := method(x, y, z,
 	target := List2D clone
-	filler := if(z == nil, 
-			method(return nil),
+	target filler := if(z == nil, 
+			"method(return nil)",
 			z)
+	# quick and dirty way :)
+	doString("target filler := " .. z)
 	for(i, 1, y, 
-		subTarget := list()
+		target subTarget := list()
 		for(j, 1, x,
-			subTarget append( filler(i,j) ))
-		target append(subTarget) )
+			target subTarget append( target filler(i,j) ))
+		target append(target subTarget) )
 	target cols := y
 	target rows := x
 	return target
@@ -130,7 +132,9 @@ data := List2D dim(3,2)
 "Result: " println
 data println
 
-#List2D dim(3,2, method(x,y, x*10 + y) ) println
+"Create a 2-d array with 'filler':" println
+List2D dim(3,2, """method(x,y, 
+		"<" .. (x asString) .. "," .. (y asString) .. ">" ) """ ) println
 # this will cause problem, commented temporarily
 
 List2D set := method(x, y, newVal,
@@ -167,12 +171,15 @@ List2D println := method( separator,
 "Use customed 'println':" println
 data println
 
-"Task #6:Matrix transposition:" println
+"Task #6: Matrix transposition:" println
 List2D transpose := method(
 	target := List2D dim(cols,rows)
 	for(j, 0, target cols-1,
 		for(i, 0, target rows-1,
 			target set(i,j, get(j,i))))
+	
 	return target)
 
 data transpose println
+
+"Task #7: Write matrix to file, and read it from file." println
