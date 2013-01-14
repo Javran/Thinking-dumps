@@ -20,3 +20,7 @@ Here are some useful links about Io language:
 [Io Programming Guide](http://iolanguage.org/scm/io/docs/IoGuide.html)
 
 [Io notes](http://iota.flowsnake.org/)
+
+After playing with Io language for some days, I've found the most powerful document
+is located [here](http://iolanguage.org/scm/io/docs/reference/index.html).
+You can use the search bar in it to find everything you want.
