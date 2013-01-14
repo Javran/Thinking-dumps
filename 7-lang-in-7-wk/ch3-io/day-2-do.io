@@ -110,12 +110,18 @@ List2D := List clone
 
 # dim(x,y) assigns an array that contains y lists
 #   each of them contains x elements
+# please refer to:
+#     http://stackoverflow.com/questions/14294780/how-to-pass-a-method-but-not-activate-it-in-io-language
+# and my solution is here:
+#     https://gist.github.com/4527872
+/*
+# old method, still work, but you should pass method as code string
+# quick and dirty way :)
 List2D dim := method(x, y, z,
 	target := List2D clone
 	filler := if(z == nil, 
 			"method(return nil)",
 			z)
-	# quick and dirty way :)
 	doString("filler := " .. z)
 	for(i, 1, y, 
 		subTarget := list()
@@ -126,15 +132,49 @@ List2D dim := method(x, y, z,
 	target rows := x
 	return target
 )
+*/
+List2D dim := method(x, y,
+	target := List2D clone 
+	default := call evalArgAt(2)
+	# to improve performance, type will be compared only once.
+	if(default type == "Block", 
+		for(i, 1, y,
+			subTarget := list()
+			for(j, 1, x,
+				subTarget append( default call(i,j) )
+			)
+			target append(subTarget)
+		),
+		# elsewise
+		for(i, 1, y,
+			subTarget := list()
+			for(j, 1, x,
+				subTarget append( default )
+			)
+			target append(subTarget)
+		)
+	)
+
+	target cols := y
+	target rows := x
+	target)
 
 data := List2D dim(3,2)
 
-"Result: " println
+"Result:" println
 data println
 
+"Create a 2-d array with default value:" println
+
+"Result:" println
+List2D dim(3,2,"foo") println
+
 "Create a 2-d array with 'filler':" println
-List2D dim(3,2, """method(x,y, 
-		"<" .. (x asString) .. "," .. (y asString) .. ">" ) """ ) println
+List2D dim(2,3, block(a,b, if( (a+b) % 2 == 0, "foo", "bar"))) println
+List2D dim(3,2, block(x,y, 
+		"<" .. (x asString) .. 
+		"," .. (y asString) .. ">" ) ) println
+
 # this will cause problem, commented temporarily
 
 List2D set := method(x, y, newVal,
