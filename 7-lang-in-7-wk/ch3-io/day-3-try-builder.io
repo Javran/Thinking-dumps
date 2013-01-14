@@ -12,7 +12,7 @@ Builder forward := method(
 	call message arguments foreach(arg,
 		# this will call the 'forward' indirectly
 		content := self doMessage(arg)
-		if (content type == "Sequence", writeln(content)))
+		if (content isKindOf(Sequence), writeln(content)))
 	# produce "</body>" here
 	writeln("</", call message name, ">"))
 
