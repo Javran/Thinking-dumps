@@ -137,7 +137,11 @@ List2D dim := method(x, y,
 	target := List2D clone 
 	default := call evalArgAt(2)
 	# to improve performance, type will be compared only once.
-	if(default type == "Block", 
+	# /* bad practice */
+	# if(default type == "Block", 
+	# follow the advice that using 'isKindOf' 
+	#     rather than comparing against type slot 
+	if(default isKindOf(Block), 
 		for(i, 1, y,
 			subTarget := list()
 			for(j, 1, x,
