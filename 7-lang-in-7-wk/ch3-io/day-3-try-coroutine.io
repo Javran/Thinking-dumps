@@ -1,6 +1,6 @@
 #!/usr/bin/env io
 
-# We want to learn what is 'yield' here
+# I want to know what is 'yield' here
 
 vizzini := Object clone
 vizzini talk := method(
