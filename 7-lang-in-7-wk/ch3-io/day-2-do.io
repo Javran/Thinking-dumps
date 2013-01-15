@@ -204,7 +204,7 @@ for(j, 0, 1,
 # now overwrite println !
 List2D println := method( separator,
 	if (separator == nil, separator = " ")
-	writeln("col:", cols, ", row:",rows)
+	"col:#{cols}, row:#{rows}" interpolate println
 	for(j, 0, cols-1,
 		for(i, 0, rows-1,
 			element := get(i,j)
