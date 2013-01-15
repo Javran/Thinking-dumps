@@ -29,34 +29,30 @@ builderTester := method(builder,
 XMLBuilder := Object clone
 
 # I need a slot to store current level
-# Maybe using State will be better
-XMLState := Object clone
-XMLState indent ::= "\t"
-XMLState currentLevel ::= 0
-
-XMLBuilder state ::= XMLBuilder XMLState clone
+XMLBuilder indent ::= "\t"
+XMLBuilder currentLevel ::= 0
 
 XMLBuilder levelWriteln := method(content,
-	self state currentLevel \
-		repeat( self state indent print )
+	self currentLevel \
+		repeat( self indent print )
 	# how to pass all arguments to another function?
 	content println)
 
 XMLBuilder forward := method(
 	levelWriteln("<#{call message name}>" interpolate)
-	self state currentLevel := self state currentLevel + 1
+	self currentLevel := self currentLevel + 1
 	call message arguments foreach(arg,
 		content := self doMessage(arg)
 		if (content isKindOf(Sequence),
 			levelWriteln(content)))
-	self state currentLevel := self state currentLevel - 1
+	self currentLevel := self currentLevel - 1
 	levelWriteln("</#{call message name}>" interpolate)
 	nil)
 
 "Builder output:" println
 xmlBuilder := XMLBuilder clone
-#                          _0123_
-xmlBuilder state setIndent("    ")
+#                    _0123_
+xmlBuilder setIndent("    ")
 builderTester(xmlBuilder)
 
 "Task #2: Create a list syntax that uses brackets" println
@@ -103,14 +99,14 @@ Map atPutNumber := method(
 # TODO show attribute
 XMLBuilderPlus := XMLBuilder clone
 XMLBuilderPlus levelWrite := method(content,
-	self state currentLevel \
-		repeat( self state indent print )
+	self currentLevel \
+		repeat( self indent print )
 	# how to pass all arguments to another function?
 	content print)
 
 XMLBuilderPlus forward := method(
 	levelWriteln("<#{call message name}>" interpolate)
-	self state currentLevel := self state currentLevel + 1
+	self currentLevel := self currentLevel + 1
 
 	contents := call message arguments map( \
 		arg, self doMessage(arg))
@@ -124,11 +120,9 @@ XMLBuilderPlus forward := method(
 	elements := contents select(e, e isKindOf(String))
 	elements foreach(e, levelWriteln(e)) 
 
-	self state currentLevel := self state currentLevel - 1
+	self currentLevel := self currentLevel - 1
 	levelWriteln("</#{call message name}>" interpolate)
 	nil)
 
 s := File with("day-3-do-xml.txt") openForReading contents 
 doString("XMLBuilderPlus #{s}" interpolate)
-
-
