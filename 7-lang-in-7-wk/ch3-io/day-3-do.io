@@ -20,37 +20,43 @@ builderTester := method(builder,
 		)
 	"==== END ====" println)
 
-# TODO: remove all slots, 
-# so even 'writeln' will print "<writeln></writeln>"
-# * 'forward' is already disabled
-# * since all slots from builder are removed
-#       I'm thinking of passing context to the builder
-#       to get access to functions like 'println'
+# I don't know how to break the message forward mechanism
+#     which is not controlled by 'forward' (which we've created 
+#     our own and overwritten the original one.
+# so there's a bug that existing functions are still work
+#     e.g. 'println' will not print "<println></println>"
 
 XMLBuilder := Object clone
+
 # I need a slot to store current level
-XMLBuilder currentLevel := 0
+# Maybe using State will be better
+XMLState := Object clone
+XMLState indent ::= "\t"
+XMLState currentLevel ::= 0
+
+XMLBuilder state ::= XMLBuilder XMLState clone
+
 XMLBuilder levelWriteln := method(content,
-	for (i, 1, currentLevel, indent print)
+	self state currentLevel \
+		repeat( self state indent print )
 	# how to pass all arguments to another function?
 	content println)
 
-XMLBuilder indent ::= "\t"
 XMLBuilder forward := method(
-	levelWriteln("<" .. call message name .. ">")
-	self currentLevel := self currentLevel + 1
+	levelWriteln("<#{call message name}>" interpolate)
+	self state currentLevel := self state currentLevel + 1
 	call message arguments foreach(arg,
 		content := self doMessage(arg)
 		if (content isKindOf(Sequence),
 			levelWriteln(content)))
-	self currentLevel := self currentLevel - 1
-	levelWriteln("</" .. call message name .. ">")
+	self state currentLevel := self state currentLevel - 1
+	levelWriteln("</#{call message name}>" interpolate)
 	nil)
 
 "Builder output:" println
 xmlBuilder := XMLBuilder clone
-#                    _0123_
-xmlBuilder setIndent("    ")
+#                          _0123_
+xmlBuilder state setIndent("    ")
 builderTester(xmlBuilder)
 
 "Task #2: Create a list syntax that uses brackets" println
@@ -78,4 +84,7 @@ BracketSyntaxEnv
 
 "Task #3: Add attribute support for XML Builder" println 
 
-# TODO
+XMLBuilderPlusEnv := method(
+)
+
+XMLBuilderPlusEnv
