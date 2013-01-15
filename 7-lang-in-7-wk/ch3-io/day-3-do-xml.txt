@@ -1,0 +1,11 @@
+ul(
+	book(
+		{"author": "Tate"}
+	),
+	ul(
+		{"a" : "1", "b": "2"},
+		li("Io"), 
+		li("Lua"),
+		li("JavaScript")
+	)
+)

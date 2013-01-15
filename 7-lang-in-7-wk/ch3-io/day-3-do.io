@@ -84,7 +84,51 @@ BracketSyntaxEnv
 
 "Task #3: Add attribute support for XML Builder" println 
 
-XMLBuilderPlusEnv := method(
+OperatorTable addAssignOperator(":", "atPutNumber")
+
+curlyBrackets := method(
+	r := Map clone
+	call message arguments foreach(arg,
+		r doMessage(arg))
+	r)
+Map atPutNumber := method(
+	self atPut(
+		call evalArgAt(0) asMutable \
+			removePrefix("\"") \
+			removeSuffix("\""),
+		call evalArgAt(1)	
+	)
 )
 
-XMLBuilderPlusEnv
+# TODO show attribute
+XMLBuilderPlus := XMLBuilder clone
+XMLBuilderPlus levelWrite := method(content,
+	self state currentLevel \
+		repeat( self state indent print )
+	# how to pass all arguments to another function?
+	content print)
+
+XMLBuilderPlus forward := method(
+	levelWriteln("<#{call message name}>" interpolate)
+	self state currentLevel := self state currentLevel + 1
+
+	contents := call message arguments map( \
+		arg, self doMessage(arg))
+	
+	attributes := contents select(e, e isKindOf(Map))
+	attributeContent := attributes map(m, 
+		(m asList) map(kv, 
+			"#{kv at(0)}=\"#{kv at(1)}\"" interpolate) \
+	) flatten join(" ")
+
+	elements := contents select(e, e isKindOf(String))
+	elements foreach(e, levelWriteln(e)) 
+
+	self state currentLevel := self state currentLevel - 1
+	levelWriteln("</#{call message name}>" interpolate)
+	nil)
+
+s := File with("day-3-do-xml.txt") openForReading contents 
+doString("XMLBuilderPlus #{s}" interpolate)
+
+
