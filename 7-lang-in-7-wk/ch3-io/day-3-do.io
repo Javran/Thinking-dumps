@@ -1,7 +1,6 @@
 #!/usr/bin/env io
 
 "Task #1: Modify XML Builder to produce pretty output" println
-
 builderTester := method(builder,
 	"=== BEGIN ===" println
 	builder \
@@ -17,7 +16,7 @@ builderTester := method(builder,
 				li("Perl"),
 				li("Python")
 			)
-		)
+		) foreach(l, l println)
 	"==== END ====" println)
 
 # I don't know how to break the message forward mechanism
@@ -26,28 +25,19 @@ builderTester := method(builder,
 # so there's a bug that existing functions are still work
 #     e.g. 'println' will not print "<println></println>"
 
+# It will be better if we could return a list of things to print
+# thus we could do indentation freely
 XMLBuilder := Object clone
-
-# I need a slot to store current level
 XMLBuilder indent ::= "\t"
-XMLBuilder currentLevel ::= 0
-
-XMLBuilder levelWriteln := method(content,
-	self currentLevel \
-		repeat( self indent print )
-	# how to pass all arguments to another function?
-	content println)
-
 XMLBuilder forward := method(
-	levelWriteln("<#{call message name}>" interpolate)
-	self currentLevel := self currentLevel + 1
-	call message arguments foreach(arg,
-		content := self doMessage(arg)
-		if (content isKindOf(Sequence),
-			levelWriteln(content)))
-	self currentLevel := self currentLevel - 1
-	levelWriteln("</#{call message name}>" interpolate)
-	nil)
+	head := "<#{call message name}>" interpolate
+	contents := call message arguments map(arg, self doMessage(arg))
+	contentList := contents flatten map(l, indent .. l)
+	tail := "</#{call message name}>" interpolate
+
+	contentList atInsert(0, head)
+	contentList append(tail)
+	contentList)
 
 "Builder output:" println
 xmlBuilder := XMLBuilder clone
@@ -79,7 +69,6 @@ BracketSyntaxEnv := method(
 BracketSyntaxEnv
 
 "Task #3: Add attribute support for XML Builder" println 
-
 OperatorTable addAssignOperator(":", "atPutNumber")
 
 curlyBrackets := method(
@@ -97,13 +86,11 @@ Map atPutNumber := method(
 )
 
 XMLBuilderPlus := XMLBuilder clone
-XMLBuilderPlus indent ::= "\t"
 XMLBuilderPlus forward := method(
 
 	# first evaluate all arguments
 	# the elements will be either Map or List
-	contents := call message arguments map( \
-		arg, self doMessage(arg))
+	contents := call message arguments map(arg, self doMessage(arg))
 
 	# now we collect all Maps
 	attributes := contents select(e, e isKindOf(Map))
