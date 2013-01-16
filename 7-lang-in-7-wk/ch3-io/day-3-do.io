@@ -96,33 +96,43 @@ Map atPutNumber := method(
 	)
 )
 
-# TODO show attribute
 XMLBuilderPlus := XMLBuilder clone
-XMLBuilderPlus levelWrite := method(content,
-	self currentLevel \
-		repeat( self indent print )
-	# how to pass all arguments to another function?
-	content print)
-
+XMLBuilderPlus indent ::= "\t"
 XMLBuilderPlus forward := method(
-	levelWriteln("<#{call message name}>" interpolate)
-	self currentLevel := self currentLevel + 1
 
+	# first evaluate all arguments
+	# the elements will be either Map or List
 	contents := call message arguments map( \
 		arg, self doMessage(arg))
-	
+
+	# now we collect all Maps
 	attributes := contents select(e, e isKindOf(Map))
 	attributeContent := attributes map(m, 
-		(m asList) map(kv, 
-			"#{kv at(0)}=\"#{kv at(1)}\"" interpolate) \
-	) flatten join(" ")
+		# each Map will be expanded to list of Key-Value
+		m asList map(kv, 
+			# convert pairs to string
+			# flatten the list and join them together
+			"#{kv at(0)}=\"#{kv at(1)}\"" interpolate)) \
+			flatten join(" ")
 
-	elements := contents select(e, e isKindOf(String))
-	elements foreach(e, levelWriteln(e)) 
+	elements := contents select(e, e isKindOf(List))
+	# flatten the element list, and do indentation
+	elementContentList := elements flatten map(e, indent .. e)
 
-	self currentLevel := self currentLevel - 1
-	levelWriteln("</#{call message name}>" interpolate)
-	nil)
+	attr := if (attributeContent size > 0,
+			" " .. attributeContent,
+			"")
 
-s := File with("day-3-do-xml.txt") openForReading contents 
-doString("XMLBuilderPlus #{s}" interpolate)
+	head := "<#{call message name}#{attr}>" interpolate
+	tail := "</#{call message name}>" interpolate
+	elementContentList atInsert(0,head)
+	elementContentList append(tail)
+	elementContentList)
+
+builder := XMLBuilderPlus clone
+#                 _0123_
+builder setIndent("    ");
+xmlFile := File with("day-3-do-xml.txt") openForReading
+result := doString("builder #{xmlFile contents}" interpolate)
+result foreach(l, l println)
+xmlFile close

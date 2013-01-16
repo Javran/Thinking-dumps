@@ -6,6 +6,7 @@ ul(
 		{"a" : "1", "b": "2"},
 		li("Io"), 
 		li("Lua"),
+		{"c" : "3"},
 		li("JavaScript")
 	)
 )
