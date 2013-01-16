@@ -76,6 +76,7 @@ curlyBrackets := method(
 	call message arguments foreach(arg,
 		r doMessage(arg))
 	r)
+
 Map atPutNumber := method(
 	self atPut(
 		call evalArgAt(0) asMutable \
@@ -123,3 +124,23 @@ xmlFile := File with("day-3-do-xml.txt") openForReading
 result := doString("builder #{xmlFile contents}" interpolate)
 result foreach(l, l println)
 xmlFile close
+
+# still a problem remaining here:
+# what's the difference between "do" and "doString"?
+# i.e.:
+# this will work:
+/*
+doString(
+	"""{"a":"1", "b":"0"}"""
+)
+*/
+# this will not:
+/*
+do(
+	{"a":"1", "b":"0"}
+)
+*/
+# this will not either 
+/*
+{"a":"1", "b":"0"}
+*/
