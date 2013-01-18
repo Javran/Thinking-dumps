@@ -1,6 +1,6 @@
 % init
 :- initialization(['common.pl']).
-:- initialization(queryAll).
+:- initialization(run).
 
 % how to run code from file?
 % please refer to:

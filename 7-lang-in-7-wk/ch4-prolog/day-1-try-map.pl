@@ -1,6 +1,6 @@
 % init
 :- initialization(['common.pl']).
-:- initialization(queryAll).
+:- initialization(run).
 
 different(red  , green).
 different(red  , blue ).
@@ -21,4 +21,7 @@ coloring(Alabama, Mississippi, Georgia, Tennessee, Florida) :-
 	different(Georgia    , Florida    ),
 	different(Georgia    , Tennessee  ).
 
-query(coloring(Alabama, Mississippi, Georgia, Tennessee, Florida)).
+query(findall(
+	(Alabama, Mississippi, Georgia, Tennessee, Florida),
+	coloring(Alabama, Mississippi, Georgia, Tennessee, Florida),
+	X)).
