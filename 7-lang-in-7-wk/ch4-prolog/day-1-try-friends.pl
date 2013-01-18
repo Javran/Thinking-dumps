@@ -1,3 +1,7 @@
+% init
+:- initialization(['common.pl']).
+:- initialization(queryAll).
+
 % how to run code from file?
 % please refer to:
 %     http://stackoverflow.com/questions/10059701/simple-prolog-issue-how-do-you-test-multiple-queries-against-your-prolog-databa
@@ -37,5 +41,3 @@ query(friend(wallace, grommit)).
 query(friend(wendolene, grommit)).
 % no because they do not share any 'likes'
 
-:- initialization(['common.pl']).
-:- initialization(queryAll).

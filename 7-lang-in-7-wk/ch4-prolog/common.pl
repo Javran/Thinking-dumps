@@ -1,3 +1,5 @@
+% prolog utils
+
 writeln(T) :- write(T), nl.
 
 % query all tagged 'query' and quit
