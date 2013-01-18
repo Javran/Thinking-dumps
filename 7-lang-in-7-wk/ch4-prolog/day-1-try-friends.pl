@@ -7,13 +7,35 @@
 % 'halt' will quit the program
 % an useful link about some prolog tutorials:
 %     http://stackoverflow.com/questions/401635/good-beginners-material-on-prolog
+% now we can write queries in file and evaluate it, please refer to:
+% http://stackoverflow.com/questions/14384917/how-can-i-make-prolog-print-query-results-when-running-a-prolog-script
 
-% currently 'write' print the argument as if it is a string
-%    (but strangely removed white space between "," and "c")
-% how make it work here?
-main :-
-	write(likes(wallace, cheese)),
-	halt.
+% facts
 
-:- initialization(['day-1-try-friends-facts']).
-:- initialization(main).
+likes(wallace, cheese).
+likes(grommit, cheese).
+likes(wendolene, sheep).
+
+% name it 'friend/2'
+% if X is not Y and both X & Y like Z then X and Y are friends
+friend(X, Y) :- \+(X = Y), likes(X, Z), likes(Y, Z).
+
+% queries
+
+query(likes(wallace, cheese)).
+% yes
+query(likes(wallace, sheep)).
+% no
+query(likes(grommit, cheese)).
+% yes
+query(friend(wallace, wallace)).
+% no
+query(friend(grommit, wallace)).
+% yes because both grommit and wallace like cheese
+query(friend(wallace, grommit)).
+% yes for the same reason
+query(friend(wendolene, grommit)).
+% no because they do not share any 'likes'
+
+:- initialization(['common.pl']).
+:- initialization(queryAll).

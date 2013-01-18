@@ -1,3 +1,5 @@
+%
+
 food_type(velveeta, cheese).
 food_type(ritz, cracker).
 food_type(spam, meat).
