@@ -9,8 +9,6 @@
 %     http://stackoverflow.com/questions/2556253/prolog-newbie-question-making-a-procedure-to-print-hello-world
 % so, 'write' will output things and 'nl' prints a newlin 
 % 'halt' will quit the program
-% an useful link about some prolog tutorials:
-%     http://stackoverflow.com/questions/401635/good-beginners-material-on-prolog
 % now we can write queries in file and evaluate it, please refer to:
 % http://stackoverflow.com/questions/14384917/how-can-i-make-prolog-print-query-results-when-running-a-prolog-script
 
