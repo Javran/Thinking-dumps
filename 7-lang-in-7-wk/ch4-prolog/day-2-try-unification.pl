@@ -2,11 +2,17 @@
 :- initialization(['common.pl']).
 :- initialization(run).
 
-query( (1,2,3) = (1,2,3) ).
+% dummy query
+query( true ).
+
+% to see unification results, please refer to:
+% http://stackoverflow.com/questions/14416099/how-can-i-print-unification-results-when-using-prolog-script
+
+query_u( '(1,2,3) = (1,2,3).' ).
 % yes
-query( (1,2,3) = (1,2,3,4) ).
+query_u( '(1,2,3) = (1,2,3,4).' ).
 % no
-query( (1,2,3) = (3,2,1) ).
+query_u( '(1,2,3) = (3,2,1).' ).
 % no
-query( (A,B,C) = (1,2,3) ).
+query_u( '(A,B,C) = (1,2,3).' ).
 

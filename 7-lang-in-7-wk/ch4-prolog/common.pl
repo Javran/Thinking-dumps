@@ -6,11 +6,18 @@ writeln(T) :- write(T), nl.
 % methods that can write list elements
 
 % query all tagged 'query' and quit
-queryAll :-
+query_all :-
 	forall(query(Q), (Q ->
 		writeln('yes':Q) ;
 		writeln('no ':Q))).
 
+query_all_u :-
+	forall(query_u(Q), 
+        ( read_term_from_atom(Q, T, [variable_names(L)]),
+          ( T -> writeln('yes':L) ; writeln('no ':Q) )
+        )).
+
 run :-
-	queryAll,
+	query_all,
+	query_all_u,
 	halt.

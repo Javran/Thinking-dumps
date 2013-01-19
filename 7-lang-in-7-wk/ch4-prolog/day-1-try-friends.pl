@@ -39,3 +39,5 @@ query(friend(wallace, grommit)).
 query(friend(wendolene, grommit)).
 % no because they do not share any 'likes'
 
+% dummy query
+query_u( '_=_.' ).

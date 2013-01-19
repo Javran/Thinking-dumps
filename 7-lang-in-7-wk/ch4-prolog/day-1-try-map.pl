@@ -25,3 +25,5 @@ query(findall(
 	(Alabama, Mississippi, Georgia, Tennessee, Florida),
 	coloring(Alabama, Mississippi, Georgia, Tennessee, Florida),
 	X)).
+
+query_u( '_=_.' ).

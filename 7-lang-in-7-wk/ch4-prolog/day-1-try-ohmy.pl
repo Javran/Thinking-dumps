@@ -22,3 +22,6 @@ query(dorothy(_, _, _)).
 
 query(findall((One,Two),twin_cats(One, Two),_)).
 % list all solutions: lion-lion, lion-tiger ...
+
+% dummy query
+query_u( '_=_.' ).

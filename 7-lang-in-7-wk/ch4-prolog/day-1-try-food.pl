@@ -36,3 +36,6 @@ query(findall(X, food_flavor(X, savory),Y)).
 % so meat and cheese can be filled to Z
 % meat -> (spam, sausage) and cheese -> (velveeta)
 % so the output is 'spam, sausage, velveeta'
+
+% dummy query
+query_u( '_=_.' ).

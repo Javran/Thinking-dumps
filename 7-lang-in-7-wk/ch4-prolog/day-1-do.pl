@@ -66,3 +66,6 @@ query(findall(Musician, usesInstrument(Musician, guitar), _)).
 % Additional Task: find all instruments played by musicians
 %    whos genres is jazz
 query(findall(Instrument, genresUseInstrument(jazz, Instrument), _)). 
+
+% dummy query
+query_u( '_=_.' ).
