@@ -8,8 +8,8 @@ writeln(T) :- write(T), nl.
 % query all tagged 'query' and quit
 query_all :-
 	forall(query(Q), (Q ->
-		writeln('yes':Q) ;
-		writeln('no ':Q))).
+		format('yes:~w~n',[Q]) ;
+		format('no :~w~n',[Q]))).
 
 query_all_u :-
 	forall(query_u(Q), 
