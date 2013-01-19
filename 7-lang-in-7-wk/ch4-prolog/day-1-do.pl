@@ -15,9 +15,11 @@ writesBook(arthurConanDoyle, theSignOfTheFour).
 % Task #3: construct a knowledge database that descripts
 %     musicians and instruments, together with these musicians' genres
 
-% I've attempted to place these predicates in a more reasonable order
-%     but it seems discontiguous predicate is not allowed 
-%     sorry for the poor readability
+% it seems discontiguous predicate is not allowed by default
+%     just let it be, coding in Prolog's way 
+% but if you want to relax this rule, the links below might be useful:
+% http://stackoverflow.com/questions/7400904/discontiguous-predicate-warning-from-gnu-prolog
+% http://www.gprolog.org/manual/gprolog.html#htoc53
 
 musician(steveVai).
 musician(tommyEmmanuel).
@@ -34,19 +36,19 @@ genres(jazz).
 genres(folk).
 genres(pop).
 
-usesInstrument(steveVai, guitar).
-usesInstrument(steveVai, keyboards).
-usesInstrument(tommyEmmanuel, guitar).
-usesInstrument(kennyG, saxophone).
-usesInstrument(eugeGroove, saxophone).
+usesInstrument(steveVai     , guitar   ).
+usesInstrument(steveVai     , keyboards).
+usesInstrument(tommyEmmanuel, guitar   ).
+usesInstrument(kennyG       , saxophone).
+usesInstrument(eugeGroove   , saxophone).
 
-inGenres(steveVai, rock).
-inGenres(tommyEmmanuel, folk).
+inGenres(steveVai     , rock ).
+inGenres(tommyEmmanuel, folk ).
 inGenres(tommyEmmanuel, blues).
-inGenres(tommyEmmanuel, pop).
-inGenres(tommyEmmanuel, jazz).
-inGenres(kennyG, jazz).
-inGenres(eugeGroove, jazz).
+inGenres(tommyEmmanuel, pop  ).
+inGenres(tommyEmmanuel, jazz ).
+inGenres(kennyG       , jazz ).
+inGenres(eugeGroove   , jazz ).
 
 genresUseInstrument(Genres, Instrument) :- 
 	usesInstrument(Musician, Instrument),
@@ -55,7 +57,7 @@ genresUseInstrument(Genres, Instrument) :-
 % queries
 
 % Task #2: find all books written by same author
-query(findall(Book, writesBook(agathaChristie, Book), _)).
+query(findall(Book, writesBook(agathaChristie  , Book), _)).
 query(findall(Book, writesBook(arthurConanDoyle, Book), _)).
 
 % Task #3: find all musicians that play guitar
