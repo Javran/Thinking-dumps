@@ -20,23 +20,23 @@ concatenate_v2([Head|Tail1], List, [Head|Tail2]) :-
 
 query( append([oil],[water],[oil,water]) ).
 % yes
-query( append([tiny],[bubbles], What) ).
+query( append([tiny],[bubbles], _) ).
 % yes: [tiny, bubbles]
-query( append([dessert_topping], Who, [dessert_topping, floor_wax]) ).
+query( append([dessert_topping], _, [dessert_topping, floor_wax]) ).
 % yes: [floor_wax]
 query( findall( 
 	(One,Two), 
 	append(One, Two, [apples, oranges, bananas]),
 	_) ).
 
-query( concatenate([], [harry], What) ).
+query( concatenate([], [harry], _) ).
 % What = harry
-query( concatenate([malfoy], [potter], What) ).
+query( concatenate([malfoy], [potter], _) ).
 % What = [malfoy, potter]
-query( concatenate([malfoy, granger], [potter], What) ).
+query( concatenate([malfoy, granger], [potter], _) ).
 % What = [malfoy, granger, potter]
 
-query( concatenate_v2([1,2], [3], What) ).
+query( concatenate_v2([1,2], [3], _) ).
 % [1,2,3]
 % What happened here:
 % rule: [Head-A|Tail1-A], List-A, [Head-A|Tail2-A]

@@ -5,7 +5,7 @@
 % facts
 
 count(0, []).
-count(Count, [Head|Tail]) :-
+count(Count, [_|Tail]) :-
 	count(TailCount, Tail),
 	Count is TailCount + 1.
 
@@ -21,9 +21,9 @@ average(Average, List) :-
 
 % queries
 
-query( count(What, [1]) ).
-query( sum(What, [1,2,3]) ).
-query( average(What, [1,2,3,4,5,6]) ).
+query( count(_, [1]) ).
+query( sum(_, [1,2,3]) ).
+query( average(_, [1,2,3,4,5,6]) ).
 
 % dummy query
 query_u( '_=_.' ).
