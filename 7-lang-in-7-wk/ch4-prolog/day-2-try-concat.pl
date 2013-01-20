@@ -7,7 +7,7 @@
 concatenate([], List, List).
 concatenate([Head|[]], List, [Head|List]).
 concatenate([Head1|[Head2|[]]], List, [Head1,Head2|List]).
-concatenate([Head1|[Head2|[Head3|[]]]], List, [Head1,Head2,Head3]).
+concatenate([Head1|[Head2|[Head3|[]]]], List, [Head1,Head2,Head3|List]).
 % the rule below will not work
 %    which make [a,b] [c,d] to [[a,b],[c,d]]
 % concatenate(Head, List, [Head|List]).
