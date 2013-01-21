@@ -5,12 +5,12 @@
 % facts
 
 % Task #1: construct a simple database to descipt some books and their authors
-writesBook(agathaChristie, theABCMurder).
-writesBook(agathaChristie, afterTheFuneral).
-writesBook(agathaChristie, andThenThereWereNone).
+writes_book(agathaChristie, theABCMurder).
+writes_book(agathaChristie, afterTheFuneral).
+writes_book(agathaChristie, andThenThereWereNone).
 
-writesBook(arthurConanDoyle, aStudyInScarlet).
-writesBook(arthurConanDoyle, theSignOfTheFour).
+writes_book(arthurConanDoyle, aStudyInScarlet).
+writes_book(arthurConanDoyle, theSignOfTheFour).
 
 % Task #3: construct a knowledge database that descripts
 %     musicians and instruments, together with these musicians' genres
@@ -36,36 +36,36 @@ genres(jazz).
 genres(folk).
 genres(pop).
 
-usesInstrument(steveVai     , guitar   ).
-usesInstrument(steveVai     , keyboards).
-usesInstrument(tommyEmmanuel, guitar   ).
-usesInstrument(kennyG       , saxophone).
-usesInstrument(eugeGroove   , saxophone).
+uses_instrument(steveVai     , guitar   ).
+uses_instrument(steveVai     , keyboards).
+uses_instrument(tommyEmmanuel, guitar   ).
+uses_instrument(kennyG       , saxophone).
+uses_instrument(eugeGroove   , saxophone).
 
-inGenres(steveVai     , rock ).
-inGenres(tommyEmmanuel, folk ).
-inGenres(tommyEmmanuel, blues).
-inGenres(tommyEmmanuel, pop  ).
-inGenres(tommyEmmanuel, jazz ).
-inGenres(kennyG       , jazz ).
-inGenres(eugeGroove   , jazz ).
+in_genres(steveVai     , rock ).
+in_genres(tommyEmmanuel, folk ).
+in_genres(tommyEmmanuel, blues).
+in_genres(tommyEmmanuel, pop  ).
+in_genres(tommyEmmanuel, jazz ).
+in_genres(kennyG       , jazz ).
+in_genres(eugeGroove   , jazz ).
 
-genresUseInstrument(Genres, Instrument) :- 
-	usesInstrument(Musician, Instrument),
-	inGenres(Musician, Genres).
+genres_use_instrument(Genres, Instrument) :- 
+	uses_instrument(Musician, Instrument),
+	in_genres(Musician, Genres).
 
 % queries
 
 % Task #2: find all books written by same author
-query(findall(Book, writesBook(agathaChristie  , Book), _)).
-query(findall(Book, writesBook(arthurConanDoyle, Book), _)).
+query(findall(Book, writes_book(agathaChristie  , Book), _)).
+query(findall(Book, writes_book(arthurConanDoyle, Book), _)).
 
 % Task #3: find all musicians that play guitar
-query(findall(Musician, usesInstrument(Musician, guitar), _)).
+query(findall(Musician, uses_instrument(Musician, guitar), _)).
 
 % Additional Task: find all instruments played by musicians
 %    whos genres is jazz
-query(findall(Instrument, genresUseInstrument(jazz, Instrument), _)). 
+query(findall(Instrument, genres_use_instrument(jazz, Instrument), _)). 
 
 % dummy query
 query_u( '_=_.' ).
