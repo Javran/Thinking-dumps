@@ -21,6 +21,18 @@ fibonacci(X,Fib) :-
 	fibonacci(X2, Fib2),
 	Fib is Fib1 + Fib2.
 
+% Task #2: find those communities who use prolog to solve problems
+%     what kind of problem can prolog solve?
+% TODO: find communities
+% I've done several searches, and some usage of prolog can be inferred from:
+%     http://stackoverflow.com/questions/401635/good-beginners-material-on-prolog/
+% seems prolog can be used to deal with problems in
+%     * Artifical Intelligence
+%     * Natural Language Processing
+%     * Discrete Mathematics
+
+% Task #3: solve Tower of Hanoi problem
+
 % queries
 
 % dummy query

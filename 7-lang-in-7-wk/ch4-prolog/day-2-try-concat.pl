@@ -36,7 +36,7 @@ query( concatenate([malfoy], [potter], _) ).
 query( concatenate([malfoy, granger], [potter], _) ).
 % What = [malfoy, granger, potter]
 
-query( concatenate_v2([1,2], [3], _) ).
+query( concatenate_v2([1,2], [3], X) ).
 % [1,2,3]
 % What happened here:
 % rule: [Head-A|Tail1-A], List-A, [Head-A|Tail2-A]
