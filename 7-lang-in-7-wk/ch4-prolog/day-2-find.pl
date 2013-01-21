@@ -32,18 +32,34 @@ fibonacci(X,Fib) :-
 %     * Discrete Mathematics
 
 % Task #3: solve Tower of Hanoi problem
+% hanoi(level, init rod, tmp rod, target rod)
+
+% there is only one disk, so simply moving the disk
+%     from A to C will do
+hanoi(1,A,_,C) :-
+	format('~w -> ~w~n', [A,C]).
+
+hanoi(Level,A,B,C) :-
+	PrevLevel is Level - 1,
+	hanoi(PrevLevel,A,C,B),
+	format('~w -> ~w~n', [A,C]),
+	hanoi(PrevLevel,B,A,C).
+
+% Task #4: TODO
 
 % queries
-
-% dummy query
-query( true ).
+query( hanoi(3,a,b,c) ).
+% a solution for 7-level hanoi problem has been grabbed 
+%     from the output of 'query( hanoi(7,a,b,c) ).'
+%     you can find the solution at 'day-2-find-hanoi-7-level-solution.txt'
+%     and use the verifier 'day-2-find-hanoi-verifier.py' to verify the solution
 
 % dummy query
 query_u( 'factorial( 0,X).' ).
 % X=1
 query_u( 'factorial(10,X).' ).
 % X=3628800 
-query_u( 'fibonacci(1,X).' ).
+query_u( 'fibonacci( 1,X).' ).
 % X=1
 query_u( 'fibonacci(11,X).' ).
 % X=144
