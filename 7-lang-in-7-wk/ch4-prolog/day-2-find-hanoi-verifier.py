@@ -24,8 +24,31 @@ class HanoiVerifier:
 		# move disk
 		disk = self.rods[src].pop()
 		self.rods[tgt].append(disk)
-		# TODO: pretty print
-		print self.rods
+		print cmd
+		self.prettyPrint()
+
+	def prettyPrint(self):
+		# let's define disk's level:
+		#     -+-      -- level 3
+		#    --+--     -- level 2
+		#   ---+---    -- level 1
+		print "\n".join(
+			map(
+				# map each level to its output
+				lambda lvl:
+					" ".join( 
+						# map each rod to its output at specific level
+						map( 
+							lambda ind:
+								self.getDiskStringAt(self.rods[ind], lvl),
+							range(3)) ),
+				range(self.level, 0, -1)))
+
+	def getDiskStringAt(self, rod, level):
+		if (len(rod) < level):
+			return ' '*self.level + '|' + ' '*self.level
+		disk = rod[level-1] 
+		return ' '*(self.level-disk) + '-'*disk + '+' + '-'*disk + ' '*(self.level-disk)
 		
 	def toIndex(self, ch):
 		assert ch in 'abc'
