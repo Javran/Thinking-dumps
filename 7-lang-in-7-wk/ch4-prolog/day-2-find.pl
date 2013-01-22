@@ -45,7 +45,8 @@ hanoi(Level,A,B,C) :-
 	format('~w -> ~w~n', [A,C]),
 	hanoi(PrevLevel,B,A,C).
 
-% Task #4: TODO
+% Task #4: TODO: don't know that the exercise is asking,
+%     let me skip it for a while
 
 % queries
 query( hanoi(3,a,b,c) ).
@@ -63,4 +64,5 @@ query_u( 'fibonacci( 1,X).' ).
 % X=1
 query_u( 'fibonacci(11,X).' ).
 % X=144
-
+% TODO: how to make line below work, or is that possible?
+% query_u( 'fibonacci(N,144).' ).
