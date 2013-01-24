@@ -4,7 +4,7 @@
 
 % facts
 
-% Task #1: modify sudoku solver to solve 6x6 sudokus
+% Task #1: modify sudoku solver to solve 6x6 sudoku
 
 % TODO: I think the method used here is only a quick-and-dirty way
 %     I want a more decent solution
@@ -58,6 +58,10 @@ sudoku_6x6(Puzzle, Solution) :-
 		Row1,Row2,Row3,Row4,Row5,Row6,
 		Col1,Col2,Col3,Col4,Col5,Col6,
 		Box1,Box2,Box3,Box4,Box5,Box6]).
+
+% Task #1: 9x9 sudoku solver
+% Task #2: pretty print for sudoku solver
+% still quick and dirty, I need to find some way out
 
 sudoku_9x9(Puzzle,Solution) :-
 	Puzzle = Solution,
@@ -113,13 +117,31 @@ sudoku_9x9(Puzzle,Solution) :-
 		Row1,Row2,Row3,Row4,Row5,Row6,Row7,Row8,Row9,
 		Col1,Col2,Col3,Col4,Col5,Col6,Col7,Col8,Col9,
 		Box1,Box2,Box3,Box4,Box5,Box6,Box7,Box8,Box9
-	]).
+	]),
+
+	% pretty print
+	format('+---+---+---+~n',[]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S11,S12,S13,S14,S15,S16,S17,S18,S19]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S21,S22,S23,S24,S25,S26,S27,S28,S29]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S31,S32,S33,S34,S35,S36,S37,S38,S39]),
+	format('+---+---+---+~n',[]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S41,S42,S43,S44,S45,S46,S47,S48,S49]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S51,S52,S53,S54,S55,S56,S57,S58,S59]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S61,S62,S63,S64,S65,S66,S67,S68,S69]),
+	format('+---+---+---+~n',[]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S71,S72,S73,S74,S75,S76,S77,S78,S79]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S81,S82,S83,S84,S85,S86,S87,S88,S89]),
+	format('|~w~w~w|~w~w~w|~w~w~w|~n', [S91,S92,S93,S94,S95,S96,S97,S98,S99]),
+	format('+---+---+---+~n',[]).
 
 % judge if all groups are valid
 valid([]).
 valid([Head|Tail]) :-
 	valid(Tail),
 	fd_all_different(Head).
+
+% Task #3: solve 8-queens problem
+%     please refer to 'day-3-do-eight-queens.pl'
 
 % queries
 query( sudoku_6x6([
