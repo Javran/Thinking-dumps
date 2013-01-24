@@ -21,10 +21,13 @@ fibonacci(X,Fib) :-
 	fibonacci(X2, Fib2),
 	Fib is Fib1 + Fib2.
 
-% Task #2: find those communities who use prolog to solve problems
+% Task #2: find those communities who use prolog to solve real-world problems
 %     what kind of problem can prolog solve?
-% TODO: find communities
-% I've done several searches, and some usage of prolog can be inferred from:
+% 
+% TODO
+% I cannot find one, the clue might be located at 
+%     http://stackoverflow.com/questions/130097/real-world-prolog-usage
+% But I've done several searches, and some usage of prolog can be inferred from:
 %     http://stackoverflow.com/questions/401635/good-beginners-material-on-prolog/
 % seems prolog can be used to deal with problems in
 %     * Artifical Intelligence
@@ -45,8 +48,14 @@ hanoi(Level,A,B,C) :-
 	format('~w -> ~w~n', [A,C]),
 	hanoi(PrevLevel,B,A,C).
 
-% Task #4: TODO: don't know that the exercise is asking,
-%     let me skip it for a while
+% Task #4: What are some of the problems of dealing with "not" expressions? 
+% Why do you have to be careful with negation in Prolog?
+% Some sites that might be useful:
+%     http://stackoverflow.com/questions/5472890/prolog-negation
+%     http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/2_5.html
+%     http://www.canbaskent.net/logic/early/prolog.pdf
+% The simplest answer can be found at the 2nd link
+%     please refer to 'day-2-find-negation.pl' 
 
 % queries
 query( hanoi(3,a,b,c) ).

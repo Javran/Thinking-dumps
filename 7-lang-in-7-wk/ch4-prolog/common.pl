@@ -2,9 +2,6 @@
 
 writeln(T) :- write(T), nl.
 
-% TODO
-% methods that can write list elements
-
 % do all queries marked 'query'
 do_all_query :-
 	forall(query(Q),
