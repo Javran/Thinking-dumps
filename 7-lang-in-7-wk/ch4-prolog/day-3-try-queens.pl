@@ -100,6 +100,3 @@ query( extract_rt_lb([(1,8),(2,7),(3,5),(4,4)],_) ).
 % it will spend roughly 2.3s on my laptop, uncomment lines below to see the results
 query_u( 'eight_queens_optimized([(1,A),(2,B),(3,C),(4,D),(5,E),(6,F),(7,G),(8,H)]).' ).
 % (A,B,C,D,E,F,G,H) = (1,5,8,6,3,7,2,4)
-
-% dummy query
-query_u('_=_.').

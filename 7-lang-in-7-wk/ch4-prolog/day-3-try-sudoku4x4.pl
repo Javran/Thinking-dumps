@@ -70,6 +70,3 @@ query( sudoku([
 % 2 3 4 1
 % 1 2 3 4
 % 3 4 1 2
-
-% dummy query
-query_u( '_=_.' ).

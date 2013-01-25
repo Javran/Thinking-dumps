@@ -62,6 +62,3 @@ query( concatenate_v2([1,2], [3], X) ).
 %         ==> Tail2-B=[3]
 %    ==> Tail2A = [Head-B|Tail2-B] = [2|[3]] = [2,3]
 %    ==> What = [1|Tail2-A] = [1|[2,3]] = [1,2,3]
-
-% dummy query
-query_u( '_=_.' ).

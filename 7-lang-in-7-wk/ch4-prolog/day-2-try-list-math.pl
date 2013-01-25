@@ -24,6 +24,3 @@ average(Average, List) :-
 query( count(_, [1]) ).
 query( sum(_, [1,2,3]) ).
 query( average(_, [1,2,3,4,5,6]) ).
-
-% dummy query
-query_u( '_=_.' ).

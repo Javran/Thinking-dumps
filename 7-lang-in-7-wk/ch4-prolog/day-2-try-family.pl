@@ -30,6 +30,3 @@ query(findall(Who, ancestor_of(zeb, Who), _)).
 
 % find all ancestors of john_boy_jr 
 query(findall(Who, ancestor_of(Who, john_boy_jr), _)).
-
-% dummy query
-query_u( '_=_.' ).

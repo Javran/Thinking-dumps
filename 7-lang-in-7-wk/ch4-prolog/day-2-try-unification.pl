@@ -2,9 +2,6 @@
 :- initialization(['common.pl']).
 :- initialization(run).
 
-% dummy query
-query( true ).
-
 % to see unification results, please refer to:
 % http://stackoverflow.com/questions/14416099/how-can-i-print-unification-results-when-using-prolog-script
 

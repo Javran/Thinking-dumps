@@ -7,8 +7,4 @@
 
 % queries
 
-% dummy query
-query( true ).
 
-% dummy query
-query_u( '_=_.' ).

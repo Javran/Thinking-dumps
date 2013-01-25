@@ -71,6 +71,3 @@ list_to_row_col(List,Row,TargetList) :-
 
 % queries
 query( findall(X,eight_queens(X),_) ).
-
-% dummy query
-query_u( '_=_.' ).

@@ -31,6 +31,3 @@ query( \+ (bachelor(_)) ).
 %          of which the expected answer will be 'tom'
 % actually this query reads:
 %     fail if we can find one who is not a bachelor, succeed elsewise
-
-% dummy query
-query_u( '_=_.' ).

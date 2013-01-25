@@ -64,7 +64,6 @@ query( hanoi(3,a,b,c) ).
 %     you can find the solution at 'day-2-find-hanoi-7-level-solution.txt'
 %     and use the verifier 'day-2-find-hanoi-verifier.py' to verify the solution
 
-% dummy query
 query_u( 'factorial( 0,X).' ).
 % X=1
 query_u( 'factorial(10,X).' ).

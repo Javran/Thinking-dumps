@@ -71,6 +71,3 @@ query( min_in_list([5,6,7,4,3,8,9], _) ).
 query( keep_less_equal(5,[1,2,3,4,5,1,2,3,7,8,9,7,8,9],_) ).
 query( keep_greater(5,[1,2,3,4,5,1,2,3,7,8,9,7,8,9],_) ).
 query( quick_sort([1,2,3,4,5,1,2,3,7,8,9,7,8,9],_) ).
-
-% dummy query
-query_u( '_=_.' ).

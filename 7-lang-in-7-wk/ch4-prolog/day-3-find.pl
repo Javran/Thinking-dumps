@@ -21,9 +21,3 @@ is_ok(ok).
 query( read_and_write ).
 query( print_if_succeed(is_ok(ok)) ).
 query( print_if_succeed(is_ok(no)) ).
-
-% dummy query
-query( true ).
-
-% dummy query
-query_u( '_=_.' ).
