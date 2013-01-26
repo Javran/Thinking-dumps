@@ -43,7 +43,8 @@ println( "abc" * 4 )
 // it will produce 4 "abc"s
 
 //println( 4 * "abc" )
-// the line above will cause an error
+// scala is strong-typed and 
+//     the line above will cause an error
 //     which I guess is a compilation error
 //     because try-catch statement 
 //     cannot catch this kind of error
@@ -60,4 +61,41 @@ try {
 }
 */
 
+println( ">>> test Booleans" )
+println( 5 < 6 )
+// true
 
+println( 5 <= 6 )
+// true
+
+println( 5 <= 2 )
+// false
+
+println( 5 != 2 )
+// true
+
+val a = 1
+val b = 2
+
+if (b < a) {
+	println( "True." )
+} else {
+	println( "False.")
+}
+
+println( Nil )
+// Nil is a list?
+
+// these lines below will never work
+// if(0) {println( "true" )}
+// if(Nil) {println( "true" )}
+
+def whileLoop {
+	var i = 1
+	while (i <= 3) {
+		println(i)
+		i += 1
+	}
+}
+
+whileLoop
