@@ -1,4 +1,4 @@
-#!/usr/bin/env scala "$0" "$@"
+#!/usr/bin/env scala
 !#
 
 // if you encounter some problem like:
@@ -93,7 +93,7 @@ println( Nil )
 def whileLoop {
 	var i = 1
 	while (i <= 3) {
-		println(i)
+		println("while loop: %d" format i)
 		i += 1
 	}
 }
