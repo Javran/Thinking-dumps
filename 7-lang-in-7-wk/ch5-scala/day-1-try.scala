@@ -99,3 +99,44 @@ def whileLoop {
 }
 
 whileLoop
+
+val range = 0 until 10
+// start,end,step = 0,10,1
+
+def testRange(range:Range) {
+	println("Range: " + range)
+	println("Range start: " + range.start)
+	println("Range end  : " + range.end)
+	println("Range step : " + range.step)
+}
+
+testRange( range )
+testRange( (0 to 10) by 5 )
+// note: 'to' includes the end
+// (0,5,10)
+testRange( (0 to 10) by 6 )
+// (0,6)
+testRange( (0 until 10) by 5)
+// note: 'until' excludes the end
+testRange( (10 until 0) by -1)
+// (10 .. 1)
+testRange( (10 to 0) by -1)
+// (10 .. 0)
+testRange( (10 until 0) )
+// ()
+testRange( (0 to 10) )
+// (1.. 10)
+println( 'a' to 'e' )
+
+val person = ("Elvis", "Presley")
+println( person._1 )
+println( person._2 )
+
+val (x,y) = (1,2)
+println( x )
+println( y )
+// 1 and 2
+
+class Person(firstName : String, lastName : String)
+val gump = new Person("Forrest", "Gump")
+println( gump )
