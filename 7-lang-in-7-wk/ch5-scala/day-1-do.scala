@@ -2,23 +2,28 @@
 !#
 
 // Task #1: Tic-Tac-Toe Game
-// TODO: 
-// * strict judger, judge if the count of Xs and Os is allowed
-// * judge if both player owns a line so cannot figure out winner from the board
 object TicTacToe {
 
 	// judge whether a board is valid
 	def verifyBoard(board:List[List[Char]]) = {
 		// * it should be a 3x3 board
 		// * the value of each element must be any of 'X','O',' '
-		board.length == 3 && board.forall(
-			l => l.length == 3 && l.forall(e => List('X','O',' ').contains(e)))
+		if (board.length == 3 && 
+			board.forall(l => l.length == 3 && l.forall(e => List('X','O',' ').contains(e)))) {
+			val flattenBoard = board.flatten
+			val countX = flattenBoard.filter( e => e == 'X' ).length
+			val countO = flattenBoard.filter( e => e == 'O' ).length
+			countX == countO || (countX - 1) == countO
+		}
+		else
+			false
 	}
 
 	/*
 		returns:
 			' ' 		if I cannot judge who is the winner
-			'X'/'O' 	elsewise
+			'X'/'O' 	if I can find the winner
+			'*' 		elsewise(both players own a line...)
 	*/
 	def findWinnerOfBoard(board:List[List[Char]]) = {
 		val possibleLines = List( 
@@ -39,17 +44,27 @@ object TicTacToe {
 			/* if we cannot find any winner for a while, leave it blank temporarily */
 			.foldLeft(' ') (
 				(curWinner:Char, curLine:List[(Int,Int)]) => {
-					if (curWinner == 'X' || curWinner == 'O')
+					if (curWinner == '*')
 						curWinner
 					else
 					{
 						val boardCells = curLine.map( xy => board(xy._1)(xy._2) ) 		
 						if      ( boardCells.forall( e => e == 'X') )
-							'X'
+						{
+							if (curWinner == 'O')
+								'*'
+							else
+								'X'
+						}
 						else if ( boardCells.forall( e => e == 'O') )
-							'O'
+						{
+							if (curWinner == 'X')
+								'*'
+							else
+								'O'
+						}
 						else
-							' '
+							curWinner
 					}
 
 				}
@@ -69,6 +84,7 @@ object TicTacToe {
 			'invalid' 	if the board is invalid
 			'X' or 'O' 	if I can figure out the winner
 			'tie' 		if the board is full but no one wins
+			'both' 		if both player owns a line...
 			'incomplete' 	elsewise	
 	*/
 	def judgeBoard(board:List[List[Char]]) = {
@@ -79,7 +95,15 @@ object TicTacToe {
 		{
 			val winner = findWinnerOfBoard(board)
 			if ( winner != ' ' )
-				winner
+			{
+				if (winner == '*')
+					"both"
+				else
+					/*
+						note here is a Char, but we need a string
+					*/
+					winner.toString()
+			}
 			else
 			{
 				if (isFullBoard(board))
@@ -120,14 +144,15 @@ def testBoard(raw: List[String], caseStr: String, expectedStr: String) = {
 	val board = TicTacToe.parseBoard( raw )
 	if (board == Nil)
 	{
-		println( "Board tester: parsing failed" )
+		println( "=== Board tester: parsing failed" )
 	}
 	else
 	{
 		val status = TicTacToe.judgeBoard( board )
-		println( "Board tester: judger returns: " + status )
+		println( "Board tester: judger  returns: [" + status + "]" )
+		println( "Board tester: expected return: [" + expectedStr + "]" )
+		println( "=== expected result? " + (status == expectedStr) )
 	}
-	println( "=== expected result: " + expectedStr )
 	println( "<<< test case done" )
 }
 
@@ -157,17 +182,17 @@ testBoard( List(
 	"XXO",
 	"XOX"), "tie situation", "tie")
 
-
 testBoard( List(
 	"X X",
 	"OOO",
 	"XXO"), "winner O", "O")
 
-
-/*
 testBoard( List(
-	"X O",
-	"   ",
-	"O X"), "incomplete board", "incomplete")
+	"XXX",
+	"OOO",
+	"XXO"), "both win(impossible)", "both")
 
-*/
+testBoard( List(
+	"X X",
+	"OOO",
+	"X O"), "Count X < Count O", "invalid")
