@@ -159,8 +159,37 @@ object TicTacToe {
 		println()
 	}
 
-	// TODO: robust user interaction
 	def play = {
+		def isValidMove(board:List[List[Char]], x:Int, y:Int) = {
+			x >= 0 && x < 3 &&
+			y >= 0 && y < 3 &&
+			board(x)(y) == ' '
+		}
+
+		def readKeyToPair = {
+			var keyMap = Map(
+				('u', (0,0)), ('i', (0,1)), ('o', (0,2)),
+				('j', (1,0)), ('k', (1,1)), ('l', (1,2)),
+				('m', (2,0)), (',', (2,1)), ('.', (2,2)))
+
+			println( "key map hint:" )
+			println( " u i o" )
+			println( " j k l" )
+			println( " m , ." )
+
+			val raw = readLine
+			if (raw.length != 1)
+				(-1,-1)
+			else
+			{
+				val cmd = raw(0)
+				if (!keyMap.contains(cmd))
+					(-1,-1)
+				else
+					keyMap(cmd)
+			}
+		}
+
 		def getNextPlayer(player:Char):Char = {
 			if (player == 'X')
 				'O'
@@ -171,11 +200,18 @@ object TicTacToe {
 		}
 
 		def getNextBoard(player:Char,board:List[List[Char]]):List[List[Char]] = {
-			TicTacToe.printBoard( board )
-			println( "%c's move:".format(player) )
 
-			val x = readInt
-			val y = readInt
+			var (x,y) = (-1, -1)
+
+			while ( !isValidMove(board,x,y) )
+			{
+				TicTacToe.printBoard( board )
+				println( "%c's move:".format(player) )
+				val xy = readKeyToPair
+				x = xy._1
+				y = xy._2
+			}
+
 			board.updated(x,board(x).updated(y,player))
 		}
 
