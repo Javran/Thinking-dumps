@@ -1,8 +1,13 @@
 #!/usr/bin/env scala
 !#
 
-// Task #1: Tic-Tac-Toe Game
+// Task #1: Tic-Tac-Toe Game judger
+// Task #2: make two players playing against each other
 object TicTacToe {
+	
+	val blankBoard = parseBoard(
+		//    _012_  _012_  _012_
+		List( "   ", "   ", "   " ))
 
 	// judge whether a board is valid
 	def verifyBoard(board:List[List[Char]]) = {
@@ -136,6 +141,68 @@ object TicTacToe {
 			}
 		}
 	}
+
+	// please make sure the board is valid when calling this method
+	def printBoard(board:List[List[Char]]) = {
+		println( "Current board:" )
+		println("+-+-+-+")
+		for (i <- 0 until 3)
+		{
+			for(j <- 0 until 3)
+			{
+				print("|" + board(i)(j))
+				if (j == 2)
+					println('|')
+			}
+			println("+-+-+-+")
+		}
+		println()
+	}
+
+	// TODO: robust user interaction
+	def play = {
+		def getNextPlayer(player:Char):Char = {
+			if (player == 'X')
+				'O'
+			else if (player == 'O')
+				'X'
+			else
+				throw new Exception("Impossible")
+		}
+
+		def getNextBoard(player:Char,board:List[List[Char]]):List[List[Char]] = {
+			TicTacToe.printBoard( board )
+			println( "%c's move:".format(player) )
+
+			val x = readInt
+			val y = readInt
+			board.updated(x,board(x).updated(y,player))
+		}
+
+		// (player, board) to (next player, next board)
+		def nextTurn(player:Char, board:List[List[Char]]):Any = {
+			val judgment = judgeBoard(board)
+			if (judgment == "incomplete") {
+				val nextPlayer = getNextPlayer(player)
+				val nextBoard = getNextBoard(player, board)
+				nextTurn(nextPlayer, nextBoard)
+			} else if (judgment == "X") {
+				println("X wins the game.")
+				TicTacToe.printBoard(board)	
+			} else if (judgment == "O") {
+				println("O wins the game.")
+				TicTacToe.printBoard(board)	
+			} else if (judgment == "tie") {
+				println("it's a tie.")
+				TicTacToe.printBoard(board)	
+			} else {
+				println("error occurred.")
+			}
+		}
+
+		println("TicTacToe new game.")	
+		nextTurn('X', blankBoard)
+	}
 }
 
 def testBoard(raw: List[String], caseStr: String, expectedStr: String) = {
@@ -196,3 +263,15 @@ testBoard( List(
 	"X X",
 	"OOO",
 	"X O"), "Count X < Count O", "invalid")
+
+val board = TicTacToe.parseBoard(List(
+	"OXO",
+	"XXO",
+	"XOX"))
+
+println("Print a completed board:")
+TicTacToe.printBoard(board)
+println("Print an empty board:")
+TicTacToe.printBoard(TicTacToe.blankBoard)
+
+TicTacToe.play
