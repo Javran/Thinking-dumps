@@ -166,7 +166,7 @@ object TicTacToe {
 			board(x)(y) == ' '
 		}
 
-		def readKeyToPair = {
+		def readKeyToPair() = {
 			var keyMap = Map(
 				'u' -> (0,0), 'i' -> (0,1), 'o' -> (0,2),
 				'j' -> (1,0), 'k' -> (1,1), 'l' -> (1,2), 
