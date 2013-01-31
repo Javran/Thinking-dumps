@@ -47,12 +47,14 @@ trait Censor {
 
 }
 
-val cp = new ContentPrinter with Censor
 
 val originStr = "Pucky! Beans! We need to keep these curse words out of my sight."
 
+val cp = new ContentPrinter with Censor
+
 println( "Original content:" )
 cp.print( originStr )
+
 println( "Censored content:" )
 cp.censoredPrint( originStr )
 
@@ -60,4 +62,27 @@ println
 
 println( "Task #3: load the curse words and alternatives from a file" )
 
-// stub
+import scala.io.Source
+
+val curseWordSource = Source.fromFile("day-2-do-read-number.csv")
+
+// we can use Censor to "read" a number
+val numberMap = curseWordSource.getLines.toList
+	.map( x => {
+		val ar = x.split(",")
+		(ar(0), ar(1))
+	}).toMap
+
+curseWordSource.close()
+
+println( "Loaded data:" )
+println( numberMap )
+
+val piStr = "3.141592653589"
+val piStrLoose = """(.)""".r.replaceAllIn( piStr, m => m.matched + ' ' )
+
+println( "Original content:" )
+cp.print( piStrLoose )
+
+println( "Censored content:" )
+cp.censoredPrint( piStrLoose, numberMap )
