@@ -37,13 +37,14 @@ trait Censor {
 		"Pucky" -> "Shoot",
 		"Beans" -> "Darn")
 	
-	def censoredPrint(str:String) = {
-		println( censorWithMap(str, defaultCurseWordMap) )	
+	def censoredPrint(str:String, map:Map[String,String] = defaultCurseWordMap) = {
+		println( censorWithMap(str, map) )	
 	}
 
 	def censorWithMap(str:String, map: Map[String,String]) = {
 		map.foldLeft(str) ( (curStr,kv) => { kv._1.r.replaceAllIn(curStr, kv._2) } )
 	}
+
 }
 
 val cp = new ContentPrinter with Censor
