@@ -17,9 +17,45 @@ println( "Target count: " + listToCount.foldLeft(0)(
 
 println( "Verify result: " + testString.count(ch => ch != ' ') )
 
+println
+
 println( "Task #2: write Censor trait" )
 
-// stub
+class ContentPrinter {
+	
+	def print(str:String) = {
+		println( str )
+	}
+
+}
+
+// TODO maybe this is not the right way of doing it...
+//     it's really pointless to use a trait only because we want a new method
+//     and this damn method do not even know what class it's been added to...
+trait Censor {
+	val defaultCurseWordMap = Map(
+		"Pucky" -> "Shoot",
+		"Beans" -> "Darn")
+	
+	def censoredPrint(str:String) = {
+		println( censorWithMap(str, defaultCurseWordMap) )	
+	}
+
+	def censorWithMap(str:String, map: Map[String,String]) = {
+		map.foldLeft(str) ( (curStr,kv) => { kv._1.r.replaceAllIn(curStr, kv._2) } )
+	}
+}
+
+val cp = new ContentPrinter with Censor
+
+val originStr = "Pucky! Beans! We need to keep these curse words out of my sight."
+
+println( "Original content:" )
+cp.print( originStr )
+println( "Censored content:" )
+cp.censoredPrint( originStr )
+
+println
 
 println( "Task #3: load the curse words and alternatives from a file" )
 
