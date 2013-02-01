@@ -167,7 +167,7 @@ object TicTacToe {
 		}
 
 		def readKeyToPair() = {
-			var keyMap = Map(
+			val keyMap = Map(
 				'u' -> (0,0), 'i' -> (0,1), 'o' -> (0,2),
 				'j' -> (1,0), 'k' -> (1,1), 'l' -> (1,2), 
 				'm' -> (2,0), ',' -> (2,1), '.' -> (2,2))
@@ -200,6 +200,8 @@ object TicTacToe {
 		}
 
 		def getNextBoard(player:Char,board:List[List[Char]]):List[List[Char]] = {
+			// TODO: attempt whether it is possible 
+			//     to use Source.stdio.getLines to get rid of 'var'
 
 			var (x,y) = (-1, -1)
 
