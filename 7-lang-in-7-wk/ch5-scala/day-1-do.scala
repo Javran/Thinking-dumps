@@ -1,6 +1,19 @@
 #!/usr/bin/env scala
 !#
 
+// TODO: need code clean-up
+
+// get one valid user input
+//     returns user input, null on failure(e.g. SIGINT is sent)
+// inputHint: lambda that will print hint on what should be inputted
+// cond: judge if the inputted string meets the condition
+def getUserInputWhere(inputHint: ()=>Unit, cond: String=>Boolean) = {
+	Stream.continually[String]( {
+		inputHint()
+		readLine()
+	}).find( l => l == null || cond(l)).get
+}
+
 // Task #1: Tic-Tac-Toe Game judger
 // Task #2: make two players playing against each other
 object TicTacToe {
@@ -159,30 +172,24 @@ object TicTacToe {
 		println()
 	}
 
-	def play = {
+	def play() = {
 		def isValidMove(board:List[List[Char]], x:Int, y:Int) = {
 			x >= 0 && x < 3 &&
 			y >= 0 && y < 3 &&
 			board(x)(y) == ' '
 		}
 
-		def readKeyToPair() = {
+		def keyToPair(key:String) = {
 			val keyMap = Map(
 				'u' -> (0,0), 'i' -> (0,1), 'o' -> (0,2),
 				'j' -> (1,0), 'k' -> (1,1), 'l' -> (1,2), 
 				'm' -> (2,0), ',' -> (2,1), '.' -> (2,2))
 
-			println( "key map hint:" )
-			println( " u i o" )
-			println( " j k l" )
-			println( " m , ." )
-
-			val raw = readLine
-			if (raw.length != 1)
+			if (key == null || key.length != 1)
 				(-1,-1)
 			else
 			{
-				val cmd = raw(0)
+				val cmd = key(0)
 				if (!keyMap.contains(cmd))
 					(-1,-1)
 				else
@@ -200,20 +207,29 @@ object TicTacToe {
 		}
 
 		def getNextBoard(player:Char,board:List[List[Char]]):List[List[Char]] = {
-			// TODO: attempt whether it is possible 
-			//     to use Source.stdio.getLines to get rid of 'var'
 
-			var (x,y) = (-1, -1)
+			val input = getUserInputWhere( 
+				/* input hint */
+				() => {
+					TicTacToe.printBoard( board )
+					println( "%c's move:".format(player) )
 
-			while ( !isValidMove(board,x,y) )
-			{
-				TicTacToe.printBoard( board )
-				println( "%c's move:".format(player) )
-				val xy = readKeyToPair
-				x = xy._1
-				y = xy._2
-			}
+					println( "key map hint:" )
+					println( " u i o" )
+					println( " j k l" )
+					println( " m , ." )
+				},
+				/* condition */
+				input => {
+					val xy = keyToPair( input )
+					isValidMove(board, xy._1, xy._2)
+				}
+			)
 
+			if (input == null)
+				throw new Exception("User quited the game.")
+
+			val (x,y) = keyToPair( input )
 			board.updated(x,board(x).updated(y,player))
 		}
 
@@ -221,9 +237,9 @@ object TicTacToe {
 		def nextTurn(player:Char, board:List[List[Char]]):Any = {
 			val judgment = judgeBoard(board)
 			if (judgment == "incomplete") {
-				val nextPlayer = getNextPlayer(player)
-				val nextBoard = getNextBoard(player, board)
-				nextTurn(nextPlayer, nextBoard)
+				nextTurn(
+					getNextPlayer(player), 
+					getNextBoard(player, board))
 			} else if (judgment == "X") {
 				println("X wins the game.")
 				TicTacToe.printBoard(board)	
@@ -239,7 +255,11 @@ object TicTacToe {
 		}
 
 		println("TicTacToe new game.")	
-		nextTurn('X', blankBoard)
+		try {
+			nextTurn('X', blankBoard)
+		} catch {
+			case e: Exception => println( e.getMessage() )
+		}
 	}
 }
 
@@ -312,4 +332,4 @@ TicTacToe.printBoard(board)
 println("Print an empty board:")
 TicTacToe.printBoard(TicTacToe.blankBoard)
 
-TicTacToe.play
+TicTacToe.play()
