@@ -29,9 +29,11 @@ val urls = List(
 	"http://www.scala-lang.org/")
 
 def timeMethod(method: () => Unit) = {
+	println( "===== Task Start =====")
 	val startTime = System.nanoTime
 	method()
 	val endTime = System.nanoTime
+	println( "===== Task End =====")
 	println( "Method took " + (endTime-startTime)/1e9 + " seconds.")
 }
 
@@ -43,4 +45,20 @@ def getPageSizeSequentially() = {
 	})
 }
 
-getPageSizeSequentially
+def getPageSizeConcurrently() = {
+	val caller = self
+
+	urls.foreach( u => {
+		actor { caller ! (u, PageLoader.getPageSize(u)) }
+	} )
+
+	(0 until urls.size).foreach( _ => {
+		receive {
+			case (url, size) =>
+				println( "Url: \"%s\" fetched, size: %d".format(url, size) )
+		}
+	})
+}
+
+timeMethod( getPageSizeSequentially )
+timeMethod( getPageSizeConcurrently )
