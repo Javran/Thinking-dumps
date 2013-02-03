@@ -1,3 +1,6 @@
+#!/usr/bin/env scala
+!#
+
 import scala.actors._
 import scala.actors.Actor._
 
