@@ -1,5 +1,14 @@
-#!/usr/bin/env scala
+#!/bin/sh
+       TAGSOUP_LIB=/usr/share/tagsoup/lib/tagsoup.jar
+       exec /usr/bin/env scala -classpath ${TAGSOUP_LIB} "$0" "$@"
 !#
+
+/*
+	IMPORTANT: to get this source code work, you might need tagsoup:
+	    http://mercury.ccil.org/~cowan/XML/tagsoup/
+
+	After getting tagsoup ready, please modify TAGSOUP_LIB accordingly
+*/
 
 import scala.io._
 import scala.actors._
@@ -14,9 +23,14 @@ object PageLoader {
 				.fromURL(url)
 				.mkString
 
-			// TODO: find the right way of parsing HTML
-			val parsed = XML.loadString(content)
-			
+			val parserFactory = new org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl()
+			val parser = parserFactory.newSAXParser()
+			val source = new org.xml.sax.InputSource(new java.io.ByteArrayInputStream(content.getBytes()))
+			val adapter = new scala.xml.parsing.NoBindingFactoryAdapter
+			val data = adapter.loadXML(source, parser)
+
+			println( "links: %d".format( (data \\ "a" \\ "@href").length ) )
+
 			content.length
 		} catch {
 			case e:Exception => {
