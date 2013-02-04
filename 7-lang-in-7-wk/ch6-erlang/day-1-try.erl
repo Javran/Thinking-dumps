@@ -9,6 +9,12 @@
 %         erl -man <module>
 
 main(_) -> 
+	try_6_2_2(),
+	try_6_2_3(),
+	try_6_2_4().
+
+% 6.2.2 basic
+try_6_2_2() -> 
 	io:format("~w~n", [2+2]),
 	% prints '4'
 	io:format("~w~n", [2+2.0]),
@@ -38,3 +44,57 @@ main(_) ->
 	% so the following line causes error:
 	%     Var = 2,
 	io:format("~n",[]).
+
+% 6.2.3 atom/list/tuple
+try_6_2_3() -> 
+	io:format("~w~n",[red]),
+	Pill = blue,
+	io:format("~w~n",[Pill]),
+	% prints 'blue'
+	io:format("~w~n", [[1,2,3]]),
+	% prints [1,2,3]
+	io:format("~w~n", [[1,2,'three']]),
+	% [1,2,three]
+	List = [1,2,3],
+	io:format("~w~n", [List]),
+	% [1,2,3]
+	io:format("~w~n", [{one,two,three}]),
+	% tuple: one, two, three
+	Origin = {0,0},
+	io:format("origin: ~w~n", [Origin]),
+	io:format("~p~n", [{name,"Spaceman Spiff"}]),
+	io:format("~p~n", [{
+				comic_strip, 
+				{name, "Calvin and Hobbes"}, 
+				{character, "Spaceman Spiff"} }]),	
+	io:format("~n",[]).
+
+% 6.2.4 matching
+try_6_2_4() ->
+	Person = {
+		person,
+		{name, "Agent Smith"},
+		{profession, "Killing programs"}},
+	{person, {name, Name}, {profession, Profession}} = Person,
+	io:format("Name: ~p~nProfession: ~p~n", [Name,Profession]),
+	[Head|Tail] = [1,2,3],
+	io:format("Head: ~p~nTail: ~p~n", [Head,Tail]),
+	% 1,[2,3]
+	[One, Two|Rest] = [Head|Tail],
+	% One: 1, Two: 2, Rest: [3]
+	io:format("One: ~w~nTwo: ~w~nRest: ~w~n", [One,Two,Rest]),
+	% no match will be found
+	%     [X1|Rest1] = [],
+	pack_and_unpack(),
+	io:format("~n",[]).
+
+pack_and_unpack() ->
+	Origin = {1,2,3,4},
+	{W,X,Y,Z} = Origin,
+	io:format("Original data: ~w~n", [Origin] ),
+	% "W:3" means W should take 3 bits
+	All = <<W:3, X:3, Y:5, Z:5>>,
+	io:format("Packed data: ~w~n", [All]),
+	<<A:3, B:3, C:5, D:5>> = All,
+	io:format("Unpacked data: ~w~n", [{A,B,C,D}]),
+	ok.
