@@ -1,6 +1,7 @@
 #!/usr/bin/env escript
 
 main(_) -> 
+	c:c(u),
 	io:format("Task #1: return word count of a given string~n"),
 	task1(),
 	io:format("Task #2: write a function that count to 10, recursively~n"),
