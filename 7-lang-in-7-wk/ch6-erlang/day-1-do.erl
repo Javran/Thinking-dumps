@@ -10,9 +10,28 @@ main(_) ->
 	task3(),
 	ok.
 
+word_count(Str) ->
+	SpacePos = string:chr(Str,$\ ),
+	if
+		SpacePos > 0 ->
+				SubStr = string:substr(Str,SpacePos+1),
+				word_count(SubStr)+1;
+
+		% if no space founded
+		true ->
+			RestLen = string:len(Str),
+			if
+				RestLen == 0 -> 0;
+				true -> 1
+			end
+	end.
+
 task1() ->
-	% TODO
-	% first we need to know how to split words from a string
+	Text = "We need to count words in this text",
+	u:ws("The string is:"),
+	u:ws(Text),
+	u:wl(word_count(Text)),
+	% supposed to be '8'
 	ok.
 
 count_to_and_print(N, N) -> 
