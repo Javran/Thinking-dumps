@@ -9,56 +9,58 @@
 %         erl -man <module>
 
 main(_) -> 
+	c:c(u),
 	try_6_2_2(),
 	try_6_2_3(),
 	try_6_2_4().
 
 % 6.2.2 basic
 try_6_2_2() -> 
-	io:format("~w~n", [2+2]),
+	u:wl(2+2),
 	% prints '4'
-	io:format("~w~n", [2+2.0]),
+	u:wl(2+2.0),
 	% prints '4.0'
-	io:format("~w~n", ['string']),
+	u:wl('string'),
 	% prints 'string'
-	io:format("~w~n", ["string"]),
+	u:wl("string"),
 	% prints char value list
 	% very similar to prolog :)
-	io:format("~w~n", [[1,2,3]]),
+	u:wl([1,2,3]),
 	% we could see from the doc that '~p' will attempt to print readably 
 	% while '~w' will not
-	io:format("~p~n", [[72,97,32,72,97,32,72,97]]),
+	HaHa = [72,97,32,72,97,32,72,97],
+	io:format("~p~n", [HaHa]),
 	% "Ha Ha Ha"
-	io:format("~w~n", [[72,97,32,72,97,32,72,97]]),
+	io:format("~w~n", [HaHa]),
 	% print values
 	% following line will cause problem, because of type mismatching
-	%     io:format("~w~n", [4+"string"]),
+	%     u:wl(4+"string"),
 	% like prolog, 'variable' is an atom while 'Variable' will be a variable
 	% so it is reasonable that the following line will not work:
 	%     variable = 4,
 	% but the following link will
 	Var = 1,
-	io:format("~w~n", [Var]),
+	u:wl(Var),
 	% prints '1'
 	% variables is not allowed to re-define/assign:
 	% so the following line causes error:
 	%     Var = 2,
-	io:format("~n",[]).
+	u:nl().
 
 % 6.2.3 atom/list/tuple
 try_6_2_3() -> 
-	io:format("~w~n",[red]),
+	u:wl(red),
 	Pill = blue,
-	io:format("~w~n",[Pill]),
+	u:wl(Pill),
 	% prints 'blue'
-	io:format("~w~n", [[1,2,3]]),
+	u:wl([1,2,3]),
 	% prints [1,2,3]
-	io:format("~w~n", [[1,2,'three']]),
+	u:wl([1,2,'three']),
 	% [1,2,three]
 	List = [1,2,3],
-	io:format("~w~n", [List]),
+	u:wl(List),
 	% [1,2,3]
-	io:format("~w~n", [{one,two,three}]),
+	u:wl({one,two,three}),
 	% tuple: one, two, three
 	Origin = {0,0},
 	io:format("origin: ~w~n", [Origin]),
@@ -67,7 +69,7 @@ try_6_2_3() ->
 				comic_strip, 
 				{name, "Calvin and Hobbes"}, 
 				{character, "Spaceman Spiff"} }]),	
-	io:format("~n",[]).
+	u:nl().
 
 % 6.2.4 matching
 try_6_2_4() ->
@@ -86,7 +88,7 @@ try_6_2_4() ->
 	% no match will be found
 	%     [X1|Rest1] = [],
 	pack_and_unpack(),
-	io:format("~n",[]).
+	u:nl().
 
 pack_and_unpack() ->
 	Origin = {1,2,3,4},

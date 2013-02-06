@@ -26,12 +26,15 @@ fib_checker(From, To) ->
 
 
 main(_) -> 
-	io:format("correctness of quicker_fib ... ~w~n",[fib_checker(0,10)]),
-	io:format("~w~n", [another_factorial(3)]),
-	io:format("~w~n", [another_factorial(20)]),
-	io:format("~w~n", [another_factorial(200)]),
-	io:format("~w~n", [another_factorial(2000)]),
+	c:c(u),
+	u:ws("correctness of quicker_fib ... "),
+	u:wl(fib_checker(0,10)),
+
+	u:wl(another_factorial(3)),
+	u:wl(another_factorial(20)),
+	u:wl(another_factorial(200)),
+	u:wl(another_factorial(2000)),
 	% the line below runs VERY SLOW, let's replace it with iteration
-	% io:format("~w~n", [another_fib(2000)]),
-	io:format("~w~n",[quicker_fib(2000)]),
-	io:format("~n",[]).
+	% u:wl(another_fib(2000)),
+	u:wl(quicker_fib(2000)),
+	ok.

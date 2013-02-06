@@ -2,8 +2,20 @@
 %     frequent used functions
 
 -module(u).
--export([writeln/1]).
+-export([ws/1]).
+-export([wl/1]).
+-export([nl/0]).
 
-writeln(Term) ->
-	io:write(Term),
-	io:format("~n").
+% write string, together with newline, to stdout
+ws(Term) ->
+	io:format("~s~n", [Term]).
+
+% write value to stdout, with newline.
+%     if you do not need to print quotation mark,
+%     use 'ws/1' instead.
+wl(Term) ->
+	io:format("~w~n", [Term]).
+
+
+% newline
+nl() -> io:format("~n").

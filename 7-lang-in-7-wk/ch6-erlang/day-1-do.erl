@@ -2,11 +2,11 @@
 
 main(_) -> 
 	c:c(u),
-	io:format("Task #1: return word count of a given string~n"),
+	u:ws("Task #1: return word count of a given string"),
 	task1(),
-	io:format("Task #2: write a function that count to 10, recursively~n"),
+	u:ws("Task #2: write a function that count to 10, recursively"),
 	task2(),
-	io:format("Task #3: use pattern matching to deal with error/success messages~n"),
+	u:ws("Task #3: use pattern matching to deal with error/success messages"),
 	task3(),
 	ok.
 
@@ -16,9 +16,9 @@ task1() ->
 	ok.
 
 count_to_and_print(N, N) -> 
-	io:format("~w~n",[N]);
+	u:wl(N);
 count_to_and_print(Current, Limit) ->
-	io:format("~w~n",[Current]),
+	u:wl(Current),
 	count_to_and_print(Current+1, Limit).
 
 count_to_10_and_print() ->
@@ -28,15 +28,16 @@ task2() ->
 	count_to_10_and_print().
 
 maybe_success(success) ->
-	io:format("success~n");
+	u:ws("success");
 
 maybe_success({error,Message}) ->
-	io:format("error: ~p~n", [Message]).
+	u:ws("error:"),
+	u:ws(Message).
 
 task3() ->
-	io:format("call with 'success':~n"),
+	u:ws("call with 'success':"),
 	maybe_success(success),
-	io:format("call with 'error':~n"),
+	u:ws("call with 'error':"),
 	maybe_success({error, "This is an error"}),
 	maybe_success({error, "Yet another error"}),
 	ok.

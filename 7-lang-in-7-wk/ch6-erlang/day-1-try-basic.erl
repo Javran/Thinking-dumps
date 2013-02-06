@@ -2,9 +2,7 @@
 
 mirror(Anything) -> Anything.
 
-% TODO: test loading modules
-
 main(_) ->
 	c:c(u),
-	u:writeln(mirror(smiling_mug)),
-	u:writeln(mirror(1)).
+	u:wl(mirror(smiling_mug)),
+	u:wl(mirror(1)).
