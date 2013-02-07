@@ -49,6 +49,20 @@ main(_) ->
 	% [1,2,1]
 	u:wl(lists:dropwhile(LessThan3, AnotherNumbers)),
 	% [4,1]
+
+	u:ws("Test `foldl`:"),
+	Add = fun(I, Acc) -> Acc + I end,
+	AddSeed = 0,
+
+	Multi = fun(I, Acc) -> Acc * I end,
+	MultiSeed = 1,
+
+	u:ws("Numbers:"),
+	u:wl(Numbers),
+	u:ws("Calculate sum:"),
+	u:wl(lists:foldl(Add, AddSeed, Numbers)),
+	u:ws("Calculate product:"),
+	u:wl(lists:foldl(Multi, MultiSeed, Numbers)),
 	ok.
 
 my_map(F, [H|T]) -> [F(H)| my_map(F, T)];
