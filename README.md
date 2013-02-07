@@ -11,6 +11,6 @@ Please feel free to use the codes or to share your thoughts with me.
 
 Author: Bruce A. Tate
 
-Version: Chinese translated version
+Version: Simplified Chinese-language version
 
 Directory: `7-lang-in-7-wk`
