@@ -70,7 +70,7 @@ task2() ->
 %         x for player X,
 %         o for player O,
 %         e for empty
-judge_tictactoe(Board) ->
+judge_board(Board) ->
 	% define what is line
 	Lines = [
 		% rows
@@ -129,13 +129,97 @@ judge_tictactoe(Board) ->
 		true -> no_winner
 	end.
 
+print_board(Board) ->
+	io:format("+-+-+-+~n"),
+	lists:foreach(
+		fun(L) ->
+			PL = lists:map(
+				fun(X) ->
+					case X of
+						x -> $X;
+						o -> $O;
+						e -> $\ 
+					end
+				end,
+				L),
+			io:format("|~c|~c|~c|~n",PL),
+			io:format("+-+-+-+~n")
+		end,
+		Board).
+
+% wrap print & judgment in one call
+judge_tictactoe(Board) ->
+	u:ws("The Board is:"),
+	print_board(Board),
+	u:ws("Judgment is :"),
+	Result = judge_board(Board),
+	u:wl( Result ),
+	Result.
 
 task3() ->
-	% TODO pretty print
-	u:wl(
-	judge_tictactoe([ 
-		[o,x,o],
-		[x,o,x],
-		[x,o,x]])),
-	
-	ok.
+	TestCases = [
+		{
+			% case #1: x wins
+			[ 
+				[e,o,x],
+				[x,x,o],
+				[x,o,e]
+			],
+			x
+		},
+		{
+			% case #2: o wins
+			[ 
+				[o,o,o],
+				[x,x,o],
+				[x,x,e]
+			],
+			o
+		},
+		{
+			% case #3: no one wins
+			[ 
+				[o,x,o],
+				[o,x,x],
+				[x,o,x]
+			],
+			cat
+		},
+		{
+			% case #4: empty board 
+			[ 
+				[e,e,e],
+				[e,e,e],
+				[e,e,e]
+			],
+			no_winner
+		},
+		{
+			% case #5: playing 
+			[ 
+				[o,e,o],
+				[e,x,e],
+				[x,e,e]
+			],
+			no_winner
+		},
+		{
+			% case #5: impossible 
+			[ 
+				[o,o,o],
+				[x,x,x],
+				[e,e,e]
+			],
+			impossible
+		}
+	],
+
+	lists:foreach(
+		fun({Case,RightAnswer}) ->
+			Answer = judge_tictactoe(Case),
+			case Answer of
+				RightAnswer -> u:ws("The judgement is correct");
+				_           -> u:ws("The judgement is incorrect")
+			end
+		end,
+		TestCases).
