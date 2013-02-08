@@ -151,7 +151,7 @@ print_board(Board) ->
 judge_tictactoe(Board) ->
 	u:ws("The Board is:"),
 	print_board(Board),
-	u:ws("Judgment is :"),
+	u:ws("The judgment is:"),
 	Result = judge_board(Board),
 	u:wl( Result ),
 	Result.
