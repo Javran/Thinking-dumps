@@ -1,29 +1,11 @@
 #!/usr/bin/env escript
 
--module('day-3-try-translate').
--export([loop/0]).
-
-loop() ->
-	receive
-		"casa" ->
-			u:ws("house"),
-			loop();
-		"blanca" ->
-			u:ws("white"),
-			loop();
-		":stop" ->
-			u:ws("<Stop process>");
-			% loop/0 is used to keep process going
-			%     we remove `loop()` here, 
-			%     so the process will stop
-		_ ->
-			u:ws("I don't understand."),
-			loop()
-	end.
-
 main(_) -> 
 	c:c(u),
-	Pid = spawn(fun ?MODULE:loop/0),
+	code:add_patha("./day-3-modules"),
+	c:c('./day-3-modules/translate'),
+
+	Pid = spawn(fun translate:loop/0),
 	u:ws("Spawned pid:"),
 	u:wl(Pid),
 
