@@ -2,9 +2,7 @@
 %     frequent used functions
 
 -module(u).
--export([ws/1]).
--export([wl/1]).
--export([nl/0]).
+-export([ws/1, wl/1, nl/0]).
 
 % write string, together with newline, to stdout
 ws(Term) ->
@@ -15,7 +13,6 @@ ws(Term) ->
 %     use 'ws/1' instead.
 wl(Term) ->
 	io:format("~w~n", [Term]).
-
 
 % newline
 nl() -> io:format("~n").

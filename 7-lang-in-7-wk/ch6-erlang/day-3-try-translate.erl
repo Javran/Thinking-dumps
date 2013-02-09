@@ -2,8 +2,10 @@
 
 main(_) -> 
 	c:c(u),
+	% please run the script in current directory
+	%     or change the relative path below accordingly
 	code:add_patha("./day-3-modules"),
-	c:c('./day-3-modules/translate'),
+	c:c("./day-3-modules/translate"),
 
 	Pid = spawn(fun translate:loop/0),
 	u:ws("Spawned pid:"),
