@@ -8,4 +8,6 @@
 
 [What is OTP?](http://learnyousomeerlang.com/what-is-otp)
 
+[Clients and Servers](http://learnyousomeerlang.com/clients-and-servers)
+
 [An Erlang OTP tutorial for beginners](http://blog.bot.co.za/en/article/349/an-erlang-otp-tutorial-for-beginners)
