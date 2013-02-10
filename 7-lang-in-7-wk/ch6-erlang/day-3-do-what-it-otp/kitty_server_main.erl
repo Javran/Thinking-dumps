@@ -18,7 +18,8 @@ main(_) ->
 	print_cat(Cat3),
 
 	kitty_server:return_cat(Pid, Cat3),
+	kitty_server:return_cat(Pid, Cat2),
 	kitty_server:close_shop(Pid),
 	timer:sleep(100),
-	io:format("Verify termination ... ~p~n", [is_process_alive(Pid) == false]),
+	io:format("Verifying termination ... ~p~n", [is_process_alive(Pid) == false]),
 	ok.

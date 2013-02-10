@@ -6,8 +6,8 @@
 	return_cat/2,
 	close_shop/1]).
 
-% what is 'record'? never see it before ...
-%     seems to descript some structure and link it with term 'cat' ...
+% records are used to support named accessing, the link below would help:
+%     http://20bits.com/article/erlang-an-introduction-to-records
 -record(cat, {name, color=green, description}).
 
 
@@ -16,6 +16,9 @@ start_link() -> spawn_link(fun init/0).
 
 %% Synchronous call
 order_cat(Pid, Name, Color, Description) ->
+	% please refer to
+	%     http://www.erlang.org/doc/man/erlang.html#monitor-2
+	% enabling monitor will cause 'DOWN' messages sent
 	Ref = erlang:monitor(process, Pid),
 	Pid ! {self(), Ref, {order, Name, Color, Description}},
 	receive
@@ -27,11 +30,6 @@ order_cat(Pid, Name, Color, Description) ->
 	after 5000 ->
 		erlang:error(timeout)
 	end.
-
-%% Asynchronous call
-return_cat(Pid, Cat = #cat{}) ->
-	Pid ! {return, Cat},
-	ok.
 
 %% Synchronous call
 close_shop(Pid) ->
@@ -47,6 +45,11 @@ close_shop(Pid) ->
 		erlang:error(timeout)
 	end.
 
+%% Asynchronous call
+return_cat(Pid, Cat = #cat{}) ->
+	Pid ! {return, Cat},
+	ok.
+
 %%% Server functions
 init() -> loop([]).
 loop(Cats) ->
@@ -57,6 +60,7 @@ loop(Cats) ->
 					Pid ! {Ref, make_cat(Name, Color, Description)},
 					loop(Cats);
 				Cats =/= [] ->
+					% goes without saying that (hd,tl) = (head,tail)
 					Pid ! {Ref, hd(Cats)},
 					loop(tl(Cats))
 			end;
@@ -76,7 +80,7 @@ make_cat(Name, Color, Description) ->
 	#cat{name=Name, color=Color, description=Description}.
 
 terminate(Cats) ->
-	io:format("Terminating ...~p~n",[Cats]),
+	io:format("Terminating ...~n"),
 	lists:foreach( 
 		fun(C) -> 
 			io:format("~p was set free. ~n", [C#cat.name])
