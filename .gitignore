@@ -6,3 +6,6 @@
 # erlang
 *.beam
 *.dump
+
+# app output
+*.out

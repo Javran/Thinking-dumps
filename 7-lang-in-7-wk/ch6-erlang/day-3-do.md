@@ -18,3 +18,7 @@ Please refer to: [Erlang process monitoring itself](http://stackoverflow.com/que
 * Task #3: write a monitor to monitor Doctor, if either Doctor or monitor dies, restart it.
 
 Please refer to `/day-3-do-monitored-doctor.erl`
+
+* Task #4: build an OTP server that can write messages to files
+
+Please refer to `./day-3-do-logger.erl`
