@@ -6,7 +6,6 @@ main(_) ->
 	c:c("./modules/day-3/try/doctor"),
 
 	Doctor = spawn(fun doctor:loop/0),
-
 	Doctor ! new,
 
 	SendNumber = fun(X) ->
