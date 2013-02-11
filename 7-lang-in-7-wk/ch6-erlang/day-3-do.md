@@ -22,3 +22,8 @@ Please refer to `/day-3-do-monitored-doctor.erl`
 * Task #4: build an OTP server that can write messages to files
 
 Please refer to `./day-3-do-logger.erl`
+
+* Task #5: make `translate_service` avaliable through network
+
+I guess implementing an echo server will do, some related info can be found [here](http://kazmier.net/computer/port-howto/)
+I'll use `translate_service_otp` mentioned above to achieve this.
