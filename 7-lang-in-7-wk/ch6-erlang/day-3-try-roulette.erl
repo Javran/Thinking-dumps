@@ -4,8 +4,7 @@
 
 main(_) ->
 	c:c(u),
-	code:add_patha("./day-3-modules"),
-	c:c("./day-3-modules/roulette"),
+	c:c("./modules/day-3/try/roulette"),
 
 	Gun = spawn(fun roulette:loop/0),
 

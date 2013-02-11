@@ -2,9 +2,8 @@
 
 main(_) ->
 	c:c(u),
-	code:add_patha("./day-3-modules"),
-	c:c("./day-3-modules/roulette"),
-	c:c("./day-3-modules/coroner"),
+	c:c("./modules/day-3/try/roulette"),
+	c:c("./modules/day-3/try/coroner"),
 
 	Revolver = spawn(fun roulette:loop/0),
 	Coroner = spawn(fun coroner:loop/0),

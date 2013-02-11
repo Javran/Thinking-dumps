@@ -2,8 +2,7 @@
 
 main(_) -> 
 	c:c(u),
-	code:add_patha("./day-3-modules"),
-	c:c("./day-3-modules/translate_service"),
+	c:c("./modules/day-3/try/translate_service"),
 
 	Translator = spawn(fun translate_service:loop/0),
 
