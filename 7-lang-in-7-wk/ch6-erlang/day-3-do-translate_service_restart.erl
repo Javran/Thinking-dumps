@@ -1,7 +1,5 @@
 #!/usr/bin/env escript
 
-% Task #1: monitor translate_service, restart it when it was terminated
-
 translate(Word) ->
 	translator ! {self(), Word},
 	receive
