@@ -13,9 +13,9 @@ loop({MonitorPid, RevolverPid}) ->
 			loop({MonitorPid,whereis(revolver)});
 
 		new_monitor ->
-			NewMonitorPid = spawn_link(doctor_monitor, start, []),
-			self() ! {monitor, NewMonitorPid},
-			NewMonitorPid ! {doctor, self()},
+			register(monitor, spawn_link(doctor_monitor, start, [])),
+			self() ! {monitor, whereis(monitor)},
+			monitor ! {doctor, self()},
 			loop({0, RevolverPid});
 
 		kill ->

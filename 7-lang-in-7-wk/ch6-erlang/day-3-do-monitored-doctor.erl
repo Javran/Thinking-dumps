@@ -19,24 +19,46 @@ main(_) ->
 	end,
 
 	Monitor = spawn(doctor_monitor, start, []), 
-	Monitor ! new,
+	% quick and dirty ... need to register monitor manually
+	register(monitor, Monitor),
+
+	CheckState = fun() ->
+		State = lists:map(
+			fun(X) -> 
+				if
+					is_pid(X) -> is_process_alive(X);
+					true -> is_process_alive(whereis(X))
+				end
+			end,
+			[revolver, doctor, monitor]),
+
+		io:format(
+			">>> Checking if revolver, doctor and monitor are all alive ... ~p <<<~n",
+			[lists:all(fun(X) -> X end, State)])
+	end,
+
+	monitor ! new,
 	timer:sleep(100),
 
+	CheckState(),
 	PlayGame(),
 
 	% try to kill doctor
 	doctor ! kill,
 	timer:sleep(100),
 
+	CheckState(),
 	PlayGame(),
 
 	Monitor ! kill,
 	timer:sleep(100),
 
+	CheckState(),
 	PlayGame(),
 
 	% try to kill doctor again to see if monitor works
 	doctor ! kill,
 	timer:sleep(100),
 
+	CheckState(),
 	ok.
