@@ -14,3 +14,7 @@ Maybe it's possble, but it is not a recommended practice.
 Skip this task.
 
 Please refer to: [Erlang process monitoring itself](http://stackoverflow.com/questions/8464369/erlang-process-monitoring-itself).
+
+* Task #3: write a monitor to monitor Doctor, if either Doctor or monitor dies, restart it.
+
+Please refer to `/day-3-do-monitored-doctor.erl`
