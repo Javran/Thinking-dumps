@@ -1,0 +1,14 @@
+$ telnet 127.1 8103
+Trying 127.0.0.1...
+Connected to 127.1.
+Escape character is '^]'.
+casa
+house
+blanca
+white
+hello
+I don't understand.
+^]
+
+telnet> quit
+Connection closed.
