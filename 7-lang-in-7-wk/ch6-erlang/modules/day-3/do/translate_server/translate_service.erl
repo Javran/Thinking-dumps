@@ -37,9 +37,12 @@ stop(Pid) ->
 % call crash/1 to simulate a crash on the process 
 crash(Pid) ->
 	gen_server:cast(Pid, crash).
+%%% Client API <<<
 
-%% Client summary:
-%
+%%% Server functions >>>
+% internal state structure:
+% { TranslatorState }
+
 % call patterns:
 %     {translate, OriginWord}
 %     stop_server
@@ -48,19 +51,17 @@ crash(Pid) ->
 %     crash
 %
 
-%%% Client API <<<
-
-%%% Server functions >>>
-% internal state structure:
-% { TranslatorState }
-
 init([]) -> 
 	u:ws("translate_service: initializing ..."),
 	TranslatorState = translator:new(),
+	process_flag(trap_exit, true),
 	{ok, {TranslatorState}}.
 
 terminate(normal, _) ->
 	u:ws("translate_service: terminating ..."),
+	ok;
+terminate(shutdown, _) ->
+	u:ws("translate_service: terminating ... (req from supervisor)"),
 	ok;
 terminate(Reason, _) ->
 	io:format("translate_service: crashed because ~p~n", [Reason]),
