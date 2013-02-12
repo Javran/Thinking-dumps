@@ -2,7 +2,7 @@
 %     this neither shebang nor run permission is set.
 % use 'day-1-try-load-module' to test this module
 
--module('day-1-try-module').
+-module(test_module).
 -export([module_test/0]).
 -export([writeln/1]).
 

@@ -3,5 +3,9 @@
 *.swp
 *.swo
 
-# compiled erlang module (beam)
+# erlang
 *.beam
+*.dump
+
+# app output
+*.out
