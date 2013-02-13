@@ -16,3 +16,7 @@ experimental codes.
 * `./src/clojure_codes/day_X/do` 
 
 codes that implement tasks assigned.
+
+* `./utils/`
+
+some handy tools to use
