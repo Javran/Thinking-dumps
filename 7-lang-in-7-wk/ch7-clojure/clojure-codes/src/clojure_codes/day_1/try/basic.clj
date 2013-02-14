@@ -1,4 +1,5 @@
-(ns clojure-codes.day-1.try.basic)
+(ns clojure-codes.day-1.try.basic
+  (:require [clojure-codes.utils :as utils]))
 
 (defn -main [& args]
   (println "nice boat!")

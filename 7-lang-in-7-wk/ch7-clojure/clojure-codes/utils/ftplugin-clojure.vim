@@ -19,11 +19,17 @@ function! s:GetCurrentClojureNamespace()
 	return curr_name_sp
 endfunction
 
-if exists("g:loaded_foreplay")
+function! SaveAndRunClojureEntryMain()
 	let clj_ns = s:GetCurrentClojureNamespace()
 	let eval_cmd = 'Eval (' . clj_ns . '/-main)'
 	" relies on 'cpR' and ':Eval' from foreplay.vim
-	execute 'nmap <F7> :w<CR>cpR:'.eval_cmd.'<CR>'
+	normal :w<CR>cpR
+	execute eval_cmd
+
+endfunction
+
+if exists("g:loaded_foreplay")
+	nmap <F7> :w<CR>:call SaveAndRunClojureEntryMain()<CR>
 else
 	nmap <F7> :w<CR>:! lein-ns-run %<CR>
 endif

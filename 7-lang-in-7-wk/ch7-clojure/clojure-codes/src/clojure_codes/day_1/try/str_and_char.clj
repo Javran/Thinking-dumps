@@ -1,24 +1,28 @@
-(ns clojure-codes.day-1.try.str-and-char)
+(ns clojure-codes.day-1.try.str-and-char
+  (:require [clojure-codes.utils :as utils]))
 
 (defn -main [& args]
-  ; convert to string
-  (println (str 1))
-  (println (class (str 1)))
+  (utils/eval-and-println
+    ; convert to string
+    (str 1)
+    (class (str 1))
 
-  ; concat strings together
-  (println (str "yoda, " "luke, " "darth"))
-  ; even non-strings
-  (println (str "one: " 1 " two: " 2))
+    ; concat strings together
+    (str "yoda, " "luke, " "darth")
+    ; even non-strings
+    (str "one: " 1 " two: " 2)
 
-  ; char should have a leading '\'
-  (println \a \b \c \newline)
+    ; char should have a leading '\'
+    '(\a \b \c \newline)
 
-  (println (str \f \o \r \c \e))
+    (str \f \o \r \c \e)
 
-  ; some comparison
-  (println (= "a" \a))
-  ; false
+    ; some comparison
+    (= "a" \a)
+    ; false
 
-  (println (= (str \newline) "\n"))
-  ; true
+    (= (str \newline) "\n")
+    ; true
+    )
+
   )
