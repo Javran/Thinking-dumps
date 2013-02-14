@@ -20,12 +20,15 @@ fi
 
 FIRST_LINE=`head -1 $1`
 
-if [[ $FIRST_LINE =~ \(ns\ ([^\ ]*) ]]
+if [[ $FIRST_LINE =~ \(ns\ ([a-z0-9.-]+) ]]
 then
 	NAMESPACE=${BASH_REMATCH[1]}
+
 	# make sure `lein` has added to your PATH 
 	#     or correct the line below accordingly
-	lein run -m ${NAMESPACE}
+	CMD="lein run -m ${NAMESPACE}"
+	echo "Execute command: \`${CMD}\`"
+	${CMD}
 else
 	echo "Cannot find any namespace"
 	exit -1
