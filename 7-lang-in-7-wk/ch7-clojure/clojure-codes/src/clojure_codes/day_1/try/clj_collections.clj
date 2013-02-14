@@ -52,6 +52,7 @@
 
     ; set show time
     (def spacecraft #{:x-wing :y-wing :tie-fighter})
+    (class spacecraft)
     (count spacecraft)
     (sort spacecraft)
     
@@ -59,6 +60,39 @@
 
     (clojure.set/union #{:skywalker} #{:vader})
     (clojure.set/difference #{1 2 3} #{2})
+
+    ; set itself is a function that judge if an element is one member of it
+    (#{:jar-jar :chewbacca} :chewbacca)
+    ; :chewbacca
+    (#{:jar-jar :chewbacca} :luke)
+    ; :luke
+
+    ; about map
+    {:chewie :wookie :lea :human}
+    ; that means 
+    ; :chewie -> :wookie
+    ; :lea -> :human
+    
+    ; another form
+    (def mentors {:darth-vader "obi wan", :luke "yoda"})
+    (class mentors)
+    ; ArrayMap
+    (mentors :luke)
+    ; yoda
+    ; strange but work
+    (:luke mentors)
+
+    ; merge 2 dicts:
+    (merge {:y-wing 2, :x-wing 4} {:tie-fighter 2})
+    ; another merge that allow conflict values combined to produce one
+    (merge-with + {:y-wing 2, :x-wing 4} {:tie-fighter 2, :x-wing 3})
+    ; :x-wing -> 7 because 4+3
+
+    ; can also append new k-v pair
+    (assoc {:one 1, :three 3} :two 2)
+
+    ; sorted map
+    (sorted-map 1 :one, 3 :three, 2 :two)
 
   )
 )

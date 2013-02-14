@@ -23,7 +23,8 @@ function! SaveAndRunClojureEntryMain()
 	let clj_ns = s:GetCurrentClojureNamespace()
 	let eval_cmd = 'Eval (' . clj_ns . '/-main)'
 	" relies on 'cpR' and ':Eval' from foreplay.vim
-	normal :w<CR>cpR
+	normal :w<CR>
+	normal cpR
 	execute eval_cmd
 
 endfunction
