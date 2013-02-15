@@ -24,6 +24,18 @@
     (map #(* 2 (count %)) people)
     ; '#' is called reader macro
 
+    ; I found that 'def' can also define a function:
+    (def add5 #(+ % 5))
+    (add5 7)
+    ; 12
+
+    (def add6 (fn [x] (+ x 6)))
+    (add6 8)
+    ; 14
+
+    ; it's a good evidence that functions in clojure 
+    ;     are first-class functions
+
     (def v [3 1 2])
 
     (apply + v)
