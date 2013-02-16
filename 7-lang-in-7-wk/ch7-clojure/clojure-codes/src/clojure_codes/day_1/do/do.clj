@@ -8,12 +8,12 @@
   (<= (count st) n))
 
 
-; currently don't compare the results from function `type` 
+; don't rely on the concrete types of Clojure data structure 
 ;     or you might encounter some strange problem
 ; please refer to:
 ;     http://stackoverflow.com/questions/14909312/in-clojure-why-the-type-of-an-empty-list-is-different-from-that-of-non-empty-li
 ; for more detail
-; let's use `list?` `map?` `vector?` instead
+; it seems using `list?` `map?` `vector?` instead is a good practice
 (defn collection-type
   "Task #2: return the type of a given collection(:list, :map, :vector)"
   [col]
