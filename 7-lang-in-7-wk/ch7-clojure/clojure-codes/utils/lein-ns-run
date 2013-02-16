@@ -1,0 +1,35 @@
+#!/bin/bash
+
+function help_quit {
+	echo "lein-ns-run: "
+	echo "    read first line of a clojure file, parse namespace <ns>"
+	echo "    then call \`lein run -m <ns>\`"
+	exit -1
+}
+
+if [ $# -ne 1 ]
+then
+	help_quit
+fi
+
+if [ ! -e $1 ]
+then
+	echo "File \"$1\" does not exist"
+	exit -1
+fi
+
+FIRST_LINE=`head -1 $1`
+
+if [[ $FIRST_LINE =~ \(ns\ ([a-z0-9.-]+) ]]
+then
+	NAMESPACE=${BASH_REMATCH[1]}
+
+	# make sure `lein` has added to your PATH 
+	#     or correct the line below accordingly
+	CMD="lein run -m ${NAMESPACE}"
+	echo "Execute command: \`${CMD}\`"
+	${CMD}
+else
+	echo "Cannot find any namespace"
+	exit -1
+fi
