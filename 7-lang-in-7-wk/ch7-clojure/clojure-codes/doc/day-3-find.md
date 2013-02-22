@@ -14,3 +14,6 @@ so that the overhead will be lower.
 
 What we're looking for is a counterpart of BlockingQueue -- that is [fill-queue](http://richhickey.github.com/clojure-contrib/seq-utils-api.html),
 the code of which is located [here](https://github.com/richhickey/clojure-contrib/blob/master/src/main/clojure/clojure/contrib/seq_utils.clj#L189)
+
+I've written an example of `clojure.contrib.seq-utils/fill-queue`,
+please find source code: `./src/clojure_codes/day_3/find/find.clj` in project directory.
