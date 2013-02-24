@@ -2,7 +2,12 @@
   (:require 
     [clojure-codes.utils :as utils]))
 
-; TODO: description here
+; Task #2: solve sleeping barber problem
+;     * 3 chairs in waiting room
+;     * 1 barber and 1 chair in barber shop
+;     * 20 ms to cut hair
+;     * consumer arriving interval 10 - 30 ms
+;     * the barber shop will be open for 10 sec
 
 (defn -main [& args]
   (def open-flag (ref false))
