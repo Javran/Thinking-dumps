@@ -62,11 +62,12 @@
       [[a b]] [b (+ a b)])
 
     (fib-pair [3 5])
-    (def fib-seq (map first (iterate fib-pair [1 1])))
+    ; use bigint here or you might encounter an integer overflow exception
+    ;     when calculating the 500-th one in fibonacci seq
+    (def fib-seq (map first (iterate fib-pair [(bigint 1) (bigint 1)])))
     (->> fib-seq (take 5))
     ; fibonacci seq
-    ; TODO: next line got an int overflow exception, need to fix it
-    ; (nth fib-seq 500)
+    (nth fib-seq 500)
 
     ; factorial
     (defn factorial [n]
