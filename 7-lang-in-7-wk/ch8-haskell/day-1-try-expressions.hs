@@ -1,5 +1,4 @@
-putExprLn :: (Show a) => a -> IO ()
-putExprLn = putStrLn . show
+import Utils
 
 main = do
 	putExprLn $ 4
