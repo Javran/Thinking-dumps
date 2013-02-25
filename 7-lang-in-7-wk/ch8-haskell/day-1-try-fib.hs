@@ -19,6 +19,15 @@ fibQuicker x = fibResult $ fibTuple (0, 1, x)
 	where
 		fibResult (x, _, _) = x
 
+fibNextPair :: (Integer, Integer) -> (Integer, Integer)
+fibNextPair (x, y) = (y, x+y)
+
+fibNthPair :: Integer -> (Integer, Integer)
+fibNthPair 1 = (1, 1)
+fibNthPair n = fibNextPair $ fibNthPair $ n - 1
+
+fibWithPair :: Integer -> Integer
+fibWithPair = fst . fibNthPair
 
 main = do
 	testFib fib [1..10]
@@ -33,3 +42,5 @@ main = do
 
 	putStrLn "Fib 1000:"
 	putExprLn $ fibQuicker 1000
+
+	testFib fibWithPair [1..10]
