@@ -40,6 +40,8 @@ allEvenWithListMonad xs = do
 -- actually allEvenWithListComprehension and allEvenWithListMonad is identical
 -- refer to: http://learnyouahaskell.com/a-fistful-of-monads#the-list-monad
 
+-- Task #1: implement allEven
+
 main = mapM_ testPrints [
 	allEvenWithFilter,
 	allEvenWithFoldl,
