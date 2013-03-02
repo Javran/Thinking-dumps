@@ -1,3 +1,5 @@
+import Control.Monad
+
 import Utils
 
 isNum :: Char -> Bool
@@ -31,7 +33,7 @@ strSeparateNum rawStr =
 strCheckCommas :: String -> Maybe Integer
 strCheckCommas rawStr = 
 	if not $ all 
-   	-- check the validity of each Char according to their index
+   	-- check the validity of each Char according to their indices
 		(\ (ind, ch) -> if (ind `mod` 4 == 0)
 			then ch == ','
 			else isNum ch
@@ -49,5 +51,38 @@ strToNum rawStr = do
 	return $ (fromIntegral intPart) + (fromIntegral decPart) / 100
 
 main = do
-	putExprLn $ return "$2,345,678.99" >>= strCheckHead >>= strSeparateNum
-	putExprLn $ strToNum "$2,345,678.99"
+	let testCases =
+		[ ( "$not a num", 		Nothing )
+		, ( "$123,456.789", 		Nothing )
+		, ( "123,456,789.00", 		Nothing )
+		, ( "$12,34,56,78.00", 		Nothing )
+		, ( "$1234,567,890.11", 	Nothing )
+		, ( "$123.000", 		Nothing )
+		, ( "$123.00", 			Just 123)
+		, ( "$2,345,678.99", 		Just 2345678.99)
+		, ( "$002,345,678.99", 		Just 2345678.99)
+		, ( "$00,000,000,000.00", 	Just 0)
+		, ( "$0,000,000,001.23", 	Just 1.23)]
+
+	putStrLn "Let's do some tests!"
+
+	-- collect test results
+	let testResults = mapM doTest testCases where
+		doTest (raw, expected) = do
+			putStrLn "Input:"
+			putStrLn raw
+			putStrLn "Expected result:"
+			putExprLn expected
+			if strToNum raw == expected
+				then do
+					putStrLn "Test passed"
+					return True
+				else do
+					putStrLn "Test failed"
+					return False
+
+	-- check if all tests are passed
+	passed <- liftM and testResults	 
+	if passed
+		then putStrLn "All tests passed."
+		else putStrLn "Some tests failed."
