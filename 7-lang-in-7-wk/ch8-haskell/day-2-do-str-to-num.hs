@@ -64,6 +64,8 @@ main = do
 		, ( "$00,000,000,000.00", 	Just 0)
 		, ( "$0,000,000,001.23", 	Just 1.23)]
 
+	putStrLn "Task #3: convert strings to numbers"
+
 	putStrLn "Let's do some tests!"
 
 	-- collect test results
