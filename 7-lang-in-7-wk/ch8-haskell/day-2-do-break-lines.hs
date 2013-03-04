@@ -27,27 +27,38 @@ printInit widthLimit = PrintStatus
 		, widthLimit = widthLimit
 		}
 
-printWord printStatus word = 
+-- return new rest word list
+printWord :: PrintStatus -> [String] -> (PrintStatus, [String])
+printWord printStatus (word:restWordList) = 
 	if currentLine printStatus == []
 		then
 			-- nothing in current line, simply printing the word will do
-			PrintStatus
-			{ printedLines = printedLines printStatus
-			, currentLine = word
-			, widthLimit = widthLimit printStatus
-			}
+			(
+				  PrintStatus
+					{ printedLines = printedLines printStatus
+					, currentLine = word
+					, widthLimit = widthLimit printStatus
+					}
+				, restWordList
+			)
 		else
 			if (length $ currentLine printStatus) + (length word) + 1 <= (widthLimit printStatus)
 				then
 			   	-- simply append current word to the current line if possible
-					PrintStatus
-						{ printedLines = printedLines printStatus
-						, currentLine = (currentLine printStatus) ++ " " ++ word
-						, widthLimit = widthLimit printStatus
-						}
+					(
+						  PrintStatus
+							{ printedLines = printedLines printStatus
+							, currentLine = (currentLine printStatus) ++ " " ++ word
+							, widthLimit = widthLimit printStatus
+							}
+						, restWordList
+					)
 				else
 				-- time to switch to new line!
-					printNewline printStatus
+					(
+						  printNewline printStatus
+						, word:restWordList
+					)
 
 printNewline :: PrintStatus -> PrintStatus
 printNewline printStatus =
@@ -57,11 +68,21 @@ printNewline printStatus =
 	, widthLimit = widthLimit printStatus
 	}
 
+printAllWords :: PrintStatus -> [String] -> PrintStatus
+-- all words' been printed, no more things to do
+printAllWords printStatus [] = printStatus
+printAllWords printStatus (wordList) = finalPrintStatus where
+	(newPrintStatus, newRestWordList) = printWord printStatus (wordList)
+	finalPrintStatus = printAllWords newPrintStatus newRestWordList
+
+printStatusToLines :: PrintStatus -> [String]
+printStatusToLines printStatus = (printedLines printStatus) ++ [currentLine printStatus]
+
 -- break a long line into multiple lines with width given
 breakLine :: Int -> String -> [String]
 breakLine widthLimit rawLine = outputLines where
-	outputLines = printedLines printStatus
-	printStatus = printNewline $ foldl printWord (printInit widthLimit) (words rawLine)
+	outputLines = printStatusToLines printStatus
+	printStatus = printAllWords (printInit widthLimit) (words rawLine)--printNewline $ foldl printWord (printInit widthLimit) (words rawLine)
 
 -- if you want to know how to deal with files in haskell
 -- please refer to:
