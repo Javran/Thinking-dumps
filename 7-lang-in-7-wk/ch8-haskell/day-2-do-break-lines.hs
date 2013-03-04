@@ -120,6 +120,36 @@ numWidthFormat n width = paddingSpaces ++ nStr where
 	nStr = show n
 	paddingSpaces = take (width-length nStr) $ repeat ' '
 
+-- add line number to a list of String
+decorateWithLineNumber :: [String] -> [String]
+decorateWithLineNumber xs = 
+	zipWith
+		(\line content -> (numWidthFormat line maxLineLen) ++ " " ++ content)
+		[1..]
+		xs
+	where
+		maxLineLen = length $ show $ length xs 
+
+data JustifyType = LeftJustify | RightJustify | FullJustify
+	deriving (Enum, Show)
+
+justifyLine :: Int -> JustifyType -> String -> String
+justifyLine width jType content =
+	if length content >= width 
+		then
+		-- nothing need to do
+			content
+		else
+			case jType of
+			     LeftJustify  	-> content ++ padding
+			     RightJustify 	-> padding ++ content
+			     -- TODO: implement full justify
+			     FullJustify 	-> content
+			where
+				padding = take (width - length content) $ repeat ' '
+
+justifyLines w jType = map $ justifyLine w jType
+
 -- if you want to know how to deal with files in haskell
 -- please refer to:
 --     http://learnyouahaskell.com/input-and-output#files-and-streams
@@ -133,12 +163,14 @@ main = do
 	prettyOutput formattedLines
 
 	putStrLn "Task #9: add line numbers"
+	prettyOutput $ decorateWithLineNumber formattedLines
 
-	let maxLineLen = length $ show $ length formattedLines
-	prettyOutput $ zipWith
-		(\line content -> (numWidthFormat line maxLineLen) ++ " " ++ content)
-		[1..]
-		formattedLines
+	putStrLn "Task #10: justify lines"
+	mapM_
+		(\x -> do
+			putStrLn $ "Justify type: " ++ show x
+			prettyOutput $ decorateWithLineNumber $ justifyLines 80 x formattedLines
+			putStrLn "")
+		[LeftJustify, RightJustify, FullJustify]
 
 	hClose hFile
-
