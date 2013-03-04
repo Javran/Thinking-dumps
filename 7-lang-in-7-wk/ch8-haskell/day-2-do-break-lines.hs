@@ -97,6 +97,7 @@ printAllWords printStatus wordList = finalPrintStatus where
 	(newPrintStatus, newRestWordList) = printWord printStatus wordList
 	finalPrintStatus = printAllWords newPrintStatus newRestWordList
 
+-- dump all printed texts from the 'printer'
 printStatusToLines :: PrintStatus -> [String]
 printStatusToLines printStatus = (printedLines printStatus) ++ [currentLine printStatus]
 
@@ -106,16 +107,38 @@ breakLine widthLimit rawLine = outputLines where
 	outputLines = printStatusToLines printStatus
 	printStatus = printNewline $ printAllWords (printInit widthLimit) (words rawLine)
 
+prettyOutput :: [String] -> IO ()
+prettyOutput xs = do
+	putStrLn "====== Output begin ======"
+	putStr $ unlines xs
+	putStrLn "======  Output end  ======"
+
+-- format a number into string
+--     and pad the string(using space) into a given length
+numWidthFormat :: Int -> Int -> String
+numWidthFormat n width = paddingSpaces ++ nStr where
+	nStr = show n
+	paddingSpaces = take (width-length nStr) $ repeat ' '
+
 -- if you want to know how to deal with files in haskell
 -- please refer to:
 --     http://learnyouahaskell.com/input-and-output#files-and-streams
 main = do
 	putStrLn "Task #8: break long strings"
 
-	putStrLn "====== Output begin ======"
 	hFile <- openFile testFile ReadMode
 	content <- hGetContents hFile
 	let fileLines = lines content
-	putStr $ unlines $ join $ map (breakLine 80) fileLines 
+	let formattedLines = join $ map (breakLine 80) fileLines
+	prettyOutput formattedLines
+
+	putStrLn "Task #9: add line numbers"
+
+	let maxLineLen = length $ show $ length formattedLines
+	prettyOutput $ zipWith
+		(\line content -> (numWidthFormat line maxLineLen) ++ " " ++ content)
+		[1..]
+		formattedLines
+
 	hClose hFile
-	putStrLn "======  Output end  ======"
+
