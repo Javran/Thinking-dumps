@@ -28,27 +28,40 @@ printInit widthLimit = PrintStatus
 		}
 
 printWord printStatus word = 
-	if (length $ currentLine printStatus) + (length word) + 1 <= (widthLimit printStatus)
+	if currentLine printStatus == []
 		then
-	   	-- simply append current word to the current line if possible
+			-- nothing in current line, simply printing the word will do
 			PrintStatus
 			{ printedLines = printedLines printStatus
-			, currentLine = (currentLine printStatus) ++ " " ++ word
+			, currentLine = word
 			, widthLimit = widthLimit printStatus
 			}
 		else
-		-- time to switch to new line!
-			PrintStatus
-			{ printedLines = (printedLines printStatus) ++ [currentLine printStatus]
-			, currentLine = ""
-			, widthLimit = widthLimit printStatus
-			}
+			if (length $ currentLine printStatus) + (length word) + 1 <= (widthLimit printStatus)
+				then
+			   	-- simply append current word to the current line if possible
+					PrintStatus
+						{ printedLines = printedLines printStatus
+						, currentLine = (currentLine printStatus) ++ " " ++ word
+						, widthLimit = widthLimit printStatus
+						}
+				else
+				-- time to switch to new line!
+					printNewline printStatus
+
+printNewline :: PrintStatus -> PrintStatus
+printNewline printStatus =
+	PrintStatus
+	{ printedLines = (printedLines printStatus) ++ [currentLine printStatus]
+	, currentLine = ""
+	, widthLimit = widthLimit printStatus
+	}
 
 -- break a long line into multiple lines with width given
 breakLine :: Int -> String -> [String]
 breakLine widthLimit rawLine = outputLines where
-	outputLines = (printedLines printStatus) ++ [ currentLine printStatus ]
-	printStatus = foldl printWord (printInit widthLimit) (words rawLine)
+	outputLines = printedLines printStatus
+	printStatus = printNewline $ foldl printWord (printInit widthLimit) (words rawLine)
 
 -- if you want to know how to deal with files in haskell
 -- please refer to:
