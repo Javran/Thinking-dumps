@@ -144,11 +144,56 @@ justifyLine width jType content =
 			     LeftJustify  	-> content ++ padding
 			     RightJustify 	-> padding ++ content
 			     -- TODO: implement full justify
-			     FullJustify 	-> content
+			     FullJustify 	-> fullJustifier width content
 			where
 				padding = take (width - length content) $ repeat ' '
 
 justifyLines w jType = map $ justifyLine w jType
+
+fullJustifier :: Int -> String -> String
+fullJustifier widthLimit originalStr =
+	if length wordList <= 1
+		then
+		-- simply padding spaces will do
+			newStr ++ separatorPool
+		else
+		-- word count >= 2
+		--     we need to insert spaces between words
+			justifyWordList wordList
+	where
+		newStr = join wordList
+		wordList = words originalStr
+ 
+		separator = ' '
+		-- separatorPool: separators to be inserted
+		separatorPool = take (widthLimit - (length newStr)) (repeat separator)
+		separatorPoolLen = length separatorPool
+				 
+		justifyWordList (x:xs) =
+		-- it's guaranteed that length wordList > 1
+		-- the justification is based on one equation:
+		--
+		--         (x `div` y) * y + (x `mod` y) == x
+		--
+		--     so each separator group should at least have a length of (x `div` y)
+		--     and there should now be a gap that has width (x `mod` y)
+		--     to fill that gap, the first (x `mod` y) separator is assigned with an extra separator
+		--     because of that, the word list should be indexed
+		--     so we can distinguish different separator groups.
+		--
+		-- * separator group is defined as consecutive separators (i.e. spaces) between two words
+			foldl (\acc i -> acc ++ uncurry justifyWord i) x indexedXs
+			where
+				-- bind words with indices
+				indexedXs = zip [1..] xs
+ 
+				-- pad word with leading spaces
+				-- the number of spaces is inferred from its index
+				justifyWord ind word = (take spaceLen (repeat separator)) ++ word
+					where
+						spaceLen =
+							  separatorPoolLen `div` (length xs)
+							+ if ind <= separatorPoolLen `mod` (length xs) then 1 else 0
 
 -- if you want to know how to deal with files in haskell
 -- please refer to:
