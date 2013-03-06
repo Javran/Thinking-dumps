@@ -20,7 +20,25 @@ value Ace 	= 5
 cardValue :: Card -> Integer
 cardValue (rank, _) = value rank
 
+backwardsCard :: Hand -> Hand
+backwardsCard [] = []
+backwardsCard (x:xs) = backwardsCard xs ++ [x]
+
+backwards :: [a] -> [a]
+backwards [] = []
+backwards (x:xs) = backwards xs ++ [x]
+
 main = do
 	let card = (Ten, Hearts)
 	putExprLn $ card
 	putExprLn $ cardValue card
+
+	let hand = [(Ten, Spades), (Jack, Hearts) ]
+
+	putExprLn $ backwardsCard hand
+	-- not work for [Char]
+	-- putExprLn $ backwardsCard "abc"
+
+	-- reverse [a], "a" can be anything
+	putExprLn $ backwards hand
+	putExprLn $ backwards "abc"
