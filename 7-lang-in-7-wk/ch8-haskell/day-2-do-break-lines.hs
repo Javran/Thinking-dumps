@@ -198,11 +198,20 @@ fullJustifier widthLimit originalStr =
 -- if you want to know how to deal with files in haskell
 -- please refer to:
 --     http://learnyouahaskell.com/input-and-output#files-and-streams
+
+-- related articles about laziness and `seq`:
+-- http://stackoverflow.com/questions/9707190/time-cost-of-haskell-seq-operator
+-- http://www.haskell.org/haskellwiki/Seq
+-- http://www.haskell.org/ghc/docs/latest/html/libraries/base/Prelude.html#v:seq
+
 main = do
 	putStrLn "Task #8: break long strings"
 
 	hFile <- openFile testFile ReadMode
 	content <- hGetContents hFile
+	content `seq` return ()
+	hClose hFile
+
 	let fileLines = lines content
 	let formattedLines = join $ map (breakLine 80) fileLines
 	prettyOutput formattedLines
@@ -218,4 +227,3 @@ main = do
 			putStrLn "")
 		[LeftJustify, RightJustify, FullJustify]
 
-	hClose hFile
