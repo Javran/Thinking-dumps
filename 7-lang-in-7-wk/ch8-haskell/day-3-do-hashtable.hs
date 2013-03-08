@@ -43,6 +43,43 @@ lookupDeepHashTable table (k:restKey) = do
 		then lookupDeepHashTable newTable restKey
 		else Nothing
 
+-- pretty print a hashtable with given indent level
+prettyPrintHashTable :: (Show a) => Int -> HashTable a -> [String]
+prettyPrintHashTable indentLevel table =
+	map (indentStr ++ ) keyValueShowList
+	where
+		keyValueShowList = concat $ map prettyPrintKeyValuePair table
+		indentStr = concat $ replicate indentLevel "\t"
+
+-- pretty print a key-value pair
+prettyPrintKeyValuePair :: (Show a) => (HashKey, HashValue a) -> [String]
+prettyPrintKeyValuePair (key,value) = (prettyPrintKey key) : (prettyPrintValue value)
+
+prettyPrintKey :: HashKey => String
+prettyPrintKey k = "K: " ++ k
+
+prettyPrintValue :: (Show a) => HashValue a -> [String]
+prettyPrintValue (Value v) = ["V: " ++ (show v)]
+prettyPrintValue (ChildTable table) = "V: HashTable" : printedTable where
+	printedTable = prettyPrintHashTable 1 table
+
+prettyPrintLookupIO :: (Show a) => HashTable a -> HashKey -> IO ()
+prettyPrintLookupIO table key = do
+	putStr $ "Lookup key " ++ (show key) ++ " in hashtable ... "
+	lookupResultPrintIO $ lookupHashTable table key
+
+prettyPrintLookupDeepIO :: (Show a) => HashTable a -> [HashKey] -> IO ()
+prettyPrintLookupDeepIO table keys = do
+	putStrLn "Lookup recursively with key list: "
+	putExprLn keys
+	lookupResultPrintIO $ lookupDeepHashTable table keys
+
+lookupResultPrintIO :: (Show a) => Maybe (HashValue a) -> IO ()
+lookupResultPrintIO Nothing = putStrLn "Failed"
+lookupResultPrintIO (Just v) = do
+	putStrLn "OK:"
+	mapM_ putStrLn $ prettyPrintValue v
+
 main = do
 	putStrLn "Task #1: write a hashtable lookup function"
 
@@ -62,19 +99,20 @@ main = do
 		, ("monads", monadTable)]
 
 	putStrLn "The hash table is:"
-	putExprLn $ testTable
+	mapM_ putStrLn $ prettyPrintHashTable 0 testTable
 	
-	putExprLn $ lookupHashTable testTable "language"
+	prettyPrintLookupIO testTable "language"
 
-	putExprLn $ lookupDeepHashTable testTable ["language"]
-	-- haskell
-	putExprLn $ lookupDeepHashTable testTable ["monads", "more"]
-	-- we'll find `moreMonad`
-	putExprLn $ lookupDeepHashTable testTable ["monads", "more", "Maybe"]
-	-- Data.Maybe
-	putExprLn $ lookupDeepHashTable testTable ["error"]
-	-- Nothing
-	putExprLn $ lookupDeepHashTable testTable ["monads"]
-	-- `monadTable`
-	putExprLn $ lookupDeepHashTable testTable ["monads", "IO", "oh"]
-	-- Nothing
+	mapM_ (prettyPrintLookupDeepIO testTable) [
+		  ["language"]
+		-- haskell
+		, [ "monads", "more"]
+		-- we'll find `moreMonad`
+		, ["monads", "more", "Maybe"]
+		-- Data.Maybe
+		, ["error"]
+		-- Nothing
+		, ["monads"]
+		-- `monadTable`
+		, ["monads", "IO", "oh"]]
+		-- Nothing
