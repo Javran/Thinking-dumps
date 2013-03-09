@@ -223,6 +223,7 @@ parseMaze w h (header:rawMaze) = do
 			then Nothing
 			else do
 				walls <- parseCellSides $ map tail rawMaze
+				-- TODO: remove duplicate/invalid walls
 				return $ Maze w h walls
 	where
 		-- after removing the first line and leading char from rawLine
@@ -230,13 +231,24 @@ parseMaze w h (header:rawMaze) = do
 		parseCellSides :: [String] -> Maybe [Wall]
 		parseCellSides rawMaze = do
 			-- group every 2 lines together
-			let walls = map parseCellLines $ splitToPairs rawMaze
+			-- and add indices for each line
+			let walls = map (uncurry parseCellLine) $ zip [1..] $ splitToPairs rawMaze
 			if any (== Nothing) walls
 				then Nothing
 				else return $ concat $ map (\(Just x) -> x) walls
 
-		parseCellLines :: (String, String) -> Maybe [Wall]
-		parseCellLines = undefined
+		parseCellLine :: Int -> (String, String) -> Maybe [Wall]
+		parseCellLine ind (line1, line2) = undefined
+
+		parseCell :: Int -> Int -> (String, String) -> Maybe [Wall]
+		parseCell x y (a:b:[], c:d:[]) =
+			-- a b
+			-- c d
+			if a /= ' ' || d /= '+' 
+				|| (not $ b `elem` " |") 
+				|| (not $ c `elem` " -")
+				then Nothing
+				else undefined
 
 		splitToPairs :: [a] -> [(a, a)]
 		splitToPairs [] = []
