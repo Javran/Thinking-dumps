@@ -23,23 +23,39 @@ data Wall = Wall
 	, node2 	:: Node}
 	deriving (Show)
 
+nodeInOrd :: Wall -> (Node, Node)
+nodeInOrd (Wall n1 n2) = 
+	if n1 <= n2
+		then (n1,n2)
+		else (n2,n1)
+
 instance Eq Wall where
-	x == y =
-		   (node1 x, node2 x) == (node1 y, node2 y)
-		--                            ^        ^
-		|| (node1 x, node2 x) == (node2 y, node1 y) 
-		--                            ^        ^
+	x == y = (nodeInOrd x) == (nodeInOrd y)
+
+instance Ord Wall where
+	compare x y = compare (nodeInOrd x) (nodeInOrd y)
+
+-- remove duplicate/invalid walls
+pruneWalls :: Maze -> Maze
+pruneWalls maze = Maze w h prunedXs where
+	(Maze w h xs) = maze
+	prunedXs = filter validWall $ map head $ group $ sort xs
+	validWall (Wall a b) = all (`inside` maze) [a,b]
 
 data Maze = Maze
 	{ width 	:: Int
 	, height 	:: Int
 	, walls 	:: [Wall] }
-	deriving (Show)
+	deriving (Show, Eq)
 
 data MazeProblem = MazeProblem
 	{ start 	:: Node
 	, end 		:: Node }
-	deriving (Show)
+	deriving (Eq)
+
+instance Show MazeProblem where
+	show (MazeProblem start end) =
+		"Problem: from " ++ (show start) ++ " to " ++ (show end)
 
 newtype MazeSolution = Solution
 	{ getSolution   :: [Node] }
@@ -113,7 +129,7 @@ prettyLinesMaze maze = header : body where
 		-- reduce strings, and decorate with appropriate chars
 		let line1 = ('|' :) $ concatMap fst cellStrings
 		let line2 = ('+' :) $ concatMap snd cellStrings
-		return [ line1, line2]
+		return [line1, line2]
 
 -- solve the maze, return all solutions
 solve :: Maze -> MazeProblem -> [MazeSolution]
@@ -143,70 +159,6 @@ optimizeResult solutions = filter ((==bestLen).solutionLength) solutions where
 	bestLen = minimum $ map solutionLength solutions
 	solutionLength (Solution xs) = length xs
 
-mazeTest = do
-	-- let's make a test case
-	-- +-+-+-+
-	-- | | | |
-	-- + + + +
-	-- |   | |
-	-- +-+-+-+
-	-- maze: width = 3, height = 2
-	--     3 walls:
-	--         (1,1)-(2,1)
-	--         (2,2)-(3,2)
-	--         (2,1)-(3,1)
-	let testMaze = Maze 
-		{ width 	= 3
-		, height 	= 2
-		, walls 	= 
-			[ Wall ( Node 1 1 ) ( Node 2 1 )
-			, Wall ( Node 2 2 ) ( Node 3 2 )
-			, Wall ( Node 2 1 ) ( Node 3 1 )
-			]
-		}
-	let testNodes = [ Node x y | x <- [1..3], y <- [1..2] ]
-	-- testNodes' connectivity
-	let testConnectivityIO n = do
-		putExprLn n
-		putStr "reachable neighbors: "
-		putExprLn $ neighbors testMaze n
-
-	putStrLn "Task #2: represent a maze"
-		
-	mapM_ testConnectivityIO testNodes
-	mapM_ putStrLn $ prettyLinesMaze testMaze
-
-	putStrLn "Task #3: solve the maze"
-	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 2 1)
-	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 3 1)
-
-	let maze = Maze 4 4 []
-	let sol = solve maze $ MazeProblem (Node 1 1) (Node 4 4)
-	putExprLn $ length $ optimizeResult sol
-
-
--- load test cases from file
-loadTestCase :: FilePath -> IO (Maybe (Maze, [MazeProblem]))
-loadTestCase file = do
-	putStrLn $ "Loading test case from file: " ++ file
-	handle <- openFile file ReadMode
-	contents <- hGetContents handle	
-	let rawLines = lines contents
-	-- read width & height for maze
-	let [width, height] = map read $ words $ head $ rawLines :: [Int]
-	let (beginStr, endStr) = ("-- BEGIN", "-- END")	
-	let rawMaze = tail $ takeWhile (/= endStr) $ dropWhile (/= beginStr) rawLines
-	let rawProblems = tail $ dropWhile (/=endStr) rawLines
-	-- verify raw data length
-	if not $ all ((== (width*2+1)).length) rawMaze
-		then return Nothing
-		else 
-			if length rawMaze /= (height*2+1)
-				then return Nothing
-				else return $ do
-					maze <- parseMaze width height rawMaze
-					problems <- parseProblemList rawProblems
-					return (maze, problems)
 
 parseMaze :: Int -> Int -> [String] -> Maybe Maze
 parseMaze w h (header:rawMaze) = do
@@ -238,25 +190,159 @@ parseMaze w h (header:rawMaze) = do
 				else return $ concat $ map (\(Just x) -> x) walls
 
 		parseCellLine :: Int -> (String, String) -> Maybe [Wall]
-		parseCellLine ind (line1, line2) = undefined
+		-- sample input: 
+		--     2 (" |   |"
+		--      , "-+ +-+")
+	   	-- will be broken into: 
+		-- [ (1, (< |>, <-+>))
+		-- , (2, (<  >, < +>))
+		-- , (3, (< |>, <-+>))]
+		-- "<ab>" ::= ('a', 'b')
+		parseCellLine ind (line1, line2) = do
+			let splitedLine1 = splitToPairs line1
+			let splitedLine2 = splitToPairs line2
+			let parseResult = map (\(x,l1,l2) -> parseCell x ind (l1,l2)) $ 
+					zip3 [1..] splitedLine1 splitedLine2
+			if any (== Nothing) parseResult
+				then Nothing
+				else return $ concat $ map (\(Just x) -> x) parseResult
 
-		parseCell :: Int -> Int -> (String, String) -> Maybe [Wall]
-		parseCell x y (a:b:[], c:d:[]) =
+		parseCell :: Int -> Int -> ((Char, Char), (Char, Char)) -> Maybe [Wall]
+		parseCell x y ((a,b), (c,d)) =
 			-- a b
 			-- c d
 			if a /= ' ' || d /= '+' 
 				|| (not $ b `elem` " |") 
 				|| (not $ c `elem` " -")
 				then Nothing
-				else undefined
+				else do
+					let node = Node x y
+					let rightWall = if b == ' '
+								then []
+								else [Wall node (Node (x+1) y)]
+					let bottomWall = if c == ' '
+							    	then []
+								else [Wall node (Node x (y+1))]
+					return $ concat [rightWall, bottomWall]
 
 		splitToPairs :: [a] -> [(a, a)]
 		splitToPairs [] = []
 		splitToPairs (l:r:xs) = (l,r):(splitToPairs xs) 
-		
 
 parseProblemList :: [String] -> Maybe [MazeProblem]
-parseProblemList xs = undefined
+parseProblemList xs = do
+	let problemList = map parseProblem xs
+	if any (== Nothing) problemList
+		then Nothing
+		else return $ map (\(Just x) -> x) problemList
+
+parseProblem :: String -> Maybe MazeProblem
+parseProblem rawProblem = do
+	let [p,rawStart,rawEnd] = words rawProblem
+
+	let
+		(startX, startY) = 
+			read rawStart :: (Int, Int)
+		(endX, endY) = 
+			read rawEnd :: (Int, Int)
+
+	if p /= "Problem"
+		then Nothing
+		else return $ MazeProblem 
+				(Node startX startY)
+				(Node endX endY)
+
+-- load test cases from file
+loadTestCase :: FilePath -> IO (Maybe (Maze, [MazeProblem]))
+loadTestCase file = do
+	putStrLn $ "Loading test case from file: " ++ file
+	handle <- openFile file ReadMode
+	contents <- hGetContents handle	
+	let rawLines = lines contents
+	-- read width & height for maze
+	let [width, height] = map read $ words $ head $ rawLines :: [Int]
+	let (beginStr, endStr) = ("-- BEGIN", "-- END")	
+	let rawMaze = tail $ takeWhile (/= endStr) $ dropWhile (/= beginStr) rawLines
+	let rawProblems = tail $ dropWhile (/=endStr) rawLines
+	-- verify raw data length
+	if not $ all ((== (width*2+1)).length) rawMaze
+		then return Nothing
+		else 
+			if length rawMaze /= (height*2+1)
+				then return Nothing
+				else do
+					let parseResult = do
+						maybeMaze <- parseMaze width height rawMaze
+						maybeProblems <- parseProblemList rawProblems
+						return (pruneWalls maybeMaze, maybeProblems)
+					if parseResult == Nothing
+						then return Nothing
+						else do
+							let (Just (maze, problems)) = parseResult
+							putStrLn "Maze loaded:"
+							mapM_ putStrLn $ prettyLinesMaze maze
+							putStrLn "Problem list:"
+							mapM_ putExprLn problems
+							return parseResult
+
+doTestCaseFile file = do
+	parseResult <- loadTestCase file
+	if parseResult == Nothing
+		then return ()
+		else do
+			let (Just (maze, problems)) = parseResult
+			putStrLn "Start problem solving ..."
+			mapM_ (solveMazeIO maze) problems
+
+solveMazeIO :: Maze -> MazeProblem -> IO [MazeSolution]
+solveMazeIO maze problem = do
+	putExprLn problem
+	let solutions = optimizeResult $ solve maze problem
+	putStr "Shortest solution(s): "
+	if length solutions == 0
+		then putStrLn "No solution"
+		else putStrLn ""
 
 
-main = loadTestCase "day-3-do-maze-in.txt"
+	mapM_ putExprLn solutions
+	return solutions
+
+main = do
+	-- let's make a test case
+	-- +-+-+-+
+	-- | | | |
+	-- + + + +
+	-- |   | |
+	-- +-+-+-+
+	-- maze: width = 3, height = 2
+	--     3 walls:
+	--         (1,1)-(2,1)
+	--         (2,2)-(3,2)
+	--         (2,1)-(3,1)
+	let testMaze = Maze 
+		{ width 	= 3
+		, height 	= 2
+		, walls 	= 
+			[ Wall ( Node 1 1 ) ( Node 2 1 )
+			, Wall ( Node 2 2 ) ( Node 3 2 )
+			, Wall ( Node 2 1 ) ( Node 3 1 )
+			]
+		}
+	let testNodes = [ Node x y | x <- [1..3], y <- [1..2] ]
+	-- testNodes' connectivity
+	let testConnectivityIO n = do
+		putStr "Node: "
+		putExprLn n
+		putStr "reachable neighbors: "
+		putExprLn $ neighbors testMaze n
+
+	putStrLn "Task #2: represent a maze"
+		
+	mapM_ testConnectivityIO testNodes
+	mapM_ putStrLn $ prettyLinesMaze testMaze
+
+	putStrLn "Task #3: solve the maze"
+
+	mapM_ doTestCaseFile 
+		[ "day-3-do-maze-in-1.txt"
+		, "day-3-do-maze-in-2.txt"]
