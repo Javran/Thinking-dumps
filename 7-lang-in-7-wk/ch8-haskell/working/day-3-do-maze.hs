@@ -1,6 +1,7 @@
 import Data.Ix
 import Data.List
 import Control.Monad
+import System.IO
 
 import Utils
 
@@ -142,7 +143,7 @@ optimizeResult solutions = filter ((==bestLen).solutionLength) solutions where
 	bestLen = minimum $ map solutionLength solutions
 	solutionLength (Solution xs) = length xs
 
-main = do
+mazeTest = do
 	-- let's make a test case
 	-- +-+-+-+
 	-- | | | |
@@ -179,6 +180,71 @@ main = do
 	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 2 1)
 	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 3 1)
 
-	let maze = Maze 5 5 []
-	let sol = solve maze $ MazeProblem (Node 1 1) (Node 5 5)
+	let maze = Maze 4 4 []
+	let sol = solve maze $ MazeProblem (Node 1 1) (Node 4 4)
 	putExprLn $ length $ optimizeResult sol
+
+
+-- load test cases from file
+loadTestCase :: FilePath -> IO (Maybe (Maze, [MazeProblem]))
+loadTestCase file = do
+	putStrLn $ "Loading test case from file: " ++ file
+	handle <- openFile file ReadMode
+	contents <- hGetContents handle	
+	let rawLines = lines contents
+	-- read width & height for maze
+	let [width, height] = map read $ words $ head $ rawLines :: [Int]
+	let (beginStr, endStr) = ("-- BEGIN", "-- END")	
+	let rawMaze = tail $ takeWhile (/= endStr) $ dropWhile (/= beginStr) rawLines
+	let rawProblems = tail $ dropWhile (/=endStr) rawLines
+	-- verify raw data length
+	if not $ all ((== (width*2+1)).length) rawMaze
+		then return Nothing
+		else 
+			if length rawMaze /= (height*2+1)
+				then return Nothing
+				else return $ do
+					maze <- parseMaze width height rawMaze
+					problems <- parseProblemList rawProblems
+					return (maze, problems)
+
+parseMaze :: Int -> Int -> [String] -> Maybe Maze
+parseMaze w h (header:rawMaze) = do
+	-- verify and drop the first line
+	let rightHeader = foldl (++) "+" $ replicate w "-+"
+	-- rawMaze with indices
+	let rawMazeI = zip [1..] rawMaze
+	if header /= rightHeader
+		then Nothing
+		else if any (\ (ind, line) -> if odd ind
+				-- verify and remove the first col
+				then head line == '+' 
+				else head line == '|') rawMazeI
+			then Nothing
+			else do
+				walls <- parseCellSides $ map tail rawMaze
+				return $ Maze w h walls
+	where
+		-- after removing the first line and leading char from rawLine
+		--     let's parse cell connection info into walls
+		parseCellSides :: [String] -> Maybe [Wall]
+		parseCellSides rawMaze = do
+			-- group every 2 lines together
+			let walls = map parseCellLines $ splitToPairs rawMaze
+			if any (== Nothing) walls
+				then Nothing
+				else return $ concat $ map (\(Just x) -> x) walls
+
+		parseCellLines :: (String, String) -> Maybe [Wall]
+		parseCellLines = undefined
+
+		splitToPairs :: [a] -> [(a, a)]
+		splitToPairs [] = []
+		splitToPairs (l:r:xs) = (l,r):(splitToPairs xs) 
+		
+
+parseProblemList :: [String] -> Maybe [MazeProblem]
+parseProblemList xs = undefined
+
+
+main = loadTestCase "day-3-do-maze-in.txt"
