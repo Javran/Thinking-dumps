@@ -1,4 +1,5 @@
 import Data.Ix
+import Data.List
 import Control.Monad
 
 import Utils
@@ -11,7 +12,11 @@ import Utils
 data Node = Node
 	{ col 		:: Int
 	, row 		:: Int}
-	deriving (Eq, Show)
+	deriving (Eq, Ord)
+
+instance Show Node where
+	show n = "(" ++ (show $ col n) ++ "," ++ (show $ row n) ++ ")"
+
 data Wall = Wall
 	{ node1 	:: Node
 	, node2 	:: Node}
@@ -35,11 +40,20 @@ data MazeProblem = MazeProblem
 	, end 		:: Node }
 	deriving (Show)
 
-directions = 
-	[ ( 0,-1)
-	, ( 0, 1)
-	, (-1, 0)
-	, ( 1, 0)]
+newtype MazeSolution = Solution
+	{ getSolution   :: [Node] }
+
+instance Show MazeSolution where
+	show (Solution (x:xs)) = (show x) ++ concatMap ((" -> " ++ ).show) xs 
+
+instance Eq MazeSolution where
+	(Solution a) == (Solution b) = a == b
+
+instance Ord MazeSolution where
+	compare (Solution a) (Solution b) = compare a b
+
+insertHead :: Node -> MazeSolution -> MazeSolution
+insertHead x (Solution xs) = Solution (x:xs) 
 
 -- check if the node is inside maze
 inside :: Node -> Maze -> Bool
@@ -61,6 +75,11 @@ isNeighborConnected maze n1 n2 =
 -- returns all reachable neighbors of a node in maze
 neighbors :: Maze -> Node -> [Node]
 neighbors maze node = reachableNeighbors where
+	directions = 
+		[ ( 0,-1)
+		, ( 0, 1)
+		, (-1, 0)
+		, ( 1, 0)]
 	allNeighbors = [ Node (col node + x) (row node + y) | (x,y) <- directions]
 	validNeighbors = filter (`inside` maze) allNeighbors
 	reachableNeighbors = [ nNode | nNode <- validNeighbors, not $ (Wall node nNode) `elem` (walls maze) ]
@@ -91,9 +110,37 @@ prettyLinesMaze maze = header : body where
 			, if bottomSide then "-+" else " +") 
 		let cellStrings = map toCellStrings cellInfos
 		-- reduce strings, and decorate with appropriate chars
-		let line1 = ('|' :) $ foldl1 (++) $ map fst cellStrings
-		let line2 = ('+' :) $ foldl1 (++) $ map snd cellStrings
+		let line1 = ('|' :) $ concatMap fst cellStrings
+		let line2 = ('+' :) $ concatMap snd cellStrings
 		return [ line1, line2]
+
+-- solve the maze, return all solutions
+solve :: Maze -> MazeProblem -> [MazeSolution]
+solve maze (MazeProblem start end) = solveMask maze (MazeProblem start end) []
+
+-- solve the maze, with some nodes masked
+--     this is only a naive DFS
+--     we can speed up by providing which nodes have been searched
+--     given that we only need to search one time for each node to find the best solutions
+solveMask :: Maze -> MazeProblem -> [Node] -> [MazeSolution]
+solveMask maze (MazeProblem start end) visitedNodes 
+	| start == end = [Solution [end]]
+	| otherwise = concat $ do
+		-- pick up one possible move
+		nextNode <- neighbors maze start
+		-- ensure not to visit nodes that have been visited
+		guard $ not $ nextNode `elem` visitedNodes
+		
+		-- get all possible moves from nextNode to end
+		let subSolutions = solveMask maze (MazeProblem nextNode end) (start:visitedNodes)
+		let currentSolutions = map (insertHead start) subSolutions
+		return currentSolutions
+
+-- filter out results that are not the shortest
+optimizeResult :: [MazeSolution] -> [MazeSolution]
+optimizeResult solutions = filter ((==bestLen).solutionLength) solutions where
+	bestLen = minimum $ map solutionLength solutions
+	solutionLength (Solution xs) = length xs
 
 main = do
 	-- let's make a test case
@@ -127,3 +174,11 @@ main = do
 		
 	mapM_ testConnectivityIO testNodes
 	mapM_ putStrLn $ prettyLinesMaze testMaze
+
+	putStrLn "Task #3: solve the maze"
+	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 2 1)
+	putExprLn $ solve testMaze $ MazeProblem (Node 1 1) (Node 3 1)
+
+	let maze = Maze 5 5 []
+	let sol = solve maze $ MazeProblem (Node 1 1) (Node 5 5)
+	putExprLn $ length $ optimizeResult sol
