@@ -1,13 +1,15 @@
-I do feel a sense of regret 
-when I found they are plenty of books purchased and links bookmarked keeping unread.
+# Thinking dumps
 
-So I want to fix this, by converting these highly valued things into what they are truly valued for.
+This repo keeps track of my codes, answers and thinkings when exploring books.
 
-This repo keeps track of test codes and exercises' answers for the books/links I've read or I'm currently reading.
+I like to learn things by repeating what others have done,
+from which I'd like to find something new.
 
-Please feel free to use the codes or to share your thoughts with me. 
+So I name this repo "Thinking dumps".
 
-# Seven Languages in Seven Weeks
+Please feel free to use the codes or share your thinking with me. 
+
+## Seven Languages in Seven Weeks
 
 Author: Bruce A. Tate
 
