@@ -2,3 +2,10 @@
 *~
 *.swp
 *.swo
+
+# erlang
+*.beam
+*.dump
+
+# app output
+*.out
