@@ -1,3 +1,9 @@
+% init
+:- initialization(['common.pl']).
+:- initialization(run).
+
+% facts
+
 food_type(velveeta, cheese).
 food_type(ritz, cracker).
 food_type(spam, meat).
@@ -12,7 +18,21 @@ flavor(sweet, soda).
 
 food_flavor(X, Y) :- food_type(X, Z), flavor(Y, Z).
 
-query(food_type(What, meat)).
+% queries
 
-:- initialization(['common.pl']).
-:- initialization(queryAll).
+query(food_type(What, meat)).
+% spam
+query(findall(X, food_type(X, meat), Y)).
+% spam and sausage
+query(food_flavor(sausage, sweet)).
+% food_type(sausage, meat) and flavor(savory, meat), so:
+% no
+query(food_flavor(sausage, savory)).
+% this will be yes
+query(findall(X, flavor(sweet, X), Y)).
+% it's dessert and soda
+query(findall(X, food_flavor(X, savory),Y)).
+% food_flavor(X,Y) --> Y -> savory
+% so meat and cheese can be filled to Z
+% meat -> (spam, sausage) and cheese -> (velveeta)
+% so the output is 'spam, sausage, velveeta'
