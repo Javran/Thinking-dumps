@@ -16,3 +16,11 @@ Author: Bruce A. Tate
 Version: Simplified Chinese-language version
 
 Directory: `7-lang-in-7-wk`
+
+## Teach Yourself Scheme in Fixnum Days
+
+Author: Dorai Sitaram
+
+Link: [t-y-scheme](http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html)
+
+Directory: `t-y-scheme`
