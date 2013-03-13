@@ -7,21 +7,22 @@ treasureMap d = crawl $ stagger $ stagger d
 data Position t = Position t
 	deriving (Show)
 
-staggerP (Position d) = Position $ d + 2
-crawlP (Position d) = Position $ d + 1
+staggerM = rtn.stagger
+crawlM = rtn.crawl
 
 -- actually `return` wrap things inside a monad
 --     what you have learnt from book is slightly different from the real world
 rtn x = Position x
-x >>== f = f x
+(Position x) >>== f = Position newX where
+	(Position newX) = f x
 
 -- return (i.e. rtn) should put the number inside a Position
 --     then bind functions to do things
-treasureMapP pos = 
+treasureMapM pos = 
 	rtn pos >>==
-	staggerP >>==
-	staggerP >>==
-	crawlP
+	staggerM >>==
+	staggerM >>==
+	crawlM
 
 main = do
 	putExprLn $ treasureMap 0
@@ -34,3 +35,4 @@ main = do
 		in d3
 
 	putExprLn $ letTreasureMap 0
+	putExprLn $ treasureMapM 0
