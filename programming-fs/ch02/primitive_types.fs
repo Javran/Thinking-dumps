@@ -87,5 +87,21 @@ let verbatimString = @"Verbatim.\n.\n.\t.\t.String";;
 let hello = "Hello"B;;
 // [|72uy; 101uy; 108uy; 108uy; 111uy|]
 
+// Booleans:
+// operators are: || && not
+
+let printTruthTable f =
+    printfn ""
+    printfn "       |  true | false |"
+    printfn "       +-------+-------+"
+    printfn " true  | %5b | %5b |" (f true true) (f true false)
+    printfn " false | %5b | %5b |" (f false true) (f false false)
+    printfn "       +-------+-------+"
+    printfn ""
+    ();;
+
+// print truth table for &&
+printTruthTable (&&);;
+printTruthTable (||);;
 
 #quit;;
