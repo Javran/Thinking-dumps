@@ -45,6 +45,47 @@ let zettabyte = megabyte * 1024I * 1024I * 1024I * 1024I * 1024I;;
 2048 >>> 10 ;; // 2
 0b1100 >>> 2 ;; // 3
 
+// characters
+
+let vowels = ['a'; 'e'; 'i'; 'o'; 'u'];;
+
+// string formatting
+printfn "Hex u0061 = '%c'" '\u0061';;
+
+// conversion
+
+int 'C';;
+// 67
+
+'C'B;;
+// byte: 67uy ('uy' for unsigned byte)
+
+let password = "abracadabra";;
+let multiline = "This string
+takes up
+multiple lines";;
+
+multiline.[0];;
+// T
+multiline.[1];;
+multiline.[2];;
+multiline.[3];;
+
+// triple quotes
+
+let xmlFragment = """<Ship Name="Prometheus"></foo>""";;
+
+let longString = "abc-\
+                    def-\
+                ghi";;
+// "abc-def-ghi"
+
+let normalString = "Normal.\n.\n.\t.\t.String";;
+let verbatimString = @"Verbatim.\n.\n.\t.\t.String";;
+
+// string to byte array
+let hello = "Hello"B;;
+// [|72uy; 101uy; 108uy; 108uy; 111uy|]
 
 
 #quit;;
