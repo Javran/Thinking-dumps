@@ -86,4 +86,27 @@ let printGreeting shouldGreet greeting =
 printGreeting true "Nice!";;
 printGreeting false "Nice Boat!";;
 
+let isEven x =
+    let result =
+        if x % 2 = 0 
+            then "Yes it is"
+            else "No it is not"
+    result;;
+
+isEven 5;;
+isEven 6;;
+
+let isWeekday day =
+    if   day = "Moday"      then true
+    elif day = "Tuesday"    then true
+    elif day = "Wednesday"  then true
+    elif day = "Thursday"   then true
+    elif day = "Friday"     then true
+    else false;;
+
+isWeekday "Sunday";;
+// false
+isWeekday "Thursday";;
+// true
+
 #quit;;
