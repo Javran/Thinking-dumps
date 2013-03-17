@@ -1,4 +1,5 @@
 import Data.Ix
+import Data.Maybe
 import Data.List
 import Control.Monad
 import System.IO
@@ -187,7 +188,7 @@ parseMaze w h (header:rawMaze) = do
 			let walls = map (uncurry parseCellLine) $ zip [1..] $ splitToPairs rawMaze
 			if any (== Nothing) walls
 				then Nothing
-				else return $ concat $ map (\(Just x) -> x) walls
+				else return $ concat $ map fromJust walls
 
 		parseCellLine :: Int -> (String, String) -> Maybe [Wall]
 		-- sample input: 
@@ -205,7 +206,7 @@ parseMaze w h (header:rawMaze) = do
 					zip3 [1..] splitedLine1 splitedLine2
 			if any (== Nothing) parseResult
 				then Nothing
-				else return $ concat $ map (\(Just x) -> x) parseResult
+				else return $ concat $ map fromJust parseResult
 
 		parseCell :: Int -> Int -> ((Char, Char), (Char, Char)) -> Maybe [Wall]
 		parseCell x y ((a,b), (c,d)) =
@@ -234,7 +235,7 @@ parseProblemList xs = do
 	let problemList = map parseProblem xs
 	if any (== Nothing) problemList
 		then Nothing
-		else return $ map (\(Just x) -> x) problemList
+		else return $ map fromJust problemList
 
 parseProblem :: String -> Maybe MazeProblem
 parseProblem rawProblem = do
