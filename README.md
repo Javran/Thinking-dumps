@@ -23,4 +23,4 @@ Author: Dorai Sitaram
 
 Link: [t-y-scheme](http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html)
 
-Directory: `t-y-scheme`
+Directory: `ty-scheme`
