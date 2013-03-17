@@ -158,4 +158,41 @@ let isMultipleOf5 x = (x % 5 = 0)
 
 let multOf5, nonMultipleOf5 = List.partition isMultipleOf5 [1..15];;
 
+// we'll find our old friends: map and fold!
+
+List.map square [1..10];;
+[ for i in 1..10 -> square i];;
+// [1; 4; 9; .. 100]
+
+let insertCommas (acc:string) item = acc + ", " + item;;
+List.reduce insertCommas ["Jack"; "Jill"; "Jim"; "Joe"; "Jane"];;
+
+let addAccToListItem = (+);;
+
+List.fold addAccToListItem 0 [1;2;3];;
+// 6
+
+let countVowels (str : string) =
+    let charList = List.ofSeq str
+
+    let accFunc (As, Es, Is, Os, Us) letter =
+        match letter with
+        | 'a' -> (As+1, Es, Is, Os, Us)
+        | 'e' -> (As, Es+1, Is, Os, Us)
+        | 'i' -> (As, Es, Is+1, Os, Us)
+        | 'o' -> (As, Es, Is, Os+1, Us)
+        | 'u' -> (As, Es, Is, Os, Us+1)
+        | _ -> (As, Es, Is, Os, Us)
+
+    List.fold accFunc (0,0,0,0,0) charList;;
+
+countVowels "The quick brown fox jumps over the lazy dog";;
+
+// note F# also have List.reduceBack and List.foldBack, just like what foldr does in Haskell
+//     I'll skip this part because I think it'll be easy to figure out.
+
+// List.iter is predominately used for eval functions that have side effects
+let printNumber x = printfn "Printing %d" x
+List.iter printNumber [1..5];;
+
 #quit;;
