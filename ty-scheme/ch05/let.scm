@@ -54,3 +54,25 @@
 ; 3
 (out (cons 1 '(2 3 4)))
 ; cons is not affected outside
+
+(define counter 0)
+(define bump-counter
+  (lambda ()
+    (set! counter (+ counter 1))
+    counter))
+
+; fluid-let allows us to temorarily set a lexical variable
+(fluid-let ((counter 99))
+  ; counter is temorarily set to 99
+  (out (bump-counter))
+  (out (bump-counter))
+  (out (bump-counter)))
+
+(out (bump-counter))
+; 1
+; the variable counter is unchanged, despite which has been used in the fluid-let above.
+
+(let ((counter 99))
+  (out (bump-counter))
+  (out (bump-counter))
+  (out (bump-counter)))
