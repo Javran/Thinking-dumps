@@ -58,3 +58,16 @@
       (write-factorial (+ i 1)))))
 
 (close-output-port outfile)
+
+; another way of reading & writing is to use 'call-with-{input,output}-file'
+; let's try to make a copy of this source code 
+(call-with-input-file "file-ports.scm"
+  (lambda (inf)
+    (call-with-output-file "file-ports.copy"
+      (lambda (ouf)
+	(let read-write-all ()
+          (define cur-ch (read-char inf))
+	  (if (eof-object? cur-ch) 'ok
+	    (begin
+	      (write-char cur-ch ouf)
+	      (read-write-all))))))))
