@@ -38,3 +38,23 @@
 	(read-next (cons cur-ch cur-content))))))
 (out (read-all infile))
 (close-input-port infile)
+
+; try to write factorials to a file
+(define factorial
+  (lambda (n)
+    (if (= n 0) 1
+      (* n (factorial (- n 1))))))
+
+(define outfile (open-output-file "factorial.txt"))
+
+(let write-factorial (
+  (i 0))
+  (if (> i 20) 'ok
+    (begin
+      (display i outfile)
+      (write-char #\space outfile)
+      (display (factorial i) outfile)
+      (newline outfile)
+      (write-factorial (+ i 1)))))
+
+(close-output-port outfile)
