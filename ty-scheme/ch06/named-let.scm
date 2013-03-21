@@ -1,10 +1,4 @@
-(define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
-
-(newline)
+(load "../common/utils.scm")
 
 ; only 'letrec' will work here
 ;     because 'let' cannot make countdown seen its definition in its body

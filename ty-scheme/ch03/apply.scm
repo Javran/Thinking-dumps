@@ -1,10 +1,4 @@
-(define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
-
-(newline)
+(load "../common/utils.scm")
 
 (define x '(1 2 3 4))
 

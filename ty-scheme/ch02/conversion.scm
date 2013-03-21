@@ -1,10 +1,4 @@
-(define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
-
-(newline)
+(load "../common/utils.scm")
 
 (out (char->integer #\d))
 ; 100

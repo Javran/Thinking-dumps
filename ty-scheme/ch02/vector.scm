@@ -1,10 +1,4 @@
-(define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
-
-(newline)
+(load "../common/utils.scm")
 
 ; summary:
 ; '(vector ... )' or '#( ... )' to make a vector

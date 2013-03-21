@@ -1,10 +1,4 @@
-(define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
-
-(newline)
+(load "../common/utils.scm")
 
 ; the s-expr below is identical
 ;     current-output-port is used if no port is given
