@@ -9,4 +9,8 @@ printfn "hex: %s" (Utilities.ConversionUtils.ConvertBase.convertToHex num)
 printfn "oct: %s" (Utilities.ConversionUtils.ConvertBase.convertToOct num)
 // 177777 
 
+// I'm confusing about why should F# have namespace and modules at the same time
+//     skiping tests on namespace, let's just follow what's been said in book:
+//     "just put everything in a module"
+
 #quit;;
