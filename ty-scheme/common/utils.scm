@@ -11,6 +11,11 @@
          ((name . pattern) template))))))
 
 
+; see:
+; http://www.ps.uni-saarland.de/courses/info-i/scheme/doc/refman/refman_11.html#IDX1288
+; in mit-scheme, `gensym` is called `generate-uninterned-symbol`
+(define gensym generate-uninterned-symbol)
+
 (define out
   (lambda (what)
     (begin
