@@ -2,6 +2,7 @@
 (load "defstruct.scm")
 
 (defstruct tree height girth age leaf-shape leaf-color)
+(defstruct test-str (a '(1 2)) b)
 
 (define coconut
   (make-tree 
