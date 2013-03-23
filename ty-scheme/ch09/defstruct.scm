@@ -23,6 +23,8 @@
           (let* (
                   (n+1 (+ n 1))
                   (vv (make-vector n+1)))
+
+            ; construct vv - the list keeping default values for all fields
             (let loop ((i 1) (ff ff))
               (if (<= i n)
                 ; take the first element from field name list
@@ -33,12 +35,14 @@
                       ;   so we extract it from the pair
                       (cadr f) 
                       ; or, we'll just simply set it as 'undefined'(denoted by (if #f #f))
+                      ; quote here to delay the evaluation
                       '(if #f #f)))
                   ; walk through all fields, store default values for them
                   (loop (+ i 1) (cdr ff)))))
 
-            (let ((ff (map (lambda (f) (if (pair? f) (car f) f))
-                       ff)))
+            (let 
+              ; make sure 'ff' contains only field names as symbols
+              ((ff (map (lambda (f) (if (pair? f) (car f) f)) ff)))
               `(begin
 
                   ; definition of the constructor
@@ -54,12 +58,14 @@
                         ; the first element is a symbol - structure name
                         (vector-set! st 0 ',s)
 
+                        ; set each field with its corresponding default value
                         ,@(let loop ((i 1) (r '()))
                             (if (> i n)
                               r
                               (loop (+ i 1)
                                     (cons `(vector-set! st ,i ,(vector-ref vv i)) r))))
 
+                        ; look through field names, override default values with assigned one
                         (let loop ((fvfv fvfv))
                           (if (not (null? fvfv))
                             (begin
@@ -70,12 +76,13 @@
                               (loop (cddr fvfv)))))
                         st)))
 
-             ; defintion of field accessors
+             ; defintion of field getter & setter
+             ; start from the first field i.e. ind = 1
              ,@(let loop ((i 1) (procs '()))
-                 (if (>= i n+1) procs
+                 (if (> i n) procs
                      (loop (+ i 1)
+                           ; get name of a field -> f
                            (let ((f (symbol->string (list-ref ff (- i 1)))))
-
                              (cons
                               `(define ,(string->symbol (string-append s-s "." f))
                                  (lambda (x) (vector-ref x ,i)))
