@@ -26,3 +26,8 @@
 ; 40
 (out (tree.girth coconut))
 ; 10
+
+(out (tree? coconut))
+; #t
+(out (tree? 'tree!))
+; #f
