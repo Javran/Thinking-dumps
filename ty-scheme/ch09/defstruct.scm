@@ -1,9 +1,13 @@
+; get the position of obj in the list
 (define list-position
-  (lambda (o l)
-    (let loop ((i 0) (l l))
-      (if (null? l) #f
-          (if (eqv? (car l) o) i
-              (loop (+ i 1) (cdr l)))))))
+  ; the function accepts 2 arg: obj and ls
+  (lambda (obj ls)
+    ; initialize index to 0, list(l) to ls
+    (let loop ((i 0) (l ls))
+      (if (null? l) 
+        #f ; the list is empty, nothing can be found
+        (if (eqv? (car l) obj) i ; ok, we've found the obj in list
+          (loop (+ i 1) (cdr l)))))))
 
 (define-syntax defstruct
   (rsc-macro-transformer 
