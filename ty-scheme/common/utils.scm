@@ -1,4 +1,3 @@
-
 ; just follow the suggestion here:
 ; http://stackoverflow.com/questions/15552057/is-it-possible-to-implement-define-macro-in-mit-scheme/
 ; we should prefer syntax-rules over define-macro
@@ -17,10 +16,10 @@
 (define gensym generate-uninterned-symbol)
 
 (define out
-  (lambda (what)
-    (begin
-      (display what)
-      (newline))))
+  (lambda items
+    (map (lambda (x)
+           (display x)
+           (newline)) items)))
 
 ; use newline to finish the line "loading XXX ..."
 (newline)
