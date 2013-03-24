@@ -10,24 +10,26 @@
     'leaf-shape 'frond
     'age 5))
 
-(out (tree.height coconut))
+(out 
+  (tree.height coconut)
+  (tree.leaf-shape coconut)
+  (tree.girth coconut))
 ; 30
-
-(out (tree.leaf-shape coconut))
 ; frond
-
-(out (tree.girth coconut))
 ; <undefined>
+
 
 (set!tree.height coconut 40)
 (set!tree.girth coconut 10)
 
-(out (tree.height coconut))
+(out
+  (tree.height coconut)
+  (tree.girth coconut))
 ; 40
-(out (tree.girth coconut))
 ; 10
 
-(out (tree? coconut))
+(out
+  (tree? coconut)
+  (tree? 'tree!))
 ; #t
-(out (tree? 'tree!))
 ; #f

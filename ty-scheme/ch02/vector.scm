@@ -26,9 +26,10 @@
 (vector-set! (vector-ref vector-2d 1) 1 "mid")
 (out vector-2d)
 
-(out (vector? "aaa"))
-; #f
-(out (vector? #()))
-; #t
-(out (vector? #(1 2 3)))
-; #t
+(out 
+  (vector? "aaa")
+  ; #f
+  (vector? #())
+  ; #t
+  (vector? #(1 2 3)))
+  ; #t
