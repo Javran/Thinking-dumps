@@ -9,7 +9,7 @@
         (if (eqv? (car l) obj) i ; ok, we've found the obj in list
           (loop (+ i 1) (cdr l)))))))
 
-(define undefined '(if #f _))
+(define undefined #!unspecific)
 
 (define-syntax defstruct
   (rsc-macro-transformer 
@@ -27,7 +27,13 @@
           (field-count (length field-defs))
           (field-syms (map symbol-of field-defs))
           (struct-size (+ field-count 1))
-          (default-field-values (make-vector struct-size))
+          (default-field-values 
+            (list->vector
+              (cons 
+                struct-name
+                (map 
+                  (lambda (field) (if (pair? field) (cadr field) undefined))
+                  field-defs))))
 
           ; function names
           (maker-func (string->symbol (string-append "make-" struct-name-str)))
@@ -37,21 +43,6 @@
           (setter-func (lambda (field-name)
                          (string->symbol (string-append "set!" struct-name-str "." field-name))))
           )
-
-          ; construct default-field-values
-          (let loop ((i 1) (cur-field-defs field-defs))
-            (if (<= i field-count)
-              ; take the first element from field name list
-              (let ((field-def (car cur-field-defs)))
-                (vector-set! default-field-values i 
-                  (if (pair? field-def)
-                    ; the constructor has default value for this field
-                    ;   so we extract it from the pair
-                    (cadr field-def) 
-                    ; or, we'll just simply set it as undefined
-                    undefined))
-                ; walk through all fields, store default values for them
-                (loop (+ i 1) (cdr cur-field-defs)))))
 
           `(begin
             ; definition of the constructor
@@ -64,7 +55,7 @@
                       ; eval & put field symbol list here
                       (field-sym-list ',field-syms))
 
-                  ; the firinst element is the structure name
+                  ; the first element is the structure name
                   (vector-set! inst 0 ',struct-name)
 
                   ; set each field with its corresponding default value
