@@ -88,3 +88,19 @@
 ; anything that does not made from 'standard-class' returns #t
 ; (#t #t #t #t <trivial-bike-class>)
 
+; getter and setter
+(define slot-value
+  (lambda (instance slot)
+    (let* (
+        (class (class-of instance))
+        (slot-index (list-position slot (standard-class.slots class)))
+        )
+      (vector-ref instance (+ slot-index 1)))))
+
+(define set!slot-value
+  (lambda (instance slot new-val)
+    (let* (
+        (class (class-of instance))
+        (slot-index (list-position slot (standard-class.slots class)))
+        )
+      (vector-set! instance (+ slot-index 1) new-val))))
