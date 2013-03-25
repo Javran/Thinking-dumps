@@ -160,3 +160,95 @@
       (lambda (e r)
         (apply xfmr (cdr e))))))
 
+
+(define send
+  (lambda (method instance . args)
+    (let (
+        ; search method through superclass-chain
+        (proc (let loop ((class (class-of instance)))
+                (if (eqv? class #t)
+                  ; root reached
+                  (error 'send)
+                  ; else
+                  (let (
+                      (method-pos (list-position
+                                    method
+                                    (standard-class.method-names class))))
+                    (if method-pos
+                      ; the method is found
+                      (vector-ref (standard-class.method-vector class) method-pos)
+                      ; else
+                      (loop (standard-class.superclass class))))))))
+      (apply proc instance args))))
+
+(define bike-class
+  (create-class
+    #t
+    (frame size parts chain tires)
+    (check-fit
+      (lambda (me inseam)
+        (let (
+            (bike-size (slot-value me 'size))
+            (ideal-size (* inseam 3/5))
+            )
+          (let (
+              (diff (- bike-size ideal-size))
+              )
+            (cond
+              ((<= -1 diff 1) 'perfect-fit)
+              ((<= -2 diff 2) 'fits-well)
+              ((< diff -2) 'too-small)
+              ((> diff 2) 'too-big))))))))
+
+(define my-bike-plus
+  (make-instance bike-class
+    'frame 'titanium
+    'size 21
+    'parts 'ultegra
+    'chain 'sachs
+    'tires 'continental))
+
+(out my-bike-plus)
+
+(out (send 'check-fit my-bike-plus 32))
+; 'fits-well
+
+(define mtn-bike-class
+  (create-class
+    ; base
+    bike-class
+    ; slots
+    (suspension)
+    ; methods
+    (check-fit
+      (lambda (me inseam)
+        (let (
+            (bike-size (slot-value me 'size))
+            (ideal-size (- (* inseam 3/5) 2))
+            )
+          (let (
+              (diff (- bike-size ideal-size))
+                )
+            (cond
+              ((<= -2 diff 2) 'perfect-fit)
+              ((<= -4 diff 4) 'fits-well)
+              ((< diff -4) 'too-small)
+              ((> diff 4) 'too-big))))))))
+
+(define my-mtn-bike
+  (make-instance mtn-bike-class
+    'frame 'titanium
+    'size 21
+    'parts 'ultegra
+    'chain 'sachs
+    'tires 'continental
+    'suspension 'unknown))
+
+(out (slot-value my-mtn-bike 'suspension))
+; unknown
+
+; check different behavior of method "check-fit"
+(out (send 'check-fit my-bike-plus 40))
+; too-small
+(out (send 'check-fit my-mtn-bike 40))
+; perfect-fit
