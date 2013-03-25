@@ -104,3 +104,59 @@
         (slot-index (list-position slot (standard-class.slots class)))
         )
       (vector-set! instance (+ slot-index 1) new-val))))
+
+(define delete-duplicates
+  (lambda (s)
+    (if (null? s)
+      s
+      (let (
+          (head (car s))
+          (tail (cdr s))
+          )
+        ; memv - if head is equal to one of the member of tail
+        ; please refer to:
+        ; http://stackoverflow.com/questions/1869116/scheme-built-in-to-check-list-containment/
+        (if (memv head tail)
+          ; then head is not needed
+          (delete-duplicates tail)
+          ; else add head in the list
+          (cons head (delete-duplicates tail)))))))
+
+; makes appropriate call to make-standard-class for us
+(define create-class-proc
+  (lambda (superclass slots method-names method-vector)
+    (make-standard-class
+      'superclass superclass
+      'slots
+        (let (
+            (superclass-slots
+              ; if the superclass is not the root class (i.e. #t)
+              (if (not (eqv? superclass #t))
+                ; derive all slots from superclass
+                (standard-class.slots superclass)
+                ; else, just return an empty list
+                '())))
+          (if (null? superclass-slots)
+            slots
+            ; append slots from superclass, and remove duplicate slots
+            (delete-duplicates
+              (append slots superclass-slots))))
+      'method-names method-names
+      'method-vector method-vector)))
+
+(define-syntax create-class
+  (rsc-macro-transformer
+    (let ((xfmr
+      (lambda (superclass slots . methods)
+      `(create-class-proc
+         ; superclass
+         ,superclass
+         ; slots
+         (list ,@(map (lambda (slot) `',slot) slots))
+         ; method-names
+         (list ,@(map (lambda (method) `',(car method)) methods))
+         ; method-vector
+         (vector ,@(map (lambda (method) `,(cadr method)) methods))))))
+      (lambda (e r)
+        (apply xfmr (cdr e))))))
+
