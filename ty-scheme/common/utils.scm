@@ -15,6 +15,8 @@
 ; in mit-scheme, `gensym` is called `generate-uninterned-symbol`
 (define gensym generate-uninterned-symbol)
 
+(define call/cc call-with-current-continuation)
+
 (define out
   (lambda items
     (map (lambda (x)
