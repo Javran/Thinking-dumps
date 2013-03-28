@@ -95,7 +95,23 @@ let lenOfSquare = square >> toString >> strLen;;
 lenOfSquare 1024;;
 // 7
 
+List.iter (printfn "%d") [1..3];;
+List.iter (printfn "%d") <| [1..3];;
 
-// TODO :)
+printfn "The result of sprintf is %s" (sprintf "(%d,%d)" 1 2);;
+// one like "$" in Haskell?
+printfn "The result of sprintf is %s" <| sprintf "(%d,%d)" 1 2;;
+
+// backward composition
+let negate x = -x;;
+(square >> negate) -2;;
+// -4
+(square << negate) -2;;
+// 4
+
+// filtering lists
+[ [1]; []; [4;5;6]; [3;4]; []; []; []; [9] ]
+    |> List.filter (not << List.isEmpty);;
+// select only those lists that are not empty
 
 #quit;;
