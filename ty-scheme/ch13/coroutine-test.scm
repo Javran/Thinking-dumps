@@ -30,8 +30,11 @@
           ((pair? tree)
               (loop (car tree))
               (loop (cdr tree)))
+          ; it's a node
           (else
+            ; send it to the match-cor
             (resume matcher-cor tree))))
+      ; nothing remaining
       (resume matcher-cor '()))))
 
 ; here we've made two leaf-gen-coroutine and a matcher-coroutine
@@ -56,5 +59,3 @@
 ; #t
 (out (same-fringe? '(1 2 (3 4 5)) '((1 2) 4 (3 5))))
 ; #f
-
-; TODO: what's happening here?
