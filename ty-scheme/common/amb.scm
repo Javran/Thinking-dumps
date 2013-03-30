@@ -7,11 +7,13 @@
         (error "amb tree exhausted")))))
 
 (initialize-amb-fail)
+; set amb-fail as a lambda
 
 (define-syntax amb
   (rsc-macro-transformer 
     (let ((xfmr (lambda alts...
 
+                  ; save the previous amb-fail state
                   `(let ((+prev-amb-fail amb-fail))
                      (call/cc
                        (lambda (+sk)
