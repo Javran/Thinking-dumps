@@ -127,4 +127,47 @@ let describeNumbers x y =
         -> "Both of the numbers are two."
     | _ -> "Other."
 
+let testXor x y =
+    match x, y with
+    | a,b when a <> b
+        -> true
+    | _ -> false;;
+
+List.iter ( printfn "%b" << (fun (a,b) -> testXor a b) ) [
+    (true,true);
+    (true,false);
+    (false,true);
+    (false,false);];;
+
+// pattern matching against list
+// looks stupid, but come on, it's merely an example after all :)
+let rec listLength l =
+    match l with
+    | []
+        -> 0
+    | [_]
+        -> 1
+    | [_; _]
+        -> 2
+    | [_; _; _]
+        -> 3
+    | head::tail
+        -> 1 + listLength tail;;
+
+List.iter ( printfn "%d" << listLength )
+    [ []; [1]; [1;2]; [for i in 1 .. 100 do yield i]];;
+// 0 1 2 100
+
+let describeOption o =
+    match o with
+    | Some(42)
+        -> "The answer was 42, but what was the question?"
+    | Some(x)
+        -> sprintf "The answer was %d" x
+    | None
+        -> "No answer found.";;
+
+List.iter ( printfn "%s" << describeOption )
+    [ Some(1); Some(2); Some(42); None ];;
+
 #quit;;
