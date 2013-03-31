@@ -46,3 +46,24 @@
 
   (lambda (e r)
     (apply xfmr (cdr e))))))
+
+(define-syntax bag-of
+  (rsc-macro-transformer
+    (let ((xfmr (lambda (e)
+
+                  `(let ((+prev-amb-fail amb-fail)
+                         (+results '()))
+                     (if (call/cc
+                           (lambda (+k)
+                             (set! amb-fail (lambda () (+k #f)))
+                             (let ((+v ,e))
+                               (set! +results (cons +v +results))
+                               (+k #t))))
+                       (amb-fail))
+                     (set! amb-fail +prev-amb-fail)
+                     ; go to hell damned "reverse!"!
+                     (reverse +results)))))
+      (lambda (e r)
+        (apply xfmr (cdr e))))))
+
+
