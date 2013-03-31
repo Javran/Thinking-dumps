@@ -72,6 +72,7 @@ let highLowGame () =
 
         printfn "Guess the secret number:"
         let guessStr = Console.ReadLine()
+        
         let guess = Int32.Parse(guessStr)
 
         match guess with
@@ -92,8 +93,38 @@ let highLowGame () =
 
     highLowGameStep();;
         
-highLowGame();;
+// uncomment to play the game
+// highLowGame();;
 
+let elem e ls =
+    Seq.exists ((=) e) ls;;
 
+let vowelTest1 c =
+    match c with
+    | 'a' | 'e' | 'i' | 'o' | 'u'
+        -> true
+    | _ -> false;;
+
+Seq.iter ( printfn "%b" << vowelTest1 ) "abcde";;
+// t f f f t 
+
+let vowelTest2 c =
+    match c with
+    | _ when elem c "aeiou"
+        -> true
+    | _ -> false;;
+
+Seq.iter ( printfn "%b" << vowelTest2 ) "abcde";;
+// t f f f t 
+
+let describeNumbers x y =
+    match x,y with
+    | 1, _
+    | _, 1
+        -> "One of the numbers is one."
+    // simply replacing the line below with "| (2,2)" will do as well
+    | (2, _) & (_, 2)
+        -> "Both of the numbers are two."
+    | _ -> "Other."
 
 #quit;;
