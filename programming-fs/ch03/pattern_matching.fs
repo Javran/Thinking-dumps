@@ -62,4 +62,38 @@ let greet3 name =
 
 List.map greet3 ["Bill G."; "Bill Gates"; Bill];;
 
+open System
+
+let highLowGame () =
+    let rng = new Random()
+    let secretNumber = rng.Next() % 100
+
+    let rec highLowGameStep () =
+
+        printfn "Guess the secret number:"
+        let guessStr = Console.ReadLine()
+        let guess = Int32.Parse(guessStr)
+
+        match guess with
+        | _ when guess > secretNumber
+            ->
+                printfn "The secret number is lower."
+                highLowGameStep()
+        | _ when guess = secretNumber
+            ->
+                printfn "You've guessed correctly."
+                ()
+        | _ when guess < secretNumber
+            ->
+                printfn "The secret number is higher."
+                highLowGameStep()
+        // fallback case to eliminate warnings
+        | _ -> ()
+
+    highLowGameStep();;
+        
+highLowGame();;
+
+
+
 #quit;;
