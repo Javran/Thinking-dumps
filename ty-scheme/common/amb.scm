@@ -72,4 +72,8 @@
       (lambda (e r)
         (apply xfmr (cdr e))))))
 
-
+; assert might not be similiar with that of assert in C language
+; here assert is supposed to be used with amb
+(define assert
+  (lambda (pred)
+    (if (not pred) (amb))))

@@ -35,12 +35,5 @@
 ; boat
 ; ok, here we've noticed amb might not fail
 ;     unless EVERYTHING put into the amb seq got failed
-
-; assert might not be similiar with that of assert in C language
-; here assert is supposed to be used with amb
-(define assert
-  (lambda (pred)
-    (if (not pred) (amb))))
-
 (out (bag-of
   (number-between 1 10)))
