@@ -36,10 +36,8 @@
 ; ok, here we've noticed amb might not fail
 ;     unless EVERYTHING put into the amb seq got failed
 
-; this definition of 'assert' looks stupid,
-;     why not just simply call 'error' but do all the things indirectly?
-;     moreover, making direct use of 'error' gives us the ability
-;     of indicating the reason of a specific failure
+; assert might not be similiar with that of assert in C language
+; here assert is supposed to be used with amb
 (define assert
   (lambda (pred)
     (if (not pred) (amb))))

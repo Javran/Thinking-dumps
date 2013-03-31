@@ -15,8 +15,7 @@
 (out (list-position 0 '(1 2 3 4 5)))
 ; #f
 
-
-; WHAT A HORRIBLE CODE! I would NEVER CODE like below
+; seems here 'reverse!' is more efficient than 'reverse' ...
 (define reverse!
   (lambda (s)
     (let loop ((s s) (r '()))
@@ -24,15 +23,15 @@
 	  (let ((d (cdr s)))
             (set-cdr! s r)
 	    (loop d s))))))
-; I don't know it's scheme's philosophy to keep variable names as brain-fuckers
 
-; and look what it did:
 (define test-list '(1 2 3 4 5))
 (out test-list)
 (out (reverse! test-list))
-; cheers! it do reverse a list
 (out test-list)
-; cheers! and it also ruins the list itself!
+; note "reverse!" tends to be DESTRUCTIVE:
+; http://www.gnu.org/software/mit-scheme/documentation/mit-scheme-ref/Miscellaneous-List-Operations.html#Miscellaneous-List-Operations
+; the comment practice is to use it with set! 
+; i.e. : (set! x (reverse! x))
 
 (define get-reverse
   (lambda (seq)
