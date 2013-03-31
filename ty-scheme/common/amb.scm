@@ -51,18 +51,24 @@
   (rsc-macro-transformer
     (let ((xfmr (lambda (e)
 
+                  ; save previous amb-fail
                   `(let ((+prev-amb-fail amb-fail)
                          (+results '()))
                      (if (call/cc
+                           ; resume point #1
                            (lambda (+k)
+                             ; only when elements in amb-fail got exhausted (in terms of 'e')
+                             ; can we escape from this 'if' statement 
                              (set! amb-fail (lambda () (+k #f)))
+                             ; eval e and save the result in list
                              (let ((+v ,e))
                                (set! +results (cons +v +results))
                                (+k #t))))
                        (amb-fail))
+                     ; rollback to previous amb-fail
                      (set! amb-fail +prev-amb-fail)
-                     ; go to hell damned "reverse!"!
-                     (reverse +results)))))
+                     ; return all results
+                     (reverse! +results)))))
       (lambda (e r)
         (apply xfmr (cdr e))))))
 

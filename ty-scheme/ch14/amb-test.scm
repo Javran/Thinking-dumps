@@ -44,6 +44,5 @@
   (lambda (pred)
     (if (not pred) (amb))))
 
-
 (out (bag-of
   (number-between 1 10)))
