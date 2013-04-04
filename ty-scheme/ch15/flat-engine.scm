@@ -1,6 +1,13 @@
-(load "../common/utils.scm")
+; please use Guile for this source file
+(load "../common/guile/utils.scm")
+(load "../common/guile/clock.scm")
 
-; how to make it work, we don't have clock
+(define *engine-escape* #f)
+(define *engine-entrance* #f)
+
+(clock 'set-handler
+       (lambda ()
+         (call/cc *engine-escape*)))
 
 (define make-engine
   (lambda (th)
@@ -28,4 +35,16 @@
               (lambda ()
                 (result 'resume)))))))))
 
+; test engine
+(define printn-engine
+  (make-engine
+    (lambda ()
+      (let loop ((i 0))
+        (if (= 0 (remainder i 10000))
+          (begin 
+            (display i)
+            (display " ")))
+        (loop (+ i 1))))))
 
+(define *more* #f)
+(printn-engine 0.5 list (lambda (ne) (set! *more* ne)))

@@ -2,6 +2,18 @@
 
 (define *infinity* +inf.0)
 
+; note: 
+; the document here might be wrong 
+; http://www.gnu.org/software/guile/docs/docs-1.8/guile-ref/Signals.html#Signals
+; you can try following procedure in your REPL:
+; (setitimer ITIMER_REAL 5 0 2 0)
+; ; signal fired after 2 sec
+; (setitimer ITIMER_REAL 2 0 5 0)
+; ; signal fired after 5 sec
+(define ualarm
+  (lambda (sec usec)
+    (setitimer ITIMER_REAL 0 0 sec usec)))
+
 (define clock
   (let ((stopped? #t)
         (clock-interrupt-handler
