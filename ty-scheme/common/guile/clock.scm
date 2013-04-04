@@ -14,6 +14,19 @@
   (lambda (sec usec)
     (setitimer ITIMER_REAL 0 0 sec usec)))
 
+(define number->second-pair
+  (lambda (n)
+    (let ((int-part (floor n)))
+      (cons (inexact->exact int-part)
+            (inexact->exact (floor (* 1000000 (- n int-part))))))))
+
+(define my-alarm
+  (lambda (n)
+    (let* ((sec-pair (number->second-pair n))
+           (sec (car sec-pair))
+           (usec (cdr sec-pair)))
+      (ualarm sec usec))))
+
 (define clock
   (let ((stopped? #t)
         (clock-interrupt-handler
@@ -53,7 +66,7 @@
                         time-remaining))))
                  (else
 
-                   (let ((time-remaining (alarm val)))
+                   (let ((time-remaining (my-alarm val)))
                      (if stopped?
                        (begin
                          (set! stopped? #f)
