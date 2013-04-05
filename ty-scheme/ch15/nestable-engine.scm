@@ -2,6 +2,10 @@
 (load "../common/guile/utils.scm")
 (load "../common/guile/clock.scm")
 
+(define clock-min min)
+(define clock-minus -)
+(define clock-plus +)
+
 (define make-engine
   (lambda (th)
     (lambda (ticks on-success on-failure)
@@ -80,6 +84,3 @@
             ((make-engine (lambda () (result 'resume)))
              ticks-left on-success on-failure)))))))
 
-
-(out (clock 'set 1))
-(sleep 10)
