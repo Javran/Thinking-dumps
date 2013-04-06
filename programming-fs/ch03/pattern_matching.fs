@@ -170,4 +170,48 @@ let describeOption o =
 List.iter ( printfn "%s" << describeOption )
     [ Some(1); Some(2); Some(42); None ];;
 
+
+// uncomment the line below and an error saying "incomplete pattern match" will emerge
+// let 1 = 2;;
+
+let addOptionValues = fun (Some(x), Some(y)) -> x+y;;
+
+addOptionValues (Some(10),Some(20));;
+// 30
+
+// wildcard pattern: '_'
+
+List.iter (fun _ -> printfn "Step...") [1..3];;
+// we don't care about the argument in this case, so we use a wildcard to ignore the arg
+
+let _, second, _ = (1,2,3);;
+printfn "The second element is %d" second;;
+
+// test if '::' in F# can achieve things just like ':' in Haskell achieves
+let a :: b :: xs = [1..10];;
+printfn "first: %d, second: %d, rest: %A" a b xs;;
+// ok, it works
+// output: f: 1, s: 2, rest: [3..10]
+
+// alternate lambda syntax
+let rec listLength theList =
+    match theList with
+    | []        -> 0
+    | [_]       -> 1
+    | [_;_]     -> 2
+    | [_;_;_]   -> 3
+    | hd::tail  -> 1 + listLength tail
+
+printfn "len: %d" <| listLength [1..10];;
+// 10
+
+let rec funListLength = 
+    function
+    | []        -> 0
+    | [_]       -> 1
+    | hd::tail  -> 1 + funListLength tail;;
+
+printfn "len: %d" <| listLength [1..100];;
+// 100
+
 #quit;;
