@@ -119,5 +119,9 @@
           (loop (+ i 1)))))))
 
 (define *more* #f)
+(out "start!")
 (printn-engine 1 list (lambda (ne) (set! *more* ne)))
+(out "resume!")
+(*more* 1 list (lambda (ne) (set! *more* ne)))
+(out "resume!")
 (*more* 1 list (lambda (ne) (set! *more* ne)))
