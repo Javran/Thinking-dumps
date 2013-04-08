@@ -66,7 +66,8 @@
                (if (not (= chunk-num 1))
                  (delete-file-if-empty outfile)))
               ((= rest-size 0) ; keep going
-               (loop (+ chunk-num 1))))))))))
+               (loop (+ chunk-num 1))))))
+        (out "file splitted.")))))
 
 ; copy content in handle to the outfile, with limited size
 ; return the remaining size (i.e. allowed size minus actual copied size)
@@ -88,8 +89,6 @@
                 (begin
                   (write-char ch out-handle)
                   (loop (- rest-size 1)))))))))))
-
-
 
 (define entry
   (lambda ()
