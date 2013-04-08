@@ -142,4 +142,27 @@ seq {
 // I think "yield!" actually provides another way of flattening a list
 // this also produce "1000" as expected
 
+// aggregate operators
+
+testSeq
+    |> Seq.take 5
+    |> Seq.iter (printfn "%d");;
+// 1 .. 5
+
+testSeq
+    |> Seq.take 5
+    |> Seq.map (( * ) 10)
+    |> Seq.iter (printfn "%d");;
+// 10, 20 .. 50
+
+testSeq
+    |> Seq.take 5
+    |> Seq.map (fun (x) -> 2 * x + 1)
+    |> Seq.fold (+) 0;;
+// 3+5+7+9+11 = 7*5 = 35
+
+seq { 1..100 }
+    |> Seq.fold (+) 0;;
+// 5050
+
 #quit;;
