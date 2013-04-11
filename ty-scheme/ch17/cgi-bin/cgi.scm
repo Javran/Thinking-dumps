@@ -111,3 +111,27 @@
                       (par-loop '())))
                   (arg-loop (cons c arg)))))
             (par-loop (cons c par))))))))
+
+(define-macro unless
+  (lambda (test . branch)
+    (list 'if
+          (list 'not test)
+          (cons 'begin branch))))
+
+; display html-encoded s to port o, if o is not given, stdout is selected.
+(define display-html
+  (lambda (s . o)
+    (let ((o (if (null? o) (current-output-port)
+                 (car o))))
+      (let ((n (string-length s)))
+        (let loop ((i 0))
+          (unless (>= i n)
+            (let ((c (string-ref s i)))
+              (display
+               (case c
+                 ((#\<) "&lt;")
+                 ((#\>) "&gt;")
+                 ((#\") "&quot;")
+                 ((#\&) "&amp;")
+                 (else c)) o)
+              (loop (+ i 1)))))))))
