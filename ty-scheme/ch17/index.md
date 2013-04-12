@@ -6,3 +6,4 @@
 * [url-decode.scm - test "url-decode" of "cgi.scm"](/cgi-bin/url-decode.scm?20%25+%2b+30%25+%3d+50%25%2c+%26c%2e)
 * [selected-env2.html - test simplified version](/selected-env2.html)
 * [selected-env-demo2 - test simplified version](/cgi-bin/testcgi2-simplified.scm?envvar=SERVER_PROTOCOL)
+* [cgicalc - a scheme calculator](/cgi-bin/cgicalc.scm)

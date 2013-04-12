@@ -62,6 +62,25 @@
     (display "<input type=reset value=\"Clear\">")
     (display "</form>")))
 
+(define print-example
+  (lambda (expr)
+    (display "<li>")
+    (display expr)
+    (display "</li>")))
+
+(define print-examples
+  (lambda ()
+    (display "<ul>")
+    (for-each print-example
+              '(
+                "1234"
+                "(+ 1 2 3 4 5)"
+                "(* 1 2 3 4 5 6 7 8 9 10)"
+                "(* 5 (- 5 (/ 1 5)))"
+                "(** 2 64)"
+                ))
+    (display "</ul>")))
+
 (parse-form-data)
 
 (print-page-begin)
@@ -86,5 +105,9 @@
             (number->string
               (calc-eval (read (open-input-string expr)))))))
       (display "<p>"))))
+
+(display "<h2>Try test cases:</h2>")
+; TODO: item -> links, hint: need url encoding
+(print-examples)
 
 (print-page-end)
