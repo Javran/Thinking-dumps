@@ -67,4 +67,42 @@ open Microsoft.FSharp.Data.UnitSystems.SI.UnitNames
 let flashlightIntensity = 80.0<cd>;;
 let world'sLargestGoldNugget = 280.0<kilogram>;;
 
+[<Measure>]
+type rads;;
+
+let halfPI = System.Math.PI * 0.5<rads>;;
+
+// remove UoM before using sin
+sin( float halfPI );;
+
+// make type inference take care of measurement unit
+let genericsSquare (x: float<_>) = x * x;;
+
+genericsSquare 1.0<m/s>;;
+genericsSquare 1.0<m^2>;;
+genericsSquare 1.0;;
+
+// represents a point respecting the unit of measurement
+type Point< [<Measure>] 'u > (x: float<'u>, y: float<'u>) =
+    member this.X = x
+    member this.Y = y
+
+    // remove unit
+    member this.UnitlessX = float x
+    member this.UnitlessY = float y
+
+    member this.Length =
+        let sqr x = x * x
+        sqrt <| sqr this.X + sqr this.Y
+
+    override this.ToString() =
+        sprintf
+            "{%f,%f}"
+            this.UnitlessX
+            this.UnitlessY
+
+// I think it's a cool feature but kinda verbose
+let p = new Point<m>(10.0<m>, 10.0<m>);;
+p.Length;;
+
 #quit;;
