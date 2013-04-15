@@ -132,6 +132,78 @@ describeArray [| (1,2,3) |];;
 
 // array module functions
 
-// TODO :)
+// Array.init 
+Array.init 10 (fun ind -> ind);;
+// [|0;1;2...;9|]
+
+// Array.zeroCreate
+(Array.zeroCreate 10 : int []);;
+// [|0;0;0...;0|]
+
+let isGreaterThanTen x = x > 10;;
+
+// Array.partition: break an array into 2 arraries according to if the element meets a condition
+Array.init 10 (fun x -> 2*x+1) |> Array.partition isGreaterThanTen;;
+
+// Array.tryFind
+let rec isPowerOfTwo =
+    function
+    | 2 ->
+        true
+    | x when x % 2 = 1 ->
+        false
+    | x ->
+        isPowerOfTwo (x/2);;
+
+let testCase1 = [| 1; 7; 13; 64; 32 |]
+
+Array.tryFind isPowerOfTwo testCase1;;
+// Some 64
+
+Array.tryFindIndex isPowerOfTwo testCase1;;
+// Some 3
+        
+// aggregate operators
+let vowels = Array.ofSeq "aeiou";;
+
+Array.iteri (fun idx chr -> printfn "vowel.[%d] = %c" idx chr) vowels;;
+
+// multidimentional arrays
+// * rectangle arrays, including Array2D and Array3D
+// * jagged arrays 
+//     (I think there is no difference between this kind of arrays and regular arrays)
+
+let identityMatrix1 = Array2D.zeroCreate 3 3
+identityMatrix1.[0,0] <- 1.0
+identityMatrix1.[1,1] <- 1.0
+identityMatrix1.[2,2] <- 1.0
+
+let identityMatrix2 =
+    let constructIdentity x y =
+        if x = y
+            then 1.0
+            else 0.0
+
+    Array2D.init 3 3 constructIdentity;;
+    
+identityMatrix1 = identityMatrix2;;
+// true
+
+// supports slicing
+identityMatrix2.[*,1..2];;
+
+Array2D.init 2 4 (fun x y-> sprintf "(%d,%d)" x y);;
+Array3D.init 2 3 4 (fun x y z -> 100*x + 10*y + z);;
+
+let jaggedArray1 : int[][] = Array.zeroCreate 3
+jaggedArray1.[0] <- Array.init 1 (fun x -> x)
+jaggedArray1.[1] <- Array.init 2 (fun x -> x)
+jaggedArray1.[2] <- Array.init 3 (fun x -> x);;
+
+let jaggedArray2 : int[][] = 
+    Array.init 3 (fun x -> Array.init (x+1) (fun x -> x) );;
+
+jaggedArray1 = jaggedArray2;;
+// true
 
 #quit;;
