@@ -36,3 +36,7 @@
 
 ; I'd like to see what's wrong with my understanding, waiting answers here:
 ; http://stackoverflow.com/questions/16036139/seek-for-some-explanation-on-sicp-exercise-1-5
+; well the point is: when `(test 0 (p))` got expanded to `(if (= 0 0) 0 (p))`
+; we have to evaluate `(= 0 0)` before we can tell which branch should we expand
+; since `(= 0 0)` evaluates to #f, `(p)` will never be evaluated.
+; I didn't notice "if" shares same behavior in normal-order & applicative-order evaluation
