@@ -39,3 +39,35 @@
   (sqrt 100000)
   ; 316.2
   )
+
+; I'd like to abstract the computation of Newton's method.
+; My idea is:
+; TODO: the code here is just a naive skeleton, need to make it work
+(define do-newton-method
+  (lambda (prev-guess     ; the previous guess, #f for the initial call
+           current-guess  ; the current guess
+           target-func    ; target func, we want (target-func current-guess) to be zero
+           refine-func    ; how we refine a value, 
+                          ;     will be called like (refine-func current-guess target)
+           good-enough?   ; criteria of the value, do we need to stop?
+                          ;     will be called like (good-enough? prev-guess current-guess)
+           )
+    (if (not prev-guess)
+      ; if it's the initial call
+      (do-newton-method
+        current-guess
+        (refine-func current-guess (target-func current-guess))
+        target-func
+        refine-func
+        good-enough?)
+      ; else we have a prev-guess available
+      (if (good-enough? prev-guess current-guess)
+        ; yes, good-enough, return it.
+        current-guess
+        ; need to refine
+        (do-newton-method
+          current-guess 
+          (refine-func current-guess (target-func current-guess))
+          target-func
+          refine-func
+          good-enough?)))))
