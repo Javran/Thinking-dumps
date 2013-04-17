@@ -4,7 +4,10 @@
 ; for example: if we guess y1*y1 = x, by calculating y2 = (y1+(x/y1))/2, 
 ;     we'll have a better y2 that y2*y2 is closer to x than y1*y1 is
 
-; TODO: figure out why
+; refer to: Newton's method
+; http://en.wikipedia.org/wiki/Newton%27s_method
+; we need (* guess guess) to be (sqrt x)
+; the result is: x(n+1) = (guess + x(n)/guess)/2
 
 (define (square x) (* x x))
 
