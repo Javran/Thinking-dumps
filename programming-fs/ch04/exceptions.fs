@@ -70,6 +70,8 @@ let getFileInfo filePath =
         printfn "Unhandled Exception: %s" ex.Message
         5
 
+// ":?" is call a "dynamic type test operator", does what its name suggests
+
 [ @"X:\NoSuchDrive\a"
 ; @"D:\NoSuchDir\a"
 ; @"D:\tmp\NoSuchFile"
@@ -94,6 +96,60 @@ let test() =
 
 test();;
 // note: there is no "try-catch-finally" expression in F# ...
+
+// reraising exceptions
+let tryWithBackOff f times =
+    let mutable attempt = 1
+    let mutable success = false
+
+    while not success do
+        try
+            printfn "Try to run the function ..."
+            f()
+            success <- true
+        with ex ->
+            attempt <- attempt + 1
+            if attempt >= times then
+                reraise()
+
+let errorFunction _ =
+    raise <| new System.Exception("Test Exception")
+    ();;
+
+try
+    tryWithBackOff errorFunction 5
+with ex ->
+    printfn "tryWithBackOff failed for %d time, because: %s" 5 ex.Message
+
+// defining exceptions
+
+// F# provides some lightweight exception syntax
+
+open System
+open System.Collections.Generic
+
+exception ErrorWithoutArg
+exception ErrorWithReason of string
+exception ErrorWithTuple of int * int
+
+let raiseSpecialError errId =
+    try
+        match errId with
+        | 0 -> raise <| ErrorWithoutArg
+        | 1 -> raise <| ErrorWithReason "Test error"
+        | 2 -> raise <| ErrorWithTuple (123,456)
+        | _ -> ()
+    with
+    | ErrorWithoutArg ->
+        printfn "Error without argument"
+    | ErrorWithReason(r) ->
+        printfn "Error with reason: %s" r
+    | ErrorWithTuple(a,b) ->
+        printfn "Error with a tuple: %A" (a,b)
+    
+raiseSpecialError 0
+raiseSpecialError 1
+raiseSpecialError 2
 
 
 #quit;;
