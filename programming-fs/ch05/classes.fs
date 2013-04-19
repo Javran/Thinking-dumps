@@ -127,4 +127,15 @@ type GenRec<'a,'b> = { Field1 : 'a; Field2 : 'b };;
 let x = { Field1 = "Blue"; Field2 = (1,2) };;
 // GenRec<string,(int * int)>
 
+open System
+
+type Circle(m_radius) =
+    // we don't have to use "val" I think ...
+
+    member foo.Radius = m_radius
+    member bar.Area = Math.PI * bar.Radius * bar.Radius
+
+// it seems when we define something like "a.b"
+//     the instance itself is actually bound to variable name "a" (I guess)
+
 #quit;;
