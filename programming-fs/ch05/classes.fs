@@ -91,4 +91,40 @@ new Point3("1.0,10.0")
 
 // generic classes
 
+// F# use 'a, 'b, 'c ... as convension for generic types
+
+type Arrayify<'a>(x : 'a) =
+    let infiniteSeqOf x = seq { while true do yield x }
+    let arrayRepeat x times = Seq.toArray <| Seq.take times (infiniteSeqOf x)
+
+    member this.EmptyArray : 'a[] = arrayRepeat x 0 
+    member this.ArraySize1 : 'a[] = arrayRepeat x 1
+    member this.ArraySize2 : 'a[] = arrayRepeat x 2
+    member this.ArraySize3 : 'a[] = arrayRepeat x 3
+
+let arrayifyTuple = new Arrayify<int * int>( (10,27) );;
+arrayifyTuple.ArraySize3;;
+// [| (10,27); (10,27); (10;27) |]
+
+// compiler can infer types for us
+let infered = new Arrayify<_>( "string" );;
+// Arrayify<string>
+
+
+// we can make records and discriminated unions as generic types
+// discriminated unions
+type GenDU<'a> =
+    | Tag1 of 'a
+    | Tag2 of string * 'a list
+
+Tag1 "aaa";;
+// GenDu<string>
+Tag2 ("11",[(1,1)]);;
+// GenDu<int * int>
+
+type GenRec<'a,'b> = { Field1 : 'a; Field2 : 'b };;
+
+let x = { Field1 = "Blue"; Field2 = (1,2) };;
+// GenRec<string,(int * int)>
+
 #quit;;
