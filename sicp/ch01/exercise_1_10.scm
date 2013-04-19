@@ -49,3 +49,49 @@
 
 (out (A 3 3))
 ; 65536
+
+; * mathematical definition of (A 0 n):
+; => (A 0 n)
+; => (* 2 n)
+; definition:
+; f n = (A 0 n) = n*2
+
+; * mathematical definition of (A 1 n):
+; => (A 1 n)
+; => (A 0 (A 1 (- n 1)))
+; => ...
+; when (A 1 n) reaches (A 1 1), there'll be (n-1) "(A 0 "s on the left and (n-1) ")"s on the right
+;     each "(A 0 _)" multiples "_" by 2
+; g n = (A 1 n) = 2^n (n > 0)
+; when n = 0, g 0 = (A 1 0) = 0
+; (A 1 n) will become an infinite loop when n < 0
+; definition:
+; g n = 2^n (n > 0)
+; g 0 = 0
+
+; * mathematical definition: of (A 2 n):
+; => (A 2 n)
+; => (A 1 (A 2 (- n 1)))
+; because h n = (A 2 n), so (A 2 (- n 1)) = h (- n 1)
+; we have: h n = (A 1 (h (- n 1))) = g (h (- n 1)) = 2^(h (- n 1)) (n > 0)
+; and h 1 = (A 2 1) = 2
+; h 1 = 2
+; h 2 = 2^(h 1) = 2^2
+; h 3 = 2^(h 2) = 2^(2^2)
+; ...
+; when n = 0
+; h 0 = (A 2 0) = 0
+; definition:
+; h n = 2^(2^(2^(...))) (n > 1) ; we'll have n "2"s on the right side
+; h 0 = 0
+
+(define func-compare
+  (lambda (f1 f2 testcases)
+    (out "test cases:")
+    (out testcases)
+    (let ((result
+            (every (lambda (x) (= (f1 x) (f2 x)))
+                   testcases)))
+      (if result
+        (out "Test passed")
+        (out "Test failed")))))
