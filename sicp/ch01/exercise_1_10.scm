@@ -83,7 +83,27 @@
 ; h 0 = (A 2 0) = 0
 ; definition:
 ; h n = 2^(2^(2^(...))) (n > 1) ; we'll have n "2"s on the right side
+; h 1 = (A 2 1) = 2
 ; h 0 = 0
+
+(define (f n) (A 0 n))
+(define (f-A-free n)
+  (* 2 n))
+
+(define (g n) (A 1 n))
+(define (g-A-free n)
+  (if (= n 0)
+    0
+    (expt 2 n)))
+
+(define (h n) (A 2 n))
+(define (h-A-free n)
+  (if (= n 0)
+    0
+    (if (= n 1)
+      2
+      (expt 2 (h-A-free (- n 1))))))
+
 
 (define func-compare
   (lambda (f1 f2 testcases)
@@ -95,3 +115,12 @@
       (if result
         (out "Test passed")
         (out "Test failed")))))
+
+(out "Verify (f n):")
+(func-compare f f-A-free '(0 1 2 3 4 5))
+
+(out "Verify (g n):")
+(func-compare g g-A-free '(0 1 2 3 4 5))
+
+(out "Verify (h n):")
+(func-compare h h-A-free '(0 1 2 3 4))
