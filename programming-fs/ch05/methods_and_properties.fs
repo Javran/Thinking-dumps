@@ -64,5 +64,52 @@ let testSettingPropInConstrutor () =
 
 // methods
 
+// seems no way to define mutable members by implicit constructor ...
+type Television = 
+    val mutable m_channel : int
+    val mutable m_turnedOn : bool
+
+    new () = { m_channel = 3; m_turnedOn = true}
+
+    member this.TurnOn () =
+        printfn "Turning on ..."
+        this.m_turnedOn <- true
+
+    member this.TurnOff () =
+        printfn "Turnning off ..."
+        this.m_turnedOn <- false
+
+    member this.ChangeChannel (newChannel : int) =
+        if this.m_turnedOn = false
+            then failwith "Cannot change channel, the TV is not on."
+        printfn "Changing channel to %d ..." newChannel
+        this.m_channel <- newChannel
+    member this.CurrentChannel = this.m_channel
+
+let testTV =
+    let tv = new Television()
+
+    tv.TurnOff()
+    tv.TurnOn()
+    tv.ChangeChannel 0
+    printfn "TV channel: %d" tv.CurrentChannel;;
+
+// it's great that method can be partially applied,
+//     but the best practice is to use tuple to pass argument
+//     note when referenced from other .Net languages, the argument will be "flatten"
+
+// implicit constructor by using "()", which were ignored, might not compile.
+type Adder () =
+    member this.AddTwoParams = (+)
+    member this.AddTwoTupledParams(x,y) = this.AddTwoParams x y;;
+
+let testAdder =
+    let a = new Adder()
+    let b = a.AddTwoParams 1
+
+    printfn "%d" (b 2)
+    // 1+2=3
+    printfn "%d" (a.AddTwoTupledParams(3,4))
+    // 3+4=7
 
 #quit;;
