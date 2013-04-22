@@ -112,4 +112,34 @@ let testAdder =
     printfn "%d" (a.AddTwoTupledParams(3,4))
     // 3+4=7
 
+// static members
+// "static" keyword, without self identifier
+
+type StaticMethodTest() =
+    static member StaticMember () = 5;;
+
+StaticMethodTest.StaticMember();;
+// 5
+
+// a rare type that can only be initialized for limited times
+type RareType () =
+    static let mutable m_numLeft = 2
+
+    do
+        if m_numLeft <= 0
+            then failwith "No more left!"
+        m_numLeft <- m_numLeft - 1
+        printfn "Initialized a rare type, only %d left!" m_numLeft
+    static member NumLeft () = m_numLeft
+
+let testRareType =
+    let mightFail f =
+        try
+            f()
+        with
+        | _ as ex ->
+            printfn "Failed: %s" ex.Message
+
+    Seq.iter (fun _ -> ignore <| new RareType()) [1..5];;
+
 #quit;;
