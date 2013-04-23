@@ -135,11 +135,12 @@ type RareType () =
 let testRareType =
     let mightFail f =
         try
-            f()
+            ignore <| f()
         with
         | _ as ex ->
             printfn "Failed: %s" ex.Message
 
-    Seq.iter (fun _ -> ignore <| new RareType()) [1..5];;
+    // try to initialize the list for 5 times
+    Seq.iter (fun _ -> ignore <| mightFail (fun () -> new RareType())) [1..5];;
 
 #quit;;
