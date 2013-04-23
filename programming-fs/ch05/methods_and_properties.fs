@@ -143,4 +143,94 @@ let testRareType =
     // try to initialize the list for 5 times
     Seq.iter (fun _ -> ignore <| mightFail (fun () -> new RareType())) [1..5];;
 
+// please refer to :
+// http://stackoverflow.com/questions/16162722/can-we-have-more-generic-type-to-shorten-this-code-in-f/
+// http://msdn.microsoft.com/en-us/library/dd548047.aspx
+open LanguagePrimitives
+
+type BitCounter =
+    static member inline CountBitsWithRangedMask x upBound =
+        seq { for i = GenericZero to upBound do yield GenericOne <<< i }
+            |> Seq.map ((&&&) x)
+            |> Seq.filter ((<>) GenericZero)
+            |> Seq.length
+
+    static member CountBits (x : int16) =
+        BitCounter.CountBitsWithRangedMask x 15
+    
+    static member CountBits (x : int) =
+        BitCounter.CountBitsWithRangedMask x 31
+
+    static member CountBits (x : int64) =
+        BitCounter.CountBitsWithRangedMask x 63
+
+// accessibility modifiers
+
+// public: visible from anywhere
+// private: only visible among class members
+// internal: visible inside assembly
+
+open System
+
+// hiding main constructor
+type internal Ruby private(shininess, carats) =
+    let mutable m_size = carats
+    let mutable m_shininess = shininess
+
+    // polishing increases shininess but decreases size
+    member this.Polish() =
+        this.Size <- this.Size - 0.1
+        m_shininess <- m_shininess + 0.1
+
+    // getter & setter
+    member public this.Size with get() = m_size
+    member private this.Size with set newSize = m_size <- newSize
+
+    member this.Shininess = m_shininess
+
+    public new() =
+        let rng = new Random()
+        let s = float ( rng.Next() % 100 ) * 0.01
+        let c = float ( rng.Next() % 16 ) + 0.1
+        new Ruby(s, c)
+
+    public new(carats) =
+        let rng = new Random()
+        let s = float ( rng.Next() % 100) * 0.01
+        new Ruby(s,carats)
+
+    override this.ToString() =
+        sprintf "Ruby: Shininess: %f, Size: %f" this.Shininess this.Size
+
+
+let testRuby =
+    let r1 = new Ruby()
+    printfn "%A" r1
+    r1.Polish()
+    printfn "%A" r1
+    
+    let r2 = new Ruby(0.5)
+    printfn "%A" r2
+    r2.Polish()
+    printfn "%A" r2
+
+// accessibility modifiers on module values
+open System.IO
+open System.Collections.Generic
+
+module Logger =
+    let mutable private m_filesToWriteTo = new List<string>()
+    let AddLogFile(filePath) = m_filesToWriteTo.Add( filePath )
+    let LogMessage(message:string) =
+        Seq.iter 
+            (fun filePath ->
+                use file = new StreamWriter(filePath, true)
+                file.WriteLine(message)
+                file.Close())
+            m_filesToWriteTo
+
+Logger.LogMessage "Nothing"
+Logger.AddLogFile "test.log"
+Logger.LogMessage "New log file: test.log"
+
 #quit;;
