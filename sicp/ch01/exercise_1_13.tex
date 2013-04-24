@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\begin{document}
+
+\section*{Proof of exercise 1.13 in SICP}
+
+
+When $n=0$
+\begin{equation*}
+	\frac{\phi^0-\psi^0}{\sqrt{5}} = 0 = Fib(0)
+\end{equation*}
+
+When $n=1$
+\begin{equation*}
+	\frac{\phi^1-\psi^1}{\sqrt{5}} = 1 = Fib(1)
+\end{equation*}
+
+Assume when $n=k$
+\begin{equation*}
+	Fib(k) = \frac{\phi^k-\psi^k}{\sqrt{5}}
+\end{equation*}
+
+\begin{align*}
+	Fib(k-1) + Fib(k) 
+	& = \frac{\phi^{k-1}-\psi^{k-1}}{\sqrt{5}} + \frac{\phi^k-\psi^k}{\sqrt{5}} \\
+	& = \frac{1}{\sqrt{5}} \left ( \left ( \phi^{-1}+1 \right )\phi^k + \left ( \psi^{-1}+1 \right )\psi^k \right ) \\
+	& = \frac{\phi^{k+1}-\psi^{k+1}}{\sqrt{5}} \\
+	& = Fib(k+1)
+\end{align*}
+
+Then we need to prove:
+\begin{equation*}
+	\left | Fib(n)-\frac{\phi^n}{\sqrt{5}}\right | < \frac{1}{2}
+\end{equation*}
+
+\begin{align*}
+	\left | Fib(n)-\frac{\phi^n}{\sqrt{5}} \right | & = \left | \frac{\psi^n}{\sqrt{5}} \right | \\
+	& = \frac{ \left ( \frac{\sqrt{5}-1}{2} \right )^n }{\sqrt{5}} < \frac{1}{2}
+\end{align*}
+
+\end{document}
