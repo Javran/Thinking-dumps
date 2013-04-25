@@ -19,22 +19,6 @@
 ; so fib 38 is called at least 2 times, each time it need to do the same task
 ; when fib is applied with a big number, the time consumption might not be affordable.
 
-; calculate time difference
-(define time-test
-  (lambda (f . args)
-    (let ((start-time (real-time-clock)))
-      ; require the value immediately to force it
-      start-time
-      (apply f args)
-      (let* ((end-time (real-time-clock))
-             (diff-time (- end-time start-time)))
-        ; force it
-        diff-time
-        (display "Time elapsed: ")
-        (display diff-time)
-        (newline)
-        diff-time))))
-
 (define (print-func func testcases)
   (out "== Print Begin ==")
   (for-each
