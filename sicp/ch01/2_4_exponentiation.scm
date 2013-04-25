@@ -31,3 +31,7 @@
 (out (fast-expt 2 10))
 ; 1024
 
+(time-test my-expt 2 10000)
+(time-test my-expt-2 2 10000)
+(time-test fast-expt 2 10000)
+; fast-expt should always be the fastest one
