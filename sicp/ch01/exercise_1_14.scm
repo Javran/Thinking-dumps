@@ -56,3 +56,5 @@
 ; (cc 11 3) => (+ 3 1) = 4
 ; (cc 11 4) => 4
 ; (cc 11 5) => 4
+
+; TODO: finish the remained task, draw the tree if possible
