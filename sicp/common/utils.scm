@@ -23,17 +23,18 @@
            (newline)) items)))
 
 ; calculate time difference
+; returns a pair (return value . time elapsed)
 (define time-test
   (lambda (f . args)
     (let ((start-time (real-time-clock)))
       ; require the value immediately to force it
       start-time
-      (apply f args)
-      (let* ((end-time (real-time-clock))
-             (diff-time (- end-time start-time)))
-        ; force it
-        diff-time
-        (display "Time elapsed: ")
-        (display diff-time)
-        (newline)
-        diff-time))))
+      (let ((f-result (apply f args)))
+        (let* ((end-time (real-time-clock))
+               (diff-time (- end-time start-time)))
+          ; force it
+          diff-time
+          (display "Time elapsed: ")
+          (display diff-time)
+          (newline)
+        (cons f-result diff-time))))))
