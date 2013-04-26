@@ -16,13 +16,25 @@
     (error "x is odd")
     (/ x 2)))
 
+; the performan relies heavily on the size of 'b'
+; we need to focus on reducing 'b' rather than reducing 'a'
 (define (fast-mul a b)
   (cond ((= b 0) 0)
-        ((odd? a) (+ a (fast-mul a (- b 1))))
-        (else (double (fast-mul (halve a) b)))))
+        ((odd? b) (+ a (fast-mul a (- b 1))))
+        (else (double (fast-mul a (halve b))))))
+
+; the previous code is mistakenly written as:
+; (define (fast-mul a b)
+;   (cond ((= b 0) 0)
+;         ((odd? a) (+ a (fast-mul a (- b 1))))
+;         (else (double (fast-mul (halve a) b)))))
+; which failed to reduce 'b' thus does not help on reducing time complexity
+
 
 (out (fast-mul 123 456))
 
-(time-test my-mul 12345 39999)
-(time-test fast-mul 12345 39999)
-; why the heck is fast-mul so slow???
+(time-test my-mul 1234 34567)
+(time-test fast-mul 1234 34567)
+; the latter should be much more faster.
+
+; here I have an idea: swap 'a' and 'b' if 'b' is larger than 'a' ...
