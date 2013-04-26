@@ -25,3 +25,13 @@
 
 ; equality test
 (out (= (expt 3 10000) (my-expt 3 10000)))
+
+; explanation on why the computation can be done within a logarithmic number of steps:
+; assume the time consumption of f is:
+; f(n) = f(n/2) + c0 (n is even)
+; f(n) = f(n-1) + c1 (n is odd)
+; for the best case
+; f(n) = f(n/2) + c0 = f(n/4) + 2c0 ... ~= c0 * log(n)
+; for the worst case
+; f(n) = f(n-1) + c1 = f((n-1)/2) + c0 + c1 = f((n-1)/2-1) + c0 + 2c1 ... ~= (c0+c1) * log(n)
+; => f(n) = theta( log(n) )
