@@ -14,9 +14,10 @@ type ChessPiece =
     | King      = 10
 
 let createChessBoard () =
-    let board = Array2D.init 8 8 (fun _ _ -> ChessPiece.Empty)
+    let board = Array2D.create 8 8 ChessPiece.Empty
 
     // place pawns
+    // I think "enum<'a>" works just like a type converter
     for i = 0 to 7 do
         board.[1,i] <- ChessPiece.Pawn
         board.[6,i] <- enum<ChessPiece> (-1 * int ChessPiece.Pawn)
@@ -53,5 +54,33 @@ System.Enum.IsDefined(typeof<ChessPiece>, int ChessPiece.Rook);;
 // true
 System.Enum.IsDefined(typeof<ChessPiece>, 12345);;
 // false
+
+// FYI:
+// FlagsAttribute Class:
+// http://msdn.microsoft.com/en-us/library/system.flagsattribute.aspx
+
+open System
+
+type FlagsEnum =
+    | OptionA = 0b0001
+    | OptionB = 0b0010
+    | OptionC = 0b0100
+    | OptionD = 0b1000
+
+let isFlagSet (enumVal: FlagsEnum) (flag: FlagsEnum) =
+    let flagName = Enum.GetName(typeof<FlagsEnum>, flag)
+    if enumVal &&& flag = flag
+        then printfn "Flag [%s] is set." flagName
+        else printfn "Flag [%s] is not set." flagName
+
+
+let customFlags = FlagsEnum.OptionA ||| FlagsEnum.OptionC
+
+// Poor compatibility ... damn it
+// http://cs.hubfs.net/topic/None/59580
+let allFlags = Enum.GetValues(typeof<FlagsEnum>) :?> int[];;
+allFlags
+    |> Seq.map enum<FlagsEnum>
+    |> Seq.iter (fun mask -> isFlagSet customFlags mask);;
 
 #quit;;
