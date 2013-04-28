@@ -67,3 +67,5 @@
 ; #f (in most cases)
 (out (fast-prime? 997 5))
 ; #t
+(out (fast-prime? 2147483647 5))
+; #t
