@@ -38,3 +38,5 @@
           (display diff-time)
           (newline)
         (cons f-result diff-time))))))
+
+(define (square x) (* x x))
