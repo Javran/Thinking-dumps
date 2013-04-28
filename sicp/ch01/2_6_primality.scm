@@ -52,3 +52,18 @@
 
 (out (time-test expmod 23 4567 8901))
 ; (8717 . <time>)
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod-i a n n) a))
+  (try-it (random-range-in 1 (- n 1))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else false)))
+
+(out (fast-prime? 123 5))
+; #f (in most cases)
+(out (fast-prime? 997 5))
+; #t
