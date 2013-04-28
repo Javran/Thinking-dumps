@@ -45,7 +45,7 @@
     (cond ((= count 0) (remainder n m)) ; count = 0, (base^count * n) mod m = n mod m
           ((even? count)
             ; (base^count * n) mod m = ((base^2)^(count/2) * n) mod m
-            (expmod-iter (square base) (/ count 2) m n))
+            (expmod-iter (remainder (square base) m) (/ count 2) m n))
           (else
             (expmod-iter base (- count 1) m (remainder (* base n) m)))))
   (expmod-iter base count m 1))
