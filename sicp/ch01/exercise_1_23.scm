@@ -44,15 +44,22 @@
   (+ x 1))
 
 (define (verbose-prime-test n)
-  (display "input: ")
-  (display n)
-  (newline)
-  (display "original-next output : ")
-  (display (tracked-prime? n original-next))
-  (newline)
-  (display "optimized-next output: ")
-  (display (tracked-prime? n next))
-  (newline))
+  (let ((ori-result (tracked-prime? n original-next))
+        (opt-result (tracked-prime? n next)))
+    (display "input: ")
+    (display n)
+    (newline)
+    (display "original-next output : ")
+    (display ori-result)
+    (newline)
+    (display "optimized-next output: ")
+    (display opt-result)
+    (newline)
+    (display "speed ratio: (ori/opt) = ")
+    (display (exact->inexact 
+               (/ (cdr ori-result)
+                  (cdr opt-result))))
+    (newline)))
 
 (verbose-prime-test 100000007)
 ; (#t . 39999)
@@ -60,4 +67,10 @@
 
 ; for number 100000007, the time consumption is roughly as expected
 ; let's test other cases
-
+(for-each
+  verbose-prime-test
+  '(    1009    1013    1019
+       10007   10009   10037
+      100003  100019  100043
+     1000003 1000033 1000037))
+; all speed ratio should be close to 2
