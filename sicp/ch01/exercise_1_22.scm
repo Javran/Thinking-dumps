@@ -57,12 +57,14 @@
 (out (search-for-primes 10 100 5))
 
 (begin
-  (out (search-for-primes   1000 #f 3))
+  (out (search-for-primes    1000 #f 3))
   ; (1009 1013 1019)
-  (out (search-for-primes  10000 #f 3))
+  (out (search-for-primes   10000 #f 3))
   ; (10007 10009 10037)
-  (out (search-for-primes 100000 #f 3))
+  (out (search-for-primes  100000 #f 3))
   ; (100003 100019 100043) 
+  (out (search-for-primes 1000000 #f 3))
+  ; (1000003 1000033 1000037)
   )
 
 ; (runtime) is too small to come up with a conclusion 
