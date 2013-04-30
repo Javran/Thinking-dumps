@@ -132,4 +132,48 @@ let testCountLetters =
     printfn "%d,%d" countResult actualResult
     // 58,58
 
+// active pattern can be used anywhere that pattern matching can be used
+
+let testActivePattern =
+    let (|ToUpper|) (input:string) = input.ToUpper()
+    let f (ToUpper x) = printfn "x = %s" x
+    
+    f "this is lower case";;
+
+// active patterns can be combined by using "&"
+let (|KBInSize|MBInSize|GBInSize|) (_,size) =
+    let block = 1024L
+    if size < block * block
+        then KBInSize
+    else if size < block * block * block
+        then MBInSize
+        else GBInSize
+
+let (|IsImageFile|_|) (fileName,size) =
+    let (|EndsWithExtension|) (input:string,_) =
+        input.Substring(input.LastIndexOf('.'))
+
+    match (fileName,size) with
+    | EndsWithExtension ".jpg"
+    | EndsWithExtension ".bmp"
+    | EndsWithExtension ".gif" ->
+        Some()
+    | _ ->
+        None
+
+let ImageTooBigForEmail =
+    function
+    | IsImageFile & (MBInSize | GBInSize) -> true
+    | _ -> false
+
+[ "aa.jpg", 10000L 
+; "bb.gif", 100000000L
+; "cc.txt", 1L]
+    |> Seq.map ImageTooBigForEmail
+    |> Seq.iter (printfn "%b")
+// false,true,false
+
+// nesting active patterns
+// TODO :)
+
 #quit;;
