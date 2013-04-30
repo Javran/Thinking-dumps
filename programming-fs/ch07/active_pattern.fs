@@ -174,6 +174,57 @@ let ImageTooBigForEmail =
 // false,true,false
 
 // nesting active patterns
-// TODO :)
+
+#r "System.Xml.dll"
+open System.Xml
+
+let (|Elem|_|) name (inp: XmlNode) =
+    if inp.Name = name
+        then Some(inp)
+        else None
+
+let (|Attributes|) (inp: XmlNode) =
+    inp.Attributes
+
+let (|Attr|) attrName (inp: XmlAttributeCollection) =
+    match inp.GetNamedItem(attrName) with
+    | null -> failwithf "Attribute %s not found" attrName
+    | attr -> attr.Value
+
+type Part =
+    | Widget    of float
+    | Sprocket  of string * int
+
+let ParseXmlNode element =
+    match element with
+    | Elem "Widget" xmlElement ->
+        match xmlElement with
+        | Attributes xmlElementsAttributes ->
+            match xmlElementsAttributes with
+            | Attr "Diameter" diameter ->
+                Widget(float diameter)
+    | Elem "Sprocket" (Attributes (Attr "Model" model & Attr "SerialNumber" sn)) ->
+        Sprocket(model, int sn)
+    | _ -> failwith "Unknown element"
+
+let testXmlParse =
+    let xmlDoc =
+        let doc = new System.Xml.XmlDocument()
+        let xmlText = 
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+                <Parts>
+                    <Widget Diameter='5.0' />
+                    <Sprocket Model='A' SerialNumber='147' />
+                    <Sprocket Model='B' SerialNumber='302' />
+                </Parts>"
+        doc.LoadXml(xmlText)
+        doc
+    xmlDoc.DocumentElement.ChildNodes
+    |> Seq.cast<XmlElement>
+    |> Seq.map ParseXmlNode
+    |> Seq.iter (printfn "%A")
+    // Widget 5.0
+    // Sprocket 'A' 147
+    // Sprocket 'B' 302
 
 #quit;;
