@@ -70,6 +70,10 @@
 ; c1 : c2 = 415 / 715 = 0.58 
 ; and the constant c is roughly within range:(35,47) 
 
-; TODO:
 ; actually I don't think we have to track the consumption manually ...
 ; we can run fermat test with a big 'time' so the time consumption can be observed directly ...
+(time-test tracked-fast-prime? 1009 5000)
+(time-test tracked-fast-prime? 1000003 5000)
+; for n = 1009,    time =  631
+; for n = 1000003, time = 1151
+; c1 : c2 = 631 / 1151 = 0.55
