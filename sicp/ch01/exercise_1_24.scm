@@ -25,16 +25,47 @@
       (cons (= (car result) a) (cdr result))))
   (try-it (random-range-in 1 (- n 1))))
 
-(define (fast-prime? n times)
+(define (tracked-fast-prime? n times)
   (if (= times 0)
     (cons #t 0)
     (let ((result (tracked-fermat-test n)))
       (if (car result)
-        (let ((sub-result (fast-prime? n (- times 1))))
+        (let ((sub-result (tracked-fast-prime? n (- times 1))))
           (cons (car sub-result) 
                 (+ (cdr sub-result) (cdr result))))
         ; else
         (cons #f (cdr result))))))
 
-(out (fast-prime? 2147483647 1))
+(out (tracked-fast-prime? 2147483647 1))
 ; (#t . 308)
+
+; f(n) = c * log(n)/log(2)
+; c = f(n) /(log(n)/log(2)) should be relatively stable
+; assmue when n = 1000, consumption = f(1000) = c1 = c * log(1000)/log(2)
+; then:
+;     f(1000000) = c2 = c * log(1000000)/log(2) = 2 * c * log(1000)/log(2) = 2 * c1
+(define (verbose-fast-prime-test n)
+  (let ((result (tracked-fast-prime? n 5)))
+    (display "input: ")
+    (display n)
+    (newline)
+    (display "output: ")
+    (display result)
+    (newline)
+    (display "f(n):(log(n)/log(2))= ")
+    (display (exact->inexact 
+               (/ (cdr result)
+                  (/ (log n) (log 2)))))
+    (newline)))
+
+(for-each
+  verbose-fast-prime-test
+  '(    1009    1013    1019
+       10007   10009   10037
+      100003  100019  100043
+     1000003 1000033 1000037))
+; we can see that:
+;     for n = 1009,    counter = 415
+;     for n = 1000003, counter = 715
+; c1 : c2 = 415 / 715 = 0.58 
+; and the constant c is roughly within range:(35,47) 
