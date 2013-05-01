@@ -12,7 +12,8 @@
 
 ; test if x is a non trival square root of 1 modulo n
 (define (non-trival-square-root? x n)
-  (cond ; valid range: 1<x<n 
+  (cond
+        ; ((or (<= x 1) (>= x n)) (error "number out of range"))
         ((= 1 x) #f) ; x should not be 1 nor n-1
         ((= (- n 1) x) #f)
         ((= 1 (remainder (square x) n)) #t)
@@ -57,11 +58,20 @@
   (display n)
   (newline)
   (display "output(fermat-test): ")
-  (display (fast-prime? n 5 fermat-test))
+  (display (fast-prime? n 10 fermat-test))
   (newline)
   (display "output(miller-rabin-test): ")
-  (display (fast-prime? n 5 miller-rabin-test))
+  (display (fast-prime? n 10 miller-rabin-test))
   (newline))
 
+; test some Carmichael numbers
 (for-each verbose-prime-test
           '(561 1105 1729 2465 2821 6601))
+
+; filter out all prime numbers less than 100:
+(out (filter (lambda (x) (fast-prime? x 10 fermat-test))
+             (list-in-range 2 99)))
+
+(out (filter (lambda (x) (fast-prime? x 10 miller-rabin-test))
+             (list-in-range 2 99)))
+

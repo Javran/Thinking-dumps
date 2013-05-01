@@ -51,3 +51,9 @@
     '()
     (cons seed 
           (take-iterate next (next seed) (- len 1)))))
+
+; construct a list [a..b]
+(define (list-in-range a b)
+  (if (<= a b)
+    (cons a (list-in-range (+ a 1) b))
+    '()))
