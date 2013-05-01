@@ -10,12 +10,27 @@
 ; * for at least half of the number a, 1<a<n, 
 ;       computing a^n will reveal a nontrival square root (if n is not a prime number)
 
-(define (expmod-i base count m)
-  (define (expmod-iter base count m n) ; constant: (base^count * n) mod m
-    (cond ((= count 0) (remainder n m)) ; count = 0, (base^count * n) mod m = n mod m
-          ((even? count)
-            ; (base^count * n) mod m = ((base^2)^(count/2) * n) mod m
-            (expmod-iter (remainder (square base) m) (/ count 2) m n))
-          (else
-            (expmod-iter base (- count 1) m (remainder (* base n) m)))))
-  (expmod-iter base count m 1))
+; test if x is a non trival square root of 1 modulo n
+(define (non-trival-square-root? x n)
+  (cond ; valid range: 1<x<n 
+        ((= 1 x) #f) ; x should not be 1 nor n-1
+        ((= (- n 1) x) #f)
+        ((= 1 (remainder (square x) n)) #t)
+        (else #f)))
+
+; modified version of `expmod` (Miller-Rabin test)
+; seems it'll be easier if we use recursive version of `expmod`
+; returns a pair: (result, flag), flag will set to #t if a non-trival square root is discovered
+(define (expmod base count m) ; base^n mod m
+  (cond ((= count 0) 
+         (cons 1 #f))
+        ((even? count)
+          (let ((sub-result (expmod base (/ count 2) m)))
+            (cons
+              (remainder (square (car sub-result)) m)
+              (or (cdr sub-result) (non-trival-square-root? (car sub-result) count)))))
+        (else
+          (let ((sub-result (expmod base (- count 1) m)))
+            (cons
+              (remainder (* base (car sub-result)) m)
+              (cdr sub-result))))))
