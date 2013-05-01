@@ -72,9 +72,9 @@
           '(561 1105 1729 2465 2821 6601))
 
 ; filter out all prime numbers less than 100:
-(out (filter (lambda (x) (fast-prime? x 10 fermat-test))
+; only test 2 numbers for each test case, so fermat-test will make more mistakes
+(out (filter (lambda (x) (fast-prime? x 2 fermat-test))
              (list-in-range 2 99)))
 
-(out (filter (lambda (x) (fast-prime? x 10 miller-rabin-test))
+(out (filter (lambda (x) (fast-prime? x 2 miller-rabin-test))
              (list-in-range 2 99)))
-
