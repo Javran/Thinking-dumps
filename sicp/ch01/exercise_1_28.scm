@@ -29,7 +29,10 @@
           (let ((sub-result (expmod base (/ count 2) m)))
             (cons
               (remainder (square (car sub-result)) m)
-              (or (cdr sub-result) (non-trival-square-root? (car sub-result) count)))))
+              ; I've mistakenly passed 'count' rather than 'm' here ...
+              ; note the target here is to calculate (base^count) mod m,
+              ;     so we need to judge if `(base^2) mod m` is equal to 1
+              (or (cdr sub-result) (non-trival-square-root? (car sub-result) m)))))
         (else
           (let ((sub-result (expmod base (- count 1) m)))
             (cons
@@ -43,8 +46,8 @@
 
 (define (miller-rabin-test n)
   (define (try-it a)
-    (let ((result (expmod a n n)))
-      (and (= (car result) a)
+    (let ((result (expmod a (- n 1) n)))
+      (and (= (car result) 1)
            (not (cdr result)))))
   (try-it (random-range-in 1 (- n 1))))
 
