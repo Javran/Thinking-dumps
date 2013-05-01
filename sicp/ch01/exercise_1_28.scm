@@ -34,3 +34,34 @@
             (cons
               (remainder (* base (car sub-result)) m)
               (cdr sub-result))))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (car (expmod a n n)) a))
+  (try-it (random-range-in 1 (- n 1))))
+
+(define (miller-rabin-test n)
+  (define (try-it a)
+    (let ((result (expmod a n n)))
+      (and (= (car result) a)
+           (not (cdr result)))))
+  (try-it (random-range-in 1 (- n 1))))
+
+(define (fast-prime? n times verifier)
+  (cond ((= times 0) true)
+        ((verifier n) (fast-prime? n (- times 1) verifier))
+        (else #f)))
+
+(define (verbose-prime-test n)
+  (display "input: ")
+  (display n)
+  (newline)
+  (display "output(fermat-test): ")
+  (display (fast-prime? n 5 fermat-test))
+  (newline)
+  (display "output(miller-rabin-test): ")
+  (display (fast-prime? n 5 miller-rabin-test))
+  (newline))
+
+(for-each verbose-prime-test
+          '(561 1105 1729 2465 2821 6601))
