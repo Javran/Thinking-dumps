@@ -46,7 +46,7 @@
 
 (define (miller-rabin-test n)
   (define (try-it a)
-    (let ((result (expmod a (- n 1) n)))
+    (let ((result (expmod a (- n 1) n))
       (and (= (car result) 1)
            (not (cdr result)))))
   (try-it (random-range-in 1 (- n 1))))

@@ -40,6 +40,8 @@
         (cons f-result diff-time))))))
 
 (define (square x) (* x x))
+(define (cube x) (* x x x))
+
 (define (random-range-in a b)
   (+ a (random (+ (- b a) 1))))
   ; random (b-a)+1 -> [0, (b-a)] + a -> [a, b] 
