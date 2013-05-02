@@ -40,3 +40,5 @@ let mightFail =
 
 // use attribute: [<RequireQualifiedAccess>] to enforce using qualified import
 // use attribute: [<AutoOpen>] to open a namespace automatically when its parent is imported
+
+#quit;;
