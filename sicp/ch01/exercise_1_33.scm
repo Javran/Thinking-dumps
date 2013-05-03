@@ -69,9 +69,28 @@
   (accumulate-itr + 0 square a inc b prime?))
 
 (out (sum-of-square-of-prime-in-range 20 500))
+; 7033959
 
 ; verification
 (out (apply + 
             (map square 
                  (filter prime? 
                          (list-in-range 20 500)))))
+; 7033959
+
+(define (my-gcd a b)
+  (if (= b 0)
+    a
+    (my-gcd b (remainder a b))))
+
+(define (product-relative-primes-less-than n)
+  (define (relative-prime? x)
+    (= 1 (my-gcd n x)))
+  (accumulate-itr * 1 identity 1 inc (- n 1) relative-prime?))
+
+(out (product-relative-primes-less-than 234))
+
+; verification
+(out (apply *
+            (filter (lambda (x) (= 1 (my-gcd 234 x)))
+                    (list-in-range 1 (- 234 1)))))
