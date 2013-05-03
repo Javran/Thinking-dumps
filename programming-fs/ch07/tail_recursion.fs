@@ -62,7 +62,96 @@ let rec iter f binTree =
         iter f l
         iter f r
 
-iter (printfn "[%A]") (Node (1,Node(2,Empty,Empty),Node(3,Empty,Empty)))
+let theTree = 
+    Node (
+        1,
+        Node (
+            2,
+            Empty,
+            Empty),
+        Node (
+            3,
+            Empty,
+            Node (
+                4,
+                Empty,
+                Empty)))
 
+
+
+iter (printfn "[%A]") theTree
+
+printfn ""
+
+// continuation ... might be connected with "current continuation" in scheme...
+// "continations are function values that represent the rest of the code to execute"
+
+let printListRev ls =
+    let rec printListRevTR ls cont =
+        match ls with
+        | [] ->
+            // do the rest of stuffs remaining
+            cont()
+        | hd :: tl ->
+            printListRevTR tl (fun () ->
+                                    // do things here 
+                                    printf "[%d]" hd
+                                    // rest
+                                    cont() )
+    printListRevTR ls (fun () -> printfn " Done.")
+
+printListRev [1;2;3;4];;
+
+// try to write a tail recursive function on my own...
+
+let treeIter f tree =
+    let rec treeIterTR f tree cont =
+        match tree with
+        | Empty ->
+            cont()
+        | Node (x,l,r) ->
+            f x
+            treeIterTR f l (fun () ->
+                                // when we've visited the left part of tree,
+                                //      visit the right part.
+                                treeIterTR f r cont)
+    treeIterTR f tree (fun () -> printfn "") 
+                                
+treeIter (printf "<%A> ") theTree
+// it works, the output should be <1>, <2>, <3>, <4> in order.
+
+// cheers!
+
+type ContinuationStep<'a> =
+    | Finished
+    | Step of 'a * (unit -> ContinuationStep<'a>)
+
+let iter2 f binTree =
+
+    let rec linearize binTree cont =
+        match binTree with
+        | Empty ->
+            cont()
+        | Node (x,l,r) ->
+            // the "linearrize" process, first we need x, then we'll go through l and r
+            // just like a lazy list ... we need to execute the lambda in order to get the next 'Step'
+            Step(x, (fun () -> linearize l (fun () -> linearize r cont)))
+
+    let steps = linearize binTree (fun () -> Finished)
+
+    let rec processSteps step =
+        match step with
+        | Finished -> ()
+        | Step(x, getNext) ->
+            // Step stores what we need to deal with next and how can we do the rest of the tasks
+            f x
+            // execute "getNext" for the next element we need to take care of
+            processSteps (getNext ())
+
+    processSteps steps
+
+iter2 (printf "<%A> ") theTree
+
+printfn ""
 
 #quit;;
