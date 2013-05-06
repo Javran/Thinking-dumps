@@ -83,7 +83,21 @@
 ; (define (my-sqrt x)
 ;   (fixed-point (lambda (y) (/ x y)) 1.0))
 
-; TODO: "the answer is always between our guess y and x/y" why?
+; "the answer is always between our guess y and x/y"
+; assume the answer is "yt", i.e. x = yt^2, yt>0
+; case #1: if y < x / y
+; => y^2 < x = yt^2
+; => y < yt
+; compare yt and x/y:
+; yt - x/y = (yt * y - yt * yt)/y = yt/y * (y - yt) < 0
+; => y < yt < x / y
+; case #2: if y > x / y
+; => y^2 > x = yt^2
+; => y > yt
+; compare yt and x/y:
+; yt - x/y = yt/y * (y - yt) > 0
+; => x / y < yt < y
+; so yt is always between y and x/y
 
 (define (my-sqrt x)
   (fixed-point (lambda (y) (mid y (/ x y))) 1.0))
