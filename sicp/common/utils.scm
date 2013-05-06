@@ -67,3 +67,7 @@
   (if (<= a b)
     (cons a (list-in-range (+ a 1) b))
     '()))
+
+; return a function that drops the input and return x constantly
+(define (const x)
+  (lambda (y) x))

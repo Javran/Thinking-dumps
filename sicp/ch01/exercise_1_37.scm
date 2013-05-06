@@ -22,10 +22,10 @@
 ; need accuracy of 4 decimal places
 (define tolerance 0.00001)
 
-(define const-1 (lambda (x) 1.0))
+; (define const-1 (lambda (x) 1.0))
 
 (let loop ((k 1))
-  (let* ((result (cont-frac-itr const-1 const-1 k))
+  (let* ((result (cont-frac-itr (const 1.0) (const 1.0) k))
          (diff (abs (- result psi))))
     (display "result: ")
     (display result)
