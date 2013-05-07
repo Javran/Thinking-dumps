@@ -82,3 +82,25 @@
   (out (newton-method f (- 8)))
   ; ~= -10
   )
+
+; abstractions and first-class procedures
+(define (fixed-point-of-transform g transform guess)
+  ; actually I don't think this function is necessary ...
+  ; as this version just flattens the parameters to "fixed-point"
+  (fixed-point (transform g) guess))
+
+(define (sqrt-ad x)
+  (fixed-point-of-transform
+    (lambda (y) (/ x y))
+    average-damping
+    1.0))
+
+(define (sqrt-nm-2 x)
+  (fixed-point-of-transform
+    (lambda (y) (- (* y y) x))
+    newton-transform
+    1.0))
+
+(out (sqrt 4321))
+(out (sqrt-ad 4321))
+(out (sqrt-nm-2 4321))
