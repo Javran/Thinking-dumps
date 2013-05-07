@@ -41,3 +41,44 @@
 ; compare two results below
 (out (expt 1234567 (/ 1 3)))
 (out (cube-root 1234567))
+
+; Newton's method
+; the idea is: next(x) = x - g(x) / dg(x)
+;     where dg is derivative of g at point (x,f(x))
+
+(define dx 0.00001)
+
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x)) dx)))
+
+; f(x) = x^3 => df(x) = 3*x^2, test point at (3, f(3))
+(out ((deriv cube) 3))
+; should be 3*3^2 = 27
+(out ((deriv cube) 5))
+; should be 3*5^2 = 75
+
+; transform a function f(x) to its next(x) form
+(define (newton-transform g)
+  (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+(define (newton-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (sqrt-nm x)
+  (newton-method
+    (lambda (y) (- (* y y) x))
+    1.0))
+
+(out (sqrt 1111))
+(out (sqrt-nm 1111))
+
+; find a root of f(x) = (x-1.2345)(x+10)(x+20)
+(let ((f (lambda (x) (* (- x 1.2345) (+ x 10) (+ x 20)))))
+  (out (newton-method f 2))
+  ; ~= 1.2345
+  (out (newton-method f (- 100)))
+  ; ~= -20
+  (out (newton-method f (- 8)))
+  ; ~= -10
+  )
