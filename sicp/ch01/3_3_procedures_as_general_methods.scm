@@ -105,4 +105,15 @@
 (out (my-sqrt 9))
 ; ~= 3
 
-; TODO: search "average damping" for more details
+; despite "average damping" is not widely mentioned except in SICP exercises,
+; here are some related links:
+; * Why does average damping magically speed up the convergence of fixed-point calculators?
+; http://stackoverflow.com/questions/3860929/why-does-average-damping-magically-speed-up-the-convergence-of-fixed-point-calcu
+; * Bill the Lizard SICP Exercise 1.36 Fixed points and Average damping
+; http://www.billthelizard.com/2010/07/sicp-exercise-136-fixed-points-and.html
+ 
+; here's another series of problems concerning about y -> x / y, which does not converge since y2 = x/y1 = x/(x/y0) = yo
+; * is there a general method of telling if some function is oscillate?
+; * if it oscillates, does it really converges?
+; * if it converges, how many generations will it take to converge?
+; I think all of the questions above are connected to the correctness and efficiency of our algorithm
