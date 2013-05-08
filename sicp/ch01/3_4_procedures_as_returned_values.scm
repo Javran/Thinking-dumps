@@ -62,11 +62,11 @@
 (define (newton-transform g)
   (lambda (x) (- x (/ (g x) ((deriv g) x)))))
 
-(define (newton-method g guess)
+(define (newtons-method g guess)
   (fixed-point (newton-transform g) guess))
 
 (define (sqrt-nm x)
-  (newton-method
+  (newtons-method
     (lambda (y) (- (* y y) x))
     1.0))
 
@@ -75,11 +75,11 @@
 
 ; find a root of f(x) = (x-1.2345)(x+10)(x+20)
 (let ((f (lambda (x) (* (- x 1.2345) (+ x 10) (+ x 20)))))
-  (out (newton-method f 2))
+  (out (newtons-method f 2))
   ; ~= 1.2345
-  (out (newton-method f (- 100)))
+  (out (newtons-method f (- 100)))
   ; ~= -20
-  (out (newton-method f (- 8)))
+  (out (newtons-method f (- 8)))
   ; ~= -10
   )
 
