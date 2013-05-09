@@ -114,6 +114,82 @@ wb.Word;;
 
 // adding slices
 
-// working :3
+type TextBlock(text : string) =
+    let words = text.Split([|' '|])
+
+    member this.AverageWordLength =
+        // the code in the book is wrong
+        words |> Array.map (fun x -> float x.Length ) |> Array.average
+
+    // this method is called implicitly when use something like inst.[a..b]
+    member this.GetSlice(lowerBound : int option, upperBound : int option) =
+        let words =
+            match lowerBound, upperBound with
+            | Some(lb), Some(ub) ->
+                words.[lb..ub]
+            | Some(lb), None ->
+                words.[lb..]
+            | None, Some(ub) ->
+                words.[..ub]
+            | None, None ->
+                words.[*]
+        words
+
+let text = "The quick brown fox jumps over the lazy dog."
+
+let tb = new TextBlock(text)
+
+tb.AverageWordLength;;
+// average word length
+
+tb.[*];;
+// everything
+
+tb.[..2];;
+// first 3 words
+
+tb.[1..1];;
+// the second word wrapped in list
+
+tb.[5..];;
+// skipping the first 5 words
+
+// two-dimensional slice
+open System
+
+type DataPoints(points : seq<int*int>) =
+    member this.GetSlice(xlb,xub,ylb,yub) =
+        // safe getter, always returns a valid value
+        let getValue optType defaultValue =
+            match optType with
+            | Some(x) -> x
+            | None -> defaultValue
+
+        let minX = getValue xlb Int32.MinValue
+        let maxX = getValue xub Int32.MaxValue
+
+        let minY = getValue ylb Int32.MinValue
+        let maxY = getValue yub Int32.MaxValue
+
+        let inRange (x, y) =
+            (minX <= x && x <= maxX &&
+             minY <= y && y <= maxY)
+
+        Seq.filter inRange points
+
+let points =
+    seq {
+        for i = 0 to 99 do
+            for j = 0 to 49 do
+                yield (i, j)
+    };;
+
+let d = new DataPoints(points)
+// a line ..
+Seq.iter (printf "<%A>") d.[0..49,0..0]
+printfn ""
+
+Seq.iter (printf "[%A]") d.[0..2,45..49]
+printfn ""
 
 #quit;;
