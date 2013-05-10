@@ -1,3 +1,9 @@
+(define end-script
+  (lambda ()
+    (if (string=? (string microcode-id/operating-system) "unix")
+      (%exit)
+      (exit))))
+
 ; just follow the suggestion here:
 ; http://stackoverflow.com/questions/15552057/is-it-possible-to-implement-define-macro-in-mit-scheme/
 ; we should prefer syntax-rules over define-macro
