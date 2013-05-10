@@ -56,5 +56,30 @@
 (out (nth-root (expt 123.4567 23) 23))
 ; 4 average-damping is performed
 
+(for-each
+  (lambda (testcase)
+    (let* ((x (car testcase))
+          (n (cdr testcase))
+          (x^n (expt x n)))
+      (display "Finding the nth-root of: ")
+      (display x^n)
+      (newline)
+
+      (display "n = ")
+      (display n)
+      (newline)
+
+      (display "the answer should be: ")
+      (display x)
+      (newline)
+
+      (display "result: ")
+      (newline)
+      (display (nth-root x^n n))
+      (newline)))
+  '(
+    (123.456 . 30)
+    (567.8901 . 45)
+    (23 . 78)))
 
 (end-script)
