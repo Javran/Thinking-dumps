@@ -3,7 +3,7 @@
 ; a procedure that returns functions / procedures
 (define (average-damping f)
   (lambda (x)
-    (mid x (f x))))
+    (average x (f x))))
 
 (out ((average-damping square) 10))
 ; average of 10 and 100 is 55

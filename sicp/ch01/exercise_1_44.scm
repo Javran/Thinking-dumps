@@ -1,10 +1,5 @@
 (load "../common/utils.scm")
 
-(define (gen-list from to step)
-  (if (> from to)
-    '()
-    (cons from (gen-list (+ from step) to step))))
-
 (define (compose f g)
   (lambda (x) (f (g x))))
 

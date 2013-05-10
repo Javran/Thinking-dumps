@@ -6,7 +6,7 @@
 
 (define (average-damping f)
   (lambda (x)
-    (mid x (f x))))
+    (average x (f x))))
 
 (define tolerance 0.00001)
 

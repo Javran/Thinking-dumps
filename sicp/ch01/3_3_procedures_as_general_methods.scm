@@ -10,7 +10,7 @@
 ; * the interval of the uncertainty is reduced by half at each step
 
 (define (search f neg-point pos-point)
-  (let ((midpoint (mid neg-point pos-point)))
+  (let ((midpoint (average neg-point pos-point)))
     (if (close-enough? neg-point pos-point)
       midpoint
       (let ((test-value (f midpoint)))
@@ -100,7 +100,7 @@
 ; so yt is always between y and x/y
 
 (define (my-sqrt x)
-  (fixed-point (lambda (y) (mid y (/ x y))) 1.0))
+  (fixed-point (lambda (y) (average y (/ x y))) 1.0))
 
 (out (my-sqrt 9))
 ; ~= 3

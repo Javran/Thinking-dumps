@@ -30,7 +30,6 @@
 (out "with average damping:")
 (out (verbose-fixed-point
        (lambda (x)
-         (mid x
-              (/ (log 1000) (log x))))
+         (average x (/ (log 1000) (log x))))
        100.0))
 ; 12 times

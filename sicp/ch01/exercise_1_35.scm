@@ -24,4 +24,4 @@
 
 (out phi
      (fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0)
-     (fixed-point (lambda (x) (mid (+ 1 (/ 1 x)) x)) 1.0)) ; avarage damping
+     (fixed-point (lambda (x) (average (+ 1 (/ 1 x)) x)) 1.0)) ; avarage damping
