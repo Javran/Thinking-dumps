@@ -1,3 +1,7 @@
 # f sharp
 
 *.exe
+
+# temp file
+# TODO: merge this file into its parent when this branch is done
+*.tmp
