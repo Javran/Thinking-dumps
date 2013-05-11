@@ -64,6 +64,47 @@
 (out (my-sqrt-fp 1234))
 ; ~= 35.128
 
-; TODO: further more ... reimpl ex 1.7
+; redo ex 1.7, i.e. judge if a guess is good enough by comparing
+;     the relative difference between current guess and previous one
+(define (my-sqrt-2 x)
+  ; v-pair: if it's a pair, stores previous guess and current guess
+  ;       : else it's a value (initial guess)
+  (define tolerance 0.00001)
+
+  (define (good-enough? v-pair)
+    (if (pair? v-pair)
+      (let ((old-guess (car v-pair))
+            (cur-guess (cdr v-pair)))
+        (< (abs (/ (- cur-guess old-guess)
+                   cur-guess))
+           tolerance))
+      (= x (square v-pair))))
+
+  (define (next guess)
+    ((average-damping
+       (lambda (y) (/ x y))) guess))
+
+  (define (improve v-pair)
+    (if (pair? v-pair)
+      (cons (cdr v-pair)
+            (next (cdr v-pair)))
+      (cons v-pair
+            (next v-pair))))
+
+  (define (extract-value v-pair)
+    (if (pair? v-pair)
+      (cdr v-pair)
+      v-pair))
+
+  (extract-value 
+    ((iterative-improve good-enough? improve) 1.0)))
+
+(newline)
+(out (my-sqrt-fp (square 1.234e-6)))
+(out (my-sqrt    (square 1.234e-6)))
+; poor performance for small numbers
+
+(out (my-sqrt-2  (square 1.234e-6)))
+; this one should be the best
 
 (end-script)
