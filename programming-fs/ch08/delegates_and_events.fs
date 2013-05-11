@@ -35,8 +35,61 @@ let testCup =
     cup.Drink(75.0)
     cup.Drink(75.0)
 
+printfn "";;
+
 // defining delegates
 
-// working :3
+let printAndAdd x y =
+    printfn "x = %d, y = %d" x y
+    x + y
+
+// really confusing ... why not int -> int -> int
+// if "int -> int -> int" is used, the compiler will say that:
+// "Delegate specifications must not be curried types."
+// ... if it helps.
+type DelegateType = delegate of int * int -> int
+
+let delegateValue1 =
+    new DelegateType(
+        fun x y ->
+            printfn "x = %d, y = %d" x y
+            x + y)
+
+printAndAdd 1 2;;
+delegateValue1.Invoke(1,2);;
+
+type IntDelegate = delegate of int -> unit
+
+type ListHelper =
+    static member ApplyDelegate (l : int list, d : IntDelegate) =
+        l |> List.iter (fun x -> d.Invoke(x))
+
+// construct the delegate explicitly
+ListHelper.ApplyDelegate([1..10], new IntDelegate( printf "[%d]" ))
+printfn "";;
+
+// construct the delegate implicitly
+// why partial function does not work here?
+// ListHelper.ApplyDelegate([1..10], (printf "<%d>"))
+ListHelper.ApplyDelegate([1..10], (fun x -> printf "<%d>" x))
+printfn "";;
+
+// combining delegates
+type LogMessage = delegate of string -> unit
+
+let printToConsole =
+    LogMessage(fun msg -> printfn "Logging to console: %s ..." msg)
+
+let appendToLogFile =
+    LogMessage(fun msg ->
+                    printfn "Logging to file: %s ..." msg
+                    printfn "Pretending that I've appended it to a file :)")
+    
+let doBoth = LogMessage.Combine( printToConsole, appendToLogFile );;
+// type for doBoth is just System.Delegate, we need to convert it to a LogMessage
+let typedDoBoth = doBoth :?> LogMessage
+
+// one shot with two delegates triggered!
+typedDoBoth.Invoke("Message!");;
 
 #quit;;
