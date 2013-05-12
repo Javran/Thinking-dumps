@@ -28,18 +28,17 @@
                (* (numer y) (denom x)))
             (* (denom x) (denom y))))
 
+; x - y = x + (-y)
 (define (sub-rat x y)
-  (make-rat (- (* (numer x) (denom y))
-               (* (numer y) (denom x)))
-            (* (denom x) (denom y))))
+  (add-rat x (neg-rat y)))
 
 (define (mul-rat x y)
   (make-rat (* (numer x) (numer y))
             (* (denom x) (denom y))))
 
+; x / y = x * (1/y)
 (define (div-rat x y)
-  (make-rat (* (numer x) (denom y))
-            (* (denom x) (numer y))))
+  (mul-rat x (inv-rat y)))
 
 (define (display-rat x)
   (display (numer x))
@@ -49,4 +48,3 @@
 (define (equal-rat? x y)
   (= (* (numer x) (denom y))
      (* (numer y) (denom x))))
-
