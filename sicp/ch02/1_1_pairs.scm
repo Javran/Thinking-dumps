@@ -17,35 +17,35 @@
 ; representing rational numbers
 (define make-rat cons)
 (define numer car)
-(define demon cdr)
+(define denom cdr)
 
 ; I'd like to name it display-rat rather than print-rat
 (define (display-rat x)
   (display (numer x))
   (display "/")
-  (display (demon x)))
+  (display (denom x)))
 
 (define (add-rat x y)
-  (make-rat (+ (* (numer x) (demon y))
-               (* (numer y) (demon x)))
-            (* (demon x) (demon y))))
+  (make-rat (+ (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
 
 (define (sub-rat x y)
-  (make-rat (- (* (numer x) (demon y))
-               (* (numer y) (demon x)))
-            (* (demon x) (demon y))))
+  (make-rat (- (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
 
 (define (mul-rat x y)
   (make-rat (* (numer x) (numer y))
-            (* (demon x) (demon y))))
+            (* (denom x) (denom y))))
 
 (define (div-rat x y)
-  (make-rat (* (numer x) (demon y))
-            (* (demon x) (numer y))))
+  (make-rat (* (numer x) (denom y))
+            (* (denom x) (numer y))))
 
 (define (equal-rat? x y)
-  (= (* (numer x) (demon y))
-     (* (numer y) (demon x))))
+  (= (* (numer x) (denom y))
+     (* (numer y) (denom x))))
 
 (define one-half (make-rat 1 2))
 (display-rat one-half)
