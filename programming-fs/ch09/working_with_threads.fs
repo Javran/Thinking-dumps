@@ -79,6 +79,10 @@ let testResourceRace () =
     let bigArr = Array.create 1000000 1
     lockedSumArray bigArr
 
-testResourceRace();;
+// uncomment next line to see the example
+// testResourceRace();;
 
-#quit;;
+// deadlocks: use "lock" carefully,
+//      assigning resources with id and always acquire locks in order might solve the problem
+
+#quit;
