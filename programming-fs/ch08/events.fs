@@ -190,6 +190,10 @@ let testObservableMap () =
     form.ShowDialog() |> ignore
 
 // uncomment the line below to see the example
-testObservableMap();;
+//testObservableMap();;
+
+// creating .Net events
+
+// use attribute "[<CLIEvent>]" to make the Event compatible with other .Net languages
 
 #quit;;
