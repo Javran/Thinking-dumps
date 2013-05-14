@@ -4,6 +4,23 @@
       (%exit)
       (exit))))
 
+; when set to #t, everything wrapped in "tp"(test-procedure) will be run
+; otherwise they'll be skipped(load as if the file is a module)
+(define run-test #f)
+
+; prepare environment for starting a script
+; current only set "run-test" to #t
+(define start-script
+  (lambda ()
+    (set! run-test #t)))
+
+; tp = test-procedure
+; any procedure wrapped inside will be executed only if "run-test" is set to #t
+(define tp
+  (lambda (f . args)
+    (if run-test
+      (apply f args))))
+
 ; just follow the suggestion here:
 ; http://stackoverflow.com/questions/15552057/is-it-possible-to-implement-define-macro-in-mit-scheme/
 ; we should prefer syntax-rules over define-macro
