@@ -28,3 +28,5 @@
 ; => ((lambda (m) (m 123 456)) (lambda (p q) p))
 ; => ((lambda (p q) p) 123 456)
 ; => 123
+
+(end-script)
