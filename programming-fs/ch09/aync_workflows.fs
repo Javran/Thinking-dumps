@@ -78,7 +78,44 @@ let testDownload () =
     webPages;;
         
 // uncomment to see the example
-testDownload();;
+//testDownload();;
+
+// test some computations that might fail
+let testComputationMightFail () =
+    let asyncTasks =
+        [ async { raise <| new System.Exception("Error") } 
+        ; async { () } ]
+    asyncTasks
+    |> Async.Parallel
+    |> Async.Catch
+    |> Async.RunSynchronously;;
+    
+// uncomment to see the example
+// testComputationMightFail();;
+
+open System
+open System.Threading
+
+let cancelableTask =
+    async {
+        printfn "Waiting 1 sec ..."
+        for i = 1 to 10 do
+            printfn "%d ..." i
+            do! Async.Sleep(100)
+        printfn "Finished"
+    };;
+
+let cancelHandler (ex : OperationCanceledException) =
+    printfn "The task has been canceled."
+
+let testCalcelable () =
+    Async.TryCancelled(cancelableTask, cancelHandler)
+    |> Async.Start
+    Thread.Sleep(300)
+    Async.CancelDefaultToken();;
+
+// uncomment to see the example
+// testCalcelable ();;
 
 
 #quit;;
