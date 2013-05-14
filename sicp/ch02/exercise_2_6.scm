@@ -71,6 +71,20 @@
 (out (to-num (add one two)))
 ; 3
 
+; let's do something interesting: implement fibonacci numbers :)
+(define (fib n)
+  (cond ((= n 0) zero)
+        ((= n 1) one)
+        (else (add (fib (- n 1)) (fib (- n 2))))))
 
+(define (fib-test i)
+  (display i)
+  (display "\t")
+  (display (to-num (fib i)))
+  (newline))
+
+(for-each
+  fib-test
+  (list-in-range 1 10))
 
 (end-script)
