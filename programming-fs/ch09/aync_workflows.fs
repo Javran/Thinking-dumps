@@ -117,5 +117,27 @@ let testCalcelable () =
 // uncomment to see the example
 // testCalcelable ();;
 
+let testAsyncStartWithContinuations () =
+    let asyncTask = 
+        async {
+            for i = 1 to 10 do
+                printfn "Working..."
+                do! Async.Sleep(100) 
+        }
+
+    Async.StartWithContinuations(
+        asyncTask,
+        (fun result ->
+            printfn "Task completed with result: %A" result),
+        (fun ex ->
+            printfn "Task threw an exception: %A" ex.Message),
+        (fun oce ->
+            printfn "Task was cancelled: %A" oce.Message))
+
+    Thread.Sleep(200)
+    Async.CancelDefaultToken()
+
+// uncomment to see the example
+// testAsyncStartWithContinuations();;
 
 #quit;;
