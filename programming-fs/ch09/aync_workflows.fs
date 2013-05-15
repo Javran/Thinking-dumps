@@ -140,4 +140,31 @@ let testAsyncStartWithContinuations () =
 // uncomment to see the example
 // testAsyncStartWithContinuations();;
 
+// async operations
+
+#r "System.Windows.Forms.dll"
+#r "System.Drawing.dll"
+
+open System.Threading
+open System.Windows.Forms
+
+let asyncSleepDemo () =
+    let form = new Form(TopMost = true)
+    let pb = new ProgressBar(Minimum = 0, Maximum = 15, Dock = DockStyle.Fill)
+    form.Controls.Add(pb)
+
+    let atask = async {
+        for i = 0 to 15 do
+            do! Async.Sleep(1000)
+            pb.Value <- i
+    }
+    Async.Start atask
+
+    form.Show()
+    Async.RunSynchronously atask;;
+
+// uncomment to see the example
+asyncSleepDemo();;
+
+
 #quit;;
