@@ -122,3 +122,34 @@
 
 (test-mul (make-interval -10 2)
           (make-interval -4 14))
+
+; should have same output for each case
+
+; pick up nums in [-4 - 4], make intervals to test
+(define (mul-test)
+  (define (interval-eq? a b)
+    (and (= (lower-bound a) (lower-bound b))
+         (= (upper-bound a) (upper-bound b))))
+
+  (let loop-i1 ((i1 -4))
+    (if (<= i1 4)
+      (let loop-j1 ((j1 i1))
+        (if (<= j1 4)
+          ; make interval-1
+          (let ((iv1 (make-interval i1 j1)))
+            (let loop-i2 ((i2 -4))
+              (if (<= i2 4)
+                (let loop-j2 ((j2 i2))
+                  (if (<= j2 4)
+                    ; make interval-2
+                    (let ((iv2 (make-interval i2 j2)))
+                      (if (interval-eq? (mul-interval-1 iv1 iv2)
+                                        (mul-interval-2 iv1 iv2))
+                        ; test passed, next j
+                        (loop-j2 (+ j2 1))
+                        ; else
+                        (error "result mismatch"))))
+                  (loop-i2 (+ i2 1)))))
+            (loop-j1 (+ j1 1))))
+        (loop-i1 (+ i1 1))))))
+(mul-test)
