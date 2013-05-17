@@ -164,7 +164,10 @@ let asyncSleepDemo () =
     Async.RunSynchronously atask;;
 
 // uncomment to see the example
-asyncSleepDemo();;
+//asyncSleepDemo();;
 
+// custom async primitives
+// finally I decide to skip this part
+//      because I can no idea about how to implement BeginXXX & EndXXX
 
 #quit;;
