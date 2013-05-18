@@ -174,5 +174,5 @@
         ; next of 1st i
         (loop (+ i 1))))))
 
-; uncomment the next line for tests
-; (mul-test)
+(mul-test)
+(out "test passed")
