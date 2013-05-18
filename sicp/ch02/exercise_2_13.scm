@@ -31,6 +31,9 @@
   (/ (width x)
      (center x)))
 
+(define (make-center-percent c p)
+  (make-center-width c (* c p)))
+
 ; start my solution here
 ; assume all numbers are positive:
 ; iv1*iv2 = [lb1*lb2, ub1*ub2]
@@ -49,3 +52,15 @@
 ; p_result = ( (1+p1)*(1+p2) - (1-p1)*(1-p2) ) / ( (1+p1)*(1+p2) + (1-p1)*(1-p2) )
 ; p_result = (p1+p2) / (1+p1*p2)
 ; the condition "small percentage tolerances" have not yet been used ... something missed?
+(define (interval-mul-percent x y)
+  (let ((p1 (percent x))
+        (p2 (percent y)))
+    (/ (+ p1 p2)
+       (+ 1 (* p1 p2)))))
+
+(define iv1 (make-center-percent 3.5 0.02))
+(define iv2 (make-center-percent 5 0.01))
+
+(out (percent (mul-interval iv1 iv2))
+     (interval-mul-percent iv1 iv2))
+; should be the same
