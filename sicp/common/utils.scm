@@ -85,3 +85,7 @@
 ; return a function that drops the input and return x constantly
 (define (const x)
   (lambda (y) x))
+
+; use `pair?` to judge if a list contains any element is not straighforward
+; so here I made an alias to make the code more friendly to readers
+(define non-empty? pair?)
