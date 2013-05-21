@@ -89,3 +89,5 @@
 ; use `pair?` to judge if a list contains any element is not straighforward
 ; so here I made an alias to make the code more friendly to readers
 (define non-empty? pair?)
+
+(define nil '())
