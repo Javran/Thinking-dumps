@@ -28,4 +28,23 @@
 (out (new-scale-list (list-in-range 1 10) 10))
 ; (10 20 30 ... 100)
 
+(out (map +
+          (list 1 2 3)
+          (list 40 50 60)
+          (list 700 800 900)))
+; (741 852 963)
+
+(out (list (+ 1 40 700)
+           (+ 2 50 800)
+           (+ 3 60 900)))
+; (741 852 963)
+
+(out (map (lambda (x y) (+ x (* 2 y)))
+          (list 1 2 3)
+          (list 4 5 6))
+     (map +
+          (list 1 2 3)
+          (list 8 10 12)))
+; (9 12 15)
+
 (end-script)
