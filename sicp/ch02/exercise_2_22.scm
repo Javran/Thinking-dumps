@@ -1,7 +1,5 @@
 (load "../common/utils.scm")
 
-(define nil '())
-
 (define (square-list-1 items)
   (define (iter things answer)
     ; things -> rest things to do
