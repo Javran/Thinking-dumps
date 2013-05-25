@@ -29,4 +29,28 @@
      ; 2
      )
 
+(define (total-weight mobile)
+  (define (total-weight-branch branch)
+    (let ((struct (branch-structure branch)))
+      (if (number? struct)
+        struct
+        (total-weight struct))))
+
+  (let ((left (left-branch mobile))
+        (right (right-branch mobile)))
+    (+ (total-weight-branch left)
+       (total-weight-branch right))))
+
+(out (total-weight test-data-1))
+; 3 (1+2)
+
+(define test-data-2
+  (make-mobile (make-branch 10 test-data-1)
+               (make-branch 3 (make-mobile
+                                (make-branch 4 16)
+                                (make-branch 1 64)))))
+
+(out (total-weight test-data-2))
+; 83 (3+16+64)
+
 (end-script)
