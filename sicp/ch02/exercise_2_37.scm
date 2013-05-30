@@ -41,4 +41,21 @@
   (out (matrix-*-vector x y)))
 ; (10 34)
 
+; transpose example:
+; / A B C \     / A D \
+; \ D E F /  => | B E |
+;               \ C F /
+; we can make (A D), (B E), (C F) lists by using `accumulate-n`
+;   and then put them into a list to form the result
+;   we are lucky because the result of `accumulate-n` comes naturally as a list
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+
+(let ((x (list (list 1 2 3 4)
+               (list 5 5 6 6)
+               (list 7 8 9 0))))
+  (out x)
+  (out (transpose x))
+  (out (transpose (transpose x))))
+
 (end-script)
