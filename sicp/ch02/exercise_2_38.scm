@@ -66,5 +66,12 @@
 ; => `(foldl' op tl)` to `fl`, `(foldr' op tl)` to `fr`
 ; (fl (op init hd)) and
 ; (op hd (fr init)) should be equal
+;
+; I can't figure out anything further ... now let's guess:
+; the difference of fold-left and fold-right are how heads are consumed
+;     for fold-left, head is applied as the second argument
+;     whereas for fold-right, head is applied as the first
+;     so at least (op a (op b c)) should equal to (op (op a b) c)
+;     and (op a b) should equal to (op b a) (I'm not so sure for this one)
 
 (end-script)
