@@ -38,9 +38,33 @@
      ; (1 (2 (3 nil)))
      (fold-left list nil (list 1 2 3))
      ; (((nil 1) 2) 3)
-
      )
 
+; attempt to make a recursive definition of fold-left:
+(define (my-fold-left-1 op init seq)
+  (if (null? seq)
+    init
+    (my-fold-left-1 op (op init (car seq)) (cdr seq))))
 
+(let ((ls (list-in-range 1 5)))
+  (out (fold-left / 1 ls)
+       (my-fold-left / 1 ls)
+       (my-fold-left-1 / 1 ls)))
+; 1/120
+
+; when fold-left and fold-right produce the same values for any seq:
+; if seq is null: already equal
+; if seq is not null:
+; (fold-left op (op init (car seq)) (cdr seq)) and
+; (op (car seq) (fold-right op init (cdr seq))) should be equal
+; => `(car seq)` to `hd`, `(cdr seq)` to `tl`
+; (fold-left op (op init hd) tl) and
+; (op hd (fold-right op init tl)) should be equal
+; => change argument order
+; (foldl' op tl (op init hd)) and
+; (op hd (foldr' op tl init)) should be equal
+; => `(foldl' op tl)` to `fl`, `(foldr' op tl)` to `fr`
+; (fl (op init hd)) and
+; (op hd (fr init)) should be equal
 
 (end-script)
