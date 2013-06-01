@@ -5,6 +5,7 @@
   (fold-right append nil ls))
 
 ; try to work it out by myself first...
+;   wow poor readability boy...
 (define (my-solution-1 n)
   ; first generate i
   (let ((all-i (list-in-range 1 n)))

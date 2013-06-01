@@ -66,17 +66,17 @@
     (cons seed 
           (take-iterate next (next seed) (- len 1)))))
 
-; construct a list [a..b]
-(define (list-in-range a b)
-  (if (<= a b)
-    (cons a (list-in-range (+ a 1) b))
-    '()))
-
 (define (gen-list from to step)
   (if (> from to)
     '()
     (cons from
           (gen-list (+ from step) to step))))
+
+; construct a list [a..b]
+(define (list-in-range a b)
+  (gen-list a b 1))
+
+(define enumerate-interval list-in-range)
 
 (define average
   (lambda x
