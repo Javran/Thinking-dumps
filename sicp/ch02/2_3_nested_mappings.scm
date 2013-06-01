@@ -30,7 +30,39 @@
                       #f)))
                 flat-pairs))))))
 
+(define (solution-part-1 n)
+  (fold-right
+    append
+    nil
+    (map (lambda (i)
+           (map (lambda (j) (list i j))
+                (enumerate-interval 1 (- i 1))))
+         (enumerate-interval 1 n))))
+
+(out (solution-part-1 6))
+; all i-j pairs that 1 <= j < i <= n
+
+(define (flatmap f seq)
+  (fold-right append nil (map f seq)))
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (flatmap
+                 (lambda (i)
+                   (map (lambda (j) (list i j))
+                        (enumerate-interval 1 (- i 1))))
+                 (enumerate-interval 1 n)))))
+
+(out (prime-sum-pairs 6))
 (out (my-solution-1 6))
 ; ((2 1 3) (3 2 5) ... (6 5 11))
+
 
 (end-script)
