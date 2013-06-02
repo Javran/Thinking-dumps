@@ -64,5 +64,19 @@
 (out (my-solution-1 6))
 ; ((2 1 3) (3 2 5) ... (6 5 11))
 
+(define (permutations s)
+  (if (null? s)
+    (list nil)
+    (flatmap (lambda (x)
+               ; for each element x in list
+               (map (lambda (p) (cons x p))
+                    (permutations (remove-from-list x s))))
+             s)))
+
+(define (remove-from-list item seq)
+  (filter (lambda (x) (not (= x item)))
+          seq))
+
+(out (permutations (list 1 2 3)))
 
 (end-script)
