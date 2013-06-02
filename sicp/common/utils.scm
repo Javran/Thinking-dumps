@@ -103,3 +103,11 @@
             (else (find-divisor n (+ test-divisor 1)))))
     (find-divisor n 2))
   (= n (smallest-divisor n)))
+
+(define (concat ls)
+  (fold-right append nil ls))
+
+(define (flatmap f ls)
+  (concat (map f ls)))
+
+(define concatmap flatmap)
