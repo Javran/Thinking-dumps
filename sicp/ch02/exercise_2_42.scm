@@ -10,8 +10,44 @@
 (define (adjust-position new-row k rest-of-queens)
   (cons (cons new-row k) rest-of-queens))
 
+(define (list-member? x ls)
+  ; x is a member of ls?
+  (if (null? ls)
+    #f
+    (if (= x (car ls))
+      #t
+      (list-member? x (cdr ls)))))
+
+(out (list-member? 3 (list 1 2 3)))
+; #t
+(out (list-member? 4 (list 1 2 3)))
+; #f
+(newline)
+
 (define (safe? k positions)
-  #t)
+  (let ((safe-postions (cdr positions))
+        ; already knowing that the first element is (cons row k)
+        ; and we only have interest in `row`
+        (cur-row (caar positions)))
+    (not 
+      (list-member? 
+        cur-row
+        (flatmap
+          ; for each safe position
+          ;   figure out rows that the queen can move to in column k
+          (lambda (pos)
+            ; returns all rows that the position can move to in col k
+            (let ((row (car pos))
+                  (col (car pos)))
+              (list row
+                    (+ row (- k col))
+                    (- row (- k col)))))
+          positions)))))
+
+(out (safe? 2 '( (1 . 1) (2 . 2) )))
+; #f
+(out (safe? 2 '( (1 . 1) (3 . 2) )))
+; #t
 
 (define (queens board-size)
   ; solution in first k-th cols
@@ -36,5 +72,7 @@
           ; solution of the first (k-1)-th queens
           (queen-cols (- k 1))))))
   (queen-cols board-size))
+
+(out (queens 8))
 
 (end-script)
