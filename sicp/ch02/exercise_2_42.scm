@@ -1,6 +1,19 @@
 (load "../common/utils.scm")
 
-(define (queens borad-size)
+; coordinate: (cons row col)
+;   note: row and col start from 1
+; a queen placement: a list of coordinate, each stands for a col
+
+; an empty-board, from the definition, is `nil`
+(define empty-board nil)
+
+(define (adjust-position new-row k rest-of-queens)
+  (cons (cons new-row k) rest-of-queens))
+
+(define (safe? k positions)
+  #t)
+
+(define (queens board-size)
   ; solution in first k-th cols
   (define (queen-cols k)
     (if (= k 0)
