@@ -25,7 +25,7 @@
 (newline)
 
 (define (safe? k positions)
-  (let ((safe-postions (cdr positions))
+  (let ((safe-positions (cdr positions))
         ; already knowing that the first element is (cons row k)
         ; and we only have interest in `row`
         (cur-row (caar positions)))
@@ -38,16 +38,17 @@
           (lambda (pos)
             ; returns all rows that the position can move to in col k
             (let ((row (car pos))
-                  (col (car pos)))
+                  (col (cdr pos)))
               (list row
                     (+ row (- k col))
                     (- row (- k col)))))
-          positions)))))
+          safe-positions)))))
 
-(out (safe? 2 '( (1 . 1) (2 . 2) )))
+(out (safe? 2 '( (2 . 2) (1 . 1) )))
 ; #f
-(out (safe? 2 '( (1 . 1) (3 . 2) )))
+(out (safe? 2 '( (3 . 2) (1 . 1) )))
 ; #t
+(newline)
 
 (define (queens board-size)
   ; solution in first k-th cols
