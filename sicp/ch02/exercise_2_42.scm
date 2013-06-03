@@ -74,6 +74,35 @@
           (queen-cols (- k 1))))))
   (queen-cols board-size))
 
-(out (queens 8))
+; it's not exactly the placement but is a way of quick visualization
+(define (pretty-print-board board)
+  (define board-size (length board))
+  (define (pretty-print-line pos)
+    (let ((row (car pos)))
+      (for-each
+        display
+        (map (lambda (x)
+               (if (= x row)
+                 #\X
+                 #\.))
+             (list-in-range 1 board-size)))
+      (newline)))
+  (for-each
+    pretty-print-line
+    board)
+  (newline))
+
+
+(define solutions (queens 8))
+
+; only visualize the first solution
+(pretty-print-board (car solutions))
+
+;(for-each
+;  pretty-print-board
+;  solutions)
+
+(out "Solution count: "
+     (length solutions))
 
 (end-script)
