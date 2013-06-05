@@ -7,7 +7,3 @@
 # generated data file
 
 *.data
-
-# compiled lib
-
-libs/*
