@@ -1,4 +1,4 @@
-(load "../common/utils.scm")
+; now this file can be loaded as a module
 
 ; note: not working until the definition of several building-block procedures
 ;   are given
@@ -20,5 +20,3 @@
                           (multiplicand exp))))
         (else
           (error "unknown expression type: DERIV" exp))))
-
-(end-script)
