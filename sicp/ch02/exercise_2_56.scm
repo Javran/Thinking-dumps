@@ -64,7 +64,11 @@
           (let* ((u (base exp))
                  (n (exponent exp))
                  (du/dx (deriv u var)))
-            (make-product (* n (expt u (- n 1))) du/dx)))
+            (make-product
+              (make-product
+                n
+                (make-exponentiation u (- n 1)))
+              du/dx)))
         (else
           (error "unknown expression type: DERIV" exp))))
 
@@ -88,6 +92,12 @@
               (= e2 1)) e1)
         (else (list '** e1 e2))))
 
-(out (deriv '(* 10 (** x 6)) 'x))
+(out (deriv '(** x 6) 'x)
+     ; (x^4+y^5)*2
+     (deriv '(* (+ (** x 4) (** y 5)) 2) 'x)
+     ; =8x^3
+     (deriv '(* (+ (** x 4) (** y 5)) 2) 'y)
+     ; =5y^4
+     )
 
 (end-script)
