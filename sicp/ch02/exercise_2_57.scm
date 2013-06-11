@@ -41,15 +41,33 @@
   (cons '* ls))
 
 (define addend cadr)
-(define augend cddr)
+(define (augend s)
+  (let ((result (cddr s)))
+    (if (= 1 (length result))
+      (car result)
+      (cons '+ result))))
 
 (define multiplier cadr)
-(define multiplicand cddr)
+(define (multiplicand p)
+  (let ((result (cddr p)))
+    (if (= 1 (length result))
+      (car result)
+      (cons '* result))))
+
+(let ((a (make-sum 1 2 3))
+      (b (make-product 4 5 6)))
+  (out (addend a)
+       (augend a)
+       (multiplier b)
+       (multiplicand b)))
 
 ; test
-(out (deriv '(* x (+ 2 y)) 'x)
-     (deriv '(* x (+ 2 y)) 'y))
-(newline)
+(out (deriv '(* x 2) 'x))
+; = 2
 
+(out (deriv '(* x y (+ x 3)) 'x))
+; (+ (* x (+ (* y (+ 1 0)) (* 0 (+ x 3)))) (* 1 (* y (+ x 3))))
+; => (+ (* x y) (* y (+ x 3)))
+; => (+ (* 2 x y) (* 3 y))
 
 (end-script)
