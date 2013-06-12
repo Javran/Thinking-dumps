@@ -58,4 +58,13 @@
                           (multiplicand exp))))
         (else
           (error "unknown expression type: DERIV" exp))))
+
+(let ((s '(x + (3 * (x + (y + 2))))))
+  (out s
+       (deriv s 'x)
+       ; = 4
+       (deriv s 'y)
+       ; = 3
+       ))
+
 (end-script)
