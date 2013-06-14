@@ -86,7 +86,13 @@
          #t)))
 
 (define multiplier car)
-(define multiplicand caddr)
+(define (multiplicand x)
+  (define (get x)
+    (if (and (list? x)
+             (= (length x) 1))
+      (car x)
+      x))
+  (get (cddr x)))
 
 (define (make-product a b)
   (list a '* b))
