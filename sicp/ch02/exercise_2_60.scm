@@ -36,4 +36,17 @@
   ; has duplicate elements
   )
 
+; comparison:
+;   element-of-set?
+;     both are theta(n)
+;   adjoin-set
+;     duplicate impl: theta(1), non-duplicate impl: theta(n)
+;   intersection-set
+;     both are theta(n^2)
+;   union-set
+;     duplicate impl: theta(n), non-duplicate impl: theta(n^2)
+
+; adjoin-set & union-set is quicker for duplicate impl despite that we might have a big 'n'
+; when we don't have much element, and when it doesn't matter if we have duplicate elements stored in memory
+;   I'd prefer this representation
 (end-script)
