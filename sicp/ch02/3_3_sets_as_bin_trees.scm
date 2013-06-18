@@ -6,34 +6,31 @@
 ; element-of-set?
 ; adjoin-set
 
+; tree definition and corresponding accessors
+(define (make-tree entry left right)
+  (list entry left right))
+
+(define entry car)
+(define left-branch cadr)
+(define right-branch caddr)
+
 (define (element-of-set? x set)
-  ; given that its an ordered list, we can skip some element comparisons
   (cond ((null? set) #f)
-        ((= x (car set)) #t)
-        ((< x (car set)) #f)
-        (else (element-of-set? x (cdr set)))))
+        ((= x (entry set)) #t)
+        ((< x (entry set))
+          (element-of-set? x (left-branch set)))
+        ((> x (entry set))
+          (element-of-set? x (right-branch set)))))
 
-(define (intersection-set set1 set2)
-  (if (or (null? set1) (null? set2))
-    '()
-    (let ((x1 (car set1)) (x2 (car set2)))
-      (cond ((= x1 x2)
-              (cons x1 (intersection-set (cdr set1)
-                                         (cdr set2))))
-            ((< x1 x2)
-              (intersection-set (cdr set1) set2))
+(let ((set (make-tree 2
+                    (make-tree 1 nil nil)
+                    (make-tree 3 nil nil))))
+  (out (map
+         (lambda (x)
+           (element-of-set? x set))
+         (list-in-range 1 4))))
+  ; (#t #t #t #f)
 
-            ((< x2 x1)
-              (intersection-set set1 (cdr set2)))))))
 
-(let ((x1 (list-in-range 2 5))
-      (x2 (list-in-range 3 7)))
-  (out (element-of-set? 6 x1)
-       ; #f
-       (element-of-set? 6 x2)
-       ; #t
-       (intersection-set x1 x2)
-       ; (3 4 5)
-       ))
 
 (end-script)
