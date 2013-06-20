@@ -38,4 +38,15 @@
 (out (tree->list-2 tree-123))
 ; (1 2 3)
 
+; TODO: to be verified
+; a. Do the two procedures produce the same result for every tree? 
+;   They should be the same as they have similiar structure
+;   to convert trees to lists ({merge} {left} {entry} {right}) 
+; b. Do the two procedures have the same order of growth in the
+;   number of steps required to convert a balanced tree with n ele-
+;   ments to a list?
+;   `tree->list-2` might have slightly more steps to convert a tree
+;   because it is a tail-recursive procedure and iterative
+;   but they have same order of growth in terms of number of steps.
+
 (end-script)
