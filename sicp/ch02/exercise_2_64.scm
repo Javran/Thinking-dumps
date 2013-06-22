@@ -43,6 +43,21 @@
               (cons (make-tree this-entry left-tree right-tree)
                     remaining-elements))))))))
 
+; how `partial-tree` works?
+; * an empty tree is required, nothing should be used
+;     returns (nil all-elements)
+; * for other cases:
+;     * determine size for left and right tree:
+;         left-size = (n - 1)/2
+;         right-size = n - left-size - 1
+;         the extra one element is consumed by the current tree constructing.
+;           (i.e. this-entry)
+;     * first make left tree recursively
+;     * take elements remained
+;     * take first element from the left-result as root for current tree
+;     * take others and run partial-tree recursively to build right tree
+;     * put left-tree this-entry right-tree together
+
 (out (list->tree '(1 2 3 4 5)))
 (out (list->tree (list-in-range 1 10)))
 
