@@ -61,4 +61,24 @@
 (out (list->tree '(1 2 3 4 5)))
 (out (list->tree (list-in-range 1 10)))
 
+; eval: (1 3 5 7 9 11)
+; (partial-tree '(1 3 5 7 9 11) 6)
+; left-tree constructed by: (6-1)/2 -> 2, list: '(1 3)
+;   (partial-tree '(1 3 5 7 9 11) 2)
+;     left-tree constructed by: (2-1)/2 -> 0, empty left-tree
+;       1 -> this-entry, 2 - 0 - 1 = 1
+;     (partial-tree '(3 5 7 9 11) 1) # this is the right tree
+;     => (3 nil nil)
+;   => (1 nil (3 nil nil)), remaining: (5 7 9 11)
+; this-entry: 5, remaining: (7 9 11) 
+; right-tree constructed by: 6 - 2 - 1 = 3, list: '(7 9 11)
+;   (partial-tree '(7 9 11) 3)
+;     left-tree constructed by: (3 - 1)/2 -> 1, list: '(7)
+;     => (7 nil nil)
+;     9 -> this-entry
+;     right: (11 nil nil)
+;   => (9 (7 nil nil) (11 nil nil))
+; => (5 (1 nil (3 nil nil)) (9 (7 nil nil) (11 nil nil)))
+(out (list->tree '(1 3 5 7 9 11)))
+
 (end-script)
