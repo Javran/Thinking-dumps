@@ -81,4 +81,8 @@
 ; => (5 (1 nil (3 nil nil)) (9 (7 nil nil) (11 nil nil)))
 (out (list->tree '(1 3 5 7 9 11)))
 
+; the order of growth:
+; theta(n) = c + 2 * theta(n/2), c is the cost of constructing a node of tree
+; => theta(n) = c * n, because list->tree scans and builds a node for every element scanned
+
 (end-script)
