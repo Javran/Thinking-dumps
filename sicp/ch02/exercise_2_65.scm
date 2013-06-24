@@ -110,5 +110,27 @@
   ; (3 (1 () (2 () ())) (4 () (5 () ())))
   )
 
+; 2.3.3 intersection-set for ordered list
+(define (intersection-set-ol set1 set2)
+  (if (or (null? set1) (null? set2))
+    '()
+    (let ((x1 (car set1)) (x2 (car set2)))
+      (cond ((= x1 x2)
+              (cons x1 (intersection-set-ol (cdr set1)
+                                         (cdr set2))))
+            ((< x1 x2)
+              (intersection-set-ol (cdr set1) set2))
+
+            ((< x2 x1)
+              (intersection-set-ol set1 (cdr set2)))))))
+
+(define (intersection-set set1 set2)
+  (let ((set-l1 (tree->list set1))
+        (set-l2 (tree->list set2)))
+    (list->tree (intersection-set-ol set-l1 set-l2))))
+
+(let ((t1 (list->tree (gen-list 1 7 2)))
+      (t2 (list->tree (list-in-range 4 7))))
+  (out (intersection-set t1 t2)))
 
 (end-script)
