@@ -129,8 +129,30 @@
         (set-l2 (tree->list set2)))
     (list->tree (intersection-set-ol set-l1 set-l2))))
 
+; exercise 2.62: union-set for ordered list
+(define (union-set-ol set1 set2)
+  (cond ((null? set1) set2)
+        ((null? set2) set1)
+        (else (let ((x1 (car set1))
+                    (x2 (car set2)))
+                (cond ((= x1 x2)
+                       (cons x1 (union-set-ol (cdr set1) (cdr set2))))
+                      ((< x1 x2)
+                       (cons x1 (union-set-ol (cdr set1) set2)))
+                      ((> x1 x2)
+                       (cons x2 (union-set-ol set1 (cdr set2)))))))))
+(define (union-set set1 set2)
+  (let ((set-l1 (tree->list set1))
+        (set-l2 (tree->list set2)))
+    (list->tree (union-set-ol set-l1 set-l2))))
+
+
 (let ((t1 (list->tree (gen-list 1 7 2)))
       (t2 (list->tree (list-in-range 4 7))))
-  (out (intersection-set t1 t2)))
+  (out (intersection-set t1 t2))
+  ; (1 3 5 7) /\ (4 5 6 7) => (5 7)
+  (out (union-set t1 t2))
+  ; (1 3 5 7) \/ (4 5 6 7) => (1 3 4 5 6 7)
+  )
 
 (end-script)
