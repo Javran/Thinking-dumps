@@ -77,4 +77,35 @@
         (cons 1 (encode-symbol symbol (right-branch tree))))
       (not-found symbol))))
 
+; test:
+; a:1 b:2 c:3 d:4
+(let* ((ta (make-leaf 'a 1))
+       (tb (make-leaf 'b 2))
+       (tc (make-leaf 'c 3))
+       (td (make-leaf 'd 4))
+       ; merge a,b: (a b):3 c:3 d:4
+       (tree-1 (make-code-tree ta tb))
+       ; merge (a b),c: ((a b) c):6 d:4
+       (tree-2 (make-code-tree tree-1 tc))
+       ; merge all: (d ((a b) c))
+       ; => the final tree
+       (tree-fin (make-code-tree td tree-2))
+       ; original data:
+       (ori-data '(d c d b b c a d c d))
+       ; dcdbbcadcd
+       (enc-result (encode ori-data tree-fin))
+       (dec-result (decode enc-result tree-fin))
+       (correct (equal? ori-data dec-result)))
+  (out "Original data:"
+       ori-data
+       "Encoded data:"
+       enc-result
+       "Decoded data:"
+       dec-result
+       "Correct?"
+       correct)
+  ; uncomment the next line to see the error signal
+  ; (out (encode '(a b c d e) tree-fin))
+  )
+
 (end-script)
