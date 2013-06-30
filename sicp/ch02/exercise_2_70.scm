@@ -139,4 +139,8 @@
     sha boom)
   huff-tree)
 
+; for huffman encoding, the number of bits required is 87,
+; for fixed-length encoding, the number of bits required is 3*36=108
+;   because each word needs 3 bits to encode.
+
 (end-script)
