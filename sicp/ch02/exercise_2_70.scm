@@ -93,16 +93,50 @@
       (not-found symbol))))
 
 ; my solution:
-(let ((huff-tree 
-       (list (list 'a     2)
-             (list 'get   2)
-             (list 'sha   3)
-             (list 'wah   1)
-             (list 'boom  1)
-             (list 'job   2)
-             (list 'na    16)
-             (list 'yip   9))))
-  (out (generate-huffman-tree huff-tree)
-       ))
+(define huff-tree 
+  (generate-huffman-tree
+    (list (list 'a     2)
+          (list 'get   2)
+          (list 'sha   3)
+          (list 'wah   1)
+          (list 'boom  1)
+          (list 'job   2)
+          (list 'na    16)
+          (list 'yip   9))))
+(out
+  "The Huffman tree is:"
+  huff-tree)
+
+(define (test-message msg tree)
+  (let* ((enc-result (encode msg tree))
+         (dec-result (decode enc-result tree)))
+    (out "Original message:"
+         msg
+         "Length:"
+         (length msg)
+
+         "Encoded message:"
+         enc-result
+         "Length:"
+         (length enc-result)
+
+         "Decoded message:"
+         dec-result
+         "Length:"
+         (length dec-result)
+
+         "Correct?"
+         (equal? msg dec-result)
+         )))
+
+(test-message
+  '(
+    get a job
+    sha na na na na na na na na
+    get a job
+    sha na na na na na na na na
+    wah yip yip yip yip yip yip yip yip yip
+    sha boom)
+  huff-tree)
 
 (end-script)
