@@ -40,3 +40,14 @@
          "ex_2_45_einstein_usplit")
 
 ; extra task: left-split and down-split?
+(define (flip bin)
+  (lambda (a b)
+    (bin b a)))
+
+(define left-split (split (flip beside) below))
+(define down-split (split (flip below) beside))
+
+(p->file (left-split einstein 3)
+         "ex_2_45_einstein_lsplit")
+(p->file (down-split einstein 3)
+         "ex_2_45_einstein_dsplit")
