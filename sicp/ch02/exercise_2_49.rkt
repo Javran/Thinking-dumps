@@ -92,6 +92,13 @@
               (list mc md)
               (list md ma))))))
 
+; to construct painter_d:
+; * read description
+;     (the segments in "./wave_segments.txt" use GIMP's coordinate)
+; * re-mapping points
+; * construct segment list
+; * construct painter
+
 (for-each
   (lambda (args)
     (apply test-painter args))
