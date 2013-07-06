@@ -74,8 +74,16 @@
             (list pc pd)
             (list pd pa)))))
 
+(define painter_b
+  (segments->painter
+    (list->segments
+      (list (list pa pc)
+            (list pb pd)))))
+
 (for-each
   (lambda (args)
     (apply test-painter args))
   (list
-    (list painter_a "ex_2_49_a")))
+    (list painter_a "ex_2_49_a")
+    (list painter_b "ex_2_49_b")
+    ))
