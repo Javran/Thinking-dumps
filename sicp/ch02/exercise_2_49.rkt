@@ -80,10 +80,23 @@
       (list (list pa pc)
             (list pb pd)))))
 
+(define painter_c
+  (let ((ma '(0.5 0))
+        (mb '(1 0.5))
+        (mc '(0.5 1))
+        (md '(0 0.5)))
+    (segments->painter
+      (list->segments
+        (list (list ma mb)
+              (list mb mc)
+              (list mc md)
+              (list md ma))))))
+
 (for-each
   (lambda (args)
     (apply test-painter args))
   (list
     (list painter_a "ex_2_49_a")
     (list painter_b "ex_2_49_b")
+    (list painter_c "ex_2_49_c")
     ))
