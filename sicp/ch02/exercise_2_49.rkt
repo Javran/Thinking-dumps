@@ -117,9 +117,28 @@
                     (cadddr data)))))
     (cdr raw-data)))
 
-(display raw-wave-segment-list)
+(define (remap-point p)
+  (let ((x0 (car p))
+        (y0 (cadr p)))
+    (list (/ x0 pic-size)
+          (/ (- pic-size y0) pic-size))))
+(define (str-pt->num-pt p)
+  (map string->number p))
 
-(exit)
+(define wave-segment-list
+  (map
+    (lambda (segment)
+      (map remap-point
+           ; remap points
+           (map str-pt->num-pt
+                ; convert str-segments to num-segments
+                segment)))
+    raw-wave-segment-list))
+
+(define painter_d
+  (segments->painter
+    (list->segments
+      wave-segment-list)))
 
 (for-each
   (lambda (args)
@@ -128,4 +147,5 @@
     (list painter_a "ex_2_49_a")
     (list painter_b "ex_2_49_b")
     (list painter_c "ex_2_49_c")
+    (list painter_d "ex_2_49_d")
     ))
