@@ -99,6 +99,28 @@
 ; * construct segment list
 ; * construct painter
 
+(define raw-data
+  (file->lines "./wave_segments.txt"))
+
+(define pic-size
+  (string->number
+    (car
+      (string-split (car raw-data)))))
+
+(define raw-wave-segment-list
+  (map
+    (lambda (line)
+      (let ((data (string-split line)))
+        (list (list (car data)
+                    (cadr data))
+              (list (caddr data)
+                    (cadddr data)))))
+    (cdr raw-data)))
+
+(display raw-wave-segment-list)
+
+(exit)
+
 (for-each
   (lambda (args)
     (apply test-painter args))
