@@ -67,3 +67,23 @@
 (p->file (squash-inwards einstein)
          "2_4_einstein_si")
 
+(define (beside1 painter1 painter2)
+  (let* ((split-point (make-vect 0.5 0))
+         (paint-left
+           (transform-painter1
+             painter1
+             (make-vect 0 0)
+             split-point
+             (make-vect 0 1)))
+         (paint-right
+           (transform-painter1
+             painter2
+             split-point
+             (make-vect 1 0)
+             (make-vect 0.5 1))))
+    (lambda (frame)
+      (paint-left frame)
+      (paint-right frame))))
+
+(p->file (beside1 einstein einstein)
+         "2_4_einstein_beside1")
