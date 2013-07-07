@@ -27,3 +27,22 @@
 (p->file (flip-horiz1 einstein)
          "ex_2_50_einstein_fh")
 
+(define (rotate-cc-180 painter)
+  (transform-painter1
+    painter
+    (make-vect 1 1)
+    (make-vect 0 1)
+    (make-vect 1 0)))
+
+(p->file (rotate-cc-180 einstein)
+         "ex_2_50_einstein_rc180")
+
+(define (rotate-cc-270 painter)
+  (transform-painter1
+    painter
+    (make-vect 0 1)
+    (make-vect 0 0)
+    (make-vect 1 1)))
+
+(p->file (rotate-cc-270 einstein)
+         "ex_2_50_einstein_rc270")
