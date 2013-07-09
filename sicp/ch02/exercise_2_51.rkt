@@ -17,6 +17,24 @@
                    (sub-vect (m corner1) new-origin)
                    (sub-vect (m corner2) new-origin)))))))
 
+(define (beside1 painter1 painter2)
+  (let* ((split-point (make-vect 0.5 0))
+         (paint-left
+           (transform-painter1
+             painter1
+             (make-vect 0 0)
+             split-point
+             (make-vect 0 1)))
+         (paint-right
+           (transform-painter1
+             painter2
+             split-point
+             (make-vect 1 0)
+             (make-vect 0.5 1))))
+    (lambda (frame)
+      (paint-left frame)
+      (paint-right frame))))
+
 ; define below in 2 different ways
 ; below1: analogous to the beside
 
@@ -38,8 +56,8 @@
       (paint-down frame)
       (paint-up frame))))
 
-; the upper would have two painters piled
-(p->file (below1 einstein (beside einstein einstein))
+; the upper would have two painters of Einstein
+(p->file (below1 einstein (beside1 einstein einstein))
          "ex_2_51_einstein_below1")
 
 ; below2: in terms of beside and suitable rotation operations
@@ -57,20 +75,13 @@
     (make-vect 1 1)
     (make-vect 0 0)))
 
-(define (beside1 painter1 painter2)
-  (let* ((split-point (make-vect 0.5 0))
-         (paint-left
-           (transform-painter1
-             painter1
-             (make-vect 0 0)
-             split-point
-             (make-vect 0 1)))
-         (paint-right
-           (transform-painter1
-             painter2
-             split-point
-             (make-vect 1 0)
-             (make-vect 0.5 1))))
-    (lambda (frame)
-      (paint-left frame)
-      (paint-right frame))))
+(define (below2 painter1 painter2)
+  (let* ((rp1 (rotate-cc-90 painter1)) ; rotated painter1
+         (rp2 (rotate-cc-90 painter2)) ; rotated painter2
+         (beside-result (beside1 rp2 rp1))) ; note the order of p1-p2 here
+                                            ;   which is due to the different drawing order of 
+                                            ;   beside (left-right) and below (down-up)
+    (rotate-cc-270 beside-result)))
+
+(p->file (below2 einstein (beside1 einstein einstein))
+         "ex_2_51_einstein_below2")
