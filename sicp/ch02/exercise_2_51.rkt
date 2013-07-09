@@ -17,4 +17,29 @@
                    (sub-vect (m corner1) new-origin)
                    (sub-vect (m corner2) new-origin)))))))
 
-; TODO
+; define below in 2 different ways
+; below1: analogous to the beside
+
+(define (below1 painter1 painter2)
+  (let ((split-point (make-vect 0 0.5)))
+    (let ((paint-down
+            (transform-painter1
+              painter1
+              (make-vect 0 0)
+              (make-vect 1 0)
+              split-point))
+          (paint-up
+            (transform-painter1
+              painter2
+              split-point
+              (make-vect 1 0.5)
+              (make-vect 0 1))))
+      (lambda (frame)
+        (paint-down frame)
+        (paint-up frame)))))
+
+; the upper would have two painters piled
+(p->file (below1 einstein (below1 einstein einstein))
+         "ex_2_51_einstein_below1")
+
+; below2: in terms of beside and suitable rotation operations
