@@ -30,7 +30,7 @@
                     identity
                     rotate180
                     flip-vert)))
-    (combine4 einstein)))
+    (combine4 painter)))
 
 (p->file (square-limit-1 einstein)
          "2_4_einstein_sl1")
