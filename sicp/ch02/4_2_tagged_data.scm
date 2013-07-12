@@ -119,4 +119,12 @@
   (print-complex (div-complex c1 c2)) ;  0+1i
   )
 
+; not satisfied with the implementations above.
+; * the procedures are too verbose,
+;     cond statements appear over and over again,
+;       whenever we need a new procedure that dispatches data to different impl
+;       this kind of work needs to be repeated
+; * make-from-xxx creates data with tags but selectors uses data without tags
+;     from my point of view, it might cause some confusion
+
 (end-script)
