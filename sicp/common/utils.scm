@@ -30,6 +30,8 @@
            (newline))
       items)))
 
+(define pi 3.141592653589793)
+
 ; calculate time difference
 ; returns a pair (return value . time elapsed)
 (define time-test

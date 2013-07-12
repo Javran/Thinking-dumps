@@ -26,6 +26,15 @@
   (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
                      (- (angle z1) (angle z2))))
 
+(define (test-complex)
+  (let ((c1 (make-from-real-imag 1 1))
+        (c2 (make-from-mag-ang 1 (/ pi 4))))
+    (out (magnitude c1) ; ~= (sqrt 2)
+         (angle c1) ; ~= pi/4
+         (real-part c2) ; ~= (sqrt (/ 1 2))
+         (imag-part c2) ; ~= (sqrt (/ 1 2))
+         )))
+
 (begin ; ben's impl
   (define real-part car)
   (define imag-part cdr)
@@ -37,8 +46,7 @@
   (define make-from-real-imag cons)
   (define (make-from-mag-ang r a)
     (cons (* r (cos a)) (* r (sin a))))
-
-  'stub)
+  (test-complex))
 
 (begin ; alyssa's impl
   (define (real-part z)
@@ -51,6 +59,6 @@
     (cons (sqrt (+ (square x) (square y)))
           (atan y x)))
   (define make-from-mag-ang cons)
-  'stub)
+  (test-complex))
 
 (end-script)
