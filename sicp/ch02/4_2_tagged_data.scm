@@ -1,0 +1,47 @@
+(load "../common/utils.scm")
+
+(define attach-tag cons)
+(define (type-tag datum)
+  (if (pair? datum)
+    (car datum)
+    (error "Bad tagged datum: TYPE-TAG" datum)))
+(define (contents datum)
+  (if (pair? datum)
+    (cdr datum)
+    (error "Bad tagged datum: CONTENTS" datum)))
+
+(define (rect? z)
+  (eq? (type-tag z) 'rect))
+
+(define (polar? z)
+  (eq? (type-tag z) 'polar))
+
+; ben's impl
+(define real-part-rect car)
+(define imag-part-rect cdr)
+(define (magnitude-rect z)
+  (sqrt (+ (square (real-part-rect z))
+           (square (imag-part-rect z)))))
+(define (angle-rect z)
+  (atan (imag-part-rect z)
+        (real-part-rect z)))
+(define (make-from-real-imag-rect x y)
+  (attach-tag 'rect (cons x y)))
+(define (make-from-mag-ang r a)
+  (make-from-real-imag-rect (* r (cos a))
+                            (* r (sin a))))
+
+; alyssa's impl
+(define (real-part-polar z)
+  (* (magnitude-polar z) (cos (angle-polar z))))
+(define (imag-part-polar z)
+  (* (magnitude-polar z) (sin (angle-polar z))))
+(define magnitude-polar car)
+(define angle-polar cdr)
+(define (make-from-real-imag-polar x y)
+  (make-from-mag-ang (sqrt (+ (square x) (square y)))
+                     (atan y x)))
+(define (make-from-mag-ang-polar r a)
+  (attach-tag 'polar (cons r a)))
+
+(end-script)
