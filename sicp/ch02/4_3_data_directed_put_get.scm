@@ -19,7 +19,12 @@
                  table))))
 
 (define (put op type item)
-  (set! proc-table (put-proc op type item proc-table)))
+  (cond ((null? type) 'done)
+        ((list? type)
+          (put op (car type) item)
+          (put op (cdr type) item))
+        (else
+          (set! proc-table (put-proc op type item proc-table)))))
 
 (define (get op type)
   (let ((type-val (assq type proc-table)))
@@ -39,6 +44,7 @@
     (put 'add 'tp2 'proc3)
     (put 'add 'tp1 'proc4)
     (put 'sub 'tp2 'proc5)
+    (put 'add '(tp1 tp2) 'proc7)
     (out proc-table)
     (newline)
 

@@ -10,6 +10,10 @@
 ; to add a new representation doesn't need to change any existing procedures
 
 (load "./4_3_data_directed_put_get.scm")
+(load "./4_3_data_directed_ben_impl.scm")
 
+(install-rect-package)
+
+(out proc-table)
 
 (end-script)
