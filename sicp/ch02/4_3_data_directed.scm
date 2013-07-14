@@ -32,12 +32,33 @@
 (define (put op type item)
   (set! proc-table (put-proc op type item proc-table)))
 
-; tests:
-(put 'add 'tp1 'proc1) ; <- overridden by proc4
-(put 'sub 'tp1 'proc2)
-(put 'add 'tp2 'proc3)
-(put 'add 'tp1 'proc4)
+(define (get op type)
+  (let ((type-val (assq type proc-table)))
+    (if type-val
+      (let* ((op-table (cadr type-val))
+             (op-proc-pair (assq op op-table)))
+        (if op-proc-pair
+          (cadr op-proc-pair)
+          #f))
+      #f)))
 
-(out proc-table)
+(define (get-put-tests)
+  (let ((origin-table proc-table))
+    ; tests:
+    (put 'add 'tp1 'proc1) ; <- overridden by proc4
+    (put 'sub 'tp1 'proc2)
+    (put 'add 'tp2 'proc3)
+    (put 'add 'tp1 'proc4)
+    (put 'sub 'tp2 'proc5)
+    (out proc-table)
+    (newline)
+
+    (out (get 'add 'tp1)
+         (get 'a 'b)
+         (get 'c 'tp2)
+         (get 'sub 'tp2))
+    (set! proc-table origin-table)))
+
+(get-put-tests)
 
 (end-script)
