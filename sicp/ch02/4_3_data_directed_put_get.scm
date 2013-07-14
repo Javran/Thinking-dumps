@@ -44,14 +44,31 @@
     (put 'add '(tp1 tp2) 'proc7)
     (put 'add '(tp1 tp2) 'proc8)
     (put 'sub '(tp1 tp2) 'proc9)
-    (out proc-table)
-    (newline)
+    (pretty-print-proc-table)
 
     (out (get 'add 'tp1)
          (get 'a 'b)
          (get 'c 'tp2)
          (get 'sub 'tp2))
     (set! proc-table origin-table)))
+
+(define (pretty-print-proc-table)
+  (define (pretty-print-type-entity pair)
+    (display "type: ")
+    (display (car pair))
+    (newline)
+    (for-each
+      pretty-print-op-entity
+      (cadr pair)))
+  (define (pretty-print-op-entity pair)
+    (display "  op: ")
+    (display (car pair))
+    (display " -> ")
+    (display (cadr pair))
+    (newline))
+  (for-each
+    pretty-print-type-entity
+    proc-table))
 
 ; uncomment next line for tests
 ; (get-put-tests)

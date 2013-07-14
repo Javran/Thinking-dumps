@@ -36,6 +36,6 @@
 (install-rect-package)
 (install-polar-package)
 
-(out proc-table)
+(pretty-print-proc-table)
 
 (end-script)
