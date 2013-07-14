@@ -11,8 +11,10 @@
 
 (load "./4_3_data_directed_put_get.scm")
 (load "./4_3_data_directed_ben_impl.scm")
+(load "./4_3_data_directed_aly_impl.scm")
 
 (install-rect-package)
+(install-polar-package)
 
 (out proc-table)
 
