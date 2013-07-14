@@ -14,6 +14,9 @@
     (make-from-real-imag (* r (cos a)) (* r (sin a))))
 
   ;; interface to the rest of the system
+  ; the "'(rect)" shown above is actually an equivalent to type signature
+  ; when replaced with "'(rect polar)", it might suggest the proc in the value field
+  ;   is a binary that accept 2 arguments with type 'rect and 'polar respectively
   (define (tag x) (attach-tag 'rect x))
   (put 'real-part '(rect) real-part)
   (put 'imag-part '(rect) imag-part)

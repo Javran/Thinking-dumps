@@ -4,10 +4,11 @@
 
 (define (put-alist key val alist)
   (cons (list key val)
-        (del-assq key alist)))
+        (del-assoc key alist)))
 
 (define (put-proc op type item table)
-  (let ((type-val (assq type table)))
+  ; use assoc because type-val would be a list of symbols
+  (let ((type-val (assoc type table)))
     (if type-val
       ; if the type exists
       (let* ((op-table (cadr type-val))
@@ -19,15 +20,11 @@
                  table))))
 
 (define (put op type item)
-  (cond ((null? type) 'done)
-        ((list? type)
-          (put op (car type) item)
-          (put op (cdr type) item))
-        (else
-          (set! proc-table (put-proc op type item proc-table)))))
+  (set! proc-table (put-proc op type item proc-table)))
 
 (define (get op type)
-  (let ((type-val (assq type proc-table)))
+  ; use assoc because type-val would be a list of symbols
+  (let ((type-val (assoc type proc-table)))
     (if type-val
       (let* ((op-table (cadr type-val))
              (op-proc-pair (assq op op-table)))
@@ -45,6 +42,8 @@
     (put 'add 'tp1 'proc4)
     (put 'sub 'tp2 'proc5)
     (put 'add '(tp1 tp2) 'proc7)
+    (put 'add '(tp1 tp2) 'proc8)
+    (put 'sub '(tp1 tp2) 'proc9)
     (out proc-table)
     (newline)
 
