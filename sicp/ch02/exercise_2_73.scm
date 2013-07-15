@@ -60,6 +60,8 @@
 
 (load "./exercise_2_73_impl.scm")
 (install-deriv-my-impl)
+(define make-sum (get 'make-sum 'sum-product))
+(define make-product (get 'make-product 'sum-product))
 
 (out (deriv '(* x (+ x (* 3 y))) 'x))
 (out (deriv '(* x (+ x (* 3 y))) 'y))

@@ -1,5 +1,11 @@
 
 (define (install-deriv-my-impl)
+  ; constructors
+  (define (make-sum a1 a2)
+    (list '+ a1 a2))
+  (define (make-product m1 m2)
+    (list '* m1 m2))
+
   ; selectors
   (define addend car)
   (define augend cadr)
@@ -22,4 +28,7 @@
   ; install
   (put 'deriv '+ deriv-plus)
   (put 'deriv '* deriv-mul)
+
+  (put 'make-sum 'sum-product make-sum)
+  (put 'make-product 'sum-product make-product)
   )
