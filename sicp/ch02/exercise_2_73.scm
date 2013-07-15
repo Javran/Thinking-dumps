@@ -77,5 +77,27 @@
 ; (+ (* 0 (+ x (* 3 y))) (* (+ 0 (+ (* 0 y) (* 1 3))) x))
 ; => (* 3 x)
 ; => 3*x
+(newline)
+
+(load "./exercise_2_73_exp_impl.scm")
+(install-deriv-my-exp-impl)
+(define make-exponentiation (get 'make-exponentiation 'exp))
+
+; testcases are excerpted from "./exercise_2_56.scm"
+(out (deriv '(** x 6) 'x)
+     ; =6x^5
+     ; (x^4+y^5)*2
+     (deriv '(* (+ (** x 4) (** y 5)) 2) 'x)
+     ; =8x^3
+     (deriv '(* (+ (** x 4) (** y 5)) 2) 'y)
+     ; =10y^4
+     )
+
+; (* (* 6 (** x 5)) 1)
+; => (* 6 (** x 5)) => 6x^5
+; (+ (* (+ (* (* 4 (** x 3)) 1) (* (* 5 (** y 4)) 0)) 2) (* 0 (+ (** x 4) (** y 5))))
+; => (* 8 (** x 3)) => 8x^3
+; (+ (* (+ (* (* 4 (** x 3)) 0) (* (* 5 (** y 4)) 1)) 2) (* 0 (+ (** x 4) (** y 5))))
+; => (* 10 (** y 4)) => 10y^4
 
 (end-script)
