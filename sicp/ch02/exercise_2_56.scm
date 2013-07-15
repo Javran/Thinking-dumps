@@ -93,11 +93,12 @@
         (else (list '** e1 e2))))
 
 (out (deriv '(** x 6) 'x)
+     ; =6x^5
      ; (x^4+y^5)*2
      (deriv '(* (+ (** x 4) (** y 5)) 2) 'x)
      ; =8x^3
      (deriv '(* (+ (** x 4) (** y 5)) 2) 'y)
-     ; =5y^4
+     ; =10y^4
      )
 
 (end-script)
