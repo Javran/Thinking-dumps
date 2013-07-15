@@ -40,12 +40,6 @@
 
 (load "./4_3_data_directed_put_get.scm")
 
-; overwrite selectors that are unsuitable for `deriv`
-(define addend car)
-(define augend cadr)
-(define multiplier car)
-(define multiplicand cadr)
-
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp)
