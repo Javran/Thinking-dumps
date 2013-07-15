@@ -36,5 +36,24 @@
         (else (error "unknown expression type: DERIV-1" exp))))
 
 (out (deriv-1 '(+ x 3) 'x))
+(newline)
 
+(load "./4_3_data_directed_put_get.scm")
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp)
+          (if (same-variable? exp var) 1 0))
+        (else ((get 'deriv (operator exp))
+                (operands exp) var))))
+(define operator car)
+(define operand cdr)
+
+; a. Explain what was done above. Why can’t we assimilate the pred-
+; icates number? and variable? into the data-directed dispatch?
+
+; answer: symbols like '+ and '* are regarded as tags
+;   so that `deriv` can be re-written into data-directed style.
+;   and number? as well as variable? cannot be assimilated simply because
+;   that numbers and variables do not have special tags,
+;   which is required for the procedure "operator".
 (end-script)
