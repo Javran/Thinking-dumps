@@ -39,6 +39,13 @@
 (newline)
 
 (load "./4_3_data_directed_put_get.scm")
+
+; overwrite selectors that are unsuitable for `deriv`
+(define addend car)
+(define augend cadr)
+(define multiplier car)
+(define multiplicand cadr)
+
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp)
@@ -46,7 +53,7 @@
         (else ((get 'deriv (operator exp))
                 (operands exp) var))))
 (define operator car)
-(define operand cdr)
+(define operands cdr)
 
 ; a. Explain what was done above. Why can’t we assimilate the pred-
 ; icates number? and variable? into the data-directed dispatch?
@@ -56,4 +63,23 @@
 ;   and number? as well as variable? cannot be assimilated simply because
 ;   that numbers and variables do not have special tags,
 ;   which is required for the procedure "operator".
+
+(load "./exercise_2_73_impl.scm")
+(install-deriv-my-impl)
+
+(out (deriv '(* x (+ x (* 3 y))) 'x))
+(out (deriv '(* x (+ x (* 3 y))) 'y))
+; x * (x + (3 * y))
+; => x*x + 3*x*y
+; (deriv by x) => 2*x + 3*y
+; result: 
+; (+ (* 1 (+ x (* 3 y))) (* (+ 1 (+ (* 0 y) (* 0 3))) x))
+; => (+ (+ x (* 3 y))  x)
+; => x + x + 3*y
+; (deriv by y) => 3*x
+; result:
+; (+ (* 0 (+ x (* 3 y))) (* (+ 0 (+ (* 0 y) (* 1 3))) x))
+; => (* 3 x)
+; => 3*x
+
 (end-script)
