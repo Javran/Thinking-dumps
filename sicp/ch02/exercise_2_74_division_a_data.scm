@@ -1,0 +1,6 @@
+(("James" ((addr . "Alabama")
+           (salary . 500)))
+ ("John" ((addr . "Alaska")
+          (salary . 600)))
+ ("Mark" ((addr . "Arizona")
+          (salary . 550))))

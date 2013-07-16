@@ -17,4 +17,23 @@
 ; furthermore, I assume the name is unique to all the employees represented.
 ;   so we don't need to care about the name confliction 
 
+(define division-a
+  (call-with-input-file
+    "./exercise_2_74_division_a_data.scm"
+    read))
+
+(define division-b
+  (call-with-input-file
+    "./exercise_2_74_division_b_data.scm"
+    read))
+
+(define division-c
+  (call-with-input-file
+    "./exercise_2_74_division_c_data.scm"
+    read))
+
+(out division-a)
+(out division-b)
+(out division-c)
+
 (end-script)
