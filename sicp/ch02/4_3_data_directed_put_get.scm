@@ -27,7 +27,7 @@
   (let ((type-val (assoc type proc-table)))
     (if type-val
       (let* ((op-table (cadr type-val))
-             (op-proc-pair (assq op op-table)))
+             (op-proc-pair (assoc op op-table)))
         (if op-proc-pair
           (cadr op-proc-pair)
           #f))
