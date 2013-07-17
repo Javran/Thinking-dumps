@@ -9,8 +9,11 @@
       (if (null? employee-data)
         #f
         (cons name employee-data))))
+  (define (get-salary record)
+    (cadr (assoc 'salary (cdr record))))
 
   (put 'get-record 'division-c get-record)
+  (put 'get-salary 'division-c get-salary)
   )
 
 ; install automatically

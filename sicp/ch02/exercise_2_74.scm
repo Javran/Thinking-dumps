@@ -63,4 +63,21 @@
 (out (get-record "Susan" (cadr all-division-data)))
 (out (get-record "Lisa" (caddr all-division-data)))
 
+; b. Implement for headquarters a get-salary procedure that
+; returns the salary information from a given employee’s record
+; from any division’s personnel file. How should the record be
+; structured in order to make this operation work?
+
+; answer: 
+; The record should at least contain information of the division
+; it is belonging to. So I make the returned data from `get-record` tagged
+
+(define (get-salary record)
+  ((get 'get-salary (type-tag record)) (contents record)))
+
+(newline)
+(out (get-salary (get-record "James" (car all-division-data))))
+(out (get-salary (get-record "Susan" (cadr all-division-data))))
+(out (get-salary (get-record "Lisa" (caddr all-division-data))))
+
 (end-script)
