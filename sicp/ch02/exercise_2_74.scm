@@ -51,8 +51,10 @@
 (define (get-record name division-data)
   (let ((tag (type-tag division-data))
         (data (contents division-data)))
-    (attach-tag tag
-                ((get 'get-record tag) name data))))
+    (let ((result ((get 'get-record tag) name data)))
+      (if result
+        (attach-tag tag result)
+        #f))))
 
 (load "./exercise_2_74_division_a_impl.scm")
 (load "./exercise_2_74_division_b_impl.scm")
@@ -79,5 +81,41 @@
 (out (get-salary (get-record "James" (car all-division-data))))
 (out (get-salary (get-record "Susan" (cadr all-division-data))))
 (out (get-salary (get-record "Lisa" (caddr all-division-data))))
+ 
+; c. Implement for headquarters a find-employee-record proce-
+; dure. This should search all the divisions’ files for the record of
+; a given employee and return the record. Assume that this pro-
+; cedure takes as arguments an employee’s name and a list of all
+; the divisions’ files.
+
+(define (find-employee-record name division-list)
+  (if (null? division-list)
+    #f
+    (let ((record (get-record name (car division-list))))
+      (if record
+        record
+        (find-employee-record name (cdr division-list))))))
+
+; make a list for all employees listed above, including their divisions and their salary information
+(define test-employees
+  (list "Susan" "James" "Donald" "NoSuch" "Mary" "Mark" "Jeff" "Betty"))
+
+(newline)
+(for-each
+  (lambda (name)
+    (let ((result (find-employee-record name all-division-data)))
+      (if result
+        (begin
+          (display name)
+          (display ":\t")
+          (display (type-tag result))
+          (display "\t")
+          (display (get-salary result))
+          (newline))
+        (begin
+          (display name)
+          (display ":\t <not found>")
+          (newline)))))
+  test-employees)
 
 (end-script)
