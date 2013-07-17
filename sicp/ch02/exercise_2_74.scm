@@ -49,9 +49,10 @@
        all-division-info))
 
 (define (get-record name division-data)
-  ((get 'get-record (type-tag division-data))
-    name
-    (contents division-data)))
+  (let ((tag (type-tag division-data))
+        (data (contents division-data)))
+    (attach-tag tag
+                ((get 'get-record tag) name data))))
 
 (load "./exercise_2_74_division_a_impl.scm")
 (load "./exercise_2_74_division_b_impl.scm")
