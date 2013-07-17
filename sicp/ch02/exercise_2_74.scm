@@ -48,6 +48,13 @@
              (call-with-input-file division-filename read))))
        all-division-info))
 
-(out all-division-data)
+(define (get-record name division-data)
+  ((get 'get-record (type-tag division-data))
+    name
+    (contents division-data)))
+
+(load "./exercise_2_74_division_a_impl.scm")
+
+(out (get-record "James" (car all-division-data)))
 
 (end-script)
