@@ -117,5 +117,14 @@
           (display ":\t <not found>")
           (newline)))))
   test-employees)
+ 
+; d. When Insatiable takes over a new company, what changes must
+; be made in order to incorporate the new personnel information
+; into the central system?
+
+; answer:
+; * implement `get-record` and `get-salary` accordingly
+; * assign the division an identity (used as tag)
+; * install new implementation into the system
 
 (end-script)
