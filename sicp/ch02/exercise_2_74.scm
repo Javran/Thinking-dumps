@@ -54,7 +54,12 @@
     (contents division-data)))
 
 (load "./exercise_2_74_division_a_impl.scm")
+(load "./exercise_2_74_division_b_impl.scm")
+(load "./exercise_2_74_division_c_impl.scm")
 
+; test get-record from 3 divisions
 (out (get-record "James" (car all-division-data)))
+(out (get-record "Susan" (cadr all-division-data)))
+(out (get-record "Lisa" (caddr all-division-data)))
 
 (end-script)
