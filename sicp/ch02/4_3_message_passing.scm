@@ -12,11 +12,14 @@
           (else (error "Unknown op: MAKE-FROM-REAL-IMAG" op))))
   dispatch)
 
+(define (apply-generic op arg) (arg op))
+
 (let ((x (make-from-real-imag 3 4)))
   (out (x 'real-part)
        (x 'imag-part)
        (x 'magnitude)
        (x 'angle)
+       (apply-generic 'angle x)
        ))
 
 (end-script)
