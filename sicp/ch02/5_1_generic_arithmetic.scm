@@ -18,10 +18,12 @@
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
 
-; TODO: we don't actually need to give the implementation of `sub` and `div`
-;   and if we can find the negative of any valid number x, say `(neg x)`
-;   then we can have (define (sub x y) (add x (neg y))).
-;   Similarly, we can have `div` redefined.
+; (define (neg x) (apply-generic 'neg x))
+; (define (inv x) (apply-generic 'inv x))
+; if we have procedure `neg` that satisfies (neg x) + x = 0
+; then procedure `sub` can be defined as `(add x (neg y))`
+; if we have procedure `inv` that satisfies (inv x) * x = 1
+; that procedure `div` can be defined as `(mul x (inv y))`
 
 (load "./5_1_generic_arithmetic_scheme_number.scm")
 (install-scheme-number-package)
