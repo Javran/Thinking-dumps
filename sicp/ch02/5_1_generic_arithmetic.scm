@@ -31,10 +31,25 @@
 ; test scheme-number
 (let ((a (make-scheme-number 20))
       (b (make-scheme-number 10)))
-  (out (add a b)
-       (sub a b)
-       (mul a b)
-       (div a b)))
+  (out (add a b) ;  30
+       (sub a b) ;  10
+       (mul a b) ; 200
+       (div a b) ;   2
+       ))
+
+(load "./5_1_generic_arithmetic_rational.scm")
+(install-rational-package)
+(define make-rational
+  (get 'make 'rational))
+
+; test rational numbers
 (newline)
+(let ((a (make-rational 8 9))
+      (b (make-rational 3 7)))
+  (out (add a b) ; 83/63
+       (sub a b) ; 29/63
+       (mul a b) ;  8/21
+       (div a b) ; 56/27
+       ))
 
 (end-script)
