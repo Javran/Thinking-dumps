@@ -9,10 +9,6 @@
         (error
           "No method for these types: APPLY-GENERIC"
           (list op type-tags))))))
-(define (add x y) (apply-generic 'add x y))
-(define (sub x y) (apply-generic 'sub x y))
-(define (mul x y) (apply-generic 'mul x y))
-(define (div x y) (apply-generic 'div x y))
 (load "./exercise_2_77_complex.scm")
 (install-complex-package)
 (define make-from-real-imag
@@ -20,25 +16,23 @@
 (define make-from-mag-ang
   (get 'make-from-mag-ang 'complex))
 
-(define (real-part x)
-  (apply-generic 'real-part x))
-(define (imag-part x)
-  (apply-generic 'imag-part x))
+(define (real-part x) (apply-generic 'real-part x))
+(define (imag-part x) (apply-generic 'imag-part x))
+(define (magnitude x) (apply-generic 'magnitude x))
+(define (angle x) (apply-generic 'angle x))
+
+(define (show-info x)
+  (display "data dump: ") (display x) (newline)
+  (display "real-part: ") (display (real-part x)) (newline)
+  (display "imag-part: ") (display (imag-part x)) (newline)
+  (display "magnitude: ") (display (magnitude x)) (newline)
+  (display "angle: ") (display (angle x)) (newline))
 
 ; test complex numbers
 (newline)
-(let* ((a (make-from-real-imag 1  4))
-       (b (make-from-real-imag 2 -3))
-       (mul-result (mul a b))
-       (div-result (div a b)))
-  (out (add a b)  ;      3+     i
-       (sub a b)  ; -    1+    7i
-       mul-result ;     14+    5i
-       (real-part mul-result) 
-       (imag-part mul-result)
-       div-result ; -10/13+11/13i ~= -0.769+0.846i
-       (real-part div-result) 
-       (imag-part div-result)
-       ))
-
-(end-script)
+(let* ((a (make-from-real-imag 3 4))
+       (b (make-from-mag-ang   3 4)))
+  (show-info a)
+  (show-info b)
+  )
+  (end-script)
