@@ -5,7 +5,6 @@
 (install-polar-package)
 
 (define (install-complex-package)
-
   (define (real-part z)
     (apply-generic 'real-part z))
   (define (imag-part z)
@@ -48,4 +47,10 @@
 
   (put 'make-from-real-imag 'complex (tagged make-from-real-imag))
   (put 'make-from-mag-ang 'complex (tagged make-from-mag-ang))
+
+  (put 'real-part '(complex) real-part)
+  (put 'imag-part '(complex) imag-part)
+  (put 'magnitude '(complex) magnitude)
+  (put 'angle '(complex) angle)
+
   'done)

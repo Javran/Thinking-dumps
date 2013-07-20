@@ -20,14 +20,15 @@
 (define make-from-mag-ang
   (get 'make-from-mag-ang 'complex))
 
+(define (real-part x)
+  (apply-generic 'real-part x))
+(define (imag-part x)
+  (apply-generic 'imag-part x))
+
 ; test complex numbers
 (newline)
 (let* ((a (make-from-real-imag 1  4))
        (b (make-from-real-imag 2 -3))
-       (real-part (lambda (x)
-                    (apply-generic 'real-part (contents x))))
-       (imag-part (lambda (x)
-                    (apply-generic 'imag-part (contents x))))
        (mul-result (mul a b))
        (div-result (div a b)))
   (out (add a b)  ;      3+     i
