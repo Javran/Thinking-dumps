@@ -8,6 +8,15 @@
     (cdr datum)
     (error "Bad tagged datum: CONTENTS" datum)))
 
+(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+        (apply proc (map contents args))
+        (error
+          "No method for these types: APPLY-GENERIC"
+          (list op type-tags))))))
+
 ; a 2d table recording the corresponding proc:
 ; proc-table[type][op] => the proc
 (define proc-table nil)
