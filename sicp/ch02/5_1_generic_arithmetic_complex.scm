@@ -23,7 +23,7 @@
     (make-from-real-imag (+ (real-part z1) (real-part z2))
                          (+ (imag-part z1) (imag-part z2))))
   (define (neg-complex z)
-    (make-from-real-imag (- (real-part z)) (imag-part z)))
+    (make-from-real-imag (- (real-part z)) (- (imag-part z))))
   (define (sub-complex z1 z2)
     (add-complex z1 (neg-complex z2)))
   (define (mul-complex z1 z2)
