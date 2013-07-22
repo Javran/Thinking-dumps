@@ -41,9 +41,9 @@
 (define (put op type item)
   (set! proc-table (put-proc op type item proc-table)))
 
-(define (get op type)
+(define (get-proc op type table)
   ; use assoc because type-val would be a list of symbols
-  (let ((type-val (assoc type proc-table)))
+  (let ((type-val (assoc type table)))
     (if type-val
       (let* ((op-table (cadr type-val))
              (op-proc-pair (assoc op op-table)))
@@ -51,6 +51,9 @@
           (cadr op-proc-pair)
           #f))
       #f)))
+
+(define (get op type)
+  (get-proc op type proc-table))
 
 (define (get-put-tests)
   (let ((origin-table proc-table))
