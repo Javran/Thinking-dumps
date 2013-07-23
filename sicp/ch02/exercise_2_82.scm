@@ -29,26 +29,50 @@
 (out ((get-coercion 'type-b 'type-c)
        (make-type-b 'stub-c)))
 
+(put 'test '(type-a type-a type-a)
+     (lambda (a b c)
+       (out "Test ok." a b c)))
+
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
+        ; find a exact match, apply it
         (apply proc (map contents args))
         ; else
-        (if (= (length args) 2)
-          (let ((type1 (car type-tags))
-                (type2 (cadr type-tags))
-                (a1 (car args))
-                (a2 (cadr args)))
-            (let ((t1->t2 (get-coercion type1 type2))
-                  (t2->t1 (get-coercion type2 type1)))
-              (cond (t1->t2 
-                      (apply-generic op (t1->t2 a1) a2))
-                    (t2->t1
-                      (apply-generic op a1 (t2->t1 a2)))
-                    (else (error "No method for these types"
-                                 (list op type-tags))))))
-          (error "No method for these type"
-                 (list op type-tags)))))))
+        (let* ((type-tos type-tags) ; a list of target types we should attempt
+               (get-converters
+                 ; a procedure when given a type, it attempts to fetch a list of
+                 ;  corresponding converters to each argument
+                 (let ((converters
+                         (lambda (type-to)
+                           (map (lambda (type-from)
+                                  (if (equal? type-from type-to)
+                                    identity
+                                    (get-coercion type-from type-to)))
+                                type-tags))))
+                   (if (and
+                         ; all converters should be available
+                         (apply and converters)
+                         ; and the proc exists
+                         (proc (get op (map (const type-to) type-tags))))
+                     converters
+                     #f)))
+               (solutions
+                 (filter identity 
+                         (map get-converters type-tags))))
+          (if (null? solutions)
+            (error "No method for these types"
+                   (list op type-tags))
+            ; take the first solution and then zip!
+            (apply proc (map apply
+                             (car solution)
+                             (map contents args)))))))))
+
+(define (test a b c)
+  (apply-generic 'test a b c))
+
+(out (test (make-type-a 'a) (make-type-a 'b) (make-type-a 'c)))
+
 
 (end-script)
