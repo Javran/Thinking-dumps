@@ -10,6 +10,11 @@
 
 (define (change-to-tag new-tag)
   (lambda (x)
+    (display "type change: ")
+    (display (type-tag x))
+    (display " -> ")
+    (display new-tag)
+    (newline)
     (attach-tag new-tag (contents x))))
 
 (put-coercion 'type-a 'type-b (change-to-tag 'type-b))
@@ -29,7 +34,7 @@
 (out ((get-coercion 'type-b 'type-c)
        (make-type-b 'stub-c)))
 
-(put 'test '(type-a type-a type-a)
+(put 'test '(type-c type-c type-c)
      (lambda (a b c)
        (out "Test ok." a b c)))
 
@@ -44,20 +49,19 @@
                (get-converters
                  ; a procedure when given a type, it attempts to fetch a list of
                  ;  corresponding converters to each argument
-                 (let ((converters
-                         (lambda (type-to)
+                 (lambda (type-to)
+                   (let ((converters
                            (map (lambda (type-from)
                                   (if (equal? type-from type-to)
                                     identity
                                     (get-coercion type-from type-to)))
-                                type-tags))))
-                   (if (and
-                         ; all converters should be available
-                         (apply and converters)
-                         ; and the proc exists
-                         (proc (get op (map (const type-to) type-tags))))
-                     converters
-                     #f)))
+                                type-tags)))
+                     (if (and
+                           ; all converters should be available
+                           (apply boolean/and converters)
+                           (get op (map (const type-to) type-tags)))
+                       converters
+                       #f))))
                (solutions
                  (filter identity 
                          (map get-converters type-tags))))
@@ -65,14 +69,19 @@
             (error "No method for these types"
                    (list op type-tags))
             ; take the first solution and then zip!
-            (apply proc (map apply
-                             (car solution)
-                             (map contents args)))))))))
+            (let ((new-args (map (lambda (f data)
+                                   (f data))
+                                 (car solutions)
+                                 args)))
+              (apply apply-generic (cons op new-args)))))))))
+
 
 (define (test a b c)
   (apply-generic 'test a b c))
 
-(out (test (make-type-a 'a) (make-type-a 'b) (make-type-a 'c)))
-
+(newline)
+(test (make-type-c 1) (make-type-c 2) (make-type-c 3))
+(test (make-type-a 4) (make-type-a 5) (make-type-c 6))
+(test (make-type-a 7) (make-type-b 8) (make-type-c 9))
 
 (end-script)
