@@ -84,4 +84,11 @@
 (test (make-type-a 4) (make-type-a 5) (make-type-c 6))
 (test (make-type-a 7) (make-type-b 8) (make-type-c 9))
 
+; situation where this strategy is not sufficiently general:
+; consider we have a multiple procedure that multiple a complex number by a real number
+; the type would be '(complex real) or '(real complex)
+; when the apply-generic is call with type '(integer complex), there would not be an exact match
+; and system will attempt to make all types of the argument the same, in this case if a suitable handler
+; (e.g. multiple procedure that matches '(complex complex) ) cannot be found, the apply-generic will fail
+
 (end-script)
