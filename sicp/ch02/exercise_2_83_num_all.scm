@@ -8,9 +8,13 @@
       (attach-tag 'integer x)
       (error "MAKE-INTEGER: not an integer" x)))
 
+  (define (integer->rational x)
+    ((get 'make 'rational) (contents x) 1))
   (put 'make 'integer make-integer)
   (put 'add '(integer integer) (tagged 'integer +))
   (put 'sub '(integer integer) (tagged 'integer -))
+
+  (put-coercion 'integer 'rational integer->rational)
   'done)
 
 (define (install-rational-package)
@@ -30,9 +34,14 @@
   (define (sub-rat x y)
     (add-rat x (neg-rat y)))
 
+  (define (rat-only x y)
+    (out "this is a rational only procedure for test")
+    (out x y))
+
   (put 'make 'rational (tagged 'rational make-rat))
   (put 'add '(rational rational) (tagged 'rational add-rat))
   (put 'sub '(rational rational) (tagged 'rational sub-rat))
+  (put 'rat-only '(rational rational) rat-only)
   'done)
 
 (define (install-real-package)
