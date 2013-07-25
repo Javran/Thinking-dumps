@@ -11,6 +11,9 @@
 (define (sub a b)
   (apply-generic 'sub a b))
 
+(define (raise x)
+  (apply-generic 'raise x))
+
 (install-integer-package)
 (install-rational-package)
 (install-real-package)
@@ -32,5 +35,10 @@
 
 (newline)
 (apply-generic 'rat-only (make-integer 10) (make-rational 1 10))
+
+(newline)
+(out (raise (make-integer 10)))
+(out (raise (make-rational 10 17)))
+(out (raise (make-real 123)))
 
 (end-script)

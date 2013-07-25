@@ -10,11 +10,14 @@
 
   (define (integer->rational x)
     ((get 'make 'rational) (contents x) 1))
+
   (put 'make 'integer make-integer)
   (put 'add '(integer integer) (tagged 'integer +))
   (put 'sub '(integer integer) (tagged 'integer -))
 
   (put-coercion 'integer 'rational integer->rational)
+  (put 'raise '(integer) (lambda (x)
+                           ((get 'make 'rational) x 1)))
   'done)
 
 (define (install-rational-package)
@@ -42,12 +45,19 @@
   (put 'add '(rational rational) (tagged 'rational add-rat))
   (put 'sub '(rational rational) (tagged 'rational sub-rat))
   (put 'rat-only '(rational rational) rat-only)
+
+  (put 'raise '(rational)
+       (lambda (r)
+         ((get 'make 'real) (/ (numer r)
+                               (denom r)))))
   'done)
 
 (define (install-real-package)
   (put 'make 'real (tagged 'real identity))
   (put 'add '(real real) (tagged 'real +))
   (put 'sub '(real real) (tagged 'real -))
+  (put 'raise '(real) (lambda (r)
+                        ((get 'make 'complex) r 0)))
   'done)
 
 (define (install-complex-package)
