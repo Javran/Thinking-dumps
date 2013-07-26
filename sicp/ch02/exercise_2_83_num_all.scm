@@ -14,8 +14,6 @@
   (put 'make 'integer make-integer)
   (put 'add '(integer integer) (tagged 'integer +))
   (put 'sub '(integer integer) (tagged 'integer -))
-
-  (put-coercion 'integer 'rational integer->rational)
   (put 'raise '(integer) (lambda (x)
                            ((get 'make 'rational) x 1)))
   'done)
@@ -37,14 +35,9 @@
   (define (sub-rat x y)
     (add-rat x (neg-rat y)))
 
-  (define (rat-only x y)
-    (out "this is a rational only procedure for test")
-    (out x y))
-
   (put 'make 'rational (tagged 'rational make-rat))
   (put 'add '(rational rational) (tagged 'rational add-rat))
   (put 'sub '(rational rational) (tagged 'rational sub-rat))
-  (put 'rat-only '(rational rational) rat-only)
 
   (put 'raise '(rational)
        (lambda (r)

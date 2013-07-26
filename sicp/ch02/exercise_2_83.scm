@@ -1,8 +1,6 @@
 (load "../common/utils.scm")
 
-(load "./5_2_coercion_base.scm")
-(load "./exercise_2_82_apply.scm")
-
+(load "./4_3_data_directed_put_get.scm")
 (load "./exercise_2_83_num_all.scm")
 
 (define (add a b)
@@ -32,9 +30,6 @@
 
 (out (add (make-complex 12 34)
           (make-complex 56 78)))
-
-(newline)
-(apply-generic 'rat-only (make-integer 10) (make-rational 1 10))
 
 (newline)
 (out (raise (make-integer 10)))
