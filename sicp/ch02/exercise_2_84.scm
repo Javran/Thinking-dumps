@@ -42,7 +42,7 @@
       (cond ((equal? type data-type) data)
             ((higher-type? type data-type)
              ((raise-to type) (raise data)))
-            (else (error "RAISE-TO: no way to raise downsides"))))))
+            (else (error "no way to raise downwards: RAISE-TO"))))))
 
 ; pick up the highest type in the list
 (define (highest-type ls)
@@ -55,8 +55,18 @@
     (cdr ls)))
 
 (define (apply-generic op . args)
-  (define (raise-and-apply op type-list data-list)
-    #f)
+  (define (raise-and-apply op args)
+    (let* ((type-list (map type-tag args))
+           (data-list (map contents args))
+
+           (type-target (highest-type type-list))
+           (new-type-list (map (const type-target) type-list))
+           (raised-data (map (raise-to type-target) args))
+           (proc (get op new-type-list)))
+      (if proc
+        (apply proc (map contents raised-data))
+        (error "No method for thest types: APPLY-GENERIC"
+               (list op args)))))
 
   (let ((type-list (map type-tag args))
         (data-list (map contents args)))
@@ -64,9 +74,18 @@
       (if proc
         (apply proc data-list)
         ; else try to raise all types and look for a procedure again
-        (raise-and-apply op type-list data-list)))))
+        (raise-and-apply op args)))))
 
-(out ((raise-to 'rational) (make-integer 30)))
-(out (highest-type '(rational integer real)))
+; gradually raise to the complex type
+(let* ((result1 (add (make-integer 1)
+                     (make-rational 1 2)))
+       (result2 (add result1
+                     (make-real 0.25)))
+       (result3 (add (make-complex 0.125 0.125)
+                     result2)))
+  (out result1 ; 1 + 1/2 => 3/2
+       result2 ; 3/2 + 0.25 => 1.75
+       result3 ; 0.125 + 0.125i + 1.75 => 1.875 + 0.125i
+       ))
 
 (end-script)
