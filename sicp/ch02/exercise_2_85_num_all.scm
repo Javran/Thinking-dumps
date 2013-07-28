@@ -58,8 +58,8 @@
   (define (real->rational target)
     (define make-rational (get 'make 'rational))
     (define (close-to-rational n d)
-      (if (< (abs (- (/ n d) target)) eps)
-        (make-rational n d)
+      (if (< (abs (- (/ (round n) (round d)) target)) eps)
+        (make-rational (round n) (round d))
         (close-to-rational (* 10 n) (* 10 d))))
     (close-to-rational target 1))
 

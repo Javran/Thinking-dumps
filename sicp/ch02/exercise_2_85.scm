@@ -21,6 +21,7 @@
 (define (raise x) (apply-generic 'raise x))
 (define (=zero? x) (apply-generic '=zero? x))
 (define (equ? x y) (=zero? (sub x y)))
+(define (project x) (apply-generic 'project x))
 
 (define eps 1e-7)
 
@@ -85,9 +86,21 @@
          (equ? x3 (make-real 1.42857e1)) ; #t
          (equ? x4 (make-complex 1 2.1)) ; #f
          )))
-(define
+
+(define (test-project)
+  (let ((x1 (make-rational 27 7))
+        (x2 (make-real 45.875))
+        (x3 (make-complex 2 3)))
+    (apply out 
+           (map project
+                (list
+                  x1 ; 4
+                  x2 ; 367 8
+                  x3 ; 2
+                  )))))
 
 ; uncomment next lines for test
 ; (test-equ)
+; (test-project)
 
 (end-script)
