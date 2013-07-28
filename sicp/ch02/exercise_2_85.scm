@@ -75,4 +75,19 @@
         ; else try to raise all types and look for a procedure again
         (raise-and-apply op args)))))
 
+(define (test-equ)
+  (let ((x1 (make-integer 1))
+        (x2 (make-rational 9 27))
+        (x3 (make-real 14.2857))
+        (x4 (make-complex 1 2)))
+    (out (equ? x1 (make-integer 2)) ; #f
+         (equ? x2 (make-rational 1 3)) ; #t
+         (equ? x3 (make-real 1.42857e1)) ; #t
+         (equ? x4 (make-complex 1 2.1)) ; #f
+         )))
+(define
+
+; uncomment next lines for test
+; (test-equ)
+
 (end-script)

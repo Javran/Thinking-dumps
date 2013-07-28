@@ -54,11 +54,7 @@
 
 (define (install-real-package)
 
-  (define (=zero? x)
-    (< (abs (/ (numer x)
-               (denom x)))
-       eps))
-
+  (define (=zero? x) (< (abs x) eps))
   (define (real->rational target)
     (define make-rational (get 'make 'rational))
     (define (close-to-rational n d)
