@@ -54,27 +54,27 @@
     (car ls)
     (cdr ls)))
 
-(define (apply-generic op . args)
-  (define (raise-and-apply op args)
-    (let* ((type-list (map type-tag args))
-           (data-list (map contents args))
+  (define (apply-generic op . args)
+    (define (raise-and-apply op args)
+      (let* ((type-list (map type-tag args))
+             (data-list (map contents args))
 
-           (type-target (highest-type type-list))
-           (new-type-list (map (const type-target) type-list))
-           (raised-data (map (raise-to type-target) args))
-           (proc (get op new-type-list)))
-      (if proc
-        (apply proc (map contents raised-data))
-        (error "No method for thest types: APPLY-GENERIC"
-               (list op args)))))
+             (type-target (highest-type type-list))
+             (new-type-list (map (const type-target) type-list))
+             (raised-data (map (raise-to type-target) args))
+             (proc (get op new-type-list)))
+        (if proc
+          (apply proc (map contents raised-data))
+          (error "No method for thest types: APPLY-GENERIC"
+                 (list op args)))))
 
-  (let ((type-list (map type-tag args))
-        (data-list (map contents args)))
-    (let ((proc (get op type-list)))
-      (if proc
-        (apply proc data-list)
-        ; else try to raise all types and look for a procedure again
-        (raise-and-apply op args)))))
+    (let ((type-list (map type-tag args))
+          (data-list (map contents args)))
+      (let ((proc (get op type-list)))
+        (if proc
+          (apply proc data-list)
+          ; else try to raise all types and look for a procedure again
+          (raise-and-apply op args)))))
 
 (define (test-equ)
   (let ((x1 (make-integer 1))
@@ -106,6 +106,7 @@
 (define (drop num)
   (let ((type (type-tag num))
         (data (contents num)))
+    (out type)
     (let ((proc (get 'project (list type))))
       (if proc
         ; `project` operation is available
@@ -118,10 +119,16 @@
         ; lowest reached
         num))))
 
+(newline)
 (out (drop (make-complex 1.25 0))) ; to rational: 5 / 4
 (out (drop (add (make-complex 10 -10)
                 (make-complex 10 10)))) ; to integer 20
 (out (drop (make-integer 2))) ; unchanged
 (out (drop (make-rational 1 2))) ; unchanged
+(out (drop (drop (make-complex 1 2)))) ; unchanged
+
+(newline)
+;(out (drop (add (make-complex 1 -1)
+ ;               (make-complex 5 1))))
 
 (end-script)
