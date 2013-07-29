@@ -54,27 +54,28 @@
     (car ls)
     (cdr ls)))
 
-  (define (apply-generic op . args)
-    (define (raise-and-apply op args)
-      (let* ((type-list (map type-tag args))
-             (data-list (map contents args))
+(define (apply-generic op . args)
+  (define (raise-and-apply op args)
+    (let* ((type-list (map type-tag args))
+           (data-list (map contents args))
 
-             (type-target (highest-type type-list))
-             (new-type-list (map (const type-target) type-list))
-             (raised-data (map (raise-to type-target) args))
-             (proc (get op new-type-list)))
-        (if proc
-          (apply proc (map contents raised-data))
-          (error "No method for thest types: APPLY-GENERIC"
-                 (list op args)))))
+           (type-target (highest-type type-list))
+           (new-type-list (map (const type-target) type-list))
+           (raised-data (map (raise-to type-target) args))
+           (proc (get op new-type-list)))
+      (if proc
+        (apply proc (map contents raised-data))
+        (error "No method for thest types: APPLY-GENERIC"
+               (list op args)))))
 
-    (let ((type-list (map type-tag args))
-          (data-list (map contents args)))
-      (let ((proc (get op type-list)))
-        (if proc
-          (apply proc data-list)
-          ; else try to raise all types and look for a procedure again
-          (raise-and-apply op args)))))
+  (let ((type-list (map type-tag args))
+        (data-list (map contents args)))
+    (let ((proc (get op type-list)))
+      (if proc
+        (apply proc data-list)
+        ; else try to raise all types and look for a procedure again
+        (raise-and-apply op args)))))
+
 
 (define (test-equ)
   (let ((x1 (make-integer 1))
@@ -106,16 +107,16 @@
 (define (drop num)
   (let ((type (type-tag num))
         (data (contents num)))
-    (out type)
     (let ((proc (get 'project (list type))))
       (if proc
         ; `project` operation is available
         (let ((lowered (project num)))
-          (if (equ? (raise lowered) num)
-            ; `project` operation accepted, go futher
-            (drop lowered)
-            ; elsewise we roll back
-            num))
+          (cond ((=zero? num)
+                  (drop lowered))
+                ((equ? (raise lowered) num)
+                  ; `project` operation accepted, go futher
+                  (drop lowered))
+                (else num)))
         ; lowest reached
         num))))
 
@@ -128,7 +129,11 @@
 (out (drop (drop (make-complex 1 2)))) ; unchanged
 
 (newline)
-;(out (drop (add (make-complex 1 -1)
- ;               (make-complex 5 1))))
+(out (drop (add (make-complex 1 -1)
+                (make-complex 5 1))))
+
+; I don't know how to rewrite apply-generic
+; simply attach drop after fetching the original apply-generic
+; might cause an infinite loop and I don't have a solution for this problem
 
 (end-script)
