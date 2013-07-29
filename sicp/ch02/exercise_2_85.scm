@@ -95,12 +95,33 @@
            (map project
                 (list
                   x1 ; 4
-                  x2 ; 367 8
+                  x2 ; 367 / 8
                   x3 ; 2
                   )))))
 
 ; uncomment next lines for test
 ; (test-equ)
 ; (test-project)
+
+(define (drop num)
+  (let ((type (type-tag num))
+        (data (contents num)))
+    (let ((proc (get 'project (list type))))
+      (if proc
+        ; `project` operation is available
+        (let ((lowered (project num)))
+          (if (equ? (raise lowered) num)
+            ; `project` operation accepted, go futher
+            (drop lowered)
+            ; elsewise we roll back
+            num))
+        ; lowest reached
+        num))))
+
+(out (drop (make-complex 1.25 0))) ; to rational: 5 / 4
+(out (drop (add (make-complex 10 -10)
+                (make-complex 10 10)))) ; to integer 20
+(out (drop (make-integer 2))) ; unchanged
+(out (drop (make-rational 1 2))) ; unchanged
 
 (end-script)
