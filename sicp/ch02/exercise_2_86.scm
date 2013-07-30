@@ -19,4 +19,6 @@
 ; * (optional) visualization
 ;   print-num
 
+(load "./exercise_2_86_test.scm")
+
 (end-script)
