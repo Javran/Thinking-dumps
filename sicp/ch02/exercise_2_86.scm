@@ -7,4 +7,16 @@
 ; * insert `sine` and `cosine` to take the place of `sin` and `cos`
 ; * (optional) implement `print-num` to visualize a number
 
+; package requirement:
+; * constructors
+; * accessors:
+;   denom/numer for rational
+;   real-part/imag-part/magnitude/angle for complex numbers
+; * mathematical operations:
+;   add/sub/mul/div/equ?/=zero?
+; * coercion system:
+;   raise/project
+; * (optional) visualization
+;   print-num
+
 (end-script)
