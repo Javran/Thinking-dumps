@@ -13,7 +13,7 @@
 ;   denom/numer for rational
 ;   real-part/imag-part/magnitude/angle for complex numbers
 ; * mathematical operations:
-;   add/sub/mul/div/equ?/=zero?
+;   add/sub/mul/equ?/=zero?
 ; * coercion system:
 ;   raise/project
 ; * (optional) visualization
@@ -24,5 +24,13 @@
 
 ; tag system
 (load "./exercise_2_86_tag_system.scm")
+
+; math precision
+(define eps 1e-7)
+
+(load "./exercise_2_86_pkg_integer.scm")
+
+(install-integer-package)
+(test-integer-package)
 
 (end-script)
