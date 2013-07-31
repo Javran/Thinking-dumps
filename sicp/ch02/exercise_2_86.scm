@@ -23,8 +23,6 @@
 (load "./exercise_2_86_test.scm")
 
 ; tag system
-(load "./4_3_data_directed_put_get.scm")
-; overwrite `apply-generic`
-(load "./exercise_2_86_apply_generic.scm")
+(load "./exercise_2_86_tag_system.scm")
 
 (end-script)
