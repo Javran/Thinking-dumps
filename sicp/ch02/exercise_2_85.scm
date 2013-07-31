@@ -35,7 +35,7 @@
 (define make-real (get 'make 'real))
 (define make-complex (get 'make 'complex))
 
-; raise to a higher type for data (currying)
+; raise to a higher type for data (curried)
 (define (raise-to type)
   (lambda (data)
     (let ((data-type (type-tag data)))
