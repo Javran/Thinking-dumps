@@ -29,8 +29,12 @@
 (define eps 1e-7)
 
 (load "./exercise_2_86_pkg_integer.scm")
+(load "./exercise_2_86_pkg_rational.scm")
 
 (install-integer-package)
+(install-rational-package)
+
 (test-integer-package)
+(test-rational-package)
 
 (end-script)
