@@ -7,17 +7,6 @@
 ; * insert `sine` and `cosine` to take the place of `sin` and `cos`
 ; * (optional) implement `print-num` to visualize a number
 
-; package requirement:
-; * constructors
-; * accessors:
-;   denom/numer for rational
-;   real-part/imag-part/magnitude/angle for complex numbers
-; * mathematical operations:
-;   add/sub/mul/equ?/=zero?
-; * coercion system:
-;   raise/project
-; * (optional) visualization
-;   print-num
 
 ; test tools
 (load "./exercise_2_86_test.scm")
@@ -28,6 +17,7 @@
 ; math precision
 (define eps 1e-7)
 
+; num packages
 (load "./exercise_2_86_pkg_integer.scm")
 (load "./exercise_2_86_pkg_rational.scm")
 (load "./exercise_2_86_pkg_real.scm")
@@ -42,5 +32,57 @@
 (test-rational-package)
 (test-real-package)
 (test-complex-package)
+
+; package requirement:
+; * constructors
+(define make-integer (get 'make 'integer))
+(define make-rational (get 'make 'rational))
+(define make-real (get 'make 'real))
+(define make-complex-ri (get 'make-from-real-imag 'complex))
+(define make-complex-ma (get 'make-from-mag-ang 'complex))
+
+; * accessors:
+;   denom/numer for rational
+;   real-part/imag-part/magnitude/angle for complex numbers
+(define (denom x) (apply-unary 'denom x))
+(define (numer x) (apply-unary 'numer x))
+(define (real-part x) (apply-unary 'real-part x))
+(define (imag-part x) (apply-unary 'imag-part x))
+(define (magnitude x) (apply-unary 'magnitude x))
+(define (angle x) (apply-unary 'angle x))
+
+; * mathematical operations:
+;   add/sub/mul/equ?/=zero?
+(define (add x y) (apply-generic 'add x y))
+(define (sub x y) (apply-generic 'sub x y))
+(define (mul x y) (apply-generic 'mul x y))
+(define (equ? x y) (apply-generic 'equ? x y))
+(define (=zero? x) (apply-unary '=zero? x))
+
+; * coercion system:
+;   raise/project
+(define (raise x) (apply-unary 'raise x))
+(define (project x) (apply-unary 'project x))
+
+; * (optional) visualization
+;   print-num
+(define (print-num x) (apply-unary 'print-num x))
+
+(define (assert x)
+  (if x
+    (display ".")
+    (error "Assertion failed")))
+
+(display "Testing coercion for apply-generic ...")
+(assert (equ? (add (make-complex-ri 7 0) (make-real -7.0))
+              (make-integer 0)))
+(assert (equ? (sub (make-rational 1 4) (make-integer 1))
+              (make-real -0.75)))
+(assert (equ? (add (make-integer 1) (make-complex-ri 1 0))
+            (make-rational 10 5)))
+(assert (equ? (mul (make-integer 1) (make-complex-ri 0 1))
+            (make-complex-ma 1 (/ pi 2))))
+(out "Test passed.")
+
 
 (end-script)

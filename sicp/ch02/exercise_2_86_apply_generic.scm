@@ -1,5 +1,6 @@
 ; excerpted from ex 2.85
 
+(load "./exercise_2_84_type_cmp.scm")
 ; raise to a higher type for data (curried)
 (define (raise-to type)
   (lambda (data)

@@ -14,7 +14,7 @@
 
   ;; coercion system
   (define (raise x)
-    ((get 'make 'complex) x 0))
+    ((get 'make-from-real-imag 'complex) x 0))
 
   (define (project x)
     (define (real->rational n d target)

@@ -23,6 +23,11 @@
 (define (equ? x y) (=zero? (sub x y)))
 (define (project x) (apply-generic 'project x))
 
+; TODO: here we should made equ? implemented inside a package
+;   to avoid `drop` so the infinite loop:
+;   drop => equ? => =zero? => sub => drop
+;   can be prevented
+
 (define eps 1e-7)
 
 (install-integer-package)
