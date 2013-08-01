@@ -38,7 +38,7 @@
     (< (magnitude x) eps))
 
   ;; coercion system
-  (define project real-part)
+  (define (project x) ((get 'make 'real) (real-part x)))
 
   ;; visualization
   (define (print-num x)

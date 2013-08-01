@@ -20,7 +20,11 @@
     (car ls)
     (cdr ls)))
 
-(define (apply-generic op . args)
+; drop
+(load "./exercise_2_86_drop.scm")
+
+; apply-generic without drop
+(define (apply-generic-inner op . args)
   (define (raise-and-apply op args)
     (let* ((type-list (map type-tag args))
            (data-list (map contents args))
@@ -41,3 +45,11 @@
         (apply proc data-list)
         ; else try to raise all types and look for a procedure again
         (raise-and-apply op args)))))
+
+(define (apply-generic-d op . args)
+  (let ((result (apply apply-generic-inner (cons op args))))
+    (if (non-empty? result)
+      (drop result)
+      result)))
+
+(define apply-generic apply-generic-inner)

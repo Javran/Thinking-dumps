@@ -28,10 +28,7 @@
 (install-real-package)
 (install-complex-package)
 
-(test-integer-package)
-(test-rational-package)
-(test-real-package)
-(test-complex-package)
+
 
 ; package requirement:
 ; * constructors
@@ -68,6 +65,11 @@
 ;   print-num
 (define (print-num x) (apply-unary 'print-num x))
 
+(test-integer-package)
+(test-rational-package)
+(test-real-package)
+(test-complex-package)
+
 (define (assert x)
   (if x
     (display ".")
@@ -84,5 +86,26 @@
             (make-complex-ma 1 (/ pi 2))))
 (out "Test passed.")
 
+(display "Testing drop ... ")
+(test-drop)
+
+; switch to new `apply-generic` (i.e. with `drop` feature)
+(define apply-generic apply-generic-d)
+
+(display "Testing apply-generic(with drop) ")
+(let ((testcases (list
+                   (cons (list (add (make-complex-ri (sqrt 3) 1)
+                                    (make-complex-ma 1 (* (/ 3 2) pi))))
+                         'rational)
+                   (cons (list (mul (make-complex-ri 1 1)
+                                    (make-complex-ma (* 2 (sqrt 2)) (- (/ pi 4)))))
+                         'integer)
+                   (cons (list (sub (make-rational 1234 25)
+                                    (make-real 49.36)))
+                         'integer)
+                   (cons (list (sub (make-complex-ri 10 0)
+                                    (make-rational 2 5)))
+                         'rational))))
+  (do-test type-tag testcases))
 
 (end-script)
