@@ -3,12 +3,21 @@
 ; and raise error if the result is wrong
 
 (define (do-test f testcases)
+  (define (my-equal? x y)
+    (cond ((equal? x y) #t)
+          ((and (number? x) (number? y))
+            (= x y))
+          ((and (non-empty? x) (non-empty? y))
+            (and (my-equal? (car x) (car y))
+                 (my-equal? (cdr x) (cdr y))))
+          (else #f)))
+
   (for-each
     (lambda (testcase)
       (let* ((args (car testcase))
              (expected (cdr testcase))
              (result (apply f args)))
-        (if (equal? expected result)
+        (if (my-equal? expected result)
           (display ".")
           (begin
             (out "Result:"
