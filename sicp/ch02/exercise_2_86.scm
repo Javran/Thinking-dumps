@@ -31,13 +31,16 @@
 (load "./exercise_2_86_pkg_integer.scm")
 (load "./exercise_2_86_pkg_rational.scm")
 (load "./exercise_2_86_pkg_real.scm")
+(load "./exercise_2_86_pkg_complex.scm")
 
 (install-integer-package)
 (install-rational-package)
 (install-real-package)
+(install-complex-package)
 
 (test-integer-package)
 (test-rational-package)
 (test-real-package)
+(test-complex-package)
 
 (end-script)

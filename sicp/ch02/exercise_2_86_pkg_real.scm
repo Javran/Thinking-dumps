@@ -18,8 +18,8 @@
 
   (define (project x)
     (define (real->rational n d target)
-      (if (< (abs (- (/ n d) target)) eps)
-        ((get 'make 'rational) n d)
+      (if (< (abs (- (/ (round n) (round d)) target)) eps)
+        ((get 'make 'rational) (round n) (round d))
         (real->rational (* 10 n) (* 10 d) target)))
     (real->rational x 1 x))
 
