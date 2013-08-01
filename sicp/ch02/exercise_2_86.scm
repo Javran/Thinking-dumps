@@ -30,11 +30,14 @@
 
 (load "./exercise_2_86_pkg_integer.scm")
 (load "./exercise_2_86_pkg_rational.scm")
+(load "./exercise_2_86_pkg_real.scm")
 
 (install-integer-package)
 (install-rational-package)
+(install-real-package)
 
 (test-integer-package)
 (test-rational-package)
+(test-real-package)
 
 (end-script)
