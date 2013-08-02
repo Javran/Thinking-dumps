@@ -3,11 +3,17 @@
   (define real-part car)
   (define imag-part cdr)
 
+  (define make-real (get 'make 'real))
+  (define (make-num x) (drop (make-real x)))
+
   (define (magnitude z)
-    (sqrt (+ (square (real-part z))
-             (square (imag-part z)))))
+    (make-num
+      (sqrt (+ ((unwrapped square) (real-part z))
+               ((unwrapped square) (imag-part z))))))
+
   (define (angle z)
-    (atan (imag-part z) (real-part z)))
+    (make-num
+      ((unwrapped atan) (imag-part z) (real-part z))))
 
   (define make-from-real-imag cons)
   (define (make-from-mag-ang r a)
