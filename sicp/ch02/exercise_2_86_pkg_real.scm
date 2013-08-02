@@ -28,6 +28,9 @@
     (display "real: ")
     (display x))
 
+  ;; compatibility
+  (define real->value identity)
+
   ;; installation
   (put 'make 'real (tagged 'real make))
   (put 'add '(real real) (tagged 'real +))
@@ -38,6 +41,8 @@
   (put 'raise 'real raise)
   (put 'project 'real project)
   (put 'print-num 'real print-num)
+
+  (put 'real->value 'real real->value)
   'done)
 
 (define (test-real-package)

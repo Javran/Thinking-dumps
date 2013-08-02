@@ -7,7 +7,6 @@
 ; * insert `sine` and `cosine` to take the place of `sin` and `cos`
 ; * (optional) implement `print-num` to visualize a number
 
-
 ; test tools
 (load "./exercise_2_86_test.scm")
 
@@ -115,6 +114,29 @@
 ; * for accessors, real-part & imag-part works perfectly for rect-impl
 ;   and magnitude & angle works perfectly for polar-impl
 ;   so we need to get another 4 accessors work
+; * need to replace all math operations properly, e.g. `+` to `add`, `*` to `mul` 
+;   or here is another solution: if we can convert the number from `real` type out,
+;   we can simplify the process of making new math operations
+
+(define (real->value x) (apply-unary 'real->value x))
+(define (num->value x) (real->value ((raise-to 'real) x)))
+
+; get an unwrapped version of operator `op`
+(define (unwrapped op)
+  (lambda args
+    (apply op (map num->value args))))
+
+(display "Testing operation unwrapping ")
+(let ((testcases (list
+                   (cons (list square (make-integer 10))
+                         100)
+                   (cons (list + (make-rational 3 4) (make-real 0.25))
+                         1)
+                   (cons (list sin (make-real 1234))
+                         (sin 1234))))
+      (f (lambda (op . args)
+           (apply (unwrapped op) args))))
+  (do-test f testcases))
 
 (out "===================")
 (define make-complex2-ri (get 'make-from-real-imag 'complex2))

@@ -62,8 +62,8 @@
     (display (imag-part x))
     (display "i"))
 
-  (load "./4_3_data_directed_aly_impl.scm")
-  (load "./4_3_data_directed_ben_impl.scm")
+  (load "./exercise_2_86_pkg_rect.scm")
+  (load "./exercise_2_86_pkg_polar.scm")
   (install-rect-package)
   (install-polar-package)
 
