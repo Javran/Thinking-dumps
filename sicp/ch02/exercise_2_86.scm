@@ -28,8 +28,6 @@
 (install-real-package)
 (install-complex-package)
 
-
-
 ; package requirement:
 ; * constructors
 (define make-integer (get 'make 'integer))
@@ -107,5 +105,29 @@
                                     (make-rational 2 5)))
                          'rational))))
   (do-test type-tag testcases))
+
+(load "./exercise_2_86_pkg_complex2.scm")
+(install-complex2-package)
+
+; changes to the system:
+; * complex2 (i.e. the complex number made from other real numbers) 
+;   should be called with instances of numbers instead of primitive numbers
+; * for accessors, real-part & imag-part works perfectly for rect-impl
+;   and magnitude & angle works perfectly for polar-impl
+;   so we need to get another 4 accessors work
+
+(out "===================")
+(define make-complex2-ri (get 'make-from-real-imag 'complex2))
+(define make-complex2-ma (get 'make-from-mag-ang 'complex2))
+
+(let ((c1 (make-complex2-ri (make-rational 2 1) (make-real 2.0)))
+      (c2 (make-complex2-ma (make-integer 2) (make-real (/ pi 2)))))
+  (out c1)
+  (out  (real-part c1) (imag-part c1))
+  (out "===================")
+  (out c2)
+  (out (magnitude c2) (angle c2))
+
+  )
 
 (end-script)
