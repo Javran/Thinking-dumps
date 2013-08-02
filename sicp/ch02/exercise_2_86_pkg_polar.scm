@@ -1,9 +1,13 @@
 (define (install-polar-package)
+
+  (define make-real (get 'make 'real))
+  (define (make-num x) (drop (make-real x)))
+
   ;; internal procedures
   (define (real-part z)
-    (* (magnitude z) (cos (angle z))))
+    (make-num (* (num->value (magnitude z)) ((unwrapped cos) (angle z)))))
   (define (imag-part z)
-    (* (magnitude z) (sin (angle z))))
+    (make-num (* (num->value (magnitude z)) ((unwrapped sin) (angle z)))))
 
   (define magnitude car)
   (define angle cdr)

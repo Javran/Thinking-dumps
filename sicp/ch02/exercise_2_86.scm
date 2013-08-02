@@ -145,12 +145,12 @@
 (let ((c1 (make-complex2-ri (make-rational 2 1) (make-real 2.0)))
       (c2 (make-complex2-ma (make-real (sqrt 8)) (make-real (/ pi 4)))))
   (out c1)
-  (out  (real-part c1) (imag-part c1))
+  (out (real-part c1) (imag-part c1))
   (out (magnitude c1) (angle c1))
   (out "===================")
   (out c2)
+  (out (real-part c2) (imag-part c2))
   (out (magnitude c2) (angle c2))
-
   )
 
 (end-script)
