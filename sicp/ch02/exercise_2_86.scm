@@ -116,7 +116,8 @@
 ;   so we need to get another 4 accessors work
 ; * need to replace all math operations properly, e.g. `+` to `add`, `*` to `mul` 
 ;   or here is another solution: if we can convert the number from `real` type out,
-;   we can simplify the process of making new math operations
+;   we can simplify the process of making new math operations (i.e. the procedure 
+;   that I called `unwrapped`)
 ; * implement `project` for complex2, `raise` for complex
 ;   or leave complex2 out from `drop`
 
@@ -161,6 +162,8 @@
   (out (equ? c1 c2))
   (out (equ? c1 c3))
   (print-num c1)
+  (print-num c2)
+  (print-num c3)
   )
 
 (end-script)

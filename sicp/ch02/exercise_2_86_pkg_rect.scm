@@ -16,8 +16,6 @@
       ((unwrapped atan) (imag-part z) (real-part z))))
 
   (define make-from-real-imag cons)
-  (define (make-from-mag-ang r a)
-    (make-from-real-imag (* r (cos a)) (* r (sin a))))
 
   ;; interface to the rest of the system
   ; the "'(rect)" shown above is actually an equivalent to type signature
@@ -30,6 +28,4 @@
   (put 'angle '(rect) angle)
   (put 'make-from-real-imag 'rect 
        (lambda (x y) (tag (make-from-real-imag x y))))
-  (put 'make-from-mag-ang 'rect
-       (lambda (r a) (tag (make-from-mag-ang r a))))
   'done)
