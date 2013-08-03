@@ -49,7 +49,13 @@
 (define (apply-generic-d op . args)
   (let ((result (apply apply-generic-inner (cons op args))))
     (if (non-empty? result)
-      (drop result)
+      (let ((type (type-tag result)))
+        ; make sure complex2 should not be involved in simplication 
+        ; (actually complex2 and complex can be converted to each other
+        ;  but we keep `drop` out side of complex2 so we can easily
+        ;  figure out what happened)
+        (cond ((equal? type 'complex2) result)
+              (else (drop result))))
       result)))
 
 (define apply-generic apply-generic-inner)

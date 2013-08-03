@@ -32,8 +32,9 @@
   ;; math operations
   (define (add x y)
     (make-from-real-imag
-      (+ (real-part x) (real-part y))
-      (+ (imag-part x) (imag-part y))))
+      (apply-generic 'add (real-part x) (real-part y))
+      (apply-generic 'add (imag-part x) (imag-part y))))
+
   (define (inv x)
     (make-from-real-imag
       (- (real-part x))

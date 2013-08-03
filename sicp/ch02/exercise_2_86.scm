@@ -117,6 +117,8 @@
 ; * need to replace all math operations properly, e.g. `+` to `add`, `*` to `mul` 
 ;   or here is another solution: if we can convert the number from `real` type out,
 ;   we can simplify the process of making new math operations
+; * implement `project` for complex2, `raise` for complex
+;   or leave complex2 out from `drop`
 
 (define (real->value x) (apply-unary 'real->value x))
 (define (num->value x) (real->value ((raise-to 'real) x)))
@@ -151,6 +153,8 @@
   (out c2)
   (out (real-part c2) (imag-part c2))
   (out (magnitude c2) (angle c2))
+  (out "===================")
+  (out (add c1 c2))
   )
 
 (end-script)
