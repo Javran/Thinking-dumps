@@ -7,7 +7,7 @@
 ; apply for unary functions, without coercion
 (define (apply-unary op arg)
   (let ((type (type-tag arg))
-         (data (contents arg)))
+        (data (contents arg)))
      ; error will be reported automatically if `get` returns #f
      ; so actually I don't think it's necessary to handle errors manually
      ((get op type) data)))

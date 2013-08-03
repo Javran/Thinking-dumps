@@ -145,7 +145,8 @@
 (define make-complex2-ma (get 'make-from-mag-ang 'complex2))
 
 (let ((c1 (make-complex2-ri (make-rational 2 1) (make-real 2.0)))
-      (c2 (make-complex2-ma (make-real (sqrt 8)) (make-real (/ pi 4)))))
+      (c2 (make-complex2-ma (make-real (sqrt 8)) (make-real (/ pi 4))))
+      (c3 (make-complex2-ri (make-integer 1) (make-integer 1))))
   (out c1)
   (out (real-part c1) (imag-part c1))
   (out (magnitude c1) (angle c1))
@@ -155,6 +156,11 @@
   (out (magnitude c2) (angle c2))
   (out "===================")
   (out (add c1 c2))
+  (out (sub c1 c2))
+  (out (mul c1 c2))
+  (out (equ? c1 c2))
+  (out (equ? c1 c3))
+  (print-num c1)
   )
 
 (end-script)

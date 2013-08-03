@@ -60,7 +60,7 @@
   (put 'equ? '(rational rational) equ?)
   (put 'raise 'rational raise)
   (put 'project 'rational project)
-  (put 'print-num 'integer print-num)
+  (put 'print-num 'rational print-num)
 
   'done)
 

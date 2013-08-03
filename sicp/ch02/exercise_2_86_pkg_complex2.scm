@@ -35,33 +35,39 @@
       (apply-generic 'add (real-part x) (real-part y))
       (apply-generic 'add (imag-part x) (imag-part y))))
 
-  (define (inv x)
-    (make-from-real-imag
-      (- (real-part x))
-      (- (imag-part x))))
   (define (sub x y)
-    (add x (inv y)))
+    (make-from-real-imag
+      (apply-generic 'sub (real-part x) (real-part y))
+      (apply-generic 'sub (imag-part x) (imag-part y))))
+
+  (define make-real (get 'make 'real))
+  (define (make-num x) (drop (make-real x)))
 
   (define (mul x y)
-    (make-from-mag-ang (* (magnitude x) (magnitude y))
-                       (+ (angle x) (angle y))))
+    (make-from-mag-ang (make-num ((unwrapped *) (magnitude x) (magnitude y)))
+                       (make-num ((unwrapped +) (angle x) (angle y)))))
 
   (define (equ? x y)
     (=zero? (sub x y)))
 
   (define (=zero? x)
-    (< (magnitude x) eps))
+    (define (small-enough x)
+      (< (abs x) eps))
+    ((unwrapped small-enough) (magnitude x)))
 
   ;; coercion system
-  (define (project x) ((get 'make 'real) (real-part x)))
+  ; (N/A)
 
   ;; visualization
   (define (print-num x)
-    (display "complex: ")
-    (display (real-part x))
-    (display " + ")
-    (display (imag-part x))
-    (display "i"))
+    (define (print-num-g x)
+      (apply-unary 'print-num x))
+    (display "complex2: ")
+    (display "[real=")
+    (print-num-g (real-part x))
+    (display ", imag=")
+    (print-num-g (imag-part x))
+    (display "]"))
 
   (load "./exercise_2_86_pkg_rect.scm")
   (load "./exercise_2_86_pkg_polar.scm")
