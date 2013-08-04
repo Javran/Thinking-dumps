@@ -1,10 +1,8 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
 ; tag and datum
 ;   * attach-tag
 ;   * type-tag
 ;   * contents
+;   * tagged
 
 ; procedure
 ;   * put
@@ -72,6 +70,10 @@
 (define (get op type)
   (get-proc op type proc-table))
 
+(define (tagged tag f)
+  (lambda args
+    (attach-tag tag
+                (apply f args))))
 ; ==== tests ====
 (define (test-tag-system)
   ; test tag
@@ -97,6 +99,14 @@
           (x2 (attach-tag 'tag 'data2)))
       (assert (equal? 'data (apply-generic 'op1 x1)))
       (assert (equal? '(data . data2) (apply-generic 'op2 x1 x2))))
-    (set! proc-table origin-table)))
 
-(test-tag-system)
+    (let ((f (tagged 'test-tag +))
+          (testcases (list
+                       (mat 1 2 3
+                            (cons 'test-tag 6))
+                       (mat -1 1
+                            (cons 'test-tag 0)))))
+      (do-test-q f testcases))
+  (set! proc-table origin-table)))
+
+(put 'test 'tag-system test-tag-system)

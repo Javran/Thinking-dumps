@@ -66,7 +66,7 @@
         (error "test failed")))))
 
 (define (do-test-quiet-or-not proc testcases cmp quiet)
-  (let ((correct? (if (null? cmp) equal? cmp))
+  (let ((correct? (if (non-empty? cmp) (car cmp) equal?))
         (on-correct (on-correct-default quiet))
         (on-wrong (on-wrong-default quiet)))
     (do-test-ex proc testcases correct? on-correct on-wrong)))
