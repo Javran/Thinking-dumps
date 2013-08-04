@@ -14,7 +14,7 @@
 (load "./exercise_2_86_tag_system.scm")
 
 ; math precision
-(define eps 1e-7)
+(define eps 1e-10)
 
 ; num packages
 (load "./exercise_2_86_pkg_integer.scm")
@@ -161,9 +161,9 @@
   (out (mul c1 c2))
   (out (equ? c1 c2))
   (out (equ? c1 c3))
-  (print-num c1)
-  (print-num c2)
-  (print-num c3)
+  (print-num c1)(newline)
+  (print-num c2)(newline)
+  (print-num c3)(newline)
   )
 
 (end-script)
