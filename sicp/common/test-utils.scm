@@ -65,11 +65,17 @@
           (display (cdr testcase))(newline)
         (error "test failed")))))
 
-(define (do-test proc testcases . cmp)
+(define (do-test-quiet-or-not proc testcases cmp quiet)
   (let ((correct? (if (null? cmp) equal? cmp))
-        (on-correct (on-correct-default #f))
-        (on-wrong (on-wrong-default #f)))
+        (on-correct (on-correct-default quiet))
+        (on-wrong (on-wrong-default quiet)))
     (do-test-ex proc testcases correct? on-correct on-wrong)))
+
+(define (do-test proc testcases . cmp)
+  (do-test-quiet-or-not proc testcases cmp #f))
+
+(define (do-test-q proc testcases . cmp)
+  (do-test-quiet-or-not proc testcases cmp #t))
 
 ; short for `make a testcase`
 (define (mat . args)
