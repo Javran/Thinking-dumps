@@ -19,15 +19,17 @@
   ;   e.g.: a valid testcase to test `+` might be:
   ;     (list (cons (list 1 2 3) 6)
   ;           (cons (list 4 5 6) 15))
-  ; correct?
+  ; correct?:
   ;   accepts two arguments that one comes from the result of `proc`
-  ;   and another from <expected>, should return #t when a test case is passed
-  ; on-correct
+  ;   and another from <expected>, should return #t when a testcase is passed
+  ; on-correct:
   ;   when a testcase passed, on-correct will be called 
   ;   with the corresponding testcase
-  ; on-wrong
+  ; on-wrong:
   ;   when a testcase failed, on-wrong will be called
   ;   with the corresponding testcase and the actual result
+  ; returns:
+  ;   a list of output from either on-correct or on-wrong is collected and returned
   (define (make-sure-list x)
     (if (list? x) x (list x)))
 
@@ -40,4 +42,37 @@
         (on-correct testcase)
         (on-wrong testcase result))))
 
-  (for-each test-single-case testcases))
+  (map test-single-case testcases))
+
+(define (on-correct-default quiet)
+  ; quiet: should be quiet?
+  (lambda (testcase)
+    (if quiet 'done (display #\.))))
+
+(define (on-wrong-default quiet)
+  ; quiet: should be quiet?
+  (lambda (testcase actual-result)
+    (if quiet
+      (error "test failed on testcase:" testcase
+             "actual result:" actual-result)
+      (begin
+        (display "test failed:")(newline)
+        (display "input: ")
+          (display (car testcase))(newline)
+        (display "output: ")
+          (display actual-result)(newline)
+        (display "expected: ")
+          (display (cdr testcase))(newline)
+        (error "test failed")))))
+
+(define (do-test proc testcases . cmp)
+  (let ((correct? (if (null? cmp) equal? cmp))
+        (on-correct (on-correct-default #f))
+        (on-wrong (on-wrong-default #f)))
+    (do-test-ex proc testcases correct? on-correct on-wrong)))
+
+; short for `make a testcase`
+(define (mat . args)
+  (let ((len (length args)))
+    (cons (list-head args (- len 1))
+          (car (list-tail args (- len 1))))))
