@@ -1,5 +1,4 @@
 (define (install-rect-package)
-
   (define make cons)
   (define real-part car)
   (define imag-part cdr)

@@ -113,3 +113,8 @@
   (concat (map f ls)))
 
 (define concatmap flatmap)
+
+; are a and b close enough?
+(define (close-number? eps)
+  (lambda (a b) 
+    (< (abs (- a b)) eps)))
