@@ -2,17 +2,24 @@
 (load "../common/test-utils.scm")
 (load "./tag_system.scm")
 
-(define eps 1e-9)
 
 (load "./number_system_scheme_number.scm")
+(load "./number_system_rational.scm")
+
+(define eps 1e-9)
+
 (install-scheme-number-package)
+(install-rational-package)
 
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
   (for-each run-test
             (list
               'tag-system
-              'scheme-number-package))
+              'scheme-number-package
+              'rational-package))
   (out "all tests are done."))
+
+(run-all-test)
 
 (end-script)
