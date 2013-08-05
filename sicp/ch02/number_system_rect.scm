@@ -22,7 +22,7 @@
                      (mat 'imag-part x2 4)
                      (mat 'magnitude x1 (sqrt 5))
                      (mat 'angle x2 (atan 4 3)))))
-         (do-test apply-generic testcases =))
+         (do-test-q apply-generic testcases (close-number? eps)))
        ))
 
   (put 'real-part '(rect) real-part)

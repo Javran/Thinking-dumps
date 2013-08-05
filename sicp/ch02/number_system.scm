@@ -13,6 +13,8 @@
 
 (load "./number_system_rect.scm")
 (install-rect-package)
+(load "./number_system_polar.scm")
+(install-polar-package)
 
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
@@ -22,6 +24,7 @@
               'scheme-number-package
               'rational-package
               'rect-package
+              'polar-package
               ))
   (out "all tests are done."))
 
