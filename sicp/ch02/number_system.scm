@@ -11,13 +11,18 @@
 (install-scheme-number-package)
 (install-rational-package)
 
+(load "./number_system_rect.scm")
+(install-rect-package)
+
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
   (for-each run-test
             (list
               'tag-system
               'scheme-number-package
-              'rational-package))
+              'rational-package
+              'rect-package
+              ))
   (out "all tests are done."))
 
 (run-all-test)
