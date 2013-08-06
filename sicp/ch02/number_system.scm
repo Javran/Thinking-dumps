@@ -5,16 +5,13 @@
 
 (load "./number_system_scheme_number.scm")
 (load "./number_system_rational.scm")
+(load "./number_system_complex.scm")
 
 (define eps 1e-9)
 
 (install-scheme-number-package)
 (install-rational-package)
-
-(load "./number_system_rect.scm")
-(install-rect-package)
-(load "./number_system_polar.scm")
-(install-polar-package)
+(install-complex-package)
 
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
@@ -23,8 +20,7 @@
               'tag-system
               'scheme-number-package
               'rational-package
-              'rect-package
-              'polar-package
+              'complex-package
               ))
   (out "all tests are done."))
 
