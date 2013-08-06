@@ -2,7 +2,6 @@
 (load "../common/test-utils.scm")
 (load "./tag_system.scm")
 
-
 (load "./number_system_scheme_number.scm")
 (load "./number_system_rational.scm")
 (load "./number_system_complex.scm")

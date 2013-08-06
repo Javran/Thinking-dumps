@@ -70,6 +70,7 @@
                     )))
         (do-test-q apply-generic testcases equ?))
       ))
+
   (put 'make-ri 'complex (tagged 'complex make-ri))
   (put 'make-ma 'complex (tagged 'complex make-ma))
   (put 'real-part '(complex) real-part)

@@ -22,7 +22,13 @@
                 (mat 'div y y (make 1))))
             (f (lambda (tag a1 a2)
                  (apply-generic tag a1 a2))))
-        (do-test-q f testcases equ-num?))))
+        (do-test-q f testcases equ-num?))
+      (let ((testcases
+              (list
+                (mat 'to-string x "1")
+                (mat 'to-string y "2"))))
+        (do-test-q apply-generic testcases))
+      ))
 
   (put 'make 'scheme-number (tagged 'scheme-number identity))
   (put 'add '(scheme-number scheme-number) (tagged 'scheme-number +))
