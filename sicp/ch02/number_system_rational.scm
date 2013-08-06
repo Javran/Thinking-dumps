@@ -33,6 +33,12 @@
   (define (equ? x y)
     (=zero? (sub x y)))
 
+  (define (to-string x)
+    (string-append
+      (number->string (numer x))
+      "/"
+      (number->string (denom x))))
+
   (define (test-rational)
     (let* ((make (get 'make 'rational))
            (x1 (make 1 7))
@@ -60,6 +66,11 @@
                     (mat 'div x3 x1 (make 7 2))))
             (num-equ? (lambda (a b) (apply-generic 'equ? a b))))
         (do-test-q apply-generic testcases num-equ?))
+      (let ((testcases
+              (list (mat 'to-string x1 "1/7")
+                    (mat 'to-string x2 "1/7")
+                    (mat 'to-string x3 "1/2"))))
+        (do-test-q apply-generic testcases))
       ))
 
   (put 'make 'rational (tagged 'rational make))
@@ -71,6 +82,7 @@
   (put 'div '(rational rational) (tagged 'rational div))
   (put '=zero? '(rational) =zero?)
   (put 'equ? '(rational rational) equ?)
+  (put 'to-string '(rational) to-string)
   (put 'test 'rational-package test-rational)
   'done)
 
