@@ -1,6 +1,7 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-(load "./tag_system.scm")
+; required packages:
+; (load "../common/utils.scm")
+; (load "../common/test-utils.scm")
+; (load "./tag_system.scm")
 
 (load "./number_system_rational.scm")
 (load "./number_system_scheme_number.scm")
@@ -22,7 +23,3 @@
               'complex-package
               ))
   (out "all tests are done."))
-
-(run-all-test)
-
-(end-script)
