@@ -28,6 +28,20 @@
                       (add-terms (rest-terms l1)
                                  (rest-terms l2))))))))
 
+  (define (mul-terms l1 l2)
+    (if (empty-termlist? l1)
+      (the-empty-termlist)
+      (add-terms (mul-term-by-all-terms (first-term l1) l2)
+                 (mul-terms (rest-terms l1) l2))))
+  (define (mul-term-by-all-terms t1 l)
+    (if (empty-termlist? l)
+      (the-empty-termlist)
+      (let ((t2 (first-term l)))
+        (adjoin-term
+          (make-term (+ (order t1) (order t2))
+                     (mul (coeff t1) (coeff t2)))
+          (mul-term-by-all-terms t1 (rest-terms l))))))
+
   (define (add-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
       (make-poly (variable p1)
