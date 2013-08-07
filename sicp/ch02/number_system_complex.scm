@@ -30,6 +30,11 @@
 
   (define (equ? x y) (=zero? (sub x y)))
 
+  (define (to-string x)
+    (string-append
+      (number->string (real-part x)) "+"
+      (number->string (imag-part x)) "i"))
+
   (define (test-package)
     (run-test 'rect-package)
     (run-test 'polar-package)
@@ -69,6 +74,11 @@
                     (mat 'div x3 x4 (make-ri -1 -1))
                     )))
         (do-test-q apply-generic testcases equ?))
+      ; test to-string
+      (let ((testcases
+              (list (mat 'to-string x3 "2+-2i")
+                    (mat 'to-string (make-ri 1 2) "1+2i"))))
+        (do-test-q apply-generic testcases))
       ))
 
   (put 'make-ri 'complex (tagged 'complex make-ri))
@@ -83,6 +93,7 @@
   (put 'div '(complex complex) (tagged 'complex div))
   (put 'equ? '(complex complex) equ?)
   (put '=zero? '(complex) =zero?)
+  (put 'to-string '(complex) to-string)
   (put 'test 'complex-package test-package)
 
   'done)
