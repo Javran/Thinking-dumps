@@ -20,7 +20,7 @@
   (define term-list cdr)
 
   (define variable? symbol?)
-  (define (same-varialbe? v1 v2)
+  (define (same-variable? v1 v2)
     (and (variable? v1) (variable? v2) (equal? v1 v2)))
 
   (define (add-terms l1 l2)
