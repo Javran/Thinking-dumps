@@ -1,6 +1,20 @@
 (define (install-polynomial-package)
-  ;; internal procedures
-  ;; representation of poly
+  ; data structure tag: poly
+  ; each "poly" is consisted by a single variable & term list
+  ; accessors:
+  ;   * variable
+  ;   * term-list
+  ; for variables:
+  ;   * same-variable?: precondition of `add-poly` and `mul-poly`
+  ; for terms:
+  ;   * the-empty-term-list
+  ;   * add-terms
+  ;   * mul-terms
+  ;   * adjoin-term: add new term into the list
+  ; for poly:
+  ;   * add-poly
+  ;   * mul-poly
+
   (define make-poly cons)
   (define variable car)
   (define term-list cdr)
