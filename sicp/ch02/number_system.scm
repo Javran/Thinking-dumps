@@ -6,12 +6,14 @@
 (load "./number_system_rational.scm")
 (load "./number_system_scheme_number.scm")
 (load "./number_system_complex.scm")
+(load "./number_system_native_num_test.scm")
 
 (define eps 1e-9)
 
 (install-rational-package)
 (install-scheme-number-package)
 (install-complex-package)
+(install-native-num-test)
 
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
@@ -21,5 +23,6 @@
               'scheme-number-package
               'rational-package
               'complex-package
+              'native-num
               ))
   (out "all tests are done."))

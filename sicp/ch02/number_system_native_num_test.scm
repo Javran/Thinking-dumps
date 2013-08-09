@@ -1,0 +1,11 @@
+(define (install-native-num-test)
+  (define (test)
+    (let ((a 10)
+          (b 8))
+      (let ((testcases
+              (list (mat 'add a b 18)
+                    (mat 'sub a b 2)
+                    (mat 'mul a b 80)
+                    (mat 'div a b 1.25))))
+        (do-test-q apply-generic testcases (close-number? eps)))))
+  (put 'test 'native-num test))

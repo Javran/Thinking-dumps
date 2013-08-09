@@ -13,15 +13,19 @@
 
 ; ==== implementations ====
 
-(define attach-tag cons)
+(define (attach-tag tag datum)
+  (cond ((eq? tag 'scheme-number) datum)
+        (else (cons tag datum))))
+
 (define (type-tag datum)
-  (if (pair? datum)
-    (car datum)
-    (error "Bad tagged datum: TYPE-TAG" datum)))
+  (cond ((number? datum) 'scheme-number)
+        ((pair? datum) (car datum))
+        (else (error "Bad tagged datum: TYPE-TAG" datum))))
+
 (define (contents datum)
-  (if (pair? datum)
-    (cdr datum)
-    (error "Bad tagged datum: CONTENTS" datum)))
+  (cond ((number? datum) datum)
+        ((pair? datum) (cdr datum))
+        (else (error "Bad tagged datum: CONTENTS" datum))))
 
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
