@@ -39,11 +39,17 @@
       "/"
       (number->string (denom x))))
 
+  (define (raise x)
+    ((get 'make 'scheme-number)
+      (/ (numer x) (denom x))))
+
   (define (test-rational)
     (let* ((make (get 'make 'rational))
            (x1 (make 1 7))
            (x2 (make 8 56))
-           (x3 (make 4 8)))
+           (x3 (make 4 8))
+           (make-scheme-number (get 'make 'scheme-number))
+           (num-equ? (lambda (a b) (apply-generic 'equ? a b))))
       ; test equ? and =zero?
       (let ((testcases
               (list (mat '=zero? (make 0 1) #t)
@@ -63,9 +69,14 @@
               (list (mat 'add x1 x2 (make 2 7))
                     (mat 'sub x3 x1 (make 5 14))
                     (mat 'mul x1 x3 (make 1 14))
-                    (mat 'div x3 x1 (make 7 2))))
-            (num-equ? (lambda (a b) (apply-generic 'equ? a b))))
+                    (mat 'div x3 x1 (make 7 2)))))
         (do-test-q apply-generic testcases num-equ?))
+      ; test raise
+      (let ((testcases
+              (list (mat 'raise (make 20 10) (make-scheme-number 2))
+                    (mat 'raise (make 1 7) (make-scheme-number (/ 1 7))))))
+        (do-test-q apply-generic testcases num-equ?))
+      ; test to-string
       (let ((testcases
               (list (mat 'to-string x1 "1/7")
                     (mat 'to-string x2 "1/7")
@@ -83,6 +94,7 @@
   (put '=zero? '(rational) =zero?)
   (put 'equ? '(rational rational) equ?)
   (put 'to-string '(rational) to-string)
+  (put 'raise '(rational) raise)
   (put 'test 'rational-package test-rational)
   'done)
 

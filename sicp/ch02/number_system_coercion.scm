@@ -53,8 +53,6 @@
                        'scheme-number)))
           (f (lambda args (highest-type args))))
       (do-test-q f testcases))
-
-
     )
   (put 'test 'coercion-system test)
   )
