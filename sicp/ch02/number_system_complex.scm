@@ -30,6 +30,9 @@
 
   (define (equ? x y) (=zero? (sub x y)))
 
+  (define (project x)
+    ((get 'make 'scheme-number) (real-part x)))
+
   (define (to-string x)
     (string-append
       (number->string (real-part x)) "+"
@@ -40,6 +43,7 @@
     (run-test 'polar-package)
     (let* ((make-ri (get 'make-ri 'complex))
            (make-ma (get 'make-ma 'complex))
+           (make-scheme-num (get 'make 'scheme-number))
            (x1 (make-ri (sqrt 3) 1))
            (x2 (make-ma 2 (/ pi 6)))
            (x3 (make-ri 2 -2))
@@ -74,6 +78,15 @@
                     (mat 'div x3 x4 (make-ri -1 -1))
                     )))
         (do-test-q apply-generic testcases equ?))
+      ; test project
+      (let ((testcases
+              (list (mat 'project x1 (make-scheme-num (sqrt 3)))
+                    (mat 'project x2 (make-scheme-num (sqrt 3)))
+                    (mat 'project x3 (make-scheme-num 2))
+                    (mat 'project x4 (make-scheme-num 0))
+                    ))
+            (num-equ? (lambda (a b) (apply-generic 'equ? a b))))
+        (do-test-q apply-generic testcases num-equ?))
       ; test to-string
       (let ((testcases
               (list (mat 'to-string x3 "2+-2i")
@@ -93,6 +106,7 @@
   (put 'div '(complex complex) (tagged 'complex div))
   (put 'equ? '(complex complex) equ?)
   (put '=zero? '(complex) =zero?)
+  (put 'project '(complex) project)
   (put 'to-string '(complex) to-string)
   (put 'test 'complex-package test-package)
 
