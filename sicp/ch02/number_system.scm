@@ -7,6 +7,7 @@
 (load "./number_system_scheme_number.scm")
 (load "./number_system_complex.scm")
 (load "./number_system_native_num_test.scm")
+(load "./number_system_coercion.scm")
 
 (define eps 1e-9)
 
@@ -14,6 +15,7 @@
 (install-scheme-number-package)
 (install-complex-package)
 (install-native-num-test)
+(install-coercion-test)
 
 (define (run-test tag) ((get 'test tag)))
 (define (run-all-test)
@@ -24,5 +26,6 @@
               'rational-package
               'complex-package
               'native-num
+              'coercion-system
               ))
   (out "all tests are done."))
