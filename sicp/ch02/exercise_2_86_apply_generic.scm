@@ -1,7 +1,7 @@
 ; excerpted from ex 2.85
 
 (load "./exercise_2_84_type_cmp.scm")
-; raise to a higher type for data (curried)
+; raise data to a higher type (curried)
 (define (raise-to type)
   (lambda (data)
     (let ((data-type (type-tag data)))
