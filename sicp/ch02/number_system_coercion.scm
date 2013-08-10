@@ -30,6 +30,29 @@
     (car ls)
     (cdr ls)))
 
+; overwrite apply-generic
+(define (apply-generic op . args)
+  (define (raise-error)
+    (error "No method for this argument list APPLY-GENERIC"
+           (cons op args)))
+  (define (same-type-list? ls)
+    (apply boolean/and
+           (map (lambda (x) (equal? x (car ls))) (cdr ls))))
+
+  (let ((args-type (map type-tag args))
+        (args-data (map contents args)))
+    (let ((proc (get op args-type)))
+      (if proc
+        (apply proc args-data)
+        ; if the handler is not found:
+        (cond 
+          ; if the argument list are already of the same type, abort.
+          ((same-type-list? args-type) (raise-error))
+          ; pick up the `highest` type, raise and retry
+          (else
+            (let* ((target-type (highest-type args-type))
+                   (raised-args (map (raise-to target-type) args)))
+              (apply apply-generic (cons op raised-args)))))))))
 
 (define (install-coercion-test)
   (define (test)
