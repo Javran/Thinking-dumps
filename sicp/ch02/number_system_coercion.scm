@@ -64,7 +64,7 @@
                   (mat 'complex 'rational #t)
                   (mat 'scheme-number 'scheme-number #f))))
       (do-test-q higher-type? testcases))
-    ; test higher-type?
+    ; test highest-type
     (let ((testcases
             (list (mat 'scheme-number 'complex 'rational
                        'complex)
@@ -76,6 +76,20 @@
                        'scheme-number)))
           (f (lambda args (highest-type args))))
       (do-test-q f testcases))
+    ; test apply-generic
+    (let* ((make-ra (get 'make 'rational))
+           (make-sn (get 'make 'scheme-number))
+           (make-ri (get 'make-ri 'complex))
+           (gen-equ? (lambda (x y) (apply-generic 'equ? x y)))
+           (a (make-ra 1 4))
+           (b (make-sn 0.25))
+           (c (make-ri 0.5 0)))
+      (let ((testcases
+              (list (mat 'add a b c)
+                    (mat 'sub c a b)
+                    (mat 'sub c b a))))
+        (do-test-q apply-generic testcases gen-equ?)))
+
     )
   (put 'test 'coercion-system test)
   )
