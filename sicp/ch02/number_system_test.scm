@@ -5,15 +5,4 @@
 
 (run-all-test)
 
-(let* ((make-sc (get 'make 'scheme-number))
-       (make-ra (get 'make 'rational))
-       (make-ri (get 'make-ri 'complex))
-       (make-ma (get 'make-ma 'complex))
-       (a (make-sc 123))
-       (b (make-ra 12 34))
-       (c (make-ri 3 3))
-       (d (make-ma 2 (/ pi 4))))
-  (out a b c d)
-  (out (add a b))
-  )
 (end-script)
