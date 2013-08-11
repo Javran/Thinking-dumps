@@ -31,14 +31,13 @@
     (cdr ls)))
 
 ; overwrite apply-generic
-(define (apply-generic-inner op . args)
+(define (apply-generic op . args)
   (define (raise-error)
     (error "No method for this argument list APPLY-GENERIC"
            (cons op args)))
   (define (same-type-list? ls)
     (apply boolean/and
            (map (lambda (x) (equal? x (car ls))) (cdr ls))))
-
   (let ((args-type (map type-tag args))
         (args-data (map contents args)))
     (let ((proc (get op args-type)))
@@ -46,19 +45,18 @@
         (apply proc args-data)
         ; if the handler is not found:
         (cond 
-          ; if the argument list are already of the same type, abort.
-          ((same-type-list? args-type) (raise-error))
+          ((null? args-type) (error "fuck" op args) (raise-error))
+          ; if the argument list are already of the same type, try raise all up then abort.
+          ((same-type-list? args-type)
+            (let ((raise-up (get 'raise (list (car args-type)))))
+              (if raise-up
+                (apply apply-generic (cons op (map raise-up args-data)))
+                (raise-error))))
           ; pick up the `highest` type, raise and retry
           (else
             (let* ((target-type (highest-type args-type))
                    (raised-args (map (raise-to target-type) args)))
-              (apply apply-generic-inner (cons op raised-args)))))))))
-
-(define (apply-generic op . args)
-  (let ((result (apply apply-generic-inner (cons op args))))
-    (if (member op '(add sub mul div))
-      (drop result)
-      result)))
+              (apply apply-generic (cons op raised-args)))))))))
 
 (define (drop datum)
   (define (do-drop datum type)
@@ -125,9 +123,7 @@
                     (mat c 'rational)
                     (mat d 'rational)))
             (f (lambda (x) (type-tag (drop x)))))
-        (do-test f testcases)))
-
-
+        (do-test-q f testcases)))
     )
   (put 'test 'coercion-system test)
   )
