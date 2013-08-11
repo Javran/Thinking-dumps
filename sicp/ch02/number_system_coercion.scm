@@ -31,7 +31,7 @@
     (cdr ls)))
 
 ; overwrite apply-generic
-(define (apply-generic op . args)
+(define (apply-generic-inner op . args)
   (define (raise-error)
     (error "No method for this argument list APPLY-GENERIC"
            (cons op args)))
@@ -52,7 +52,28 @@
           (else
             (let* ((target-type (highest-type args-type))
                    (raised-args (map (raise-to target-type) args)))
-              (apply apply-generic (cons op raised-args)))))))))
+              (apply apply-generic-inner (cons op raised-args)))))))))
+
+(define (apply-generic op . args)
+  (let ((result (apply apply-generic-inner (cons op args))))
+    (if (member op '(add sub mul div))
+      (drop result)
+      result)))
+
+(define (drop datum)
+  (define (do-drop datum type)
+    (let ((proc (get 'project (list type))))
+      (if proc
+        (let ((projected (project datum)))
+          (if (equ? (raise projected) datum)
+            (do-drop projected (type-tag projected))
+            datum))
+        datum)))
+  (let ((type (type-tag datum)))
+    ; valid type?
+    (if type
+      (do-drop datum type)
+      datum)))
 
 (define (install-coercion-test)
   (define (test)
@@ -89,6 +110,23 @@
                     (mat 'sub c a b)
                     (mat 'sub c b a))))
         (do-test-q apply-generic testcases gen-equ?)))
+    ; test drop
+    (let* ((make-ri (get 'make-ri 'complex))
+           (make-ma (get 'make-ma 'complex))
+           (make-ra (get 'make 'rational))
+           (make-sc (get 'make 'scheme-number))
+           (a (make-ri 1 2))
+           (b (make-ma 5 0))
+           (c (make-ra 5 1))
+           (d (make-sc 5)))
+      (let ((testcases
+              (list (mat a 'complex)
+                    (mat b 'rational)
+                    (mat c 'rational)
+                    (mat d 'rational)))
+            (f (lambda (x) (type-tag (drop x)))))
+        (do-test f testcases)))
+
 
     )
   (put 'test 'coercion-system test)

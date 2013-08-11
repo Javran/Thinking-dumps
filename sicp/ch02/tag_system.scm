@@ -17,10 +17,12 @@
   (cond ((eq? tag 'scheme-number) datum)
         (else (cons tag datum))))
 
+; type-tag can be applied on any data,
+;   when it returns #f, the datum is not a valid object
 (define (type-tag datum)
   (cond ((pair? datum) (car datum))
         ((number? datum) 'scheme-number)
-        (else (error "Bad tagged datum: TYPE-TAG" datum))))
+        (else #f)))
 
 (define (contents datum)
   (cond ((pair? datum) (cdr datum)) 

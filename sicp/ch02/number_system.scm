@@ -41,7 +41,7 @@
 (define (raise a) (apply-generic 'raise a))
 (define (project a) (apply-generic 'project a))
 
-(define (run-test tag) ((get 'test tag)))
+(define (run-test tag) (out "testing" tag) ((get 'test tag)))
 (define (run-all-test)
   (for-each run-test
             (list
