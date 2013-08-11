@@ -118,3 +118,19 @@
 (define (close-number? eps)
   (lambda (a b) 
     (< (abs (- a b)) eps)))
+
+; compose unaries
+; compose (...  h . g . f) x = ... $ h $ g $ f x
+; => compose-inv (f . g . h ...) x
+; => (compose-inv (g . h ...)) $ f x
+(define (compose . procs)
+  (define (compose-inv procs)
+    (if (null? procs)
+      identity
+      (lambda (x)
+        ((compose-inv (cdr procs)) ((car procs) x)))))
+  (let ((procs-inv (reverse! procs)))
+    (compose-inv procs-inv)))
+
+(define (curry2 f)
+  (lambda (a) (lambda (b) (f a b))))

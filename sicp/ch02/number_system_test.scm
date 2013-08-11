@@ -6,8 +6,9 @@
 (run-all-test)
 
 ; ==== demo ===
-(define (out-num x)
-  (out (to-string (drop x))))
+(define out-num
+  (compose out to-string drop))
+
 ; (sqrt 3)+1i + 5 - (2 cos(pi/6) + 2 sin(pi/6) i) = 5
 (out-num (sub (add (make-complex-ri (sqrt 3) 1) (make-scheme-number 5))
               (make-complex-ma 2 (/ pi 6))))
