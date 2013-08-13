@@ -74,7 +74,7 @@
   (put 'make 'poly-termlist (tagged 'poly-termlist make-empty))
   (put 'make-from-args 'poly-termlist (tagged 'poly-termlist make-from-args))
   (put 'first-term '(poly-termlist) first-term)
-  (put 'rest-terms '(poly-termlist) rest-terms)
+  (put 'rest-terms '(poly-termlist) (tagged 'poly-termlist rest-terms))
   (put 'add '(poly-termlist poly-termlist) (tagged 'poly-termlist add-terms))
   (put 'mul '(poly-termlist poly-termlist) (tagged 'poly-termlist mul-terms))
   (put 'empty? '(poly-termlist) empty-termlist?)

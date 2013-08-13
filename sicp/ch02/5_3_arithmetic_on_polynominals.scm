@@ -38,8 +38,8 @@
   ; l2 = 2x+2
   (let ((p1 (make-poly 'x l1))
         (p2 (make-poly 'x l2)))
-    (out (add p1 p2))
-    (out (mul p1 p2))))
+    (out (to-string (add p1 p2)))
+    (out (to-string (mul p1 p2)))))
 
 (let ((l1 (make-termlist-from-args
             2 (make-scheme-number 3)
@@ -51,9 +51,9 @@
             0 (make-complex-ri 5 3))))
   (let ((p1 (make-poly 'x l1))
         (p2 (make-poly 'x l2)))
-    (out p1
-         p2
-         (add p1 p2)
-         (mul p1 p2))))
+    (for-each
+      (compose out to-string)
+      (list p1 p2 (add p1 p2) (mul p1 p2)))))
+
 
 (end-script)
