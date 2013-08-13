@@ -134,3 +134,6 @@
 
 (define (curry2 f)
   (lambda (a) (lambda (b) (f a b))))
+
+(define (flip f)
+  (lambda (a b) (f b a)))
