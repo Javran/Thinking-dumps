@@ -1,5 +1,6 @@
 (define (install-poly-termlist-package)
   (define (make-empty) nil)
+  (define the-empty-termlist make-empty)
   (define first-term car)
   (define rest-terms cdr)
   (define empty-termlist? null?)
