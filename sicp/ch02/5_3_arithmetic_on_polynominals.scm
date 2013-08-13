@@ -96,6 +96,29 @@
     (for-each
       (compose out to-string)
       (list px1 px2 (mul px1 px2)))))
+(newline)
 
+(let ((t (make-poly
+           'x
+           (make-termlist-from-args ; x + 1
+             1 (make-scheme-number 1)
+             0 (make-scheme-number 1))))
+      (one (make-poly
+             'x
+             (make-termlist-from-args 
+               0 (make-scheme-number 1)))))
+  (for-each
+    ; 3. convert to string and output
+    (compose out to-string)
+    (map (lambda (len) 
+           ; 2. accumulate by mul
+           (fold-left 
+             mul 
+             one
+             ; 1. make a list of length len, whose elements are all `t`
+             (map 
+               (const t)
+               (list-in-range 1 len))))
+           (list-in-range 1 10))))
 
 (end-script)
