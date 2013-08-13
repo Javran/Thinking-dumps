@@ -71,10 +71,15 @@
                 "+"
                 (to-string (make-poly var (rest-terms termls))))))))
 
+  (define (=zero? x)
+    ; TODO: placeholder
+    #f)
+
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
   (put 'make 'polynominal (tagged 'polynominal make-poly))
   (put 'variable '(polynominal) variable)
+  (put '=zero? '(polynominal) =zero?)
   (put 'to-string '(polynominal) to-string)
   (put 'term-list '(polynominal) term-list)
   'done)

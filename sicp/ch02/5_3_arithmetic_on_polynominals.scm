@@ -40,6 +40,7 @@
         (p2 (make-poly 'x l2)))
     (out (to-string (add p1 p2)))
     (out (to-string (mul p1 p2)))))
+(newline)
 
 (let ((l1 (make-termlist-from-args
             2 (make-scheme-number 3)
@@ -54,6 +55,47 @@
     (for-each
       (compose out to-string)
       (list p1 p2 (add p1 p2) (mul p1 p2)))))
+(newline)
+
+(let ((py1 (make-poly
+             'y
+             (make-termlist-from-args ; y + 1
+               1 (make-scheme-number 1)
+               0 (make-scheme-number 1))))
+      (py2 (make-poly
+             'y
+             (make-termlist-from-args ; y^2 + 1
+               2 (make-scheme-number 1)
+               0 (make-scheme-number 1))))
+      (py3 (make-poly
+             'y
+             (make-termlist-from-args ; y - 1
+               1 (make-scheme-number 1)
+               0 (make-scheme-number -1))))
+      (py4 (make-poly
+             'y
+             (make-termlist-from-args ; y - 2
+               1 (make-scheme-number 1)
+               0 (make-scheme-number -2))))
+      (py5 (make-poly
+             'y
+             (make-termlist-from-args ; y^3 + 7
+               3 (make-scheme-number 1)
+               0 (make-scheme-number 7)))))
+  (let ((px1 (make-poly
+               'x
+               (make-termlist-from-args
+                 2 py1
+                 1 py2
+                 0 py3)))
+        (px2 (make-poly
+               'x
+               (make-termlist-from-args
+                 1 py4
+                 0 py5))))
+    (for-each
+      (compose out to-string)
+      (list px1 px2 (mul px1 px2)))))
 
 
 (end-script)
