@@ -23,6 +23,11 @@
 (define order car)
 (define coeff cadr)
 
+(load "./5_3_poly_term_package.scm")
+(install-poly-term-package)
+
+(run-test 'poly-term-package)
+
 ; join two term-lists
 (define (add-terms l1 l2)
   (cond ((empty-termlist? l1) l2)
