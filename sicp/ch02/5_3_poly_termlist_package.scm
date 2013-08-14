@@ -5,6 +5,14 @@
   (define rest-terms cdr)
   (define empty-termlist? null?)
 
+  (define coeff ((curry2 apply-generic) 'coeff))
+  (define order ((curry2 apply-generic) 'order))
+
+  (define coeff-list
+    ((curry2 map) coeff))
+  (define order-list
+    ((curry2 map) order))
+
   ; (make-from-args order1 coeff1 order2 coeff2 ...)
   (define (make-from-args . args)
     (define (list-to-pair-list ls)
@@ -78,5 +86,9 @@
   (put 'add '(poly-termlist poly-termlist) (tagged 'poly-termlist add-terms))
   (put 'mul '(poly-termlist poly-termlist) (tagged 'poly-termlist mul-terms))
   (put 'empty? '(poly-termlist) empty-termlist?)
+
+  ; extension: fetch a list of term order / coeff
+  (put 'order-list '(poly-termlist) order-list)
+  (put 'coeff-list '(poly-termlist) coeff-list)
 
   'done)

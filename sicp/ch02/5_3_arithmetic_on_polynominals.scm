@@ -98,6 +98,7 @@
       (list px1 px2 (mul px1 px2)))))
 (newline)
 
+; now we can make Pascal's triangle :)
 (let ((t (make-poly
            'x
            (make-termlist-from-args ; x + 1
@@ -108,8 +109,15 @@
              (make-termlist-from-args 
                0 (make-scheme-number 1)))))
   (for-each
-    ; 3. convert to string and output
-    (compose out to-string)
+      (compose
+        ; 6. output
+        out
+        ; 5. apply generic to-string
+        ((curry2 map) to-string)
+        ; 4. get the list of coeff
+        ((curry2 apply-generic) 'coeff-list)
+        ; 3. get term-list
+        ((curry2 apply-generic) 'term-list))
     (map (lambda (len) 
            ; 2. accumulate by mul
            (fold-left 
@@ -119,6 +127,6 @@
              (map 
                (const t)
                (list-in-range 1 len))))
-           (list-in-range 1 10))))
+         (list-in-range 0 10))))
 
 (end-script)
