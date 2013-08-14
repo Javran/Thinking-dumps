@@ -61,7 +61,7 @@
       (apply-generic 'empty? x))
     (let ((var (variable p))
           (termls (term-list p)))
-      (cond ((empty-termlist? termls) "")
+      (cond ((empty-termlist? termls) "0")
             ((empty-termlist? (rest-terms termls))
               ; only one element
               (term-to-string (first-term termls) var))
@@ -71,9 +71,9 @@
                 "+"
                 (to-string (make-poly var (rest-terms termls))))))))
 
-  (define (=zero? x)
+  (define =zero?
     ; TODO: placeholder
-    #f)
+    (const #f))
 
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
