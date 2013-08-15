@@ -137,3 +137,12 @@
 
 (define (flip f)
   (lambda (a b) (f b a)))
+
+(define (drop-while pred ls)
+  (if (null? ls)
+    '()
+    (if (pred (car ls))
+      (drop-while pred (cdr ls))
+      ls)))
+
+'done
