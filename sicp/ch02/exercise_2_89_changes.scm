@@ -59,24 +59,46 @@
                              t-coeff)
                         (rest-terms termlist))
                   ; case #5: t-order < ft-order
-                  (cons (first-term termlist)
+                  (cons (coeff (first-term termlist))
                         (merge-term term (rest-terms termlist)))))))))))
 
-  (define (test)
+  (define (test-merge-term)
     (let* ((make-term (get 'make 'poly-term))
            (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
                                               (list-in-range 1 len))))
            (testcases
              (list
+               ; case #1
+               (mat (make-term 10 (make-scheme-number 0)) (map make-scheme-number (list 1 2 3 4))
+                    (map make-scheme-number (list 1 2 3 4)))
                ; case #2
                (mat (make-term 4 (make-scheme-number 7)) nil 
-                    (map make-scheme-number
-                         (list 7 0 0 0 0)))))
+                    (map make-scheme-number (list 7 0 0 0 0)))
+               ; case #3
+               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3))
+                    (map make-scheme-number (list 7 0 1 2 3)))
+               ; case #3
+               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4))
+                    (map make-scheme-number (list 7 1 2 3 4)))
+               ; case #4
+               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4 5))
+                    (map make-scheme-number (list 8 2 3 4 5)))
+               ; case #5
+               (mat (make-term 1 (make-scheme-number 5)) (map make-scheme-number (list 1 2 3 4 5))
+                    (map make-scheme-number (list 1 2 3 9 5)))
+               ; case #5
+               (mat (make-term 0 (make-scheme-number 4)) (map make-scheme-number (list 1 2 3 4 5))
+                    (map make-scheme-number (list 1 2 3 4 9)))
+               ))
+
            (list-equ? (lambda (a b)
                         (and (= (length a) (length b))
                              (apply boolean/and (map equ? a b)))))
            )
-      (do-test merge-term testcases list-equ?)))
+      (do-test-q merge-term testcases list-equ?)))
+
+  (define (test)
+    (test-merge-term))
 
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
