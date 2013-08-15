@@ -7,6 +7,8 @@
 
 (load "./exercise_2_89_changes.scm")
 
+(run-test 'poly-termlist-dense-package)
+
 (let ((test-list (attach-tag 'poly-termlist-dense (list-in-range 1 4))))
   (out test-list
        (apply-generic 'first-term test-list)

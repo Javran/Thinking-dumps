@@ -62,10 +62,28 @@
                   (cons (first-term termlist)
                         (merge-term term (rest-terms termlist)))))))))))
 
+  (define (test)
+    (let* ((make-term (get 'make 'poly-term))
+           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
+                                              (list-in-range 1 len))))
+           (testcases
+             (list
+               ; case #2
+               (mat (make-term 4 (make-scheme-number 7)) nil 
+                    (map make-scheme-number
+                         (list 7 0 0 0 0)))))
+           (list-equ? (lambda (a b)
+                        (and (= (length a) (length b))
+                             (apply boolean/and (map equ? a b)))))
+           )
+      (do-test merge-term testcases list-equ?)))
+
+
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
   (put 'first-term '(poly-termlist-dense) first-term)
   (put 'rest-terms '(poly-termlist-dense) (tagged 'poly-termlist-dense rest-terms))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
+  (put 'test 'poly-termlist-dense-package test)
 
   'done)
 
