@@ -89,6 +89,9 @@
                ; case #5
                (mat (make-term 0 (make-scheme-number 4)) (map make-scheme-number (list 1 2 3 4 5))
                     (map make-scheme-number (list 1 2 3 4 9)))
+               ; case #5
+               (mat (make-term 4 (make-scheme-number -5)) (map make-scheme-number (list 5 0 0 0 0))
+                    nil)
                ))
 
            (list-equ? (lambda (a b)
