@@ -129,7 +129,33 @@
                         (else (error "impossible case")))))))
 
   (define (test-add-terms)
-    'stub
+    (let* ((make-term (get 'make 'poly-term))
+           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
+                                              (list-in-range 1 len))))
+           (to-termlist ((curry2 map) make-scheme-number))
+
+           (testcases
+             (list
+               (mat nil nil
+                    nil)
+               (mat nil (to-termlist (list 1 2 3 4 5))
+                    (to-termlist (list 1 2 3 4 5)))
+               (mat (to-termlist (list 5 4 3 2 1)) nil
+                    (to-termlist (list 5 4 3 2 1)))
+               (mat (to-termlist (list 3 2 1)) (to-termlist (list 5 4 0 0 0))
+                    (to-termlist (list 5 4 3 2 1)))
+               (mat (to-termlist (list 5 4 3 0 0)) (to-termlist (list 2 1))
+                    (to-termlist (list 5 4 3 2 1)))
+               (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
+                    nil)
+               ))
+           (list-equ? (lambda (a b)
+                        (and (= (length a) (length b))
+                             (apply boolean/and (map equ? a b)))))
+
+           )
+      (do-test-q add-terms testcases list-equ?))
+
     )
                           
 
