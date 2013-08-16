@@ -100,8 +100,44 @@
            )
       (do-test-q merge-term testcases list-equ?)))
 
+  (define (add-terms l1 l2)
+    ; there're 2 ways of implementing add-terms
+    ; 1. use first-term and rest-terms to retrieve info about the termlist
+    ; 2. use structure-related code, we can simple add coeffs accordingly, 
+    ;     and result in higher performance, but it would make rest-terms and first-term
+    ;     placed in the same `language` level of add-terms
+    ; I'll use the first method
+    (cond ((empty-termlist? l1) l2)
+          ((empty-termlist? l2) l1)
+          (else (let ((ft1 (first-term-order l1))
+                      (ft2 (first-term-order l2)))
+                  (cond ((equ? ft1 ft2)
+                          (merge-term ((get 'make 'poly-term)
+                                        ft1
+                                        (add (coeff (first-term l1))
+                                             (coeff (first-term l2))))
+                                      (add-terms (rest-terms l1)
+                                                 (rest-terms l2))))
+                        ((> ft1 ft2)
+                          (merge-term (first-term l1)
+                                      (add-terms (rest-terms l1)
+                                                 l2)))
+                        ((< ft1 ft2)
+                          (merge-term (first-term l2)
+                                      (add-terms l1
+                                                 (rest-terms l2))))
+                        (else (error "impossible case")))))))
+
+  (define (test-add-terms)
+    'stub
+    )
+                          
+
   (define (test)
-    (test-merge-term))
+    (test-merge-term)
+    (test-add-terms)
+
+    )
 
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
