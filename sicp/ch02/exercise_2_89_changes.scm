@@ -174,4 +174,11 @@
 
   'done)
 
+(define (install-poly-term-package-mul-extension)
+  'stub
+  ; note it make sense to multiple two terms and produce a new one,
+  ;   which would be useful for our mul-terms
+  )
+
 (install-poly-termlist-dense-package)
+(install-poly-term-package-mul-extension)
