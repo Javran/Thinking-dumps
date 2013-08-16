@@ -13,5 +13,10 @@
   (out test-list
        (apply-generic 'first-term test-list)
        (apply-generic 'rest-terms test-list)))
+(newline)
+(let* ((make (get 'make 'poly-term))
+       (x1 (make 3 (make-complex-ri 3  4)))
+       (x2 (make 5 (make-complex-ri 3 -4))))
+  ((compose out to-string coeff) (mul x1 x2)))
 
 (end-script)

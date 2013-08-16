@@ -175,10 +175,22 @@
   'done)
 
 (define (install-poly-term-package-mul-extension)
-  'stub
+
   ; note it make sense to multiple two terms and produce a new one,
   ;   which would be useful for our mul-terms
+
+  (define order (get 'order '(poly-term)))
+  (define coeff (get 'coeff '(poly-term)))
+  (define make (get 'make 'poly-term))
+
+  (define (mul-term t1 t2)
+    (out t1 t2)
+    (make (+   (order t1) (order t2))
+          (mul (coeff t1) (coeff t2))))
+
+  (put 'mul '(poly-term poly-term) mul-term)
+
   )
 
-(install-poly-termlist-dense-package)
 (install-poly-term-package-mul-extension)
+(install-poly-termlist-dense-package)
