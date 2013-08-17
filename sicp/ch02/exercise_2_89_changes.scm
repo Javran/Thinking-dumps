@@ -23,8 +23,12 @@
            (to-termlist ((curry2 map) make-scheme-number))
            (testcases
              (list (mat (to-termlist (list 1 0 2 3 4))
+                        ; result: (cons <first-term-result> <rest-terms-result>)
                         (cons (make-term 4 (make-scheme-number 1))
                               (to-termlist (list 2 3 4))))
+                   (mat (to-termlist (list 1 0 0 0 0 0 0 0))
+                        (cons (make-term 7 (make-scheme-number 1))
+                              nil))
                    ))
            (f (lambda (x) (cons (first-term x) (rest-terms x))))
            (result-eq?
@@ -32,9 +36,8 @@
                (and (equ? (car a) (car b)) 
                     (= (length (cdr a)) (length (cdr b)))
                     (apply boolean/and (map equ? (cdr a) (cdr b))))))
-                    
            )
-      (do-test f testcases result-eq?)))
+      (do-test-q f testcases result-eq?)))
 
   (define coeff ((curry2 apply-generic) 'coeff))
   (define order ((curry2 apply-generic) 'order))
