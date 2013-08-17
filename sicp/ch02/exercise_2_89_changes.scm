@@ -182,12 +182,37 @@
 
     )
                           
-  ;(define (mul-term-by-all-terms t1 l)
+  (define (mul-term-by-all-terms t1 l)
+    (if (empty-termlist? l)
+      (the-empty-termlist)
+      (merge-term (mul t1 (first-term l))
+                  (mul-term-by-all-terms t1 (rest-terms l)))))
+
+  (define (test-mul-term-by-all-terms)
+    (let* ((make-term (get 'make 'poly-term))
+           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
+                                              (list-in-range 1 len))))
+           (to-termlist ((curry2 map) make-scheme-number))
+           (testcases
+             (list
+               (mat (make-term 2 (make-scheme-number 4)) (to-termlist (list 1 2 3))
+                    (to-termlist (list 4 8 12 0 0)))
+               (mat (make-term 7 (make-scheme-number 0)) (to-termlist (list 1 2 3 4 5 6))
+                    nil)
+               (mat (make-term 100 (make-scheme-number 100)) nil
+                    nil)
+               ))
+           (list-equ? (lambda (a b)
+                        (and (= (length a) (length b))
+                             (apply boolean/and (map equ? a b)))))
+           )
+      (do-test-q mul-term-by-all-terms testcases list-equ?)))
 
   (define (test)
     (test-accessors)
     (test-merge-term)
     (test-add-terms)
+    (test-mul-term-by-all-terms)
     )
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
@@ -212,7 +237,6 @@
          (equ? (coeff a) (coeff b))))
 
   (define (mul-term t1 t2)
-    (out t1 t2)
     (make (+   (order t1) (order t2))
           (mul (coeff t1) (coeff t2))))
 
