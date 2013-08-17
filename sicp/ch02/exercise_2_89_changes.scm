@@ -16,6 +16,26 @@
   (define (rest-terms ls)
     (drop-while =zero? (cdr ls)))
 
+  (define (test-accessors)
+    (let* ((make-term (get 'make 'poly-term))
+           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
+                                              (list-in-range 1 len))))
+           (to-termlist ((curry2 map) make-scheme-number))
+           (testcases
+             (list (mat (to-termlist (list 1 0 2 3 4))
+                        (cons (make-term 4 (make-scheme-number 1))
+                              (to-termlist (list 2 3 4))))
+                   ))
+           (f (lambda (x) (cons (first-term x) (rest-terms x))))
+           (result-eq?
+             (lambda (a b)
+               (and (equ? (car a) (car b)) 
+                    (= (length (cdr a)) (length (cdr b)))
+                    (apply boolean/and (map equ? (cdr a) (cdr b))))))
+                    
+           )
+      (do-test f testcases result-eq?)))
+
   (define coeff ((curry2 apply-generic) 'coeff))
   (define order ((curry2 apply-generic) 'order))
 
@@ -162,6 +182,7 @@
   ;(define (mul-term-by-all-terms t1 l)
 
   (define (test)
+    (test-accessors)
     (test-merge-term)
     (test-add-terms)
     )
@@ -174,7 +195,7 @@
 
   'done)
 
-(define (install-poly-term-package-mul-extension)
+(define (install-poly-term-package-extension)
 
   ; note it make sense to multiple two terms and produce a new one,
   ;   which would be useful for our mul-terms
@@ -183,14 +204,19 @@
   (define coeff (get 'coeff '(poly-term)))
   (define make (get 'make 'poly-term))
 
+  (define (equ-term? a b)
+    (and (=    (order a) (order b))
+         (equ? (coeff a) (coeff b))))
+
   (define (mul-term t1 t2)
     (out t1 t2)
     (make (+   (order t1) (order t2))
           (mul (coeff t1) (coeff t2))))
 
   (put 'mul '(poly-term poly-term) mul-term)
+  (put 'equ? '(poly-term poly-term) equ-term?)
 
   )
 
-(install-poly-term-package-mul-extension)
+(install-poly-term-package-extension)
 (install-poly-termlist-dense-package)
