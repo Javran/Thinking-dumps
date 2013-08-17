@@ -16,29 +16,6 @@
   (define (rest-terms ls)
     (drop-while =zero? (cdr ls)))
 
-  (define (test-accessors)
-    (let* ((make-term (get 'make 'poly-term))
-           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
-                                              (list-in-range 1 len))))
-           (to-termlist ((curry2 map) make-scheme-number))
-           (testcases
-             (list (mat (to-termlist (list 1 0 2 3 4))
-                        ; result: (cons <first-term-result> <rest-terms-result>)
-                        (cons (make-term 4 (make-scheme-number 1))
-                              (to-termlist (list 2 3 4))))
-                   (mat (to-termlist (list 1 0 0 0 0 0 0 0))
-                        (cons (make-term 7 (make-scheme-number 1))
-                              nil))
-                   ))
-           (f (lambda (x) (cons (first-term x) (rest-terms x))))
-           (result-eq?
-             (lambda (a b)
-               (and (equ? (car a) (car b)) 
-                    (= (length (cdr a)) (length (cdr b)))
-                    (apply boolean/and (map equ? (cdr a) (cdr b))))))
-           )
-      (do-test-q f testcases result-eq?)))
-
   (define coeff ((curry2 apply-generic) 'coeff))
   (define order ((curry2 apply-generic) 'order))
 
@@ -86,44 +63,6 @@
                   (cons (coeff (first-term termlist))
                         (merge-term term (rest-terms termlist)))))))))))
 
-  (define (test-merge-term)
-    (let* ((make-term (get 'make 'poly-term))
-           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
-                                              (list-in-range 1 len))))
-           (testcases
-             (list
-               ; case #1
-               (mat (make-term 10 (make-scheme-number 0)) (map make-scheme-number (list 1 2 3 4))
-                    (map make-scheme-number (list 1 2 3 4)))
-               ; case #2
-               (mat (make-term 4 (make-scheme-number 7)) nil 
-                    (map make-scheme-number (list 7 0 0 0 0)))
-               ; case #3
-               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3))
-                    (map make-scheme-number (list 7 0 1 2 3)))
-               ; case #3
-               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4))
-                    (map make-scheme-number (list 7 1 2 3 4)))
-               ; case #4
-               (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4 5))
-                    (map make-scheme-number (list 8 2 3 4 5)))
-               ; case #5
-               (mat (make-term 1 (make-scheme-number 5)) (map make-scheme-number (list 1 2 3 4 5))
-                    (map make-scheme-number (list 1 2 3 9 5)))
-               ; case #5
-               (mat (make-term 0 (make-scheme-number 4)) (map make-scheme-number (list 1 2 3 4 5))
-                    (map make-scheme-number (list 1 2 3 4 9)))
-               ; case #5
-               (mat (make-term 4 (make-scheme-number -5)) (map make-scheme-number (list 5 0 0 0 0))
-                    nil)
-               ))
-
-           (list-equ? (lambda (a b)
-                        (and (= (length a) (length b))
-                             (apply boolean/and (map equ? a b)))))
-           )
-      (do-test-q merge-term testcases list-equ?)))
-
   (define (add-terms l1 l2)
     ; there're 2 ways of implementing add-terms
     ; 1. use first-term and rest-terms to retrieve info about the termlist
@@ -151,36 +90,6 @@
                                       (add-terms l1
                                                  (rest-terms l2))))
                         (else (error "impossible case")))))))
-
-  (define (test-add-terms)
-    (let* ((make-term (get 'make 'poly-term))
-           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
-                                              (list-in-range 1 len))))
-           (to-termlist ((curry2 map) make-scheme-number))
-
-           (testcases
-             (list
-               (mat nil nil
-                    nil)
-               (mat nil (to-termlist (list 1 2 3 4 5))
-                    (to-termlist (list 1 2 3 4 5)))
-               (mat (to-termlist (list 5 4 3 2 1)) nil
-                    (to-termlist (list 5 4 3 2 1)))
-               (mat (to-termlist (list 3 2 1)) (to-termlist (list 5 4 0 0 0))
-                    (to-termlist (list 5 4 3 2 1)))
-               (mat (to-termlist (list 5 4 3 0 0)) (to-termlist (list 2 1))
-                    (to-termlist (list 5 4 3 2 1)))
-               (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
-                    nil)
-               ))
-           (list-equ? (lambda (a b)
-                        (and (= (length a) (length b))
-                             (apply boolean/and (map equ? a b)))))
-
-           )
-      (do-test-q add-terms testcases list-equ?))
-
-    )
                           
   (define (mul-term-by-all-terms t1 l)
     (if (empty-termlist? l)
@@ -188,67 +97,116 @@
       (merge-term (mul t1 (first-term l))
                   (mul-term-by-all-terms t1 (rest-terms l)))))
 
-  (define (test-mul-term-by-all-terms)
-    (let* ((make-term (get 'make 'poly-term))
-           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
-                                              (list-in-range 1 len))))
-           (to-termlist ((curry2 map) make-scheme-number))
-           (testcases
-             (list
-               (mat (make-term 2 (make-scheme-number 4)) (to-termlist (list 1 2 3))
-                    (to-termlist (list 4 8 12 0 0)))
-               (mat (make-term 7 (make-scheme-number 0)) (to-termlist (list 1 2 3 4 5 6))
-                    nil)
-               (mat (make-term 100 (make-scheme-number 100)) nil
-                    nil)
-               ))
-           (list-equ? (lambda (a b)
-                        (and (= (length a) (length b))
-                             (apply boolean/and (map equ? a b)))))
-           )
-      (do-test-q mul-term-by-all-terms testcases list-equ?)))
-
   (define (mul-terms l1 l2)
     (if (empty-termlist? l1)
       (the-empty-termlist)
       (add-terms (mul-term-by-all-terms (first-term l1) l2)
                  (mul-terms (rest-terms l1) l2))))
 
- (define (test-mul-terms)
+  (define (test)
     (let* ((make-term (get 'make 'poly-term))
            (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
                                               (list-in-range 1 len))))
            (to-termlist ((curry2 map) make-scheme-number))
-           (testcases
-             (list
-               (mat nil nil
-                    nil)
-               (mat nil (to-termlist (list 1 2 3 4 5))
-                    nil)
-               (mat (to-termlist (list 1 2 3 4 5)) nil
-                    nil)
-               (mat (to-termlist (list 1 2 3)) (to-termlist (list 4 5 6))
-                    ; (x^2 + 2x + 3) * (4x^2 + 5x + 6)
-                    ; => 4x^4 + 13x^3 + 28^x2 + 27x + 18
-                    (to-termlist (list 4 13 28 27 18)))
-               (mat (to-termlist (list 5 0 0 7 0 9 0)) (to-termlist (list 2 0 4 0 0))
-                    ;(5x^6 + 7x^3 + 9x) * (2x^4 + 4x^2)
-                    ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
-                    (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
-               ))
            (list-equ? (lambda (a b)
                         (and (= (length a) (length b))
                              (apply boolean/and (map equ? a b)))))
            )
-      (do-test-q mul-terms testcases list-equ?)))
-
-  (define (test)
-    (test-accessors)
-    (test-merge-term)
-    (test-add-terms)
-    (test-mul-term-by-all-terms)
-    (test-mul-terms)
-    )
+      ; test accessors
+      (let ((testcases
+              (list (mat (to-termlist (list 1 0 2 3 4))
+                         ; result: (cons <first-term-result> <rest-terms-result>)
+                         (cons (make-term 4 (make-scheme-number 1))
+                               (to-termlist (list 2 3 4))))
+                    (mat (to-termlist (list 1 0 0 0 0 0 0 0))
+                         (cons (make-term 7 (make-scheme-number 1))
+                               nil))
+                    ))
+            (f (lambda (x) (cons (first-term x) (rest-terms x))))
+            (result-eq?
+              (lambda (a b)
+                (and (equ? (car a) (car b)) 
+                     (= (length (cdr a)) (length (cdr b)))
+                     (apply boolean/and (map equ? (cdr a) (cdr b))))))
+            )
+        (do-test-q f testcases result-eq?))
+      ; test merge-term
+      (let ((testcases
+              (list
+                ; case #1
+                (mat (make-term 10 (make-scheme-number 0)) (map make-scheme-number (list 1 2 3 4))
+                     (map make-scheme-number (list 1 2 3 4)))
+                ; case #2
+                (mat (make-term 4 (make-scheme-number 7)) nil 
+                     (map make-scheme-number (list 7 0 0 0 0)))
+                ; case #3
+                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3))
+                     (map make-scheme-number (list 7 0 1 2 3)))
+                ; case #3
+                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4))
+                     (map make-scheme-number (list 7 1 2 3 4)))
+                ; case #4
+                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4 5))
+                     (map make-scheme-number (list 8 2 3 4 5)))
+                ; case #5
+                (mat (make-term 1 (make-scheme-number 5)) (map make-scheme-number (list 1 2 3 4 5))
+                     (map make-scheme-number (list 1 2 3 9 5)))
+                ; case #5
+                (mat (make-term 0 (make-scheme-number 4)) (map make-scheme-number (list 1 2 3 4 5))
+                     (map make-scheme-number (list 1 2 3 4 9)))
+                ; case #5
+                (mat (make-term 4 (make-scheme-number -5)) (map make-scheme-number (list 5 0 0 0 0))
+                     nil)
+                )))
+        (do-test-q merge-term testcases list-equ?))
+      ; test add-terms
+      (let ((testcases
+              (list
+                (mat nil nil
+                     nil)
+                (mat nil (to-termlist (list 1 2 3 4 5))
+                     (to-termlist (list 1 2 3 4 5)))
+                (mat (to-termlist (list 5 4 3 2 1)) nil
+                     (to-termlist (list 5 4 3 2 1)))
+                (mat (to-termlist (list 3 2 1)) (to-termlist (list 5 4 0 0 0))
+                     (to-termlist (list 5 4 3 2 1)))
+                (mat (to-termlist (list 5 4 3 0 0)) (to-termlist (list 2 1))
+                     (to-termlist (list 5 4 3 2 1)))
+                (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
+                     nil)
+                )))
+        (do-test-q add-terms testcases list-equ?))
+      ; test mul-term-by-all-terms
+      (let ((testcases
+              (list
+                (mat (make-term 2 (make-scheme-number 4)) (to-termlist (list 1 2 3))
+                     (to-termlist (list 4 8 12 0 0)))
+                (mat (make-term 7 (make-scheme-number 0)) (to-termlist (list 1 2 3 4 5 6))
+                     nil)
+                (mat (make-term 100 (make-scheme-number 100)) nil
+                     nil)
+                )))
+        (do-test-q mul-term-by-all-terms testcases list-equ?))
+      ; test mul-terms
+      (let ((testcases
+              (list
+                (mat nil nil
+                     nil)
+                (mat nil (to-termlist (list 1 2 3 4 5))
+                     nil)
+                (mat (to-termlist (list 1 2 3 4 5)) nil
+                     nil)
+                (mat (to-termlist (list 1 2 3)) (to-termlist (list 4 5 6))
+                     ; (x^2 + 2x + 3) * (4x^2 + 5x + 6)
+                     ; => 4x^4 + 13x^3 + 28^x2 + 27x + 18
+                     (to-termlist (list 4 13 28 27 18)))
+                (mat (to-termlist (list 5 0 0 7 0 9 0)) (to-termlist (list 2 0 4 0 0))
+                     ;(5x^6 + 7x^3 + 9x) * (2x^4 + 4x^2)
+                     ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
+                     (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
+                )))
+        (do-test-q mul-terms testcases list-equ?))
+      ))
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
   (put 'first-term '(poly-termlist-dense) first-term)
@@ -277,7 +235,7 @@
 
   (put 'mul '(poly-term poly-term) mul-term)
   (put 'equ? '(poly-term poly-term) equ-term?)
-
+  'done
   )
 
 (install-poly-term-package-extension)
