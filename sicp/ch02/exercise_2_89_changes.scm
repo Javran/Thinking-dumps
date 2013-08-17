@@ -7,6 +7,23 @@
   (define the-empty-termlist make-empty)
   (define empty-termlist? null?)
 
+  ; (make-from-args order1 coeff1 order2 coeff2 ...)
+  (define (make-from-args . args)
+    (define (list-to-pair-list ls)
+      (cond ((null? ls) '())
+            ((>= (length ls) 2)
+              (cons 
+                (cons (car ls) (cadr ls))
+                (list-to-pair-list (cddr ls))))
+            (else
+              (error "invalid list length"))))
+    (define (pair-to-term p)
+      ((get 'make 'poly-term) (car p) (cdr p)))
+
+    (let ((terms (map pair-to-term
+                      (list-to-pair-list args))))
+      (fold-right merge-term (make-empty) terms)))
+
   (define (first-term-order ls) (- (length ls) 1))
   (define (first-term ls)
     ; to obtain a term, we should combine the coeff with its order
@@ -206,6 +223,17 @@
                      (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
                 )))
         (do-test-q mul-terms testcases list-equ?))
+      ; test make-from-args
+      (let ((testcases
+              (list
+                (mat 1 (make-scheme-number 3)
+                     2 (make-scheme-number 2)
+                     3 (make-scheme-number 1)
+                     (to-termlist (list 1 2 3 0)))
+                (mat 10 (make-scheme-number 3)
+                     (to-termlist (cons 3 (gen-empty-list 10))))
+                )))
+        (do-test-q make-from-args testcases list-equ?))
       ))
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
