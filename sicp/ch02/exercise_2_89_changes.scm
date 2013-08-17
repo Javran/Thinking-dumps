@@ -13,7 +13,8 @@
     (let ((term-order (first-term-order ls))
           (term-coeff (car ls)))
       ((get 'make 'poly-term) term-order term-coeff)))
-  (define rest-terms cdr)
+  (define (rest-terms ls)
+    (drop-while =zero? (cdr ls)))
 
   (define coeff ((curry2 apply-generic) 'coeff))
   (define order ((curry2 apply-generic) 'order))
@@ -158,13 +159,12 @@
 
     )
                           
+  ;(define (mul-term-by-all-terms t1 l)
 
   (define (test)
     (test-merge-term)
     (test-add-terms)
-
     )
-
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
   (put 'first-term '(poly-termlist-dense) first-term)
