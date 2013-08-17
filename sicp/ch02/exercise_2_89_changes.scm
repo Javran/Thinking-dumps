@@ -237,8 +237,11 @@
       ))
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
+  (put 'make-from-args 'poly-termlist-dense (tagged 'poly-termlist-dense make-from-args))
   (put 'first-term '(poly-termlist-dense) first-term)
   (put 'rest-terms '(poly-termlist-dense) (tagged 'poly-termlist-dense rest-terms))
+  (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist add-terms))
+  (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist mul-terms))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
   (put 'test 'poly-termlist-dense-package test)
 
