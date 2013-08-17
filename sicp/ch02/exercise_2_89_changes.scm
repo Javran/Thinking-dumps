@@ -208,11 +208,46 @@
            )
       (do-test-q mul-term-by-all-terms testcases list-equ?)))
 
+  (define (mul-terms l1 l2)
+    (if (empty-termlist? l1)
+      (the-empty-termlist)
+      (add-terms (mul-term-by-all-terms (first-term l1) l2)
+                 (mul-terms (rest-terms l1) l2))))
+
+ (define (test-mul-terms)
+    (let* ((make-term (get 'make 'poly-term))
+           (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
+                                              (list-in-range 1 len))))
+           (to-termlist ((curry2 map) make-scheme-number))
+           (testcases
+             (list
+               (mat nil nil
+                    nil)
+               (mat nil (to-termlist (list 1 2 3 4 5))
+                    nil)
+               (mat (to-termlist (list 1 2 3 4 5)) nil
+                    nil)
+               (mat (to-termlist (list 1 2 3)) (to-termlist (list 4 5 6))
+                    ; (x^2 + 2x + 3) * (4x^2 + 5x + 6)
+                    ; => 4x^4 + 13x^3 + 28^x2 + 27x + 18
+                    (to-termlist (list 4 13 28 27 18)))
+               (mat (to-termlist (list 5 0 0 7 0 9 0)) (to-termlist (list 2 0 4 0 0))
+                    ;(5x^6 + 7x^3 + 9x) * (2x^4 + 4x^2)
+                    ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
+                    (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
+               ))
+           (list-equ? (lambda (a b)
+                        (and (= (length a) (length b))
+                             (apply boolean/and (map equ? a b)))))
+           )
+      (do-test-q mul-terms testcases list-equ?)))
+
   (define (test)
     (test-accessors)
     (test-merge-term)
     (test-add-terms)
     (test-mul-term-by-all-terms)
+    (test-mul-terms)
     )
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
