@@ -240,8 +240,8 @@
   (put 'make-from-args 'poly-termlist-dense (tagged 'poly-termlist-dense make-from-args))
   (put 'first-term '(poly-termlist-dense) first-term)
   (put 'rest-terms '(poly-termlist-dense) (tagged 'poly-termlist-dense rest-terms))
-  (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist add-terms))
-  (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist mul-terms))
+  (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense add-terms))
+  (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense mul-terms))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
   (put 'test 'poly-termlist-dense-package test)
 
@@ -271,3 +271,15 @@
 
 (install-poly-term-package-extension)
 (install-poly-termlist-dense-package)
+
+; insert 2 makes into global env
+(define make-termlist-from-args-dense
+  (get 'make-from-args 'poly-termlist-dense))
+(define the-empty-term-list-dense
+  (get 'make 'poly-termlist-dense))
+
+; termlist accessors
+(define first-term ((curry2 apply-generic) 'first-term))
+(define rest-terms ((curry2 apply-generic) 'rest-terms))
+
+(define term-list ((curry2 apply-generic) 'term-list))
