@@ -7,3 +7,9 @@
       (cons (order t)
             (cons (coeff t)
                   (to-order-coeff-list (rest-terms ls)))))))
+
+(define (to-poly-termlist-type termlist type)
+  (if (eq? type (type-tag termlist))
+    termlist
+    (apply (get 'make-from-args type)
+           (to-order-coeff-list termlist))))

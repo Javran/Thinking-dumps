@@ -31,6 +31,10 @@
   (out y)
   (out (to-order-coeff-list x))
   (out (to-order-coeff-list y))
+  (out (to-poly-termlist-type x 'poly-termlist))
+  (out (to-poly-termlist-type y 'poly-termlist))
+  (out (to-poly-termlist-type x 'poly-termlist-dense))
+  (out (to-poly-termlist-type y 'poly-termlist-dense))
   )
 
 (end-script)
