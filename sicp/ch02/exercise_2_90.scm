@@ -21,20 +21,21 @@
 
 (run-test 'poly-termlist-dense-package)
 
-(let ((x (make-termlist-from-args
+(let ((m (make-termlist-from-args
+           ; 4 x^3 + 2 x^1
            1 (make-scheme-number 2)
            3 (make-scheme-number 4)))
-      (y (make-termlist-from-args-dense
+      (n (make-termlist-from-args-dense
+           ; 4 x^3 + 2 x^1
            1 (make-scheme-number 2)
            3 (make-scheme-number 4))))
-  (out x)
-  (out y)
-  (out (to-order-coeff-list x))
-  (out (to-order-coeff-list y))
-  (out (to-poly-termlist-type x 'poly-termlist))
-  (out (to-poly-termlist-type y 'poly-termlist))
-  (out (to-poly-termlist-type x 'poly-termlist-dense))
-  (out (to-poly-termlist-type y 'poly-termlist-dense))
-  )
+  (let ((p1 (make-poly 'x m))
+        (p2 (make-poly 'x n)))
+    (for-each
+      (compose out to-string)
+      (list (add p1 p2)
+            (add p2 p1)
+            (mul p1 p2)
+            (mul p2 p1)))))
 
 (end-script)
