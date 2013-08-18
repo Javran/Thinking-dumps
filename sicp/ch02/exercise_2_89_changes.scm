@@ -81,8 +81,17 @@
                              t-coeff)
                         (rest-terms termlist))
                   ; case #5: t-order < ft-order
-                  (cons (coeff (first-term termlist))
-                        (merge-term term (rest-terms termlist)))))))))))
+                  ; this part was affected by new rest-terms
+                  ; TODO: try to find a better impl
+                  (list-modify termlist 
+                               (- ft-order t-order)
+                               (add (list-ref termlist (- ft-order t-order))
+                                    t-coeff))))))))))
+
+  (define (list-modify ls ind val)
+    (if (= ind 0)
+      (cons val (cdr ls))
+      (cons (car ls) (list-modify (cdr ls) (- ind 1) val))))
 
   (define (add-terms l1 l2)
     ; there're 2 ways of implementing add-terms
@@ -178,6 +187,9 @@
                 ; case #5
                 (mat (make-term 4 (make-scheme-number -5)) (map make-scheme-number (list 5 0 0 0 0))
                      nil)
+                ; case #5
+                (mat (make-term 1 (make-scheme-number 2)) (map make-scheme-number (list 4 0 0 0))
+                     (map make-scheme-number (list 4 0 2 0)))
                 )))
         (do-test-q merge-term testcases list-equ?))
       ; test add-terms
