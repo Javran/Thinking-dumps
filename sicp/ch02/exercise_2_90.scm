@@ -21,11 +21,16 @@
 
 (run-test 'poly-termlist-dense-package)
 
-(let ((y (make-termlist-from-args-dense
+(let ((x (make-termlist-from-args
+           1 (make-scheme-number 2)
+           3 (make-scheme-number 4)))
+      (y (make-termlist-from-args-dense
            1 (make-scheme-number 2)
            3 (make-scheme-number 4))))
+  (out x)
   (out y)
-  
+  (out (to-order-coeff-list x))
+  (out (to-order-coeff-list y))
   )
 
 (end-script)
