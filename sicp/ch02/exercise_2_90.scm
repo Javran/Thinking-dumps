@@ -19,5 +19,13 @@
 ; instead, I'll make two converters so these two types can be converted to each other.
 (load "./exercise_2_90_changes.scm")
 
+(run-test 'poly-termlist-dense-package)
+
+(let ((y (make-termlist-from-args-dense
+           1 (make-scheme-number 2)
+           3 (make-scheme-number 4))))
+  (out y)
+  
+  )
 
 (end-script)
