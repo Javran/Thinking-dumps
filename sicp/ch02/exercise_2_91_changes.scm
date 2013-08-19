@@ -44,7 +44,6 @@
       term-list
       (cons term term-list)))
 
-  ; join two term-lists
   (define (add-terms l1 l2)
     (cond ((empty-termlist? l1) l2)
           ((empty-termlist? l2) l1)
@@ -86,6 +85,39 @@
   (define (sub-terms l1 l2)
     (add-terms l1 (neg-terms l2)))
 
+  ; ==== begin solution ====
+  (define (div-terms l1 l2)
+    (if (empty-termlist? l1)
+      (list (the-empty-termlist) (the-empty-termlist))
+      (let ((t1 (first-term l1))
+            (t2 (first-term l2)))
+        (if (> (order t2) (order t1))
+          (list (the-empty-termlist) l1)
+          (let ((new-c (div (coeff t1) (coeff t2)))
+                (new-o (-   (order t1) (order t2))))
+            (let ((rest-of-result
+                    (div-terms 
+                      (sub-terms l1 
+                                 (mul-term-by-all-terms
+                                   (make-term new-o new-c)
+                                   l2))
+                      l2)))
+              (let ((terms-quotient (car rest-of-result))
+                    (terms-remainder (cadr rest-of-result)))
+                (list (adjoin-term (make-term new-o new-c)
+                                   terms-quotient)
+                      terms-remainder))))))))
+
+  (define (test)
+    (let ((a (make-from-args
+               5 (make-scheme-number 1)
+               0 (make-scheme-number -1)))
+          (b (make-from-args
+               2 (make-scheme-number 1)
+               0 (make-scheme-number -1))))
+      (out (div-terms a b)))
+      )
+
   (put 'make 'poly-termlist (tagged 'poly-termlist make-empty))
   (put 'make-from-args 'poly-termlist (tagged 'poly-termlist make-from-args))
   (put 'first-term '(poly-termlist) first-term)
@@ -95,6 +127,7 @@
   (put 'mul '(poly-termlist poly-termlist) (tagged 'poly-termlist mul-terms))
   (put 'neg '(poly-termlist) (tagged 'poly-termlist neg-terms))
   (put 'empty? '(poly-termlist) empty-termlist?)
+  (put 'test 'poly-termlist-package-2 test)
 
   (put 'order-list '(poly-termlist) order-list)
   (put 'coeff-list '(poly-termlist) coeff-list)

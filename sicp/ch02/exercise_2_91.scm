@@ -26,4 +26,6 @@
             0 (make-scheme-number -1))))
   (out (sub (sub x1 (mul x2 x3)) x4)))
 
+(run-test 'poly-termlist-package-2)
+
 (end-script)
