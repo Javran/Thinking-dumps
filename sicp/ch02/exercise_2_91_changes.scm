@@ -1,3 +1,9 @@
+; codes are copied from ./5_3_poly_termlist_package.scm
+; and ./exercise_2_88_changes.scm
+; 
+; in order to implement div-terms,
+; we need to use hidden tools like `mul-term-by-all-terms`
+
 (define (install-poly-termlist-package-2)
   (define (make-empty) nil)
   (define the-empty-termlist make-empty)
