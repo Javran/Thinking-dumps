@@ -16,15 +16,16 @@
             ; x^2 - 1
             2 (make-scheme-number 1)
             0 (make-scheme-number -1)))
-      (x3 (make-termlist-from-args
-            ; x^3 + x
-            3 (make-scheme-number 1)
-            1 (make-scheme-number 1)))
-      (x4 (make-termlist-from-args
-            ; x - 1
-            1 (make-scheme-number 1)
-            0 (make-scheme-number -1))))
-  (out (sub (sub x1 (mul x2 x3)) x4)))
+      )
+  (let ((p1 (make-poly 'x x1))
+        (p2 (make-poly 'x x2)))
+    (let* ((result (div p1 p2))
+           (q (car result))
+           (r (cadr result)))
+      (out "divisor:" (to-string p1)
+           "dividend:" (to-string p2)
+           "quotient:" (to-string q)
+           "remainder:" (to-string r)))))
 
 (run-test 'poly-termlist-package-2)
 

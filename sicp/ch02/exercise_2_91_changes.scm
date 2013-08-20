@@ -167,6 +167,11 @@
   (put 'add '(poly-termlist poly-termlist) (tagged 'poly-termlist add-terms))
   (put 'sub '(poly-termlist poly-termlist) (tagged 'poly-termlist sub-terms))
   (put 'mul '(poly-termlist poly-termlist) (tagged 'poly-termlist mul-terms))
+  (put 'div '(poly-termlist poly-termlist)
+       ; special case: div-terms returns a list of poly-termlist rather than the poly-termlist itself
+       (lambda (l1 l2)
+         (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
+
   (put 'equ? '(poly-termlist poly-termlist) equ-termlist?)
   (put 'neg '(poly-termlist) (tagged 'poly-termlist neg-terms))
   (put 'empty? '(poly-termlist) empty-termlist?)
@@ -177,4 +182,26 @@
 
   'done)
 
+(define (install-polynomial-package-div)
+  (define make-poly cons)
+  (define variable car)
+  (define term-list cdr)
+
+  (define (div-poly p1 p2)
+    (assert (same-variable?
+              (variable p1)
+              (variable p2)))
+    (let ((result (div (term-list p1)
+                       (term-list p2))))
+      (map (lambda (tl)
+             (attach-tag 'polynominal
+                         (make-poly (variable p1)
+                                    tl)))
+           result)))
+
+  (put 'div '(polynominal polynominal) div-poly)
+
+  )
+
 (install-poly-termlist-package-2)
+(install-polynomial-package-div)
