@@ -28,7 +28,4 @@
 
 (run-test 'poly-termlist-package-2)
 
-(out (get 'equ? '(poly-termlist))
-     (get '=zero? '(poly-termlist)))
-
 (end-script)
