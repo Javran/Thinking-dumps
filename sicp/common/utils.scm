@@ -145,4 +145,24 @@
       (drop-while pred (cdr ls))
       ls)))
 
+(define (rec-eq? equ?)
+  (define (compare a b)
+    (cond 
+      ; a & b are lists
+      ((and (list? a) (list? b))
+        (or 
+          ; both are null
+          (and (null? a) (null? b))
+          ; or equal
+          (and (not (null? a)) 
+               (not (null? b))
+               (compare (car a) (car b))
+               (compare (cdr a) (cdr b)))))
+      ; both are not lists
+      ((and (not (list? a))
+            (not (list? b)))
+        (equ? a b))
+      (else #f)))
+  compare)
+
 'done
