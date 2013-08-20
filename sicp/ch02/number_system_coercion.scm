@@ -45,7 +45,7 @@
         (apply proc args-data)
         ; if the handler is not found:
         (cond 
-          ((null? args-type) (error "fuck" op args) (raise-error))
+          ((null? args-type) (raise-error))
           ; if the argument list are already of the same type, try raise all up then abort.
           ((same-type-list? args-type)
             (let ((raise-up (get 'raise (list (car args-type)))))

@@ -145,6 +145,7 @@
       (drop-while pred (cdr ls))
       ls)))
 
+; recursively compare two lists
 (define (rec-eq? equ?)
   (define (compare a b)
     (cond 

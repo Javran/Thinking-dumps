@@ -108,6 +108,9 @@
                                    terms-quotient)
                       terms-remainder))))))))
 
+  (define (equ-termlist? l1 l2)
+    (empty-termlist? (sub-terms l1 l2)))
+
   (define (test)
     (let ((a (make-from-args
                5 (make-scheme-number 1)
@@ -125,6 +128,7 @@
   (put 'add '(poly-termlist poly-termlist) (tagged 'poly-termlist add-terms))
   (put 'sub '(poly-termlist poly-termlist) (tagged 'poly-termlist sub-terms))
   (put 'mul '(poly-termlist poly-termlist) (tagged 'poly-termlist mul-terms))
+  (put 'equ? '(poly-termlist poly-termlist) equ-termlist?)
   (put 'neg '(poly-termlist) (tagged 'poly-termlist neg-terms))
   (put 'empty? '(poly-termlist) empty-termlist?)
   (put 'test 'poly-termlist-package-2 test)
