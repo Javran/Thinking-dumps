@@ -42,8 +42,9 @@
 (define (project a) (apply-generic 'project a))
 
 (define (run-test tag) ((get 'test tag)))
+(define (run-tests tag-list) (for-each run-test tag-list))
 (define (run-all-test)
-  (for-each run-test
+  (run-tests
             (list
               'tag-system
               'scheme-number-package
