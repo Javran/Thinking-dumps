@@ -11,3 +11,8 @@
 
 (load "./exercise_2_92_polynominal_package.scm")
 (install-polynomial-package)
+
+(run-tests 
+  (list 
+    'polynominal-package
+    ))

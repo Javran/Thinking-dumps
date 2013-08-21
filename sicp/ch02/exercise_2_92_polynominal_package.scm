@@ -57,11 +57,23 @@
     ; TODO: placeholder
     (const #f))
 
+  (define (test)
+    ; test accessors
+    (let* ((obj (make-poly 'stub-var 'stub-terml))
+           (testcases (list (mat variable 'stub-var)
+                            (mat term-list 'stub-terml)))
+           (f (lambda (proc) (proc obj))))
+      (do-test-q f testcases)))
+
+  (put 'make 'polynominal (tagged 'polynominal make-poly))
+
+  (put 'variable '(polynominal) variable)
+  (put 'term-list '(polynominal) term-list)
+
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
-  (put 'make 'polynominal (tagged 'polynominal make-poly))
-  (put 'variable '(polynominal) variable)
   (put '=zero? '(polynominal) =zero?)
   (put 'to-string '(polynominal) to-string)
-  (put 'term-list '(polynominal) term-list)
+
+  (put 'test 'polynominal-package test)
   'done)
