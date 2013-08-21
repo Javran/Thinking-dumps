@@ -9,8 +9,15 @@
 (define (same-variable? v1 v2)
   (and (variable? v1) (variable? v2) (equal? v1 v2)))
 
+(load "./exercise_2_92_poly_term_package.scm")
 (load "./exercise_2_92_polynominal_package.scm")
+
+(install-poly-term-package)
 (install-polynomial-package)
+
+(define make-poly (get 'make 'polynominal))
+(define variable ((curry2 apply-generic) 'variable))
+(define term-list ((curry2 apply-generic) 'term-list))
 
 (run-tests 
   (list 
