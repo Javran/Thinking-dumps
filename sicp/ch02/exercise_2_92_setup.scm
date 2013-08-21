@@ -19,7 +19,13 @@
 (define variable ((curry2 apply-generic) 'variable))
 (define term-list ((curry2 apply-generic) 'term-list))
 
+; better remember the arg-list by its name(order-coeff)
+(define make-term-oc (get 'make 'poly-term))
+(define order ((curry2 apply-generic) 'order))
+(define coeff ((curry2 apply-generic) 'coeff))
+
 (run-tests 
   (list 
+    'poly-term-package
     'polynominal-package
     ))
