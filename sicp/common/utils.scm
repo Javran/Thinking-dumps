@@ -149,19 +149,16 @@
 (define (rec-eq? equ?)
   (define (compare a b)
     (cond 
-      ; a & b are lists
-      ((and (list? a) (list? b))
-        (or 
-          ; both are null
-          (and (null? a) (null? b))
-          ; or equal
-          (and (not (null? a)) 
-               (not (null? b))
-               (compare (car a) (car b))
-               (compare (cdr a) (cdr b)))))
-      ; both are not lists
-      ((and (not (list? a))
-            (not (list? b)))
+      ; both are nulls
+      ((and (null? a) (null? b)) #t)
+      ; only one of them is null
+      ((or  (null? a) (null? b)) #f)
+      ((and (pair? a) (pair? b))
+        (and (compare (car a) (car b))
+             (compare (cdr a) (cdr b))))
+      ; both are not pairs
+      ((and (not (pair? a))
+            (not (pair? b)))
         (equ? a b))
       (else #f)))
   compare)

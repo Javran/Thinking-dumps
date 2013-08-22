@@ -10,7 +10,9 @@
 
 (let ((a '((1 2 3) (4 5 6) () (7 8 9)))
       (b '((1 2 3) (4 5 6) () (7)))
-      (c '((1 2 3 4 5) (6 7 8))))
+      (c '((1 2 3 4 5) (6 7 8)))
+      (d (cons 1 2))
+      (e (cons 1 2)))
   (let ((testcases
           (list (mat a b #f)
                 (mat a c #f)
@@ -20,7 +22,10 @@
                 (mat '() '(a) #f)
                 (mat a a #t)
                 (mat b b #t)
-                (mat c c #t))))
+                (mat c c #t)
+                (mat d e #t)
+                (mat a e #f)
+                )))
     (do-test (rec-eq? =) testcases)))
 
 (let ((testcases
