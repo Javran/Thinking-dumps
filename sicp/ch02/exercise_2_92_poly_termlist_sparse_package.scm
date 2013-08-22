@@ -170,7 +170,61 @@
     ;   so it does make a simple test for adjoin-term
     ;   but here we try to cover all possible situations
     ;   to make us more confident.
-    'todo
+    (let ((testcases
+            (list
+              ; case #1
+              (mat (make-term-oc 1 (make-scheme-number 0))
+                   (make-empty)
+                   ; result
+                   (make-empty))
+              ; case #2
+              (mat (make-term-oc 1 (make-scheme-number 2))
+                   (make-empty)
+                   ; result
+                   (make-from-args
+                     1 (make-scheme-number 2)))
+              ; case #3
+              (mat (make-term-oc 7 (make-scheme-number 2))
+                   (make-from-args
+                     2 (make-scheme-number 3))
+                   ; result
+                   (make-from-args
+                     7 (make-scheme-number 2)
+                     2 (make-scheme-number 3)))
+              ; case #4
+              (mat (make-term-oc 5 (make-scheme-number 2))
+                   (make-from-args
+                     5 (make-rational -4 2)
+                     3 (make-scheme-number 3)
+                     2 (make-scheme-number 2))
+                   ; result
+                   (make-from-args
+                     3 (make-scheme-number 3)
+                     2 (make-scheme-number 2)))
+              ; case #5
+              (mat (make-term-oc 3 (make-scheme-number 2))
+                   (make-from-args
+                     3 (make-scheme-number 1)
+                     2 (make-scheme-number 2)
+                     1 (make-scheme-number 1)
+                     0 (make-scheme-number 0))
+                   ; result
+                   (make-from-args
+                     3 (make-scheme-number 3)
+                     2 (make-scheme-number 2)
+                     1 (make-scheme-number 1)))
+              ; case #6
+              (mat (make-term-oc 2 (make-scheme-number 2))
+                   (make-from-args
+                     6 (make-scheme-number 6)
+                     3 (make-scheme-number 3))
+                   ; result
+                   (make-from-args
+                     6 (make-scheme-number 6)
+                     3 (make-scheme-number 3)
+                     2 (make-scheme-number 2)))
+                   )))
+      (do-test-q adjoin-term testcases termlist-equ?))
     
     )
 
