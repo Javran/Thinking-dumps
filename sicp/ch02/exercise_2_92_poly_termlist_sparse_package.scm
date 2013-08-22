@@ -37,15 +37,15 @@
     (cond ((=zero? term)
             term-list)
           ; term is non-zero
-          ((=zero? term-list)
+          ((empty-termlist? term-list)
             (list term))
           ; term-list is non-empty
           (else 
             (let* ((ft (first-term term-list))
                    (ft-order (order ft))
                    (ft-coeff (coeff ft))
-                   (t-order (order t))
-                   (t-coeff (coeff t)))
+                   (t-order (order term))
+                   (t-coeff (coeff term)))
               ; bind ft-* -> first term in the termlist
               (cond ((> t-order ft-order)
                       ; if t-order > ft-order, insert in front of the termlist
@@ -105,10 +105,39 @@
           (make-term (+ (order t1) (order t2))
                      (mul (coeff t1) (coeff t2)))
           (mul-term-by-all-terms t1 (rest-terms l))))))
+  
+  ; TODO: should be a package-independent procedure
+  ; bind concrete impl of first-term, rest-terms and empty?
+  ; make the `equ?` handler
+  (define (termlist-equ?-maker first-term rest-terms empty?)
+    (define (termlist-equ? l1 l2)
+      (cond ((and (empty? l1) (empty? l2)) #t)
+            ((or  (empty? l1) (empty? l2)) #f)
+            (else (and (equ? (first-term l1)
+                             (first-term l2))
+                       (termlist-equ? (rest-terms l1)
+                                      (rest-terms l2))))))
+    termlist-equ?)
+
+  (define termlist-equ?
+    (termlist-equ?-maker first-term rest-terms empty-termlist?))
 
   (define (test)
-    (let ()
-      #f))
+    ; test make-from-args
+    ;   try to avoid using equ? here because
+    ;   this moment it has not been well tested
+    ; use an exact structure comparison
+    (let ((l1 (make-from-args
+                1 (make-scheme-number 1)
+                3 (make-scheme-number 3)
+                5 (make-scheme-number 5)))
+          (l2 (make-from-args
+                3 (make-scheme-number 3)
+                5 (make-scheme-number 5)
+                1 (make-scheme-number 1)))
+          )
+     (do-test-q (rec-eq? eq?)
+               (list (mat l1 l2 #t)))))
 
   (put 'make 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-empty))
   (put 'make-from-args 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-from-args))
@@ -120,6 +149,7 @@
   (put '=zero? '(poly-termlist-sparse) empty-termlist?)
   (put 'order-list '(poly-termlist-sparse) order-list)
   (put 'coeff-list '(poly-termlist-sparse) coeff-list)
+  (put 'equ? '(poly-termlist-sparse poly-termlist-sparse) termlist-equ?)
 
   (put 'test 'poly-termlist-sparse-package test)
 
