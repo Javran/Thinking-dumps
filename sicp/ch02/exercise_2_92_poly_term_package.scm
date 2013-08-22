@@ -32,6 +32,11 @@
                       (mat 'equ? x2 x3 #t)
                       (mat 'equ? x3 x4 #f))))
           (do-test-q apply-generic testcases))
+        ; test add
+        (let ((testcases
+                (list (mat 'add x1 x4 (make 1 (make-scheme-number (+ 5 2/3))))
+                      (mat 'add x2 x3 (make 5 (make-scheme-number 10))))))
+          (do-test-q apply-generic testcases equ?))
         )))
 
   (define zero-term? (compose =zero? coeff))
@@ -39,11 +44,18 @@
     (and (=    (order a) (order b))
          (equ? (coeff a) (coeff b))))
 
+  (define (add-term t1 t2)
+    (assert (= (order t1) (order t2))
+            "term order must be same")
+    (make (order t1)
+          (add (coeff t1) (coeff t2))))
+
   (put 'make 'poly-term (tagged 'poly-term make))
   (put 'order '(poly-term) order)
   (put 'coeff '(poly-term) coeff)
   (put '=zero? '(poly-term) zero-term?)
   (put 'equ? '(poly-term poly-term) term-equ?)
+  (put 'add '(poly-term poly-term) (tagged 'poly-term add-term))
 
   (put 'test 'poly-term-package test)
 

@@ -34,10 +34,10 @@
       (fold-left add-terms (make-empty) terms)))
 
   (define (adjoin-term term term-list)
-    (cond ((=zero? (coeff term))
+    (cond ((=zero? term)
             term-list)
           ; term is non-zero
-          ((empty-termlist? term-list)
+          ((=zero? term-list)
             (list term))
           ; term-list is non-empty
           (else 
@@ -52,13 +52,13 @@
                       (cons term term-list))
                     ((= t-order ft-order)
                       ; if t-order = ft-order
-                      (let ((result-coeff (add t-coeff ft-coeff)))
+                      (let ((result-term (add ft term)))
                         ; coeff = 0
-                        (if (=zero? result-coeff)
+                        (if (=zero? result-term)
                           ; drop the first term
                           (rest-terms term-list)
                           ; else
-                          (cons (make-term-oc ft-order result-coeff)
+                          (cons result-term
                                 (rest-terms term-list)))))
                     ((< t-order ft-order)
                       ; if t-order < ft-order
@@ -117,6 +117,7 @@
   (put 'add '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse add-terms))
   (put 'mul '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse mul-terms))
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
+  (put '=zero? '(poly-termlist-sparse) empty-termlist?)
   (put 'order-list '(poly-termlist-sparse) order-list)
   (put 'coeff-list '(poly-termlist-sparse) coeff-list)
 
