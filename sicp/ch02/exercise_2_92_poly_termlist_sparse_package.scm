@@ -35,9 +35,11 @@
 
   (define (adjoin-term term term-list)
     (cond ((=zero? term)
+            ; case #1
             term-list)
           ; term is non-zero
           ((empty-termlist? term-list)
+            ; case #2
             (list term))
           ; term-list is non-empty
           (else 
@@ -48,6 +50,7 @@
                    (t-coeff (coeff term)))
               ; bind ft-* -> first term in the termlist
               (cond ((> t-order ft-order)
+                      ; case #3
                       ; if t-order > ft-order, insert in front of the termlist
                       (cons term term-list))
                     ((= t-order ft-order)
@@ -55,12 +58,15 @@
                       (let ((result-term (add ft term)))
                         ; coeff = 0
                         (if (=zero? result-term)
+                          ; case #4
                           ; drop the first term
                           (rest-terms term-list)
+                          ; case #5
                           ; else
                           (cons result-term
                                 (rest-terms term-list)))))
                     ((< t-order ft-order)
+                      ; case #6
                       ; if t-order < ft-order
                       (cons (first-term term-list)
                            (adjoin-term term (rest-terms term-list))))
@@ -137,7 +143,36 @@
                 1 (make-scheme-number 1)))
           )
      (do-test-q (rec-eq? eq?)
-               (list (mat l1 l2 #t)))))
+                (list (mat l1 l2 #t))))
+    ; test termlist-equ?
+    (let ((l1 (make-from-args
+                1 (make-scheme-number 2)
+                3 (make-scheme-number 4)))
+          (l2 (make-from-args
+                1 (make-complex-ri 2 0)
+                3 (make-rational 8 2)))
+          (l3 (make-empty))
+          (l4 (make-from-args
+                2 (make-scheme-number 2)))
+          )
+      (let ((testcases
+              (list
+                (mat l1 l2 #t)
+                (mat l1 l3 #f)
+                (mat l1 l4 #f)
+                (mat l2 l3 #f)
+                (mat l2 l4 #f)
+                (mat l3 l3 #t)
+                (mat l3 l4 #f))))
+        (do-test-q termlist-equ? testcases)))
+    ; test adjoin-term
+    ;   make-from-args uses adjoin-term implicitly
+    ;   so it does make a simple test for adjoin-term
+    ;   but here we try to cover all possible situations
+    ;   to make us more confident.
+    'todo
+    
+    )
 
   (put 'make 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-empty))
   (put 'make-from-args 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-from-args))
