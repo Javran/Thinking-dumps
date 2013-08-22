@@ -43,5 +43,6 @@
 (run-tests 
   (list 
     'poly-term-package
+    'poly-termlist-sparse-package
     'polynominal-package
     ))

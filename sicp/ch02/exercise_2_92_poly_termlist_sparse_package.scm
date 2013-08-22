@@ -34,9 +34,37 @@
       (fold-left add-terms (make-empty) terms)))
 
   (define (adjoin-term term term-list)
-    (if (=zero? (coeff term))
-      term-list
-      (cons term term-list)))
+    (cond ((=zero? (coeff term))
+            term-list)
+          ; term is non-zero
+          ((empty-termlist? term-list)
+            (list term))
+          ; term-list is non-empty
+          (else 
+            (let* ((ft (first-term term-list))
+                   (ft-order (order ft))
+                   (ft-coeff (coeff ft))
+                   (t-order (order t))
+                   (t-coeff (coeff t)))
+              ; bind ft-* -> first term in the termlist
+              (cond ((> t-order ft-order)
+                      ; if t-order > ft-order, insert in front of the termlist
+                      (cons term term-list))
+                    ((= t-order ft-order)
+                      ; if t-order = ft-order
+                      (let ((result-coeff (add t-coeff ft-coeff)))
+                        ; coeff = 0
+                        (if (=zero? result-coeff)
+                          ; drop the first term
+                          (rest-terms term-list)
+                          ; else
+                          (cons (make-term-oc ft-order result-coeff)
+                                (rest-terms term-list)))))
+                    ((< t-order ft-order)
+                      ; if t-order < ft-order
+                      (cons (first-term term-list)
+                           (adjoin-term term (rest-terms term-list))))
+                    (else (error "impossible case")))))))
 
   ; join two term-lists
   (define (add-terms l1 l2)
@@ -78,6 +106,10 @@
                      (mul (coeff t1) (coeff t2)))
           (mul-term-by-all-terms t1 (rest-terms l))))))
 
+  (define (test)
+    (let ()
+      #f))
+
   (put 'make 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-empty))
   (put 'make-from-args 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-from-args))
   (put 'first-term '(poly-termlist-sparse) first-term)
@@ -87,5 +119,7 @@
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
   (put 'order-list '(poly-termlist-sparse) order-list)
   (put 'coeff-list '(poly-termlist-sparse) coeff-list)
+
+  (put 'test 'poly-termlist-sparse-package test)
 
   'done)
