@@ -70,26 +70,8 @@
 
   ; join two term-lists
   (define (add-terms l1 l2)
-    (cond ((empty-termlist? l1) l2)
-          ((empty-termlist? l2) l1)
-          (else
-            (let ((t1 (first-term l1))
-                  (t2 (first-term l2)))
-              ; terms of the bigger order always are placed
-              ;   in front of lower ones
-              (cond ((> (order t1) (order t2))
-                     (adjoin-term
-                       t1 (add-terms (rest-terms l1) l2)))
-                    ((< (order t1) (order t2))
-                     (adjoin-term 
-                       t2 (add-terms l1 (rest-terms l2))))
-                    ; of the same order, merge t1 and t2
-                    (else
-                      (adjoin-term
-                        (make-term-oc (order t1)
-                                      (add (coeff t1) (coeff t2)))
-                        (add-terms (rest-terms l1)
-                                   (rest-terms l2)))))))))
+    (fold-right adjoin-term l1 l2))
+
   (define (mul-terms l1 l2)
     (if (empty-termlist? l1)
       ; 0 * x = 0
@@ -275,7 +257,7 @@
                      2 (make-scheme-number 1)
                      1 (make-scheme-number 1)))
               )))
-      (do-test add-terms testcases termlist-equ?))
+      (do-test-q add-terms testcases termlist-equ?))
     
     )
 
