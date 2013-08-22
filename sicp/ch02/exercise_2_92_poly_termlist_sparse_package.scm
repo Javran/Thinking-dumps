@@ -24,14 +24,10 @@
               (error "invalid list length"))))
     (define (pair-to-term p)
       ((get 'make 'poly-term) (car p) (cdr p)))
-    (define (term-to-termlist t)
-      (adjoin-term t (make-empty)))
 
-    (let ((terms (map (compose
-                        term-to-termlist
-                        pair-to-term)
+    (let ((terms (map pair-to-term
                       (list-to-pair-list args))))
-      (fold-left add-terms (make-empty) terms)))
+      (fold-right adjoin-term (make-empty) terms)))
 
   (define (adjoin-term term term-list)
     (cond ((=zero? term)
