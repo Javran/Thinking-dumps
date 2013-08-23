@@ -290,6 +290,32 @@
                    (make-empty))
               )))
       (do-test-q mul-term-by-all-terms testcases termlist-equ?))
+    ; test mul-terms
+    (let ((testcases
+            (list
+              (mat (make-empty)
+                   (make-from-args 1 (make-scheme-number 100))
+                   ; result
+                   (make-empty))
+              (mat (make-from-args 1 (make-scheme-number 200))
+                   (make-empty)
+                   ; result
+                   (make-empty))
+              (mat (make-from-args
+                     ; 2x + 3
+                     1 (make-scheme-number 2)
+                     0 (make-scheme-number 3))
+                   (make-from-args
+                     ; 2x - 3
+                     1 (make-scheme-number 2)
+                     0 (make-scheme-number -3))
+                   ; result
+                   (make-from-args
+                     ; 4x^2 - 9
+                     2 (make-scheme-number 4)
+                     0 (make-scheme-number -9)))
+              )))
+      (do-test-q mul-terms testcases termlist-equ?))
 
     
     )
