@@ -52,13 +52,21 @@
                 (list (mat 'add x1 x4 (make 1 (make-scheme-number (+ 5 2/3))))
                       (mat 'add x2 x3 (make 5 (make-scheme-number 10))))))
           (do-test-q apply-generic testcases equ?))
+        ; test mul
+        (let ((testcases
+                (list (mat 'mul x1 x2 (make 6 (make-rational 10 3)))
+                      (mat 'mul x3 x4 (make 6 (make-scheme-number 25)))
+                      )))
+          (do-test-q apply-generic testcases equ?))
         )))
+
   (put 'make 'poly-term (tagged 'poly-term make))
   (put 'order '(poly-term) order)
   (put 'coeff '(poly-term) coeff)
   (put '=zero? '(poly-term) zero-term?)
   (put 'equ? '(poly-term poly-term) term-equ?)
   (put 'add '(poly-term poly-term) (tagged 'poly-term add-term))
+  (put 'mul '(poly-term poly-term) (tagged 'poly-term mul-term))
 
   (put 'test 'poly-term-package test)
 
