@@ -86,7 +86,7 @@
       ; t1*(a1+a2...) = t1*a1+t1*(a2+...)
       (let ((t2 (first-term l)))
         (adjoin-term
-          (make-term (+ (order t1) (order t2))
+          (make-term-oc (+ (order t1) (order t2))
                      (mul (coeff t1) (coeff t2)))
           (mul-term-by-all-terms t1 (rest-terms l))))))
   
@@ -258,6 +258,39 @@
                      1 (make-scheme-number 1)))
               )))
       (do-test-q add-terms testcases termlist-equ?))
+    ; test mul-term-by-all-terms
+    (let ((testcases
+            (list
+              (mat (make-term-oc 0 (make-scheme-number 2))
+                   (make-from-args
+                     3 (make-scheme-number 3)
+                     2 (make-rational 4 5)
+                     1 (make-complex-ri 1 2))
+                   ; result
+                   (make-from-args
+                     3 (make-scheme-number 6)
+                     2 (make-rational 8 5)
+                     1 (make-complex-ri 2 4)))
+              (mat (make-term-oc 10 (make-scheme-number 0))
+                   (make-from-args
+                     1 (make-scheme-number 1))
+                   ; result
+                   (make-empty))
+              (mat (make-term-oc 2 (make-rational 1 2))
+                   (make-from-args
+                     2 (make-scheme-number 4)
+                     4 (make-scheme-number 8))
+                   ; result
+                   (make-from-args
+                     4 (make-scheme-number 2)
+                     6 (make-scheme-number 4)))
+              (mat (make-term-oc 2 (make-rational 1 2))
+                   (make-empty)
+                   ; result
+                   (make-empty))
+              )))
+      (do-test-q mul-term-by-all-terms testcases termlist-equ?))
+
     
     )
 
