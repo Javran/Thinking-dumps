@@ -4,6 +4,21 @@
   (define order car)
   (define coeff cdr)
 
+  (define zero-term? (compose =zero? coeff))
+  (define (term-equ? a b)
+    (and (=    (order a) (order b))
+         (equ? (coeff a) (coeff b))))
+
+  (define (add-term t1 t2)
+    (assert (= (order t1) (order t2))
+            "term order must be same")
+    (make (order t1)
+          (add (coeff t1) (coeff t2))))
+
+  (define (mul-term t1 t2)
+    (make (+   (order t1) (order t2))
+          (mul (coeff t1) (coeff t2))))
+
   (define (test)
     (let ((make (get 'make 'poly-term)))
       (let ((x1 (make 1 (make-rational 2 3)))
@@ -38,18 +53,6 @@
                       (mat 'add x2 x3 (make 5 (make-scheme-number 10))))))
           (do-test-q apply-generic testcases equ?))
         )))
-
-  (define zero-term? (compose =zero? coeff))
-  (define (term-equ? a b)
-    (and (=    (order a) (order b))
-         (equ? (coeff a) (coeff b))))
-
-  (define (add-term t1 t2)
-    (assert (= (order t1) (order t2))
-            "term order must be same")
-    (make (order t1)
-          (add (coeff t1) (coeff t2))))
-
   (put 'make 'poly-term (tagged 'poly-term make))
   (put 'order '(poly-term) order)
   (put 'coeff '(poly-term) coeff)
