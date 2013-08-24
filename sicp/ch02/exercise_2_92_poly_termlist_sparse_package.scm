@@ -77,18 +77,20 @@
       ; 0 * x = 0
       (the-empty-termlist)
       ; (a1+a2+...)*l2 = a1*l2 + (a2+...)*l2
-      (add-terms (mul-term-by-all-terms (first-term l1) l2)
-                 (mul-terms (rest-terms l1) l2))))
+      (add-terms (mul-term-by-all-terms
+                   (first-term l1) l2)
+                 (mul-terms
+                   (rest-terms l1) l2))))
 
   (define (mul-term-by-all-terms t1 l)
     (if (empty-termlist? l)
       (the-empty-termlist)
       ; t1*(a1+a2...) = t1*a1+t1*(a2+...)
-      (let ((t2 (first-term l)))
-        (adjoin-term
-          (make-term-oc (+ (order t1) (order t2))
-                     (mul (coeff t1) (coeff t2)))
-          (mul-term-by-all-terms t1 (rest-terms l))))))
+      (adjoin-term
+        (mul 
+          t1 (first-term l))
+        (mul-term-by-all-terms
+          t1 (rest-terms l)))))
   
   ; TODO: should be a package-independent procedure
   ; bind concrete impl of first-term, rest-terms and empty?
