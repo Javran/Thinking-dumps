@@ -20,9 +20,14 @@
     (make-poly (variable p1)
                (mul (term-list p1) (term-list p2))))
 
+  (define (sub-poly1 p1 p2)
+    (make-poly (variable p1)
+               (sub (term-list p1) (term-list p2))))
+
   ; operations with verification
   (define add-poly (variable-verify add-poly1))
   (define mul-poly (variable-verify mul-poly1))
+  (define sub-poly (variable-verify sub-poly1))
 
   (define (to-string p)
     (define (generic-to-string x)
@@ -98,6 +103,7 @@
 
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
+  (put 'sub '(polynominal polynominal) (tagged 'polynominal sub-poly))
   (put '=zero? '(polynominal) poly-zero?)
   (put 'to-string '(polynominal) to-string)
 
