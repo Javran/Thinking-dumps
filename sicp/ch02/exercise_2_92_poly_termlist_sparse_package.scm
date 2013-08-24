@@ -96,6 +96,9 @@
     (mul-term-by-all-terms
       (make-term-oc 0 (make-scheme-number -1))
       tl))
+
+  (define (sub-terms l1 l2)
+    (add-terms l1 (neg-terms l2)))
   
   ; TODO: should be a package-independent procedure
   ; bind concrete impl of first-term, rest-terms and empty?
@@ -332,8 +335,36 @@
                    (make-empty))
               )))
       (do-test-q neg-terms testcases termlist-equ?))
-
-    
+    ; test sub-terms
+    (let ((testcases
+            (list
+              (mat (make-from-args 
+                     1 (make-scheme-number 10)
+                     2 (make-scheme-number 20)
+                     3 (make-scheme-number 30))
+                   (make-from-args
+                     1 (make-scheme-number  5)
+                     2 (make-scheme-number 10)
+                     3 (make-scheme-number 15))
+                   ; result
+                   (make-from-args
+                     1 (make-scheme-number  5)
+                     2 (make-scheme-number 10)
+                     3 (make-scheme-number 15)))
+              (mat (make-empty)
+                   (make-empty)
+                   ; result
+                   (make-empty))
+              (mat (make-empty)
+                   (make-from-args
+                     3 (make-rational 4 5)
+                     6 (make-complex-ri 7 8))
+                   ; result
+                   (make-from-args
+                     3 (make-rational -4 5)
+                     6 (make-complex-ri -7 -8)))
+              )))
+      (do-test-q sub-terms testcases termlist-equ?))
     )
 
   (put 'make 'poly-termlist-sparse (tagged 'poly-termlist-sparse make-empty))
@@ -341,6 +372,7 @@
   (put 'first-term '(poly-termlist-sparse) first-term)
   (put 'rest-terms '(poly-termlist-sparse) (tagged 'poly-termlist-sparse rest-terms))
   (put 'add '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse add-terms))
+  (put 'sub '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse sub-terms))
   (put 'mul '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse mul-terms))
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
   (put '=zero? '(poly-termlist-sparse) empty-termlist?)
