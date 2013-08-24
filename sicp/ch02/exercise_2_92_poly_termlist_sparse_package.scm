@@ -91,6 +91,11 @@
           t1 (first-term l))
         (mul-term-by-all-terms
           t1 (rest-terms l)))))
+
+  (define (neg-terms tl)
+    (mul-term-by-all-terms
+      (make-term-oc 0 (make-scheme-number -1))
+      tl))
   
   ; TODO: should be a package-independent procedure
   ; bind concrete impl of first-term, rest-terms and empty?
@@ -318,6 +323,15 @@
                      0 (make-scheme-number -9)))
               )))
       (do-test-q mul-terms testcases termlist-equ?))
+    ; test neg-terms
+    (let ((testcases
+            (list
+              (mat (make-from-args 1 (make-scheme-number 100))
+                   (make-from-args 1 (make-scheme-number -100)))
+              (mat (make-empty)
+                   (make-empty))
+              )))
+      (do-test-q neg-terms testcases termlist-equ?))
 
     
     )
