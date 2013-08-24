@@ -53,9 +53,8 @@
                 "+"
                 (to-string (make-poly var (rest-terms termls))))))))
 
-  (define =zero?
-    ; TODO: placeholder
-    (const #f))
+  (define poly-zero?
+    (compose =zero? term-list))
 
   (define (test)
     ; test accessors
@@ -63,7 +62,34 @@
            (testcases (list (mat variable 'stub-var)
                             (mat term-list 'stub-terml)))
            (f (lambda (proc) (proc obj))))
-      (do-test-q f testcases)))
+      (do-test-q f testcases))
+    ; test poly-zero?
+    (let ((testcases
+            (list
+              (mat (make-poly 
+                     'x
+                     (make-tl-from-args 
+                       'poly-termlist-sparse
+                       ; x + 1
+                       1 (make-scheme-number 1)
+                       0 (make-scheme-number 1)))
+                   #f)
+              (mat (make-poly
+                     'x
+                     (make-tl-empty
+                       'poly-termlist-sparse))
+                   #t)
+              (mat (make-poly
+                     'x
+                     (make-tl-from-args
+                       'poly-termlist-sparse
+                       2 (make-scheme-number 0)
+                       1 (make-scheme-number 0)
+                       0 (make-scheme-number 0)))
+                   #t)
+              )))
+      (do-test-q poly-zero? testcases))
+    )
 
   (put 'make 'polynominal (tagged 'polynominal make-poly))
 
@@ -72,7 +98,7 @@
 
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
-  (put '=zero? '(polynominal) =zero?)
+  (put '=zero? '(polynominal) poly-zero?)
   (put 'to-string '(polynominal) to-string)
 
   (put 'test 'polynominal-package test)
