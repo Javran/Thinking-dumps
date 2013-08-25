@@ -94,7 +94,7 @@
   (define (add-terms l1 l2)
     ; there're 2 ways of implementing add-terms
     ; 1. use first-term and rest-terms to retrieve info about the termlist
-    ; 2. use structure-related code, we can simple add coeffs accordingly, 
+    ; 2. use structure-related code, we can simply add coeffs accordingly, 
     ;     and result in higher performance, but it would make rest-terms and first-term
     ;     placed in the same `language` level of add-terms
     ; I'll use the first method

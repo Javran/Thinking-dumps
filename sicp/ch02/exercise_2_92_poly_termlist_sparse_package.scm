@@ -1,6 +1,5 @@
 (define (install-poly-termlist-sparse-package)
   (define (make-empty) nil)
-  (define the-empty-termlist make-empty)
   (define first-term car)
   (define rest-terms cdr)
   (define empty-termlist? null?)
@@ -75,7 +74,7 @@
   (define (mul-terms l1 l2)
     (if (empty-termlist? l1)
       ; 0 * x = 0
-      (the-empty-termlist)
+      (make-empty)
       ; (a1+a2+...)*l2 = a1*l2 + (a2+...)*l2
       (add-terms (mul-term-by-all-terms
                    (first-term l1) l2)
@@ -84,7 +83,7 @@
 
   (define (mul-term-by-all-terms t1 l)
     (if (empty-termlist? l)
-      (the-empty-termlist)
+      (make-empty)
       ; t1*(a1+a2...) = t1*a1+t1*(a2+...)
       (adjoin-term
         (mul 
