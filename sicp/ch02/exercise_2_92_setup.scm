@@ -10,11 +10,13 @@
   (and (variable? v1) (variable? v2) (equal? v1 v2)))
 
 (load "./exercise_2_92_poly_term_package.scm")
+(load "./exercise_2_92_poly_generic.scm")
 (load "./exercise_2_92_poly_termlist_sparse_package.scm")
 (load "./exercise_2_92_poly_termlist_dense_package.scm")
 (load "./exercise_2_92_polynominal_package.scm")
 
 (install-poly-term-package)
+(install-poly-generic-package)
 (install-poly-termlist-sparse-package)
 (install-poly-termlist-dense-package)
 (install-polynomial-package)

@@ -110,11 +110,14 @@
       (adjoin-term (mul t1 (first-term l))
                   (mul-term-by-all-terms t1 (rest-terms l)))))
 
-  (define (mul-terms l1 l2)
-    (if (empty-termlist? l1)
-      (make-empty)
-      (add-terms (mul-term-by-all-terms (first-term l1) l2)
-                 (mul-terms (rest-terms l1) l2))))
+  (define mul-terms
+    ((get 'mul-terms-maker 'poly-generic)
+      first-term
+      rest-terms
+      empty-termlist?
+      make-empty
+      add-terms
+      mul-term-by-all-terms))
 
   (define (neg-terms tl)
     (mul-term-by-all-terms
