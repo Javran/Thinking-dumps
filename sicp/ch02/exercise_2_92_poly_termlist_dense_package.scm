@@ -116,6 +116,14 @@
       (add-terms (mul-term-by-all-terms (first-term l1) l2)
                  (mul-terms (rest-terms l1) l2))))
 
+  (define (neg-terms tl)
+    (mul-term-by-all-terms
+      (make-term-oc 0 (make-scheme-number -1))
+      tl))
+
+  (define (sub-terms l1 l2)
+    (add-terms l1 (neg-terms l2)))
+
   (define (test)
     (let* ((make-term (get 'make 'poly-term))
            (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
@@ -243,7 +251,7 @@
   (put 'first-term '(poly-termlist-dense) first-term)
   (put 'rest-terms '(poly-termlist-dense) (tagged 'poly-termlist-dense rest-terms))
   (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense add-terms))
-;  (put 'sub '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense sub-terms))
+  (put 'sub '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense sub-terms))
   (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense mul-terms))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
   (put '=zero? '(poly-termlist-dense) empty-termlist?)
