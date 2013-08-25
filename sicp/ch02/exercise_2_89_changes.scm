@@ -22,11 +22,9 @@
 
     (let ((terms (map pair-to-term
                       (list-to-pair-list args))))
-      (fold-left (lambda (acc i)
-                   (merge-term i acc))
-                 (make-empty)
-                 terms)
-      ))
+      (fold-right merge-term
+                  (make-empty)
+                  terms)))
 
   (define (first-term-order ls) (- (length ls) 1))
   (define (first-term ls)
