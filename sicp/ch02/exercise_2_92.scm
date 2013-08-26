@@ -15,19 +15,28 @@
 (define variable ((curry2 apply-generic) 'variable))
 (define term-list ((curry2 apply-generic) 'term-list))
 
-(let ((p1 (make-poly
-            'x
-            (make-tl-from-args
-              'poly-termlist-dense
-              1 (make-scheme-number 2)
-              3 (make-scheme-number 4))))
-      (p2 (make-poly
-            'x
-            (make-tl-from-args
-              'poly-termlist-dense
-              3 (make-scheme-number 2)
-              2 (make-scheme-number -2)
-              0 (make-scheme-number -2)))))
-  (out (to-string (sub p1 p2))))
+(let ((args1 (list 
+               1 (make-scheme-number 2)
+               3 (make-scheme-number 4)))
+      (args2 (list 
+               3 (make-scheme-number 2)
+               2 (make-scheme-number -2)
+               0 (make-scheme-number -2)))
+      (types (list 'poly-termlist-sparse
+                   'poly-termlist-dense)))
+  (let loop ((t types))
+    (if (null? t)
+      'done
+      (let ((p1 (make-poly
+                  'x
+                  (apply make-tl-from-args
+                         (cons (car t) args1))))
+            (p2 (make-poly
+                  'x
+                  (apply make-tl-from-args
+                         (cons (car t) args2)))))
+        (format #t "impl ~A:~%" (car t))
+        (out (to-string (sub p1 p2)))
+        (loop (cdr t))))))
 
 (end-script)

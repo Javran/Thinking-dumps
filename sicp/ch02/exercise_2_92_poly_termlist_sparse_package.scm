@@ -71,15 +71,13 @@
   (define (add-terms l1 l2)
     (fold-right adjoin-term l1 l2))
 
-  (define (mul-term-by-all-terms t1 l)
-    (if (empty-termlist? l)
-      (make-empty)
-      ; t1*(a1+a2...) = t1*a1+t1*(a2+...)
-      (adjoin-term
-        (mul 
-          t1 (first-term l))
-        (mul-term-by-all-terms
-          t1 (rest-terms l)))))
+  (define mul-term-by-all-terms
+    ((get 'mul-term-by-all-terms-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?
+     make-empty
+     adjoin-term))
 
   (define mul-terms
     ((get 'mul-terms-maker 'poly-generic)

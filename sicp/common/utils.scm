@@ -1,3 +1,5 @@
+(load-option 'format)
+
 (define end-script
   (lambda ()
     (if (string=? (string microcode-id/operating-system) "unix")
