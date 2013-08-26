@@ -18,13 +18,13 @@
 (let ((p1 (make-poly
             'x
             (make-tl-from-args
-              'poly-termlist-sparse
+              'poly-termlist-dense
               1 (make-scheme-number 2)
               3 (make-scheme-number 4))))
       (p2 (make-poly
             'x
             (make-tl-from-args
-              'poly-termlist-sparse
+              'poly-termlist-dense
               3 (make-scheme-number 2)
               2 (make-scheme-number -2)
               0 (make-scheme-number -2)))))

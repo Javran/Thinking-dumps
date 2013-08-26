@@ -13,7 +13,7 @@
             make-empty
             add-terms
             mul-term-by-all-terms)
-    (define  (mul-terms l1 l2)
+    (define (mul-terms l1 l2)
       (if (empty-termlist? l1)
         (make-empty)
         (add-terms (mul-term-by-all-terms
