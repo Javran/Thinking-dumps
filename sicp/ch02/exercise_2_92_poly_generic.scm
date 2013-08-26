@@ -22,5 +22,23 @@
                      (rest-terms l1) l2))))
     mul-terms)
 
+  (define (neg-terms-maker
+            mul-term-by-all-terms)
+    (define (neg-terms tl)
+      (mul-term-by-all-terms
+        (make-term-oc 0 (make-scheme-number -1))
+        tl))
+    neg-terms)
+  
+  (define (sub-terms-maker
+            add-terms
+            neg-terms)
+    (define (sub-terms  l1 l2)
+      (add-terms l1 (neg-terms l2)))
+    sub-terms)
+
   (put 'mul-terms-maker 'poly-generic mul-terms-maker)
+  (put 'neg-terms-maker 'poly-generic neg-terms-maker)
+  (put 'sub-terms-maker 'poly-generic sub-terms-maker)
+
   'done)

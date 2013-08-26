@@ -90,13 +90,14 @@
      add-terms
      mul-term-by-all-terms))
 
-  (define (neg-terms tl)
-    (mul-term-by-all-terms
-      (make-term-oc 0 (make-scheme-number -1))
-      tl))
+  (define neg-terms
+    ((get 'neg-terms-maker 'poly-generic)
+     mul-term-by-all-terms))
 
-  (define (sub-terms l1 l2)
-    (add-terms l1 (neg-terms l2)))
+  (define sub-terms
+    ((get 'sub-terms-maker 'poly-generic)
+     add-terms
+     neg-terms))
   
   ; TODO: should be a package-independent procedure
   ; bind concrete impl of first-term, rest-terms and empty?
