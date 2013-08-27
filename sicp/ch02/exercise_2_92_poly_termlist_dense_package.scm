@@ -87,7 +87,7 @@
           ((empty-termlist? l2) l1)
           (else (let ((ft1 (first-term-order l1))
                       (ft2 (first-term-order l2)))
-                  (cond ((equ? ft1 ft2)
+                  (cond ((= ft1 ft2)
                           (adjoin-term (add (first-term l1)
                                              (first-term l2))
                                        (add-terms (rest-terms l1)
