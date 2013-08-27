@@ -82,25 +82,35 @@
       (cons val (cdr ls))
       (cons (car ls) (list-modify (cdr ls) (- ind 1) val))))
 
+  (define (add-terms-1 l1 l2)
+    (if (empty-termlist? l1)
+      l2
+      (adjoin-term (first-term l1)
+                   (add-terms-1 (rest-terms l1) l2)))
+;    (cond ((empty-termlist? l1) l2)
+;          ((empty-termlist? l2) l1)
+;          (else (let ((ft1 (first-term-order l1))
+;                      (ft2 (first-term-order l2)))
+;                  (cond ((= ft1 ft2)
+;                          (adjoin-term (add (first-term l1)
+;                                             (first-term l2))
+;                                       (add-terms (rest-terms l1)
+;                                                  (rest-terms l2))))
+;                        ((> ft1 ft2)
+;                          (adjoin-term (first-term l1)
+;                                       (add-terms (rest-terms l1)
+;                                                  l2)))
+;                        ((< ft1 ft2)
+;                          (adjoin-term (first-term l2)
+;                                       (add-terms l1
+;                                                 (rest-terms l2))))
+;                        (else (error "impossible case"))))))
+)
+
   (define (add-terms l1 l2)
-    (cond ((empty-termlist? l1) l2)
-          ((empty-termlist? l2) l1)
-          (else (let ((ft1 (first-term-order l1))
-                      (ft2 (first-term-order l2)))
-                  (cond ((= ft1 ft2)
-                          (adjoin-term (add (first-term l1)
-                                             (first-term l2))
-                                       (add-terms (rest-terms l1)
-                                                  (rest-terms l2))))
-                        ((> ft1 ft2)
-                          (adjoin-term (first-term l1)
-                                       (add-terms (rest-terms l1)
-                                                  l2)))
-                        ((< ft1 ft2)
-                          (adjoin-term (first-term l2)
-                                       (add-terms l1
-                                                 (rest-terms l2))))
-                        (else (error "impossible case")))))))
+    (let ((result (add-terms-1 l1 l2)))
+      (out "l1" l1 "l2" l2 "res" result)
+      result))
 
   (define mul-term-by-all-terms
     ((get 'mul-term-by-all-terms-maker 'poly-generic)
@@ -202,8 +212,15 @@
                      (to-termlist (list 5 4 3 2 1)))
                 (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
                      nil)
+                ; debug:
+                ;   14 0 28 0  0 0 0 0 
+                ; +      18 0 36 0 0 0 
+                ; = 14 0 46 0 36 0 0 0
+                (mat (to-termlist (list 14 0 28 0 0 0 0 0)) (to-termlist (list 18 0 36 0 0 0))
+                     (to-termlist (list 14 0 46 0 36 0 0 0)))
+
                 )))
-        (do-test-q add-terms testcases list-equ?))
+        (do-test add-terms testcases list-equ?))
       ; test mul-term-by-all-terms
       (let ((testcases
               (list
@@ -233,7 +250,7 @@
                      ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
                      (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
                 )))
-        (do-test-q mul-terms testcases list-equ?))
+        (do-test mul-terms testcases list-equ?))
       ; test make-from-args
       (let ((testcases
               (list
