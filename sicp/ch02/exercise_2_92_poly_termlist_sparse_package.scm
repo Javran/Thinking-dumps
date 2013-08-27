@@ -68,11 +68,13 @@
                     (else (error "impossible case")))))))
 
   ; join two term-lists
-  (define (add-terms l1 l2)
-    (if (empty-termlist? l1)
-      l2
-      (adjoin-term (first-term l1)
-                   (add-terms (rest-terms l1) l2))))
+  (define add-terms
+    ((get 'add-terms-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?
+     adjoin-term))
+
 
   (define mul-term-by-all-terms
     ((get 'mul-term-by-all-terms-maker 'poly-generic)

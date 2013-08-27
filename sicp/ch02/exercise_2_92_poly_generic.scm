@@ -6,6 +6,18 @@
 ; with little pain by simply call the procedure to make one for us.
 (define (install-poly-generic-package)
 
+  (define (add-terms-maker
+            first-term
+            rest-terms
+            empty-termlist?
+            adjoin-term)
+    (define (add-terms l1 l2)
+      (if (empty-termlist? l1)
+        l2
+        (adjoin-term (first-term l1)
+                     (add-terms (rest-terms l1) l2))))
+    add-terms)
+
   (define (mul-term-by-all-terms-maker
             first-term
             rest-terms
@@ -54,6 +66,7 @@
       (add-terms l1 (neg-terms l2)))
     sub-terms)
 
+  (put 'add-terms-maker 'poly-generic add-terms-maker)
   (put 'mul-term-by-all-terms-maker 'poly-generic mul-term-by-all-terms-maker)
   (put 'mul-terms-maker 'poly-generic mul-terms-maker)
   (put 'neg-terms-maker 'poly-generic neg-terms-maker)
