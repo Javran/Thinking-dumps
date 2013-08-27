@@ -88,19 +88,17 @@
           (else (let ((ft1 (first-term-order l1))
                       (ft2 (first-term-order l2)))
                   (cond ((equ? ft1 ft2)
-                          (adjoin-term ((get 'make 'poly-term)
-                                        ft1
-                                        (add (coeff (first-term l1))
-                                             (coeff (first-term l2))))
-                                      (add-terms (rest-terms l1)
-                                                 (rest-terms l2))))
+                          (adjoin-term (add (first-term l1)
+                                             (first-term l2))
+                                       (add-terms (rest-terms l1)
+                                                  (rest-terms l2))))
                         ((> ft1 ft2)
                           (adjoin-term (first-term l1)
-                                      (add-terms (rest-terms l1)
-                                                 l2)))
+                                       (add-terms (rest-terms l1)
+                                                  l2)))
                         ((< ft1 ft2)
                           (adjoin-term (first-term l2)
-                                      (add-terms l1
+                                       (add-terms l1
                                                  (rest-terms l2))))
                         (else (error "impossible case")))))))
 

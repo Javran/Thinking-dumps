@@ -1,7 +1,4 @@
 ;(load "./5_3_polynominal_setup.scm")
-;(load "./exercise_2_87_changes.scm")
-;(load "./exercise_2_88_changes.scm")
-;(load "./exercise_2_89_changes.scm")
 ;(load "./exercise_2_90_changes.scm")
 ;(load "./exercise_2_91_changes.scm")
 

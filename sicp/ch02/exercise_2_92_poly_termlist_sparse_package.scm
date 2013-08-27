@@ -69,7 +69,10 @@
 
   ; join two term-lists
   (define (add-terms l1 l2)
-    (fold-right adjoin-term l1 l2))
+    (if (empty-termlist? l1)
+      l2
+      (adjoin-term (first-term l1)
+                   (add-terms (rest-terms l1) l2))))
 
   (define mul-term-by-all-terms
     ((get 'mul-term-by-all-terms-maker 'poly-generic)
