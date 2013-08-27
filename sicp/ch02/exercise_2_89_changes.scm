@@ -75,9 +75,10 @@
                 =zero?
                 (if (= t-order ft-order)
                   ; case #4: t-order = ft-order
-                  (cons (add (coeff (first-term termlist))
-                             t-coeff)
-                        (rest-terms termlist))
+                  ; TODO: bug fix here (change cons to merge-term)
+                  (merge-term (make-term t-order (add (coeff (first-term termlist))
+                                                      t-coeff))
+                              (rest-terms termlist))
                   ; case #5: t-order < ft-order
                   ; this part was affected by new rest-terms
                   ; TODO: try to find a better impl
@@ -188,6 +189,9 @@
                 ; case #5
                 (mat (make-term 1 (make-scheme-number 2)) (map make-scheme-number (list 4 0 0 0))
                      (map make-scheme-number (list 4 0 2 0)))
+                ; bug #1
+                (mat (make-term 5 (make-scheme-number 28)) (map make-scheme-number (list 18 0 36 0 0 0))
+                     (map make-scheme-number (list 46 0 36 0 0 0)))
                 )))
         (do-test-q merge-term testcases list-equ?))
       ; test add-terms
