@@ -195,8 +195,11 @@
                 ; case #5
                 (mat (make-term 1 (make-scheme-number 2)) (map make-scheme-number (list 4 0 0 0))
                      (map make-scheme-number (list 4 0 2 0)))
+                ; bug #1
+                (mat (make-term 5 (make-scheme-number 28)) (map make-scheme-number (list 18 0 36 0 0 0))
+                     (map make-scheme-number (list 46 0 36 0 0 0)))
                 )))
-        (do-test-q adjoin-term testcases list-equ?))
+        (do-test adjoin-term testcases list-equ?))
       ; test add-terms
       (let ((testcases
               (list
@@ -213,11 +216,11 @@
                 (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
                      nil)
                 ; debug:
-                ;   14 0 28 0  0 0 0 0 
-                ; +      18 0 36 0 0 0 
-                ; = 14 0 46 0 36 0 0 0
-                (mat (to-termlist (list 14 0 28 0 0 0 0 0)) (to-termlist (list 18 0 36 0 0 0))
-                     (to-termlist (list 14 0 46 0 36 0 0 0)))
+                ;   28 0  0 0 0 0 
+                ; + 18 0 36 0 0 0 
+                ; = 46 0 36 0 0 0
+                (mat (to-termlist (list 28 0 0 0 0 0)) (to-termlist (list 18 0 36 0 0 0))
+                     (to-termlist (list 46 0 36 0 0 0)))
 
                 )))
         (do-test add-terms testcases list-equ?))
