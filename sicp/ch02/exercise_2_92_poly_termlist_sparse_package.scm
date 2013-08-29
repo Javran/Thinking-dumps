@@ -75,7 +75,6 @@
      empty-termlist?
      adjoin-term))
 
-
   (define mul-term-by-all-terms
     ((get 'mul-term-by-all-terms-maker 'poly-generic)
      first-term
@@ -109,6 +108,7 @@
      empty-termlist?))
 
   (define (test)
+    (((get 'test-maker 'poly-generic) 'poly-termlist-sparse))
     ; test make-from-args
     ;   try to avoid using equ? here because
     ;   this moment it has not been well tested

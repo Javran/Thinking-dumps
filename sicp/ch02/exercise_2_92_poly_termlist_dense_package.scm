@@ -81,13 +81,18 @@
       (cons val (cdr ls))
       (cons (car ls) (list-modify (cdr ls) (- ind 1) val))))
 
+  (define termlist-equ?
+    ((get 'termlist-equ?-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?))
+
   (define add-terms
     ((get 'add-terms-maker 'poly-generic)
      first-term
      rest-terms
      empty-termlist?
      adjoin-term))
-
 
   (define mul-term-by-all-terms
     ((get 'mul-term-by-all-terms-maker 'poly-generic)
@@ -116,13 +121,12 @@
      neg-terms))
 
   (define (test)
+    (((get 'test-maker 'poly-generic) 'poly-termlist-dense))
     (let* ((make-term (get 'make 'poly-term))
            (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
                                               (list-in-range 1 len))))
            (to-termlist ((curry2 map) make-scheme-number))
-           (list-equ? (lambda (a b)
-                        (and (= (length a) (length b))
-                             (apply boolean/and (map equ? a b)))))
+           (termlist-equ? termlist-equ?)
            )
       ; test accessors
       (let ((testcases
@@ -176,7 +180,7 @@
                 (mat (make-term 5 (make-scheme-number 28)) (map make-scheme-number (list 18 0 36 0 0 0))
                      (map make-scheme-number (list 46 0 36 0 0 0)))
                 )))
-        (do-test-q adjoin-term testcases list-equ?))
+        (do-test-q adjoin-term testcases termlist-equ?))
       ; test add-terms
       (let ((testcases
               (list
@@ -200,7 +204,7 @@
                      (to-termlist (list 46 0 36 0 0 0)))
 
                 )))
-        (do-test-q add-terms testcases list-equ?))
+        (do-test-q add-terms testcases termlist-equ?))
       ; test mul-term-by-all-terms
       (let ((testcases
               (list
@@ -211,7 +215,7 @@
                 (mat (make-term 100 (make-scheme-number 100)) nil
                      nil)
                 )))
-        (do-test-q mul-term-by-all-terms testcases list-equ?))
+        (do-test-q mul-term-by-all-terms testcases termlist-equ?))
       ; test mul-terms
       (let ((testcases
               (list
@@ -230,7 +234,7 @@
                      ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
                      (to-termlist (list 10 0 20 14 0 46 0 36 0 0 0)))
                 )))
-        (do-test-q mul-terms testcases list-equ?))
+        (do-test-q mul-terms testcases termlist-equ?))
       ; test make-from-args
       (let ((testcases
               (list
@@ -244,7 +248,7 @@
                 (mat 10 (make-scheme-number 3)
                      (to-termlist (cons 3 (gen-empty-list 10))))
                 )))
-        (do-test-q make-from-args testcases list-equ?))
+        (do-test-q make-from-args testcases termlist-equ?))
       ))
 
   (put 'make 'poly-termlist-dense (tagged 'poly-termlist-dense make-empty))
@@ -258,7 +262,7 @@
   (put '=zero? '(poly-termlist-dense) empty-termlist?)
 ;  (put 'order-list '(poly-termlist-dense) order-list)
 ;  (put 'coeff-list '(poly-termlist-dense) coeff-list)
-;  (put 'equ? '(poly-termlist-dense poly-termlist-dense) termlist-equ?)
+  (put 'equ? '(poly-termlist-dense poly-termlist-dense) termlist-equ?)
 ;
   (put 'test 'poly-termlist-dense-package test)
 

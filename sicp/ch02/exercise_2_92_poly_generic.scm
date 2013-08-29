@@ -6,7 +6,10 @@
 ; with little pain by simply call the procedure to make one for us.
 (define (install-poly-generic-package)
 
-  (define (termlist-equ?-maker first-term rest-terms empty?)
+  (define (termlist-equ?-maker
+            first-term
+            rest-terms
+            empty?)
     (define (termlist-equ? l1 l2)
       (cond ((and (empty? l1) (empty? l2)) #t)
             ((or  (empty? l1) (empty? l2)) #f)
@@ -76,11 +79,19 @@
       (add-terms l1 (neg-terms l2)))
     sub-terms)
 
+  (define (test-maker type)
+    (define (test)
+      ; sanity test for poly-termlist-*
+      'placeholder
+      )
+    test)
+
   (put 'termlist-equ?-maker 'poly-generic termlist-equ?-maker)
   (put 'add-terms-maker 'poly-generic add-terms-maker)
   (put 'mul-term-by-all-terms-maker 'poly-generic mul-term-by-all-terms-maker)
   (put 'mul-terms-maker 'poly-generic mul-terms-maker)
   (put 'neg-terms-maker 'poly-generic neg-terms-maker)
   (put 'sub-terms-maker 'poly-generic sub-terms-maker)
+  (put 'test-maker 'poly-generic test-maker)
 
   'done)
