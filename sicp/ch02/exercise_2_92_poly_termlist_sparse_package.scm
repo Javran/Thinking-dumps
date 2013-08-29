@@ -102,21 +102,11 @@
      add-terms
      neg-terms))
   
-  ; TODO: should be a package-independent procedure
-  ; bind concrete impl of first-term, rest-terms and empty?
-  ; make the `equ?` handler
-  (define (termlist-equ?-maker first-term rest-terms empty?)
-    (define (termlist-equ? l1 l2)
-      (cond ((and (empty? l1) (empty? l2)) #t)
-            ((or  (empty? l1) (empty? l2)) #f)
-            (else (and (equ? (first-term l1)
-                             (first-term l2))
-                       (termlist-equ? (rest-terms l1)
-                                      (rest-terms l2))))))
-    termlist-equ?)
-
   (define termlist-equ?
-    (termlist-equ?-maker first-term rest-terms empty-termlist?))
+    ((get 'termlist-equ?-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?))
 
   (define (test)
     ; test make-from-args
