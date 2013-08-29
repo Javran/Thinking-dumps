@@ -79,12 +79,58 @@
       (add-terms l1 (neg-terms l2)))
     sub-terms)
 
-  (define (test-maker type)
-    (define (test)
-      ; sanity test for poly-termlist-*
-      'placeholder
+    (define (test-poly-termlist
+              ; suffix '1' to distinguish
+              ; bound procedures with its generic counterparts
+              make-empty
+              make-from-args
+              first-term1
+              rest-terms1
+              add-terms
+              sub-terms
+              mul-term-by-all-terms
+              mul-terms
+              empty-termlist?
+              termlist-equ?)
+      ; test make-from-args
+      ;   try to avoid using equ? here because
+      ;   this moment it has not been well tested
+      ; use an exact structure comparison
+      (let ((l1 (make-from-args
+                  1 (make-scheme-number 1)
+                  3 (make-scheme-number 3)
+                  5 (make-scheme-number 5)))
+            (l2 (make-from-args
+                  3 (make-scheme-number 3)
+                  5 (make-scheme-number 5)
+                  1 (make-scheme-number 1)))
+            )
+        (do-test-q (rec-eq? eq?)
+                   (list (mat l1 l2 #t))))
+      ; test termlist-equ?
+      (let ((l1 (make-from-args
+                  1 (make-scheme-number 2)
+                  3 (make-scheme-number 4)))
+            (l2 (make-from-args
+                  1 (make-complex-ri 2 0)
+                  3 (make-rational 8 2)))
+            (l3 (make-empty))
+            (l4 (make-from-args
+                  2 (make-scheme-number 2)))
+            )
+        (let ((testcases
+                (list
+                  (mat l1 l2 #t)
+                  (mat l1 l3 #f)
+                  (mat l1 l4 #f)
+                  (mat l2 l3 #f)
+                  (mat l2 l4 #f)
+                  (mat l3 l3 #t)
+                  (mat l3 l4 #f))))
+          (do-test-q termlist-equ? testcases)))
+
+
       )
-    test)
 
   (put 'termlist-equ?-maker 'poly-generic termlist-equ?-maker)
   (put 'add-terms-maker 'poly-generic add-terms-maker)
@@ -92,6 +138,6 @@
   (put 'mul-terms-maker 'poly-generic mul-terms-maker)
   (put 'neg-terms-maker 'poly-generic neg-terms-maker)
   (put 'sub-terms-maker 'poly-generic sub-terms-maker)
-  (put 'test-maker 'poly-generic test-maker)
+  (put 'test-poly-termlist 'poly-generic test-poly-termlist)
 
   'done)

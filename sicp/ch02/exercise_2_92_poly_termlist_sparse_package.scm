@@ -108,43 +108,17 @@
      empty-termlist?))
 
   (define (test)
-    (((get 'test-maker 'poly-generic) 'poly-termlist-sparse))
-    ; test make-from-args
-    ;   try to avoid using equ? here because
-    ;   this moment it has not been well tested
-    ; use an exact structure comparison
-    (let ((l1 (make-from-args
-                1 (make-scheme-number 1)
-                3 (make-scheme-number 3)
-                5 (make-scheme-number 5)))
-          (l2 (make-from-args
-                3 (make-scheme-number 3)
-                5 (make-scheme-number 5)
-                1 (make-scheme-number 1)))
-          )
-     (do-test-q (rec-eq? eq?)
-                (list (mat l1 l2 #t))))
-    ; test termlist-equ?
-    (let ((l1 (make-from-args
-                1 (make-scheme-number 2)
-                3 (make-scheme-number 4)))
-          (l2 (make-from-args
-                1 (make-complex-ri 2 0)
-                3 (make-rational 8 2)))
-          (l3 (make-empty))
-          (l4 (make-from-args
-                2 (make-scheme-number 2)))
-          )
-      (let ((testcases
-              (list
-                (mat l1 l2 #t)
-                (mat l1 l3 #f)
-                (mat l1 l4 #f)
-                (mat l2 l3 #f)
-                (mat l2 l4 #f)
-                (mat l3 l3 #t)
-                (mat l3 l4 #f))))
-        (do-test-q termlist-equ? testcases)))
+    ((get 'test-poly-termlist 'poly-generic)
+     make-empty
+     make-from-args
+     first-term
+     rest-terms
+     add-terms
+     sub-terms
+     mul-term-by-all-terms
+     mul-terms
+     empty-termlist?
+     termlist-equ?)
     ; test adjoin-term
     ;   make-from-args uses adjoin-term implicitly
     ;   so it does make a simple test for adjoin-term

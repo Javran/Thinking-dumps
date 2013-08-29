@@ -121,12 +121,21 @@
      neg-terms))
 
   (define (test)
-    (((get 'test-maker 'poly-generic) 'poly-termlist-dense))
+    ((get 'test-poly-termlist 'poly-generic)
+     make-empty
+     make-from-args
+     first-term
+     rest-terms
+     add-terms
+     sub-terms
+     mul-term-by-all-terms
+     mul-terms
+     empty-termlist?
+     termlist-equ?)
     (let* ((make-term (get 'make 'poly-term))
            (gen-empty-list (lambda (len) (map (const (make-scheme-number 0))
                                               (list-in-range 1 len))))
            (to-termlist ((curry2 map) make-scheme-number))
-           (termlist-equ? termlist-equ?)
            )
       ; test accessors
       (let ((testcases
