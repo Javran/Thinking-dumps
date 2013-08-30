@@ -109,6 +109,7 @@
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
+     'poly-termlist-sparse
      make-empty
      make-from-args
      first-term

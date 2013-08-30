@@ -80,6 +80,7 @@
     sub-terms)
 
     (define (test-poly-termlist
+              termlist-type
               ; suffix '1' to distinguish
               ; bound procedures with its generic counterparts
               make-empty
@@ -134,6 +135,10 @@
       ;   so it does make a simple test for adjoin-term
       ;   but here we try to cover all possible situations
       ;   to make us more confident.
+      (define (make-from-intcseq . coeffs)
+        (contents (apply make-tl-from-cseq
+                         (cons termlist-type
+                               (map make-scheme-number coeffs)))))
       (let ((testcases
               (list
                 (mat 
@@ -194,6 +199,46 @@
                     6 (make-scheme-number 6)
                     3 (make-scheme-number 3)
                     2 (make-scheme-number 2)))
+                (mat (make-term-oc 10 (make-scheme-number 0))
+                     (make-from-intcseq 1 2 3 4)
+                     ; result
+                     (make-from-intcseq 1 2 3 4))
+                (mat (make-term-oc 4 (make-scheme-number 7))
+                     (make-empty) 
+                     ; result
+                     (make-from-intcseq 7 0 0 0 0))
+                (mat (make-term-oc 4 (make-scheme-number 7)) 
+                     (make-from-intcseq 1 2 3)
+                     ; result
+                     (make-from-intcseq 7 0 1 2 3))
+                (mat (make-term-oc 4 (make-scheme-number 7))
+                     (make-from-intcseq 1 2 3 4)
+                     ; result
+                     (make-from-intcseq 7 1 2 3 4))
+                (mat (make-term-oc 4 (make-scheme-number 7))
+                     (make-from-intcseq 1 2 3 4 5)
+                     ; result
+                     (make-from-intcseq 8 2 3 4 5))
+                (mat (make-term-oc 1 (make-scheme-number 5))
+                     (make-from-intcseq 1 2 3 4 5)
+                     ; result
+                     (make-from-intcseq 1 2 3 9 5))
+                (mat (make-term-oc 0 (make-scheme-number 4))
+                     (make-from-intcseq 1 2 3 4 5)
+                     ; result
+                     (make-from-intcseq 1 2 3 4 9))
+                (mat (make-term-oc 4 (make-scheme-number -5))
+                     (make-from-intcseq 5 0 0 0 0)
+                     ; result
+                     nil)
+                (mat (make-term-oc 1 (make-scheme-number 2))
+                     (make-from-intcseq 4 0 0 0)
+                     ; result
+                     (make-from-intcseq 4 0 2 0))
+                (mat (make-term-oc 5 (make-scheme-number 28))
+                     (make-from-intcseq 18 0 36 0 0 0)
+                     ; result
+                     (make-from-intcseq 46 0 36 0 0 0))
                 )))
         (do-test-q adjoin-term testcases termlist-equ?))
 

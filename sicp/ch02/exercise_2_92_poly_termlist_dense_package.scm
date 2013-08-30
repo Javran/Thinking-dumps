@@ -122,6 +122,7 @@
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
+     'poly-termlist-dense
      make-empty
      make-from-args
      first-term
@@ -156,41 +157,6 @@
                      (apply boolean/and (map equ? (cdr a) (cdr b))))))
             )
         (do-test-q f testcases result-eq?))
-      ; test adjoin-term
-      (let ((testcases
-              (list
-                ; case #1
-                (mat (make-term 10 (make-scheme-number 0)) (map make-scheme-number (list 1 2 3 4))
-                     (map make-scheme-number (list 1 2 3 4)))
-                ; case #2
-                (mat (make-term 4 (make-scheme-number 7)) nil 
-                     (map make-scheme-number (list 7 0 0 0 0)))
-                ; case #3
-                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3))
-                     (map make-scheme-number (list 7 0 1 2 3)))
-                ; case #3
-                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4))
-                     (map make-scheme-number (list 7 1 2 3 4)))
-                ; case #4
-                (mat (make-term 4 (make-scheme-number 7)) (map make-scheme-number (list 1 2 3 4 5))
-                     (map make-scheme-number (list 8 2 3 4 5)))
-                ; case #5
-                (mat (make-term 1 (make-scheme-number 5)) (map make-scheme-number (list 1 2 3 4 5))
-                     (map make-scheme-number (list 1 2 3 9 5)))
-                ; case #5
-                (mat (make-term 0 (make-scheme-number 4)) (map make-scheme-number (list 1 2 3 4 5))
-                     (map make-scheme-number (list 1 2 3 4 9)))
-                ; case #5
-                (mat (make-term 4 (make-scheme-number -5)) (map make-scheme-number (list 5 0 0 0 0))
-                     nil)
-                ; case #5
-                (mat (make-term 1 (make-scheme-number 2)) (map make-scheme-number (list 4 0 0 0))
-                     (map make-scheme-number (list 4 0 2 0)))
-                ; bug #1
-                (mat (make-term 5 (make-scheme-number 28)) (map make-scheme-number (list 18 0 36 0 0 0))
-                     (map make-scheme-number (list 46 0 36 0 0 0)))
-                )))
-        (do-test-q adjoin-term testcases termlist-equ?))
       ; test add-terms
       (let ((testcases
               (list
