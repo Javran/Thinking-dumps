@@ -121,61 +121,6 @@
      mul-terms
      empty-termlist?
      termlist-equ?)
-    ; test add-terms
-    ; TODO: can be a generic add-terms test
-    (let ((testcases
-            (list
-              ; 0 + 0 = 0
-              (mat (make-empty)
-                   (make-empty)
-                   ; result
-                   (make-empty))
-              ; 0 + x = x
-              (mat (make-empty)
-                   (make-from-args
-                     1 (make-scheme-number 1))
-                   ; result
-                   (make-from-args
-                     1 (make-scheme-number 1)))
-              ; x + 0 = x
-              (mat (make-from-args
-                     1 (make-scheme-number 1))
-                   (make-empty)
-                   ; result
-                   (make-from-args
-                     1 (make-scheme-number 1)))
-              (mat (make-from-args
-                     ; 3x^2 + 2^x + 1
-                     2 (make-scheme-number 3)
-                     1 (make-scheme-number 2)
-                     0 (make-scheme-number 1))
-                   (make-from-args
-                     ; -3x^2 - 2^x - 1
-                     2 (make-scheme-number -3)
-                     1 (make-scheme-number -2)
-                     0 (make-scheme-number -1))
-                   ; result
-                   (make-empty))
-              (mat (make-from-args
-                     ; x^6 + x^4 + x^2
-                     6 (make-scheme-number 1)
-                     4 (make-scheme-number 1)
-                     2 (make-scheme-number 1))
-                   (make-from-args
-                     ; x^5 + x^3 + x
-                     5 (make-scheme-number 1)
-                     3 (make-scheme-number 1)
-                     1 (make-scheme-number 1))
-                   ; result
-                   (make-from-args
-                     6 (make-scheme-number 1)
-                     5 (make-scheme-number 1)
-                     4 (make-scheme-number 1)
-                     3 (make-scheme-number 1)
-                     2 (make-scheme-number 1)
-                     1 (make-scheme-number 1)))
-              )))
-      (do-test-q add-terms testcases termlist-equ?))
     ; test mul-term-by-all-terms
     (let ((testcases
             (list

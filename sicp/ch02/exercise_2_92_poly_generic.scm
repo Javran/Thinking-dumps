@@ -241,6 +241,43 @@
                      (make-from-intcseq 46 0 36 0 0 0))
                 )))
         (do-test-q adjoin-term testcases termlist-equ?))
+      ; test add-terms
+      (let ((testcases
+              (list
+                ; 0 + 0 = 0
+                (mat (make-empty)
+                     (make-empty)
+                     ; result
+                     (make-empty))
+                ; 0 + x = x
+                (mat (make-empty)
+                     (make-from-intcseq 1 0)
+                     ; result
+                     (make-from-intcseq 1 0))
+                ; x + 0 = x
+                (mat (make-from-intcseq 1 0)
+                     (make-empty)
+                     ; result
+                     (make-from-intcseq 1 0))
+                (mat (make-from-intcseq
+                       ; 3x^2 + 2^x + 1
+                       3 2 1)
+                     (make-from-intcseq
+                       ; -3x^2 - 2^x - 1
+                       -3 -2 -1)
+                     ; result
+                     (make-empty))
+                (mat (make-from-intcseq
+                       ; x^6 + x^4 + x^2
+                       1 0 1 0 1 0 0)
+                     (make-from-intcseq
+                       ; x^5 + x^3 + x
+                       1 0 1 0 1 0)
+                     ; result
+                     (make-from-intcseq
+                       1 1 1 1 1 1 0))
+                )))
+        (do-test-q add-terms testcases termlist-equ?))
 
       )
 

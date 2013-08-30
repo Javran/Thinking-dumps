@@ -172,10 +172,6 @@
                      (to-termlist (list 5 4 3 2 1)))
                 (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
                      nil)
-                ; debug:
-                ;   28 0  0 0 0 0 
-                ; + 18 0 36 0 0 0 
-                ; = 46 0 36 0 0 0
                 (mat (to-termlist (list 28 0 0 0 0 0)) (to-termlist (list 18 0 36 0 0 0))
                      (to-termlist (list 46 0 36 0 0 0)))
 
