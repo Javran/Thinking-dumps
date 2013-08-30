@@ -86,6 +86,7 @@
               make-from-args
               first-term1
               rest-terms1
+              adjoin-term
               add-terms
               sub-terms
               mul-term-by-all-terms
@@ -128,7 +129,73 @@
                   (mat l3 l3 #t)
                   (mat l3 l4 #f))))
           (do-test-q termlist-equ? testcases)))
-
+      ; test adjoin-term
+      ;   make-from-args uses adjoin-term implicitly
+      ;   so it does make a simple test for adjoin-term
+      ;   but here we try to cover all possible situations
+      ;   to make us more confident.
+      (let ((testcases
+              (list
+                (mat 
+                  ; 0x + 0 = 0x
+                  (make-term-oc 1 (make-scheme-number 0))
+                  (make-empty)
+                  ; result
+                  (make-empty))
+                (mat
+                  ; 2x + 0 = 2x
+                  (make-term-oc 1 (make-scheme-number 2))
+                  (make-empty)
+                  ; result
+                  (make-from-args
+                    1 (make-scheme-number 2)))
+                (mat
+                  ; 2x^7 + 3x^2
+                  (make-term-oc 7 (make-scheme-number 2))
+                  (make-from-args
+                    2 (make-scheme-number 3))
+                  ; result
+                  (make-from-args
+                    7 (make-scheme-number 2)
+                    2 (make-scheme-number 3)))
+                (mat
+                  ; 2x^5 + -2/1 x^5 + 3x^3 + 2x^2
+                  ; = 3x^3 + 2x^2
+                  (make-term-oc 5 (make-scheme-number 2))
+                  (make-from-args
+                    5 (make-rational -4 2)
+                    3 (make-scheme-number 3)
+                    2 (make-scheme-number 2))
+                  ; result
+                  (make-from-args
+                    3 (make-scheme-number 3)
+                    2 (make-scheme-number 2)))
+                (mat
+                  ; 2x^3 + 1x^3 + 2x^2 + 1x^1 + 0x^0
+                  (make-term-oc 3 (make-scheme-number 2))
+                  (make-from-args
+                    3 (make-scheme-number 1)
+                    2 (make-scheme-number 2)
+                    1 (make-scheme-number 1)
+                    0 (make-scheme-number 0))
+                  ; result
+                  (make-from-args
+                    3 (make-scheme-number 3)
+                    2 (make-scheme-number 2)
+                    1 (make-scheme-number 1)))
+                (mat
+                  ; 2x^2 + 6x^6 + 3x^3
+                  (make-term-oc 2 (make-scheme-number 2))
+                  (make-from-args
+                    6 (make-scheme-number 6)
+                    3 (make-scheme-number 3))
+                  ; result
+                  (make-from-args
+                    6 (make-scheme-number 6)
+                    3 (make-scheme-number 3)
+                    2 (make-scheme-number 2)))
+                )))
+        (do-test-q adjoin-term testcases termlist-equ?))
 
       )
 

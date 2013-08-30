@@ -126,6 +126,7 @@
      make-from-args
      first-term
      rest-terms
+     adjoin-term
      add-terms
      sub-terms
      mul-term-by-all-terms
