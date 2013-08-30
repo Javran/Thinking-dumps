@@ -34,6 +34,14 @@
 ; make an empty term list
 (define (make-tl-empty type)
   ((get 'make type)))
+; make termlist(tl) from coeff seq
+;   e.g. args: 1 2 3 4 produces a termlist
+;     representing 1 x^3 + 2 x^2 + 3 x + 4
+(define (make-tl-from-cseq type . coeffs)
+  (let ((orders (reverse! (list-in-range 0 (- (length coeffs) 1)))))
+    (apply make-tl-from-args
+           (cons type
+                 (apply append (map list orders coeffs))))))
 
 (define first-term ((curry2 apply-generic) 'first-term))
 (define rest-terms ((curry2 apply-generic) 'rest-terms))

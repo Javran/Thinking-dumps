@@ -39,4 +39,6 @@
         (out (to-string (sub p1 p2)))
         (loop (cdr t))))))
 
+(out (make-tl-from-cseq 'poly-termlist-sparse 1 2 3 4))
+
 (end-script)
