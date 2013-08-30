@@ -276,9 +276,52 @@
                      ; result
                      (make-from-intcseq
                        1 1 1 1 1 1 0))
+                (mat (make-from-intcseq 3 2 1) (make-from-intcseq 5 4 0 0 0)
+                     (make-from-intcseq 5 4 3 2 1))
+                (mat (make-from-intcseq 5 4 3 2 1) (make-from-intcseq -5 -4 -3 -2 -1)
+                     (make-empty))
+                (mat (make-from-intcseq 28 0 0 0 0 0) (make-from-intcseq 18 0 36 0 0 0)
+                     (make-from-intcseq 46 0 36 0 0 0))
                 )))
         (do-test-q add-terms testcases termlist-equ?))
-
+      ; test mul-term-by-all-terms
+      (let ((testcases
+              (list
+                (mat (make-term-oc 0 (make-scheme-number 2))
+                     (make-from-args
+                       3 (make-scheme-number 3)
+                       2 (make-rational 4 5)
+                       1 (make-complex-ri 1 2))
+                     ; result
+                     (make-from-args
+                       3 (make-scheme-number 6)
+                       2 (make-rational 8 5)
+                       1 (make-complex-ri 2 4)))
+                (mat (make-term-oc 10 (make-scheme-number 0))
+                     (make-from-args
+                       1 (make-scheme-number 1))
+                     ; result
+                     (make-empty))
+                (mat (make-term-oc 2 (make-rational 1 2))
+                     (make-from-args
+                       2 (make-scheme-number 4)
+                       4 (make-scheme-number 8))
+                     ; result
+                     (make-from-args
+                       4 (make-scheme-number 2)
+                       6 (make-scheme-number 4)))
+                (mat (make-term-oc 2 (make-rational 1 2))
+                     (make-empty)
+                     ; result
+                     (make-empty))
+                (mat (make-term-oc 2 (make-scheme-number 4)) (make-from-intcseq 1 2 3)
+                     (make-from-intcseq 4 8 12 0 0))
+                (mat (make-term-oc 7 (make-scheme-number 0)) (make-from-intcseq 1 2 3 4 5 6)
+                     (make-empty))
+                (mat (make-term-oc 100 (make-scheme-number 100)) (make-empty)
+                     (make-empty))
+                )))
+        (do-test-q mul-term-by-all-terms testcases termlist-equ?))
       )
 
   (put 'termlist-equ?-maker 'poly-generic termlist-equ?-maker)

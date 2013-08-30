@@ -157,37 +157,6 @@
                      (apply boolean/and (map equ? (cdr a) (cdr b))))))
             )
         (do-test-q f testcases result-eq?))
-      ; test add-terms
-      (let ((testcases
-              (list
-                (mat nil nil
-                     nil)
-                (mat nil (to-termlist (list 1 2 3 4 5))
-                     (to-termlist (list 1 2 3 4 5)))
-                (mat (to-termlist (list 5 4 3 2 1)) nil
-                     (to-termlist (list 5 4 3 2 1)))
-                (mat (to-termlist (list 3 2 1)) (to-termlist (list 5 4 0 0 0))
-                     (to-termlist (list 5 4 3 2 1)))
-                (mat (to-termlist (list 5 4 3 0 0)) (to-termlist (list 2 1))
-                     (to-termlist (list 5 4 3 2 1)))
-                (mat (to-termlist (list 5 4 3 2 1)) (to-termlist (map - (list 5 4 3 2 1)))
-                     nil)
-                (mat (to-termlist (list 28 0 0 0 0 0)) (to-termlist (list 18 0 36 0 0 0))
-                     (to-termlist (list 46 0 36 0 0 0)))
-
-                )))
-        (do-test-q add-terms testcases termlist-equ?))
-      ; test mul-term-by-all-terms
-      (let ((testcases
-              (list
-                (mat (make-term 2 (make-scheme-number 4)) (to-termlist (list 1 2 3))
-                     (to-termlist (list 4 8 12 0 0)))
-                (mat (make-term 7 (make-scheme-number 0)) (to-termlist (list 1 2 3 4 5 6))
-                     nil)
-                (mat (make-term 100 (make-scheme-number 100)) nil
-                     nil)
-                )))
-        (do-test-q mul-term-by-all-terms testcases termlist-equ?))
       ; test mul-terms
       (let ((testcases
               (list

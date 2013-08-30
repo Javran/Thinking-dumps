@@ -121,38 +121,6 @@
      mul-terms
      empty-termlist?
      termlist-equ?)
-    ; test mul-term-by-all-terms
-    (let ((testcases
-            (list
-              (mat (make-term-oc 0 (make-scheme-number 2))
-                   (make-from-args
-                     3 (make-scheme-number 3)
-                     2 (make-rational 4 5)
-                     1 (make-complex-ri 1 2))
-                   ; result
-                   (make-from-args
-                     3 (make-scheme-number 6)
-                     2 (make-rational 8 5)
-                     1 (make-complex-ri 2 4)))
-              (mat (make-term-oc 10 (make-scheme-number 0))
-                   (make-from-args
-                     1 (make-scheme-number 1))
-                   ; result
-                   (make-empty))
-              (mat (make-term-oc 2 (make-rational 1 2))
-                   (make-from-args
-                     2 (make-scheme-number 4)
-                     4 (make-scheme-number 8))
-                   ; result
-                   (make-from-args
-                     4 (make-scheme-number 2)
-                     6 (make-scheme-number 4)))
-              (mat (make-term-oc 2 (make-rational 1 2))
-                   (make-empty)
-                   ; result
-                   (make-empty))
-              )))
-      (do-test-q mul-term-by-all-terms testcases termlist-equ?))
     ; test mul-terms
     (let ((testcases
             (list
@@ -179,15 +147,6 @@
                      0 (make-scheme-number -9)))
               )))
       (do-test-q mul-terms testcases termlist-equ?))
-    ; test neg-terms
-    (let ((testcases
-            (list
-              (mat (make-from-args 1 (make-scheme-number 100))
-                   (make-from-args 1 (make-scheme-number -100)))
-              (mat (make-empty)
-                   (make-empty))
-              )))
-      (do-test-q neg-terms testcases termlist-equ?))
     ; test sub-terms
     (let ((testcases
             (list
