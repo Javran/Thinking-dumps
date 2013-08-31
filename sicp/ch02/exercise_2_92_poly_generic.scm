@@ -314,14 +314,85 @@
                      (make-empty)
                      ; result
                      (make-empty))
-                (mat (make-term-oc 2 (make-scheme-number 4)) (make-from-intcseq 1 2 3)
+                (mat (make-term-oc 2 (make-scheme-number 4)) 
+                     (make-from-intcseq 1 2 3)
+                     ; result
                      (make-from-intcseq 4 8 12 0 0))
-                (mat (make-term-oc 7 (make-scheme-number 0)) (make-from-intcseq 1 2 3 4 5 6)
+                (mat (make-term-oc 7 (make-scheme-number 0))
+                     (make-from-intcseq 1 2 3 4 5 6)
+                     ; result
                      (make-empty))
-                (mat (make-term-oc 100 (make-scheme-number 100)) (make-empty)
+                (mat (make-term-oc 100 (make-scheme-number 100))
+                     (make-empty)
+                     ; result
                      (make-empty))
                 )))
         (do-test-q mul-term-by-all-terms testcases termlist-equ?))
+      ; test mul-terms
+      (let ((testcases
+              (list
+                (mat (make-empty)
+                     (make-from-intcseq 100 0)
+                     ; result
+                     (make-empty))
+                (mat (make-from-intcseq 200 0)
+                     (make-empty)
+                     ; result
+                     (make-empty))
+                (mat (make-from-intcseq
+                       ; 2x + 3
+                       2 3)
+                     (make-from-intcseq
+                       ; 2x - 3
+                       2 -3)
+                     ; result
+                     (make-from-intcseq
+                       ; 4x^2 - 9
+                       4 0 -9))
+                (mat (make-empty) (make-empty)
+                     (make-empty))
+                (mat (make-empty) (make-from-intcseq 1 2 3 4 5)
+                     (make-empty))
+                (mat (make-from-intcseq 1 2 3 4 5) (make-empty)
+                     (make-empty))
+                (mat (make-from-intcseq 1 2 3) (make-from-intcseq 4 5 6)
+                     ; (x^2 + 2x + 3) * (4x^2 + 5x + 6)
+                     ; => 4x^4 + 13x^3 + 28^x2 + 27x + 18
+                     (make-from-intcseq 4 13 28 27 18))
+                (mat (make-from-intcseq 5 0 0 7 0 9 0) (make-from-intcseq 2 0 4 0 0)
+                     ;(5x^6 + 7x^3 + 9x) * (2x^4 + 4x^2)
+                     ; => 10x^10 + 20x^8 + 14x^7 + 46x^5 + 36x^3
+                     (make-from-intcseq 10 0 20 14 0 46 0 36 0 0 0))
+
+                )))
+        (do-test-q mul-terms testcases termlist-equ?))
+      ; test sub-terms
+      (let ((testcases
+              (list
+                (mat (make-from-intcseq 
+                       ; 30 x^3 + 20 x^2 + 10 x^1
+                       30 20 10 0)
+                     (make-from-intcseq
+                       ; 15 x^3 + 10 x^2 +  5 x^1
+                       15 10  5 0)
+                     ; result
+                     (make-from-intcseq
+                       ; 15 x^3 + 10 x^2 +  5 x^1
+                       15 10  5 0))
+                (mat (make-empty)
+                     (make-empty)
+                     ; result
+                     (make-empty))
+                (mat (make-empty)
+                     (make-from-args
+                       3 (make-rational 4 5)
+                       6 (make-complex-ri 7 8))
+                     ; result
+                     (make-from-args
+                       3 (make-rational -4 5)
+                       6 (make-complex-ri -7 -8)))
+                )))
+        (do-test-q sub-terms testcases termlist-equ?))
       )
 
   (put 'termlist-equ?-maker 'poly-generic termlist-equ?-maker)
