@@ -12,22 +12,20 @@
       (f p1 p2)))
 
   ; operations without variable verification
-  (define (add-poly1 p1 p2)
-    (make-poly (variable p1)
-               (add (term-list p1) (term-list p2))))
-
-  (define (mul-poly1 p1 p2)
-    (make-poly (variable p1)
-               (mul (term-list p1) (term-list p2))))
-
-  (define (sub-poly1 p1 p2)
-    (make-poly (variable p1)
-               (sub (term-list p1) (term-list p2))))
+  (define (binary-op-poly-maker f)
+    (define (binary-op-poly p1 p2)
+      (let ((tl1 (term-list p1))
+            (tl2 (term-list p2)))
+        (make-poly (variable p1)
+                   (f tl1
+                      (to-poly-termlist-type
+                        tl2 (type-tag tl1))))))
+    binary-op-poly)
 
   ; operations with verification
-  (define add-poly (variable-verify add-poly1))
-  (define mul-poly (variable-verify mul-poly1))
-  (define sub-poly (variable-verify sub-poly1))
+  (define add-poly (variable-verify (binary-op-poly-maker add)))
+  (define mul-poly (variable-verify (binary-op-poly-maker mul)))
+  (define sub-poly (variable-verify (binary-op-poly-maker sub)))
 
   (define (to-string p)
     (define (generic-to-string x)
