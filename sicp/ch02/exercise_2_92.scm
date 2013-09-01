@@ -37,6 +37,17 @@
                          (cons (car t) args2)))))
         (format #t "impl ~A:~%" (car t))
         (out (to-string (sub p1 p2)))
-        (loop (cdr t))))))
+        (loop (cdr t)))))
+  (newline)
+  (out 
+    (to-order-coeff-list
+      (apply make-tl-from-args
+             (cons 'poly-termlist-sparse
+                   args1)))
+    (to-order-coeff-list
+      (apply make-tl-from-args
+             (cons 'poly-termlist-dense
+                   args2))))
+  )
 
 (end-script)

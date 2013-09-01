@@ -43,6 +43,20 @@
            (cons type
                  (apply append (map list orders coeffs))))))
 
+(define (to-order-coeff-list ls)
+  (if (empty? ls)
+    '()
+    (let ((t (first-term ls)))
+      (cons (order t)
+            (cons (coeff t)
+                  (to-order-coeff-list (rest-terms ls)))))))
+
+(define (to-poly-termlist-type termlist type)
+  (if (eq? type (type-tag termlist))
+    termlist
+    (apply (get 'make-from-args type)
+           (to-order-coeff-list termlist))))
+
 (define first-term ((curry2 apply-generic) 'first-term))
 (define rest-terms ((curry2 apply-generic) 'rest-terms))
 (define empty? ((curry2 apply-generic) 'empty?))
