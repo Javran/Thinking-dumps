@@ -7,10 +7,6 @@
   (define coeff ((curry2 apply-generic) 'coeff))
   (define order ((curry2 apply-generic) 'order))
 
-  ; extension: fetch a list of term order / coeff
-  (define coeff-list ((curry2 map) coeff))
-  (define order-list ((curry2 map) order))
-
   ; (make-from-args order1 coeff1 order2 coeff2 ...)
   (define (make-from-args . args)
     (define (list-to-pair-list ls)
@@ -131,8 +127,6 @@
   (put 'mul '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse mul-terms))
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
   (put '=zero? '(poly-termlist-sparse) empty-termlist?)
-  (put 'order-list '(poly-termlist-sparse) order-list)
-  (put 'coeff-list '(poly-termlist-sparse) coeff-list)
   (put 'equ? '(poly-termlist-sparse poly-termlist-sparse) termlist-equ?)
 
   (put 'test 'poly-termlist-sparse-package test)
