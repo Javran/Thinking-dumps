@@ -110,7 +110,8 @@
      empty-termlist?
      make-empty
      sub-terms
-     mul-term-by-all-terms))
+     mul-term-by-all-terms
+     adjoin-term))
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
@@ -124,6 +125,7 @@
      sub-terms
      mul-term-by-all-terms
      mul-terms
+     div-terms
      empty-termlist?
      termlist-equ?))
 

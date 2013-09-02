@@ -85,7 +85,8 @@
             empty-termlist?
             make-empty
             sub-terms
-            mul-term-by-all-terms)
+            mul-term-by-all-terms
+            adjoin-term)
     (define (div-terms l1 l2)
       (if (empty-termlist? l1)
         (list (make-empty) (make-empty))
@@ -122,6 +123,7 @@
             sub-terms
             mul-term-by-all-terms
             mul-terms
+            div-terms
             empty-termlist?
             termlist-equ?)
     ; test make-from-args
@@ -423,6 +425,53 @@
                      6 (make-complex-ri -7 -8)))
               )))
       (do-test-q sub-terms testcases termlist-equ?))
+    ; test div-terms
+    (let* ((a (make-from-args
+                5 (make-scheme-number 1)
+                0 (make-scheme-number -1)))
+           (b (make-from-args
+                2 (make-scheme-number 1)
+                0 (make-scheme-number -1)))
+           (q (make-from-args
+                3 (make-scheme-number 1)
+                1 (make-scheme-number 1)))
+           (r (make-from-args
+                1 (make-scheme-number 1)
+                0 (make-scheme-number -1)))
+           (l1 (make-from-args
+                 ; 1/2 x^5 + 3/4 x^4 + 5/6 x^3 + 7/8 x^2 + 9/10 x + 10/11
+                 5 (make-rational  1  2)
+                 4 (make-rational  3  4)
+                 3 (make-rational  5  6)
+                 2 (make-rational  7  8)
+                 1 (make-rational  9 10)
+                 0 (make-rational 10 11)))
+           (l2 (make-from-args
+                 ; 3 x^3 + 7 x^2 - 9
+                 3 (make-scheme-number 3)
+                 2 (make-scheme-number 7)
+                 0 (make-scheme-number -9)))
+           (l3 (make-from-args
+                 ; 8 x^2 - 4 x + 2
+                 2 (make-scheme-number 8)
+                 1 (make-scheme-number -4)
+                 0 (make-scheme-number 2)))
+           (l4 (add-terms (mul-terms l1 l2)
+                          l3))
+           )
+      (let ((testcases
+              (list
+                ; a = b*q + r
+                (mat a b 
+                     (list q r))
+                (mat l4 l2
+                     (list l1 l3))
+                ))
+            (result-eq?
+              (lambda (l1 l2)
+                (apply boolean/and (map termlist-equ? l1 l2)))))
+        (do-test-q div-terms testcases result-eq?)
+        ))
     )
 
   (put 'termlist-equ?-maker 'poly-generic termlist-equ?-maker)
