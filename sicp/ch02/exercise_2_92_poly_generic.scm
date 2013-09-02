@@ -79,6 +79,36 @@
       (add-terms l1 (neg-terms l2)))
     sub-terms)
 
+  (define (div-terms-maker
+            first-term
+            rest-terms
+            empty-termlist?
+            make-empty
+            sub-terms
+            mul-term-by-all-terms)
+    (define (div-terms l1 l2)
+      (if (empty-termlist? l1)
+        (list (make-empty) (make-empty))
+        (let ((t1 (first-term l1))
+              (t2 (first-term l2)))
+          (if (> (order t2) (order t1))
+            (list (make-empty) l1)
+            (let ((new-c (div (coeff t1) (coeff t2)))
+                  (new-o (-   (order t1) (order t2))))
+              (let ((rest-of-result
+                      (div-terms 
+                        (sub-terms l1 
+                                   (mul-term-by-all-terms
+                                     (make-term-oc new-o new-c)
+                                     l2))
+                        l2)))
+                (let ((terms-quotient (car rest-of-result))
+                      (terms-remainder (cadr rest-of-result)))
+                  (list (adjoin-term (make-term-oc new-o new-c)
+                                     terms-quotient)
+                        terms-remainder))))))))
+    div-terms)
+
   (define (test-poly-termlist
             termlist-type
             ; suffix '1' to distinguish
@@ -401,6 +431,7 @@
   (put 'mul-terms-maker 'poly-generic mul-terms-maker)
   (put 'neg-terms-maker 'poly-generic neg-terms-maker)
   (put 'sub-terms-maker 'poly-generic sub-terms-maker)
+  (put 'div-terms-maker 'poly-generic div-terms-maker)
   (put 'test-poly-termlist 'poly-generic test-poly-termlist)
 
   'done)

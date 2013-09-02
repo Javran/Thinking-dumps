@@ -120,6 +120,15 @@
      add-terms
      neg-terms))
 
+  (define div-terms
+    ((get 'div-terms-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?
+     make-empty
+     sub-terms
+     mul-term-by-all-terms))
+
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
      'poly-termlist-dense
@@ -142,12 +151,12 @@
   (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense add-terms))
   (put 'sub '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense sub-terms))
   (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense mul-terms))
+  (put 'div '(poly-termlist-sparse poly-termlist-sparse)
+       (lambda (l1 l2)
+         (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
   (put '=zero? '(poly-termlist-dense) empty-termlist?)
-;  (put 'order-list '(poly-termlist-dense) order-list)
-;  (put 'coeff-list '(poly-termlist-dense) coeff-list)
   (put 'equ? '(poly-termlist-dense poly-termlist-dense) termlist-equ?)
-;
   (put 'test 'poly-termlist-dense-package test)
 
   'done)

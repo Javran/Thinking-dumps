@@ -103,6 +103,15 @@
      rest-terms
      empty-termlist?))
 
+  (define div-terms
+    ((get 'div-terms-maker 'poly-generic)
+     first-term
+     rest-terms
+     empty-termlist?
+     make-empty
+     sub-terms
+     mul-term-by-all-terms))
+
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
      'poly-termlist-sparse
@@ -125,6 +134,10 @@
   (put 'add '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse add-terms))
   (put 'sub '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse sub-terms))
   (put 'mul '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse mul-terms))
+  (put 'div '(poly-termlist-sparse poly-termlist-sparse)
+       (lambda (l1 l2)
+         (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
+
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
   (put '=zero? '(poly-termlist-sparse) empty-termlist?)
   (put 'equ? '(poly-termlist-sparse poly-termlist-sparse) termlist-equ?)
