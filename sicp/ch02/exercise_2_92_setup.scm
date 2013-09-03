@@ -43,6 +43,13 @@
            (cons type
                  (apply append (map list orders coeffs))))))
 
+; cast all numbers to scheme-number automatically
+(define (make-tl-from-cseq-num type . coeffs)
+  (apply make-tl-from-cseq
+         (cons type
+               (map make-scheme-number coeffs))))
+
+
 (define (to-order-coeff-list ls)
   (if (empty? ls)
     '()
