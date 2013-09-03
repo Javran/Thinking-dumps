@@ -26,6 +26,21 @@
   (define add-poly (variable-verify (binary-op-poly-maker add)))
   (define mul-poly (variable-verify (binary-op-poly-maker mul)))
   (define sub-poly (variable-verify (binary-op-poly-maker sub)))
+  
+  ; division without verification
+  (define (div-poly-no-v p1 p2)
+    (let* ((tl1 (term-list p1))
+           (tl2 (to-poly-termlist-type
+                    (term-list p2)
+                    (type-tag tl1)))
+           (result (div tl1 tl2)))
+      (map (lambda (tl)
+             (attach-tag 'polynominal
+                         (make-poly (variable p1)
+                                    tl)))
+           result)))
+  ; wt: with tag
+  (define div-poly-wt (variable-verify div-poly-no-v))
 
   (define (to-string p)
     (define (generic-to-string x)
@@ -102,6 +117,7 @@
   (put 'add '(polynominal polynominal) (tagged 'polynominal add-poly))
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
   (put 'sub '(polynominal polynominal) (tagged 'polynominal sub-poly))
+  (put 'div '(polynominal polynominal) div-poly-wt)
   (put '=zero? '(polynominal) poly-zero?)
   (put 'to-string '(polynominal) to-string)
 

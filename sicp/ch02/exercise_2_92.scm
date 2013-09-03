@@ -49,4 +49,21 @@
               (loop2 (cdr type2)))))
         (loop1 (cdr type1))))))
 
+(let ((x1 (make-tl-from-args 'poly-termlist-sparse
+            ; x^5 - 1
+            5 (make-scheme-number 1)
+            0 (make-scheme-number -1)))
+      (x2 (make-tl-from-args 'poly-termlist-dense
+            ; x^2 - 1
+            2 (make-scheme-number 1)
+            0 (make-scheme-number -1)))
+      )
+  (let ((p1 (make-poly 'x x1))
+        (p2 (make-poly 'x x2)))
+    (let* ((result (div p1 p2))
+           (q (car result))
+           (r (cadr result)))
+      (out result)
+      )))
+
 (end-script)

@@ -153,7 +153,7 @@
   (put 'add '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense add-terms))
   (put 'sub '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense sub-terms))
   (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense mul-terms))
-  (put 'div '(poly-termlist-sparse poly-termlist-sparse)
+  (put 'div '(poly-termlist-dense poly-termlist-dense)
        (lambda (l1 l2)
          (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
