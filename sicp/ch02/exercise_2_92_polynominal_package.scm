@@ -14,12 +14,12 @@
   ; operations without variable verification
   (define (binary-op-poly-maker f)
     (define (binary-op-poly p1 p2)
-      (let ((tl1 (term-list p1))
-            (tl2 (term-list p2)))
+      (let* ((tl1 (term-list p1))
+             (tl2 (to-poly-termlist-type
+                    (term-list p2)
+                    (type-tag tl1))))
         (make-poly (variable p1)
-                   (f tl1
-                      (to-poly-termlist-type
-                        tl2 (type-tag tl1))))))
+                   (f tl1 tl2))))
     binary-op-poly)
 
   ; operations with verification
