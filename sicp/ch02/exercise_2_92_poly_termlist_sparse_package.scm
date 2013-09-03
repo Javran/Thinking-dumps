@@ -138,7 +138,7 @@
   (put 'mul '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse mul-terms))
   (put 'div '(poly-termlist-sparse poly-termlist-sparse)
        (lambda (l1 l2)
-         (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
+         (map ((curry2 attach-tag) 'poly-termlist-sparse) (div-terms l1 l2))))
 
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)
   (put '=zero? '(poly-termlist-sparse) empty-termlist?)

@@ -155,7 +155,7 @@
   (put 'mul '(poly-termlist-dense poly-termlist-dense) (tagged 'poly-termlist-dense mul-terms))
   (put 'div '(poly-termlist-dense poly-termlist-dense)
        (lambda (l1 l2)
-         (map ((curry2 attach-tag) 'poly-termlist) (div-terms l1 l2))))
+         (map ((curry2 attach-tag) 'poly-termlist-dense) (div-terms l1 l2))))
   (put 'empty? '(poly-termlist-dense) empty-termlist?)
   (put '=zero? '(poly-termlist-dense) empty-termlist?)
   (put 'equ? '(poly-termlist-dense poly-termlist-dense) termlist-equ?)

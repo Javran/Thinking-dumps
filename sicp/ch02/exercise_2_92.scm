@@ -63,7 +63,10 @@
     (let* ((result (div p1 p2))
            (q (car result))
            (r (cadr result)))
-      (out result)
+      (out "divisor:" (to-string p1)
+           "dividend:" (to-string p2)
+           "quotient:" (to-string q)
+           "remainder:" (to-string r))
       )))
 
 (end-script)

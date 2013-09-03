@@ -42,34 +42,26 @@
   ; wt: with tag
   (define div-poly-wt (variable-verify div-poly-no-v))
 
-  (define (to-string p)
-    (define (generic-to-string x)
-      (apply-generic 'to-string x))
+  (define (to-string-poly p)
     (define (term-to-string term var)
       (string-append 
         "("
-        (generic-to-string (coeff term))
+        (to-string (coeff term))
         ")"
         (symbol->string var)
         "^"
         (number->string (order term))))
-    (define (first-term x)
-      (apply-generic 'first-term x))
-    (define (rest-terms x)
-      (apply-generic 'rest-terms x))
-    (define (empty-termlist? x)
-      (apply-generic 'empty? x))
     (let ((var (variable p))
           (termls (term-list p)))
-      (cond ((empty-termlist? termls) "0")
-            ((empty-termlist? (rest-terms termls))
+      (cond ((empty? termls) "0")
+            ((empty? (rest-terms termls))
               ; only one element
               (term-to-string (first-term termls) var))
             (else
               (string-append
                 (term-to-string (first-term termls) var)
                 "+"
-                (to-string (make-poly var (rest-terms termls))))))))
+                (to-string-poly (make-poly var (rest-terms termls))))))))
 
   (define poly-zero?
     (compose =zero? term-list))
@@ -119,7 +111,7 @@
   (put 'sub '(polynominal polynominal) (tagged 'polynominal sub-poly))
   (put 'div '(polynominal polynominal) div-poly-wt)
   (put '=zero? '(polynominal) poly-zero?)
-  (put 'to-string '(polynominal) to-string)
+  (put 'to-string '(polynominal) to-string-poly)
 
   (put 'test 'polynominal-package test)
   'done)
