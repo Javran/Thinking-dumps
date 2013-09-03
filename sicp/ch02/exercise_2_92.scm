@@ -69,4 +69,21 @@
            "remainder:" (to-string r))
       )))
 
+(let ((tl1 (make-tl-from-cseq-num
+             'poly-termlist-sparse
+             9 -6 -4 -2 1 2 4))
+      (tl2 (make-tl-from-cseq-num
+             'poly-termlist-dense
+             3 2 1)))
+  (let ((p1 (make-poly 'x tl1))
+        (p2 (make-poly 'x tl2)))
+    (let* ((result (div p1 p2))
+           (q (car result))
+           (r (cadr result)))
+      (out "divisor:" (to-string p1)
+           "dividend:" (to-string p2)
+           "quotient:" (to-string q)
+           "remainder:" (to-string r))
+      )))
+
 (end-script)
