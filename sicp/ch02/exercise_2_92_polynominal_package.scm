@@ -66,6 +66,18 @@
   (define poly-zero?
     (compose =zero? term-list))
 
+  (define (extract-term var term t-var)
+    ; binding: 
+    ; term variable: t-var
+    ; term coeff   : t-coeff
+    ; term order   : t-order
+    (let ((t-coeff (coeff term))
+          (t-order (order term)))
+      (error "not implemented")
+      ))
+
+
+
   (define (test)
     ; test accessors
     (let* ((obj (make-poly 'stub-var 'stub-terml))
