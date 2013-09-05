@@ -66,6 +66,25 @@
   (define poly-zero?
     (compose =zero? term-list))
 
+  (define (equ-poly? p1 p2)
+    (cond 
+      ; even when the variables are different, there's still a chance that
+      ; two polynominals can be equal
+      ((and (poly-zero? p1) (poly-zero? p2)) #t)
+      ; there is a zero, but not all -> must be different
+      ((or  (poly-zero? p1) (poly-zero? p2)) #f)
+      ; test if they are constants
+      ((and (= 0 (order (first-term (term-list p1))))
+            (= 0 (order (first-term (term-list p2)))))
+        (equ? (coeff (first-term (term-list p1)))
+              (coeff (first-term (term-list p2)))))
+      ; otherwise we must test if the variables are same and so do the termlists
+      (else
+        (and (same-variable? (variable p1)
+                             (variable p2))
+             (equ? (term-list p1)
+                   (term-list p2))))))
+
   (define (extract-term var term t-var)
     ; binding: 
     ; term variable: t-var
@@ -130,6 +149,7 @@
   (put 'div '(polynominal polynominal) div-poly-wt)
   (put 'project '(polynominal) project)
   (put '=zero? '(polynominal) poly-zero?)
+  (put 'equ? '(polynominal polynominal) equ-poly?)
   (put 'to-string '(polynominal) to-string-poly)
 
   (put 'test 'polynominal-package test)

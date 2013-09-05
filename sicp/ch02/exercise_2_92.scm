@@ -95,9 +95,8 @@
 
 (out (raise (make-complex-ri 1 2)))
 
-(out (project (make-poly 'x (make-tl-from-args
-                              'poly-termlist-sparse
-                              5 (make-complex-ri 1 1)
-                              2 (make-rational 1 2)))))
+(out (drop (make-poly 'x (make-tl-from-args
+                           'poly-termlist-sparse
+                           0 (make-rational 1 2)))))
 
 (end-script)
