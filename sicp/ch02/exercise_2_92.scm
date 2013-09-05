@@ -2,7 +2,7 @@
 (load "../common/test-utils.scm")
 
 (load "./tag_system.scm")
-(load "./number_system.scm")
+(load "./exercise_2_92_number_system.scm")
 
 ; let's get a fresh start, summarize what we've done
 ;   before this exercise and organize codes together
