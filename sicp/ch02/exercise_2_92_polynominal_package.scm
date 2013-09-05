@@ -76,6 +76,12 @@
       (error "not implemented")
       ))
 
+  (define (project x)
+    (let ((tl (term-list x)))
+      (if (empty? tl)
+        (make-complex-ri 0 0)
+        ((raise-to 'complex)
+                  (coeff (first-term tl))))))
 
 
   (define (test)
@@ -122,6 +128,7 @@
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
   (put 'sub '(polynominal polynominal) (tagged 'polynominal sub-poly))
   (put 'div '(polynominal polynominal) div-poly-wt)
+  (put 'project '(polynominal) project)
   (put '=zero? '(polynominal) poly-zero?)
   (put 'to-string '(polynominal) to-string-poly)
 

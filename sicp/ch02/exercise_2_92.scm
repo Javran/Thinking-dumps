@@ -88,10 +88,16 @@
 
 (out (make-poly
        'wildcard
-       (make-tl-from-cseq-num
-       'poly-termlist-sparse
-       (make-complex-ri 1 2))))
+       (make-tl-from-args
+         'poly-termlist-sparse
+         0
+         (make-complex-ri 1 2))))
 
 (out (raise (make-complex-ri 1 2)))
+
+(out (project (make-poly 'x (make-tl-from-args
+                              'poly-termlist-sparse
+                              5 (make-complex-ri 1 1)
+                              2 (make-rational 1 2)))))
 
 (end-script)
