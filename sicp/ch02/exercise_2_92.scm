@@ -86,4 +86,12 @@
            "remainder:" (to-string r))
       )))
 
+(out (make-poly
+       'wildcard
+       (make-tl-from-cseq-num
+       'poly-termlist-sparse
+       (make-complex-ri 1 2))))
+
+(out (raise (make-complex-ri 1 2)))
+
 (end-script)

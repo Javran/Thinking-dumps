@@ -5,7 +5,7 @@
 
 (load "./number_system_rational.scm")
 (load "./number_system_scheme_number.scm")
-(load "./number_system_complex.scm")
+(load "./exercise_2_92_number_system_complex.scm")
 (load "./number_system_native_num_test.scm")
 (load "./exercise_2_92_number_system_coercion.scm")
 
