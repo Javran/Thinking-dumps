@@ -99,4 +99,16 @@
                            'poly-termlist-sparse
                            0 (make-rational 1 2)))))
 
+; TODO:
+; * write testcases for equality test
+; * strategies of dealing with wildcard:
+;   wildcard op wildcard  => wildcard
+;   wildcard op x         => x
+;   x op wildcard         => x
+;   x op y                => error
+; * test if now we can enable something like:
+;   (y^2+y+1) x^3 + 2 x^3
+;   where `(y^2+y+1) + 2` becomes possible
+
+
 (end-script)

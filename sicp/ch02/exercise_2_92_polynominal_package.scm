@@ -136,6 +136,33 @@
                    #t)
               )))
       (do-test-q poly-zero? testcases))
+    ; test equ-poly?
+    (let ((testcases
+            (list
+              ; different variable but are all constants
+              (mat (make-poly 'x
+                              (make-tl-from-cseq-num 
+                                'poly-termlist-sparse 10))
+                   (make-poly 'z
+                              (make-tl-from-cseq-num
+                                'poly-termlist-dense 10))
+                   #t)
+              ; different variable
+              (mat (make-poly 'x
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse 1 2))
+                   (make-poly 'z
+                              (make-tl-from-cseq-num
+                                'poly-termlist-dense 1 2))
+                   #f)
+              ; all are empty
+              (mat (make-poly 'x
+                              (make-tl-empty 'poly-termlist-sparse))
+                   (make-poly 'z
+                              (make-tl-empty 'poly-termlist-sparse))
+                   #t)
+              )))
+      (do-test equ-poly? testcases))
     )
 
   (put 'make 'polynominal (tagged 'polynominal make-poly))
