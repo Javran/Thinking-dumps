@@ -49,7 +49,6 @@
          (cons type
                (map make-scheme-number coeffs))))
 
-
 (define (to-order-coeff-list ls)
   (if (empty? ls)
     '()

@@ -100,7 +100,6 @@
                            0 (make-rational 1 2)))))
 
 ; TODO:
-; * write testcases for equality test
 ; * strategies of dealing with wildcard:
 ;   wildcard op wildcard  => wildcard
 ;   wildcard op x         => x

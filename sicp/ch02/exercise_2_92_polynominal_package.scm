@@ -145,7 +145,7 @@
                                 'poly-termlist-sparse 10))
                    (make-poly 'z
                               (make-tl-from-cseq-num
-                                'poly-termlist-dense 10))
+                                'poly-termlist-sparse 10))
                    #t)
               ; different variable
               (mat (make-poly 'x
@@ -153,7 +153,7 @@
                                 'poly-termlist-sparse 1 2))
                    (make-poly 'z
                               (make-tl-from-cseq-num
-                                'poly-termlist-dense 1 2))
+                                'poly-termlist-sparse 1 2))
                    #f)
               ; all are empty
               (mat (make-poly 'x
@@ -161,8 +161,26 @@
                    (make-poly 'z
                               (make-tl-empty 'poly-termlist-sparse))
                    #t)
+              ; empty vs non-empty
+              (mat (make-poly 'x
+                              (make-tl-empty 'poly-termlist-sparse))
+                   (make-poly 'z
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 3 4))
+                   #f)
+              ; trivial case
+              (mat (make-poly 'x
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 3 0 0 0 4 5 6))
+                   (make-poly 'x
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 3 0 0 0 4 5 6))
+                   #t)
               )))
-      (do-test equ-poly? testcases))
+      (do-test-q equ-poly? testcases))
     )
 
   (put 'make 'polynominal (tagged 'polynominal make-poly))
