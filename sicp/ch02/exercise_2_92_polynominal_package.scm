@@ -3,13 +3,22 @@
   (define variable car)
   (define term-list cdr)
 
+  (define (wildcard? v) (eq? 'wildcard v))
+
   (define (compatible-variable? v1 v2)
-    (define (wildcard? v)
-      (eq? 'wildcard v))
     ; two variables are compatible when wildcard exists
     ; or when two variables are exactly the same
     (or (or (wildcard? v1) (wildcard? v2))
         (same-variable? v1 v2)))
+
+  ; merge two variables together
+  ; all wildcard -> wildcard
+  ; 1 wildcard -> replaced with another one
+  (define (merge-variable v1 v2)
+    (cond ((same-variable? v1 v2) v1)
+          ((wildcard? v1) v2)
+          ((wildcard? v2) v1)
+          (else (error "impossible case"))))
 
   ; verify variable equality before performing a binary op, say `f`
   (define (variable-verify f)
@@ -27,9 +36,10 @@
       (let* ((tl1 (term-list p1))
              (tl2 (to-poly-termlist-type
                     (term-list p2)
-                    (type-tag tl1))))
-        (make-poly (variable p1)
-                   (f tl1 tl2))))
+                    (type-tag tl1)))
+             (var (merge-variable (variable p1)
+                                  (variable p2))))
+        (make-poly var (f tl1 tl2))))
     binary-op-poly)
 
   ; operations with verification

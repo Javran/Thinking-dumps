@@ -86,25 +86,17 @@
            "remainder:" (to-string r))
       )))
 
-(out (make-poly
-       'wildcard
-       (make-tl-from-args
-         'poly-termlist-sparse
-         0
-         (make-complex-ri 1 2))))
-
-(out (raise (make-complex-ri 1 2)))
-
-(out (drop (make-poly 'x (make-tl-from-args
-                           'poly-termlist-sparse
-                           0 (make-rational 1 2)))))
+(let ((p1 (make-poly 'wildcard
+                     (make-tl-from-cseq-num
+                       'poly-termlist-sparse
+                       1 2 3 4 5)))
+      (p2 (make-poly 'x
+                     (make-tl-from-cseq-num
+                       'poly-termlist-sparse
+                       1 2 3 4 5))))
+  (out (mul p1 p2)))
 
 ; TODO:
-; * strategies of dealing with wildcard:
-;   wildcard op wildcard  => wildcard
-;   wildcard op x         => x
-;   x op wildcard         => x
-;   x op y                => error
 ; * test if now we can enable something like:
 ;   (y^2+y+1) x^3 + 2 x^3
 ;   where `(y^2+y+1) + 2` becomes possible
