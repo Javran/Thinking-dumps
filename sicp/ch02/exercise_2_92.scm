@@ -94,7 +94,9 @@
                      (make-tl-from-cseq-num
                        'poly-termlist-sparse
                        1 2 3 4 5))))
-  (out (mul p1 p2)))
+  (out (mul p1 p2))
+  (out (mul p1 (make-scheme-number 10)))
+  (out (mul p2 (make-scheme-number 10))))
 
 ; TODO:
 ; * test if now we can enable something like:
