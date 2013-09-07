@@ -3,15 +3,25 @@
   (define variable car)
   (define term-list cdr)
 
-  ; verify variable equality before performing a binary op
+  (define (compatible-variable? v1 v2)
+    (define (wildcard? v)
+      (eq? 'wildcard v))
+    ; two variables are compatible when wildcard exists
+    ; or when two variables are exactly the same
+    (or (or (wildcard? v1) (wildcard? v2))
+        (same-variable? v1 v2)))
+
+  ; verify variable equality before performing a binary op, say `f`
   (define (variable-verify f)
     (lambda (p1 p2)
-      (assert (same-variable? (variable p1)
-                              (variable p2))
+      (assert (compatible-variable?
+                (variable p1)
+                (variable p2))
               "Polys not in same var")
       (f p1 p2)))
 
   ; operations without variable verification
+  ;   convert arguments between different termlist types on demand
   (define (binary-op-poly-maker f)
     (define (binary-op-poly p1 p2)
       (let* ((tl1 (term-list p1))
@@ -66,24 +76,14 @@
   (define poly-zero?
     (compose =zero? term-list))
 
-  (define (equ-poly? p1 p2)
-    (cond 
-      ; even when the variables are different, there's still a chance that
-      ; two polynominals can be equal
-      ((and (poly-zero? p1) (poly-zero? p2)) #t)
-      ; there is a zero, but not all -> must be different
-      ((or  (poly-zero? p1) (poly-zero? p2)) #f)
-      ; test if they are constants
-      ((and (= 0 (order (first-term (term-list p1))))
-            (= 0 (order (first-term (term-list p2)))))
-        (equ? (coeff (first-term (term-list p1)))
-              (coeff (first-term (term-list p2)))))
-      ; otherwise we must test if the variables are same and so do the termlists
-      (else
-        (and (same-variable? (variable p1)
-                             (variable p2))
-             (equ? (term-list p1)
-                   (term-list p2))))))
+  (define (poly-equ?-nover p1 p2)
+    (let* ((tl1 (term-list p1))
+           (tl2 (to-poly-termlist-type
+                  (term-list p2)
+                  (type-tag tl1))))
+      (equ? tl1 tl2)))
+
+  (define poly-equ? (variable-verify poly-equ?-nover))
 
   (define (extract-term var term t-var)
     ; binding: 
@@ -101,7 +101,6 @@
         (make-complex-ri 0 0)
         ((raise-to 'complex)
                   (coeff (first-term tl))))))
-
 
   (define (test)
     ; test accessors
@@ -139,32 +138,16 @@
     ; test equ-poly?
     (let ((testcases
             (list
-              ; different variable but are all constants
-              (mat (make-poly 'x
-                              (make-tl-from-cseq-num 
-                                'poly-termlist-sparse 10))
-                   (make-poly 'z
-                              (make-tl-from-cseq-num
-                                'poly-termlist-sparse 10))
-                   #t)
-              ; different variable
-              (mat (make-poly 'x
-                              (make-tl-from-cseq-num
-                                'poly-termlist-sparse 1 2))
-                   (make-poly 'z
-                              (make-tl-from-cseq-num
-                                'poly-termlist-sparse 1 2))
-                   #f)
               ; all are empty
               (mat (make-poly 'x
                               (make-tl-empty 'poly-termlist-sparse))
-                   (make-poly 'z
+                   (make-poly 'x
                               (make-tl-empty 'poly-termlist-sparse))
                    #t)
               ; empty vs non-empty
-              (mat (make-poly 'x
+              (mat (make-poly 'y
                               (make-tl-empty 'poly-termlist-sparse))
-                   (make-poly 'z
+                   (make-poly 'y
                               (make-tl-from-cseq-num
                                 'poly-termlist-sparse
                                 1 2 3 4))
@@ -179,8 +162,17 @@
                                 'poly-termlist-sparse
                                 1 2 3 0 0 0 4 5 6))
                    #t)
+              (mat (make-poly 'x
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 3 4 5 6))
+                   (make-poly 'x
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 2 4 5 6))
+                   #f)
               )))
-      (do-test-q equ-poly? testcases))
+      (do-test-q poly-equ? testcases))
     )
 
   (put 'make 'polynominal (tagged 'polynominal make-poly))
@@ -194,7 +186,7 @@
   (put 'div '(polynominal polynominal) div-poly-wt)
   (put 'project '(polynominal) project)
   (put '=zero? '(polynominal) poly-zero?)
-  (put 'equ? '(polynominal polynominal) equ-poly?)
+  (put 'equ? '(polynominal polynominal) poly-equ?)
   (put 'to-string '(polynominal) to-string-poly)
 
   (put 'test 'polynominal-package test)
