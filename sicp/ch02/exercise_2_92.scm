@@ -49,10 +49,17 @@
               (loop2 (cdr type2)))))
         (loop1 (cdr type1))))))
 
-; TODO:
-; * test if now we can enable something like:
-;   (y^2+y+1) x^3 + 2 x^3
-;   where `(y^2+y+1) + 2` becomes possible
-
+(let* ((p1 (make-poly
+             'y
+             (make-tl-from-cseq-num
+               'poly-termlist-sparse
+               1 1 1)))
+       (p2 (make-poly
+             'x
+             (make-tl-from-args
+               'poly-termlist-sparse
+               3 p1
+               3 (make-scheme-number 2)))))
+  (out (to-string p2)))
 
 (end-script)
