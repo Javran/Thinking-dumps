@@ -4,7 +4,7 @@
 ; nomials works for polynomials in different variables. (This is not
 ; easy!)
 ; * since variables are symbols, we can simply convert symbols into strings
-;   so they will be compariable and easy to impose an ordering
+;   so they will be comparable and easy to impose an ordering
 ; * I'd like to introduce a new procedure: `extract` which accepts a variable `var`
 ;   and a polynominal `poly1`, and produces a polynomial `poly2` which is mathematically
 ;   equal to `poly1` but the variable is guaranteed to be `var` and all of `poly2`'s coeffs
