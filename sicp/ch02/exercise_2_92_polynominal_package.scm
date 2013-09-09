@@ -96,14 +96,33 @@
   (define poly-equ? (variable-verify poly-equ?-nover))
 
   (define (extract-term var term t-var)
+    (define (is-poly? data)
+      (eq? 'polynominal (type-tag data)))
+
     ; binding: 
     ; term variable: t-var
     ; term coeff   : t-coeff
     ; term order   : t-order
     (let ((t-coeff (coeff term))
           (t-order (order term)))
-      (error "not implemented")
-      ))
+      (if (is-poly? t-coeff)
+        ; need further extraction
+        (error "not implemented")
+        ; else
+        ; coeff is a number
+        ; make term wrapped in a polynominal
+        (let ((wrapped (make-poly
+                         var
+                         (make-tl-from-args
+                           'poly-termlist-sparse
+                           t-order t-coeff))))
+          (if (same-variable? var t-var)
+            wrapped
+            ; not same
+            (make-poly
+              var
+              (make-tl-from-args
+                0 wrapped)))))))
 
   (define (extract-poly target-var poly)
     (let* ((var (variable poly))
