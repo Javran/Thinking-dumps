@@ -3,6 +3,8 @@
   (define variable car)
   (define term-list cdr)
 
+  (define tagged-make-poly (tagged 'polynominal make-poly))
+
   (define (wildcard? v) (eq? 'wildcard v))
 
   (define (compatible-variable? v1 v2)
@@ -111,17 +113,18 @@
         ; else
         ; coeff is a number
         ; make term wrapped in a polynominal
-        (let ((wrapped (make-poly
-                         var
+        (let ((wrapped (tagged-make-poly
+                         t-var
                          (make-tl-from-args
                            'poly-termlist-sparse
                            t-order t-coeff))))
           (if (same-variable? var t-var)
             wrapped
             ; not same
-            (make-poly
+            (tagged-make-poly
               var
               (make-tl-from-args
+                'poly-termlist-sparse
                 0 wrapped)))))))
 
   (define (extract-poly target-var poly)
@@ -229,9 +232,22 @@
                    #f)
               )))
       (do-test-q poly-equ? testcases))
+    ; test extract-poly
+    (let* ((p1 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   3 2 1 0))))
+      (for-each
+        (compose out to-string)
+        (list
+          p1
+          (extract-term 'x (make-term-oc 2 (make-rational 2 3)) 'x)
+          (extract-term 'y (make-term-oc 2 (make-rational 2 3)) 'x)
+          )))
     )
 
-  (put 'make 'polynominal (tagged 'polynominal make-poly))
+  (put 'make 'polynominal tagged-make-poly)
 
   (put 'variable '(polynominal) variable)
   (put 'term-list '(polynominal) term-list)
