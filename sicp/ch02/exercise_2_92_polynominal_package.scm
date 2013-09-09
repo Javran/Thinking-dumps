@@ -105,6 +105,33 @@
       (error "not implemented")
       ))
 
+  (define (extract-poly target-var poly)
+    (let* ((var (variable poly))
+           (tl (term-list poly))
+           (terms (map
+                    make-term-oc 
+                    (order-list tl)
+                    (coeff-list tl)))
+           (result (map
+                     (lambda (term)
+                       (extract-term
+                         target-var
+                         term
+                         var))
+                     terms))
+           )
+      ; http://www.gnu.org/software/mit-scheme/documentation/mit-scheme-ref/Reduction-of-Lists.html
+      ;   The argument initial is used only if list is empty;
+      ;   in this case initial is the result of the call to reduce-left.
+      ;   If list has a single argument, it is returned.
+      ;   Otherwise, the arguments are reduced in a left-associative fashion. 
+      (make-poly
+        target-var
+        (reduce-left 
+          add
+          (make-tl-empty 'poly-termlist-sparse)
+          result))))
+
   (define (project x)
     (let ((tl (term-list x)))
       (if (empty? tl)
