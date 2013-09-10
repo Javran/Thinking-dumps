@@ -257,21 +257,28 @@
           ; (3x^3 + 2x^2 + 1x^1 + 1)x^3
           (extract-term 'x (make-term-oc 3 p1) 'x)
           )))
-     (let* ((p1 (tagged-make-poly
-                  'x
-                  (make-tl-from-cseq-num
-                    'poly-termlist-sparse
-                    1 1 1)))
-            ; ((x^2+x+1)x^2+(x^2+x+1)x+(x^2+x+1))x^2
-            (p2 (tagged-make-poly
-                  'x
-                  (make-tl-from-args
-                    'poly-termlist-sparse
-                    2 p1
-                    1 p1
-                    0 p1))))
-       (out "===")
-       (out (to-string (extract-term 'x (make-term-oc 2 p2) 'x))))
+    ; test extract-term, same variable
+    (out "====")
+    (let* ((p1 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 1 1)))
+           ; ((x^2+x+1)x^2+(x^2+x+1)x+(x^2+x+1))x^2
+           (p2 (tagged-make-poly
+                 'x
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   2 p1
+                   1 p1
+                   0 p1))))
+      (out (to-string
+             (tagged-make-poly 
+               'x
+               (make-tl-from-args
+                 'poly-termlist-sparse
+                 2 p2))))
+      (out (to-string (extract-term 'x (make-term-oc 2 p2) 'x))))
 
     )
 
