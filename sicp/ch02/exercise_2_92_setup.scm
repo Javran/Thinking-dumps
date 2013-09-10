@@ -66,8 +66,16 @@
 (define first-term ((curry2 apply-generic) 'first-term))
 (define rest-terms ((curry2 apply-generic) 'rest-terms))
 (define empty? ((curry2 apply-generic) 'empty?))
-(define order-list ((curry2 apply-generic) 'order-list))
-(define coeff-list ((curry2 apply-generic) 'coeff-list))
+
+(define (map-poly-term f ls)
+  (if (empty? ls)
+    nil
+    (cons (f (first-term ls))
+          (map-poly-term f (rest-terms ls)))))
+
+
+(define order-list ((curry2 map-poly-term) order))
+(define coeff-list ((curry2 map-poly-term) coeff))
 
 (run-tests 
   (list 

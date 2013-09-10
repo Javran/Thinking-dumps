@@ -109,7 +109,17 @@
           (t-order (order term)))
       (if (is-poly? t-coeff)
         ; need further extraction
-        (error "not implemented")
+        (if (same-variable? var t-var)
+          (let ((result (extract-poly var t-coeff))
+                (order-poly (tagged-make-poly
+                              var
+                              (make-tl-from-args
+                                'poly-termlist-sparse
+                                t-order (make-scheme-number 1)))))
+            ; add up t-order into the poly
+            (mul result order-poly))
+          ; else
+          (error "not implemented"))
         ; else
         ; coeff is a number
         ; make term wrapped in a polynominal
@@ -128,8 +138,8 @@
                 0 wrapped)))))))
 
   (define (extract-poly target-var poly)
-    (let* ((var (variable poly))
-           (tl (term-list poly))
+    (let* ((var (variable (contents poly)))
+           (tl (term-list (contents poly)))
            (terms (map
                     make-term-oc 
                     (order-list tl)
@@ -147,12 +157,12 @@
       ;   in this case initial is the result of the call to reduce-left.
       ;   If list has a single argument, it is returned.
       ;   Otherwise, the arguments are reduced in a left-associative fashion. 
-      (make-poly
-        target-var
-        (reduce-left 
-          add
-          (make-tl-empty 'poly-termlist-sparse)
-          result))))
+      (reduce-left 
+        add
+        (make-poly
+          target-var
+          (make-tl-empty 'poly-termlist-sparse))
+        result)))
 
   (define (project x)
     (let ((tl (term-list x)))
@@ -237,14 +247,32 @@
                  'x
                  (make-tl-from-cseq-num
                    'poly-termlist-sparse
-                   3 2 1 0))))
+                   3 2 1 1))))
       (for-each
         (compose out to-string)
         (list
           p1
           (extract-term 'x (make-term-oc 2 (make-rational 2 3)) 'x)
           (extract-term 'y (make-term-oc 2 (make-rational 2 3)) 'x)
+          ; (3x^3 + 2x^2 + 1x^1 + 1)x^3
+          (extract-term 'x (make-term-oc 3 p1) 'x)
           )))
+     (let* ((p1 (tagged-make-poly
+                  'x
+                  (make-tl-from-cseq-num
+                    'poly-termlist-sparse
+                    1 1 1)))
+            ; ((x^2+x+1)x^2+(x^2+x+1)x+(x^2+x+1))x^2
+            (p2 (tagged-make-poly
+                  'x
+                  (make-tl-from-args
+                    'poly-termlist-sparse
+                    2 p1
+                    1 p1
+                    0 p1))))
+       (out "===")
+       (out (to-string (extract-term 'x (make-term-oc 2 p2) 'x))))
+
     )
 
   (put 'make 'polynominal tagged-make-poly)
