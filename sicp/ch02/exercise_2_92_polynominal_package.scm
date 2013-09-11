@@ -119,7 +119,21 @@
             ; add up t-order into the poly
             (mul result order-poly))
           ; else
-          (error "not implemented"))
+          (let* ((result (extract-poly target-var t-coeff))
+                 ; wrapped term
+                 (wrapped (tagged-make-poly
+                            t-var
+                            (make-tl-from-args
+                              'poly-termlist-sparse
+                              t-order (make-scheme-number 1))))
+                 (order-poly (tagged-make-poly
+                               target-var
+                               (make-tl-from-args
+                                 'poly-termlist-sparse
+                                 0 wrapped))))
+            ; add up t-order into the poly
+            (mul result order-poly))
+          )
         ; else
         ; coeff is a number
         ; make term wrapped in a polynominal
@@ -279,6 +293,17 @@
                  'poly-termlist-sparse
                  2 p2))))
       (out (to-string (extract-term 'x (make-term-oc 2 p2) 'x))))
+    (out "====")
+    ; (x^2+2x+3)y^2
+    (let* ((p1 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 2 3)))
+           )
+      (out (to-string
+             (extract-term 'x (make-term-oc 2 p1) 'y))))
+
 
     )
 
