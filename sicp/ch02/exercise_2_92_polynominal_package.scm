@@ -97,7 +97,7 @@
 
   (define poly-equ? (variable-verify poly-equ?-nover))
 
-  (define (extract-term var term t-var)
+  (define (extract-term target-var term t-var)
     (define (is-poly? data)
       (eq? 'polynominal (type-tag data)))
 
@@ -109,10 +109,10 @@
           (t-order (order term)))
       (if (is-poly? t-coeff)
         ; need further extraction
-        (if (same-variable? var t-var)
-          (let ((result (extract-poly var t-coeff))
+        (if (same-variable? target-var t-var)
+          (let ((result (extract-poly target-var t-coeff))
                 (order-poly (tagged-make-poly
-                              var
+                              target-var
                               (make-tl-from-args
                                 'poly-termlist-sparse
                                 t-order (make-scheme-number 1)))))
@@ -128,11 +128,11 @@
                          (make-tl-from-args
                            'poly-termlist-sparse
                            t-order t-coeff))))
-          (if (same-variable? var t-var)
+          (if (same-variable? target-var t-var)
             wrapped
             ; not same
             (tagged-make-poly
-              var
+              target-var
               (make-tl-from-args
                 'poly-termlist-sparse
                 0 wrapped)))))))
