@@ -25,17 +25,19 @@
   ; verify variable equality before performing a binary op, say `f`
   (define (variable-verify f)
     (lambda (p1 p2)
-      (assert (compatible-variable?
-                (variable p1)
-                (variable p2))
-              "Polys not in same var")
-      (f p1 p2)))
+      (if (compatible-variable?  (variable p1) (variable p2))
+        (f p1 p2)
+        ; p1 and p2 are not compatible,
+        ; in this case, neither p1 nor p2 are not wildcards
+        ; we should determine which one should be put inside
+        (error "Polys not in same var"))))
 
   ; operations without variable verification
   ;   convert arguments between different termlist types on demand
   (define (binary-op-poly-maker f)
     (define (binary-op-poly p1 p2)
       (let* ((tl1 (term-list p1))
+             ; convert tl2 to the same type of tl1
              (tl2 (to-poly-termlist-type
                     (term-list p2)
                     (type-tag tl1)))
