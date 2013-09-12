@@ -6,6 +6,12 @@
 (define (same-variable? v1 v2)
   (and (variable? v1) (variable? v2) (equal? v1 v2)))
 
+; when (variable-less? v1 v2) returns #t,
+;   that means v1 should be put outside
+(define (variable-less? v1 v2)
+  (string<? (symbol->string v1)
+            (symbol->string v2)))
+
 (load "./exercise_2_92_poly_term_package.scm")
 (load "./exercise_2_92_poly_generic.scm")
 (load "./exercise_2_92_poly_termlist_sparse_package.scm")

@@ -30,7 +30,22 @@
         ; p1 and p2 are not compatible,
         ; in this case, neither p1 nor p2 are not wildcards
         ; we should determine which one should be put inside
-        (error "Polys not in same var"))))
+        (cond ((variable-less? 
+                 (variable p1) (variable p2))
+                (f p1 (make-poly
+                        (variable p1)
+                        (make-tl-from-args
+                          'poly-termlist-sparse
+                          0 (attach-tag 'polynominal p2)))))
+              ((variable-less?
+                 (variable p2) (variable p1))
+                (f (make-poly
+                     (variable p2)
+                     (make-tl-from-args
+                       'poly-termlist-sparse
+                       0 (attach-tag 'polynominal p1)))
+                   p2))
+              (else (error "unexpected case"))))))
 
   ; operations without variable verification
   ;   convert arguments between different termlist types on demand
