@@ -369,9 +369,27 @@
                  (make-tl-from-args
                    'poly-termlist-sparse
                    0 p1)))
+           (p3 (tagged-make-poly
+                 'z
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   0 p1
+                   1 p2)))
+           (p4 (tagged-make-poly
+                 'w
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   0 p1 
+                   1 p2
+                   1 p3
+                   2 p2)))
            )
-      (out p1 p2)
-      (out (fetch-variables (contents p2))))
+      (out (to-string p4))
+      (out (to-string (extract-poly 'x p4)))
+      (out (to-string (extract-poly 'y p4)))
+      (out (to-string (extract-poly 'z p4)))
+      (out (to-string (extract-poly 'w p4)))
+      (out (fetch-variables (contents p4))))
 
 
     )
