@@ -114,6 +114,21 @@
 
   (define poly-equ? (variable-verify poly-equ?-nover))
 
+  ; fetch all variables from a polynominal
+  (define (fetch-variables p)
+    (define (is-poly? data)
+      (eq? 'polynominal (type-tag data)))
+    (cons (variable p)
+          (concat
+            (filter
+              identity
+              (map-poly-term
+                (lambda (term)
+                  (if (is-poly? (coeff term))
+                    (fetch-variables (contents (coeff term)))
+                    #f))
+                (term-list p))))))
+
   (define (extract-term target-var term t-var)
     (define (is-poly? data)
       (eq? 'polynominal (type-tag data)))
@@ -323,25 +338,40 @@
 
     (out "====")
     ; (x^2+x+1)*(y^2+y+1)*z^2
-     (let* ((p1 (tagged-make-poly
-                  'x
-                  (make-tl-from-cseq-num
-                    'poly-termlist-sparse
-                    1 1 1)))
-            (p2 (tagged-make-poly
-                  'y
-                  (make-tl-from-cseq-num
-                    'poly-termlist-sparse
-                    1 1 1)))
-            (p3 (mul p2
-                     (tagged-make-poly
-                       'y
-                       (make-tl-from-args
-                         'poly-termlist-sparse
-                         0 p1)))))
-       (out (to-string (extract-term 'x (make-term-oc 2 p3) 'z)))
-       )
+    (let* ((p1 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 1 1)))
+           (p2 (tagged-make-poly
+                 'y
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 1 1)))
+           (p3 (mul p2
+                    (tagged-make-poly
+                      'y
+                      (make-tl-from-args
+                        'poly-termlist-sparse
+                        0 p1)))))
+      (out (to-string (extract-term 'x (make-term-oc 2 p3) 'z)))
+      )
 
+    ; test fetch-variables
+    (out "+++")
+    (let* ((p1 (tagged-make-poly
+                 'x
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   0 (make-scheme-number 1))))
+           (p2 (tagged-make-poly
+                 'y
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   0 p1)))
+           )
+      (out p1 p2)
+      (out (fetch-variables (contents p2))))
 
 
     )
