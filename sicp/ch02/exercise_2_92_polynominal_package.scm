@@ -129,6 +129,18 @@
                     #f))
                 (term-list p))))))
 
+  ; get extract order of a polynominal
+  (define (extract-order p)
+    (let ((all-vars (fetch-variables p)))
+      ; remove duplicate members
+      (fold-left
+        (lambda (ls cur-ele)
+          (if (memq cur-ele ls)
+            ls
+            (cons cur-ele ls)))
+        nil
+        all-vars)))
+
   (define (extract-term target-var term t-var)
     (define (is-poly? data)
       (eq? 'polynominal (type-tag data)))
@@ -385,13 +397,9 @@
                    2 p2)))
            )
       (out (to-string p4))
-      (out (to-string (extract-poly 'x p4)))
-      (out (to-string (extract-poly 'y p4)))
-      (out (to-string (extract-poly 'z p4)))
-      (out (to-string (extract-poly 'w p4)))
-      (out (fetch-variables (contents p4))))
-
-
+      (out (fetch-variables (contents p4)))
+      (out (extract-order (contents p4)))
+      )
     )
 
   (put 'make 'polynominal tagged-make-poly)
