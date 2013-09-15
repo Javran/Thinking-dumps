@@ -49,32 +49,4 @@
               (loop2 (cdr type2)))))
         (loop1 (cdr type1))))))
 
-(let* ((p1 (make-poly
-             'y
-             (make-tl-from-cseq-num
-               'poly-termlist-sparse
-               1 1 1)))
-       (p2 (make-poly
-             'x
-             (make-tl-from-args
-               'poly-termlist-sparse
-               3 p1
-               3 (make-scheme-number 2)))))
-  (out (to-string p2)))
-
-(let ((p1 (make-poly
-            'x
-            (make-tl-from-cseq-num
-              'poly-termlist-sparse
-              1 2 3)))
-      (p2 (make-poly
-            'y
-            (make-tl-from-cseq-num
-              'poly-termlist-sparse
-              1 2 3))))
-  (out (to-string (add p1 p2)))
-  (out (to-string (add p2 p1)))
-  (out (to-string (mul p1 p2)))
-  )
-
 (end-script)

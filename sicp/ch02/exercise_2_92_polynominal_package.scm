@@ -306,105 +306,10 @@
               )))
       (do-test-q poly-equ? testcases))
     ; test extract-poly
-    (let* ((p1 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   3 2 1 1))))
-      (for-each
-        (compose out to-string)
-        (list
-          p1
-          (extract-term 'x (make-term-oc 2 (make-rational 2 3)) 'x)
-          (extract-term 'y (make-term-oc 2 (make-rational 2 3)) 'x)
-          ; (3x^3 + 2x^2 + 1x^1 + 1)x^3
-          (extract-term 'x (make-term-oc 3 p1) 'x)
-          )))
-    ; test extract-term, same variable
-    (out "====")
-    (let* ((p1 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 1 1)))
-           ; ((x^2+x+1)x^2+(x^2+x+1)x+(x^2+x+1))x^2
-           (p2 (tagged-make-poly
-                 'x
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   2 p1
-                   1 p1
-                   0 p1))))
-      (out (to-string
-             (tagged-make-poly 
-               'x
-               (make-tl-from-args
-                 'poly-termlist-sparse
-                 2 p2))))
-      (out (to-string (extract-term 'x (make-term-oc 2 p2) 'x))))
-    (out "====")
-    ; (x^2+2x+3)y^2
-    (let* ((p1 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 2 3)))
-           )
-      (out (to-string
-             (extract-term 'x (make-term-oc 2 p1) 'y))))
-
-    (out "====")
-    ; (x^2+x+1)*(y^2+y+1)*z^2
-    (let* ((p1 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 1 1)))
-           (p2 (tagged-make-poly
-                 'y
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 1 1)))
-           (p3 (mul p2
-                    (tagged-make-poly
-                      'y
-                      (make-tl-from-args
-                        'poly-termlist-sparse
-                        0 p1)))))
-      (out (to-string (extract-term 'x (make-term-oc 2 p3) 'z)))
-      )
+    ; TODO - auto testcases
 
     ; test fetch-variables
-    (out "+++")
-    (let* ((p1 (tagged-make-poly
-                 'x
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   0 (make-scheme-number 1))))
-           (p2 (tagged-make-poly
-                 'y
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   0 p1)))
-           (p3 (tagged-make-poly
-                 'z
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   0 p1
-                   1 p2)))
-           (p4 (tagged-make-poly
-                 'w
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   0 p1 
-                   1 p2
-                   1 p3
-                   2 p2)))
-           )
-      (out (to-string p4))
-      (out (fetch-variables (contents p4)))
-      (out (extract-order (contents p4)))
-      )
+    ; TODO - auto testcases
     )
 
   (put 'make 'polynominal tagged-make-poly)
