@@ -131,15 +131,20 @@
 
   ; get extract order of a polynominal
   (define (extract-order p)
-    (let ((all-vars (fetch-variables p)))
-      ; remove duplicate members
-      (fold-left
-        (lambda (ls cur-ele)
-          (if (memq cur-ele ls)
-            ls
-            (cons cur-ele ls)))
-        nil
-        all-vars)))
+    (let* ((all-vars (fetch-variables p))
+           (all-var-set
+             ; remove duplicate members
+             (fold-left
+               (lambda (ls cur-ele)
+                 (if (memq cur-ele ls)
+                   ls
+                   (cons cur-ele ls)))
+               nil
+               all-vars)))
+      (sort all-var-set
+            (lambda (s1 s2)
+              (string<? (symbol->string s1)
+                        (symbol->string s2))))))
 
   (define (extract-term target-var term t-var)
     (define (is-poly? data)
