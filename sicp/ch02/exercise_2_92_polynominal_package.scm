@@ -114,10 +114,11 @@
 
   (define poly-equ? (variable-verify poly-equ?-nover))
 
+  (define (is-poly? data)
+    (eq? 'polynominal (type-tag data)))
+
   ; fetch all variables from a polynominal
   (define (fetch-variables p)
-    (define (is-poly? data)
-      (eq? 'polynominal (type-tag data)))
     (cons (variable p)
           (concat
             (filter
@@ -147,9 +148,6 @@
                         (symbol->string s2))))))
 
   (define (extract-term target-var term t-var)
-    (define (is-poly? data)
-      (eq? 'polynominal (type-tag data)))
-
     ; binding: 
     ; term variable: t-var
     ; term coeff   : t-coeff
@@ -226,6 +224,26 @@
           target-var
           (make-tl-empty 'poly-termlist-sparse))
         result)))
+
+  ; do extraction according to sym-order
+  (define (do-extract p sym-order)
+    (if (null? sym-order)
+      p
+      ; call do-extract recursively on all terms
+      (reduce-left
+        add
+        (make-poly
+          target-var
+          (make-tl-empty 'poly-termlist-sparse))
+        (map-poly-term
+          (lambda (term)
+            (let (t-coeff (coeff term))
+              (if (is-poly? t-coeff)
+                (make-term-oc
+                  (order term)
+                  (do-extract t-coeff (cdr sym-order)))
+                term)))
+          (extract-poly (car sym-order) p)))))
 
   (define (project x)
     (let ((tl (term-list x)))
