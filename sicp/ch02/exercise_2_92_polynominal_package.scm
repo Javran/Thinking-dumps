@@ -230,20 +230,23 @@
     (if (null? sym-order)
       p
       ; call do-extract recursively on all terms
-      (reduce-left
-        add
-        (make-poly
-          target-var
-          (make-tl-empty 'poly-termlist-sparse))
-        (map-poly-term
-          (lambda (term)
-            (let (t-coeff (coeff term))
-              (if (is-poly? t-coeff)
-                (make-term-oc
-                  (order term)
-                  (do-extract t-coeff (cdr sym-order)))
-                term)))
-          (extract-poly (car sym-order) p)))))
+      (let ((extract-1 (extract-poly (car sym-order) p)))
+        (reduce-left
+          add
+          (tagged-make-poly
+            (variable extract-1)
+            (make-tl-empty 'poly-termlist-sparse))
+          (tagged-make-poly
+            (variable extract-1)
+            (map-poly-term
+              (lambda (term)
+                (let ((t-coeff (coeff term)))
+                  (if (is-poly? t-coeff)
+                    (make-term-oc
+                      (order term)
+                      (do-extract t-coeff (cdr sym-order)))
+                    term)))
+              (term-list (contents extract-1))))))))
 
   (define (project x)
     (let ((tl (term-list x)))
@@ -328,6 +331,23 @@
 
     ; test fetch-variables
     ; TODO - auto testcases
+    (let* ((pxyz (tagged-make-poly
+                   'z
+                   (make-tl-from-args
+                     'poly-termlist-sparse
+                     2 (tagged-make-poly
+                         'y
+                         (make-tl-from-args
+                           'poly-termlist-sparse
+                           2 (tagged-make-poly
+                               'x
+                               (make-tl-from-cseq-num
+                                 'poly-termlist-sparse
+                                 1 1 1))))))))
+      (out (to-string pxyz))
+      (out (to-string (extract-poly 'x pxyz)))
+      (out (do-extract pxyz '(x y z)))
+      )
     )
 
   (put 'make 'polynominal tagged-make-poly)
