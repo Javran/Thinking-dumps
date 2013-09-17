@@ -244,7 +244,7 @@
       ; call do-extract recursively on all terms
       (let ((extract-1 (extract-poly (car sym-order) p)))
         (tagged-make-poly
-          (variable extract-1)
+          (variable (contents extract-1))
           (list-of-term->term-list
             (map-poly-term
               (lambda (term)
@@ -353,8 +353,9 @@
                                  'poly-termlist-sparse
                                  1 1 1))))))))
       (out (to-string pxyz))
-      (out (to-string (extract-poly 'x pxyz)))
-      (out (do-extract pxyz '(x y z)))
+      (out (to-string (do-extract pxyz '(x y z))))
+      (out (to-string (do-extract pxyz '(y x z))))
+      (out (to-string (do-extract pxyz '(z x y))))
       )
     )
 
