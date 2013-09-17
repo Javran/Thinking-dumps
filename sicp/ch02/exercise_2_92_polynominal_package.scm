@@ -352,10 +352,11 @@
                                (make-tl-from-cseq-num
                                  'poly-termlist-sparse
                                  1 1 1))))))))
-      (out (to-string pxyz))
-      (out (to-string (do-extract pxyz '(x y z))))
-      (out (to-string (do-extract pxyz '(y x z))))
-      (out (to-string (do-extract pxyz '(z x y))))
+      (out 'original (to-string pxyz))
+      (out 'order-xyz (to-string (do-extract pxyz '(x y z))))
+      (out 'order-yxz (to-string (do-extract pxyz '(y x z))))
+      (out 'order-zxy (to-string (do-extract pxyz '(z x y))))
+      (out 'order-zyx (to-string (do-extract pxyz '(z y x))))
       )
     )
 
