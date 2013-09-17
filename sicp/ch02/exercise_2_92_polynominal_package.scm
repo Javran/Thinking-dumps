@@ -243,23 +243,18 @@
       p
       ; call do-extract recursively on all terms
       (let ((extract-1 (extract-poly (car sym-order) p)))
-        (reduce-left
-          add
-          (tagged-make-poly
-            (variable extract-1)
-            (make-tl-empty 'poly-termlist-sparse))
-          (tagged-make-poly
-            (variable extract-1)
-            (list-of-term->term-list
-              (map-poly-term
-                (lambda (term)
-                  (let ((t-coeff (coeff term)))
-                    (if (is-poly? t-coeff)
-                      (make-term-oc
-                        (order term)
-                        (do-extract t-coeff (cdr sym-order)))
-                      term)))
-                (term-list (contents extract-1)))))))))
+        (tagged-make-poly
+          (variable extract-1)
+          (list-of-term->term-list
+            (map-poly-term
+              (lambda (term)
+                (let ((t-coeff (coeff term)))
+                  (if (is-poly? t-coeff)
+                    (make-term-oc
+                      (order term)
+                      (do-extract t-coeff (cdr sym-order)))
+                    term)))
+              (term-list (contents extract-1))))))))
 
   (define (project x)
     (let ((tl (term-list x)))
