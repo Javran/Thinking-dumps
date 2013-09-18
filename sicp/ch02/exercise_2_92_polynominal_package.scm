@@ -256,6 +256,10 @@
                     term)))
               (term-list (contents extract-1))))))))
 
+  (define (extract-all p)
+    (let ((ord-list (extract-order (contents p))))
+      (do-extract p ord-list)))
+
   (define (project x)
     (let ((tl (term-list x)))
       (if (empty? tl)
@@ -353,10 +357,7 @@
                                  'poly-termlist-sparse
                                  1 1 1))))))))
       (out 'original (to-string pxyz))
-      (out 'order-xyz (to-string (do-extract pxyz '(x y z))))
-      (out 'order-yxz (to-string (do-extract pxyz '(y x z))))
-      (out 'order-zxy (to-string (do-extract pxyz '(z x y))))
-      (out 'order-zyx (to-string (do-extract pxyz '(z y x))))
+      (out 'ext (to-string (extract-all pxyz)))
       )
     )
 
