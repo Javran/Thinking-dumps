@@ -359,6 +359,73 @@
       (out 'original (to-string pxyz))
       (out 'ext (to-string (extract-all pxyz)))
       )
+  
+    ; (x^2+2x+3)(y^2+2y+3)(z^2+2z+3)
+    ; 6 different ways to expand
+    ; separate into 2 groups
+    ; append (+x+y+z) in the first group
+    ; append (-x-y-z) in the second group
+    ; subtraction result should be 2x+2y+2z
+    ; TODO:
+    ; * simplify codes
+    ; * finish tests
+    ; * define simplify
+    (let* (
+           ; order1: x y z
+           (a1 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 2 3)))
+           (b1 (tagged-make-poly
+                 'y
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   2 a1
+                   1 (mul (make-scheme-number 2)
+                          a1)
+                   0 (mul (make-scheme-number 3)
+                          a1))))
+           (c1 (tagged-make-poly
+                 'z
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   2 b1
+                   1 (mul (make-scheme-number 2)
+                          b1)
+                   0 (mul (make-scheme-number 3)
+                          b1))))
+           ; order2: x z y
+           (a2 (tagged-make-poly
+                 'x
+                 (make-tl-from-cseq-num
+                   'poly-termlist-sparse
+                   1 2 3)))
+           (b2 (tagged-make-poly
+                 'z
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   2 a2
+                   1 (mul (make-scheme-number 2)
+                          a2)
+                   0 (mul (make-scheme-number 3)
+                          a2))))
+           (c2 (tagged-make-poly
+                 'y
+                 (make-tl-from-args
+                   'poly-termlist-sparse
+                   2 b2
+                   1 (mul (make-scheme-number 2)
+                          b2)
+                   0 (mul (make-scheme-number 3)
+                          b2))))
+           )
+      (out (to-string c1))
+      (out (to-string c2))
+      (out (to-string (sub c1 c2)))
+      (out 'e (to-string (extract-all (sub c1 c2))))
+      )
+
     )
 
   (put 'make 'polynominal tagged-make-poly)
