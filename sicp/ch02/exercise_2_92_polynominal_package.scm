@@ -371,59 +371,43 @@
     ; * finish tests
     ; * define simplify
     (let* (
-           ; order1: x y z
-           (a1 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 2 3)))
-           (b1 (tagged-make-poly
-                 'y
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   2 a1
-                   1 (mul (make-scheme-number 2)
-                          a1)
-                   0 (mul (make-scheme-number 3)
-                          a1))))
-           (c1 (tagged-make-poly
-                 'z
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   2 b1
-                   1 (mul (make-scheme-number 2)
-                          b1)
-                   0 (mul (make-scheme-number 3)
-                          b1))))
-           ; order2: x z y
-           (a2 (tagged-make-poly
-                 'x
-                 (make-tl-from-cseq-num
-                   'poly-termlist-sparse
-                   1 2 3)))
-           (b2 (tagged-make-poly
-                 'z
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   2 a2
-                   1 (mul (make-scheme-number 2)
-                          a2)
-                   0 (mul (make-scheme-number 3)
-                          a2))))
-           (c2 (tagged-make-poly
-                 'y
-                 (make-tl-from-args
-                   'poly-termlist-sparse
-                   2 b2
-                   1 (mul (make-scheme-number 2)
-                          b2)
-                   0 (mul (make-scheme-number 3)
-                          b2))))
+           (make-test-poly
+             (lambda (v1 v2 v3 addition)
+               (let* ((p1 (tagged-make-poly
+                            v1
+                            (make-tl-from-cseq-num
+                              'poly-termlist-sparse
+                              1 2 3)))
+                      (p2 (tagged-make-poly
+                            v2
+                            (make-tl-from-args
+                              'poly-termlist-sparse
+                              2 p1
+                              1 (mul (make-scheme-number 2)
+                                     p1)
+                              0 (mul (make-scheme-number 3)
+                                     p1))))
+                      (p3 (tagged-make-poly
+                            v3
+                            (make-tl-from-args
+                              'poly-termlist-sparse
+                              2 p2
+                              1 (add (mul (make-scheme-number 2) p2)
+                                     (make-scheme-number addition))
+                              0 (mul (make-scheme-number 3)
+                                     p2)))))
+                 p3)))
+           (c1 (make-test-poly 'x 'y 'z  1))
+           (c2 (make-test-poly 'x 'z 'y  1))
+           (c3 (make-test-poly 'y 'x 'z -1))
+           (c4 (make-test-poly 'y 'z 'x  1))
+           (c5 (make-test-poly 'z 'x 'y -1))
+           (c6 (make-test-poly 'z 'y 'x -1))
+           (result (sub (add c1 (add c2 c4))
+                        (add c3 (add c5 c6))))
            )
-      (out (to-string c1))
-      (out (to-string c2))
-      (out (to-string (sub c1 c2)))
-      (out 'e (to-string (extract-all (sub c1 c2))))
+      (out "==== before" (to-string result))
+      (out "==== after"  (to-string (extract-all result)))
       )
 
     )
