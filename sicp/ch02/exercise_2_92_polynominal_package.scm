@@ -372,6 +372,8 @@
     ; * define simplify
     (let* (
            (make-test-poly
+             ; 3 variables ar v1, v2, v3, additional num
+             ;   will be appended into the outmost, 1-order term
              (lambda (v1 v2 v3 addition)
                (let* ((p1 (tagged-make-poly
                             v1
