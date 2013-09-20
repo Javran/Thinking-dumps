@@ -406,7 +406,7 @@
                         (add c3 (add c5 c6))))
            )
       (out "==== before" (to-string result))
-      (out "==== after"  (to-string (extract result)))
+      (out "==== after"  (to-string (simplify result)))
       )
 
     )

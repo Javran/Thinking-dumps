@@ -88,6 +88,11 @@
 (define extract
   (get 'extract 'polynominal-package))
 
+(define (simplify data)
+  (cond ((is-poly? data)
+          (extract data))
+        (else (drop data))))
+
 (run-tests 
   (list 
     'poly-term-package
