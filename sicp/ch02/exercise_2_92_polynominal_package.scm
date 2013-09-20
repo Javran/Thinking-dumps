@@ -406,7 +406,7 @@
                         (add c3 (add c5 c6))))
            )
       (out "==== before" (to-string result))
-      (out "==== after"  (to-string (extract-all result)))
+      (out "==== after"  (to-string (extract result)))
       )
 
     )
@@ -424,6 +424,7 @@
   (put '=zero? '(polynominal) poly-zero?)
   (put 'equ? '(polynominal polynominal) poly-equ?)
   (put 'to-string '(polynominal) to-string-poly)
+  (put 'extract 'polynominal-package extract-all)
 
   (put 'test 'polynominal-package test)
   'done)
