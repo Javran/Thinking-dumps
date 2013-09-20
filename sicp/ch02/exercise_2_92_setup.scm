@@ -82,6 +82,9 @@
 (define order-list ((curry2 map-poly-term) order))
 (define coeff-list ((curry2 map-poly-term) coeff))
 
+(define (is-poly? data)
+  (eq? 'polynominal (type-tag data)))
+
 (run-tests 
   (list 
     'poly-term-package

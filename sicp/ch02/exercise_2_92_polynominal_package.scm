@@ -114,9 +114,6 @@
 
   (define poly-equ? (variable-verify poly-equ?-nover))
 
-  (define (is-poly? data)
-    (eq? 'polynominal (type-tag data)))
-
   ; fetch all variables from a polynominal
   (define (fetch-variables p)
     (cons (variable p)
