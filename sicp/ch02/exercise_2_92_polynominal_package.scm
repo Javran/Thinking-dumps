@@ -110,21 +110,20 @@
 
   (define poly-equ? (variable-verify poly-equ?-nover))
 
-  ; fetch all variables from a polynominal
-  (define (fetch-variables p)
-    (cons (variable p)
-          (concat
-            (filter
-              identity
-              (map-poly-term
-                (lambda (term)
-                  (if (is-poly? (coeff term))
-                    (fetch-variables (contents (coeff term)))
-                    #f))
-                (term-list p))))))
-
-  ; get extract order of a polynominal
+  ; determine variable extraction ordering
   (define (extract-order p)
+    ; fetch all variables from a polynominal
+    (define (fetch-variables p)
+      (cons (variable p)
+            (concat
+              (filter
+                identity
+                (map-poly-term
+                  (lambda (term)
+                    (if (is-poly? (coeff term))
+                      (fetch-variables (contents (coeff term)))
+                      #f))
+                  (term-list p))))))
     (let* ((all-vars (fetch-variables p))
            (all-var-set
              ; remove duplicate members
@@ -140,7 +139,14 @@
               (string<? (symbol->string s1)
                         (symbol->string s2))))))
 
+  ; extract `target-var` from term `term` whose variable is `t-var`
   (define (extract-term target-var term t-var)
+    (define (wrap-term term-var term-order term-coeff)
+      (tagged-make-poly
+        term-var
+        (make-tl-from-args
+          'poly-termlist-sparse
+          term-order term-coeff)))
     ; binding: 
     ; term variable: t-var
     ; term coeff   : t-coeff
@@ -148,15 +154,12 @@
     (let ((t-coeff (coeff term))
           (t-order (order term)))
       (if (is-poly? t-coeff)
-        ; need further extraction
+        ; coeff is a poly - need further extraction
         (if (same-variable? target-var t-var)
+          ; if the embeded coeff has the same variable as the term itself
           (let ((result (extract-poly target-var t-coeff))
-                (order-poly (tagged-make-poly
-                              target-var
-                              (make-tl-from-args
-                                'poly-termlist-sparse
-                                t-order (make-scheme-number 1)))))
-            ; add up t-order into the poly
+                (order-poly (wrap-term target-var t-order (make-scheme-number 1))))
+            ; "move" the outer order into the result
             (mul result order-poly))
           ; else
           (let* ((result (extract-poly target-var t-coeff))
@@ -177,11 +180,7 @@
         ; else
         ; coeff is a number
         ; make term wrapped in a polynominal
-        (let ((wrapped (tagged-make-poly
-                         t-var
-                         (make-tl-from-args
-                           'poly-termlist-sparse
-                           t-order t-coeff))))
+        (let ((wrapped (wrap-term t-var t-order t-coeff)))
           (if (same-variable? target-var t-var)
             wrapped
             ; not same
