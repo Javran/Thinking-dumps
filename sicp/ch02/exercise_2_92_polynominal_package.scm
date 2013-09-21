@@ -164,19 +164,10 @@
           ; else
           (let* ((result (extract-poly target-var t-coeff))
                  ; wrapped term
-                 (wrapped (tagged-make-poly
-                            t-var
-                            (make-tl-from-args
-                              'poly-termlist-sparse
-                              t-order (make-scheme-number 1))))
-                 (order-poly (tagged-make-poly
-                               target-var
-                               (make-tl-from-args
-                                 'poly-termlist-sparse
-                                 0 wrapped))))
+                 (wrapped (wrap-term t-var t-order (make-scheme-number 1)))
+                 (order-poly (wrap-term target-var 0 wrapped)))
             ; add up t-order into the poly
-            (mul result order-poly))
-          )
+            (mul result order-poly)))
         ; else
         ; coeff is a number
         ; make term wrapped in a polynominal
@@ -184,11 +175,7 @@
           (if (same-variable? target-var t-var)
             wrapped
             ; not same
-            (tagged-make-poly
-              target-var
-              (make-tl-from-args
-                'poly-termlist-sparse
-                0 wrapped)))))))
+            (wrap-term target-var 0 wrapped))))))
 
   (define (extract-poly target-var poly)
     (let* ((var (variable (contents poly)))
