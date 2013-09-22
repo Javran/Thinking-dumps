@@ -199,7 +199,7 @@
       ;   Otherwise, the arguments are reduced in a left-associative fashion. 
       (reduce-left 
         add
-        (make-poly
+        (tagged-make-poly
           target-var
           (make-tl-empty 'poly-termlist-sparse))
         result)))
@@ -317,28 +317,39 @@
                    #f)
               )))
       (do-test-q poly-equ? testcases))
-    ; test extract-poly
-    ; TODO - auto testcases
-
-    ; test fetch-variables
-    ; TODO - auto testcases
-    (let* ((pxyz (tagged-make-poly
-                   'z
-                   (make-tl-from-args
-                     'poly-termlist-sparse
-                     2 (tagged-make-poly
-                         'y
-                         (make-tl-from-args
-                           'poly-termlist-sparse
-                           2 (tagged-make-poly
-                               'x
-                               (make-tl-from-cseq-num
-                                 'poly-termlist-sparse
-                                 1 1 1))))))))
-      (out 'original (to-string pxyz))
-      (out 'ext (to-string (extract-all pxyz)))
+    ; test extract-related functions
+    ; * extract-all (used in subtraction, implicitly)
+    ; * extract-poly (used to extract given variable out)
+    ; test poly:
+    ;   (2y^2-y+1)*x^2 + (y+1)*x + 1
+    (let* ((p (tagged-make-poly
+                'x
+                (make-tl-from-args
+                  'poly-termlist-sparse
+                  0 (make-scheme-number 1)
+                  1 (tagged-make-poly
+                      'y
+                      (make-tl-from-cseq-num
+                        'poly-termlist-sparse
+                        1 1))
+                  2 (tagged-make-poly
+                      'y
+                      (make-tl-from-cseq-num
+                        'poly-termlist-sparse
+                        2 -1 1)))))
+           (p-x (extract-poly 'x p))
+           (p-y (extract-poly 'y p)))
+      (assert (same-variable? 'x (variable (contents p-x)))
+              "variable not extracted")
+      (assert (same-variable? 'y (variable (contents p-y)))
+              "variable not extracted")
+      (assert (=zero? (extract-all (sub p-x p)))
+              "extraction result mismatch")
+      (assert (=zero? (extract-all (sub p-y p)))
+              "extraction result mismatch")
       )
   
+    ; (big-case) will run a big testcase and spend a little longer time
     ; (x^2+2x+3)(y^2+2y+3)(z^2+2z+3)
     ; 6 different ways to expand
     ; separate into 2 groups
@@ -346,51 +357,51 @@
     ; append (-x-y-z) in the second group
     ; subtraction result should be 2x+2y+2z
     ; TODO:
-    ; * simplify codes
     ; * finish tests
     ; * define simplify
-    (let* (
-           (make-test-poly
-             ; 3 variables ar v1, v2, v3, additional num
-             ;   will be appended into the outmost, 1-order term
-             (lambda (v1 v2 v3 addition)
-               (let* ((p1 (tagged-make-poly
-                            v1
-                            (make-tl-from-cseq-num
-                              'poly-termlist-sparse
-                              1 2 3)))
-                      (p2 (tagged-make-poly
-                            v2
-                            (make-tl-from-args
-                              'poly-termlist-sparse
-                              2 p1
-                              1 (mul (make-scheme-number 2)
-                                     p1)
-                              0 (mul (make-scheme-number 3)
-                                     p1))))
-                      (p3 (tagged-make-poly
-                            v3
-                            (make-tl-from-args
-                              'poly-termlist-sparse
-                              2 p2
-                              1 (add (mul (make-scheme-number 2) p2)
-                                     (make-scheme-number addition))
-                              0 (mul (make-scheme-number 3)
-                                     p2)))))
-                 p3)))
-           (c1 (make-test-poly 'x 'y 'z  1))
-           (c2 (make-test-poly 'x 'z 'y  1))
-           (c3 (make-test-poly 'y 'x 'z -1))
-           (c4 (make-test-poly 'y 'z 'x  1))
-           (c5 (make-test-poly 'z 'x 'y -1))
-           (c6 (make-test-poly 'z 'y 'x -1))
-           (result (sub (add c1 (add c2 c4))
-                        (add c3 (add c5 c6))))
-           )
-      (out "==== before" (to-string result))
-      (out "==== after"  (to-string (simplify result)))
-      )
-
+    (define (big-case)
+      (let* (
+             (make-test-poly
+               ; 3 variables ar v1, v2, v3, additional num
+               ;   will be appended into the outmost, 1-order term
+               (lambda (v1 v2 v3 addition)
+                 (let* ((p1 (tagged-make-poly
+                              v1
+                              (make-tl-from-cseq-num
+                                'poly-termlist-sparse
+                                1 2 3)))
+                        (p2 (tagged-make-poly
+                              v2
+                              (make-tl-from-args
+                                'poly-termlist-sparse
+                                2 p1
+                                1 (mul (make-scheme-number 2)
+                                       p1)
+                                0 (mul (make-scheme-number 3)
+                                       p1))))
+                        (p3 (tagged-make-poly
+                              v3
+                              (make-tl-from-args
+                                'poly-termlist-sparse
+                                2 p2
+                                1 (add (mul (make-scheme-number 2) p2)
+                                       (make-scheme-number addition))
+                                0 (mul (make-scheme-number 3)
+                                       p2)))))
+                   p3)))
+             (c1 (make-test-poly 'x 'y 'z  1))
+             (c2 (make-test-poly 'x 'z 'y  1))
+             (c3 (make-test-poly 'y 'x 'z -1))
+             (c4 (make-test-poly 'y 'z 'x  1))
+             (c5 (make-test-poly 'z 'x 'y -1))
+             (c6 (make-test-poly 'z 'y 'x -1))
+             (result (sub (add c1 (add c2 c4))
+                          (add c3 (add c5 c6))))
+             )
+        (out "==== before" (to-string result))
+        (out "==== after"  (to-string (simplify result)))))
+    ; uncoment next line for full tests
+    ;(big-case)
     )
 
   (put 'make 'polynominal tagged-make-poly)
@@ -406,6 +417,8 @@
   (put '=zero? '(polynominal) poly-zero?)
   (put 'equ? '(polynominal polynominal) poly-equ?)
   (put 'to-string '(polynominal) to-string-poly)
+
+  ; expose method
   (put 'extract 'polynominal-package extract-all)
 
   (put 'test 'polynominal-package test)
