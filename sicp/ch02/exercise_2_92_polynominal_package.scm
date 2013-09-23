@@ -451,3 +451,7 @@
 
   (put 'test 'polynominal-package test)
   'done)
+
+; TODO:
+; try to remove `contents` and `attach-tag` hackings
+; make example of how we use our code to finish the exercise

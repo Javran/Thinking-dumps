@@ -85,7 +85,6 @@
 (define (is-poly? data)
   (eq? 'polynominal (type-tag data)))
 
-
 (define (simplify data)
   (define extract
     (get 'extract 'polynominal-package))
