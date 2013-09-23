@@ -252,7 +252,7 @@
             (t-order (order term)))
         (if (is-poly? t-coeff)
           (make-term-oc t-order (drop-coeffs t-coeff))
-          (make-term-oc t-coeff (drop t-coeff)))))
+          (make-term-oc t-order (drop t-coeff)))))
     (define (term->termlist term)
       (make-tl-from-args
         'poly-termlist-sparse
@@ -272,7 +272,7 @@
                  'poly-termlist-sparse)
                (map term->termlist dropped-terms))))
       (tagged-make-poly
-        (variable p)
+        (variable (contents p))
         new-tl)))
 
   (define (test)
@@ -427,9 +427,10 @@
                           (add c3 (add c5 c6))))
              )
         (out "==== before" (to-string result))
-        (out "==== after"  (to-string (simplify result)))))
+        (out "==== after"  (to-string (drop-coeffs (simplify result))))
+        ))
     ; uncoment next line for full extraction tests
-    ;(big-case)
+    (big-case)
     )
 
   (put 'make 'polynominal tagged-make-poly)
