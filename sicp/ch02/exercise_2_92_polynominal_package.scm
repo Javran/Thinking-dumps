@@ -385,8 +385,6 @@
     ; append (+x+y+z) in the first group
     ; append (-x-y-z) in the second group
     ; subtraction result should be 2x+2y+2z
-    ; TODO:
-    ; * define simplify
     (define (big-case)
       (let* (
              (make-test-poly
@@ -427,7 +425,7 @@
                           (add c3 (add c5 c6))))
              )
         (out "==== before" (to-string result))
-        (out "==== after"  (to-string (drop-coeffs (simplify result))))
+        (out "==== after"  (to-string (simplify result)))
         ))
     ; uncoment next line for full extraction tests
     (big-case)
@@ -449,6 +447,7 @@
 
   ; expose method
   (put 'extract 'polynominal-package extract-all)
+  (put 'drop-coeffs 'polynominal-package drop-coeffs)
 
   (put 'test 'polynominal-package test)
   'done)

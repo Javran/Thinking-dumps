@@ -85,12 +85,14 @@
 (define (is-poly? data)
   (eq? 'polynominal (type-tag data)))
 
-(define extract
-  (get 'extract 'polynominal-package))
 
 (define (simplify data)
+  (define extract
+    (get 'extract 'polynominal-package))
+  (define drop-coeffs
+    (get 'drop-coeffs 'polynominal-package))
   (cond ((is-poly? data)
-          (extract data))
+         (drop-coeffs (extract data)))
         (else (drop data))))
 
 (run-tests 
