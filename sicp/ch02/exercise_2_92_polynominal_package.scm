@@ -246,6 +246,35 @@
         ((raise-to 'complex)
                   (coeff (first-term tl))))))
 
+  (define (drop-coeffs p)
+    (define (try-drop term)
+      (let ((t-coeff (coeff term))
+            (t-order (order term)))
+        (if (is-poly? t-coeff)
+          (make-term-oc t-order (drop-coeffs t-coeff))
+          (make-term-oc t-coeff (drop t-coeff)))))
+    (define (term->termlist term)
+      (make-tl-from-args
+        'poly-termlist-sparse
+        (order term) (coeff term)))
+    (assert (is-poly? p))
+    (let* ((poly (contents p))
+           (tl (term-list poly))
+           ; a list of dropped terms
+           (dropped-terms
+              (map-poly-term 
+                try-drop
+                tl))
+           (new-tl
+             (fold-left
+               add
+               (make-tl-empty
+                 'poly-termlist-sparse)
+               (map term->termlist dropped-terms))))
+      (tagged-make-poly
+        (variable p)
+        new-tl)))
+
   (define (test)
     ; test accessors
     (let* ((obj (make-poly 'stub-var 'stub-terml))
@@ -357,7 +386,6 @@
     ; append (-x-y-z) in the second group
     ; subtraction result should be 2x+2y+2z
     ; TODO:
-    ; * finish tests
     ; * define simplify
     (define (big-case)
       (let* (
@@ -400,7 +428,7 @@
              )
         (out "==== before" (to-string result))
         (out "==== after"  (to-string (simplify result)))))
-    ; uncoment next line for full tests
+    ; uncoment next line for full extraction tests
     ;(big-case)
     )
 
