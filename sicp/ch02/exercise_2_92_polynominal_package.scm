@@ -112,13 +112,15 @@
 
   ; determine variable extraction ordering
   (define (extract-order p)
-    ; fetch all variables from a polynominal
+    ; fetch all variables from a polynominal (not-tagged)
     (define (fetch-variables p)
       (cons (variable p)
             (concat
               (map-poly-term
                 (lambda (term)
                   (if (is-poly? (coeff term))
+                    ; the coeff of a term has a tag naturally
+                    ;   so we have to remove it
                     (fetch-variables (contents (coeff term)))
                     nil))
                 (term-list p)))))
@@ -175,6 +177,7 @@
             ; not same
             (wrap-term target-var 0 wrapped))))))
 
+  ; extract-poly takes as argument `target-var` and `poly`(with-tag)
   (define (extract-poly target-var poly)
     (let* ((var (variable (contents poly)))
            (tl (term-list (contents poly)))
@@ -450,6 +453,4 @@
   (put 'test 'polynominal-package test)
   'done)
 
-; TODO:
-; try to remove `contents` and `attach-tag` hackings
 ; make example of how we use our code to finish the exercise
