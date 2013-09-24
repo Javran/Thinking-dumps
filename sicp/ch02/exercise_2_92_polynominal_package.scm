@@ -429,7 +429,7 @@
         (out "==== after"  (to-string (simplify result)))
         ))
     ; uncoment next line for full extraction tests
-    (big-case)
+    ; (big-case)
     )
 
   (put 'make 'polynominal tagged-make-poly)
