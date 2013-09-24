@@ -116,14 +116,12 @@
     (define (fetch-variables p)
       (cons (variable p)
             (concat
-              (filter
-                identity
-                (map-poly-term
-                  (lambda (term)
-                    (if (is-poly? (coeff term))
-                      (fetch-variables (contents (coeff term)))
-                      #f))
-                  (term-list p))))))
+              (map-poly-term
+                (lambda (term)
+                  (if (is-poly? (coeff term))
+                    (fetch-variables (contents (coeff term)))
+                    nil))
+                (term-list p)))))
     (let* ((all-vars (fetch-variables p))
            (all-var-set
              ; remove duplicate members
