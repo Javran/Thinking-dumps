@@ -5,3 +5,6 @@
 (load "./exercise_2_93_number_system_rational_p.scm")
 
 (install-rational-p-package)
+
+(define make-rational-p 
+  (get 'make 'rational-p))

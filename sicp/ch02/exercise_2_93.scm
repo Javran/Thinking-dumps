@@ -4,12 +4,18 @@
 (load "./exercise_2_93_setup.scm")
 
 ; test
-(out (to-string
-       (make-poly
-         'x
-         (make-tl-from-cseq-num
-           'poly-termlist-sparse
-           4 3 2 1 0))))
+(let ((p1 (make-poly
+            'x
+            (make-tl-from-cseq-num
+              'poly-termlist-sparse
+              4 3 2 1 0)))
+      (p2 (make-poly
+            'x
+            (make-tl-from-cseq-num
+              'poly-termlist-sparse
+              3 0 2 0 1))))
+  (out (to-string (make-rational-p p1 p2))))
+
 
 ; we start this exercise on the base of exercise 2.92
 ; My plan is:
