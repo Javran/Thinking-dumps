@@ -10,7 +10,11 @@
                (mul (numer y) (denom x)))
           (mul (denom x) (denom y))))
   (define (neg-r x)
-    (make (mul (make-scheme-number -1)
+    ; currently using `sub` are safe because
+    ;   our type system have not yet be aware of `rational-p`
+    ; but here is a potential infinite loop in future
+    ;   if numer is of type `rational-p`
+    (make (sub (make-scheme-number 0)
                (numer x))
           (denom x)))
   (define (sub-r x y)

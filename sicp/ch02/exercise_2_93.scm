@@ -50,5 +50,9 @@
 ; * make a new tag `rational-p` to stand for polynominal `rational`s
 ; * copy code from `rational` and apply some modification accordingly
 ; * test code by using the example given by the exercise
+; update:
+; * maybe we should expose something like adjoin-term / mul-term-by-all-terms
+;     and I guess this might make our life easier
+; * impl `make-polynomial` to support the exercise
 
 (end-script)
