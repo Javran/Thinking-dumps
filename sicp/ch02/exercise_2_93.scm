@@ -41,7 +41,7 @@
   (out (to-string r1))
   (out (to-string r2))
   (out (to-string r3))
-  (out (to-string (add r2 r3)))
+  (out (to-string (sub r2 r3)))
   
   )
 
