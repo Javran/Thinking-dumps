@@ -41,8 +41,8 @@
       ))
 
   (put 'make 'rational-p (tagged 'rational-p make))
-;   (put 'numer '(rational) numer)
-;   (put 'denom '(rational) denom)
+  (put 'numer '(rational-p) numer)
+  (put 'denom '(rational-p) denom)
 ;   (put 'add '(rational rational) (tagged 'rational add))
 ;   (put 'sub '(rational rational) (tagged 'rational sub))
 ;   (put 'mul '(rational rational) (tagged 'rational mul))
