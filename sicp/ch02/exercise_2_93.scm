@@ -47,11 +47,15 @@
   (out "div r3 r2" (to-string (div r3 r2)))
   )
 
-(out (to-string (make-polynomial 'x '((2 1) (0 1)))))
-
-; we start this exercise on the base of exercise 2.92
-; My plan is:
-; * test code by using the example given by the exercise
+(let* ((p1 (make-polynomial 'x '((2 1) (0 1))))
+       (p2 (make-polynomial 'x '((3 1) (0 1))))
+       (rf (make-rational-p p2 p1))
+       (rf2 (add rf rf)))
+  (out "p1" (to-string p1))
+  (out "p2" (to-string p2))
+  (out "rf" (to-string rf))
+  (out "rf2" (to-string rf2))
+  )
 
 ; TODO (future work)
 ; * maybe we should expose something like adjoin-term / mul-term-by-all-terms
