@@ -47,14 +47,13 @@
   (out "div r3 r2" (to-string (div r3 r2)))
   )
 
+(out (to-string (make-polynomial 'x '((2 1) (0 1)))))
+
 ; we start this exercise on the base of exercise 2.92
 ; My plan is:
-; * make a new tag `rational-p` to stand for polynominal `rational`s
-; * copy code from `rational` and apply some modification accordingly
 ; * test code by using the example given by the exercise
-; update:
+
+; TODO (future work)
 ; * maybe we should expose something like adjoin-term / mul-term-by-all-terms
-;     and I guess this might make our life easier
-; * impl `make-polynomial` to support the exercise
 
 (end-script)

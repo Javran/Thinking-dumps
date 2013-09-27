@@ -8,3 +8,19 @@
 
 (define make-rational-p 
   (get 'make 'rational-p))
+
+(define (make-polynomial var terms)
+  (define (term-pair->termlist tp)
+    (let ((t-order (car tp))
+          (t-coeff (make-scheme-number
+                     (cadr tp))))
+      (make-tl-from-args
+        'poly-termlist-sparse
+        t-order t-coeff)))
+  (let ((termlists (map term-pair->termlist terms)))
+    (make-poly
+      var
+      (fold-left
+        add
+        (make-tl-empty 'poly-termlist-sparse)
+        termlists))))
