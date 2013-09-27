@@ -41,9 +41,10 @@
   (out "r1" (to-string r1))
   (out "r2" (to-string r2))
   (out "r3" (to-string r3))
-  (out "add" (to-string (add r2 r3)))
-  (out "sub" (to-string (sub r2 r3)))
-  
+  (out "add r2 r3" (to-string (add r2 r3)))
+  (out "sub r2 r3" (to-string (sub r2 r3)))
+  (out "mul r1 r2" (to-string (mul r1 r2)))
+  (out "div r3 r2" (to-string (div r3 r2)))
   )
 
 ; we start this exercise on the base of exercise 2.92
