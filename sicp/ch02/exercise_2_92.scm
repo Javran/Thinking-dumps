@@ -103,3 +103,9 @@
     ))
 
 (end-script)
+
+; drawbacks
+; * over-complicated
+; * unable to apply "simplify" automatically
+;     because it breaks the assumption that the result has the same variable
+;     of the first argument
