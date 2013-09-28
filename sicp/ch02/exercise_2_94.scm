@@ -25,4 +25,9 @@
   (out (to-string p1)
        (to-string p2)))
 
+; plan:
+; * seems we no longer needs variable ordering system
+;     remove this feature in future packages as it is over-complicated
+;     and not easy to implement something like =zero? correctly.
+
 (end-script)
