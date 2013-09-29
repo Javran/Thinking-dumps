@@ -21,7 +21,7 @@
 (let* ((p1 (make-polynomial
              'x '((4 1) (3 -1) (2 -2) (1 2))))
        (p2 (make-polynomial
-             'x ((3 1) (1 -1)))))
+             'x '((3 1) (1 -1)))))
   (out (to-string p1)
        (to-string p2)))
 
