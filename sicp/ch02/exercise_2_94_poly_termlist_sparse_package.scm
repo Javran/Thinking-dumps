@@ -113,6 +113,9 @@
      mul-term-by-all-terms
      adjoin-term))
 
+  (define (quotient-terms tl1 tl2)
+    (car (div-terms tl1 tl2)))
+
   (define (remainder-terms tl1 tl2)
     (cadr (div-terms tl1 tl2)))
 
@@ -142,6 +145,8 @@
   (put 'div '(poly-termlist-sparse poly-termlist-sparse)
        (lambda (l1 l2)
          (map ((curry2 attach-tag) 'poly-termlist-sparse) (div-terms l1 l2))))
+
+  (put 'quotient '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse quotient-terms))
   (put 'remainder '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse remainder-terms))
 
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)

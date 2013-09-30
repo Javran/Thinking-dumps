@@ -33,12 +33,13 @@
              'x
              (make-tl-from-cseq-num
                'poly-termlist-sparse
-               1 2 3)))
+               3 5 7)))
        (p2 (make-poly
              'x
              (make-tl-from-cseq-num
                'poly-termlist-sparse
-               1 2))))
+               11 13))))
+  (out (to-string (my-quotient p1 p2)))
   (out (to-string (my-remainder p1 p2))))
 
 (end-script)
