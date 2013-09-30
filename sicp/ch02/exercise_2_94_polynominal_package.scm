@@ -42,6 +42,7 @@
                          (make-poly (variable p1)
                                     tl)))
            result)))
+
   ; wt: with tag
   (define div-poly-wt (variable-verify div-poly-no-v))
 
