@@ -21,8 +21,7 @@
              (tl2 (to-poly-termlist-type
                     (term-list p2)
                     (type-tag tl1)))
-             (var (merge-variable (variable p1)
-                                  (variable p2))))
+             (var (variable p1)))
         (make-poly var (f tl1 tl2))))
     binary-op-poly)
 
