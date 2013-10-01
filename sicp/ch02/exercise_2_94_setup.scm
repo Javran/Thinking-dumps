@@ -7,6 +7,8 @@
   (apply-generic 'remainder t1 t2))
 (define (my-quotient t1 t2)
   (apply-generic 'quotient t1 t2))
+(define (my-gcd t1 t2)
+  (apply-generic 'gcd t1 t2))
 
 (install-polynomial-package)
 (install-poly-termlist-sparse-package)

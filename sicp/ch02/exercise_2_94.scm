@@ -29,17 +29,12 @@
 ; * seems we no longer needs variable ordering system
 ;     remove this feature in future packages as it is over-complicated
 
-(let* ((p1 (make-poly
-             'x
-             (make-tl-from-cseq-num
-               'poly-termlist-sparse
-               3 5 7)))
-       (p2 (make-poly
-             'x
-             (make-tl-from-cseq-num
-               'poly-termlist-sparse
-               11 13))))
-  (out (to-string (my-quotient p1 p2)))
-  (out (to-string (my-remainder p1 p2))))
+(let* ((t1 (make-tl-from-cseq-num
+             'poly-termlist-sparse
+             1 2 1))
+       (t2 (make-tl-from-cseq-num
+             'poly-termlist-sparse
+             1 3 3 1)))
+  (out (my-gcd t1 t2)))
 
 (end-script)
