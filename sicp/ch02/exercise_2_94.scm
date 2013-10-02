@@ -25,10 +25,7 @@
   (out (to-string p1)
        (to-string p2)))
 
-; plan:
-; * seems we no longer needs variable ordering system
-;     remove this feature in future packages as it is over-complicated
-
+(newline)
 (let* ((t1 (make-tl-from-cseq-num
              'poly-termlist-sparse
              1 2 1))
@@ -36,5 +33,15 @@
              'poly-termlist-sparse
              1 3 3 1)))
   (out (my-gcd t1 t2)))
+
+(newline)
+(let* ((p1 (make-polynomial
+             'x '((4 1) (3 -1) (2 -2) (1 2))))
+       (p2 (make-polynomial
+             'x '((3 1) (1 -1))))
+       (res (my-gcd p1 p2)))
+  (out "p1" (to-string p1))
+  (out "p2" (to-string p2))
+  (out "gcd(p1,p2)" (to-string (my-gcd p1 p2))))
 
 (end-script)
