@@ -31,6 +31,7 @@
   (define sub-poly (variable-verify (binary-op-poly-maker sub)))
   (define remainder-poly (variable-verify (binary-op-poly-maker my-remainder)))
   (define quotient-poly (variable-verify (binary-op-poly-maker my-quotient)))
+  (define gcd-poly (variable-verify (binary-op-poly-maker my-gcd)))
   
   ; division without verification
   (define (div-poly-no-v p1 p2)
@@ -172,6 +173,7 @@
   (put 'div '(polynominal polynominal) div-poly-wt)
   (put 'quotient '(polynominal polynominal) (tagged 'polynominal quotient-poly))
   (put 'remainder '(polynominal polynominal) (tagged 'polynominal remainder-poly))
+  (put 'gcd '(polynominal polynominal) (tagged 'polynominal gcd-poly))
   (put 'project '(polynominal) project)
   (put '=zero? '(polynominal) poly-zero?)
   (put 'equ? '(polynominal polynominal) poly-equ?)
