@@ -134,6 +134,10 @@
   (define (remainder-terms tl1 tl2)
     (cadr (div-terms tl1 tl2)))
 
+  (define (pseudoremainder-terms tl1 tl2)
+    (remainder-terms (integerize tl1 tl2)
+                     tl2))
+
   (define (gcd-terms a b)
     (if (empty-termlist? b)
       a
@@ -168,6 +172,7 @@
 
   (put 'quotient '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse quotient-terms))
   (put 'remainder '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse remainder-terms))
+  (put 'pseudoremainder '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse pseudoremainder-terms))
   (put 'gcd '(poly-termlist-sparse poly-termlist-sparse) (tagged 'poly-termlist-sparse gcd-terms))
 
   (put 'empty? '(poly-termlist-sparse) empty-termlist?)

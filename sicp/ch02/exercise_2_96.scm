@@ -32,4 +32,12 @@
   ; (36/13)x^2+(-72/13)x^1+(36/13)x^0 
   )
 
+(let ((tl1 (make-tl-from-cseq-num
+             'poly-termlist-sparse
+             11 -15 -3 7))
+      (tl2 (make-tl-from-cseq-num
+             'poly-termlist-sparse
+             13 -21 3 5)))
+  (out (pseudoremainder tl1 tl2)))
+
 (end-script)

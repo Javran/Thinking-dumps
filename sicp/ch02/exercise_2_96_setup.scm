@@ -8,3 +8,6 @@
 
 (run-test 'polynominal-package)
 (run-test 'poly-termlist-sparse-package)
+
+(define (pseudoremainder a b)
+  (apply-generic 'pseudoremainder a b))
