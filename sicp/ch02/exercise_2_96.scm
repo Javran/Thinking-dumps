@@ -29,15 +29,7 @@
   ; (13)x^3+(-21)x^2+(3)x^1+(5)x^0
   (out "gcd(q1,q2)" (to-string (my-gcd q1 q2)))
   ; result:
-  ; (36/13)x^2+(-72/13)x^1+(36/13)x^0 
+  ; (36)x^2+(-72)x^1+(36)x^0 
   )
-
-(let ((tl1 (make-tl-from-cseq-num
-             'poly-termlist-sparse
-             11 -15 -3 7))
-      (tl2 (make-tl-from-cseq-num
-             'poly-termlist-sparse
-             13 -21 3 5)))
-  (out (pseudoremainder tl1 tl2)))
 
 (end-script)

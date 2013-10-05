@@ -141,7 +141,7 @@
   (define (gcd-terms a b)
     (if (empty-termlist? b)
       a
-      (gcd-terms b (remainder-terms a b))))
+      (gcd-terms b (pseudoremainder-terms a b))))
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
