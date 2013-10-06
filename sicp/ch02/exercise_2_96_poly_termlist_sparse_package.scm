@@ -128,6 +128,20 @@
         (make-term-oc 0 (power c (+ 1 (- o1 o2))))
         p)))
 
+  (define (remove-common-coeff-factor tl)
+    (define (remove-factor factor)
+      (lambda (term)
+        (let ((t-coeff (coeff term))
+              (t-order (order term)))
+          (make-term-oc t-order
+                        (make-scheme-number
+                          (quotient (contents t-coeff)
+                                    factor))))))
+    (if (< (length tl) 2)
+      tl
+      (let* ((factor (apply gcd (map (compose contents coeff) tl))))
+        (map (remove-factor factor) tl))))
+
   (define (quotient-terms tl1 tl2)
     (car (div-terms tl1 tl2)))
 
@@ -139,9 +153,10 @@
                      tl2))
 
   (define (gcd-terms a b)
-    (if (empty-termlist? b)
-      a
-      (gcd-terms b (pseudoremainder-terms a b))))
+    (remove-common-coeff-factor
+      (if (empty-termlist? b)
+        a
+        (gcd-terms b (pseudoremainder-terms a b)))))
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)
