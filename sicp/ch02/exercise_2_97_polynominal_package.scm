@@ -185,6 +185,7 @@
   (put 'mul '(polynominal polynominal) (tagged 'polynominal mul-poly))
   (put 'sub '(polynominal polynominal) (tagged 'polynominal sub-poly))
   (put 'div '(polynominal polynominal) div-poly-wt)
+  (put 'reduce '(polynominal polynominal) reduce-poly-wt)
   (put 'quotient '(polynominal polynominal) (tagged 'polynominal quotient-poly))
   (put 'remainder '(polynominal polynominal) (tagged 'polynominal remainder-poly))
   (put 'gcd '(polynominal polynominal) (tagged 'polynominal gcd-poly))
