@@ -162,7 +162,7 @@
     (let* ((common-terms (gcd-terms n d))
            (nn (quotient-terms n common-terms))
            (dd (quotient-terms d common-terms)))
-      (list nn1 dd1)))
+      (list nn dd)))
 
   (define (test)
     ((get 'test-poly-termlist 'poly-generic)

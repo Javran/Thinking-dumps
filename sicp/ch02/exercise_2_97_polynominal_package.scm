@@ -46,8 +46,22 @@
                                     tl)))
            result)))
 
+  ; reduction without verification
+  (define (reduce-poly-no-v p1 p2)
+    (let* ((tl1 (term-list p1))
+           (tl2 (to-poly-termlist-type
+                  (term-list p2)
+                  (type-tag tl1)))
+           (result (reduce tl1 tl2)))
+      (map (lambda (tl)
+             (attach-tag 'polynominal
+                         (make-poly (variable p1)
+                                    tl)))
+           result)))
+
   ; wt: with tag
   (define div-poly-wt (variable-verify div-poly-no-v))
+  (define reduce-poly-wt (variable-verify reduce-poly-no-v))
 
   (define (to-string-poly p)
     (define (term-to-string term var)
