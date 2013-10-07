@@ -9,5 +9,17 @@
 (run-test 'polynominal-package)
 (run-test 'poly-termlist-sparse-package)
 
+(let ()
+  ; a dummy scope not to contaminate global env
+  (define (reduce-scheme-number n d)
+    (assert (integer? n))
+    (assert (integer? d))
+    (let ((g (gcd n d)))
+      (map ((curry2 attach-tag) 'scheme-number)
+           (list (quotient n g)
+                 (quotient d g)))))
+  (put 'reduce '(scheme-number scheme-number) reduce-scheme-number)
+  'done)
+
 (define (reduce n d)
   (apply-generic 'reduce n d))

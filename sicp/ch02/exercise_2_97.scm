@@ -33,4 +33,8 @@
     (out "reduced p2")
     (out-poly pp2)))
 
+(let ((a (make-scheme-number 10))
+      (b (make-scheme-number 40)))
+  (out (reduce a b)))
+
 (end-script)
