@@ -144,10 +144,9 @@
                         (make-scheme-number
                           (quotient (contents t-coeff)
                                     factor))))))
-    (if (< (length tl) 2)
-      tl
-      (let* ((factor (common-coeff-factor tl)))
-        (map (remove-factor factor) tl))))
+    ;
+    (let* ((factor (common-coeff-factor tl)))
+      (map (remove-factor factor) tl)))
 
   (define (quotient-terms tl1 tl2)
     (car (div-terms tl1 tl2)))
@@ -158,10 +157,6 @@
   (define (pseudoremainder-terms tl1 tl2)
     (remainder-terms (integerize tl1 tl2)
                      tl2))
-
-  (define (pseudoquotient-terms tl1 tl2)
-    (quotient-terms (integerize tl1 tl2)
-                    tl2))
 
   (define (gcd-terms a b)
     (cond ((empty-termlist? a) b)
@@ -174,10 +169,8 @@
 
   (define (reduce-terms n d)
     (let* ((common-terms (gcd-terms n d))
-           (nn (pseudoquotient-terms n common-terms))
-           (dd (pseudoquotient-terms d common-terms)))
-      (out "nn rem:" (pseudoremainder-terms n common-terms))
-      (out "dd rem:" (pseudoremainder-terms d common-terms))
+           (nn (quotient-terms n common-terms))
+           (dd (quotient-terms d common-terms)))
       (list nn dd)))
 
   (define (test)
