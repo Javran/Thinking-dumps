@@ -132,6 +132,9 @@
         (make-term-oc 0 (power c (+ 1 (- o1 o2))))
         p)))
 
+  (define (common-coeff-factor tl)
+    (apply gcd (map (compose contents coeff) tl)))
+
   (define (remove-common-coeff-factor tl)
     (define (remove-factor factor)
       (lambda (term)
@@ -143,7 +146,7 @@
                                     factor))))))
     (if (< (length tl) 2)
       tl
-      (let* ((factor (apply gcd (map (compose contents coeff) tl))))
+      (let* ((factor (common-coeff-factor tl)))
         (map (remove-factor factor) tl))))
 
   (define (quotient-terms tl1 tl2)
@@ -156,6 +159,10 @@
     (remainder-terms (integerize tl1 tl2)
                      tl2))
 
+  (define (pseudoquotient-terms tl1 tl2)
+    (quotient-terms (integerize tl1 tl2)
+                    tl2))
+
   (define (gcd-terms a b)
     (cond ((empty-termlist? a) b)
           ((empty-termlist? b) a)
@@ -167,9 +174,10 @@
 
   (define (reduce-terms n d)
     (let* ((common-terms (gcd-terms n d))
-           (nn (quotient-terms n common-terms))
-           (dd (quotient-terms d common-terms)))
-      (out 'ct common-terms n)
+           (nn (pseudoquotient-terms n common-terms))
+           (dd (pseudoquotient-terms d common-terms)))
+      (out "nn rem:" (pseudoremainder-terms n common-terms))
+      (out "dd rem:" (pseudoremainder-terms d common-terms))
       (list nn dd)))
 
   (define (test)
