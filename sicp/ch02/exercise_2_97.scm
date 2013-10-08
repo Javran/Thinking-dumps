@@ -53,10 +53,6 @@
   (out (to-string b)))
 )
 
-; these two are equal!
-; -(x^4 + x^3 + x^2 - 2*x - 1)/(- x^5 + x^3 + x^2 - 1)
-; (x^3 + 2*x^2 + 3*x + 1)/(x^4 + x^3 - x - 1)
-; TODO: show that there're equal
 (let ()
   (define  p1 (make-polynomial 'x '((1 1) (0  1))))
   (define  p2 (make-polynomial 'x '((3 1) (0 -1))))
@@ -65,9 +61,25 @@
   (define rf1 (make-rational-g p1 p2))
   (define rf2 (make-rational-g p3 p4))
   (define result (add rf1 rf2))
+  (define redone (make-rational-g (numer result)
+                                  (denom result)))
   (out (to-string rf1))
   (out (to-string rf2))
-  (out (to-string result))
+  (out (to-string redone))
+  (define wanted-numer (make-poly
+                         'x
+                         (make-tl-from-cseq-num
+                           'poly-termlist-sparse
+                           -1 -2 -3 -1)))
+  (define wanted-denom (make-poly
+                         'x
+                         (make-tl-from-cseq-num
+                           'poly-termlist-sparse
+                           1 1 0 -1 -1)))
+  (define wanted (make-rational-g wanted-numer wanted-denom))
+  ; TODO: write a function, catch results from add/sub/mul,
+  ;   simplify the result by calling "make-rational-g"
+  (out (to-string (add result wanted)))
   )
 
 (end-script)
