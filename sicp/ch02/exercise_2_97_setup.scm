@@ -21,6 +21,22 @@
   (put 'reduce '(scheme-number scheme-number) reduce-scheme-number)
   'done)
 
+(define (make-polynomial var terms)
+  (define (term-pair->termlist tp)
+    (let ((t-order (car tp))
+          (t-coeff (make-scheme-number
+                     (cadr tp))))
+      (make-tl-from-args
+        'poly-termlist-sparse
+        t-order t-coeff)))
+  (let ((termlists (map term-pair->termlist terms)))
+    (make-poly
+      var
+      (fold-left
+        add
+        (make-tl-empty 'poly-termlist-sparse)
+        termlists))))
+
 (define (reduce n d)
   (apply-generic 'reduce n d))
 

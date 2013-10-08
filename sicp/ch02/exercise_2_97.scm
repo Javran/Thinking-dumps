@@ -51,4 +51,14 @@
   (out (to-string a))
   (out (to-string b)))
 
+;(let ()
+;  (define  p1 (make-polynomial 'x '((1 1) (0  1))))
+;  (define  p2 (make-polynomial 'x '((3 1) (0 -1))))
+;  (define  p3 (make-polynomial 'x '((1 1))))
+;  (define  p4 (make-polynomial 'x '((2 1) (0 -1))))
+;  (define rf1 (reduce p1 p2))
+;  (define rf2 (reduce p3 p4))
+;  (out rf1)
+;  )
+
 (end-script)
