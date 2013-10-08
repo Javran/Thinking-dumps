@@ -144,9 +144,13 @@
                         (make-scheme-number
                           (quotient (contents t-coeff)
                                     factor))))))
-    ;
-    (let* ((factor (common-coeff-factor tl)))
-      (map (remove-factor factor) tl)))
+    ; seems (gcd a) = a in scheme
+    ; in this case, the term-list is actually a constant,
+    ; we can simply remove this constant.
+    (if (< (length tl) 1)
+      tl
+      (let* ((factor (common-coeff-factor tl)))
+        (map (remove-factor factor) tl))))
 
   (define (quotient-terms tl1 tl2)
     (car (div-terms tl1 tl2)))
