@@ -33,9 +33,22 @@
     (out "reduced p2")
     (out-poly pp2)))
 
-
-
-(assert make-rational-p)
-(assert make-rational)
+(newline)
+(let ((a (make-rational-g 10 20))
+      (b (make-rational-g
+           (make-poly
+             'x
+             (make-tl-from-cseq-num 
+               'poly-termlist-sparse
+               1 2 1))
+           (make-poly
+             'x
+             (make-tl-from-cseq-num
+               'poly-termlist-sparse
+               1 1)))))
+  ; generic make-rational works
+  ;   for both integers and polynomials
+  (out (to-string a))
+  (out (to-string b)))
 
 (end-script)
