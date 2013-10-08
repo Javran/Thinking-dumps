@@ -115,6 +115,8 @@
 
   ; a ^ b
   (define (power a b)
+    (if (< b 0)
+      (error "Invalid second argument of power"))
     (if (=zero? b)
       (make-scheme-number 1)
       (mul (power a (- b 1)) a)))
@@ -124,6 +126,8 @@
     (let ((o1 (order (first-term p)))
           (o2 (order (first-term q)))
           (c  (coeff (first-term q))))
+      (if (< o1 o2)
+        (error "order1 is less than order2 "))
       (mul-term-by-all-terms
         (make-term-oc 0 (power c (+ 1 (- o1 o2))))
         p)))
@@ -153,15 +157,19 @@
                      tl2))
 
   (define (gcd-terms a b)
-    (remove-common-coeff-factor
-      (if (empty-termlist? b)
-        a
-        (gcd-terms b (pseudoremainder-terms a b)))))
+    (cond ((empty-termlist? a) b)
+          ((empty-termlist? b) a)
+          ((< (order (first-term a)) (order (first-term b))) (gcd-terms b a))
+          (else (remove-common-coeff-factor
+                  (if (empty-termlist? b)
+                    a
+                    (gcd-terms b (pseudoremainder-terms a b)))))))
 
   (define (reduce-terms n d)
     (let* ((common-terms (gcd-terms n d))
            (nn (quotient-terms n common-terms))
            (dd (quotient-terms d common-terms)))
+      (out 'ct common-terms n)
       (list nn dd)))
 
   (define (test)
