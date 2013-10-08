@@ -23,3 +23,9 @@
 
 (define (reduce n d)
   (apply-generic 'reduce n d))
+
+(define (make-rational-g n d)
+  (let ((reduced (reduce n d)))
+    (let ((nn (car reduced))
+          (dd (cadr reduced)))
+      ((if (is-poly? nn) make-rational-p make-rational) nn dd))))
