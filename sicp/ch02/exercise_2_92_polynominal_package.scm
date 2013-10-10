@@ -34,7 +34,7 @@
       (if (compatible-variable?  (variable p1) (variable p2))
         (f p1 p2)
         ; p1 and p2 are not compatible,
-        ; in this case, neither p1 nor p2 are not wildcards
+        ; in this case, neither p1 nor p2 are wildcards
         ; we should determine which one should be put inside
         (cond ((variable-less?  (variable p1) (variable p2))
                 (f p1 (wrap-poly (variable p1) p2)))
