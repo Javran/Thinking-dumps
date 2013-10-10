@@ -79,7 +79,7 @@
   (define wanted (make-rational-g wanted-numer wanted-denom))
   ; TODO: write a function, catch results from add/sub/mul,
   ;   simplify the result by calling "make-rational-g"
-  (out (to-string (add result wanted)))
+  (out (to-string (sub result wanted)))
   )
 
 (end-script)

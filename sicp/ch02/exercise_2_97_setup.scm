@@ -59,6 +59,7 @@
   (define origin-add (get 'add '(rational-p rational-p)))
   (define origin-sub (get 'sub '(rational-p rational-p)))
   (define origin-mul (get 'mul '(rational-p rational-p)))
+
   (put 'add '(rational-p rational-p) (bin-op-modifier origin-add))
   (put 'sub '(rational-p rational-p) (bin-op-modifier origin-sub))
   (put 'mul '(rational-p rational-p) (bin-op-modifier origin-mul))

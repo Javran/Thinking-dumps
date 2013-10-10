@@ -14,7 +14,12 @@
     ;   our type system have not yet be aware of `rational-p`
     ; but here is a potential infinite loop in future
     ;   if numer is of type `rational-p`
-    (make (sub (make-scheme-number 0)
+    (define zero
+      (make-poly
+        (variable (numer x))
+        (make-tl-from-cseq-num
+          'poly-termlist-sparse)))
+    (make (sub zero
                (numer x))
           (denom x)))
   (define (sub-r x y)
