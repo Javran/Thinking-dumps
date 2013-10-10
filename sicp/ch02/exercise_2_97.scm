@@ -3,6 +3,7 @@
 
 (load "./exercise_2_97_setup.scm")
 
+(out "#1 reduction demo")
 (let* ((t1 (make-tl-from-cseq-num
              'poly-termlist-sparse
              1 2 3))
@@ -34,7 +35,7 @@
     (out-poly pp2)))
 
 (newline)
-(define (skip)
+(out "#2 generic make-rational demo")
 (let ((a (make-rational-g 10 20))
       (b (make-rational-g
            (make-poly
@@ -51,8 +52,9 @@
   ;   for both integers and polynomials
   (out (to-string a))
   (out (to-string b)))
-)
 
+(newline)
+(out "#3 final test")
 (let ()
   (define  p1 (make-polynomial 'x '((1 1) (0  1))))
   (define  p2 (make-polynomial 'x '((3 1) (0 -1))))
@@ -60,26 +62,28 @@
   (define  p4 (make-polynomial 'x '((2 1) (0 -1))))
   (define rf1 (make-rational-g p1 p2))
   (define rf2 (make-rational-g p3 p4))
+
   (define result (add rf1 rf2))
-  (define redone (make-rational-g (numer result)
-                                  (denom result)))
-  (out (to-string rf1))
-  (out (to-string rf2))
-  (out (to-string redone))
-  (define wanted-numer (make-poly
-                         'x
-                         (make-tl-from-cseq-num
-                           'poly-termlist-sparse
-                           -1 -2 -3 -1)))
-  (define wanted-denom (make-poly
-                         'x
-                         (make-tl-from-cseq-num
-                           'poly-termlist-sparse
-                           1 1 0 -1 -1)))
-  (define wanted (make-rational-g wanted-numer wanted-denom))
-  ; TODO: write a function, catch results from add/sub/mul,
-  ;   simplify the result by calling "make-rational-g"
-  (out (to-string (sub result wanted)))
+  (define wanted (make-rational-g
+                   (make-poly
+                     'x
+                     (make-tl-from-cseq-num
+                       'poly-termlist-sparse
+                       1 2 3 1))
+                   (make-poly
+                     'x
+                     (make-tl-from-cseq-num
+                       'poly-termlist-sparse
+                       1 1 0 -1 -1))))
+  ; wanted:
+  ;         1 x^3 + 2 x^2 + 3 x^1 + 1 x^0
+  ; -------------------------------------
+  ; 1 x^4 + 1 x^3 + 0 x^2 - 1 x^1 - 1 x^0
+  (out "rf1" (to-string rf1))
+  (out "rf2" (to-string rf2))
+  (out "result" (to-string result))
+  (out "wanted" (to-string wanted))
+  (out "diff" (to-string (sub result wanted)))
   )
 
 (end-script)
