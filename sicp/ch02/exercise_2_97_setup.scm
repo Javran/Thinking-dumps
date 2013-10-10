@@ -21,8 +21,7 @@
   (put 'reduce '(scheme-number scheme-number) reduce-scheme-number)
   'done)
 
-(define (make-polynomial var terms)
-  (define (term-pair->termlist tp)
+(define (make-polynomial var terms) (define (term-pair->termlist tp)
     (let ((t-order (car tp))
           (t-coeff (make-scheme-number
                      (cadr tp))))
@@ -45,3 +44,23 @@
     (let ((nn (car reduced))
           (dd (cadr reduced)))
       ((if (is-poly? nn) make-rational-p make-rational) nn dd))))
+
+(let ()
+  (define numer car)
+  (define denom cdr)
+
+  (define (bin-op-modifier op)
+    (lambda (a b)
+      (let ((result (contents (op a b))))
+        (let ((n (numer result))
+              (d (denom result)))
+          (make-rational-g n d)))))
+
+  (define origin-add (get 'add '(rational-p rational-p)))
+  (define origin-sub (get 'sub '(rational-p rational-p)))
+  (define origin-mul (get 'mul '(rational-p rational-p)))
+  (put 'add '(rational-p rational-p) (bin-op-modifier origin-add))
+  (put 'sub '(rational-p rational-p) (bin-op-modifier origin-sub))
+  (put 'mul '(rational-p rational-p) (bin-op-modifier origin-mul))
+
+  'done)
