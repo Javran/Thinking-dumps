@@ -24,5 +24,24 @@
         (out "Insufficient funds")))))
 (for-each new-withdraw '(25 25 60 15))
 
+(define (make-withdraw balance)
+  (lambda (amount)
+    (if (>= balance amount)
+      (begin (set! balance (- balance amount))
+             (out balance))
+      (out "Insufficient funds"))))
+
+(define W1 (make-withdraw 100))
+(define W2 (make-withdraw 100))
+
+(newline)
+(W1 50)
+; 50
+(W2 70)
+; 30
+(W2 40)
+; Insufficient funds
+(W1 40)
+; 10
 
 (end-script)
