@@ -72,4 +72,11 @@
 ((acc 'withdraw) 60)
 ; 30
 
+(newline)
+(define acc2 (make-account 100))
+((acc2 'withdraw) 40)
+; 60
+((acc 'withdraw) 40)
+; Insufficient funds
+
 (end-script)
