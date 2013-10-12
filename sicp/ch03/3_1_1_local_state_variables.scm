@@ -49,7 +49,7 @@
     (if (>= balance amount)
       (begin (set! balance (- balance amount))
              (out balance))
-      "Insufficient funds"))
+      (out "Insufficient funds")))
   (define (deposit amount)
     (set! balance (+ balance amount))
     (out balance))
@@ -59,6 +59,17 @@
           (else (error "Unknown request: MAKE-ACCOUNT"
                        m))))
   dispatch)
-      
+
+(newline)
+(define acc (make-account 100))
+
+((acc 'withdraw) 50)
+; 50
+((acc 'withdraw) 60)
+; Insufficient funds
+((acc 'deposit) 40)
+; 90
+((acc 'withdraw) 60)
+; 30
 
 (end-script)
