@@ -26,13 +26,12 @@
             ((eq? m 'next) (next-val))))
     dispatch))
 
-(define x (trigger
-            0
-            ((curry2 <=) 3)
-            inc
-            call-the-cops))
-
 (define (make-account balance password)
+  (define wrong-password-trigger
+    (trigger 0
+             ((curry2 <) 7) ; time > 7 => 7 < time => (< 7 time)
+             inc
+             call-the-cops))
   (define (withdraw amount)
     (if (>= balance amount)
       (begin (set! balance (- balance amount))
@@ -48,13 +47,20 @@
   (define (change-password new-password)
     (set! password new-password))
   (define (dispatch try-password m)
-    (if (eq? password try-password)
-      (cond ((eq? m 'withdraw) withdraw)
-            ((eq? m 'deposit) deposit)
-            ((eq? m 'change-password) change-password)
-            (else (error "Unknown request: MAKE-ACCOUNT"
-                         m)))
-      (lambda args (out "Incorrect password"))))
+    (lambda (x)
+      (if (eq? password try-password)
+        (begin
+          (wrong-password-trigger 'reset)
+          ((cond ((eq? m 'withdraw) withdraw)
+                 ((eq? m 'deposit) deposit)
+                 ((eq? m 'change-password) change-password)
+                 (else (error "Unknown request: MAKE-ACCOUNT"
+                              m)))
+            x))
+        (begin
+          (wrong-password-trigger 'next)
+          (out "Incorrect password")))))
   dispatch)
+
 
 (end-script)
