@@ -62,5 +62,21 @@
           (out "Incorrect password")))))
   dispatch)
 
+(define acc (make-account 200 'passwd))
+
+((acc 'passwd 'withdraw) 120)
+; 80
+
+(let loop ((try 0))
+  (if (< try 10)
+    (begin
+      ((acc 'wrong-passwd 'withdraw) 10)
+      (loop (inc try)))
+    'done))
+; "Incorrect password" 10 times, with `call-the-cops` invoked 3 times
+((acc 'passwd 'withdraw) 30)
+; 50
+((acc 'wrong-passwd 'withdraw) 10)
+; "Incorrect password", but without triggering `call-the-cops`
 
 (end-script)
