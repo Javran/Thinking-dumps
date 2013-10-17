@@ -54,12 +54,17 @@
   (out (estimate-pi trial-count)))
 
 (let ()
+  ; try to separate generated number and the internal state
+  ; call `rand-result` on a `pair` object to get the result
+  ; call `rand-state` on a `pair` object to get the random state
   (define rand-result car)
   (define rand-state cdr)
   (define mk-rand-st cons)
 
   (define (rand-update pair)
     (let ((st (rand-state pair)))
+      ; since random-state object get updated when called by random
+      ;   simply pass the old one should be ok
       (mk-rand-st (random random-range st)
                   st)))
 
