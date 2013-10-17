@@ -90,4 +90,9 @@
     (iter trials 0 initial-x))
   (out (estimate-pi trial-count)))
 
+; yes, I don't think monte carlo cannot be abstract simply because
+;   we had to handle random-states explicitly.
+;   extra task: impl monte-carlo in a way that can be used without
+;   knowing the experiment details
+
 (end-script)
