@@ -23,9 +23,32 @@
   (out (random 1000 seed1)
        (random 1000 seed1))
   ; we cannot guarantee that these two `(random seed1)` will produce the same outcome
+  (newline)
   )
 
 (rand-impl-example)
 
+(let ()
+  (define (rand) (random 1000000))
+
+  (define (estimate-pi trials)
+    (sqrt (/ 6 (monte-carlo trials cesaro-test))))
+  (define (cesaro-test)
+    (= (gcd (rand) (rand)) 1))
+
+  (define (monte-carlo trials experiment)
+    (define (iter trials-remaining trials-passed)
+      (cond ((= trials-remaining 0)
+              (/ trials-passed trials))
+            ((experiment)
+              (iter (- trials-remaining 1)
+                    (+ trials-passed 1)))
+            (else
+              (iter (- trials-remaining 1)
+                    trials-passed))))
+    (iter trials 0))
+
+  (out (estimate-pi 1000))
+  )
 
 (end-script)
