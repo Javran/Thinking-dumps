@@ -7,7 +7,7 @@
 
 (define random-range 1000000)
 (define make-rnd-state cons)
-(define rnd-state-result car)
+(define rnd-state-value car)
 (define rnd-state-state cdr)
 
 ; generate a list of random numbers of size len,
@@ -16,13 +16,25 @@
   (if (= 0 len)
     (cons '() init-state)
     (let* ((rnd-obj (rand-update init-state))
-           (value (rnd-state-result rnd-obj))
+           (value (rnd-state-value rnd-obj))
            (state (rnd-state-state rnd-obj))
            (rest-objs (gen-random-numbers (dec len) rand-update state))
            (rest-values (car rest-objs))
            (fin-state (cdr rest-objs)))
       (cons (cons value rest-values)
             fin-state))))
+
+(define make-ru cons)
+(define ru-value car)
+(define ru-state cdr)
+
+(define rand-update-init make-random-state)
+(define (rand-update st)
+  (let* ((st1 (make-random-state st))
+         (value (random random-range st1)))
+    (make-ru value st1)))
+
+(out (gen-random-numbers 10 rand-update (rand-update-init)))
 
 (define (cesaro-test rand-update rnd-state)
   (let* ((rs1 (rand-update rnd-state))
