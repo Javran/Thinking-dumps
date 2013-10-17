@@ -5,9 +5,24 @@
 ;   that `makes it difficult for us to isolate the Monte
 ;   Carlo idea`.
 
+(define random-range 1000000)
 (define make-rnd-state cons)
 (define rnd-state-result car)
 (define rnd-state-state cdr)
+
+; generate a list of random numbers of size len,
+;   and return (a,s) where a is the list and s is the final state
+(define (gen-random-numbers len rand-update init-state)
+  (if (= 0 len)
+    (cons '() init-state)
+    (let* ((rnd-obj (rand-update init-state))
+           (value (rnd-state-result rnd-obj))
+           (state (rnd-state-state rnd-obj))
+           (rest-objs (gen-random-numbers (dec len) rand-update state))
+           (rest-values (car rest-objs))
+           (fin-state (cdr rest-objs)))
+      (cons (cons value rest-values)
+            fin-state))))
 
 (define (cesaro-test rand-update rnd-state)
   (let* ((rs1 (rand-update rnd-state))
@@ -34,9 +49,11 @@
         (let* ((result (single-test rand-update rnd-state))
                (res-value (rnd-state-result result))
                (res-state (rnd-state-state result)))
-          (if res-value
-            (cons #t
-          
-
+          (cons #t
+                (list
+                  (inc trial-done) 
+                  ((if res-value inc identity) trial-success)
+                  res-state))))))
+  experiment)
 
 (end-script)
