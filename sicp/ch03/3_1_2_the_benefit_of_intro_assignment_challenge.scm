@@ -34,16 +34,14 @@
          (value (random random-range st1)))
     (make-ru value st1)))
 
-(out (gen-random-numbers 10 rand-update (rand-update-init)))
-
+; cesaro-test returns a pair: a boolean result and the final random state
 (define (cesaro-test rand-update rnd-state)
-  (let* ((rs1 (rand-update rnd-state))
-         (rs2 (rand-update (rnd-state-state rs1)))
-         (r1 (rnd-state-result rs1))
-         (r2 (rnd-state-result rs2))
-         (fin-state (rnd-state-state rs2))
-         (result (= (gcd r1 r2) 1)))
-    (make-rnd-state result fin-state)))
+  (let* ((randoms (gen-random-numbers 2 rand-update rnd-state))
+         (value (car randoms))
+         (state (cdr randoms))
+         (result (= (gcd (car value)
+                         (cadr value)) 1)))
+    (cons result state)))
 
 ; trial-need: the number of single tests needed
 ; single-test: (single-test rand-update rnd-state) should return a pair:
@@ -51,6 +49,7 @@
 (define (make-experiment trial-need single-test)
   ; (experiment state): s -> (a,s)
   ; if s = nil, the total experiments are done
+  ; a only makes sense if s = nil
   (define (experiment state rand-update)
     (let ((trial-done (car state))
           (trial-success (cadr state))
@@ -59,13 +58,26 @@
         (cons (/ trial-success trial-done)
               nil)
         (let* ((result (single-test rand-update rnd-state))
-               (res-value (rnd-state-result result))
+               (res-value (rnd-state-value result))
                (res-state (rnd-state-state result)))
-          (cons #t
+          (cons 'not-done
                 (list
                   (inc trial-done) 
                   ((if res-value inc identity) trial-success)
                   res-state))))))
   experiment)
+
+(define (monte-carlo init-state experiment)
+  (let* ((exp-result (experiment init-state rand-update))
+         (next-value (car exp-result))
+         (next-state (cdr exp-result)))
+    (if (null? next-state)
+      next-value
+      (monte-carlo next-state experiment))))
+
+(define (estimate-pi trials)
+  (sqrt (/ 6 (monte-carlo trials cesaro-test))))
+
+(out (sqrt ( / 6 (monte-carlo (list 0 0 (rand-update-init)) (make-experiment 10000 cesaro-test)))))
 
 (end-script)
