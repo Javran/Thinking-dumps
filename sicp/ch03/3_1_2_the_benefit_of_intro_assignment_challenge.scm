@@ -47,9 +47,9 @@
 ; single-test: (single-test rand-update rnd-state) should return a pair:
 ; the test result and the next random state
 (define (make-experiment trial-need single-test)
-  ; (experiment state): s -> (a,s)
-  ; if s = nil, the total experiments are done
-  ; a only makes sense if s = nil
+  ; (experiment state): `s -> (a,s)`
+  ; if `s` = nil, the total experiments are done
+  ; `a` only makes sense if `s` = nil
   (define (experiment state rand-update)
     (let ((trial-done (car state))
           (trial-success (cadr state))
@@ -57,16 +57,23 @@
       (if (= trial-done trial-need)
         (cons (/ trial-success trial-done)
               nil)
+        ; run single test, break result into (value,state)
         (let* ((result (single-test rand-update rnd-state))
                (res-value (rnd-state-value result))
                (res-state (rnd-state-state result)))
           (cons 'not-done
                 (list
                   (inc trial-done) 
-                  ((if res-value inc identity) trial-success)
+                  (if res-value
+                    (inc trial-success)
+                    trial-success)
                   res-state))))))
   experiment)
 
+; to write a general monte-carlo is simple:
+;   the trial count is hidden inside experiment
+;   when each experiment is done, we retrieve the result and break it into
+;   the experiment result and the next state
 (define (monte-carlo init-state experiment)
   (let* ((exp-result (experiment init-state rand-update))
          (next-value (car exp-result))
@@ -76,8 +83,13 @@
       (monte-carlo next-state experiment))))
 
 (define (estimate-pi trials)
-  (sqrt (/ 6 (monte-carlo trials cesaro-test))))
+  (let ((init-state (list 0 0 (rand-update-init)))
+        (experiment (make-experiment trials cesaro-test)))
+    (sqrt (/ 6 (monte-carlo init-state experiment)))))
 
-(out (sqrt ( / 6 (monte-carlo (list 0 0 (rand-update-init)) (make-experiment 10000 cesaro-test)))))
+(out (estimate-pi 1000))
+
+; ok, I see the point that it's tiresome to write state-passing style
+;   repeatly in scheme.
 
 (end-script)
