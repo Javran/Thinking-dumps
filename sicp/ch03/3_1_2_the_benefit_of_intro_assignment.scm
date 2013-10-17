@@ -28,8 +28,11 @@
 
 (rand-impl-example)
 
+(define random-range 1000000)
+(define trial-count 1000)
+
 (let ()
-  (define (rand) (random 1000000))
+  (define (rand) (random random-range))
 
   (define (estimate-pi trials)
     (sqrt (/ 6 (monte-carlo trials cesaro-test))))
@@ -48,7 +51,38 @@
                     trials-passed))))
     (iter trials 0))
 
-  (out (estimate-pi 1000))
-  )
+  (out (estimate-pi trial-count)))
+
+(let ()
+  (define rand-result car)
+  (define rand-state cdr)
+  (define mk-rand-st cons)
+
+  (define (rand-update pair)
+    (let ((st (rand-state pair)))
+      (mk-rand-st (random random-range st)
+                  st)))
+
+  (define random-init (mk-rand-st nil (make-random-state)))
+  
+  (define (estimate-pi trials)
+    (sqrt (/ 6 (random-gcd-test trials random-init))))
+
+  (define (random-gcd-test trials initial-x)
+    (define (iter trials-remaining trials-passed x)
+      (let ((x1 (rand-update x)))
+        (let ((x2 (rand-update x1)))
+          (cond ((= trials-remaining 0)
+                  (/ trials-passed trials))
+                ((= (gcd (rand-result x1) (rand-result x2)) 1)
+                  (iter (- trials-remaining 1)
+                        (+ trials-passed 1)
+                        x2))
+                (else
+                  (iter (- trials-remaining 1)
+                        trials-passed
+                        x2))))))
+    (iter trials 0 initial-x))
+  (out (estimate-pi trial-count)))
 
 (end-script)
