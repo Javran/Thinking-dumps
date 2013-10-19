@@ -22,6 +22,11 @@
   (let ((range (- high low)))
     (+ low (random (exact->inexact range)))))
 
-(out (random-in-range 1 10))
+(define (estimate-integral pred x1 x2 y1 y2 trials)
+  (define (experiment)
+    (let ((x (random-in-range x1 x2))
+          (y (random-in-range y1 y2)))
+      (pred x y)))
+  (monte-carlo trials experiment))
 
 (end-script)
