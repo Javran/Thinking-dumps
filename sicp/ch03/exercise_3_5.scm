@@ -29,4 +29,10 @@
       (pred x y)))
   (monte-carlo trials experiment))
 
+(define (in-circle? x y)
+  ; test if (x,y) is inside the circle
+  ; x^2 + y^2 <= 1^2
+  ; => x^2 + y^2 <= 1
+  (<= (square x) (square y) 1))
+
 (end-script)
