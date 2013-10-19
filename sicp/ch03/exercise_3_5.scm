@@ -35,7 +35,11 @@
   ; test if (x,y) is inside the circle
   ; x^2 + y^2 <= 1^2
   ; => x^2 + y^2 <= 1
-  (<= (square x) (square y) 1))
+  (<= (+ (square x) (square y)) 1))
 
+(define (estimate-pi trials)
+  (exact->inexact (estimate-integral in-circle? -2 2 -2 2 trials)))
+
+(out (estimate-pi 10000))
 
 (end-script)
