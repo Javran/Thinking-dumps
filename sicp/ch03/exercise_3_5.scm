@@ -27,12 +27,15 @@
     (let ((x (random-in-range x1 x2))
           (y (random-in-range y1 y2)))
       (pred x y)))
-  (monte-carlo trials experiment))
+  (* (monte-carlo trials experiment)
+     (- x2 x1)
+     (- y2 y1)))
 
 (define (in-circle? x y)
   ; test if (x,y) is inside the circle
   ; x^2 + y^2 <= 1^2
   ; => x^2 + y^2 <= 1
   (<= (square x) (square y) 1))
+
 
 (end-script)
