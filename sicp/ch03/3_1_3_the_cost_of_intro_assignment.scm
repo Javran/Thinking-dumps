@@ -29,4 +29,28 @@
 (out (D 10))
 ; 15
 
+; subsitution model analysis on `(D 20)`
+; (D 20)
+; => ((make-decrementer 25) 20)
+; => ((lambda (amount) (- 25 amount)) 20)
+; => (- 25 20)
+; => 5
+
+; subsitution model analysis on `(W 20)`
+; (W 20)
+; => ((make-simplified-withdraw 25) 20)
+; => ((lambda (amount)
+;      (set! balance (- 25 amount))
+;      25) 20)
+; => (set! balance (- 25 20) 25
+; => (set! balance 5) 25
+; *WRONG ANSWER*
+
+; we would have to distinguish the first occurence of `balance`
+;   from the second occurence of `balance`, and the subsitution
+;   model cannot do this.
+
+; subsitution model is base ultimately on the notion that
+;   the symbols in our language are essentially names for values.
+
 (end-script)
