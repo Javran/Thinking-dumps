@@ -23,6 +23,12 @@
       (lambda args (out "Incorrect password"))))
   dispatch)
 
-(define acc (make-account 100 'secret-password))
+; some modification required.
+; * not flexible enough to just simply output the result
+; * should make the amount store in an environment that can be shared
+;   because I made an extension that enables us to change the password
+;   we have to do something like this in case that changing the password
+;   of one account has side-effect on another account.
+;   
 
 (end-script)
