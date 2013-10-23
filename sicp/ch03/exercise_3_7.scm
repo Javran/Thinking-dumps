@@ -1,7 +1,28 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-; excerpted from ex 3.3
+; obj-holder: store an obj that can be shared
+(define (obj-holder obj)
+  ; primitives
+  (define (run f) (f obj))
+  (define (modify! f)
+    (set! obj (f obj))
+    obj)
+
+  ; readability
+  (define (test pred) (run pred))
+  (define (get) (run identity))
+
+  (define (dispatch m)
+    (cond ((eq? m 'run) run)
+          ((eq? m 'modify) modify!)
+          ((eq? m 'test) test)
+          ((eq? m 'get) get)
+          (else (error "Unknown request:"
+                       m))))
+  dispatch)
+
+; excerpted from ex 3.3, modified
 (define (make-account balance password)
   ; use the convention that use exclamation mark
   ;   for methods that have side-effect
@@ -34,6 +55,7 @@
 ;   because I made an extension that enables us to change the password
 ;   we have to do something like this in case that changing the password
 ;   of one account has side-effect on another account.
+
 
 
 (end-script)
