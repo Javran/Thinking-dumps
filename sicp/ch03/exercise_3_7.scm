@@ -55,10 +55,14 @@
   (define (joint joint-account-password)
     (make-account balance joint-account-password))
 
+  (define (show)
+    ((balance 'get)))
+
   (define (dispatch try-password m)
     (if (eq? password try-password)
       (cond ((eq? m 'withdraw) withdraw!)
             ((eq? m 'deposit) deposit!)
+            ((eq? m 'show) show)
             ((eq? m 'change-password) change-password!)
             ((eq? m 'joint) joint)
             (else (error "Unknown request: MAKE-ACCOUNT"
@@ -66,17 +70,29 @@
       (lambda args (warn "Incorrect password"))))
   dispatch)
 
-(define alice (make-account 1000 'pw))
+(define (make-joint origin-acc origin-pw joint-pw)
+  ((origin-acc origin-pw 'joint) joint-pw))
 
-(out ((alice 'pw 'withdraw) 100))
-(out ((alice 'pw 'withdraw) 100))
-(out ((alice 'pw 'withdraw) 100))
-(out ((alice 'pw 'deposit) 1234))
+(define peter-acc (make-account 1000 'open-sesame))
+(define paul-acc (make-joint peter-acc 'open-sesame 'rosebud))
 
-(define bob ((alice 'pw 'joint) 'pp))
+(out ((peter-acc 'open-sesame 'show)))
+; 1000
+(out ((peter-acc 'rosebud 'show)))
+; Incorrect password
+(out ((paul-acc 'open-sesame 'show)))
+; Incorrect password
+(out ((paul-acc 'rosebud 'show)))
+; 1000
 
-(out ((bob 'pp 'withdraw) 1000))
-(out ((bob 'pp 'deposit) 100000))
-(out ((alice 'pw 'withdraw) 1))
+(newline)
+(out ((peter-acc 'open-sesame 'withdraw) 500))
+; 500
+(out ((paul-acc 'rosebud 'show)))
+; 500
+(out ((paul-acc 'rosebud 'deposit) 734))
+; 1234
+(out ((peter-acc 'open-sesame 'show)))
+; 1234
 
 (end-script)
