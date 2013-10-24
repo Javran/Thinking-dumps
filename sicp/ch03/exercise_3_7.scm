@@ -28,7 +28,11 @@
   ;   for methods that have side-effect
 
   ; initialization:
-  (set! balance (obj-holder balance))
+  ;   for numbers, wrap them inside
+  ;   for anything else, just set it to balance
+  (if (number? balance)
+    (set! balance (obj-holder balance))
+    (set! balance balance))
 
   ; methods:
   (define (withdraw! amount)
@@ -40,30 +44,27 @@
         ((balance 'get)))
       (begin
         (warn "Insufficient funds")
-        #f)
-      ))
+        #f)))
   (define (deposit! amount)
     ((balance 'modify)
       (lambda (balance) (+ balance amount)))
     ((balance 'get)))
   (define (change-password! new-password)
     (set! password new-password))
+
+  (define (joint joint-account-password)
+    (make-account balance joint-account-password))
+
   (define (dispatch try-password m)
     (if (eq? password try-password)
       (cond ((eq? m 'withdraw) withdraw!)
             ((eq? m 'deposit) deposit!)
             ((eq? m 'change-password) change-password!)
+            ((eq? m 'joint) joint)
             (else (error "Unknown request: MAKE-ACCOUNT"
                          m)))
       (lambda args (warn "Incorrect password"))))
   dispatch)
-
-; some modification required.
-; * should make the amount store in an environment that can be shared
-;   because I made an extension that enables us to change the password
-;   we have to do something like this in case that changing the password
-;   of one account has side-effect on another account.
-
 
 (define alice (make-account 1000 'pw))
 
@@ -72,5 +73,10 @@
 (out ((alice 'pw 'withdraw) 100))
 (out ((alice 'pw 'deposit) 1234))
 
+(define bob ((alice 'pw 'joint) 'pp))
+
+(out ((bob 'pp 'withdraw) 1000))
+(out ((bob 'pp 'deposit) 100000))
+(out ((alice 'pw 'withdraw) 1))
 
 (end-script)
