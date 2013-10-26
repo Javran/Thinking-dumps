@@ -51,4 +51,20 @@
 ; * locates the binding of the variable in the environment
 ; * changes that binding to indicate the new value
 
+; here I show you an example that might disclose something about this model
+
+(define (f) (out 'a))
+(define (g) (f))
+(g)
+; a
+(define (f) (out 'b))
+(g)
+; b
+
+; the behavior of `g` changes when we redefine `f`.
+; I guess that is exactly because the environment where
+; `f` and `g` are defined is the same, redefining `f` results
+; in a change of the current environment, and finally leads to
+; the behavior change of `g`
+
 (end-script)
