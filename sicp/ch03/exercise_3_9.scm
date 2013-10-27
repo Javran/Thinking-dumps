@@ -27,4 +27,31 @@
 ; (* n 120) E1:[G], n = 6 in E1
 ; 720
 
+(define (factorial-itr n) (fact-iter 1 1 n))
+(define (fact-iter product counter max-count)
+  (if (> counter max-count)
+    product
+    (fact-iter (* counter product)
+               (+ counter 1)
+               max-count)))
+
+; for simplicity: p=product, c=counter, m=max-count
+(out (factorial-itr 6))
+; (factorial-itr 6) : G
+; (fact-iter 1 1 n) : E1:[G], n = 6 in E1
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E2:[E1,G], p = 1, c = 1, m = 6 in E2
+; (fact-iter (* c p) (+ c 1) m) : E2:[E1,G]
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E3:[E2,E1,G], p = 1, c = 2, m = 6 in E3
+; (fact-iter (* c p) (+ c 1) m) : E3:[E2,E1,G]
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E4:[E3,E2,E1,G], p = 2, c = 3, m = 6 in E4
+; (fact-iter (* c p) (+ c 1) m) : E4:[E3,E2,E1,G]
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E5:[E4,E3,E2,E1,G], p = 6, c = 4, m = 6 in E5
+; (fact-iter (* c p) (+ c 1) m) : E5:[E4,E3,E2,E1,G]
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E6:[E5,E4,E3,E2,E1,G], p = 24, c = 5, m = 6 in E6
+; (fact-iter (* c p) (+ c 1) m) : E6:[E5,E4,E3,E2,E1,G]
+; (if (> c m) p (fact-iter (* c p) (+ c 1) m)) : E7:[E6,E5,E4,E3,E2,E1,G], p = 120, c = 6, m = 6 in E7
+; (fact-iter (* c p) (+ c 1) m) : E7:[E6,E5,E4,E3,E2,E1,G]
+; (if (> c m) p _) : E8:[E7,E6,E5,E4,E3,E2,E1,G], p = 720, c = 7, m = 6 in E8
+; 720
+
 (end-script)
