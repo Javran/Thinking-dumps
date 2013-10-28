@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+; TODO: LaTeX to draw illstration?
+
 (define (make-withdraw inital-amount)
   (let ((balance inital-amount))
     (lambda (amount)
