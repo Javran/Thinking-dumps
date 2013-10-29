@@ -124,4 +124,16 @@
 ;   however, their environments are totally different:
 ;   [E2,E1,G] for W1, [E5,E4,G] for W2
 
+
+; comparing `make-withdraw` in section 3.2.3
+; (define (make-withdraw balance)
+;   (lambda (amount)
+;     (if (>= balance amount)
+;       (begin (set! balance (- balance amount))
+;              balance)
+;       "Insufficient funds")))
+; the difference is that `make-withdraw` in this exercise
+;   has one more level of `let`, so the version in this exercise
+;   has one more level of environment.
+
 (end-script)
