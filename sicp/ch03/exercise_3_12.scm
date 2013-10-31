@@ -6,7 +6,7 @@
 ;   try to achieve it using LaTeX, in future.
 
 (define (append! x y)
-  (define (last-pair? x)
+  (define (last-pair x)
     (if (null? (cdr x)) x (last-pair (cdr x))))
   (set-cdr! (last-pair x) y)
   x)
