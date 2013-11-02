@@ -1,10 +1,6 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-; TODO:
-;   this exercise also needs boxes and lines
-;   try to achieve it using LaTeX, in future.
-
 (define (append! x y)
   (define (last-pair x)
     (if (null? (cdr x)) x (last-pair (cdr x))))
@@ -15,6 +11,30 @@
 (define y (list 'c 'd))
 (define z (append x y))
 
+#|
+x:
++-+-+  +-+-+
+|.|.-->|.|/|
++|+-+  +|+-+
+ v      v
+ a      b
+
+y:
++-+-+  +-+-+
+|.|.-->|.|/|
++|+-+  +|+-+
+ v      v
+ c      d
+
+z:
++-+-+  +-+-+  +-+-+  +-+-+
+|.|.-->|.|.-->|.|.-->|.|/|
++|+-+  +|+-+  +|+-+  +|+-+
+ v      v      v      v
+ a      b      c      d
+
+|#
+
 (out z)
 ; (a b c d)
 
@@ -22,6 +42,32 @@
 ; (b)
 
 (define w (append! x y))
+
+#|
+x:
++-+-+  +-+-+
+|.|.-->|.|.|
++|+-+  +|+|+
+ v      v |
+ a      b |
+          |
+y:        |
+ +--------+
+ v
++-+-+  +-+-+
+|.|.-->|.|/|
++|+-+  +|+-+
+ v      v
+ c      d
+
+w:
++-+-+  +-+-+  +-+-+  +-+-+
+|.|.-->|.|.-->|.|.-->|.|/|
++|+-+  +|+-+  +|+-+  +|+-+
+ v      v      v      v
+ a      b      c      d
+
+|#
 
 (out w)
 ; (a b c d)
