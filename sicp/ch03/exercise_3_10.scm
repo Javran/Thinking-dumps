@@ -1,8 +1,6 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-; TODO: LaTeX to draw illstration?
-
 (define (make-withdraw inital-amount)
   (let ((balance inital-amount))
     (lambda (amount)
@@ -135,5 +133,57 @@
 ; the difference is that `make-withdraw` in this exercise
 ;   has one more level of `let`, so the version in this exercise
 ;   has one more level of environment.
+
+#|
+instead of drawing pictures, I'll use some other syntax to represent things:
+  an environment is:
+    a set of bindings, and its parent environment, G = global environment
+  a function is:
+    a function body, parameter, and its environment, function body omitted
+
+#1: after `make-withdraw` is defined
+
+G: parent= nil
+  make-withdraw -> func: para= (inital-amount), env= G
+
+#2: after `W1` is set
+
+G: parent= nil
+  make-withdraw -> ...
+  W1 -> func: para= (amount), env= E2
+E1: parent= G
+  inital-amount -> 100
+E2: parent= E1
+  balance -> 100
+
+#3: `(W1 50)`
+
+G: parent= nil
+  make-withdraw -> ...
+  W1 -> func: para= (amount), env= E2
+E1: parent= G
+  inital-amount -> 100
+E2: parent= E1
+  balance -> 50
+E3(orphan): parent= E2
+  amount -> 50
+
+#4: after `W2` is set
+
+G: parent= nil
+  make-withdraw -> ...
+  W1 -> func: para= (amount), env= E2
+E1: parent= G
+  inital-amount -> 100
+E2: parent= E1
+  balance -> 50
+E3(orphan): parent= E2
+  amount -> 50
+E4: parent= G
+  inital-amount -> 100
+E5: parent= E4
+  balance -> 100
+
+|#
 
 (end-script)
