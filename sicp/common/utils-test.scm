@@ -34,3 +34,13 @@
               (mat 1 3 #f)
               (mat 2 4 #f))))
   (do-test (rec-eq? (close-number? 1.5)) testcases))
+
+(let ((testcases
+        (list (cons (list 3 '(1 2 3 4)) 3)
+              (cons (list 3 '()) 0)
+              (cons (list 2 '(1)) 1)
+              (cons (list 3 (circular-list 1)) 3)))
+      (correct?
+        (lambda (result expected)
+          (= (length result) expected))))
+  (do-test take testcases correct?))

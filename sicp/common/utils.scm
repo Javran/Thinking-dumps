@@ -165,4 +165,10 @@
       (else #f)))
   compare)
 
+; take upto n elements from the list
+(define (take n ls)
+  (if (or (= n 0) (null? ls))
+    nil
+    (cons (car ls) (take (- n 1) (cdr ls)))))
+
 'done
