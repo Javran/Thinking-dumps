@@ -7,11 +7,6 @@
   (set-cdr! (last-pair x) (make-cycle y))
   x)
 
-(define (take n ls)
-  (if (or (= n 0) (null? ls))
-    nil
-    (cons (car ls) (take (- n 1) (cdr ls)))))
-
 (define x1 (make-cycle '(1 2 3 4)))
 (define x2 (make-lcycle '(1 2 3) '(4 5 6)))
 (define x3 '(1 2 3 4 5))
