@@ -1,3 +1,5 @@
+import Control.Monad
+
 newtype Parser a = Parser (String -> [(a,String)])
 
 runParser :: Parser a -> String -> [(a,String)]
@@ -21,6 +23,10 @@ instance Monad Parser where
         (v,inp') <- m inp
         let (Parser newM) = f v
         newM inp'
+
+instance MonadPlus Parser where
+    mzero = zero
+    mplus = plus
 
 inBetween :: (Ord a) => a -> a -> a -> Bool
 inBetween a b v = a <= v && v <= b
@@ -54,6 +60,17 @@ p `plus` q = Parser $ f
 letter :: Parser Char
 letter = lower `plus` upper
 
+alphanum :: Parser Char
+alphanum = letter `plus` digit
+
+word :: Parser String
+word = neWord `plus` result ""
+    where
+        neWord = do
+            x <- letter
+            xs <- word
+            return (x:xs)
+
 main = do
-    let result = runParser (letter >>= \x -> digit >>= \y -> return [x,y]) "A9C"
+    let result = runParser word "Yes!"
     print result
