@@ -82,16 +82,40 @@ E1: ...
 E2: ...
 
 E3: (parent = G)
-  z = ... (from z in G)
+  a = ... (from z in G)
 
 E4: (parent = E3)
   m = 'cdr
 
 ; then my-set-car!
 E5: (parent = G)
+  a = ... (from y in E1)
+  v = 17
+  ; ((a 'set-car!) v) v
+
+E6: (parent = E5)
+  m = 'set-car!
+  ; (dispatch m)
+
+E7: (parent = E6)
+  v = 17
+  ; (set! x v)
 
 |#
 
 (out (my-car x))
+
+#|
+G: ...
+
+...
+
+E8: (parent = G)
+  a = ... (from x in G)
+
+E9: (parent = E8)
+  m = 'car
+
+|#
 
 (end-script)
