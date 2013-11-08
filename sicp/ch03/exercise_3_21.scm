@@ -39,4 +39,19 @@
 ; moveover, when the queue is empty, `rear-ptr` will be reset
 ;   so the correctness is guaranteed
 
+(newline)
+(define print-queue (compose out car))
+(define q2 (make-queue))
+(insert-queue! q2 'a)
+(print-queue q2)
+
+(insert-queue! q2 'b)
+(print-queue q2)
+
+(delete-queue! q2)
+(print-queue q2)
+
+(delete-queue! q2)
+(print-queue q2)
+
 (end-script)
