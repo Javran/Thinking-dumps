@@ -15,58 +15,52 @@
 ;   front-delete-deque!
 ;   rear-delete-deque!
 
+; building block: nodes: (cons <value> (cons <prev> <next>))
+(define (make-node x)
+  (cons x (cons nil nil)))
+(define val-node car)
+(define prev-node cadr)
+(define next-node cddr)
 
-; actually the front-ptr is always the data container
-;   and rear-ptr keeps pointing to the last pair of
-;   that container (if possible)
+(define (set-prev-node! n x)
+  (set-car! (cdr n) x))
+(define (set-next-node! n x)
+  (set-cdr! (cdr n) x))
+
 (define (make-deque)
   (cons nil nil))
-
 (define front-ptr car)
 (define rear-ptr cdr)
-
 (define set-front-ptr! set-car!)
 (define set-rear-ptr! set-cdr!)
 
+(define (front-insert-deque! dq item)
+  (let ((node (make-node item)))
+    (if (empty-deque? dq)
+      (begin
+        (set-front-ptr! dq node)
+        (set-rear-ptr! dq node))
+      (begin
+        (set-next-node! node (front-ptr dq))
+        (set-prev-node! (front-ptr dq) node)
+        (set-front-ptr! dq node)))))
+
 (define empty-deque? (compose null? front-ptr))
+(define front-deque (compose val-node front-ptr))
+(define rear-deque (compose val-node rear-ptr))
 
-(define front-deque (compose car front-ptr))
-(define rear-deque (compose car rear-ptr))
-
-(define (front-insert-deque! q i)
-  (let ((pair (cons i nil)))
-    (if (empty-deque? q)
+(define (print-deque dq)
+  (let loop ((n (front-ptr dq)))
+    (if (null? n)
+      'done
       (begin
-        (set-front-ptr! q pair)
-        (set-rear-ptr! q pair))
-      (begin
-        (set-cdr! pair (front-ptr q))
-        (set-front-ptr! q pair)))))
+        (out (val-node n))
+        (loop (next-node n))))))
 
-(define (rear-insert-deque! q i)
-  (let ((pair (cons i nil)))
-    (if (empty-deque? q)
-      (begin
-        (set-front-ptr! q pair)
-        (set-rear-ptr! q pair))
-      (begin
-        (set-cdr! (rear-ptr q) pair)
-        (set-rear-ptr! q pair)))))
-
-(define (front-delete-deque! q)
-  (set-front-ptr! q (cdr (front-ptr q))))
-
-
-(let ((dq (make-deque)))
-  (for-each ((curry2 front-insert-deque!) dq)
-            '(3 2 1))
-  (for-each ((curry2 rear-insert-deque!) dq)
-            '(4 5 6))
-  (front-delete-deque! dq)
-  (out (front-ptr dq))
+(let ((x (make-deque)))
+  (for-each ((curry2 front-insert-deque!) x)
+            '(5 4 3 2 1))
+  (print-deque x)
   )
-
-
-
 
 (end-script)
