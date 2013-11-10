@@ -56,24 +56,48 @@
         (set-next-node! (rear-ptr dq) node)
         (set-rear-ptr! dq node)))))
 
+(define (front-delete-deque! dq)
+  (if (null? (next-node (front-ptr dq)))
+    (begin
+      (set-front-ptr! dq nil)
+      (set-rear-ptr! dq nil))
+    (begin
+      (set-front-ptr! dq (next-node (front-ptr dq)))
+      (set-prev-node! (front-ptr dq) nil))))
+
+(define (rear-delete-deque! dq)
+  (if (null? (prev-node (rear-ptr dq)))
+    (begin
+      (set-front-ptr! dq nil)
+      (set-rear-ptr! dq nil))
+    (begin
+      (set-rear-ptr! dq (prev-node (rear-ptr dq)))
+      (set-next-node! (rear-ptr dq) nil))))
+
 (define empty-deque? (compose null? front-ptr))
 (define front-deque (compose val-node front-ptr))
 (define rear-deque (compose val-node rear-ptr))
 
-(define (print-deque dq)
-  (let loop ((n (front-ptr dq)))
-    (if (null? n)
-      'done
-      (begin
-        (out (val-node n))
-        (loop (next-node n))))))
+(define (for-each-deque f dq)
+  (if (empty-deque? dq)
+    'done
+    (let loop ((cur (front-ptr dq)))
+      (if (null? cur)
+        'done
+        (begin
+          (f (val-node cur))
+          (loop (next-node cur)))))))
 
 (let ((x (make-deque)))
   (for-each ((curry2 front-insert-deque!) x)
             '(5 4 3 2 1))
   (for-each ((curry2 rear-insert-deque!) x)
             '(6 7 8 9))
-  (print-deque x)
+  (front-delete-deque! x)
+  (front-delete-deque! x)
+  (front-delete-deque! x)
+  (rear-delete-deque! x)
+  (for-each-deque out x)
   )
 
 (end-script)
