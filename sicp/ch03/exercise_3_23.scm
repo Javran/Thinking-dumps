@@ -45,6 +45,17 @@
         (set-prev-node! (front-ptr dq) node)
         (set-front-ptr! dq node)))))
 
+(define (rear-insert-deque! dq item)
+  (let ((node (make-node item)))
+    (if (empty-deque? dq)
+      (begin
+        (set-front-ptr! dq node)
+        (set-rear-ptr! dq node))
+      (begin
+        (set-prev-node! node (rear-ptr dq))
+        (set-next-node! (rear-ptr dq) node)
+        (set-rear-ptr! dq node)))))
+
 (define empty-deque? (compose null? front-ptr))
 (define front-deque (compose val-node front-ptr))
 (define rear-deque (compose val-node rear-ptr))
@@ -60,6 +71,8 @@
 (let ((x (make-deque)))
   (for-each ((curry2 front-insert-deque!) x)
             '(5 4 3 2 1))
+  (for-each ((curry2 rear-insert-deque!) x)
+            '(6 7 8 9))
   (print-deque x)
   )
 
