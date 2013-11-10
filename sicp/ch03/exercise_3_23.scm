@@ -43,9 +43,26 @@
         (set-cdr! pair (front-ptr q))
         (set-front-ptr! q pair)))))
 
+(define (rear-insert-deque! q i)
+  (let ((pair (cons i nil)))
+    (if (empty-deque? q)
+      (begin
+        (set-front-ptr! q pair)
+        (set-rear-ptr! q pair))
+      (begin
+        (set-cdr! (rear-ptr q) pair)
+        (set-rear-ptr! q pair)))))
+
+(define (front-delete-deque! q)
+  (set-front-ptr! q (cdr (front-ptr q))))
+
+
 (let ((dq (make-deque)))
   (for-each ((curry2 front-insert-deque!) dq)
             '(3 2 1))
+  (for-each ((curry2 rear-insert-deque!) dq)
+            '(4 5 6))
+  (front-delete-deque! dq)
   (out (front-ptr dq))
   )
 
