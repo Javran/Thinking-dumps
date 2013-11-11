@@ -107,9 +107,36 @@
 
   (for-each ((curry2 front-insert-deque!) dq)
             '(5 4 3 2 1))
+  ; 1 2 3 4 5 >> dq
   (for-each ((curry2 rear-insert-deque!) dq)
             '(6 7 8 9))
+  ; dq << 6 7 8 9
   (output-deque)
+  ; 1 .. 9
+  (front-delete-deque! dq)
+  (front-delete-deque! dq)
+  (rear-delete-deque! dq)
+  (output-deque)
+  ; 3 .. 8
+  (let loop ((x 0))
+    (if (< x 6)
+      (begin
+        (front-delete-deque! dq)
+        (loop (+ x 1)))))
+  (output-deque)
+  ; empty
+  (front-insert-deque! dq 1)
+  (output-deque)
+  ; 1
+  (rear-delete-deque! dq)
+  (rear-insert-deque! dq 2)
+  (rear-insert-deque! dq 3)
+  ; dq << 2 3
+  (output-deque)
+  ; 2 3
+  (front-delete-deque! dq)
+  (output-deque)
+  ; 3
   )
 
 (end-script)
