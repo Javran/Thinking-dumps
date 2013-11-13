@@ -27,12 +27,6 @@
                       (cdr table)))))
   'ok)
 
-; we can actually build 2d table using 1d table
-;   the idea is to let the table be
-;     key -> key-1
-;     val -> table of (key-2, value)
-; TODO: impl
-
 (define (make-table)
   (list '*2d-table*))
 
