@@ -59,4 +59,16 @@
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
 
+(put 'math '+ +)
+(put 'math '- -)
+(put 'convert 'num->str number->string)
+
+(newline)
+(out ((get 'math '+) 1 2 3))
+; 6
+(out ((get 'math '-) 6 1 2 3))
+; 0
+(out ((get 'convert 'num->str) 1234))
+; 1234
+
 (end-script)
