@@ -4,10 +4,13 @@
 (define (make-table . same-key?)
   (let ((sk? (if (null? same-key?)
                equal?
-               same-key?))
+               (car same-key?)))
         (table (list '*table*)))
     (define (lookup k)
-      (let ((result ((association-procedure sk? car) k (cdr table))))
+      ; please refer to:
+      ; http://www.gnu.org/software/mit-scheme/documentation/mit-scheme-ref/Association-Lists.html
+      (let ((result
+              ((association-procedure sk? car) k (cdr table))))
         (if result
           (cdr result)
           #f)))
@@ -51,6 +54,24 @@
       '(0 2 4 6 8 10 12 14 #f #f a)))
   )
 
+; case-insensitive key
+(define (same-key? a b)
+  (string=? (string-upcase a)
+            (string-upcase b)))
 
+(let ((tb (make-table same-key?)))
+  (for-each
+    (lambda (num)
+      (let ((key (string-append "key-" (number->string num)))
+            (val (* num num)))
+        (insert! key val tb)))
+    (list-in-range 1 10))
+  (out (lookup "KEY-1" tb))
+  ; 1
+  (out (lookup "KeY-10" tb))
+  ; 100
+  (out (lookup "keY-7" tb))
+  ; 49
+  )
 
 (end-script)
