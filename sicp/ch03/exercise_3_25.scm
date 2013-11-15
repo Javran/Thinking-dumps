@@ -14,22 +14,28 @@
 
 ; insert and return the value
 (define (insertx! keys value table)
-  (if (null? keys)
-    value
-    (let ((record (lookup (car keys) table)))
-      (if record
-        (let ((return (insertx! (cdr keys) value record)))
-          (insert! (car keys) return record))
-        (let* ((subtable (make-table))
-               (return (insertx! (cdr keys) value subtable)))
-          (insert! (car keys) return subtable))))))
+  (define (insertx-intern! keys value table)
+    (if (null? keys)
+      value
+      (let ((record (lookup (car keys) table)))
+        (if record
+          (let ((return (insertx-intern! (cdr keys) value record)))
+            (out return)
+            (insert! (car keys) return table)
+            record)
+          (let* ((subtable (make-table))
+                 (return (insertx-intern! (cdr keys) value subtable)))
+            (insert! (car keys) return subtable)
+            subtable)))))
+  (insert! (car keys) (insertx-intern! keys value table) table)
+  table)
 
 
 (let ((test (make-tablex)))
   (insert! 'a 'val1 test)
   (insert! 'b 'val2 test)
-  (out (lookupx '(a) test))
-  (insertx! '(a b c) 'val3 test)
+  (insertx! '(c d a) 'val3 test)
+  (out (lookupx '(c d a) test))
   (out test))
 
 (end-script)
