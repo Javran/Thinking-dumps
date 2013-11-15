@@ -26,12 +26,21 @@
                 (insert! (car keys) subtable table)))))))
 
 
-(let ((test (make-tablex)))
-  (insert! 'a 'val1 test)
-  (insert! 'b 'val2 test)
-  (insertx! '(c d e) 'val3 test)
-  (insertx! '(c d g) 'val4 test)
-  (out test)
-  (out (lookupx '(c d g) test)))
+(let ((tb (make-tablex)))
+  (insertx! '(a b c d e) "abcde" tb)
+  (insertx! '(a b c d f) "abcdf" tb)
+  (insertx! '(a b d) "abd" tb)
+  (insertx! '(c d) "cd" tb)
+  (insertx! '(e) "e" tb)
+
+  (for-each
+    (lambda (path)
+      (out (lookupx path tb)))
+    '((a b c d e)
+      (a b c d f)
+      (a b d)
+      (c d)
+      (e)
+      (f a l s e))))
 
 (end-script)
