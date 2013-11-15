@@ -27,6 +27,11 @@
 
 
 (let ((tb (make-tablex)))
+  ; supports arbitary length of "key path"
+  ;   however, we cannot distinct a value from a table
+  ;   if the length of the "key path" differs
+  ;   we should never use a prefix of any key path that
+  ;   has been assigned previously
   (insertx! '(a b c d e) "abcde" tb)
   (insertx! '(a b c d f) "abcdf" tb)
   (insertx! '(a b d) "abd" tb)
