@@ -15,24 +15,23 @@
 ;   or find an existing key-value pair (depending on the `key`) and just insert the node
 
 (define (make-node key val)
-  (list key val nil nil))
+  (let ((ltree nil)
+        (rtree nil))
+    (define (set-key! x) (set! key x) 'ok)
+    (define (set-val! x) (set! val x) 'ok)
+    (define (set-ltree! x) (set! ltree x) 'ok)
+    (define (set-rtree! x) (set! rtree x) 'ok)
 
-(define (key-node n)   (list-ref n 0))
-(define (val-node n)   (list-ref n 1))
-(define (ltree-node n) (list-ref n 2))
-(define (rtree-node n) (list-ref n 3))
-
-(define (set-key-node! n k)
-  (set-car! n k))
-(define (set-val-node! n v)
-  (set-car! (cdr n) v))
-(define (set-ltree-node! n l)
-  (set-car! (cddr n) l))
-(define (set-rtree-node! n r)
-  (set-car! (cdddr n) r))
-
-(define n (make-node 1 2))
-
-
+    (define (dispatch m)
+      (cond ((eq? m 'key) key)
+            ((eq? m 'val) val)
+            ((eq? m 'set-key!) set-key!)
+            ((eq? m 'set-val!) set-val!)
+            ((eq? m 'ltree) ltree)
+            ((eq? m 'rtree) rtree)
+            ((eq? m 'set-ltree!) set-ltree!)
+            ((eq? m 'set-rtree!) set-rtree!)
+            ))
+    dispatch))
 
 (end-script)
