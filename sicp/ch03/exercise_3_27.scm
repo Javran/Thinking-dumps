@@ -146,4 +146,10 @@
 
 |#
 
+; Would the scheme still work 
+;   if we had simply defined memo-fib to be (memoize fib) ?
+; No, because `fib n`  will call itself
+;   to calculate `fib (n-1)` and `fib (n-2)` rather than
+;   to look up the cached values
+
 (end-script)
