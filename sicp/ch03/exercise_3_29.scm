@@ -13,4 +13,15 @@
 ;                        (logical-not a)
 ;                        (logical-not b)))
 
+
+#|
+           ------
+a -> o -> |      \
+          |  and  |-> o ->
+b -> o -> |      /
+           ------
+|#
+
+
+
 (end-script)
