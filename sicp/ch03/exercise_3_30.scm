@@ -19,4 +19,19 @@
     (or-gate c1 c2 c-out)
     'ok))
 
+(define (ripple-carry-adder as bs ss c)
+  (define (ripple-carry-adder-intern as bs c0 ss c1)
+    (if (= (length as) 1)
+      (begin
+        (assert (= (length bs) 1))
+        (assert (= (length ss) 1))
+        (full-adder (car as) (car bs) c0 (car ss) c1))
+      (let ((c-mid (make-wire)))
+        (ripple-carry-adder-intern (cdr as) (cdr bs) c0 (cdr ss) c-mid)
+        (full-adder (car as) (car bs) c-mid (car ss) c1))))
+  (let ((c0 (make-wire)))
+    (set-signal! c0 0)
+    (ripple-carry-adder-intern as bs c0 ss c)
+    'ok))
+
 (end-script)
