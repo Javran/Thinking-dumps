@@ -59,4 +59,23 @@ case 2: not the last one
 
 |#
 
+#|
+What is the delay needed to obtain the complete output
+  from an n-bit ripple-carry adder, expressed
+  in terms of the delays for and-gates, or-gates, and inverters?
+
+delay = total delay of n FAs
+assume different gates are evaluated simultaneously,
+one full-adder delay would be:
+`2*half-adder-delay + or-gate-delay`
+one half-adder delay would be:
+`max(or-gate-delay, and-gate-delay + inverter-delay) + and-gate-delay`
+
+the n-bit ripple-carry adder delay would be:
+` 2n * max(or-gate-delay, and-gate-delay + inverter-delay)
++ 2n * and-gate-delay
++  n * or-gate-delay
+`
+|#
+
 (end-script)
