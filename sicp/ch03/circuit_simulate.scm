@@ -120,7 +120,33 @@
 (define (add-action! wire action-procedures)
   ((wire 'add-action!) action-procedures))
 
-; missing definition: after-delay, inverter-delay
+; an instance of `agenda` is kept to implement the event-driven part
+;   the agenda tells us that is the next step.
+;   while we are doing operations on agenda, procedures keeps being added
+;   according to what is happening, and thus keep the whole process going
+
+(define (after-delay delay action)
+  (add-to-agenda! (+ delay (current-time the-agenda))
+                  action
+                  the-agenda))
+
+(define (propagate)
+  (if (empty-agenda? the-agenda)
+    ; until there's nothing left
+    'done
+    (let ((first-item (first-agenda-item the-agenda)))
+      ; get the first item (procedure) and run it.
+      (first-item)
+      ; remove and keep going
+      (remove-first-agenda-item! the-agenda)
+      (propagate))))
+
+; missing definition: inverter-delay
 ; missing definition: and-gate-delay, or-gate-delay
+; missing definition: make-agenda, empty-agenda?
+; missing definition: first-agenda-item, remove-first-agenda-item!
+; missing definition: add-to-agenda!
+; missing definition: current-time
+; missing definition: the-agenda
 
 (end-script)
