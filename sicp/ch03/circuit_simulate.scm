@@ -141,12 +141,87 @@
       (remove-first-agenda-item! the-agenda)
       (propagate))))
 
-; missing definition: inverter-delay
-; missing definition: and-gate-delay, or-gate-delay
-; missing definition: make-agenda, empty-agenda?
+(define (probe name wire)
+  (add-action!
+      wire
+      (lambda ()
+        (format #t
+          ; name, current-time, value
+          "~%~A ~A  New-value = ~A~%"
+          name
+          (current-time the-agenda)
+          (get-signal wire)))))
+
+(define (make-time-segment time queue)
+  (cons time queue))
+(define (segment-time s) (car s))
+(define (segment-queue s) (cdr s))
+
+; DON'T USE THESE CONFUSING STUFFS `(list 0)` WHEN
+;   WHAT YOUR ARE DOING IS TO CREATE A PAIR
+;   RATHER THAN A LIST
+
+; make an agenda with time=0, no time segments
+(define (make-agenda) (cons 0 nil))
+(define current-time car)
+(define segments cdr)
+
+(define set-current-time! set-car!)
+(define set-segments! set-cdr!)
+
+(define first-segment (compose car segments))
+(define rest-segments (compose cdr segments))
+
+(define the-agenda (make-agenda))
+(define inverter-delay 2)
+(define and-gate-delay 3)
+(define or-gate-delay 5)
+
+(define (empty-agenda? agenda)
+  (null? (segments agenda)))
+
 ; missing definition: first-agenda-item, remove-first-agenda-item!
 ; missing definition: add-to-agenda!
-; missing definition: current-time
-; missing definition: the-agenda
+
+(define (add-to-agenda! time action agenda)
+  (define (belongs-before? segments)
+    (or (null? segments)
+        (< time (segment-time (car segments)))))
+  (define (make-new-time-segment time action)
+    (let ((q (make-queue)))
+      (insert-queue! q action)
+      (make-time-segment time q)))
+  (define (add-to-segments! segments)
+    (if (= (segment-time (car segments)) time)
+      (insert-queue! (segment-queue (car segments))
+                     action)
+      (let ((rest (cdr segments)))
+        (if (belongs-before? rest)
+          (set-cdr!
+            segments
+            (cons (make-new-time-segment time action)
+                  (cdr segments)))
+          (add-to-segments! rest)))))
+  (let ((segments (segments agenda)))
+    (if (belongs-before? segments)
+      (set-segments!
+        agenda
+        (cons (make-new-time-segment time action)
+              segments))
+      (add-to-segments! segments))))
+(define (remove-first-agenda-item! agenda)
+  (let ((q (segment-queue (first-segment agenda))))
+    (delete-queue! q)
+    (if (empty-queue? q)
+      (set-segments! agenda (rest-segments agenda)))))
+
+(define (first-agenda-item agenda)
+  (if (empty-agenda? agenda)
+    (error "Agenda is empty: FIRST-AGENDA-ITEM")
+    (let ((first-seg (first-segment agenda)))
+      (set-current-time! agenda
+                         (segment-time first-seg))
+      (front-queue (segment-queue first-seg)))))
+
 
 (end-script)
