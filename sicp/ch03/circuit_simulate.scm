@@ -55,6 +55,12 @@
     (let ((new-value
             (logical-and (get-signal a1)
                          (get-signal a2))))
+      ; wait some amount of time (simulating the delay)
+      ;   and then trigger the signal change on output
+      ; I think here we might trigger the output change twice
+      ;   because a1 and a2 will try to put the signal on output
+      ;   independently. But as long as our wire only trigger events
+      ;   when it notices a change in signal, I think it should be fine.
       (after-delay
         and-gate-delay
         (lambda () (set-signal! output new-value)))))
@@ -107,7 +113,13 @@
     (begin ((car procedures))
            (call-each (cdr procedures)))))
 
-; missing definition: get-signal, set-signal!, add-action!
+(define (get-signal wire)
+  (wire 'get-signal))
+(define (set-signal! wire new-value)
+  ((wire 'set-signal!) new-value))
+(define (add-action! wire action-procedures)
+  ((wire 'add-action!) action-procedures))
+
 ; missing definition: after-delay, inverter-delay
 ; missing definition: and-gate-delay, or-gate-delay
 
