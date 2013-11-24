@@ -205,8 +205,11 @@
       (make-time-segment time q)))
   (define (add-to-segments! segments)
     (if (= (segment-time (car segments)) time)
+      ; the head is exactly the time we want
+      ;   put the action into that queue
       (insert-queue! (segment-queue (car segments))
                      action)
+      ; else
       (let ((rest (cdr segments)))
         (if (belongs-before? rest)
           (set-cdr!
@@ -214,6 +217,8 @@
             (cons (make-new-time-segment time action)
                   (cdr segments)))
           (add-to-segments! rest)))))
+  ; so what's the benefit of confusing others with
+  ;   shadowing the definition of `segments` here?
   (let ((segments (segments agenda)))
     (if (belongs-before? segments)
       (set-segments!
