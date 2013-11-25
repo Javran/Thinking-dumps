@@ -177,7 +177,7 @@
 (define and-gate-delay 3)
 (define or-gate-delay 5)
 
-(define empty-agenda? (compose null? segments)
+(define empty-agenda? (compose null? segments))
 
 (define (remove-first-agenda-item! agenda)
   (let ((q (segment-queue (first-segment agenda))))
