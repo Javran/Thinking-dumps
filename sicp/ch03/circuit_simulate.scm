@@ -193,12 +193,17 @@
                          (segment-time first-seg))
       (front-queue (segment-queue first-seg)))))
 
-; missing definition: add-to-agenda!
-
 (define (add-to-agenda! time action agenda)
-  (define (belongs-before? segments)
+  ; insert-inplace? tests if the given action should be
+  ;   insert in front of the `segments`
+  (define (insert-inplace? segments)
+        ; if `segments` is empty
     (or (null? segments)
+        ; or if the first segment from `segments`
+        ;   has a newer (greater) time than
+        ;   the action we want to add into
         (< time (segment-time (car segments)))))
+  ; make a time segment using `time` and `action`
   (define (make-new-time-segment time action)
     (let ((q (make-queue)))
       (insert-queue! q action)
@@ -211,16 +216,20 @@
                      action)
       ; else
       (let ((rest (cdr segments)))
-        (if (belongs-before? rest)
+        (if (insert-inplace? rest)
+          ; if we should insert in place,
+          ;   make the segment and put it here
           (set-cdr!
             segments
             (cons (make-new-time-segment time action)
                   (cdr segments)))
+          ; else this is not the right place,
+          ;   keep going
           (add-to-segments! rest)))))
   ; so what's the benefit of confusing others with
   ;   shadowing the definition of `segments` here?
   (let ((segments (segments agenda)))
-    (if (belongs-before? segments)
+    (if (insert-inplace? segments)
       (set-segments!
         agenda
         (cons (make-new-time-segment time action)
