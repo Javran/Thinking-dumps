@@ -50,7 +50,8 @@
       (after-delay inverter-delay
                    (lambda ()
                      (set-signal! output new-value)))))
-  (add-action! input invert-input) 'ok)
+  (add-action! input invert-input)
+  'ok)
 
 (define (and-gate a1 a2 output)
   (define (and-action-procedure)
