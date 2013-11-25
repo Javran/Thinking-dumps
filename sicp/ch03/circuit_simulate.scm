@@ -50,7 +50,7 @@
                      (set-signal! output new-value)))))
   (add-action! input invert-input) 'ok)
 
-(define (add-gate a1 a2 output)
+(define (and-gate a1 a2 output)
   (define (and-action-procedure)
     (let ((new-value
             (logical-and (get-signal a1)
@@ -235,5 +235,3 @@
         (cons (make-new-time-segment time action)
               segments))
       (add-to-segments! segments))))
-
-(end-script)
