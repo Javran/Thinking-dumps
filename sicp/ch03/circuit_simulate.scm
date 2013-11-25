@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./3_3_2_representing_queues_procs.scm")
+
 (define (half-adder a b s c)
   (let ((d (make-wire))
         (e (make-wire)))
@@ -99,7 +101,8 @@
       ; I can't see the point here
       ;   to run the procedure just inserted
       ;   regardless of the wire-state
-      (proc))
+      (proc)
+      'done)
     (define (dispatch m)
       (cond ((eq? m 'get-signal) signal-value)
             ((eq? m 'set-signal!) set-my-signal!)

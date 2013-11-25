@@ -23,8 +23,6 @@
 
 |#
 
-(load "./3_3_2_representing_queues_procs.scm")
-
 (load "./circuit_simulate.scm")
 
 (define input-1 (make-wire))
@@ -38,7 +36,7 @@
 (half-adder input-1 input-2 sum carry)
 
 (set-signal! input-1 1)
-(propagate)
+(propagate) 
 
 (set-signal! input-2 1)
 (propagate)
