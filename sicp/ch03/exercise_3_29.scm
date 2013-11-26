@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./circuit_simulate.scm")
+
 ; truth table:
 ; a b  '!a and !b' 'a or b'
 ; 1 1  0            1
@@ -28,8 +30,6 @@ b -> o -> wire2 -> |      /
         (else #f)))
 
 (define (or-gate a1 a2 output)
-  (assert (valid-signal a1))
-  (assert (valid-signal a2))
   (let ((wire1 (make-wire))
         (wire2 (make-wire))
         (wire3 (make-wire)))
@@ -44,6 +44,35 @@ b -> o -> wire2 -> |      /
 ; else
 ;   or-gate-delay = inverter-delay*3 + and-gate-delay
 
-; TODO: need ways to verify
+; you might need to complete
+;   the all chapters about circuit simulation
+;   before you can use that.
+
+(define a (make-wire))
+(define b (make-wire))
+(define c (make-wire))
+
+(probe 'out-probe c)
+
+(or-gate a b c)
+
+; this is more verbose than ex 3.28, I guess that's because
+;   this one combines other circuits and has some "unstable" states
+
+(out "a -> 1")
+(set-signal! a 1)(propagate)
+; change to 1
+
+(out "b -> 1")
+(set-signal! b 1)(propagate)
+; nop
+
+(out "a -> 0")
+(set-signal! a 0)(propagate)
+; nop
+
+(out "b -> 0")
+(set-signal! b 0)(propagate)
+; change to 0
 
 (end-script)
