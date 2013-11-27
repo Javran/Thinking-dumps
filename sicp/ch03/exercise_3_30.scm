@@ -78,4 +78,47 @@ the n-bit ripple-carry adder delay would be:
 `
 |#
 
+(load "./circuit_simulate.scm")
+; test ripple-carry-adder
+(define (int->bins n len)
+  (if (= len 0)
+    nil
+    (append (int->bins (quotient n 2)
+                       (- len 1))
+            (list (remainder n 2)))))
+
+(define (bins->int xs)
+  (fold-left (lambda (acc i) (+ acc acc i))
+             0
+             xs))
+
+(define (bin->wire b)
+  (let ((x (make-wire)))
+    (set-signal! x b)
+    x))
+
+; test a+b, length = n
+(define (test-add a b n)
+  (let* ((bins-a  (int->bins a n))
+         (bins-b  (int->bins b n))
+         (wire-c  (make-wire))
+         (wires-a (map bin->wire bins-a))
+         (wires-b (map bin->wire bins-b))
+         (wires-n (map (lambda (x) (make-wire))
+                       (list-in-range 1 n))))
+    (out "constructing ripple-carry-adder ...")
+    (ripple-carry-adder wires-a wires-b wires-n wire-c)
+    (out "propagating ...")
+    (propagate)
+    (let ((result (bins->int (map get-signal wires-n))))
+      (format #t "circuit output: ~A, carry: ~A~%output: ~A~%"
+              result
+              (get-signal wire-c)
+              (+ a b)))))
+
+(test-add 1234 5678 16)
+; 6912
+(test-add 65535 1 16)
+; 65536 (overflow, output = 0 and carry = 1)
+
 (end-script)
