@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-; TODO: to run
+(load "./constraint_system.scm")
 
 (define (celsius-fahrenheit-converter C F)
   ; 9 * C = 5 * (F - 32)
@@ -34,20 +34,11 @@
 (set-value! C 25 'user)
 ; here we should have some output
 
-(set-value! F 212 'user)
+; (set-value! F 212 'user)
 ; will cause contradiction
 
 (forget-value! C 'user)
 (set-value! F 212 'user)
 ; no problem here
-
-; missing definitions:
-; * (make-connector)
-; * (multiplier a b c)
-; * (adder a b c)
-; * (constant a b)
-; * (probe str var)
-; * (set-value! var value source)
-; * (forget-value! var source)
 
 (end-script)

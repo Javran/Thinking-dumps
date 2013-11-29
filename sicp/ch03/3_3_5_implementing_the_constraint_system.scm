@@ -50,10 +50,10 @@
   (connect sum me)
   me)
 
-(define (inform-about-no-value constraint)
+(define (inform-about-value constraint)
   (constraint 'I-have-a-value))
 
-(define (inform-about-no-value contraint)
+(define (inform-about-no-value constraint)
   (constraint 'I-lost-my-value))
 
 (define (multiplier m1 m2 product)
@@ -122,4 +122,4 @@
 ; * (connect x y)
 ; * (get-value c)
 
-(end-script)
+; (end-script)
