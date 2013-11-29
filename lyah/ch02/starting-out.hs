@@ -1,4 +1,3 @@
-
 -- baby's first function
 doubleMe x = x + x
 
@@ -13,6 +12,7 @@ doubleSmallNumber x = if x > 100 then x else x*2
 
 doubleSmallNumber' x = (if x > 100 then x else x*2) + 1
 
+{-# ANN conanO'Brien "HLint: ignore" #-}
 -- `'` is nothing special
 conanO'Brien = "It's a-me, Conan O'Brien"
 
