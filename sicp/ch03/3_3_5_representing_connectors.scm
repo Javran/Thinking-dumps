@@ -27,6 +27,7 @@
               (error "Contradiction" (list value newval)))
             (else 'ignored)))
     (define (forget-my-value retractor)
+      ; why should we check the retractor?
       (if (eq? retractor informant)
         (begin (set! informant #f)
                (for-each-except retractor
@@ -50,5 +51,12 @@
             (else (error "Unknown operation: CONNECTOR"
                          request))))
     me))
+
+(define (for-each-except exception proc ls)
+  (define (run-it x) (proc x))
+  (define (not-exception? a) (not (eq? a exception)))
+  (for-each
+    run-it
+    (filter not-exception? ls)))
 
 (end-script)
