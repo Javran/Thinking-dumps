@@ -11,6 +11,10 @@
 ; * (inform-about-no-value <constraint>)
 
 (define (adder a1 a2 sum)
+  ; note here we don't have any parameter
+  ;   because all we need is just a signal
+  ;   that indicates if thers's any change
+  ;   on related connectors
   (define (process-new-value)
     (cond ((and (has-value? a1) (has-value? a2))
           ; a1, a2 -> sum
