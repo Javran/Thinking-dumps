@@ -1,13 +1,6 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-; missing definitions:
-; * (make-connector)
-; * (set-value! var value source)
-; * (forget-value! var source)
-; * (connect x y)
-; * (get-value c)
-
 (define (make-connector)
   (let ((value #f)
         (informant #f)
@@ -58,5 +51,16 @@
   (for-each
     run-it
     (filter not-exception? ls)))
+
+(define (has-value? connector)
+  (connector 'has-value?))
+(define (get-value connector)
+  (connector 'value))
+(define (set-value! connector new-value informant)
+  ((connector 'set-value!) new-value informant))
+(define (forget-value! connector retractor)
+  ((connector 'forget) retractor))
+(define (connect connector new-constraint)
+  ((connector 'connect) new-constraint))
 
 (end-script)
