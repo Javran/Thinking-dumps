@@ -117,7 +117,7 @@ many :: Parser a -> Parser [a]
 many p = many1 p `plus` return []
 -}
 -- impl #2
-many p = orEmpty $ many1 p
+many p = force $ orEmpty $ many1 p
 
 -- identifiers are lower-case letter followed by
 --   zero or more alphanum
@@ -149,7 +149,7 @@ nat = do
     return $ stringToInt xs
 -}
 -- impl #2
-nat = (digit >>= return . digitToInt) `chainl1` return merge
+nat = liftM digitToInt digit `chainl1` return merge
     where
         merge a i = a * 10 + i
 
@@ -277,3 +277,31 @@ chainr :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
 
 chainl p op v = (p `chainl1` op) `plus` return v
 chainr p op v = (p `chainr1` op) `plus` return v
+
+-- force the first result of a parser, increase laziness
+force :: Parser a -> Parser a
+force p = Parser $ \inp ->
+    let x = runParser p inp in
+    head x : tail x
+
+-- only return the first result from a parser
+first :: Parser a -> Parser a
+{-
+-- impl #1
+-- problem: `take 1 xxx` might unfold to some `take 0 xs`
+--   we know that its safe to abort `xs` now
+first p = Parser $ \inp -> take 1 $ runParser p inp 
+-}
+first p = Parser $ \inp ->
+    case runParser p inp of
+        [] -> []
+        (x:_) -> [x]
+
+-- `g` is a binary, after `g x y`, we apply `f`
+(.:) :: (c -> d) -> (a -> b -> c) -> (a -> b -> d)
+(f .: g) x y = f (g x y)
+
+-- lazy `plus`, if the first one succeeds,
+--   the second one never get evaluated
+(+++) :: Parser a -> Parser a -> Parser a
+(+++) = first .: plus
