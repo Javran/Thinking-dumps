@@ -79,7 +79,7 @@ alphanum = letter `plus` digit
 -- consume a word (i.e. consecutive letters)
 word :: Parser String
 {-
--- definition #1
+-- impl #1
 word = newWord `plus` result ""
     where
         newWord = do
@@ -87,7 +87,7 @@ word = newWord `plus` result ""
             xs <- word
             return (x:xs)
 -}
--- definition #2
+-- impl #2
 word = many letter
 
 -- we have MonadPlus here
@@ -109,7 +109,11 @@ string (x:xs) = do
 -- consume some chars recognized by `p`
 -- refactor: `many` and `many1` can be defined muturally recursively.
 many :: Parser a -> Parser [a]
+{-
+-- impl #1
 many p = many1 p `plus` return []
+-}
+many p = orEmpty $ many1 p
 
 -- identifiers are lower-case letter followed by
 --   zero or more alphanum
@@ -139,14 +143,69 @@ nat = do
     xs <- many1 digit
     return $ stringToInt xs
 
+-- recognize integers (i.e. positive, zero, negative)
 int :: Parser Int
 int = do
     f <- op
     n <- nat
     return $ f n
     where
+        -- either apply a `negate` if `-` is present
+        -- or keep it unchanged (by applying `id`)
+        --   if '-' is recognized, we will have two functions here
+        --   but that is not a problem, because `nat` won't recognize
+        --   anything that begin with a '-'
         op = (char '-' >> return negate) `plus` return id
 
+-- >>>> 4.2 repetition with separators
+
+-- recognize a list of integers
+ints :: Parser [Int]
+{-
+-- impl #1
+ints = do
+    char '['
+    -- begins with an int
+    n <- int
+    -- followed by arbitrary number of ','+int
+    ns <- many (char ',' >> int)
+    char ']'
+    return (n:ns)
+-}
+{-
+-- impl #2
+ints = do
+    char '['
+    xs <- int `sepby1` char ','
+    char ']'
+    return xs
+-}
+ints = bracket (char '[')
+               (int `sepby1` char ',')
+               (char ']')
+
+-- recognize pattern of `p` `sep` `p` `sep` `p` ...
+sepby1 :: Parser a -> Parser b -> Parser [a]
+p `sepby1` sep = do
+    x <- p
+    xs <- many (sep >> p)
+    return (x:xs)
+
+-- recognize `open` `p` `close`
+bracket open p close = do
+    open
+    xs <- p
+    close
+    return xs
+
+-- parse something or return empty
+orEmpty :: Parser [a] -> Parser [a]
+orEmpty p = p `plus` return []
+
+-- same as `sepby1`, allow empty result
+sepby :: Parser a -> Parser b -> Parser [a]
+p `sepby` sep = orEmpty $ p `sepby1` sep
+
 main = do
-    let result = runParser int "-4324Alpha1023 Yes!"
+    let result = runParser ints $ show [1..10] ++ "cool"
     print result
