@@ -1,4 +1,4 @@
--- this source implements a simple arithmetic expression parser 
+-- this source code implements a simple arithmetic expression parser 
 --   discribed in 4.3
 
 import MPC.Core
@@ -44,14 +44,5 @@ addop = ops
 -- factor ::= nat | '(' expr ')'
 factor = nat `plus` bracket (char '(') expr (char ')')
 
--- take as argument a list of pairs
---   whose `fst` is a parser that recognize some string of type `a`
---   and `snd` is the corresponding result
---   this function produces a parser that try to parse something
---   of type `a` in parallel and return all possible `b`s
-ops :: [(Parser a, b)] -> Parser b
-ops xs = foldr1 plus [ p >> return op | (p,op) <- xs]
-
-main = do
-    let result = runParser expr "1+2-(3+4)"
-    print result
+main = print $
+    runParser expr "1+2-(3+4)"

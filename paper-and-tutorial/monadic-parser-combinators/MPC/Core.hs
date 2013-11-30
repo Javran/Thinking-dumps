@@ -262,3 +262,18 @@ p `chainr1` op = p >>= rest
             return $ x `f` y)
             -- or do nothing
             `plus` return x
+
+-- take as argument a list of pairs
+--   whose `fst` is a parser that recognize some string of type `a`
+--   and `snd` is the corresponding result
+--   this function produces a parser that try to parse something
+--   of type `a` in parallel and return all possible `b`s
+ops :: [(Parser a, b)] -> Parser b
+ops xs = foldr1 plus [ p >> return op | (p,op) <- xs]
+
+-- allows consuming nothing
+chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+chainr :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+
+chainl p op v = (p `chainl1` op) `plus` return v
+chainr p op v = (p `chainr1` op) `plus` return v
