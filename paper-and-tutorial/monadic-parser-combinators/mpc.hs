@@ -1,4 +1,6 @@
 import Control.Monad
+import Data.Char
+import Data.Maybe
 
 newtype Parser a = Parser
     { runParser :: String -> [(a,String)]
@@ -37,9 +39,8 @@ instance Monad Parser where
 sat :: (Char -> Bool) -> Parser Char
 sat p = do
     x <- item
-    if p x
-       then return x
-       else zero
+    guard $ p x
+    return x
 
 -- consume an exact `x`
 char :: Char -> Parser Char
@@ -51,7 +52,7 @@ inBetween a b v = a <= v && v <= b
 
 -- consume a digit
 digit :: Parser Char
-digit = sat $ inBetween '1' '9'
+digit = sat $ inBetween '0' '9'
 
 -- consume a lower case char
 lower :: Parser Char
@@ -77,17 +78,75 @@ alphanum = letter `plus` digit
 
 -- consume a word (i.e. consecutive letters)
 word :: Parser String
+{-
+-- definition #1
 word = newWord `plus` result ""
     where
         newWord = do
             x <- letter
             xs <- word
             return (x:xs)
+-}
+-- definition #2
+word = many letter
 
+-- we have MonadPlus here
+--   and I think this is equivalent to 
+--   "MonadOPlus" in the paper
 instance MonadPlus Parser where
     mzero = zero
     mplus = plus
 
+-- consume a string from input
+string :: String -> Parser String
+string ""     = return ""
+string (x:xs) = do
+    char x
+    string xs
+    return (x:xs)
+
+-- >>>> 4.1 simple repetition
+-- consume some chars recognized by `p`
+-- refactor: `many` and `many1` can be defined muturally recursively.
+many :: Parser a -> Parser [a]
+many p = many1 p `plus` return []
+
+-- identifiers are lower-case letter followed by
+--   zero or more alphanum
+ident :: Parser String
+ident = do
+    x <- lower
+    xs <- many alphanum
+    return (x:xs)
+
+-- same as `many`, but this time we don't produce extra empty seq
+many1 :: Parser a -> Parser [a]
+many1 p = do
+    x <- p
+    xs <- many p
+    return (x:xs)
+
+-- convert string to int, please make sure `(not $ null xs)`
+stringToInt :: String -> Int
+stringToInt xs = foldl1 merge $ map toInt xs
+    where
+        toInt x = ord x - ord '0'
+        merge a i = a * 10 + i
+
+-- recognize a natural number
+nat :: Parser Int
+nat = do
+    xs <- many1 digit
+    return $ stringToInt xs
+
+int :: Parser Int
+int = do
+    f <- op
+    n <- nat
+    return $ f n
+    where
+        op = (char '-' >> return negate) `plus` return id
+
 main = do
-    let result = runParser word "Yes!"
+    let result = runParser int "-4324Alpha1023 Yes!"
     print result
