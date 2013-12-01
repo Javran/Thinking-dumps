@@ -23,12 +23,17 @@ multilineComment = do
     return ()
     where
         content = many $ multilineComment +++ notCommentEnd
-        notCommentEnd1 = notParser $ string "-}"
+        -- notCommentEnd should either consume some input or fail
+        --   or `many` might not have a chance to terminate.
         notCommentEnd = do
-            -- anything but '-}'
-            sat (/='-') +++ (sat (=='-') >> sat (/='}'))
+            notParser $ string "-}"
+            -- if the following stuff is not a end comment,
+            --   one character can be consumed safely
+            item
             return ()
 
+-- note here `notParser` either succeed *without consuming anything*
+--   or fail.
 notParser :: Parser a -> Parser ()
 notParser p = Parser $ \inp ->
     runParser (newParser inp) inp
