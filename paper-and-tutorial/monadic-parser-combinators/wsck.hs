@@ -13,17 +13,40 @@ comment :: Parser ()
 comment = do
     string "--"
     many $ sat (/= '\n')
-    -- I try to consume the last '\n' here
-    char '\n'
     return ()
 
 multilineComment :: Parser ()
-multilineComment = bracket (string "{-") content (string "-}") >> return ()
+multilineComment = do
+    bracket (string "{-")
+            content
+            (string "-}")
+    return ()
     where
         content = many $ multilineComment +++ notCommentEnd
+        notCommentEnd1 = notParser $ string "-}"
         notCommentEnd = do
+            -- anything but '-}'
             sat (/='-') +++ (sat (=='-') >> sat (/='}'))
             return ()
 
+notParser :: Parser a -> Parser ()
+notParser p = Parser $ \inp ->
+    runParser (newParser inp) inp
+    where
+        newParser inp' =
+            case runParser p inp' of
+                -- rejected by p
+                [] -> return ()
+                -- accepted by p
+                _  -> zero
+
 main = print $
-    runParser multilineComment "{-c-}start"
+    runParser
+        multilineComment
+        (unlines
+            [ "{- -- comment"
+            , " {- nested"
+            , "  -}" 
+            , " -- comment "
+            , "-}code start here"
+            ])
