@@ -292,6 +292,7 @@ first :: Parser a -> Parser a
 --   we know that its safe to abort `xs` now
 first p = Parser $ \inp -> take 1 $ runParser p inp 
 -}
+-- impl #2
 first p = Parser $ \inp ->
     case runParser p inp of
         [] -> []
