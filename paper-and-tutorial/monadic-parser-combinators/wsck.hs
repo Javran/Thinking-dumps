@@ -1,57 +1,46 @@
 -- White-Space, Comments, and Keywords
 
+import System.IO
+
 import MPC.Core
+import MPC.Lex
 
-spaces :: Parser ()
-spaces = do
-    many1 (sat isSpace)
-    return ()
-    where
-        isSpace x = x `elem` " \n\t"
+-- codes are moved to MPC.Lex
 
-comment :: Parser ()
-comment = do
-    string "--"
-    many $ sat (/= '\n')
-    return ()
-
-multilineComment :: Parser ()
-multilineComment = do
-    bracket (string "{-")
+main = do
+    print $
+        runParser
+            multilineComment
+            (unlines
+                [ "{- -- comment"
+                , " {- nested"
+                , "  -}" 
+                , " -- comment "
+                , "-}code start here"
+                ])
+    print $
+        runParser
+            (first junk)
+            (unlines
+                [ "--comment"
+                , "  {- {-  "
+                , " -}  "
+                , " -}  "
+                , "\t\t\t\t   "
+                , "code start here"
+                ])
+    content <- readFile "./wsck.txt"
+    print $
+        runParser
+            (parse $ first $ testParser)
             content
-            (string "-}")
-    return ()
     where
-        content = many $ multilineComment +++ notCommentEnd
-        -- notCommentEnd should either consume some input or fail
-        --   or `many` might not have a chance to terminate.
-        notCommentEnd = do
-            notParser $ string "-}"
-            -- if the following stuff is not a end comment,
-            --   one character can be consumed safely
-            item
-            return ()
-
--- note here `notParser` either succeed *without consuming anything*
---   or fail.
-notParser :: Parser a -> Parser ()
-notParser p = Parser $ \inp ->
-    runParser (newParser inp) inp
-    where
-        newParser inp' =
-            case runParser p inp' of
-                -- rejected by p
-                [] -> return ()
-                -- accepted by p
-                _  -> zero
-
-main = print $
-    runParser
-        multilineComment
-        (unlines
-            [ "{- -- comment"
-            , " {- nested"
-            , "  -}" 
-            , " -- comment "
-            , "-}code start here"
-            ])
+        testParser = do
+            a <- natural
+            b <- integer
+            c <- integer
+            let s = a + b + c
+            s1 <- symbol "sym1"
+            s2 <- symbol "sym3"
+            ids <- many $ identifier []
+            return (s, [s1,s2], ids)
