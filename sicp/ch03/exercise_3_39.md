@@ -19,15 +19,55 @@ happen at the same time:
 
 There are 2 executions, let me name them `e1` and `e2` respectively.
 
-* `e1` runs first and then `e2`:
-    * `x` is set to `100` after `e1` is done
-    * `x` is set to `101` after `e2` is done
-* `e1` runs its calculation part, then `e2` runs, `e1` changes `x` first
-    * `x` is set to `100` after `e1` is done
-    * `x` is set to `11` after `e2` is done
-* `e1` runs its calculation part, then `e2` runs, `e2` changes `x` first
-    * `x` is set to `11` after `e2` is done
-    * `x` is set to `100` after `e1` is done
-* `e2` runs first, then `e1`'s calculation part is blocked before `e2` is done.
-    * `x` is set to `11` after `e2` is done
-    * `x` is set to `121` after `e1` is done
+We also name all the operations as following:
+
+* `e1` =  `(lambda () (* x x))` + `(set! x <result>)` = `a` + `b`
+* `e2` =  `(lambda () (+ x 1))` + `(set! x <result>)` = `c` + `d`
+
+And the constraint can be described as:
+
+* `a` cannot interrupt between `c` and `d`.
+* `a` -> `b` is enforced by the order of function application 
+* `c` -> `b` is enforced by the order of function application 
+
+We begin with ignoring the first constraint and then test
+whether the first constriant is met or not.
+
+All possibilities:
+
+* Case #1: `a` -> `b` -> `c` -> `d`
+    * `x=10` for a
+    * `x` is changed to `100` in `b`
+    * `x=100` for `c`
+    * `x` is changed to `101` in `d`
+    * finally `x=101`
+* Case #2: `a` -> `c` -> `b` -> `d`
+    * `x=10` for `a`
+    * `x=10` for `c`
+    * `x` is changed to `100` in `b`
+    * `x` is changed to `11` in `c`
+    * finally `x=11`
+* Case #3: `a` -> `c` -> `d` -> `b`
+    * `x=10` for `a`
+    * `x=10` for `c`
+    * `x` is changed to `11` in `c`
+    * `x` is changed to `100` in `b`
+    * finally `x=100`
+* Case #4: `c` -> `a` -> `b` -> `d`
+    * when `c` is getting executed, `a` has to wait until `d` is done
+    * so this case is not allowed
+    * or we say that this case is enforced to be the same as `c` -> `d` -> `a` -> `b`
+* Case #5: `c` -> `a` -> `d` -> `b`
+    * when `c` is getting executed, `a` has to wait until `d` is done
+    * so this case is not allowed
+    * or we say that this case is enforced to be the same as `c` -> `d` -> `a` -> `b`
+* Case #6: `c` -> `d` -> `a` -> `b`
+    * `x=10` for `c`
+    * `x` is changed to `11` in `d`
+    * `x=11` for `a`
+    * `x` is changed to `121` in `b`
+    * finally `x=121`
+
+As the question say that there are 5 possibilities, we can merge Case #4 and Case #5 together.
+
+And now we see that all possible values after a full execution are `101,11,100,121`.
