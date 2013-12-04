@@ -8,3 +8,4 @@
 
 ; I think I should go with other scheme impls
 ;   that has documented APIs
+(out "Warning: deprecated, please use racket in this part")
