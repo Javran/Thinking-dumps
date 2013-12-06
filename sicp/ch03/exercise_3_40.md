@@ -153,3 +153,39 @@ Using this idea, here are all the situations we want to consider:
     * `d -> e -> f -> g -> a -> b -> c`
     * `a -> d -> e -> f -> g -> b -> c`
     * `a -> b -> d -> e -> f -> g -> c`
+
+Time to get them "evaluated":
+
+Note:
+* `x11` stands for `x1` in first lambda.
+* `x12` stands for `x2` in first lambda.
+* `x21` stands for `x1` in second lambda.
+* `x22` stands for `x2` in second lambda.
+* `x23` stands for `x3` in second lambda.
+
+* `a -> b -> c -> d -> e -> f -> g`
+    * `x11=10,x12=10`
+    * `x=100` after `c` is done
+    * `x21=100,x22=100,x23=100`
+    * `x=100*100*100=1000000` after `g` is done
+    * finally `x=1000000`
+* `a -> b -> d -> c -> e -> f -> g`
+    * `x11=10,x12=10,x21=10`
+    * `x=100` after `c` is done
+    * `x22=100,x23=100`
+    * `x=10*100*100=100000` after `g` is done 
+    * finally `x=100000`
+* `a -> b -> d -> e -> c -> f -> g`
+    * `x11=10,x12=10,x21=10,x22=10`
+    * `x=100` after `c` is done
+    * `x23=100`
+    * `x=10*10*100=10000` after `d` is done 
+    * finally `x=10000`
+* `a -> b -> d -> e -> f -> c -> g`
+    * `x11=10,x12=10,x21=10,x22=10,x23=10`
+    * `x=100` after `c` is done
+    * `x=10*10*10=1000` after `d` is done
+    * finally `x=1000`
+* `d -> e -> f -> g -> a -> b -> c`
+* `a -> d -> e -> f -> g -> b -> c`
+* `a -> b -> d -> e -> f -> g -> c`
