@@ -124,3 +124,32 @@ all possible combinations are:
 * `d -> e -> f -> a -> b -> g -> c`
 * `d -> e -> f -> a -> g -> b -> c`
 * `d -> e -> f -> g -> a -> b -> c`
+
+Here what is interesting is when the mutation (i.e. `c` and `g`) happens.
+So the following situations should result in the same value.
+
+* `a -> b -> d -> e -> f -> c -> g` 
+* `a -> d -> b -> e -> f -> c -> g` 
+* `a -> d -> e -> b -> f -> c -> g` 
+
+You might argue that the result of following might not be equal:
+
+* `a -> b -> d -> c -> e -> f -> g`
+* `a -> d -> b -> c -> e -> f -> g`
+* `d -> a -> b -> c -> e -> f -> g`
+
+But let's think `c` and `g` as seperators. 
+As long as the order of `{valid perm of a, b, d} c {valid perm of e,f} g` holds, everything will be fine.
+
+Using this idea, here are all the situations we want to consider:
+
+* `c` happens before `g`
+    * `a -> b -> c -> d -> e -> f -> g`
+    * `a -> b -> d -> c -> e -> f -> g`
+    * `a -> b -> d -> e -> c -> f -> g`
+    * `a -> b -> d -> e -> f -> c -> g`
+
+* `g` happens before `c`
+    * `d -> e -> f -> g -> a -> b -> c`
+    * `a -> d -> e -> f -> g -> b -> c`
+    * `a -> b -> d -> e -> f -> g -> c`
