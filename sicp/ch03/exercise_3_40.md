@@ -1,5 +1,5 @@
-Give all possible values of x that can result
-from executing:
+*Give all possible values of x that can result
+from executing*:
 
     (define x 10)
     (parallel-execute
@@ -179,13 +179,35 @@ Note:
     * `x11=10,x12=10,x21=10,x22=10`
     * `x=100` after `c` is done
     * `x23=100`
-    * `x=10*10*100=10000` after `d` is done 
+    * `x=10*10*100=10000` after `g` is done 
     * finally `x=10000`
 * `a -> b -> d -> e -> f -> c -> g`
     * `x11=10,x12=10,x21=10,x22=10,x23=10`
     * `x=100` after `c` is done
-    * `x=10*10*10=1000` after `d` is done
+    * `x=10*10*10=1000` after `g` is done
     * finally `x=1000`
 * `d -> e -> f -> g -> a -> b -> c`
+    * `x21=10,x22=10,x23=10`
+    * `x=1000` after `g` is done
+    * `x11=1000,x12=1000`
+    * `x=1000*1000` after `c` is done
+    * finally `x=1000000`
 * `a -> d -> e -> f -> g -> b -> c`
+    * `x11=10,x21=10,x22=10,x23=10`
+    * `x=1000` after `g` is done
+    * `x12=1000`
+    * `x=10*1000=10000` after `c` is done
+    * finally `x=10000`
 * `a -> b -> d -> e -> f -> g -> c`
+    * `x11=10,x12=10,x21=10,x22=10,x23=10`
+    * `x=1000` after `g` is done
+    * `x=100` after `c` is done
+    * finally `x=100`
+
+So all possible values are:
+    [1000000, 100000, 10000, 1000, 100]
+
+*Which of these possibilities remain if we instead
+use serialized procedures*:
+
+TODO
