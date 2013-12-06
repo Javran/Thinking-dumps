@@ -87,3 +87,40 @@ Now break two lambdas into:
     lambda #1 = fetch x1 -> fetch x2 & calc -> set! = a -> b -> c
     lambda #2 = fetch x1 -> fetch x2 -> fetch x3 & calc -> set! = d -> e -> f -> g
 
+all possible combinations are:
+
+* `a -> b -> c -> d -> e -> f -> g`
+* `a -> b -> d -> c -> e -> f -> g`
+* `a -> b -> d -> e -> c -> f -> g`
+* `a -> b -> d -> e -> f -> c -> g`
+* `a -> b -> d -> e -> f -> g -> c`
+* `a -> d -> b -> c -> e -> f -> g`
+* `a -> d -> b -> e -> c -> f -> g`
+* `a -> d -> b -> e -> f -> c -> g`
+* `a -> d -> b -> e -> f -> g -> c`
+* `a -> d -> e -> b -> c -> f -> g`
+* `a -> d -> e -> b -> f -> c -> g`
+* `a -> d -> e -> b -> f -> g -> c`
+* `a -> d -> e -> f -> b -> c -> g`
+* `a -> d -> e -> f -> b -> g -> c`
+* `a -> d -> e -> f -> g -> b -> c`
+* `d -> a -> b -> c -> e -> f -> g`
+* `d -> a -> b -> e -> c -> f -> g`
+* `d -> a -> b -> e -> f -> c -> g`
+* `d -> a -> b -> e -> f -> g -> c`
+* `d -> a -> e -> b -> c -> f -> g`
+* `d -> a -> e -> b -> f -> c -> g`
+* `d -> a -> e -> b -> f -> g -> c`
+* `d -> a -> e -> f -> b -> c -> g`
+* `d -> a -> e -> f -> b -> g -> c`
+* `d -> a -> e -> f -> g -> b -> c`
+* `d -> e -> a -> b -> c -> f -> g`
+* `d -> e -> a -> b -> f -> c -> g`
+* `d -> e -> a -> b -> f -> g -> c`
+* `d -> e -> a -> f -> b -> c -> g`
+* `d -> e -> a -> f -> b -> g -> c`
+* `d -> e -> a -> f -> g -> b -> c`
+* `d -> e -> f -> a -> b -> c -> g`
+* `d -> e -> f -> a -> b -> g -> c`
+* `d -> e -> f -> a -> g -> b -> c`
+* `d -> e -> f -> g -> a -> b -> c`
