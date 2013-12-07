@@ -1,0 +1,32 @@
+{-
+
+this file should be consumed by wsck.hs
+
+    {-
+        nested comment
+    -}
+-}
+
+{- try to sum the following 3 numbers up -}
+
+-- a natural number
+123
+
+-- a integer
+456
+
+-- another integer
+-578
+
+-- should be 1
+
+-- read symbols
+sym1 {-sym2-} sym3
+
+-- read identifier
+id1 id2 {- {- id3 -} -} id4
+
+id5
+
+id6
+-- end
