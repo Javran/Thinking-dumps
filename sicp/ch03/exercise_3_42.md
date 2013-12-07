@@ -8,3 +8,5 @@ Then that might be unsafe to reuse the "protected" procedure. Because by using a
 `make-serializer` might have procedures wait on some condition, and the condition might be an identity.
 If there are more than one procedure using the same identity (by calling the cached protected procedure),
 there might be a resource race between them.
+
+So `make-serializer` should specify if the its return value (i.e. the serialized version) can be cached.
