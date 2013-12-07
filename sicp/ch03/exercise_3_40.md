@@ -209,5 +209,21 @@ So all possible values are:
 
 *Which of these possibilities remain if we instead
 use serialized procedures*:
+    (define x 10)
+    (define s (make-serializer))
+    (parallel-execute
+      (s (lambda () (set! x (* x x))))
+      (s (lambda () (set! x (* x x x)))))
 
-TODO
+There are only two possibilities:
+
+* The first procedure get fully executed before the second one can start
+    * `x=100` after the first procedure is done
+    * `x=1000000` after the second procedure is done
+    * finally `x=1000000`
+* The second procedure get fully executed before the first one can start
+    * `x=1000` after the second procedure is done
+    * `x=1000000` after the first procedure is done
+    * finally `x=1000000`
+
+So there is only one possible value after everything is done: `x=1000000`.
