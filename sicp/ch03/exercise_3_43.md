@@ -42,4 +42,6 @@ sum of the balances in the accounts will be preserved. Draw a tim-
 ing diagram to show how even this condition would be violated if
 we did not serialize the transactions on individual accounts.*
 
-TODO
+We still use the previous example here. Note that the result is `30,10,10`.
+And `10+20+30 =/= 30+10+10`. In fact, we don't have any clue to show that these
+two sums could be equal.
