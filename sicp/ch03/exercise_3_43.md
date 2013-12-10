@@ -19,7 +19,23 @@ The result must be $10, $20, $30 in some order.
 how this condition can be violated if the exchanges are implemented
 using the first version of the account-exchange program in this section.*
 
-TODO
+    (define (exchange account1 account2)
+      (let ((difference (- (account1 ’balance)
+                           (account2 ’balance))))
+        ((account1 ’withdraw) difference)
+        ((account2 ’deposit) difference)))
+
+* Peter and Paul are sharing 3 accounts: `acc1`, `acc2`, `acc3`.
+* Initialize balance: `acc1,acc2,acc3 => 10,20,30`
+* Peter exchanges `acc2` and `acc1`.
+* Paul exchanges `acc3` and `acc1`.
+* Peter calculates `difference = 20-10 = 10`
+* Paul calculates `difference = 30-10 = 20`
+* Peter sets `acc2` to `20-10=10`
+* Peter sets `acc1` to `10+10=20`
+* Paul sets `acc3` to `30-20=10`
+* Paul sets `acc1` to `10+20=30`
+* Finally, the balance for each account: `acc1, acc2, acc3 => 30,10,10` (Wrong)
 
 *On the other hand, argue that even with this exchange program, the
 sum of the balances in the accounts will be preserved. Draw a tim-
