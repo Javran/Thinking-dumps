@@ -34,14 +34,24 @@ using the first version of the account-exchange program in this section.*
 * Peter sets `acc2` to `20-10=10`
 * Peter sets `acc1` to `10+10=20`
 * Paul sets `acc3` to `30-20=10`
-* Paul sets `acc1` to `10+20=30`
-* Finally, the balance for each account: `acc1, acc2, acc3 => 30,10,10` (Wrong)
+* Paul sets `acc1` to `20+20=40`
+* Finally, the balance for each account: `acc1, acc2, acc3 => 40,10,10` (Wrong)
 
 *On the other hand, argue that even with this exchange program, the
-sum of the balances in the accounts will be preserved. Draw a tim-
-ing diagram to show how even this condition would be violated if
+sum of the balances in the accounts will be preserved.*
+
+We still use the previous example here.
+The sum of the balances holds because the `difference` is calculated and stored
+in the environment. And after that `difference` will be a constant.
+We can guaranteed that all instructions in `exchange` will be executed. And exactly
+one `withdraw` and one `deposit` is performed. So the amount of money is guaranteed
+to be intact because no matter how many accounts are being operated.
+The result of executing all the instructions
+will be equivalent to a result of some sequential instructions. As every pair of instruction
+(i.e. `withdraw` and `deposit`) will guarantee the sum does not change in the result,
+The sum of the balances will not change.
+
+*Draw a timing diagram to show how even this condition would be violated if
 we did not serialize the transactions on individual accounts.*
 
-We still use the previous example here. Note that the result is `30,10,10`.
-And `10+20+30 =/= 30+10+10`. In fact, we don't have any clue to show that these
-two sums could be equal.
+TODO
