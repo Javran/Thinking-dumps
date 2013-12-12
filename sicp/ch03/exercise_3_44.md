@@ -29,3 +29,8 @@ before the other one getting access to the bank balance.
 Otherwise, the `difference` calculated in the middle of the operation will differ,
 and it eventually leads to the violation of "permutation law".
 
+However, `transfer` does not suffer from this problem. This is because that `transfer`
+does not care about the state of bank accounts.
+Given a constant number, all it does is to withdraw that amount of money from one
+account and deposit it to another. It always hols true that the amount of money does not change
+whenever `transfer` is done.
