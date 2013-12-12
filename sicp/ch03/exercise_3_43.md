@@ -27,8 +27,8 @@ using the first version of the account-exchange program in this section.*
 
 * Peter and Paul are sharing 3 accounts: `acc1`, `acc2`, `acc3`.
 * Initialize balance: `acc1,acc2,acc3 => 10,20,30`
-* Peter exchanges `acc2` and `acc1`.
-* Paul exchanges `acc3` and `acc1`.
+* Peter will exchange `acc2` and `acc1`.
+* Paul will exchange `acc3` and `acc1`.
 * Peter calculates `difference = 20-10 = 10`
 * Paul calculates `difference = 30-10 = 20`
 * Peter sets `acc2` to `20-10=10`
