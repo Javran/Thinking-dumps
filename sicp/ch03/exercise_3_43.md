@@ -54,4 +54,15 @@ The sum of the balances will not change.
 *Draw a timing diagram to show how even this condition would be violated if
 we did not serialize the transactions on individual accounts.*
 
-TODO
+* Peter and Paul are sharing 3 accounts: `acc1`, `acc2`, `acc3`.
+* Initialize balance: `acc1,acc2,acc3 => 10,20,30`
+* Peter will exchange `acc2` and `acc1`.
+* Paul will exchange `acc3` and `acc1`.
+* Peter calculates `difference = 20-10 = 10`
+* Paul calculates `difference = 30-10 = 20`
+* Peter sets `acc2` to `20-10=10`
+* Paul sets `acc3` to `30-20=10`
+* Peter sets `acc1` to `10+10=20`
+* Paul sets `acc1` to `10+20=30` (note: different from the example above, this time Peter and Paul
+reads `balance` simultaneously and race to write back)
+* Finally, the balance for each account: `acc1, acc2, acc3 => 30,10,10` (Violates the second condition)
