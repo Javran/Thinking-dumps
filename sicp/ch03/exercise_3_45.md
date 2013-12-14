@@ -39,3 +39,31 @@ I think one way to solve this problem is that
 * for any procedure that requires serialization, we use an auxiliary function to retrieve
 all the serializers, and sort them to force a definite order of requiring resouces.
 * call these serializers from this auxiliary function in the order given.
+
+The code will be like:
+
+    (define (serialized f)
+      ; apply `serializers` to proc in some order
+      ; e.g. (apply-serializers '(s1 s2 s3) proc)
+      ;   => (s1 (s2 (s3 proc)))
+      (define (apply-serializers serializers proc)
+        (if (null? serializers)
+          proc
+          ((car serializers)
+           (apply-serializers (cdr serializers) proc))))
+      (lambda args
+        (let* ((serializers
+                 ; get all serializers from account object
+                 (map (lambda (x) (x 'serializer))
+                      args))
+               (sorted-serializers
+                 ; sort serializers
+                 ; here the serializer-compare should have the property that:
+                 ;   * can run without error on any two serializers
+                 ;   * the return value is of boolean type
+                 ;   * for any equivalent serializer `s1` and `s2`,
+                 ;     (and (not (serializer-compare s1 s2))
+                 ;          (not (serializer-compare s2 s1)))
+                 ;   * `s1` is less than `s2` iff. (serializer-compare s1 s2) returns true.
+                 (sort serializers serializer-compare)))
+          (apply-serializers sorted-serializers f))))
