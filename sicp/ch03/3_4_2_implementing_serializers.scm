@@ -48,4 +48,10 @@
       (set-car! cell true)
       false)))
 
+; TODO: use racket here
+; * even when we can implement test-and-set! in MIT-scheme
+;   the operations on threads are still unclear and un documented.
+; * not sure if `clear!` is nothing more than setting the flag to false.
+;   Should it be atomic?
+
 (end-script)
