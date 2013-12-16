@@ -54,4 +54,8 @@
 ; * not sure if `clear!` is nothing more than setting the flag to false.
 ;   Should it be atomic?
 
+; TODO: maybe we can actually try to implement the bank account
+;   system. As I see few following pages and
+;   find no executable exercises afterwards.
+
 (end-script)
