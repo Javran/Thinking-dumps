@@ -62,3 +62,26 @@ consider the execution of the following sequence of instructions:
 * B: `release`
 
 Finally `balance = 150`, incorrect.
+
+However, if `test-and-set!` is atomic:
+
+* A: `acquire`
+* B: `acquire`
+* A: `test-and-set!`
+* B: `test-and-set!` (not allowed, has to wait)
+* A: `(car cell)`, will return false
+* A: `(begin (set-car! cell true) false)` 
+* B: `acquire`
+* B: `test-and-set!` (returned true, retrying)
+* A: `(+ balance amount)`, result = 300
+* A: `(set! balance 300)`
+* B: `test-and-set!` (returned true, retrying)
+* A: `release`
+* B: `test-and-set!`
+* B: `(car cell)`, will return false
+* B: `(begin (set-car! cell true) false)`
+* B: `(- balance amount)`, result = 250
+* B: `(set! balance 250)`
+* B: `release`
+
+The result should be correct now.
