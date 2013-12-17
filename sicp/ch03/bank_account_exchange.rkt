@@ -115,6 +115,26 @@
 (define acc1 (make-account 100))
 (define acc2 (make-account 400))
 
-(out (acc1 'balance) (acc2 'balance))
-(serialized-exchange acc1 acc2)
-(out (acc1 'balance) (acc2 'balance))
+(out (list (acc1 'balance) (acc2 'balance)))
+
+(define threads
+  (map
+    (lambda (x) (thread (lambda () (do-test 99))))
+    (build-list 100 (lambda (x) (+ x 1)))))
+
+(define (do-test test-round)
+  (if (= test-round 0)
+    'done
+    (begin
+      (serialized-exchange acc1 acc2)
+      (do-test (- test-round 1)))))
+
+(for-each
+  thread-wait
+  threads)
+
+(out (list (acc1 'balance) (acc2 'balance)))
+
+; TODO:
+; * multiple account exchange -> balance-cycle
+; * more comments
