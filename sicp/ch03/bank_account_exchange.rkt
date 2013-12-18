@@ -72,6 +72,7 @@
                      m))))
     dispatch))
 
+; exchange the balance of two accounts
 (define (exchange acc1 acc2)
   (let ((difference (- (acc2 'balance)
                        (acc1 'balance))))
@@ -94,15 +95,20 @@
   ; Assume all args are account objects
   (lambda args
     (let ((sorted-serializers
+            ; sort serializers using the proper comparator
             (sort
               (map (lambda (x) (x 'serializer))
                    args)
               serializer-less-than?))
           (serializer->serialize
+            ; convert a serializer to a function
+            ;   that does its job
             (lambda (s)
               (lambda (p)
                 (serializer-proc s p)))))
+      ; run the operation using the argument given
       (apply
+        ; apply all serializers in order
         (apply-functions
           (map serializer->serialize 
                sorted-serializers)
@@ -112,28 +118,52 @@
 (define serialized-exchange
   (serialize-account-operation exchange))
 
-(define acc1 (make-account 100))
-(define acc2 (make-account 400))
+(define (test1)
+  (out "==== test #1 ====")
+  (define acc1 (make-account 100))
+  (define acc2 (make-account 400))
 
-(out (list (acc1 'balance) (acc2 'balance)))
+  (out "before:"
+       (list (acc1 'balance) (acc2 'balance)))
 
-(define threads
-  (map
-    (lambda (x) (thread (lambda () (do-test 99))))
-    (build-list 100 (lambda (x) (+ x 1)))))
+  ; spawn 100 threads,
+  ;   for each thread, do it 100 times
+  (define threads
+    (map
+      (lambda (x) (thread (lambda () (do-test 100))))
+      (build-list 100 (lambda (x) 1))))
 
-(define (do-test test-round)
-  (if (= test-round 0)
-    'done
-    (begin
-      (serialized-exchange acc1 acc2)
-      (do-test (- test-round 1)))))
+  (define (do-test test-round)
+    (if (= test-round 0)
+      'done
+      (begin
+        (serialized-exchange acc1 acc2)
+        (do-test (- test-round 1)))))
 
-(for-each
-  thread-wait
-  threads)
+  (for-each
+    thread-wait
+    threads)
 
-(out (list (acc1 'balance) (acc2 'balance)))
+  (out "after:"
+       (list (acc1 'balance) (acc2 'balance)))
+  )
+
+(define (test2)
+  (out "==== test 2 ====")
+  (define bank-accounts
+    (map
+      (lambda (x)
+        ; make accounts that has a balance ranged [1..100]
+        (make-account (+ 1 (random 100))))
+      (build-list 100 (lambda (x) 1))))
+  (define balances-1
+    (map (lambda (acc) (acc 'balance))
+         bank-accounts))
+  (out balances-1)
+  )
+
+(test1)
+(test2)
 
 ; TODO:
 ; * multiple account exchange -> balance-cycle
