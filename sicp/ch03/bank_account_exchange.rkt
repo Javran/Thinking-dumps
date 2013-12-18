@@ -118,6 +118,23 @@
 (define serialized-exchange
   (serialize-account-operation exchange))
 
+; generate non-duplicate random integers
+;   ranged in [a,b]
+(define (generate-non-dup-rnd-ints n a b)
+  (if (= n 0)
+    '()
+    (let ((vals (generate-non-dup-rnd-ints (- n 1) a b))
+          (next-val (lambda () (+ a (random (+ (- b a) 1)))))
+          ; a + [0,(b-a+1-1)] -> [a,b]
+          )
+      (cons
+        (let loop ((val (next-val)))
+          (if (memq val vals)
+            ; re-run
+            (loop (next-val))
+            val))
+        vals))))
+
 (define (test1)
   (out "==== test #1 ====")
   (define acc1 (make-account 100))
@@ -146,6 +163,7 @@
 
   (out "after:"
        (list (acc1 'balance) (acc2 'balance)))
+  'done
   )
 
 (define (test2)
@@ -156,10 +174,53 @@
         ; make accounts that has a balance ranged [1..100]
         (make-account (+ 1 (random 100))))
       (build-list 100 (lambda (x) 1))))
-  (define balances-1
+  ; store the balances before anything is done
+  (define balances-before
     (map (lambda (acc) (acc 'balance))
          bank-accounts))
-  (out balances-1)
+
+  (define (do-test)
+    (define (do-exchange-on account-idxs)
+      ; ... don't know what happened
+      ; I did lots of tests
+      ; but changing this to `exchange`
+      ; makes no difference
+      ; anyway, just want to show that my implementation
+      ; can pass the tests
+      (serialized-exchange
+        (list-ref bank-accounts (car account-idxs))
+        (list-ref bank-accounts (cadr account-idxs))))
+    (define todo-list
+      (map
+        (lambda (x)
+          ; account index: [0,99]
+          (generate-non-dup-rnd-ints 2 0 99))
+        (build-list 200 (lambda (x) 1))))
+    (for-each
+      (lambda (todo)
+        (do-exchange-on todo))
+      todo-list))
+
+  ; spawn 100 threads,
+  ;   for each thread, simply run `do-test`
+  (define threads
+    (map
+      (lambda (x) (thread (lambda () (do-test))))
+      (build-list 100 (lambda (x) 1))))
+
+  (for-each
+    thread-wait
+    threads)
+
+  (define balances-after
+    (map (lambda (acc) (acc 'balance))
+         bank-accounts))
+
+  (out "before:" balances-before
+       "after:"  balances-after
+       "correctness: "
+         (equal? (sort balances-before <)
+                 (sort balances-after  <)))
   )
 
 (test1)
@@ -167,4 +228,3 @@
 
 ; TODO:
 ; * multiple account exchange -> balance-cycle
-; * more comments
