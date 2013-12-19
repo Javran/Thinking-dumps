@@ -173,7 +173,7 @@
       (lambda (x)
         ; make accounts that has a balance ranged [1..100]
         (make-account (+ 1 (random 100))))
-      (build-list 100 (lambda (x) 1))))
+      (build-list 5 (lambda (x) 1))))
   ; store the balances before anything is done
   (define balances-before
     (map (lambda (acc) (acc 'balance))
@@ -193,8 +193,8 @@
     (define todo-list
       (map
         (lambda (x)
-          ; account index: [0,99]
-          (generate-non-dup-rnd-ints 2 0 99))
+          ; account index: [0,4]
+          (generate-non-dup-rnd-ints 2 0 4))
         (build-list 200 (lambda (x) 1))))
     (for-each
       (lambda (todo)
@@ -223,8 +223,75 @@
                  (sort balances-after  <)))
   )
 
+(define (test3)
+  (out "==== test 3 ====")
+  ; ==== nothing new here, copied from test2 ====
+  (define bank-accounts
+    (map
+      (lambda (x)
+        (make-account (+ 1 (random 100))))
+      (build-list 5 (lambda (x) 1))))
+  (define balances-before
+    (map (lambda (acc) (acc 'balance))
+         bank-accounts))
+  ; ====  exchange balance of 3 accounts in one operation ====
+  (define (cycle-exchange acc1 acc2 acc3)
+    (let ((b1 (acc1 'balance))
+          (b2 (acc2 'balance))
+          (b3 (acc3 'balance)))
+      (let (; b1 + (b2 - b1) = b2
+            (diff1 (- b2 b1))
+            ; b2 + (b3 - b2) = b3
+            (diff2 (- b3 b2))
+            ; b3 + (b1 - b3) = b1
+            (diff3 (- b1 b3))
+            )
+        ((acc1 'deposit) diff1)
+        ((acc2 'deposit) diff2)
+        ((acc3 'deposit) diff3))))
+  (define serialized-cycle-exchange
+    (serialize-account-operation cycle-exchange))
+
+  (define (do-test)
+    (define (do-cycle-exchange-on account-idxs)
+      (serialized-cycle-exchange
+        (list-ref bank-accounts (car account-idxs))
+        (list-ref bank-accounts (cadr account-idxs))
+        (list-ref bank-accounts (caddr account-idxs))))
+    (define todo-list
+      (map
+        (lambda (x)
+          ; account index: [0,4], now 3 different accounts
+          (generate-non-dup-rnd-ints 3 0 4))
+        (build-list 200 (lambda (x) 1))))
+    (for-each
+      (lambda (todo)
+        (do-cycle-exchange-on todo))
+      todo-list))
+
+  ; spawn 100 threads,
+  ;   for each thread, simply run `do-test`
+  (define threads
+    (map
+      (lambda (x) (thread (lambda () (do-test))))
+      (build-list 100 (lambda (x) 1))))
+
+  (for-each
+    thread-wait
+    threads)
+
+  ; ==== nothing new here, copied from test2 ====
+  (define balances-after
+    (map (lambda (acc) (acc 'balance))
+         bank-accounts))
+
+  (out "before:" balances-before
+       "after:"  balances-after
+       "correctness: "
+         (equal? (sort balances-before <)
+                 (sort balances-after  <)))
+  )
+
 (test1)
 (test2)
-
-; TODO:
-; * multiple account exchange -> balance-cycle
+(test3)
