@@ -59,3 +59,52 @@ primitives:
 * `stream-cdr`
 * `the-empty-stream`
 * `stream-null?`
+
+stream operations:
+
+    (define (stream-ref s n)
+      (if (= n 0)
+        (stream-car s)
+        (stream-ref (stream-cdr s) (- n 1))))
+
+    (define (stream-map proc s)
+      (if (stream-null? s)
+        the-empty-stream
+        (cons-stream
+           (proc (stream-car s))
+           (stream-map proc (stream-cdr s)))))
+
+    (define (stream-for-each proc s)
+      (if (stream-null? s)
+        'done
+        (begin
+          (proc (stream-car s))
+          (stream-for-each proc (stream-cdr s)))))
+
+    (define (display-stream s)
+      (stream-for-each display-line s))
+    (define (display-line x)
+      (newline) (display x))
+
+# Procedure `delay` and `force`
+
+* `delay`: create "delayed object", a promise to evaluate
+at some future time.
+* `force`: perform evaluation for delayed objects.
+
+To construct a stream, based on the representation of a list,
+we leave the `cdr` part of a list as a "delayed object".
+
+    (define (cons-stream a b)
+      ; this implementation does not work
+      ;   cons-stream has to be a special form
+      ;   because if this is not the case,
+      ;   `b` will be evaluated
+      ;   before we construct the stream
+      (cons a (delay b)))
+
+    (define (stream-car s)
+      (car s))
+
+    (define (stream-cdr s)
+      (force (cdr s)))
