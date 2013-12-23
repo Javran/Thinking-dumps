@@ -1,18 +1,15 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./stream.scm")
+
 (define (show x)
   (display x) (newline)
   x)
 
-(define (stream-enumerate-interval low high)
-  (if (> low high)
-    nil
-    (cons-stream low (stream-enumerate-interval
-                       (+ low 1)
-                       high))))
-
 (define x
+  ; not perfect `lazy`
+  ;   as when we comment out `(test)`, we still get a `0` as output.
   (stream-map
     show
     (stream-enumerate-interval 0 10)))
