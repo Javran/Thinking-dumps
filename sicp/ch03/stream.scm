@@ -37,3 +37,9 @@
 ; print few elements from the stream, as a test
 (define (print-few n stream)
   (out (stream->list (take n stream))))
+
+(define (zip-streams-with proc)
+  (lambda args
+    (apply stream-map (cons proc args))))
+
+(define add-streams (zip-streams-with +))
