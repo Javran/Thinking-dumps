@@ -63,4 +63,9 @@
 (outsum)
 ; 210
 
+; the responses will differ if we don't memoize the function.
+; for example, `(stream-ref y 7)` will cause the first result `6` to be
+; re-evaluated and trigger `accum` one more time if the result is not
+; cached somewhere.
+
 (end-script)
