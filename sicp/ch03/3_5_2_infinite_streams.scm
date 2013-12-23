@@ -3,10 +3,6 @@
 
 (load "./stream.scm")
 
-(define (integers-starting-from n)
-  (cons-stream n
-               (integers-starting-from (+ n 1))))
-
 (define integers (integers-starting-from 1))
 
 (for-each
@@ -41,7 +37,6 @@
 (newline)
 
 ; let me try to write `sieve` by myself.
-
 (define (my-sieve stream)
   (let ((p (stream-car stream)))
     (cons-stream
