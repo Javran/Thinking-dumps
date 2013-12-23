@@ -14,10 +14,10 @@
     (find-divisor n 2))
   (= n (smallest-divisor n)))
 
-(define (stream-enumerate-inteval low high)
+(define (stream-enumerate-interval low high)
   (if (> low high)
     nil
-    (cons-stream low (stream-enumerate-inteval
+    (cons-stream low (stream-enumerate-interval
                        (+ low 1)
                        high))))
 
@@ -27,7 +27,7 @@
       (stream-cdr
         (stream-filter
           prime?
-          (stream-enumerate-inteval
+          (stream-enumerate-interval
             10000 1000000))))))
 
 (prime-computation)
@@ -63,7 +63,7 @@
   (out (stream->list
        (my-stream-filter
          prime?
-         (stream-enumerate-inteval
+         (stream-enumerate-interval
            10000
            10100))))
   (out "result from list:")
