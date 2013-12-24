@@ -43,3 +43,7 @@
     (apply stream-map (cons proc args))))
 
 (define add-streams (zip-streams-with +))
+
+(define ones (cons-stream 1 ones))
+(define integers
+  (cons-stream 1 (add-streams ones integers)))
