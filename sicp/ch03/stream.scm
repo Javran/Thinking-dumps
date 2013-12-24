@@ -47,3 +47,8 @@
 (define ones (cons-stream 1 ones))
 (define integers
   (cons-stream 1 (add-streams ones integers)))
+
+(define (scale-stream stream factor)
+  (stream-map
+    ((curry2 *) factor)
+    stream))
