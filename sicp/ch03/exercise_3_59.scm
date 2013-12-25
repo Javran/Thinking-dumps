@@ -3,11 +3,7 @@
 
 (load "./stream.scm")
 
-(define (integrate-series s)
-  (define coeffs
-    (stream-map (lambda (x) (/ 1 x))
-                integers))
-  ((zip-streams-with *) coeffs s))
+(load "./exercise_3_59_common.scm")
 
 (print-few
   10
@@ -32,17 +28,8 @@
 ; as a comparison
 (out (exp 1))
 
-(define cosine-series
-  (cons-stream
-    1
-    (scale-stream 
-      (integrate-series sine-series)
-      -1)))
-
-(define sine-series
-  (cons-stream
-    0
-    (integrate-series (scale-stream cosine-series 1))))
+; see definition of `cosine-series` in "./exercise_3_59_common.scm"
+; see definition of   `sine-series` in "./exercise_3_59_common.scm"
 
 (out "cosine 1:")
 (out (exact->inexact (series-sum 10 cosine-series)))
