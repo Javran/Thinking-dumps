@@ -10,14 +10,6 @@
   (integrate-series
     (scale-stream ones 17)))
 
-(define (series-sum n s)
-  ; take first n elements from a series
-  ;   and calculate their sum. 
-  (fold-left
-    +
-    0
-    (stream->list (take n s))))
-
 (define exp-series
   (cons-stream 1 (integrate-series exp-series)))
 

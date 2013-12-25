@@ -20,4 +20,22 @@
           0
           (mul-series at bt))))))
 
+(load "./exercise_3_59_common.scm")
+
+(define result
+  (add-streams
+    (mul-series sine-series sine-series)
+    (mul-series cosine-series cosine-series)))
+
+(out
+  "result:"
+  (exact->inexact (series-sum 10 result)))
+
+(define (powers x)
+  (define powers-aux
+    (cons-stream
+      1
+      (scale-stream powers-aux x)))
+  powers-aux)
+
 (end-script)

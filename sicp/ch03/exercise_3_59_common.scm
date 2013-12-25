@@ -4,6 +4,14 @@
                 integers))
   ((zip-streams-with *) coeffs s))
 
+(define (series-sum n s)
+  ; take first n elements from a series
+  ;   and calculate their sum. 
+  (fold-left
+    +
+    0
+    (stream->list (take n s))))
+
 (define cosine-series
   (cons-stream
     1
