@@ -1,0 +1,147 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\title{Essentials of Programming Languages\\
+{\large
+My exercise answers}}
+\author{Javran Cheng}
+\begin{document}
+\maketitle
+
+\section{Exercise 1.1}
+
+\subsection{$\{ 3n + 2 | n \in N  \}$}
+
+\subsubsection{top-down definition}
+
+A natural number $n$ is in $S$ if and only if
+
+\begin{itemize}
+    \item{$n=2$, or}
+    \item{$n-3 \in S$.}
+\end{itemize}
+
+\subsubsection{bottom-up definition}
+
+Define the set $S$ to be the smallest set contained in $N$
+and satisfying the following two properties:
+
+\begin{itemize}
+    \item{$2 \in S$, and}
+    \item{if $n \in S$, then $n+3 \in S$.}
+\end{itemize}
+
+\subsubsection{rules of inference}
+
+\begin{equation*}
+    2 \in S
+\end{equation*}
+
+\begin{equation*}
+    \frac{n \in S}{(n+3) \in S}
+\end{equation*}
+
+\subsection{$\{2n+3m+1|n,m\in N\}$}
+
+\subsubsection{top-down definition}
+
+A natural number $p$ is in $S$ if and only if
+
+\begin{itemize}
+    \item{$p=1$, or}
+    \item{$p-2 \in S$, or}
+    \item{$p-3 \in S$.}
+\end{itemize}
+
+\subsubsection{bottom-up definition}
+
+Define the set $S$ to be the smallest set contained in $N$
+and satisfying the following two properties:
+
+\begin{itemize}
+    \item{$1 \in S$, and}
+    \item{if $p \in S$, then $p+2 \in S$ and $p+3 \in S$.}
+\end{itemize}
+
+\subsubsection{rules of inference}
+
+\begin{equation*}
+    1 \in S
+\end{equation*}
+
+\begin{equation*}
+    \frac{n \in S}{(n+2) \in S}
+\end{equation*}
+
+\begin{equation*}
+    \frac{n \in S}{(n+3) \in S}
+\end{equation*}
+
+\subsection{$\{(n,2n+1)| n \in N\}$}
+
+\subsubsection{top-down definition}
+
+A tuple of natural numbers $(n,m)$ is in $S$ if and only if
+
+\begin{itemize}
+    \item{$(n,m) = (0,1)$, or}
+    \item{$(n-1,m-2) \in S $.}
+\end{itemize}
+
+\subsubsection{bottom-up definition}
+
+Define the set $S$ to be the smallest set contained in $N^2$
+and satisfying the following two properties:
+
+\begin{itemize}
+    \item{$(0,1) \in S$, and}
+    \item{if $(n,m) \in S$, then $(n+1,m+2) \in S$.}
+\end{itemize}
+
+\subsubsection{rules of inference}
+
+\begin{equation*}
+    (0,1) \in S
+\end{equation*}
+
+\begin{equation*}
+    \frac
+        {(n,m) \in S}
+        {(n+1,m+2) \in S}
+\end{equation*}
+
+\subsection{$\{(n,n^2)|n \in N\}$}
+
+\subsubsection{top-down definition}
+
+A tuple of natural numbers $(n,m)$ is in $S$ if and only if
+
+\begin{itemize}
+    \item{$(n,m) = (0,0)$, or}
+    \item{$(n-1,m-2n+1) \in S $.}
+\end{itemize}
+
+\subsubsection{bottom-up definition}
+
+Define the set $S$ to be the smallest set contained in $N^2$
+and satisfying the following two properties:
+
+\begin{itemize}
+    \item{$(0,0) \in S$, and}
+    \item{if $(n,m) \in S$, then $(n+1,m+2n+1) \in S$.}
+\end{itemize}
+
+\subsubsection{rules of inference}
+
+\begin{equation*}
+    (0,0) \in S
+\end{equation*}
+
+\begin{equation*}
+    \frac
+        {(n,m) \in S \quad n \in N \quad m \in N}
+        {(n+1,m+2n+1) \in S}
+\end{equation*}
+
+\end{document}
