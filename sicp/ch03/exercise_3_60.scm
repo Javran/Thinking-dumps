@@ -65,4 +65,9 @@
 (test 0.1)
 (test 1.1)
 
+; test sin x * cos x = sin 2x / 2
+(out (exact->inexact
+       (series-sum 10 (mul-series sine-series cosine-series))))
+(out (/ (sin 2) 2))
+
 (end-script)
