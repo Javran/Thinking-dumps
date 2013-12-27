@@ -144,4 +144,135 @@ and satisfying the following two properties:
         {(n+1,m+2n+1) \in S}
 \end{equation*}
 
+\section{Exercise 1.2}
+
+\subsection{Q1}
+
+As $n$ keeps increasing, we define function $f$:
+
+\begin{equation*}
+    f(n) =
+    \begin{cases}
+        (0,1) & n = 0, \\
+        ((n-1)+1, k'+7) & n > 0 \text{ and } f(n-1) = (n-1,k').
+    \end{cases}
+\end{equation*}
+
+Let $g(n) = cdr(f(n))$, thus:
+
+\begin{align*}
+    car(f(n)) & = n \\
+    cdr(f(n)) & = g(n) = g(n-1) + 7 (n > 0)
+\end{align*}
+
+Therefore, the answer is:
+
+\begin{equation*}
+    \{ (n,7n+1) | n \in N \}
+\end{equation*}
+
+\subsection{Q2}
+
+Define $f$ and $g$:
+
+\begin{equation*}
+    (f(n), g(n)) =
+    \begin{cases}
+        (0,1) & n = 0 \\
+        ((n'+1, 2k') & n > 0 \text{ and } (f(n-1),g(n-1)) = (n',k')
+    \end{cases}
+\end{equation*}
+
+For $n > 0$, we have:
+
+\begin{align*}
+    f(n) & = f(n-1) + 1 \\
+    g(n) & = g(n-1) * 2 
+\end{align*}
+
+And we can further conclude that:
+
+\begin{align*}
+    f(n) & = n \\
+    g(n) & = 2^n 
+\end{align*}
+
+Therefore, the answer is:
+
+\begin{equation*}
+    \{ (n,2^n) | n \in N \}
+\end{equation*}
+
+\subsection{Q3}
+
+Define $f$, $g$ and $h$:
+
+\begin{equation*}
+    (f, g, h)(n) =
+    \begin{cases}
+        (0,0,1) & n = 0 \\
+        ((n'+1, j', i'+j') & n > 0 \text{ and }
+            (f,g,h)(n-1) = (n',i',j')
+    \end{cases}
+\end{equation*}
+
+For $n > 0$, we have:
+
+\begin{align*}
+    f(n) & = f(n-1) + 1 \\
+    g(n) & = h(n-1) \\
+    h(n) & = g(n-1) + h(n-1) = h(n-2) + h(n-1)
+\end{align*}
+
+And we can further conclude that:
+
+\begin{align*}
+    f(n) & = n \\
+    g(n) & = h(n-1) \\
+    h(n) & = h(n-2) + h(n-1)
+\end{align*}
+
+Let $fib(n)$ denotes the $n^{th}$ Fibonacci number, $fib(0) = 0, fib(1) = 1$.
+
+Therefore, the answer is:
+
+\begin{equation*}
+    \{ (n,fib(n),fib(n+1)) | n \in N \}
+\end{equation*}
+
+\subsection{Q4}
+
+Define $f$, $g$ and $h$:
+
+\begin{equation*}
+    (f, g, h)(n) =
+    \begin{cases}
+        (0,1,0) & n = 0 \\
+        ((n'+1, i'+2, i'+j') & n > 0 \text{ and }
+            (f,g,h)(n-1) = (n',i',j')
+    \end{cases}
+\end{equation*}
+
+For $n > 0$, we have:
+
+\begin{align*}
+    f(n) & = f(n-1) + 1 \\
+    g(n) & = g(n-1) + 2 \\
+    h(n) & = g(n-1) + h(n-1)
+\end{align*}
+
+And we can further conclude that:
+
+\begin{align*}
+    f(n) & = n \\
+    g(n) & = 2n+1 \\
+    h(n) & = \sum_{i=0}^{n-1} g(i) = 1 \cdot n + \frac{(n-1)n}{2} \cdot 2 = n^2
+\end{align*}
+
+Therefore, the answer is:
+
+\begin{equation*}
+    \{ (n,2n+1,n^2) | n \in N \}
+\end{equation*}
+
 \end{document}
