@@ -48,9 +48,19 @@
           inv-aux))))
   inv-aux)
 
-(define x (exact->inexact (series-sum 100 cosine-series)))
-(define y (exact->inexact (series-sum 100 (invert-unit-series cosine-series))))
+(define (test-with-precision p)
+  (define x (exact->inexact (series-sum p cosine-series)))
+  (define y (exact->inexact (series-sum p (invert-unit-series cosine-series))))
+  (format
+    #t
+    "step   : ~A~%~
+     cos 1  : ~A~%~
+     1/cos 1: ~A~%~
+     product: ~A~%"
+    p x y (* x y)))
 
-(out (* x y))
+(for-each
+  test-with-precision
+  '(10 25 50 100))
 
 (end-script)
