@@ -1,10 +1,6 @@
 #lang eopl
 
-(define out
-  (lambda args
-    (for-each
-      (lambda (a) (display a) (newline))
-      args)))
+(require "./common.rkt")
 
 (define nth-element-aux
   (lambda (l n)
