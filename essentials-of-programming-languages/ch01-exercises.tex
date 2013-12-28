@@ -2,6 +2,8 @@
 \usepackage{amsmath}
 \usepackage{indentfirst}
 
+\DeclareMathOperator{\listofint}{List-of-int}
+
 \title{Essentials of Programming Languages\\
 {\large
 My exercise answers}}
@@ -283,5 +285,19 @@ Now that
 $S  = \{ 3n | n \in N \}$,
 $T = S \cup \{3n+1 | n \in N\}$,
 and $T \supset S$,  $ T \neq S $.
+
+\section{Exercise 1.4}
+
+\begin{align*}
+    & \listofint \\
+    \Rightarrow & (Int \cdot \listofint) \\
+    \Rightarrow & (Int \cdot (Int \cdot \listofint)) \\
+    \Rightarrow & (Int \cdot (Int \cdot (Int \cdot \listofint))) \\
+    \Rightarrow & ( -7 \cdot (Int \cdot (Int \cdot \listofint))) \\
+    \Rightarrow & ( -7 \cdot (  3 \cdot (Int \cdot \listofint))) \\
+    \Rightarrow & ( -7 \cdot (  3 \cdot ( 14 \cdot \listofint))) \\
+    \Rightarrow & ( -7 \cdot (  3 \cdot ( 14 \cdot         ())))
+\end{align*}
+
 
 \end{document}
