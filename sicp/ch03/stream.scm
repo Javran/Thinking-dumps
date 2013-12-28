@@ -52,3 +52,13 @@
   (stream-map
     ((curry2 *) factor)
     stream))
+
+(define (stream-sum s)
+  ; (stream-sum s) = s0, s0+s1, s0+s1+s2, ...
+  ;   where s = s0, s1, s2, ...
+  (define stream-sum-aux
+    (cons-stream
+      0
+      (add-streams s stream-sum-aux)))
+  (drop 1 stream-sum-aux))
+(define parital-sums stream-sum)

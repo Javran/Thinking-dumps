@@ -21,15 +21,6 @@
 
 
 ; write my own version of pi-approximation
-(define (stream-sum s)
-  ; (stream-sum s) = s0, s0+s1, s0+s1+s2, ...
-  ;   where s = s0, s1, s2, ...
-  (define stream-sum-aux
-    (cons-stream
-      0
-      (add-streams s stream-sum-aux)))
-  (drop 1 stream-sum-aux))
-
 (define my-pi-stream
   ; make an env that allows local definitions
   ((lambda ()
@@ -60,5 +51,17 @@
 
 (display-stream
   (take 8 (stream-map exact->inexact my-pi-stream)))
+
+; implementation from book
+(define (pi-summands n)
+  ; 1/n - 1/(n+2) + 1/(n+4) - ...
+  (cons-stream (/ 1.0 n)
+               (stream-map - (pi-summands (+ n 2)))))
+
+(define pi-stream
+  (scale-stream (parital-sums (pi-summands 1)) 4))
+
+(display-stream
+  (take 8 (stream-map exact->inexact pi-stream)))
 
 (end-script)
