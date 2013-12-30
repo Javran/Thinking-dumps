@@ -2,6 +2,7 @@
 
 (provide out)
 (provide foldl)
+(provide concat)
 
 ; output all arguments, line-by-line
 (define out
@@ -18,3 +19,7 @@
       proc 
       (proc init (car lst))
       (cdr lst))))
+
+; concat lists
+(define (concat xs)
+  (apply append xs))
