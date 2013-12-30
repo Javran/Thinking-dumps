@@ -19,8 +19,7 @@
 (display-stream (take 5 (sqrt-stream 2)))
 (newline)
 
-
-; write my own version of pi-approximation
+; my own version of pi-approximation
 (define my-pi-stream
   ; make an env that allows local definitions
   ((lambda ()
@@ -51,6 +50,7 @@
 
 (display-stream
   (take 8 (stream-map exact->inexact my-pi-stream)))
+(newline)
 
 ; implementation from book
 (define (pi-summands n)
@@ -63,5 +63,49 @@
 
 (display-stream
   (take 8 (stream-map exact->inexact pi-stream)))
+(newline)
+
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0))  ; s[n-1]
+        (s1 (stream-ref s 1))  ; s[n  ]
+        (s2 (stream-ref s 2))  ; s[n+1]
+        )
+    (cons-stream
+      (- s2 (/ (square (- s2 s1))
+               (+ s0 (* -2 s1) s2)))
+      (euler-transform (stream-cdr s)))))
+
+(display-stream
+  (take 8 (stream-map
+            exact->inexact
+            (euler-transform
+              my-pi-stream))))
+(newline)
+
+; even better ...
+(display-stream
+  (take 8 (stream-map
+            exact->inexact
+            (euler-transform
+              (euler-transform
+                my-pi-stream)))))
+(newline)
+
+; a stream of stream yielded by
+;   consecutively applying `transform` on `s`.
+(define (make-tableau transform s)
+  (cons-stream
+    s
+    (make-tableau transform (transform s))))
+
+(define (accelerated-sequence transform s)
+  ; take the first element from each stream
+  (stream-map stream-car (make-tableau transform s)))
+
+(display-stream
+  (take 8 (stream-map
+            exact->inexact
+            (accelerated-sequence euler-transform my-pi-stream))))
+(newline)
 
 (end-script)
