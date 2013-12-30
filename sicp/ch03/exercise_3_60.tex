@@ -1,0 +1,48 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\begin{document}
+
+Let $s(a_0,a_1,\dots)$ denotes power series $a_0x^0+a_1x^1+\dots$
+
+i.e.
+
+\begin{equation*}
+    s(a_0,a_1,\dots) = \sum_{i=0}^{\infty} a_ix^i
+\end{equation*}
+
+We are writing a procedure $MUL$ such that:
+
+\begin{equation*}
+    MUL( s(a_0,a_1,\dots), s(b_0,b_1,\dots)) =
+    \left(\sum_{i=0}^{\infty} a_ix^i \right) \cdot
+    \left(\sum_{i=0}^{\infty} b_ix^i \right)
+\end{equation*}
+
+\begin{align*}
+    MUL(s(a_0,a_1,\dots), s(b_0,b_1,\dots))
+    &= \left(\sum_{i=0}^{\infty} a_ix^i \right) \cdot
+       \left(\sum_{i=0}^{\infty} b_ix^i \right) \\
+    &= \left(a_0 + \sum_{i=1}^{\infty} a_ix^i \right) \cdot
+       \left(b_0 + \sum_{i=1}^{\infty} b_ix^i \right) \\
+    &= a_0 \cdot b_0
+     + \left( \sum_{i=1}^{\infty} a_ix^i \right) \cdot b_0 
+     + \left( \sum_{i=1}^{\infty} b_ix^i \right) \cdot a_0 \\
+    &+  \left(\sum_{i=1}^{\infty} a_ix^i \right) \cdot
+        \left(\sum_{i=1}^{\infty} b_ix^i \right) \\
+    &= a_0 \cdot b_0
+     + \left( \sum_{i=0}^{\infty} a_{i+1}x^i \right) \cdot b_0 \cdot x
+     + \left( \sum_{i=0}^{\infty} b_{i+1}x^i \right) \cdot a_0 \cdot x \\
+    &+  \left(\sum_{i=0}^{\infty} a_{i+1}x^i \right) \cdot
+        \left(\sum_{i=0}^{\infty} b_{i+1}x^i \right) \\
+    &= a_0 \cdot b_0 \cdot x^0 \\
+    &+ 0 \cdot x^0 
+         + \left( b_0 \sum_{i=0}^{\infty} a_{i+1}x^i \right) \cdot x^1 \\
+    &+ 0 \cdot x^0
+         + \left( a_0 \sum_{i=0}^{\infty} b_{i+1}x^i \right) \cdot x^1 \\
+    &+ 0 \cdot x^0 + 0 \cdot x^1
+         + MUL( s(a_1,a_2,\dots), s(b_1,b_2,\dots)) \cdot x^2
+\end{align*}
+
+\end{document}
