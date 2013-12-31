@@ -47,4 +47,8 @@
 (out (head (drop (f 11 26) pair-stream)))
 ; (11,26)
 
+(out (f 1 100)
+     (f 99 100)
+     (f 100 100))
+
 (end-script)
