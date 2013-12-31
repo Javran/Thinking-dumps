@@ -22,6 +22,18 @@
         (tail pair-stream))
       (triples (tail s) (tail t) (tail u)))))
 
-(print-few 40 (triples integers integers integers))
+(print-few 20 (triples integers integers integers))
+
+(define pythagrean-triples
+  (stream-filter
+    (lambda (triple)
+      (let ((a (car triple))
+            (b (cadr triple))
+            (c (caddr triple)))
+        (= (+ (* a a) (* b b))
+           (* c c))))
+    (triples integers integers integers)))
+
+(print-few 4 pythagrean-triples)
 
 (end-script)
