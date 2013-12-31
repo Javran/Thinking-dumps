@@ -33,22 +33,38 @@
   (cond 
     ((= x y 1) 0)
     ((= x y)
-     (+ (f (- x 1) x) (g (- x 1)) 1))
-        ((= (+ x 1) y)
-          (+ (f x x) (g x) 1))
-        (else
-          (+ (f x (- y 1))
-             (* 2 (g x))
-             2))))
+      (+ (f (- x 1) x) (g (- x 1)) 1))
+    ((= (+ x 1) y)
+      (+ (f x x) (g x) 1))
+    (else
+      (+ (f x (- y 1))
+         (* 2 (g x))
+         2))))
+
+; simplified formula:
+; t(x,y) = if x == y then 2 else 1
+; f(x,y) = 2^x*(y-x) + 2^(x-1)*t(x,y) - 2
+(define (f1 x y)
+  (define (t x y)
+    (if (= x y) 2 1))
+  (+ (* (expt 2 x) (- y x))
+     (* (expt 2 (- x 1)) (t x y))
+     -2))
 
 ; make tests
-(out (head (drop (f 10 35) pair-stream)))
+(out (head (drop (f1 10 35) pair-stream)))
 ; (10,35)
-(out (head (drop (f 11 26) pair-stream)))
+(out (head (drop (f1 11 26) pair-stream)))
 ; (11,26)
+(newline)
 
-(out (f 1 100)
-     (f 99 100)
-     (f 100 100))
+(format
+  #t
+  "f(  1,100) = ~A~%~
+   f( 99,100) = ~A~%~
+   f(100,100) = ~A~%"
+   (f   1 100)
+   (f  99 100)
+   (f 100 100))
 
 (end-script)
