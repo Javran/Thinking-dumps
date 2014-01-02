@@ -62,3 +62,19 @@
       (add-streams s stream-sum-aux)))
   (drop 1 stream-sum-aux))
 (define parital-sums stream-sum)
+
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+    s2
+    (cons-stream
+      (head s1)
+      (interleave s2 (tail s1)))))
+
+(define (pairs s t)
+  (cons-stream
+    (list (head s) (head t))
+    (interleave
+      (stream-map (lambda (x)
+                    (list (head s) x))
+                  (tail t))
+      (pairs (tail s) (tail t)))))
