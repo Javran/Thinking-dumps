@@ -1,6 +1,7 @@
 #lang racket
 
 (provide out)
+(provide filter)
 (provide foldl)
 (provide concat)
 (provide concat-map)
@@ -11,6 +12,14 @@
     (for-each
       (lambda (a) (display a) (newline))
       args)))
+
+(define (filter pred lst)
+  (if (null? lst)
+    '()
+    (if (pred (car lst))
+      (cons (car lst)
+            (filter pred (cdr lst)))
+      (filter pred (cdr lst)))))
 
 ; fold from left using `proc`
 (define (foldl proc init lst)
