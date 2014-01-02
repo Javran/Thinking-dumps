@@ -2,6 +2,9 @@
 
 (require "./common.rkt")
 
+; list-index :: (a -> Bool) -> [a] -> Int
+; usage: return the 0-based position of the first element
+;   of `lst` that satisfies `pred`
 (define (list-index pred lst)
   (if (null? lst)
     #f
