@@ -2,7 +2,7 @@
 
 (require "./common.rkt")
 
-; every? :: (a -> Bool) -> [a] -> Bool
+; every? :: (a -> Bool, [a]) -> Bool
 ; usage: return #t if all elements of `lst`
 ;   satisfies `pred`, #f elsewise
 (define (every? pred lst)

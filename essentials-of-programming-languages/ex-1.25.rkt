@@ -2,7 +2,7 @@
 
 (require "./common.rkt")
 
-; exists? :: (a -> Bool) -> [a] -> Bool
+; exists? :: (a -> Bool, [a]) -> Bool
 ; usage: return #t if there is an element in `lst`
 ;   that satisfies `pred`, #f elsewise
 (define (exists? pred lst)
