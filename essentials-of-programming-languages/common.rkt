@@ -3,6 +3,7 @@
 (provide out)
 (provide foldl)
 (provide concat)
+(provide concat-map)
 
 ; output all arguments, line-by-line
 (define out
@@ -23,3 +24,7 @@
 ; concat lists
 (define (concat xs)
   (apply append xs))
+
+; map and then concat
+(define (concat-map proc . args)
+  (concat (apply map (cons proc args))))
