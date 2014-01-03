@@ -49,8 +49,9 @@
     (cos upbound)
     eps
     estimated-val
-    (abs (- (cos upbound) estimated-val))))
+    (abs (- (cos upbound)
+            estimated-val))))
 
-(estimate-cos 0.25 1e-6)
+(time-test estimate-cos 0.25 5e-7)
 
 (end-script)
