@@ -75,6 +75,23 @@
       (lambda (a b)
         (= (car a) (car b))))))
 
-(print-few 10 sum-of-two-in-three-diff-ways)
+(define (pretty-print-group group)
+  (format
+    #t
+    "[sum = ~A]~%"
+    (caar group))
+  (for-each
+    (lambda (x)
+      (format
+        #t
+        "~A = ~A^2 + ~A^2~%"
+        (car x)
+        (cadr x)
+        (caddr x)))
+    group))
+
+(stream-for-each
+  pretty-print-group
+  (take 5 sum-of-two-in-three-diff-ways))
 
 (end-script)
