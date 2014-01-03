@@ -78,3 +78,28 @@
                     (list (head s) x))
                   (tail t))
       (pairs (tail s) (tail t)))))
+
+(define (take-while pred s)
+  (if (stream-null? s)
+    the-empty-stream
+    (if (pred (head s))
+      (cons-stream
+        (head s)
+        (take-while pred (tail s)))
+      the-empty-stream)))
+
+(define (take-until pred s)
+  (take-while (compose not pred) s))
+
+(define (drop-while pred s)
+  (if (stream-null? s)
+    the-empty-stream
+    (if (pred (head s))
+      (drop-while pred (tail s))
+      s)))
+
+(define (drop-until pred s)
+  (drop-while (compose not pred) s))
+
+(load "./stream-test.scm")
+(run-stream-test)
