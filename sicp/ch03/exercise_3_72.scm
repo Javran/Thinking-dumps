@@ -3,28 +3,65 @@
 
 (load "./stream.scm")
 
-; group consecutive equal numbers together,
-;   and count occurrence.
-; e.g. (1 1 2 2 3 4 5 5) => ((1 2) (2 2) (3 1) (4 1) (5 2))
-(define (group-stream s)
+(load "./exercise_3_70_common.scm")
+
+; group consecutive equal numbers together
+; e.g. (1 1 2 2 3 4 5 5) => ((1 1) (2 2) (3) (4) (5 5))
+(define (group-stream s equ?)
   ; remove consecutive elements from head,
   ;   return a stream of lists (element occurrence)
   (if (stream-null? s)
     the-empty-stream
     (let loop ((cur-s s)
-               (value (head s))
-               (count 0))
+               (cur-g '())
+               ; all elements are compared with this one
+               (element (head s)))
       (cond ((stream-null? cur-s)
+              ; the stream is empty,
+              ;   group the previous elements together.
               (cons-stream
-                (list value count)
+                cur-g
                 the-empty-stream))
-            ((= (head cur-s) value)
-              (loop (tail cur-s) value (+ count 1)))
+            ((equ? (head cur-s) element)
+              ; the current head can be groupped
+              ;   into the current one
+              (loop (tail cur-s)
+                    (cons (head cur-s) cur-g)
+                    element))
             (else
+              ; cannot be grouped together
               (cons-stream
-                (list value count)
-                (group-stream cur-s)))))))
+                cur-g
+                (group-stream cur-s equ?)))))))
 
-(print-few 20 (group-stream (list->stream '(1 1 2 2 3 4 5 5 6))))
+; test `group-stream`
+(let ((testcases
+        (list (mat '(1 1 2 2 3 4 5 5)
+                   '((1 1) (2 2) (3) (4) (5 5)))
+              (mat '(1 2 3 4 5)
+                   '((1) (2) (3) (4) (5)))
+              (mat '(1 1 1 1 1)
+                   '((1 1 1 1 1)))
+              (mat '()
+                   '())
+              ))
+      (proc
+        (compose
+          stream->list
+          (lambda (x) (group-stream x =))
+          list->stream)))
+  (do-test proc testcases equal?)
+  (newline))
+
+(define sum-of-two-square-stream
+  (let ((weight
+          (lambda (x)
+            (apply + (map square x)))))
+    (stream-map
+      ; attach the sum to the stream
+      (lambda (x) (cons (weight x) x))
+      (weighted-pairs integers integers weight))))
+
+(print-few 10 sum-of-two-square-stream)
 
 (end-script)
