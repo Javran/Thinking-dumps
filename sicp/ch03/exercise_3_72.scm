@@ -7,6 +7,8 @@
 
 ; group consecutive equal numbers together
 ; e.g. (1 1 2 2 3 4 5 5) => ((1 1) (2 2) (3) (4) (5 5))
+; s: the stream
+; equ?: a binary that indicates if two elements are equal.
 (define (group-stream s equ?)
   ; remove consecutive elements from head,
   ;   return a stream of lists (element occurrence)
@@ -62,6 +64,17 @@
       (lambda (x) (cons (weight x) x))
       (weighted-pairs integers integers weight))))
 
-(print-few 10 sum-of-two-square-stream)
+(define sum-of-two-in-three-diff-ways
+  (stream-filter
+    ; exactly 3 different ways
+    (lambda (x)
+      (= (length x) 3))
+    ; group stream using the sum
+    (group-stream
+      sum-of-two-square-stream
+      (lambda (a b)
+        (= (car a) (car b))))))
+
+(print-few 10 sum-of-two-in-three-diff-ways)
 
 (end-script)
