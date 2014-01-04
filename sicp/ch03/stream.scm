@@ -101,5 +101,17 @@
 (define (drop-until pred s)
   (drop-while (compose not pred) s))
 
+; calculate integral, return a stream s_i,
+;   where s_i = init-val + sum(integrand_j * dt)
+;         j goes from the first index to i
+(define (integral integrand init-val dt)
+  (define int
+    (cons-stream
+      init-val
+      (add-streams
+        (scale-stream integrand dt)
+        int)))
+  int)
+
 (load "./stream-test.scm")
 (run-stream-test)
