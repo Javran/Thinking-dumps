@@ -58,6 +58,7 @@
 (define (square x) (* x x))
 (define (cube x) (* x x x))
 
+; generate a random number in range [a,b]
 (define (random-range-in a b)
   (+ a (random (+ (- b a) 1))))
   ; random (b-a)+1 -> [0, (b-a)] + a -> [a, b] 
@@ -70,6 +71,8 @@
     (cons seed 
           (take-iterate next (next seed) (- len 1)))))
 
+; generate a list of numbers,
+;   from `from` to `to`, and increases `step` every time.
 (define (gen-list from to step)
   (if (> from to)
     '()
@@ -82,6 +85,7 @@
 
 (define enumerate-interval list-in-range)
 
+; get the average of all arguments
 (define average
   (lambda x
     (/ (apply + x) (length x))))
@@ -170,5 +174,33 @@
   (if (or (= n 0) (null? ls))
     nil
     (cons (car ls) (take (- n 1) (cdr ls)))))
+
+; curried arithmetic comparisons
+; usage: (arith <sym> <num>)
+;   sym can be one of:
+;   * eq / ne / lt / gt / le / ge
+;   * or use full name (see source code below)
+; e.g.:
+;   (arith 'eq 10) yields a predicate that tests
+;     if a number is equal to 10
+;   (arith 'lt 10) yields a predicate that tests
+;     if a number is less than 10
+;   (filter (arith 'ge 10) xs) yields all elements
+;     from `xs` that are greater or equal to 10
+(define (arith sym n)
+  (case sym
+    ((eq equal)
+      (lambda (x) (= x n)))
+    ((ne neq not-equal)
+      (lambda (x) (not (= x n))))
+    ((lt less-than)
+      (lambda (x) (< x n)))
+    ((gt greater-than)
+      (lambda (x) (> x n)))
+    ((le less-or-equal)
+      (lambda (x) (<= x n)))
+    ((ge greater-or-equal)
+      (lambda (x) (>= x n)))
+    ))
 
 'done
