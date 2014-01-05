@@ -6,6 +6,7 @@
 (provide concat)
 (provide concat-map)
 (provide assert)
+(provide curry2)
 
 ; output all arguments, line-by-line
 (define out
@@ -51,3 +52,9 @@
           ""
           (string-append
             ": " (car reason)))))))
+
+; return curried version of a binary function
+(define (curry2 f)
+  (lambda (a)
+    (lambda (b)
+      (f a b))))
