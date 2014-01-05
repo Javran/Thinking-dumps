@@ -51,4 +51,10 @@
 (out (apply-env e 'x)
      (apply-env e 'y)
      (apply-env e 'z))
-; 1, 2, 4
+
+(require "./ex-2.6-test.rkt")
+
+(do-env-test
+  empty-env
+  extend-env
+  apply-env)
