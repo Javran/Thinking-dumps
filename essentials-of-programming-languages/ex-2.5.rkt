@@ -58,3 +58,7 @@
   empty-env
   extend-env
   apply-env)
+
+(provide empty-env)
+(provide extend-env)
+(provide apply-env)
