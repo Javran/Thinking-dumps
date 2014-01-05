@@ -81,6 +81,7 @@
   (let ()
     ; implementation 3: keep keys and values separately
 
+    ; empty-env: () -> Env
     (define (empty-env)
       (cons '() '()))
 
