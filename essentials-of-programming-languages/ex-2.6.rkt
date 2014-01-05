@@ -77,5 +77,32 @@
 
     (list empty-env extend-env apply-env)))
 
+(define impl3
+  (let ()
+    ; implementation 3: keep keys and values separately
+
+    (define (empty-env)
+      (cons '() '()))
+
+    ; extend-env: Var x SchemeVal X Env -> Env
+    (define (extend-env key val env)
+      (let ((keys (car env))
+            (vals (cdr env)))
+        (cons (cons key keys)
+              (cons val vals))))
+
+    ; apply-env: Env x Var -> SchemeVal
+    (define (apply-env env var)
+      (let ((result (filter 
+                      (lambda (x)
+                        (eqv? var (car x)))
+                      (map cons (car env) (cdr env)))))
+        (if (null? result)
+          (report-no-binding-found var)
+          (cdar result))))
+
+    (list empty-env extend-env apply-env)))
+
 (apply do-env-test impl1)
 (apply do-env-test impl2)
+(apply do-env-test impl3)
