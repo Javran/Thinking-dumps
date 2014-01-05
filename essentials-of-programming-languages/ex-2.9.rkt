@@ -12,6 +12,9 @@
       'y 2
       (empty-env))))
 
+(provide has-binding?)
+
+; has-binding?: Env x Var -> Bool
 (define (has-binding? env s)
   (assv s env))
 
