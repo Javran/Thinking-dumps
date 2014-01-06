@@ -1,10 +1,12 @@
-#lang racket
+#lang eopl
 
 (provide out)
 (provide filter)
 (provide foldl)
 (provide concat)
 (provide concat-map)
+(provide assert)
+(provide curry2)
 
 ; output all arguments, line-by-line
 (define out
@@ -37,3 +39,22 @@
 ; map and then concat
 (define (concat-map proc . args)
   (concat (apply map (cons proc args))))
+
+; assertion with optional reason
+(define (assert v . reason)
+  (if v
+    'done
+    (eopl:error
+      'assert
+      (string-append
+        "Assertion failed"
+        (if (null? reason)
+          ""
+          (string-append
+            ": " (car reason)))))))
+
+; return curried version of a binary function
+(define (curry2 f)
+  (lambda (a)
+    (lambda (b)
+      (f a b))))
