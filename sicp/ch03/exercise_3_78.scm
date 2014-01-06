@@ -57,7 +57,10 @@
 ; =>  y(1.2345) = e^1.2345 - 1.2345 * e^1.2345
 ; =>            = -0.2345 * e^1.2345
 (let ((inv-precision 10000))
-  (out (stream-ref (solve-2nd 0 1 0.0001) 12345))
+  (out (stream-ref
+         (solve-2nd 0 1 (/ 1.0 inv-precision))
+         (inexact->exact
+           (floor (* 1.2345 inv-precision)))))
   (out (* -0.2345 (exp 1.2345))))
 
 (end-script)
