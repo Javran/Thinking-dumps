@@ -44,3 +44,32 @@
         (lambda (result expected)
           (= (length result) expected))))
   (do-test take testcases correct?))
+
+; test `arith`
+(let* ((test-arr
+         '(1 2 2 3 1))
+       (testcases
+         (list
+           ; test 'eq
+           (mat test-arr 'eq 1
+                '(#t #f #f #f #t))
+           ; test 'neq
+           (mat test-arr 'neq 1
+                '(#f #t #t #t #f))
+           ; test 'lt
+           (mat test-arr 'lt 2
+                '(#t #f #f #f #t))
+           ; test 'le
+           (mat test-arr 'le 2
+                '(#t #t #t #f #t))
+           ; test 'gt
+           (mat test-arr 'gt 2
+                '(#f #f #f #t #f))
+           ; test 'ge
+           (mat test-arr 'ge 2
+                '(#f #t #t #t #f))
+           ))
+       (proc
+         (lambda (xs sym n)
+           (map (arith sym n) xs))))
+  (do-test proc testcases equal?))
