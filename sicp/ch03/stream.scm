@@ -113,5 +113,21 @@
         int)))
   int)
 
+; same as (cons (take n s) (drop n s))
+;   should be faster than 
+;   running these two functions sequencially
+(define (split n s)
+  (cond ((stream-null? s)
+          (cons nil nil))
+        ((= n 0)
+          (cons nil s))
+        (else
+          (let ((rest-result (split (- n 1) (tail s))))
+            (cons
+              (cons-stream
+                (head s)
+                (car rest-result))
+              (cdr rest-result))))))
+
 (load "./stream-test.scm")
 (run-stream-test)

@@ -33,4 +33,16 @@
         rand-result
         random-number-pair-stream))))
 
+; break a stream into groups, making each group
+;   has `n` successive elements from the original stream
+;   groups are also streams
+(define (group-stream n s)
+  (let ((splitted (split n s)))
+    (cons-stream (car splitted)
+                 (group-stream n (cdr splitted)))))
+
+(stream-for-each
+  (compose out stream->list)
+  (take 4 (group-stream 5 random-numbers)))
+
 (end-script)

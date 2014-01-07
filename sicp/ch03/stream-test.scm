@@ -52,4 +52,19 @@
                  (list->stream l))))))
     (do-test-q proc-while testcases equal?)
     (do-test-q proc-until testcases equal?))
+  ; test split
+  (let* ((testcases
+           (list 
+             (mat '(1 2 3 4 5) 3
+                  '( (1 2 3) . (4 5) ))
+             (mat '() 10
+                  '( () . () ))
+             (mat '(1 2 3) 10
+                  '( (1 2 3) . () ))))
+         (proc
+           (lambda (l n)
+             (let ((result (split n (list->stream l))))
+               (cons (stream->list (car result))
+                     (stream->list (cdr result)))))))
+    (do-test-q proc testcases equal?))
   'done)
