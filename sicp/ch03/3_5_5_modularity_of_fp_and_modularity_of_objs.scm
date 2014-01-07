@@ -41,8 +41,45 @@
     (cons-stream (car splitted)
                  (group-stream n (cdr splitted)))))
 
-(stream-for-each
-  (compose out stream->list)
-  (take 4 (group-stream 5 random-numbers)))
+(define (map-successive-pairs f s)
+  (stream-map
+    (compose
+      ; 3. apply f
+      ((curry2 apply) f)
+      ; 2. convert back to lists
+      stream->list)
+    ; 1. group by 2
+    (group-stream 2 s)))
+
+(define (coprime? a b)
+  (= (gcd a b) 1))
+
+(define cesaro-stream
+  (map-successive-pairs
+    coprime?
+    random-numbers))
+
+(define (monte-carlo experiment-stream passed failed)
+  (define (next passed failed)
+    (cons-stream
+      ; return a stream of frac
+      (/ passed (+ passed failed))
+      (monte-carlo
+        (tail experiment-stream)
+        passed failed)))
+  (if (head experiment-stream)
+    (next (+ passed 1) failed)
+    (next passed (+ failed 1))))
+
+(define estimated-pi
+  (stream-map
+    (lambda (p) (sqrt (/ 6 p)))
+    (stream-filter
+      ; occasionally we have a "divde by zero" error here
+      ;   I just drop these elements from stream
+      (arith 'ne 0)
+      (monte-carlo cesaro-stream 0 0))))
+
+(out (stream-ref estimated-pi 10000))
 
 (end-script)
