@@ -40,4 +40,28 @@
     (stream-map cons vc il))
   RLC-circuit-stream)
 
+(define the-RLC
+  ((RLC 1 1 0.2 0.1)
+   10
+   0))
+
+(call-with-output-file
+  "./exercise_3_80_out.txt"
+  (lambda (output)
+    (define (pair->string time vc-il-pair)
+      (format
+        #f
+        "~A ~A ~A~%"
+        time (car vc-il-pair) (cdr vc-il-pair)))
+    (stream-for-each
+      (lambda (str) (display str output))
+      (take
+        ; duration = 60s = 600 elements
+        600
+        ((zip-streams-with pair->string)
+         ; the time
+         (scale-stream integers 0.1)
+         ; the pair
+         the-RLC)))))
+
 (end-script)
