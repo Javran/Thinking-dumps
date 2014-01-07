@@ -1,6 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./stream.scm")
+
+(load "./exercise_3_82_common.scm")
+
 ; >>>> from "./exercise_3_5.scm"
 
 ; return a random in range [low, high)
@@ -37,23 +41,31 @@
 ; >>>> from "./3_5_5_modularity_of_fp_and_modularity_of_objs.scm"
 
 (define (estimate-integral pred x1 x2 y1 y2)
-  (define (experiment)
-    (let ((x (random-in-range x1 x2))
-          (y (random-in-range y1 y2)))
-      (pred x y)))
-  ; because of its side effect,
-  ;   we have to define it as a procedure.
-  (define (experiment-stream)
-    (cons-stream
-      (experiment)
-      ; delayed
-      (experiment-stream)))
+  ; from a value within [0,1) to a value within [low,high)
+  (define (unit->number low high percent)
+    ; v = percent * (high-low) + low
+    ; v_min = low
+    ; v_max = high
+    (+ low (* percent
+              (- high low))))
+  ; return a stream of lists of x and y within range
+  (define random-x-y-nums
+    (stream-map
+      (lambda (x-y-stream)
+        (let ((x-y-list (stream->list x-y-stream)))
+          (list (unit->number x1 x2 (car x-y-list))
+                (unit->number y1 y2 (cadr x-y-list)))))
+      (group-stream 2 random-units)))
+  (define experiment-stream
+    (stream-map
+      ((curry2 apply) pred)
+      random-x-y-nums))
   (stream-map
     (lambda (p)
       (* p
          (- x2 x1)
          (- y2 y1)))
-    (monte-carlo (experiment-stream) 0 0)))
+    (monte-carlo experiment-stream 0 0)))
 
 (define estimate-pi
   (estimate-integral in-circle? -2 2 -2 2))
