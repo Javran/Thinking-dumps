@@ -7,6 +7,7 @@
 (provide concat-map)
 (provide assert)
 (provide curry2)
+(provide memf)
 
 ; output all arguments, line-by-line
 (define out
@@ -58,3 +59,14 @@
   (lambda (a)
     (lambda (b)
       (f a b))))
+
+; memf: (a -> Bool) -> [a] -> Either a Bool
+; search through `xs`, and get the list starting from the first element that
+;   satisfies `pred`, return #f if `xs` does not have an element
+;   that meets the predicate.
+(define (memf pred xs)
+  (if (null? xs)
+    #f
+    (if (pred (car xs))
+      xs
+      (memf pred (cdr xs)))))
