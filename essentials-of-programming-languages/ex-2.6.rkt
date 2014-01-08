@@ -21,7 +21,7 @@
         ;   raise an error
         (report-no-binding-found v)))
 
-    ; extend-env: Var x SchemeVal X Env -> Env
+    ; extend-env: Var x SchemeVal x Env -> Env
     (define (extend-env key val env)
       (lambda (v)
         ; when called with a variable

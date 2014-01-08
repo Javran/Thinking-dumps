@@ -19,7 +19,7 @@
     ; empty-env?
     (lambda () #t)))
 
-; extend-env: Var x SchemeVal X Env -> Env
+; extend-env: Var x SchemeVal x Env -> Env
 (define (extend-env key val env)
   (list 
     ; apply-env

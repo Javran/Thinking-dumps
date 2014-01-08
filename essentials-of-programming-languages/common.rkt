@@ -8,6 +8,7 @@
 (provide assert)
 (provide curry2)
 (provide memf)
+(provide const)
 
 ; output all arguments, line-by-line
 (define out
@@ -70,3 +71,8 @@
     (if (pred (car xs))
       xs
       (memf pred (cdr xs)))))
+
+; return `v` whatever is given
+(define (const v)
+  (lambda ignored
+    v))
