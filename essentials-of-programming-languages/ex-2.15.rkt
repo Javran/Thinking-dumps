@@ -80,49 +80,19 @@
 ; usage: fetch the (ope)rand from an application
 (define app-exp->rand cadr)
 
-; test predicates
-(let* ((v-e (var-exp 'x))
-       (l-e (lambda-exp 'x v-e))
-       (a-e (app-exp l-e l-e))
-       (exprs (list v-e l-e a-e)))
-  (assert
-    (equal?
-      (list #t #f #f) (map var-exp? exprs)))
-  (assert
-    (equal?
-      (list #f #t #f) (map lambda-exp? exprs)))
-  (assert
-    (equal?
-      (list #f #f #t) (map app-exp? exprs)))
-  (out "predicates: assertion test passed.")
-  'done)
+(require "./ex-2.15-test.rkt")
 
-; test extractors
-(let* (; l-e = \ x -> \y -> x y
-       (l-e (lambda-exp
-              'x
-              (lambda-exp
-                'y
-                (app-exp
-                  (var-exp 'x)
-                  (var-exp 'y))))))
-  (define the-x
-    (lambda-exp->bound-var l-e))
-  (assert (eq? the-x 'x))
-  (define the-y
-    (lambda-exp->bound-var
-      (lambda-exp->body l-e)))
-  (assert (eq? the-y 'y))
-  (define the-app
-    (lambda-exp->body
-      (lambda-exp->body l-e)))
-  (define the-app-x
-    (var-exp->var
-      (app-exp->rator the-app)))
-  (assert (eq? the-app-x 'x))
-  (define the-app-y
-    (var-exp->var
-      (app-exp->rand the-app)))
-  (assert (eq? the-app-y 'y))
-  (out "extractors: assertion test passed.")
-  'done)
+(do-lc-exp-test
+  var-exp
+  lambda-exp
+  app-exp
+  ;
+  var-exp?
+  lambda-exp?
+  app-exp?
+  ;
+  var-exp->var
+  lambda-exp->bound-var
+  lambda-exp->body
+  app-exp->rator
+  app-exp->rand)
