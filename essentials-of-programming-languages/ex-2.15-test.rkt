@@ -27,13 +27,16 @@
          (exprs (list v-e l-e a-e)))
     (assert
       (equal?
-        (list #t #f #f) (map var-exp? exprs)))
+        (list #t #f #f) (map var-exp? exprs))
+      "var-exp? failed")
     (assert
       (equal?
-        (list #f #t #f) (map lambda-exp? exprs)))
+        (list #f #t #f) (map lambda-exp? exprs))
+      "lambda-exp? failed")
     (assert
       (equal?
-        (list #f #f #t) (map app-exp? exprs)))
+        (list #f #f #t) (map app-exp? exprs))
+      "app-exp? failed")
     (out "predicates: assertion test passed.")
     'done)
 
