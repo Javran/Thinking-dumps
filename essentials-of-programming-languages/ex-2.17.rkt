@@ -158,50 +158,73 @@
 
 (apply do-lc-exp-test impl2)
 
-#|
-(define impl2
-  ; implementation #2: todo...
+(define impl3
+  (let ()
+    ; implementation #2: pairs
+    ; var:    ( var . <var> )
+    ; lambda: ( lambda . ( <var> . <exp> ) )
+    ; app:    ( app    . ( <exp> . <exp> ) )
 
-  ; ==== constructors ====
+    ; ==== constructors ====
 
-  ; var-exp: Var -> LcExp
+    ; var-exp: Var -> LcExp
+    (define (var-exp v)
+      (cons 'var v))
 
-  ; lambda-exp: Var x LcExp -> LcExp
+    ; lambda-exp: Var x LcExp -> LcExp
+    (define (lambda-exp v e)
+      (cons 'lambda
+            (cons v e)))
 
-  ; app-exp: LcExp x LcExp -> LcExp
+    ; app-exp: LcExp x LcExp -> LcExp
+    (define (app-exp e1 e2)
+      (cons 'app
+            (cons e1 e2)))
 
-  ; ==== predicates ====
+    ; ==== predicates ====
 
-  ; var-exp?: LcExp -> Bool
+    ; var-exp?: LcExp -> Bool
+    (define (var-exp? e)
+      (eq? 'var (car e)))
 
-  ; lambda-exp?: LcExp -> Bool
+    ; lambda-exp?: LcExp -> Bool
+    (define (lambda-exp? e)
+      (eq? 'lambda (car e)))
 
-  ; app-exp?: LcExp -> Bool
+    ; app-exp?: LcExp -> Bool
+    (define (app-exp? e)
+      (eq? 'app (car e)))
 
-  ; ==== extractors ====
+    ; ==== extractors ====
 
-  ; var-exp->var: LcExp -> Var
+    ; var-exp->var: LcExp -> Var
+    (define var-exp->var cdr)
 
-  ; lambda-exp->bound-var: LcExp -> Var
+    ; lambda-exp->bound-var: LcExp -> Var
+    (define lambda-exp->bound-var cadr)
 
-  ; lambda-exp->body: LcExp -> LcExp
+    ; lambda-exp->body: LcExp -> LcExp
+    (define lambda-exp->body cddr)
 
-  ; app-exp->rator: LcExp -> LcExp
+    ; app-exp->rator: LcExp -> LcExp
+    (define app-exp->rator cadr)
 
-  ; app-exp->rand: LcExp -> LcExp
+    ; app-exp->rand: LcExp -> LcExp
+    (define app-exp->rand cddr)
 
-  (list
-    var-exp
-    lambda-exp
-    app-exp
-    ;
-    var-exp?
-    lambda-exp?
-    app-exp?
-    ;
-    var-exp->var
-    lambda-exp->bound-var
-    lambda-exp->body
-    app-exp->rator
-    app-exp->rand))
-|#
+    (list
+      var-exp
+      lambda-exp
+      app-exp
+      ;
+      var-exp?
+      lambda-exp?
+      app-exp?
+      ;
+      var-exp->var
+      lambda-exp->bound-var
+      lambda-exp->body
+      app-exp->rator
+      app-exp->rand)))
+
+(apply do-lc-exp-test impl3)
