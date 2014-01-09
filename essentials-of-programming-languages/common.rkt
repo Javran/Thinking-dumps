@@ -9,6 +9,7 @@
 (provide curry2)
 (provide memf)
 (provide const)
+(provide identity)
 
 ; output all arguments, line-by-line
 (define out
@@ -76,3 +77,7 @@
 (define (const v)
   (lambda ignored
     v))
+
+; identity function
+(define (identity x)
+  x)
