@@ -1,5 +1,8 @@
 #lang eopl
 
+(require (only-in racket/base
+                  format))
+
 (provide out)
 (provide filter)
 (provide foldl)
@@ -10,6 +13,7 @@
 (provide memf)
 (provide const)
 (provide identity)
+(provide format)
 
 ; output all arguments, line-by-line
 (define out
