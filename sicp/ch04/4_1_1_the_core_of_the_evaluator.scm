@@ -65,24 +65,84 @@
           (error
             "Unknown procedure type: APPLY" procedure))))
 
+(define (list-of-values exps env)
+  ; evaluate each expression
+  ;   in environment `env` and return a list of result
+  (if (no-opearnds? exps)
+    '()
+    (cons (eval (first-operand exps) env)
+          (list-of-values (rest-operands exps) env))))
+
+(define (eval-if exp env)
+  ; use `true?` here allows the language to be implemented
+  ;   having a different representaion of truth value
+  (if (true? (eval (if-predicate exp) env))
+    (eval (if-consequent exp) env)
+    (eval (if-alternative exp) env)))
+
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps)
+          ; return the result of the last expresssion
+          (eval (first-exp exps) env))
+        (else
+          (eval (first-exp exps) env)
+          (eval-sequence (rest-exps exps) env))))
+
+; just came with an idea of refactoring
+#|
+(define (eval-sequence exps env)
+  (let ((result (eval (first-exp exps) env)))
+    (if (not (last-exp? exps))
+      (eval-sequence (rest-exps exps) env)
+      result)))
+|#
+
+(define (eval-assignment exp env)
+  ; update the environment
+  (set-variable-value!
+    (assignment-variable exp)
+    ; evaluate and bind to the variable
+    (eval (assignment-value exp) env)
+    env)
+  'ok)
+
+(define (eval-definition exp env)
+  (define-variable!
+    (definition-variable exp)
+    (eval (definition-value exp))
+    env)
+  'ok)
+
 ; missing definitions:
+; * define-variable!
+; * definition-variable
+; * definition-value
+; * set-variable-value!
+; * assignment-value
+; * assignment-variable
+; * rest-exps
+; * first-exp
+; * last-exp?
+; * if-consequent
+; * if-alternative
+; * if-predicate
+; * true?
+; * rest-operands
+; * first-operand
+; * no-opearnds?
 ; * self-evaluating?
 ; * variable?
 ; * lookup-variable-value
 ; * quoted?
 ; * text-of-quotation
 ; * assignment?
-; * eval-assignment
 ; * definition?
-; * eval-definition
 ; * if?
-; * eval-if
 ; * lambda?
 ; * make-procedure
 ; * lambda-parameters
 ; * lambda-body
 ; * begin?
-; * eval-sequence
 ; * begin-actions
 ; * cond?
 ; * cond->if
@@ -90,7 +150,6 @@
 ; * apply
 ; * operator
 ; * operands
-; * list-of-values
 ; * primitive-procedure?
 ; * apply-primitive-procedure
 ; * compound-procedure?
