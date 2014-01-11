@@ -147,7 +147,6 @@
 ; * cond?
 ; * cond->if
 ; * application?
-; * apply
 ; * operator
 ; * operands
 ; * primitive-procedure?

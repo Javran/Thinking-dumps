@@ -95,7 +95,6 @@
 ; * make-procedure
 ; * cond?
 ; * cond->if
-; * apply
 ; * primitive-procedure?
 ; * apply-primitive-procedure
 ; * compound-procedure?
