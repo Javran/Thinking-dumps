@@ -47,6 +47,24 @@
         (else
           (error "Unknown expression type: EVAL" exp))))
 
+(define (apply procedure arguments)
+  (cond ((primitive-procedure? procedure)
+          ; dispatch, if the procedure is already a primitive
+          (apply-primitive-procedure procedure arguments))
+        ((compound-procedure? procedure)
+          ; sequentially evluating the body
+          ;   using extended environment
+          ;   (the procedure environment + parameter bindings)
+          (eval-sequence
+            (procedure-body procedure)
+            (extend-environment
+              (procedure-parameters procedure)
+              arguments
+              (procedure-environment procedure))))
+        (else
+          (error
+            "Unknown procedure type: APPLY" procedure))))
+
 ; missing definitions:
 ; * self-evaluating?
 ; * variable?
@@ -73,5 +91,12 @@
 ; * operator
 ; * operands
 ; * list-of-values
+; * primitive-procedure?
+; * apply-primitive-procedure
+; * compound-procedure?
+; * procedure-body
+; * extend-environment
+; * procedure-parameters
+; * procedure-environment
 
 (end-script)
