@@ -11,7 +11,6 @@
 
 ; quotations are of the form: `(quote <text-of-quotation>)`
 (define (quoted? exp)
-  ; what is `tagged-list?` ?
   (tagged-list? exp 'quote))
 (define (text-of-quotation exp)
   (cadr exp))
