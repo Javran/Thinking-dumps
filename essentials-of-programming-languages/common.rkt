@@ -14,6 +14,11 @@
 (provide const)
 (provide identity)
 (provide format)
+(provide non-empty?)
+
+; to prove readability of `pair?` that actually means
+;   a non-empty stuff
+(define non-empty? pair?)
 
 ; output all arguments, line-by-line
 (define out
