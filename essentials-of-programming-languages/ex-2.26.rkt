@@ -45,13 +45,9 @@
       (format "(B~A)"
         (foldl
           (lambda (acc i)
-            (format
-              "~A ~A"
-              acc
-              (red-blue-subtree->string i)
-              ))
+            (format "~A ~A" acc i))
           ""
-          subtrees)))
+          (map red-blue-subtree->string subtrees))))
     (leaf-node (n)
       (number->string n))))
 
