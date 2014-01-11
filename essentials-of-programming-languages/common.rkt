@@ -15,6 +15,25 @@
 (provide identity)
 (provide format)
 (provide non-empty?)
+(provide compose)
+(provide flip)
+
+; compose unaries
+; compose (...  h . g . f) x = ... $ h $ g $ f x
+; => compose-inv (f . g . h ...) x
+; => (compose-inv (g . h ...)) $ f x
+(define (compose . procs)
+  (define (compose-inv procs)
+    (if (null? procs)
+      identity
+      (lambda (x)
+        ((compose-inv (cdr procs)) ((car procs) x)))))
+  (let ((procs-inv (reverse procs)))
+    (compose-inv procs-inv)))
+
+; flip f x y = f y x
+(define (flip f)
+  (lambda (a b) (f b a)))
 
 ; to prove readability of `pair?` that actually means
 ;   a non-empty stuff
