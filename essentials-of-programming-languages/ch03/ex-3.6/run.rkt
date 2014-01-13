@@ -6,4 +6,6 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
-(out (expval->num (run "minus(-(minus(5),9))")))
+; see "./tests.rkt" for appended test cases
+
+(test-all)

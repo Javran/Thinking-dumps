@@ -55,5 +55,9 @@
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 
+      ;; test minus functionality
+      (test-minus-1 "let x = minus(10) in let y = 20 in -(y,x)" 30)
+      (test-minus-2 "minus(minus(minus(1)))" -1)
+      (test-minus-exercise "minus(-(minus(5),9))" 14)
       ))
   )
