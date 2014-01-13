@@ -55,5 +55,21 @@
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 
+      ;; test add
+      (test-add-1 "add(add(1,2),3)" 6)
+      (test-add-2 "let x = 1 in let y = -1 in add(x,y)" 0)
+
+      ;; test mul
+      (test-mul-1 "mul(mul(10,20),30)" 6000)
+      (test-mul-2 "let x = 1 in let y = -1 in mul(x,y)" -1)
+
+      ;; test quotient
+      (test-quotient-1 "quotient(37,37)" 1)
+      (test-quotient-2 "quotient(40,7)" 5)
+      (test-quotient-3 "quotient(20,30)" 0)
+
+      ;; test combination
+      (test-comb
+          "let x = add(107,23) in let y = mul(3,19) in quotient(x,y)" 2)
       ))
   )
