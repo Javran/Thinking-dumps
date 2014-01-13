@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; partition :: (a -> Bool, [Int]) -> ([Int], [Int])
 ; usage: do partition in `loi`, return a pair `(a,b)`

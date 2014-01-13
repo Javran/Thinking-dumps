@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; from "./ex-2.5.rkt"
 (require "./ex-2.5.rkt")

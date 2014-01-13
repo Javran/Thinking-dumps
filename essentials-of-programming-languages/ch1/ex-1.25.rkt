@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; exists? :: (a -> Bool, [a]) -> Bool
 ; usage: return #t if there is an element in `lst`

@@ -1,0 +1,48 @@
+\section*{Exercise 1.5}
+
+If $e \in LcExp$, then there are the same number of left
+and right parentheses in $e$.
+
+\begin{proof}
+    Let $f(x)$ be the number of steps required to formalize that $x \in LcExp$.
+    We prove the theorem by induction on $f(e)$.
+
+    Let $lp(x)$ and $rp(x)$ be the number of left parentheses and the number
+    of right parentheses in $x$, respectively.
+
+    The induction hypothesis $IH(k)$ is that
+    any $x \in LcExp$ that $f(x) \le k$ has the same number of
+    left parentheses and right parentheses.  By definition, $f(x) \ge 1$. 
+
+    If $f(e) = 1$, then $e \in Identifier$.
+    And $lp(e) = rp(e) = 0$, thus $IH(1)$ holds true.
+
+    Let $IH(k)$ holds true, that is,
+    for any $x \in LcExp$ that $f(x) \le k$,
+    $lp(x) = rp(x)$ holds true.
+    We need to show that $IH(k+1)$ holds as well,
+    for all $e \in LcExp$ such that $f(e) = k+1$,
+    we have three posibilities according to the definition of $LcExp$:
+
+    \textbf{Case 1.} $e$ could be of form $Identifier$, which means only one
+    step of formalization is required, $IH(k+1)$ holds for this case,
+    especially, $k$ can only be $0$.
+
+    \textbf{Case 2.} $e$ could be of form
+    $(lambda \quad (Identifier) \quad LcExp)$. This struction has
+    an inner $LcExp$, we name it $e'$. By definition of $f$,
+    we know that $f(e') < f(e)$. And:
+
+    \begin{align*}
+        lp(e) & = 2 + lp(e') \\
+        rp(e) & = 2 + rp(e')
+    \end{align*}
+
+    In addition, because $f(e') \le k$, we know $lp(e') = rp(e)$ by $IH(k)$.
+    Therefore, in this case, $lp(e) = 2 + lp(e') = 2 + rp(e') = rp(e)$.
+    $IH(k+1)$ holds.
+
+    This completes the proof of the claim that $IH(k+1)$ holds and therefore
+    completes the induction.
+
+\end{proof}

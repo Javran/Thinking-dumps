@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; count-occurrences :: (Sym, [SExp]) -> Int
 ; usage: count occurrences of `s` in `slist`

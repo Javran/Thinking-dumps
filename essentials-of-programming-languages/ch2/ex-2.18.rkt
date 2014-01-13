@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; number->sequence: Int -> NodeInSeq Int
 ; usage: create a list zipper containing `x`

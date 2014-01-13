@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; invert :: [(a,b)] -> [(b,a)]
 ; usage: every element in `lst` should be 

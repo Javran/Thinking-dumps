@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 (define (diff-tree->int t)
   (if (equal? t '(one))

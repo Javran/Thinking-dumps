@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; drop-until-found: Sym * Listof(Sym) -> Listof(Sym)
 ;   usage: drop elements from the beginning of `los`,

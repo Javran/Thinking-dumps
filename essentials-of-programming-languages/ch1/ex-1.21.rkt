@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; product :: ([a], [b]) -> [(a,b)]
 ; usage: return the Cartesian product of `sos1` and `sos2`

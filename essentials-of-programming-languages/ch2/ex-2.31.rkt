@@ -1,7 +1,7 @@
 #lang eopl
 
-(require "./common.rkt")
-(require "./test-utils.rkt")
+(require "../common.rkt")
+(require "../test-utils.rkt")
 
 (define-datatype prefix-exp prefix-exp?
   (const-exp

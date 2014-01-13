@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 (define-datatype env-exp env-exp?
   (empty-env)

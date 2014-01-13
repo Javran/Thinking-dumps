@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; merge :: ([Int], [Int]) -> [Int]
 ; usage: merge two sorted (ascending) lists of integers into sorted one

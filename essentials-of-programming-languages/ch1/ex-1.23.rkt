@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; list-index :: (a -> Bool) -> [a] -> Int
 ; usage: return the 0-based position of the first element

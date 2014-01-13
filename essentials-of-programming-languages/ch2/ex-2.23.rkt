@@ -1,7 +1,7 @@
 #lang eopl
 
-(require "./common.rkt")
-(require "./test-utils.rkt")
+(require "../common.rkt")
+(require "../test-utils.rkt")
 
 (define (identifier? s)
   (and (not (eq? 'lambda s))

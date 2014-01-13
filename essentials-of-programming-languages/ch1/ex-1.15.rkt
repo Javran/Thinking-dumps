@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; duple :: (Int, SExp) -> [SExp]
 ; usage: return a list of `n` elements

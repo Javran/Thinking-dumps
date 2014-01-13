@@ -1,6 +1,6 @@
 #lang racket
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 (provide do-test
          do-test-q

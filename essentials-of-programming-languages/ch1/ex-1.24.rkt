@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; every? :: (a -> Bool, [a]) -> Bool
 ; usage: return #t if all elements of `lst`

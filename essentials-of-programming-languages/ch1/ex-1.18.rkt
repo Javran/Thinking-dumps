@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; swapper :: (Sym, Sym, SList) -> SList
 ; usage: swap any occurence of `s1` to `s2`,

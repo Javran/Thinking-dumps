@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; up :: [Either a [a]] -> [a]
 ; usage: remove a pair of parentheses for each element

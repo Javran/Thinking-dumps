@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; flatten :: SList -> [Sym]
 ; usage: flatten `slist` to a list of symbols

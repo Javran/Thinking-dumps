@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; path :: (Int, BST) -> [Path]
 ; usage: return the path of finding `n` in `bst`

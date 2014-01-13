@@ -1,7 +1,7 @@
 #lang eopl
 
-(require "./common.rkt")
-(require "./test-utils.rkt")
+(require "../common.rkt")
+(require "../test-utils.rkt")
 
 (define-datatype bintree bintree?
   (leaf-node

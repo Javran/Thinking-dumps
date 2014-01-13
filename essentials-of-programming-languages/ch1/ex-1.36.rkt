@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; number-elements :: [a] -> [(Int,a)]
 ; usage: `zip [1..] lst`

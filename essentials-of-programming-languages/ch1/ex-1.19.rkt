@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; list-set :: ([a], Int, a) -> [a]
 ; usage: replace the `n`-th element (zero-indexed)

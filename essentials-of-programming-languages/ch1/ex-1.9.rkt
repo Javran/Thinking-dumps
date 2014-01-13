@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; remove: Sym x Listof(Sym) -> Listof(Sym)
 ;   usage: remove all occurrences of `s`

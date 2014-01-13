@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; filter-in :: ((a -> Bool), [a]) -> [a]
 ; usage: return only elements from `lst` that

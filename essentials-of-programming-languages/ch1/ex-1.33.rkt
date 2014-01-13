@@ -1,6 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
 
 ; leaf :: Int -> Bintree
 ; usage: create a leaf Bintree
