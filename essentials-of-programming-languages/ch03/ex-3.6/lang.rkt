@@ -4,8 +4,7 @@
 
   (lib "eopl.ss" "eopl")                
   
-  ;(require "drscheme-init.scm")
-  (require "./eopl3/chapter3/let-lang/drscheme-init.scm")
+  (require "drscheme-init.rkt")
   
   (provide (all-defined-out))
 
