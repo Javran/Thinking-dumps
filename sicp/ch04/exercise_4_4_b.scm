@@ -10,7 +10,7 @@
 ;    (if result
 ;       (and ...)
 ;       #f))
-;  (eval <expr> env))
+;  (eval <expr1> env))
 (define (eval-and exp env)
   (define (and->if exp)
     (cond ((null? exp)
@@ -43,7 +43,7 @@
 ;    (if result
 ;       result
 ;       (or ...)))
-;  (eval <expr> env))
+;  (eval <expr1> env))
 (define (eval-or exp env)
   (define (or->if exp)
     (cond ((null? exp)
