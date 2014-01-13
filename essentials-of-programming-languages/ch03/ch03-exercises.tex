@@ -13,85 +13,10 @@ My exercise answers}}
 \begin{document}
 \maketitle
 
-\section{Exercise 3.1}
-
-There are 4 places where the fact is used:
-
-\begin{itemize}
-    \item$  \lceil \dots \lfloor
-                \texttt{(value-of <<x>> $\rho$)}
-            \rfloor \dots \rceil
-         \Rightarrow
-            \lceil \dots
-                \texttt{10}
-            \dots \rceil$
-    \item$  \lceil \dots \lfloor
-                \texttt{(value-of <<3>> $\rho$)}
-            \rfloor \dots \rceil
-         \Rightarrow
-            \lceil \dots
-                \texttt{3}
-            \dots \rceil$
-    \item$  \lceil \dots \lfloor
-                \texttt{(value-of <<v>> $\rho$)}
-            \rfloor \dots \rceil
-         \Rightarrow
-            \lceil \dots
-                \texttt{5}
-            \dots \rceil$
-    \item$  \lceil \dots \lfloor
-                \texttt{(value-of <<i>> $\rho$)}
-            \rfloor \dots \rceil
-         \Rightarrow
-            \lceil \dots
-                \texttt{1}
-            \dots \rceil$
-
-\end{itemize}
-
-\section{Exercise 3.2}
-
-Not sure if this one is correct:
-
-let $val = \texttt{(bool-val \#t)}$.
-
-\begin{align*}
-    \lfloor val \rfloor & = \bot \\
-    \lceil \lfloor val \rfloor \rceil  & = \bot \\
-    \texttt{(bool-val \#t)} & \neq \bot
-\end{align*}
-    
-\section{Exercise 3.3}
-
-Maybe it is because that substration is neither associative nor commutative.
-
-So we can tell the difference between \texttt{-(3,2)} and \texttt{-(2,3)} by simply
-looking at their results. It is more convenient to test for correctness.
-
-The derivation is too long, so I would use $A$,$B$ and $C$ to shorten the line.
-
-Where:
-
-\begin{align*}
-    A &: \texttt{(value-of <<-(x,11)>>) $= \lceil 22 \rceil $ } \\
-    B &: \texttt{(value-of <<zero?(-(x,11))>>) $=$ \#f} \\
-    C &: \texttt{(value-of <<if zero?(-(x,11)) then -(y,2) else -(y,4)>> $\rho$) }
-\end{align*}
-
-\begin{prooftree}
-    \AxiomC{A}
-    \AxiomC{
-        $ \lceil 22 \rceil \neq \lceil 0 \rceil $
-    }
-    \BinaryInfC{B}
-    \AxiomC{C}
-    \BinaryInfC{
-        \texttt{(value-of <<-(y,4)>> $\rho$) }
-    }
-    \UnaryInfC{
-        $ \lceil 18 \rceil $
-    }
-\end{prooftree}
-
+\input{./ex-3.1.tex}
+\input{./ex-3.2.tex}
+\input{./ex-3.3.tex}
+\input{./ex-3.4.tex}
+% missing: \input{./ex-3.5.tex}
 
 \end{document}
