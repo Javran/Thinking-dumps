@@ -1,0 +1,52 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{indentfirst}
+
+\DeclareMathOperator{\listofint}{List-of-int}
+
+\title{Essentials of Programming Languages\\
+{\large
+My exercise answers}}
+\author{Javran Cheng}
+\begin{document}
+\maketitle
+
+\section{Exercise 3.1}
+
+There are 4 places where the fact is used:
+
+\begin{itemize}
+    \item$  \lceil \dots \lfloor
+                \texttt{(value-of <<x>> $\rho$)}
+            \rfloor \dots \rceil
+         \Rightarrow
+            \lceil \dots
+                \texttt{10}
+            \dots \rceil$
+    \item$  \lceil \dots \lfloor
+                \texttt{(value-of <<3>> $\rho$)}
+            \rfloor \dots \rceil
+         \Rightarrow
+            \lceil \dots
+                \texttt{3}
+            \dots \rceil$
+    \item$  \lceil \dots \lfloor
+                \texttt{(value-of <<v>> $\rho$)}
+            \rfloor \dots \rceil
+         \Rightarrow
+            \lceil \dots
+                \texttt{5}
+            \dots \rceil$
+    \item$  \lceil \dots \lfloor
+                \texttt{(value-of <<i>> $\rho$)}
+            \rfloor \dots \rceil
+         \Rightarrow
+            \lceil \dots
+                \texttt{1}
+            \dots \rceil$
+
+\end{itemize}
+
+
+\end{document}
