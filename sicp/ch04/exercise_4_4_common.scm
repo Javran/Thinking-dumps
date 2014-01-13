@@ -9,7 +9,10 @@
           (list
             (mat '(and) #t)
             (mat '(and (= 1 1) (= 2 2)) #t)
-            (mat '(and (= 1 1) #f (error 'wont-reach)) #f)))
+            (mat '(and (= 1 1) #f (error 'wont-reach)) #f)
+            (mat '(and 1 2 3 4) 4)
+            (mat '(and 1) 1)
+          ))
         (proc
           (lambda (exp)
             (eval-and exp def-env))))
@@ -18,7 +21,10 @@
           (list
             (mat '(or) #f)
             (mat '(or #t (error 'wont-reach)) #t)
-            (mat '(or (< 1 1) (> 2 2)) #f)))
+            (mat '(or (< 1 1) (> 2 2)) #f)
+            (mat '(or (quote symbol)) 'symbol)
+            (mat '(or #f #f 1) 1)
+          ))
         (proc
           (lambda (exp)
             (eval-or exp def-env))))
