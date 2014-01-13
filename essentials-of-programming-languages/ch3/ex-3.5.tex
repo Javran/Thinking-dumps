@@ -1,0 +1,43 @@
+\section*{Exercise 3.5}
+
+\begin{scprooftree}{.41}
+    \AxiomC{
+        \texttt{(value-of <<let x = 7 in let y = 2 in let y = let x = -(x,1) in -(x,y) in -(-(x,8),y)>> $\rho_0$)}
+    }
+    \UnaryInfC{
+        \texttt{(value-of <<let y = 2 in let y = let x = -(x,1) in -(x,y) in -(-(x,8),y)>> $\rho_1$)}
+    } 
+    \UnaryInfC{
+        \texttt{(value-of <<let y = let x = -(x,1) in -(x,y) in -(-(x,8),y)>> $\rho_2$)}
+    } 
+    \AxiomC{
+        \texttt{(value-of <<-(x,1)>> $\rho_2$)} $= \lceil 6 \rceil $
+    }
+    \AxiomC{
+        \texttt{(value-of <<let x = -(x,1) in -(x,y)>> $\rho_2$)}
+    }
+    \BinaryInfC{
+        \texttt{(value-of <<-(x,y)>> $\rho_3$) $ = \lceil 4 \rceil $}
+    }
+    \BinaryInfC{
+        \texttt{(value-of <<-(-(x,8),y)>> $\rho_4$)}
+    }
+    \UnaryInfC{
+        \texttt{(value-of <<-(-1,y)>> $\rho_4$)}
+    }
+    \UnaryInfC{
+        $ \lceil -5 \rceil  $
+    }
+\end{scprooftree}
+
+Where:
+
+\begin{align*}
+\rho_1 &= [x= \lceil 7 \rceil ] \rho_0 \\
+\rho_2 &= [y= \lceil 2 \rceil ] \rho_1 \\
+\rho_3 &= [x= \lceil 6 \rceil ] \rho_2 \\
+\rho_4 &= [y= \lceil 4 \rceil ] \rho_2
+\end{align*}
+
+
+
