@@ -1,0 +1,9 @@
+\section*{Exercise 1.11}
+
+\texttt{subst} is guaranteed to do recursion on a smaller substructure.
+Because if \texttt{slist} is empty, it terminates, or it will call
+\texttt{subst-in-s-exp} on \texttt{(car slist)} and call
+\texttt{subst} on \texttt{(cdr slist)}, all of which are guaranteed to
+be a smaller substructure and thus can halt.
+\texttt{subst-in-s-exp} calls \texttt{subst} and thus is guaranteed to
+terminate as well.

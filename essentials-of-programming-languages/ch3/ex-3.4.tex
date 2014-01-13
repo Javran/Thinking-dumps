@@ -1,0 +1,26 @@
+\section*{Exercise 3.4}
+
+\newenvironment{scprooftree}[1]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+    {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+\begin{scprooftree}{.65}
+    \AxiomC{
+    \texttt{(value-of <<-(x,11)>>) $= \lceil 22 \rceil $ }
+    }
+    \AxiomC{
+        $ \lceil 22 \rceil \neq \lceil 0 \rceil $
+    }
+    \BinaryInfC{
+        \texttt{(value-of <<zero?(-(x,11))>>) $=$ \#f} 
+    }
+    \AxiomC{
+        \texttt{(value-of <<if zero?(-(x,11)) then -(y,2) else -(y,4)>> $\rho$) }
+    }
+    \BinaryInfC{
+        \texttt{(value-of <<-(y,4)>> $\rho$) }
+    }
+    \UnaryInfC{
+        $ \lceil 18 \rceil $
+    }
+\end{scprooftree}
+

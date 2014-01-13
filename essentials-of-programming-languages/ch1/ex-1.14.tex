@@ -1,0 +1,35 @@
+\section*{Exercise 1.14}
+
+\begin{proof}
+We will prove this by induction.
+The induction hypothesis $IH(n)$ is that
+the result of \texttt{partial-vector-sum} is correct. i.e.:
+
+\[
+    \texttt{partial-vector-sum}(v,n) = \sum_{i=0}^{n}v_i
+\]
+
+We first show that $IH(0)$ holds. If $n=0$, the result is:
+
+\[
+    \texttt{(vector-ref v 0)} = v_0 = \sum_{i=0}^{0}v_i
+\]
+
+Therefore, $IH(0)$ holds.
+
+Let $IH(k)$ holds true, we want to show that $IH(k+1)$ holds as well
+to complete the induction.
+
+Since $0 \le n < length(v)$, we know that $k + 1 \neq 0$, therefore:
+
+\begin{align*}
+    & \texttt{(+ (vector-ref v <k+1>) (partial-vector-sum v (- <k+1> 1)))} \\
+    = & v_{k+1} + \texttt{(partial-vector-sum v k)} \\
+    = & v_{k+1} + \sum_{i=0}^{k}v_i \\
+    = & \sum_{i=0}^{k+1}v_i
+\end{align*}
+
+This completes the proof of the claim that $IH(k+1)$ holds and therefore
+completes the induction.
+
+\end{proof}
