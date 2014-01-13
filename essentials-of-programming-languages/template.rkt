@@ -1,5 +1,6 @@
 #lang eopl
 
-(require "./common.rkt")
+(require "../common.rkt")
+(require "../test-utils.rkt")
 
 
