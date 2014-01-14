@@ -56,6 +56,8 @@
             ; operand
             (cond-predicate first)))))))
 
+(out (make-lambda '(x) 'body))
+
 (out (eval-cond 
        '(cond ((assoc (quote b)
                       (quote ((a 1) (b 2))))
