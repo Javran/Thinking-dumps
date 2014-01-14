@@ -29,6 +29,9 @@
       (list-val (elements)
         (expval->list v))))
 
+  ; require new type of expval: list
+  ;   and it should contain a list of data of type expval?
+
   ;; expval->num : ExpVal -> Int
   ;; Page: 70
   (define expval->num

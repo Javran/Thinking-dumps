@@ -55,5 +55,21 @@
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 
+      (test-emptylist "emptylist" ())
+
+      (test-cons "cons(1,cons(2,emptylist))" (1 2))
+
+      (test-car "car(cons(1,cons(2,emptylist)))" 1)
+
+      (test-cdr "cdr(cons(1,cons(2,emptylist)))" (2))
+
+      (test-null?-1 "null?(emptylist)" #t)
+      (test-null?-2 "null?(cons(1,emptylist))" #f)
+
+      (test-book-example
+        "let x = 4 in cons(x,cons(cons(-(x,1),emptylist),emptylist))"
+        (4 (3)))
+
+
       ))
   )
