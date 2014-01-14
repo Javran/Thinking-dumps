@@ -10,7 +10,7 @@
 ;    (if result
 ;       (and ...)
 ;       #f))
-;  (eval <expr1> env))
+;  <expr1>)
 (define (eval-and exp env)
   (define (and->if exp)
     (cond ((null? exp)
@@ -22,19 +22,14 @@
             ; last expression, simply return it
             (car exp))
           (else
-            (list
-              (list 'lambda (list 'result)
-                    (list 'if 'result
-                          (list 'and (and->if (cdr exp)))
-                          'false-value))
-              (list 'eval (car exp) 'env)))))
-  (eval (and->if (cdr exp))
-        ; extend the default environment
-        ;  to include the value of `env`
-        (extend-top-level-environment
-          env
-          '(env)
-          (list env))))
+            (let ((result-sym (gensym)))
+              (list
+                (list 'lambda (list result-sym)
+                      (list 'if result-sym
+                            (list 'and (and->if (cdr exp)))
+                            'false-value))
+                (car exp))))))
+  (eval (and->if (cdr exp)) env))
 
 ; (or) => #f
 ; (or <expr>) => <expr>
@@ -43,7 +38,7 @@
 ;    (if result
 ;       result
 ;       (or ...)))
-;  (eval <expr1> env))
+;  <expr1>)
 (define (eval-or exp env)
   (define (or->if exp)
     (cond ((null? exp)
@@ -51,17 +46,14 @@
           ((null? (cdr exp))
             (car exp))
           (else
-            (list
-              (list 'lambda (list 'result)
-                    (list 'if 'result
-                          'result
-                          (list 'or (or->if (cdr exp)))))
-              (list 'eval (car exp) 'env)))))
-  (eval (or->if (cdr exp))
-        (extend-top-level-environment
-          env
-          '(env)
-          (list env))))
+            (let ((result-sym (gensym)))
+              (list
+                (list 'lambda (list result-sym)
+                      (list 'if result-sym
+                            result-sym
+                            (list 'or (or->if (cdr exp)))))
+                (car exp))))))
+  (eval (or->if (cdr exp)) env))
                        
 (test-and-or eval-and eval-or)
 
