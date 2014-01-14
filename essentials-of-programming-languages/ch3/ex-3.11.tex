@@ -1,0 +1,13 @@
+\section*{Exercise 3.11}
+
+I extend the language on the top of ``\texttt{eopl3/chapter3/let-lang}'' and
+it is already arranged well.
+
+To add new operators, we can change the definition of ``\texttt{the-grammar}''
+from file ``\texttt{lang.scm}'' to reflect new grammar.
+
+In addition, to make the new operator work, we modify ``\texttt{value-of}''
+from file ``\texttt{interp.scm}'' to implement the new operator.
+
+Furthermore, we can harness the ``\texttt{tests.scm}'' file to test our code
+automatically.
