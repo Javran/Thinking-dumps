@@ -45,6 +45,9 @@
 (define (make-begin seq)
   (cons 'begin seq))
 
+(define (make-lambda parameters body)
+  (cons 'lambda (cons parameters body)))
+
 (define (expand-clauses clauses)
   (if (null? clauses)
     ; no case is given
