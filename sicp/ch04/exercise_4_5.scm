@@ -8,6 +8,12 @@
 (define (eval-cond exp env)
   (eval (cond->if exp) env))
 
+(define (clause-arrow? clause)
+  (eq? (cadr clause) '=>))
+; (<predicate> => <handler>)
+;                    ^- the third element
+(define clause-handler caddr)
+
 (define (expand-clauses clauses)
   (if (null? clauses)
     ; no case is given
@@ -36,11 +42,26 @@
               (list
                 (make-if
                   result-sym ; use cached result
-                  (sequence->exp (cond-actions first))
+                  (if (clause-arrow? first)
+                    ; the extended syntax
+                    ;   should be an application
+                    (list
+                      ; operator
+                      (clause-handler first)
+                      ; operand
+                      result-sym)
+                    ; the original syntax
+                    (sequence->exp (cond-actions first)))
                   (expand-clauses rest))))
             ; operand
             (cond-predicate first)))))))
 
-(out (eval-cond '(cond (#f 1) (else (quote good))) def-env))
+(out (eval-cond 
+       '(cond ((assoc (quote b)
+                      (quote ((a 1) (b 2))))
+               =>
+               cadr)
+              (else false))
+       def-env))
 
 (end-script)
