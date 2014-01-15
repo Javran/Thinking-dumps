@@ -16,4 +16,11 @@
 ; 2 (outputed by evaluation)
 ; 6 (outputed by `out`)
 
+(out
+  (eval-let
+    '(let ()
+       1)
+    (the-environment)))
+; 1
+
 (end-script)
