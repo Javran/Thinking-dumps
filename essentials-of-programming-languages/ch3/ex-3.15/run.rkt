@@ -6,6 +6,7 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
-; now `equal?` `greater?` and `less?` wind up in `bool-exp`
-
 (test-all)
+
+; I guess the not expressible thing
+;   is the side effect that "print" has.
