@@ -18,6 +18,20 @@
       exps))
 
   ; (let <var> <bindings> <body>)
+  ; =>
+  ; (let ((y-combinator 
+  ;         (lambda (f)
+  ;           ((lambda (x)
+  ;              (f (lambda <binding-vars>
+  ;                   ((x x) <binding-vars>>))))
+  ;            (lambda (x)
+  ;              (f (lambda <binding-vars>
+  ;                   ((x x) <binding-vars>>)))))))
+  ;       (almost-recursive
+  ;         (lambda (<var>)
+  ;           (lambda <binding-vars>
+  ;             <body>))))
+  ;   ((y-combinator almost-recursive) <binding-exps>))
   (define (named-let->combination exp)
     (define proc-name (cadr exp))
     (define let-binding-pairs (caddr exp))
@@ -55,16 +69,26 @@
                 args
                 body))))
 
-    (list
-      ; operator
-      (make-lambda
-        '(y almostr)
-        (list
-          (cons '(y almostr)
-                exps)))
-      ; operands
-      (y-combinator-exp vars)
-      (almostr-function-exp proc-name vars let-body)))
+    (let ((var-y (gensym))
+          (var-almostr (gensym)))
+      ; craft a normal let:
+      ; (let ((y <y-combinator>)
+      ;       (almostr <almost-recursive>))
+      ;   ((y almostr) <exps>))
+      (define crafted-let
+        (cons
+          'let
+          (cons
+            (list (list var-y
+                        (y-combinator-exp vars))
+                  (list var-almostr
+                        (almostr-function-exp
+                          proc-name
+                          vars
+                          let-body)))
+            (list (cons (list var-y var-almostr)
+                        exps)))))
+      (normal-let->combination crafted-let)))
 
   (if (named-let? exp)
     (named-let->combination exp)

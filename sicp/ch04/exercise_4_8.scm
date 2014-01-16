@@ -41,6 +41,7 @@
     (the-environment)))
 
 (out "testing")
+(test-let->combination let->combination)
 (test-named-let let->combination)
 
 (end-script)
