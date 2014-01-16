@@ -26,3 +26,27 @@
 
 (define (eval-let exp env)
   (eval (let->combination exp) env))
+
+(define (test-let->combination let->combination)
+  (define testcases
+    (list
+      (mat
+        '(let ((x 1)
+               (y 2)
+               (z 3))
+           (+ x y z))
+        6)
+      (mat
+        '(let ((a 10)
+               (b 20))
+           (+ a a)
+           (* b a))
+        200)
+      (mat
+        '(let ()
+           10)
+        10)))
+  (define (proc exp)
+    (eval (let->combination exp)
+          user-initial-environment))
+  (do-test proc testcases))

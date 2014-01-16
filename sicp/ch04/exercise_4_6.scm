@@ -23,4 +23,6 @@
     (the-environment)))
 ; 1
 
+(test-let->combination let->combination)
+
 (end-script)
