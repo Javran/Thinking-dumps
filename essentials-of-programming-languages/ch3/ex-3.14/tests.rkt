@@ -55,5 +55,18 @@
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 
+      ;; check equal? 
+      (test-equal?-1 "if equal?(1,1) then 1 else 0" 1)
+      (test-equal?-2 "if equal?(2,3) then 1 else 0" 0)
+
+      ;; check greater?
+      (test-greater?-1 "if greater?(3,9) then 1 else 0" 0)
+      (test-greater?-2 "if greater?(1,1) then 1 else 0" 0)
+      (test-greater?-3 "if greater?(3,2) then 1 else 0" 1)
+
+      ;; check less?
+      (test-less?-1 "if less?(3,9) then 1 else 0" 1)
+      (test-less?-2 "if less?(1,1) then 1 else 0" 0)
+      (test-less?-3 "if less?(3,2) then 1 else 0" 0)
       ))
   )
