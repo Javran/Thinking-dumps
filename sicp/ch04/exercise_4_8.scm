@@ -3,7 +3,6 @@
 
 (load "./exercise_4_5_common.scm")
 (load "./exercise_4_6_common.scm")
-
 (load "./exercise_4_8_common.scm")
 
 (out 
@@ -25,13 +24,23 @@
     (the-environment)))
 ; 1
 
-(out
-  (let->combination
-    '(let fib-iter ((a 1)
-                    (b 0)
-                    (count 10))
-       (if (= count 0)
-         b
-         (fib-iter (+ a b) a (- count 1))))))
+(define expr
+  '(let fib-iter ((a 1)
+                  (b 0)
+                  (count 10))
+     (if (= count 0)
+       b
+       (fib-iter (+ a b) a (- count 1)))))
+
+(out "transformed expression:"
+     (let->combination expr))
+
+(out "evaluation result:"
+  (eval-let
+    expr
+    (the-environment)))
+
+(out "testing")
+(test-named-let let->combination)
 
 (end-script)
