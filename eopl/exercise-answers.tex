@@ -8,6 +8,10 @@
 
 \newcommand{\MyAns}[2]{\input{./ch#1/ex-#1.#2.tex}}
 
+\newenvironment{scprooftree}[1]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+    {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+
 \title{
 My Exercise Answers to \\
 Essentials of Programming Languages \\
@@ -35,6 +39,8 @@ Essentials of Programming Languages \\
 \MyAns{3}{2}
 \MyAns{3}{3}
 \MyAns{3}{4}
+\MyAns{3}{5}
+\MyAns{3}{11}
 
 % missing: \input{./ex-3.5.tex}
 
