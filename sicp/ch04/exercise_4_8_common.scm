@@ -30,11 +30,12 @@
     (define let-body (cdddr exp))
     (define vars (map car  let-binding-pairs))
     (define exps (map cadr let-binding-pairs))
-    (list 'let '()
-          (cons 'define
-                (cons (cons proc-name vars)
-                      let-body))
-          (cons proc-name exps)))
+    (normal-let->combination
+      (list 'let '()
+            (cons 'define
+                  (cons (cons proc-name vars)
+                        let-body))
+            (cons proc-name exps))))
 
   ; (let <var> <bindings> <body>)
   ; =>
