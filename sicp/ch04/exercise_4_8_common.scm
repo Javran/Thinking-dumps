@@ -17,6 +17,25 @@
       ; operands
       exps))
 
+
+  ; (let <proc> <bindings> <body>)
+  ; =>
+  ; (let ()
+  ;   (define (<proc> <binding-vars>)
+  ;     <body>)
+  ;   (<proc> <binding-exps>))
+  (define (named-let->combination exp)
+    (define proc-name (cadr exp))
+    (define let-binding-pairs (caddr exp))
+    (define let-body (cdddr exp))
+    (define vars (map car  let-binding-pairs))
+    (define exps (map cadr let-binding-pairs))
+    (list 'let '()
+          (cons 'define
+                (cons (cons proc-name vars)
+                      let-body))
+          (cons proc-name exps)))
+
   ; (let <var> <bindings> <body>)
   ; =>
   ; (let ((y-combinator 
@@ -32,7 +51,7 @@
   ;           (lambda <binding-vars>
   ;             <body>))))
   ;   ((y-combinator almost-recursive) <binding-exps>))
-  (define (named-let->combination exp)
+  (define (named-let->combination-y exp)
     (define proc-name (cadr exp))
     (define let-binding-pairs (caddr exp))
     (define let-body (cdddr exp))
