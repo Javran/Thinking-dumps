@@ -1,11 +1,7 @@
 #lang eopl
 
-; I have a diff definition of foldl..
-; (require "../../common.rkt")
-(require "../../test-utils.rkt")
-
-(require "./top.rkt")
-(require "./data-structures.rkt")
+(require "../eopl3/chapter3/proc-lang/ds-rep/top.scm")
+(require "../eopl3/chapter3/proc-lang/ds-rep/data-structures.scm")
 
 (require (only-in racket/file file->lines))
 (require (only-in racket/base foldl))
@@ -47,5 +43,5 @@
 
 (out
   (expval->num
-    (run-source-file "./factorial.proc"))
+    (run-source-file "./ex-3.23-factorial.proc"))
   (factorial 8))
