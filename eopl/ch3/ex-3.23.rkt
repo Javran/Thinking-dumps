@@ -6,9 +6,6 @@
 (require (only-in racket/file file->lines))
 (require (only-in racket/base foldl))
 
-; no modification, skip tests
-; (test-all)
-
 ; result in the book is 12
 
 (define (out . args)
@@ -32,7 +29,6 @@
 (define (run-source-file path)
   (run
     (foldl
-      ; my impl ... two arguments are flipped
       (lambda (i acc)
         (string-append acc " " i))
       ""
