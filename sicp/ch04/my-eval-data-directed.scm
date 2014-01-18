@@ -6,14 +6,14 @@
 ; definition:
 ;  slot: a symbol, the syntax structure name, the tag of the expression
 ;    e.g.: `'let` should be the corresponding slot name for
-;          the handler that deals with let-expression
+;           the handler that deals with let-expression
+;  handler: handler structure,
+;           please refer to "./my-eval-handler.scm"
 ; 
 ; data structure:
 ; `eval-handler-alist` is an alist
 ;   key: a symbol the slot name
-;   value: a procedure of type: Exp x Env -> ExpVal
-;          this procedure is supposed to evaluate the expression
-;          and return the value of that expression
+;   value: a handler, see definition part
 
 (let ((eval-handler-alist '()))
   ; keep the handlers inside
