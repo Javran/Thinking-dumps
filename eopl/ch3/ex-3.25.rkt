@@ -35,3 +35,28 @@ in let maketimes4 =
    in let times4 = (makerec maketimes4)
       in (times4 3)
 ")))
+
+; my own implementation
+(out
+  (expval->num
+    (run
+"
+let pseudoY =
+  proc (psy)
+    proc (f)
+      proc (x)
+        ((f ((psy psy) f)) x)
+in
+let y =
+  proc (x)
+    ((pseudoY pseudoY) x)
+in
+let maketimes4 =
+  proc (f)
+    proc (x)
+      if zero?(x)
+        then 0
+        else -((f -(x,1)),-4)
+in let times4 = (y maketimes4)
+in (times4 3)
+")))

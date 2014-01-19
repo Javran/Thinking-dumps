@@ -77,4 +77,18 @@ gives us the recursive function corresponding to `f`.
 
 # Y combinator
 
+The last problem: how can we implement this `y`?
 
+By definition it is a recursive function, we are lucky because we have 
+already known the trick.
+
+So I come with `pseudo-y` to stand for the `almost` recursive version of
+`y`, and by putting two `pseudo-y`s together, we get the `y2`, which is essentially 
+the same as `y`.
+
+This `y` is called [`y combinator`](http://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator).
+
+However, I have another trouble: I find the implementation of my `y combinator` is different from
+book. I can tell why but I still believe these two things are equivalent.
+
+So I wrote another piece of PROC code in `./ex-3.25.rkt` to show that my solution works as well.
