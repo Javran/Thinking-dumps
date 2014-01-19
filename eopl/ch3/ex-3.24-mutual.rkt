@@ -16,10 +16,10 @@
                 (((makerE makerO) makerE) (- x 1))))))))
   (let ((even
           (lambda (x)
-            (((makeodd makeeven) makeodd) x)))
+            (((makeeven makeodd) makeeven) x)))
         (odd
           (lambda (x)
-            (((makeeven makeodd) makeeven) x))))
+            (((makeodd makeeven) makeodd) x))))
     (for-each (lambda (x)
                 (display (list x '=>
                            'e (even x)
