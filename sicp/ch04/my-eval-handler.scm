@@ -34,4 +34,7 @@
    env))
 
 (define (handler-register! h)
+  (if (and *my-eval-do-test*
+           (handler-test h))
+    ((handler-test h)))
   (my-eval-put! (handler-slot h) h))

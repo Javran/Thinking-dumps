@@ -6,4 +6,6 @@
 ; throughout this chapter.
 (load "./my-eval.scm")
 
+(out (string? (my-eval '(quote "a") #f)))
+
 (end-script)

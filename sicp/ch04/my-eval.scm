@@ -9,6 +9,9 @@
 
 (load "./my-eval-utils.scm")
 (load "./my-eval-e-simple.scm")
+(load "./my-eval-e-quote.scm")
+
+(install-eval-quote)
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:

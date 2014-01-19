@@ -39,7 +39,6 @@
     (let ((modified
             (put-handler slot handler eval-handler-alist)))
       (set! eval-handler-alist (car modified))
-      (out eval-handler-alist)
       (cdr modified)))
 
   ; look up `slot` in `alist`
