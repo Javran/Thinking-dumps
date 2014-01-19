@@ -13,6 +13,15 @@
 
 (install-eval-quote)
 
+; TODO:
+; * assignment
+; * definition
+; * if
+; * lambda
+; * begin
+; * cond
+; * application
+
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
   ; either `(list <value>)` or `#f`

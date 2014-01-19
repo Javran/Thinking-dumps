@@ -6,6 +6,9 @@
 ; throughout this chapter.
 (load "./my-eval.scm")
 
-(out (string? (my-eval '(quote "a") #f)))
+; TODO:
+; I decide to skip this exercise for a while,
+;   as the implementation is incomplete, we will not be
+;   able to proceed with the support of environment.
 
 (end-script)
