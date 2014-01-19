@@ -5,7 +5,7 @@
 
 (provide out)
 (provide filter)
-(provide foldl)
+(provide my-foldl)
 (provide concat)
 (provide concat-map)
 (provide assert)
@@ -55,10 +55,10 @@
       (filter pred (cdr lst)))))
 
 ; fold from left using `proc`
-(define (foldl proc init lst)
+(define (my-foldl proc init lst)
   (if (null? lst)
     init
-    (foldl
+    (my-foldl
       proc 
       (proc init (car lst))
       (cdr lst))))

@@ -43,7 +43,7 @@
         (red-blue-subtree->string t2)))
     (blue-node (subtrees)
       (format "(B~A)"
-        (foldl
+        (my-foldl
           (lambda (acc i)
             (format "~A ~A" acc i))
           ""

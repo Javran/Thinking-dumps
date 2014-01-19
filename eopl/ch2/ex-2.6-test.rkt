@@ -12,7 +12,7 @@
           extend-env
           apply-env)
   (define env
-    (foldl (lambda (env pair)
+    (my-foldl (lambda (env pair)
              (extend-env
                (car pair)
                (cadr pair)

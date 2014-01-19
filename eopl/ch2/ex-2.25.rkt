@@ -50,7 +50,7 @@
     "called with a leaf")
   ; pick up the maximum, remove the value part
   (car
-    (foldl
+    (my-foldl
       (lambda (max-pair cur-pair)
         (if (> (cdr cur-pair) (cdr max-pair))
           cur-pair

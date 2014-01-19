@@ -12,7 +12,7 @@
     (if (list? x)
       x
       (list x)))
-  (foldl append '() (map ensure-list lst)))
+  (my-foldl append '() (map ensure-list lst)))
 
 (out (up '((1 2) (3 4)))
      (up '((x (y)) z))

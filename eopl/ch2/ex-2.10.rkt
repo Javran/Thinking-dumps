@@ -9,7 +9,7 @@
 (out "------")
 
 (define (extend-env* vars vals env)
-  (foldl
+  (my-foldl
     (lambda (cur-env k-v)
       (extend-env
         (car k-v)

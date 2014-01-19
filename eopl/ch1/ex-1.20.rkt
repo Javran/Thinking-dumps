@@ -10,7 +10,7 @@
     (if (symbol? sexp)
       (if (eq? s sexp) 1 0)
       (count-occurrences s sexp)))
-  (foldl + 0
+  (my-foldl + 0
          (map count-occur-aux slist)))
 
 (out (count-occurrences 'x '((f x) y (((x z) x))))
