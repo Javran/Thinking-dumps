@@ -27,3 +27,11 @@
 (define handler-slot cadr)
 (define handler-proc caddr)
 (define handler-test cadddr)
+
+(define (handler-eval handler exp env)
+  ((handler-proc handler)
+   exp
+   env))
+
+(define (handler-register! h)
+  (my-eval-put! (handler-slot h) h))

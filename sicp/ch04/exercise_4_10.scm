@@ -6,5 +6,4 @@
 ; throughout this chapter.
 (load "./my-eval.scm")
 
-
 (end-script)
