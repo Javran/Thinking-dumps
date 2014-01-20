@@ -7,4 +7,3 @@
 (require "./data-structures.rkt")
 
 (test-all)
-

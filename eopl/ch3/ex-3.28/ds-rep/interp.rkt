@@ -68,9 +68,7 @@
               (extend-env var val1 env))))
         
         (proc-exp (var body)
-          (define free-vars
-            (free-variables exp))
-          (proc-val (procedure var body free-vars)))
+          (proc-val (procedure var body)))
 
         (call-exp (rator rand)
           (let ((proc (expval->proc (value-of rator env)))
@@ -79,45 +77,6 @@
 
         )))
 
-  ; copied from my answer to ex 3.26
-  ; free-variables: Exp -> [Identifier]
-  ; get a list of all free variables from `exp`
-  (define (free-variables exp)
-    (cases expression exp
-        (const-exp (num)
-          '())
-        (var-exp (var)
-          (list var))
-        (diff-exp (exp1 exp2)
-          (remove-duplicates
-            (flatten
-              (list
-                (free-variables exp1)
-                (free-variables exp2)))))
-        (zero?-exp (exp1)
-          (free-variables exp1))
-        (if-exp (exp1 exp2 exp3)
-          (remove-duplicates
-            (flatten
-              (list
-                (free-variables exp1)
-                (free-variables exp2)
-                (free-variables exp3)))))
-        (let-exp (var exp1 body)
-          (remove-duplicates
-            (flatten
-              (list
-                (free-variables exp1)
-                (remove var (free-variables body))))))
-        (proc-exp (var body)
-          (remove var (free-variables body)))
-        (call-exp (rator rand)
-          (remove-duplicates
-            (flatten
-              (list
-                (free-variables rator)
-                (free-variables rand)))))))
-
   ;; apply-procedure : Proc * ExpVal -> ExpVal
   ;; Page: 79
   (define apply-procedure
@@ -125,14 +84,7 @@
     ;   in order to evaluate free variables
     (lambda (proc1 val env)
       (cases proc proc1
-        (procedure (var body free-vars)
-          (define proc-env
-            (foldl
-              extend-env
-              (init-env)
-              free-vars
-              (map (lambda (v) (apply-env env v))
-                   free-vars)))
-          (value-of body (extend-env var val proc-env))))))
+        (procedure (var body)
+          (value-of body (extend-env var val env))))))
 
   )

@@ -72,6 +72,9 @@
       (nested-procs3 "let f = proc(x) proc (y) -(x,y) in ((f -(10,5)) 6)" 4)
 
       (book-example "let a = 3 in let p = proc (x) -(x,a) in let a = 5 in -(a,(p 2))" 8)
+
+      (ex-3-29-example-1 "let a = 3 in let p = proc (z) a in let f = proc (x) (p 0) in let a = 5 in (f 2)" 5)
+      (ex-3-29-example-2 "let a = 3 in let p = proc (z) a in let f = proc (a) (p 0) in let a = 5 in (f 2)" 2)
       
       ))
   )
