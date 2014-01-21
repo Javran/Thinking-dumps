@@ -10,8 +10,12 @@
 (load "./my-eval-utils.scm")
 (load "./my-eval-e-simple.scm")
 (load "./my-eval-e-quote.scm")
+(load "./my-eval-e-set.scm")
+(load "./my-eval-e-define.scm")
 
 (install-eval-quote)
+(install-eval-set!)
+(install-eval-define)
 
 ; TODO:
 ; * assignment
