@@ -6,6 +6,6 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
-; based on ../ex-3.28/ds-rep/
+; based on ../../../eopl3/chapter3/proc-lang/ds-rep/
 
 (test-all)
