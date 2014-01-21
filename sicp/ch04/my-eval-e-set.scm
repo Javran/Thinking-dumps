@@ -11,7 +11,51 @@
     'ok)
 
   (define (test)
-    'todo)
+    ; env -> env1 -> env2
+    ;            \-> env3
+    (define env
+      (extend-environment
+        '(a b c)
+        '(1 2 3)
+        the-empty-environment))
+    (define env1
+      (extend-environment
+        '(c d e)
+        '(#\c #\d #\e)
+        env))
+    (define env2
+      (extend-environment
+        '(d e f)
+        '("d" "e" "f")
+        env1))
+    (define env3
+      (extend-environment
+        '(a b c)
+        '("a3" "b3" "c3")
+        env1))
+
+    (eval-set! '(set! a "ax") env3)
+
+    (do-test
+      lookup-variable-value
+      (list
+        (mat 'a env  1)
+        (mat 'a env1 1)
+        (mat 'a env2 1)
+        (mat 'a env3 "ax"))
+      equal?)
+    
+    (eval-set! '(set! a "ay") env1)
+
+    (do-test
+      lookup-variable-value
+      (list
+        (mat 'a env  "ay")
+        (mat 'a env1 "ay")
+        (mat 'a env2 "ay")
+        (mat 'a env3 "ax"))
+      equal?)
+    'done)
   
   (define handler
     (make-handler

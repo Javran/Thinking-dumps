@@ -16,13 +16,11 @@
 (load "./my-eval-e-simple.scm")
 
 ; other handlers
+; installations are delayed since `my-eval`
+;   has not yet defined
 (load "./my-eval-e-quote.scm")
 (load "./my-eval-e-set.scm")
 (load "./my-eval-e-define.scm")
-
-(install-eval-quote)
-(install-eval-set!)
-(install-eval-define)
 
 ; TODO:
 ; * assignment
@@ -79,3 +77,7 @@
     (if result
       (result->val result)
       (error "unknown expression:" exp))))
+
+(install-eval-quote)
+(install-eval-set!)
+(install-eval-define)

@@ -1,8 +1,3 @@
-; find the value of `var` in `env`
-; lookup-variable-value: Var x Env -> Value
-(define (lookup-variable-value var env)
-  (error "not implemented"))
-
 ; list-tagged-with: Tag -> List -> Bool
 (define (list-tagged-with tag)
   (lambda (l)
