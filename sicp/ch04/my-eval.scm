@@ -2,13 +2,20 @@
 (load "../common/test-utils.scm")
 
 ; my `eval` and `apply` implementaton.
+
+; test flag, set to #t will perform tests when components are loaded
 (define *my-eval-do-test* #t)
 
+; basic components
 (load "./my-eval-handler.scm")
 (load "./my-eval-data-directed.scm")
-
+(load "./my-eval-env.scm")
 (load "./my-eval-utils.scm")
+
+; build-in handler
 (load "./my-eval-e-simple.scm")
+
+; other handlers
 (load "./my-eval-e-quote.scm")
 (load "./my-eval-e-set.scm")
 (load "./my-eval-e-define.scm")
