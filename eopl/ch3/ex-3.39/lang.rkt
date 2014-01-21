@@ -81,6 +81,10 @@
       (expression
         ("%lexproc" expression)
         nameless-proc-exp)
+
+      (expression
+        ("%unpack" number expression "in" expression)
+        nameless-unpack-exp)
       
       ))
 

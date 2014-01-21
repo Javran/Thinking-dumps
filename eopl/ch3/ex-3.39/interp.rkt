@@ -7,6 +7,7 @@
   (require "lang.rkt")
   (require "data-structures.rkt")
   (require "environments.rkt")
+  (require (only-in racket foldl))
 
   (provide value-of-translation value-of)
 
@@ -89,6 +90,20 @@
         (nameless-proc-exp (body)
           (proc-val
             (procedure body nameless-env)))
+
+        (nameless-unpack-exp (arglen explist body)
+          (let ((arg-expvals (expval->list (value-of explist nameless-env))))
+            (if (not (= arglen (length arg-expvals)))
+              (eopl:error 'value-of
+                "argument-list length mismatch")
+              'ok)
+            ; arg-expvals: (list-of expval?)
+            (define new-nameless-env
+              (foldl
+                extend-nameless-env
+                nameless-env
+                arg-expvals))
+            (value-of body new-nameless-env)))
 
         (else
          (eopl:error 'value-of 

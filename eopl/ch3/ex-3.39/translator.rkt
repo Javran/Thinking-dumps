@@ -1,6 +1,7 @@
 (module translator (lib "eopl.ss" "eopl")
   
   (require "lang.rkt")
+  (require (only-in racket foldl))
 
   (provide translation-of-program)
   ;;;;;;;;;;;;;;;; lexical address calculator ;;;;;;;;;;;;;;;;
@@ -40,6 +41,16 @@
             (translation-of exp1 senv)            
             (translation-of body
               (extend-senv var senv))))
+        (unpack-exp (vars explist body)
+          (define new-senv
+            (foldl
+              extend-senv
+              senv
+              vars))
+          (nameless-unpack-exp
+            (length vars)
+            (translation-of explist senv)
+            (translation-of body new-senv)))
         (cons-exp (exp1 exp2)
           (cons-exp
             (translation-of exp1 senv)
