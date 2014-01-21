@@ -87,5 +87,35 @@
                           else *(n,(fact -(n,1)))
         in (fact 5)" 120)
 
+      (mutual-recursive-test-1 "
+        let even = proc (x)
+                     if zero?(x)
+                       then 1
+                       else (odd -(x,1))
+        in let odd = proc (x)
+                       if zero?(x)
+                         then 0
+                         else (even -(x,1))
+        in (odd 13) " 1)
+      (mutual-recursive-test-2 "
+        let even = proc (x)
+                     if zero?(x)
+                       then 1
+                       else (odd -(x,1))
+        in let odd = proc (x)
+                       if zero?(x)
+                         then 0
+                         else (even -(x,1))
+        in (odd 12) " 0)
+      (mutual-recursive-test-3 "
+        let even = proc (x)
+                     if zero?(x)
+                       then 1
+                       else (odd -(x,1))
+        in let odd = proc (x)
+                       if zero?(x)
+                         then 0
+                         else (even -(x,1))
+        in (even 13) " 0)
       ))
   )
