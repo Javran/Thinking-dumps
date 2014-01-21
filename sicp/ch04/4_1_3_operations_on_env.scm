@@ -37,4 +37,54 @@
           "Variable-Value list length mismatch")
   (cons (make-frame vars vals) base-env))
 
+(define (lookup-variable-value var env)
+  ; travel through environments
+  (define (env-loop env)
+    ; search a frame for the corresponding value
+    (define (scan vars vals)
+      (cond ((null? vars)
+              ; empty frame, next one
+              (env-loop (enclosing-environment env)))
+            ((eq? var (car vars))
+              ; symbol found
+              (car vals))
+            (else
+              (scan (cdr vars) (cdr vals)))))
+    (if (eq? env the-empty-environment)
+      (error "unbound variable" var)
+      (let ((frame (first-frame env)))
+        (scan (frame-variables frame)
+              (frame-values    frame)))))
+  (env-loop env))
+
+; pretty similiar to `lookup-variable-value`
+(define (set-variable-value! var val env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+              (env-loop (enclosing-environment env)))
+            ((eq? var (car vars))
+              (set-car! vals val))
+            (else
+              (scan (cdr vars) (cdr vals)))))
+    (if (eq? env the-empty-environment)
+      (error "unbound variable" var)
+      (let ((frame (first-frame env)))
+        (scan (frame-variables frame)
+              (frame-values    frame)))))
+  (env-loop env))
+
+(define (define-variable! var val env)
+  ; seems the `env` requires to be a non-empty env
+  (let ((frame (first-frame env)))
+    (define (scan vars vals)
+      (cond ((null? vars)
+              (add-binding-to-frame! var val frame))
+            ((eq? var (car vars))
+              (set-car! vals val))
+            (else
+              (scan (cdr vars) (cdr vals)))))
+    (scan (frame-variables frame)
+          (frame-values    frame))))
+
 (end-script)
