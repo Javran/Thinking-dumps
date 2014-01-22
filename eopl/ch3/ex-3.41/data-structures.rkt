@@ -64,9 +64,11 @@
 
   ;; nameless-environment? : SchemeVal -> Bool
   ;; Page: 99
+  ;; for each frame in ribcage representation,
+  ;;   it's no longer an expval but a list of expval
   (define nameless-environment?
     (lambda (x)
-      ((list-of expval?) x)))
+      ((list-of (list-of expval?)) x)))
 
   ;; empty-nameless-env : () -> Nameless-env
   ;; Page: 99
@@ -75,6 +77,10 @@
       '()))
 
   ;; empty-nameless-env? : Nameless-env -> Bool
+  ;;   we might have frames that does not have bindings
+  ;;   but extend-nameless-env ensures no such a structure can exist
+  ;;   as long as the client only uses interfaces provided to operation
+  ;;   our environment
   (define empty-nameless-env? 
     (lambda (x)
       (null? x)))
@@ -83,12 +89,14 @@
   ;; Page: 99
   (define extend-nameless-env
     (lambda (val nameless-env)
-      (cons val nameless-env)))
+      (cons (list val) nameless-env)))
 
    ;; apply-nameless-env : Nameless-env * Lexaddr -> ExpVal
    ;; Page: 99
    (define apply-nameless-env
-     (lambda (nameless-env n)
-       (list-ref nameless-env n)))
+     (lambda (nameless-env lex-depth var-pos)
+       (list-ref
+         (list-ref nameless-env lex-depth)
+         var-pos)))
 
 )

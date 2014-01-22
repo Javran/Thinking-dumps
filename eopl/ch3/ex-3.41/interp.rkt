@@ -60,9 +60,8 @@
                 (arg (value-of rand nameless-env)))
 	    (apply-procedure proc arg)))
 
-        (nameless-var-exp (n v)
-          ; TODO: since `v` is always 1
-          (apply-nameless-env nameless-env n))
+        (nameless-var-exp (lex-depth var-pos)
+          (apply-nameless-env nameless-env lex-depth var-pos))
 
         (nameless-let-exp (exp1 body)
           (let ((val (value-of exp1 nameless-env)))
