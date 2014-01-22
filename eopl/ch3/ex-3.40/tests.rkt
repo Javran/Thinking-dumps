@@ -74,5 +74,16 @@ in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
    in (times4 3)" 12)
+
+       ;; simple letrecs
+      (simple-letrec-1 "letrec f(x) = -(x,1) in (f 33)" 32)
+      (simple-letrec-2
+        "letrec f(x) = if zero?(x)  then 0 else -((f -(x,1)), -2) in (f 4)"
+        8)
+
+      (simple-letrec-3
+        "let m = -5 
+ in letrec f(x) = if zero?(x) then 0 else -((f -(x,1)), m) in (f 4)"
+        20)
       ))
   )
