@@ -23,7 +23,6 @@
 (load "./my-eval-e-define.scm")
 
 ; TODO:
-; * definition
 ; * if
 ; * lambda
 ; * begin
