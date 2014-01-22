@@ -11,6 +11,8 @@
     'ok)
 
   (define (test)
+    ; test 3-layer environments
+
     ; env -> env1 -> env2
     ;            \-> env3
     (define env
@@ -36,6 +38,7 @@
 
     (eval-set! '(set! a "ax") env3)
 
+    ; should only have effects on `env3`
     (do-test
       lookup-variable-value
       (list
@@ -45,6 +48,7 @@
         (mat 'a env3 "ax"))
       equal?)
     
+    ; anything other than `env3` should be changed
     (eval-set! '(set! a "ay") env1)
 
     (do-test
