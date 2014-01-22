@@ -36,5 +36,9 @@
 (define (handler-register! h)
   (if (and *my-eval-do-test*
            (handler-test h))
+    ; TODO: delay all tests
+    ;   (call `(test-all)` or something explicitly)
+    ;   to make sure every handler is installed
+    ;   so all handlers can feel free to use `my-eval`
     ((handler-test h)))
   (my-eval-put! (handler-slot h) h))
