@@ -43,19 +43,19 @@
        let-exp)   
 
       (expression
-       ("proc" "(" identifier ")" expression)
-       proc-exp)
+        ("proc" "(" (separated-list identifier "," ) ")" expression)
+        proc-exp)
 
       (expression
-       ("(" expression expression ")")
-       call-exp)
+        ("(" expression (arbno expression) ")")
+        call-exp)
 
       (expression ("%nameless-var" number number) nameless-var-exp)
       (expression
         ("%let" expression "in" expression)
         nameless-let-exp)
       (expression
-        ("%lexproc" expression)
+        ("%lexproc" number expression)
         nameless-proc-exp)
       
       ))

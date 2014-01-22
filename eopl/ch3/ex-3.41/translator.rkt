@@ -1,6 +1,7 @@
 (module translator (lib "eopl.ss" "eopl")
   
   (require "lang.rkt")
+  (require (only-in racket foldl))
 
   (provide translation-of-program)
   ;;;;;;;;;;;;;;;; lexical address calculator ;;;;;;;;;;;;;;;;
@@ -41,14 +42,22 @@
             (translation-of exp1 senv)            
             (translation-of body
               (extend-senv var senv))))
-        (proc-exp (var body)
-          (nameless-proc-exp
-            (translation-of body
-              (extend-senv var senv))))
-        (call-exp (rator rand)
+        (proc-exp (vars body)
+          (define proc-env
+            (foldl
+              extend-senv
+              senv
+              vars))
+          (define arg-count
+            (length vars))
+          (nameless-proc-exp arg-count (translation-of body proc-env)))
+        (call-exp (rator rands)
           (call-exp
             (translation-of rator senv)
-            (translation-of rand senv)))
+            (map
+              (lambda (rand)
+                (translation-of rand senv))
+              rands)))
         (else (report-invalid-source-expression exp))
         )))
 

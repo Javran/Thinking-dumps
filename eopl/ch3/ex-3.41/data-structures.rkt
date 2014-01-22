@@ -56,6 +56,7 @@
       ;; in LEXADDR, bound variables are replaced by %nameless-vars, so
       ;; there is no need to declare bound variables.
       ;; (bvar symbol?)
+      (arg-count integer?)
       (body expression?)
       ;; and the closure contains a nameless environment
       (env nameless-environment?)))
