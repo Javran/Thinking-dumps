@@ -1,0 +1,30 @@
+\section*{Exercise 4.4}
+
+Specification for \texttt{begin-exp}
+
+Definition: \texttt{(begin-exp (list-of expval?))}
+
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+; base case #1
+(value-of (begin-exp '() $\rho$ $\sigma_0$)) = $\bot$
+
+; base case #2
+(value-of (begin-exp (list $exp_0$) $\rho$ $\sigma_0$)) = 
+(value-of $exp_0$ $\rho$ $\sigma_0$) =
+($result_0$, $\sigma_1$)
+
+; inductive case
+(value-of (begin-exp (cons $exp_0$ $exp_{rest}$)) $\rho$ $\sigma_0$) =
+(value-of (begin-exp $exp_{rest}$) $\rho$ $\sigma_1$)
+
+; assumptions:
+(value-of $exp_0$ $\rho$ $\sigma_0$) = ($result_0$, $\sigma_1$)
+(value-of $exp_1$ $\rho$ $\sigma_1$) = ($result_1$, $\sigma_2$)
+$\dots$
+(value-of $exp_n$ $\rho$ $\sigma_n$) = ($result_n$, $\sigma_{n+1}$)
+
+
+\end{lstlisting}
+\end{center}
