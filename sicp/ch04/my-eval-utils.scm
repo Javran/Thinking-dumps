@@ -12,6 +12,12 @@
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
 
+; test the truth value in the implemented language
+(define (true? x)
+  (not (eq? x #f)))
+(define (false? x)
+  (eq? x #f))
+
 (define (test-utils)
   ; test list-tagged-with and tagged-list?
   (let ((testcases

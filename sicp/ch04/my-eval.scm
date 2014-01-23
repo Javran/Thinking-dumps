@@ -21,9 +21,9 @@
 (load "./my-eval-e-quote.scm")
 (load "./my-eval-e-set.scm")
 (load "./my-eval-e-define.scm")
+(load "./my-eval-e-if.scm")
 
 ; TODO:
-; * if
 ; * lambda
 ; * begin
 ; * cond
@@ -79,3 +79,4 @@
 (install-eval-quote)
 (install-eval-set!)
 (install-eval-define)
+(install-eval-if)

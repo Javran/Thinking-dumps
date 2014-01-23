@@ -58,7 +58,7 @@
 (define (if-alternative exp)
   ; allowing the else part not filled.
   (if (not (null? (cdddr exp)))
-    (caddr exp)
+    (cadddr exp)
     'false))
 (define (make-if predicate consequent alternative)
   (list 'if predicate consequent alternative))
