@@ -74,5 +74,20 @@ in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
    in (times4 3)" 12)
+
+      ;; multiple arg supports
+      (multi-args-proc-1 "(proc (a,b,c) -(c,-(a,b)) 10 20 30)" 40)
+      (multi-args-proc-2 "let f = proc (x,conseq,alter)
+                                    if zero?(x)
+                                      then conseq
+                                      else alter
+                          in (f 0 1 2)" 1)
+      (multi-args-proc-3 "let f = proc (x,y,conseq,alter)
+                                    if zero?(-(x,y))
+                                      then conseq
+                                      else alter
+                          in (f 0 1 1 2)" 2)
+      (multi-args-proc-4 "(proc (x,y) -(x,y) 1)" error)
+      (multi-args-proc-5 "(proc (x) x 1 1)" error)
       ))
   )

@@ -1,0 +1,35 @@
+\section*{Exercise 4.10}
+
+The implementation is already done,
+so I just list all changes necessary.
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+
+; file "lang.scm"
+(define the-grammar
+  ...
+  (expression
+    ("begin" expression (arbno ";" expression) "end")
+    begin-exp)
+  ...)
+
+; file "interp.scm"
+(define value-of
+  ...
+  (begin-exp (exp1 exps)
+    (letrec 
+      ((value-of-begins
+        (lambda (e1 es)
+          ; e1 is the first expression
+          ; es is the rest part of expressions
+          (let ((v1 (value-of e1 env)))
+            (if (null? es)
+              ; if this is the last element
+              v1
+              ; else, keep going
+              (value-of-begins (car es) (cdr es)))))))
+      (value-of-begins exp1 exps)))
+  ...)
+\end{lstlisting}
+\end{center}

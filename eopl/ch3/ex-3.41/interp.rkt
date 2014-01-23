@@ -7,6 +7,7 @@
   (require "lang.rkt")
   (require "data-structures.rkt")
   (require "environments.rkt")
+  (require (only-in racket foldl))
 
   (provide value-of-translation value-of)
 
@@ -32,20 +33,20 @@
   (define value-of
     (lambda (exp nameless-env)
       (cases expression exp
-        (const-exp (num) (num-val num))
+                (const-exp (num) (num-val num))
 
         (diff-exp (exp1 exp2)
           (let ((val1
-                  (expval->num
-                    (value-of exp1 nameless-env)))
+		  (expval->num
+		    (value-of exp1 nameless-env)))
                 (val2
-                  (expval->num
-                    (value-of exp2 nameless-env))))
+		  (expval->num
+		    (value-of exp2 nameless-env))))
             (num-val
-              (- val1 val2))))
+	      (- val1 val2))))
         
         (zero?-exp (exp1)
-          (let ((val1 (expval->num (value-of exp1 nameless-env))))
+	        (let ((val1 (expval->num (value-of exp1 nameless-env))))
             (if (zero? val1)
               (bool-val #t)
               (bool-val #f))))
@@ -55,28 +56,27 @@
             (value-of exp1 nameless-env)
             (value-of exp2 nameless-env)))
 
-        (call-exp (rator rand)          
+        (call-exp (rator rands)          
           (let ((proc (expval->proc (value-of rator nameless-env)))
-                (arg (value-of rand nameless-env)))
-            (apply-procedure proc arg)))
+                (args (map (lambda (rand) (value-of rand nameless-env))
+                           rands)))
+            (apply-procedure proc args)))
 
-        (nameless-var-exp (n)
-          (apply-nameless-env nameless-env n))
+        (nameless-var-exp (lex-depth var-pos)
+          (apply-nameless-env nameless-env lex-depth var-pos))
 
         (nameless-let-exp (exp1 body)
           (let ((val (value-of exp1 nameless-env)))
             (value-of body
               (extend-nameless-env val nameless-env))))
 
-        (nameless-proc-exp (body)
+        (nameless-proc-exp (arg-count body)
           (proc-val
-            (procedure body nameless-env)))
+            (procedure arg-count body nameless-env)))
 
-        (nameless-letrec-var-exp (procexp body)
-          'todo)
         (else
          (eopl:error 'value-of 
-           "Illegal expression in translated code: ~s" exp))
+	    "Illegal expression in translated code: ~s" exp))
 
         )))
 
@@ -84,9 +84,19 @@
   ;; apply-procedure : Proc * ExpVal -> ExpVal
 
   (define apply-procedure
-    (lambda (proc1 arg)
+    (lambda (proc1 args)
       (cases proc proc1
-        (procedure (body saved-env)
-          (value-of body (extend-nameless-env arg saved-env))))))
+        (procedure (arg-count body saved-env)
+          (if (not (= (length args) arg-count))
+            (eopl:error 'apply-procdure
+              "arity mismatch: need ~A args, but args = ~A"
+              arg-count args)
+            'ok)
+          (define proc-env
+            (foldl
+              extend-nameless-env
+              saved-env
+              args))
+          (value-of body proc-env)))))
 
   )

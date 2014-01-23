@@ -1,0 +1,31 @@
+\section*{Exercise 4.2}
+
+Specification for \texttt{zero?-exp}
+
+\begin{prooftree}
+\AxiomC{
+    \texttt{(value-of $exp_1$ $\rho$ $\sigma_0$) = ($val_1$,$\sigma_1$)}
+}
+\AxiomC{
+    \texttt{(expval->num $val1$) $= 0$}
+}
+\BinaryInfC{
+    \texttt{
+        (value-of (zero?-exp $exp_1$) $\rho$ $\sigma_0$) =
+        (bool-val \#t, $\sigma_1$) }
+}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{
+    \texttt{(value-of $exp_1$ $\rho$ $\sigma_0$) = ($val_1$,$\sigma_1$)}
+}
+\AxiomC{
+    \texttt{(expval->num $val1$) $\neq 0$}
+}
+\BinaryInfC{
+    \texttt{
+        (value-of (zero?-exp $exp_1$) $\rho$ $\sigma_0$) =
+        (bool-val \#f, $\sigma_1$) }
+}
+\end{prooftree}

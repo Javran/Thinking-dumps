@@ -43,32 +43,21 @@
        let-exp)   
 
       (expression
-        ("proc" "(" identifier ")" expression)
+        ("proc" "(" (separated-list identifier "," ) ")" expression)
         proc-exp)
 
       (expression
-        ("(" expression expression ")")
+        ("(" expression (arbno expression) ")")
         call-exp)
 
-      (expression
-        ("letrec"
-          identifier "(" identifier ")" "=" expression
-           "in" expression)
-        letrec-exp)
-
-      (expression ("%nameless-var" number) nameless-var-exp)
+      (expression ("%nameless-var" number number) nameless-var-exp)
       (expression
         ("%let" expression "in" expression)
         nameless-let-exp)
       (expression
-        ("%lexproc" expression)
+        ("%lexproc" number expression)
         nameless-proc-exp)
-
-      (expression
-        ("%nameless-letrec-var" expression "in" expression)
-        nameless-letrec-var-exp)
       
-
       ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

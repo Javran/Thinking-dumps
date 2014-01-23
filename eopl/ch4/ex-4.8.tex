@@ -1,0 +1,12 @@
+\section*{Exercise 4.8}
+
+The inefficiency is because that the store is implemented
+out of the list structure, which does not have features to
+support efficient random access.
+
+\begin{itemize}
+    \item \texttt{deref}: uses \texttt{list-ref} which would run in linear time.
+    \item \texttt{setref!}: keeps traveling the list until the correct location
+            is reached, which takes linear time.
+    \item \texttt{newref}: uses \texttt{append} which would run in linear time.
+\end{itemize}
