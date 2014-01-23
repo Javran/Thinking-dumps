@@ -1,7 +1,8 @@
 (module store (lib "eopl.ss" "eopl")
   
   (require "drscheme-init.rkt")
-  (require (only-in racket vector-append))
+  ; (require (only-in racket vector-append))
+  ; seems the intension of the exercise is to use a fixed-size vector
    
   (provide initialize-store! reference? newref deref setref!
     instrument-newref get-store-as-list)
@@ -20,13 +21,22 @@
   ;; empty-store : () -> Sto
   ;; Page: 111
   (define empty-store
-    (lambda () (make-vector 0)))
+    (lambda () (make-vector store-size-limit)))
+
+  ; now instead of allowing the store to allocate
+  ;   arbirary amount of locations, the store size is fixed.
+  (define store-size-limit
+    1024)
+
+  (define current-store-size
+    0)
   
   ;; initialize-store! : () -> Sto
   ;; usage: (initialize-store!) sets the-store to the empty-store
   ;; Page 111
   (define initialize-store!
     (lambda ()
+      (set! current-store-size 0)
       (set! the-store (empty-store))))
 
   ;; get-store : () -> Sto
@@ -45,9 +55,10 @@
   ;; Page: 111
   (define newref
     (lambda (val)
-      (let ((next-ref (vector-length the-store)))
-        (set! the-store
-              (vector-append the-store (vector val)))
+      (let ((next-ref current-store-size))
+        (vector-set! the-store next-ref val)
+        (set! current-store-size
+          (+ current-store-size 1))
         (when (instrument-newref)
             (eopl:printf 
              "newref: allocating location ~s with initial contents ~s~%"
