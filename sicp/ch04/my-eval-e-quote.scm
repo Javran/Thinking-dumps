@@ -14,7 +14,8 @@
               (mat '(quote a) #f 'a)
               (mat '(quote "a") #f "a")
               (mat '(quote 1) #f 1))))
-      (do-test eval-quote testcases equal?)))
+      (do-test eval-quote testcases equal?))
+    'ok)
 
   (define handler
     (make-handler

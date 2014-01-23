@@ -77,6 +77,10 @@
       (error "unknown expression:" exp))))
 
 (install-eval-quote)
-(install-eval-set!)
 (install-eval-define)
 (install-eval-if)
+(install-eval-set!)
+
+(if *my-eval-do-test*
+  (my-eval-test-installed-handlers)
+  'skipped)

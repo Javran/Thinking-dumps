@@ -10,6 +10,13 @@
       env)
     'ok)
 
+  ; ONLY RUN THIS TEST ONCE.
+  ;   I don't know what is the fucking underlying implementation
+  ;   but it does keep the previous environment
+  ;   so side effect remains, the test will fail if you call this twice.
+  ; TODO: workaround?
+  ;   I don't think it worth a try to solve this,
+  ;   so I might just leave it here forever.
   (define (test)
     ; test 3-layer environments
 
@@ -59,7 +66,7 @@
         (mat 'a env2 "ay")
         (mat 'a env3 "ax"))
       equal?)
-    'done)
+    'ok)
   
   (define handler
     (make-handler

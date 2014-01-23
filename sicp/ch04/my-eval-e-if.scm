@@ -40,7 +40,7 @@
         (mat '(if false 10 20) env 20)
         ))
     (do-test eval-if testcases)
-    'todo)
+    'ok)
 
   (define handler
     (make-handler

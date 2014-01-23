@@ -2,6 +2,7 @@
 
 (define my-eval-get #f)
 (define my-eval-put! #f) 
+(define my-eval-test-installed-handlers #f)
 
 ; definition:
 ;  slot: a symbol, the syntax structure name, the tag of the expression
@@ -55,6 +56,38 @@
   (define (get slot)
     (get-handler slot eval-handler-alist))
 
+  ; test a single slot from `alist`
+  (define (test-slot slot alist)
+    (format #t "Testing ~A " slot)
+    (define handler
+      (get-handler slot alist))
+    (assert handler "handler not found")
+    (define result
+      (handler-run-test handler))
+    (format #t "~%Result: ~A~%" result)
+    result)
+
+  (define (test-all-slots)
+    (define slots
+      (map car eval-handler-alist))
+    (newline)
+    (define results
+      (map (lambda (slot)
+             (test-slot slot eval-handler-alist))
+           slots))
+    (define not-ok
+      (map
+        car 
+        (filter
+          (lambda (pair)
+            (not (eq? (cdr pair) 'ok)))
+          (map cons slots results))))
+    (out "Summary: slots that did not return with 'ok: ")
+    (out not-ok)
+    (out "Test done.")
+    'ok)
+
   (set! my-eval-get get)
   (set! my-eval-put! put!)
+  (set! my-eval-test-installed-handlers test-all-slots)
   'done)
