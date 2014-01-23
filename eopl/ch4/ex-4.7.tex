@@ -1,0 +1,18 @@
+\section*{Exercise 4.7}
+
+Make a \texttt{setref-exp} returns
+the old contents of the location.
+
+\begin{prooftree}
+\AxiomC{
+    \texttt{(value-of $exp_1$ $\rho$ $\sigma_0$) $=$ ($l$, $\sigma_1$)}
+}
+\AxiomC{
+    \texttt{(value-of $exp_2$ $\rho$ $\sigma_1$) $=$ ($val$, $\sigma_2$)}
+}
+\BinaryInfC{
+    \texttt{(value-of (setref-exp $exp_1$ $exp_2$) $\rho$ $\sigma_2$) \
+    $=$ ($\sigma_0(l)$,[$l=val$]$\sigma_2$)
+    }
+}
+\end{prooftree}

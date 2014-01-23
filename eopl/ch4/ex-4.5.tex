@@ -1,0 +1,24 @@
+\section*{Exercise 4.5}
+
+Specification for \texttt{list-exp}
+
+Definition: \texttt{(list (elements (list-of expval?)))}
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+
+; base case
+(value-of '() $\rho$ $\sigma_0$) = ('(), $\sigma_0$)
+
+; inductive case
+(value-of (cons $exp_0$ $exp_{rest}$) $\rho$ $\sigma_0$) =
+((cons $result_0$ (value-of $exp_{rest}$ $\rho$ $\sigma_1$)), $\sigma_{n+1}$)
+
+; assumptions:
+(value-of $exp_0$ $\rho$ $\sigma_0$) = ($result_0$, $\sigma_1$)
+(value-of $exp_1$ $\rho$ $\sigma_1$) = ($result_1$, $\sigma_2$)
+$\dots$
+(value-of $exp_n$ $\rho$ $\sigma_n$) = ($result_n$, $\sigma_{n+1}$)
+
+\end{lstlisting}
+\end{center}
