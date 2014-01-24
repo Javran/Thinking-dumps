@@ -22,10 +22,11 @@
 (load "./my-eval-e-set.scm")
 (load "./my-eval-e-define.scm")
 (load "./my-eval-e-if.scm")
+(load "./my-eval-e-begin.scm")
 
 ; TODO:
-; * lambda
 ; * begin
+; * lambda
 ; * cond
 ; * application
 
@@ -81,6 +82,7 @@
 (install-eval-define)
 (install-eval-if)
 (install-eval-set!)
+(install-eval-begin)
 
 (if *my-eval-do-test*
   (my-eval-test-installed-handlers)
