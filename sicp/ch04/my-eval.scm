@@ -12,6 +12,9 @@
 (load "./my-eval-env.scm")
 (load "./my-eval-utils.scm")
 
+; procedure support
+(load "./my-eval-apply.scm")
+
 ; build-in handler
 (load "./my-eval-e-simple.scm")
 
@@ -25,7 +28,6 @@
 (load "./my-eval-e-begin.scm")
 
 ; TODO:
-; * begin
 ; * lambda
 ; * cond
 ; * application
@@ -77,7 +79,6 @@
       (result->val result)
       (error "unknown expression:" exp))))
 
-
 (install-eval-quote)
 (install-eval-define)
 (install-eval-if)
@@ -87,3 +88,5 @@
 (if *my-eval-do-test*
   (my-eval-test-installed-handlers)
   'skipped)
+
+(test-my-apply)

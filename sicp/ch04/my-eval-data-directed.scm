@@ -64,7 +64,7 @@
     (assert handler "handler not found")
     (define result
       (handler-run-test handler))
-    (format #t "~%Result: ~A~%" result)
+    (format #t "~%  Result: ~A~%" result)
     result)
 
   (define (test-all-slots)
@@ -83,7 +83,7 @@
             (not (eq? (cdr pair) 'ok)))
           (map cons slots results))))
     (out "Summary: slots that did not return with 'ok: ")
-    (out not-ok)
+    (format #t "  ~A~%" not-ok)
     (out "Test done.")
     'ok)
 
