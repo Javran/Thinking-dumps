@@ -1,5 +1,4 @@
 ; handle quotations
-; TODO: env to be implemented
 
 (define (install-eval-quote)
 

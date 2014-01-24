@@ -26,11 +26,10 @@
 (load "./my-eval-e-define.scm")
 (load "./my-eval-e-if.scm")
 (load "./my-eval-e-begin.scm")
+(load "./my-eval-e-lambda.scm")
 
 ; TODO:
-; * lambda
 ; * cond
-; * application
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -84,6 +83,7 @@
 (install-eval-if)
 (install-eval-set!)
 (install-eval-begin)
+(install-eval-lambda)
 
 (if *my-eval-do-test*
   (my-eval-test-installed-handlers)

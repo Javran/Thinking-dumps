@@ -40,6 +40,10 @@
        (non-empty? exp)))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
+
+(define (make-application rator-exp rand-exps)
+  (cons rator-exp rand-exps))
+
 (define (no-operands? ops) (null? ops))
 (define (first-operand ops) (car ops))
 (define (rest-operands ops) (cdr ops))
