@@ -131,6 +131,28 @@ let f = proc (x) proc (y)
                   end
 in ((f 44) 33)"
 	12)
-      
+      ;; multi arg
+
+      (multi-args-proc-1 "(proc (a,b,c) -(c,-(a,b)) 10 20 30)" 40)
+      (multi-args-proc-2 "let f = proc (x,conseq,alter)
+                                    if zero?(x)
+                                      then conseq
+                                      else alter
+                          in (f 0 1 2)" 1)
+      (multi-args-proc-3 "let f = proc (x,y,conseq,alter)
+                                    if zero?(-(x,y))
+                                      then conseq
+                                      else alter
+                          in (f 0 1 1 2)" 2)
+      (multi-args-proc-4 "(proc (x,y) -(x,y) 1)" error)
+      (multi-args-proc-5 "(proc (x) x 1 1)" error)
+
+      ;; multiline let
+      (multiline-let-1 "let a = 1 b = 2 c = 3 in -(a,-(b,c))" 2)
+      (multiline-let-2 "let dec1 = proc(x) -(x, 1)
+                            inc1 = proc(x) -(x,-1)
+                            a = 10 
+                        in (dec1 (inc1 (dec1 a)))" 9)
+
       ))
   )

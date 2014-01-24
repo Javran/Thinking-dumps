@@ -67,10 +67,17 @@
               (value-of exp3 env))))
 
         ;\commentbox{\ma{\theletspecsplit}}
-        (let-exp (var exp1 body)       
-          (let ((v1 (value-of exp1 env)))
-            (value-of body
-              (extend-env var (newref v1) env))))
+        (let-exp (vars exps body)       
+          (let ((vals (map (lambda (exp) (value-of exp env))
+                           exps)))
+            (define new-env
+              (foldl
+                extend-env
+                env
+                vars
+                (map (lambda (val) (newref val))
+                     vals)))
+            (value-of body new-env)))
         
         (proc-exp (vars body)
           (proc-val (procedure vars body env)))
