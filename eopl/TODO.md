@@ -4,3 +4,5 @@
 * exercise 3.42 - will do if time permits
 * exercise 3.43 - will do if time permits
 * exercise 3.44 - will do if time permits
+* exercise 4.12 - will do if time permits
+* exercise 4.13 - will do if time permits
