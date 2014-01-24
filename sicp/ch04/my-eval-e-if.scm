@@ -11,7 +11,7 @@
     ; allowing the else part not filled.
     (if (non-empty? (cdddr exp))
       (cadddr exp)
-      'false))
+      '#f))
 
   (define (eval-if exp env)
     ; use `true?` here allows the language to be implemented
