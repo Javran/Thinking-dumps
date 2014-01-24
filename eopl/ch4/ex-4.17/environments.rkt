@@ -32,14 +32,14 @@
 	  (if (eqv? search-var bvar)
 	    bval
 	    (apply-env saved-env search-var)))
-        (extend-env-rec* (p-names b-vars p-bodies saved-env)
+        (extend-env-rec* (p-names b-varss p-bodies saved-env)
           (let ((n (location search-var p-names)))
             ;; n : (maybe int)
             (if n
               (newref
                 (proc-val
                   (procedure 
-                    (list (list-ref b-vars n))
+                    (list-ref b-varss n)
                     (list-ref p-bodies n)
                     env)))
               (apply-env saved-env search-var)))))))

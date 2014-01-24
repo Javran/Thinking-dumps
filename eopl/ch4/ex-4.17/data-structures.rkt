@@ -68,7 +68,7 @@
       (saved-env environment?))
     (extend-env-rec*
       (proc-names (list-of symbol?))
-      (b-vars (list-of symbol?))
+      (b-varss (list-of (list-of symbol?)))
       (proc-bodies (list-of expression?))
       (saved-env environment?)))
 

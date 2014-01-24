@@ -41,7 +41,7 @@
        let-exp)   
 
       (expression
-        ("proc" "(" (separated-list identifier "," ) ")" expression)
+        ("proc" "(" (separated-list identifier ",") ")" expression)
         proc-exp)
 
       (expression
@@ -50,7 +50,7 @@
 
       (expression
         ("letrec"
-          (arbno identifier "(" identifier ")" "=" expression)
+          (arbno identifier "(" (separated-list identifier ",") ")" "=" expression)
            "in" expression)
         letrec-exp)
       

@@ -81,9 +81,9 @@
                            rands)))
             (apply-procedure proc args)))
 
-        (letrec-exp (p-names b-vars p-bodies letrec-body)
+        (letrec-exp (p-names b-varss p-bodies letrec-body)
           (value-of letrec-body
-            (extend-env-rec* p-names b-vars p-bodies env)))
+            (extend-env-rec* p-names b-varss p-bodies env)))
 
         (begin-exp (exp1 exps)
           (letrec 
