@@ -1,0 +1,15 @@
+\section*{Exercise 4.14}
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+
+(value-of $exp_1$ $\rho$ $\sigma_0$) =
+($val$, $\sigma_1$)
+
+; $l \notin dom(\sigma_1) $
+(value-of (let-exp $var$ $exp_1$ $body$) $\rho$ $\sigma_0$) =
+(value-of $body$ $[var=l]\rho$ $[l=val]\sigma_1$)
+
+
+\end{lstlisting}
+\end{center}
