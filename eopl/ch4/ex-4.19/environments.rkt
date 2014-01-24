@@ -32,8 +32,13 @@
           (if (vector? bval)
             ; extend-env-rec*
             (if (eqv? search-var bvar)
-              (newref
-                (vector-ref bval 0))
+              ; now we need to access the vector
+              (let ((saved-ref (vector-ref bval 1)))
+                (if saved-ref
+                  saved-ref
+                  (begin
+                    (vector-set! bval 1 (newref (vector-ref bval 0)))
+                    (vector-ref bval 1))))
               (apply-env saved-env search-var))
             ; extend-env
             (if (eqv? search-var bvar)

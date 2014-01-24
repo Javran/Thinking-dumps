@@ -74,7 +74,8 @@
       (saved-env environment?)))
 
   (define (extend-env-rec* p-names b-vars bodies saved-env)
-    (let ((vecs (map (lambda (x) (make-vector 1)) p-names)))
+    (let ((vecs (map (lambda (x) (make-vector 2)) p-names)))
+      ; the second field is used to store the ref value
       (define new-env
         (foldl
           extend-env
@@ -83,6 +84,7 @@
           vecs))
       (for-each
         (lambda (p-name b-var body vec)
+          (vector-set! vec 1 #f)
           (vector-set! vec 0
             (proc-val (procedure b-var body new-env))))
         p-names
