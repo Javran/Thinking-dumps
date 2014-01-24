@@ -8,6 +8,7 @@
   (require "data-structures.rkt")
   (require "environments.rkt")
   (require "store.rkt")
+  (require (only-in racket foldl))
   
   (provide value-of-program value-of instrument-let instrument-newref)
 
@@ -71,13 +72,14 @@
             (value-of body
               (extend-env var (newref v1) env))))
         
-        (proc-exp (var body)
-          (proc-val (procedure var body env)))
+        (proc-exp (vars body)
+          (proc-val (procedure vars body env)))
 
-        (call-exp (rator rand)
+        (call-exp (rator rands)
           (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of rand env)))
-            (apply-procedure proc arg)))
+                (args (map (lambda (rand) (value-of rand env))
+                           rands)))
+            (apply-procedure proc args)))
 
         (letrec-exp (p-names b-vars p-bodies letrec-body)
           (value-of letrec-body
@@ -116,16 +118,21 @@
   
   ;; instrumented version
   (define apply-procedure
-    (lambda (proc1 arg)
+    (lambda (proc1 args)
       (cases proc proc1
-        (procedure (var body saved-env)
-          (let ((r (newref arg)))
-            (let ((new-env (extend-env var r saved-env)))
+        (procedure (vars body saved-env)
+          (let ((refs (map (lambda (arg) (newref arg))
+                           args)))
+            (let ((new-env (foldl
+                             extend-env
+                             saved-env
+                             vars
+                             refs)))
               (when (instrument-let)
                 (begin
                   (eopl:printf
                     "entering body of proc ~s with env =~%"
-                    var)
+                    vars)
                   (pretty-print (env->list new-env)) 
                   (eopl:printf "store =~%")
                   (pretty-print (store->readable (get-store-as-list)))

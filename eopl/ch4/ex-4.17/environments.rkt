@@ -39,7 +39,7 @@
               (newref
                 (proc-val
                   (procedure 
-                    (list-ref b-vars n)
+                    (list (list-ref b-vars n))
                     (list-ref p-bodies n)
                     env)))
               (apply-env saved-env search-var)))))))

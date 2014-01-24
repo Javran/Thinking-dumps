@@ -56,7 +56,7 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
+      (bvars (list-of symbol?))
       (body expression?)
       (env environment?)))
 
@@ -96,8 +96,8 @@
       (cases expval val
 	(proc-val (p)
 	  (cases proc p
-	    (procedure (var body saved-env)
-	      (list 'procedure var '... (env->list saved-env)))))
+	    (procedure (vars body saved-env)
+	      (list 'procedure vars '... (env->list saved-env)))))
 	(else val))))
 
 )
