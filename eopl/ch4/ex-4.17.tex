@@ -1,0 +1,70 @@
+\section*{Exercise 4.17}
+
+Grammar:
+
+\texttt{
+    $Expression ::= $ let $\{Identifier$ = $Expression\}^*$ in $Expression$
+}
+
+\texttt{
+    $Expression ::= $ proc ($\{Identifier\}^{*(,)}$) $Expression$
+}
+
+\texttt{
+    $Expression ::= $ ($Expression$  $\{Expression\}^{*}$) 
+}
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+
+; definitions
+(define-datatype expression expression?
+  ...
+  (let-exp
+    (vars (list-of identifier?))
+    (vals (list-of expression?))
+    (body expression?))
+  (proc-exp
+    (args (list-of identifier?))
+    (body expression?))
+  
+  (call-exp
+    (rator expression?)
+    (rands (list-of expression?)))
+  
+  ...)
+
+; assumptions
+; $l_i \notin dom(\sigma_{i+1})$
+(value-of $exp_0$ $\rho$ $\sigma_0$) = ($val_0$,$\sigma_1$)
+(value-of $exp_1$ $\rho$ $\sigma_1$) = ($val_1$,$\sigma_2$)
+...
+(value-of $exp_n$ $\rho$ $\sigma_n$) = ($val_n$,$\sigma_{n+1}$)
+
+; rules for let-exp:
+
+(value-of (let-exp
+            ($var_0$,$var_1$,...,$var_n$)
+            ($exp_0$,$exp_1$,...,$exp_n$)
+            $body$) $\rho$ $\sigma_0$) =
+(value-of
+  $body$
+  $[var_0=l_0][var_1=l_1]...[var_n=l_n]\rho$
+  $[l_0=val_0][l_1=val_1]...[l_n=val_n]\sigma_{n+1}$)
+
+; rules for proc-exp:
+
+(value-of (proc-exp ($var_0$,$var_1$,...,$var_n$) $body$) $\rho$ $\sigma$) =
+((proc-val (procedure ($var_0$,$var_1$,...,$var_n$) $body$ $\rho$)), $\sigma$)
+
+; rules for call-exp:
+(apply-procedure
+  (procedure ($var_0$,$var_1$,...,$var_n$) $body$ $\rho$)
+  $val_0$ $val_1$ ... $val_n$ $\sigma_0$) = 
+(value-of
+  $body$
+  $[var_0=l_0][var_1=l_1]...[var_n=l_n]\rho$
+  $[l_0=val_0][l_1=val_1]...[l_n=val_n]\sigma_{n+1}$)
+
+\end{lstlisting}
+\end{center}
