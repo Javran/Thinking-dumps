@@ -48,7 +48,14 @@
           env))
       (print-stmt (exp1)
         (begin
-          (pretty-print (value-of exp1 env))
+          (define val1
+            (expval->printable (value-of exp1 env)))
+          (pretty-print
+            (cases expval val1
+              (num-val (n) n)
+              (bool-val (b) b)
+              (proc-val (p) p)
+              (else "<unknown>")))
           env))
       (chain-stmt (stmts)
         (if (null? stmts)
@@ -71,7 +78,7 @@
               (while-stmt exp1 stmt1)
               (result-of stmt1 env))
             env)))
-      (var-stmt (vars next-stmt)
+      (var-stmt (vars inner-stmt)
         (begin
           ; the initial value is not specified
           ;   so anything will be acceptable
@@ -80,8 +87,10 @@
                             vars))
           (define new-env
             (foldl extend-env env vars locs))
-          (result-of next-stmt new-env)))
-      (else 'todo)))
+          (result-of inner-stmt new-env)
+          ; var only has effects on inner-stmt
+          ;   we should restore the previous env
+          env))))
 
   ;; value-of : Exp * Env -> ExpVal
   ;; Page: 118, 119

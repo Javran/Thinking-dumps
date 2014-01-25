@@ -6,6 +6,15 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
+(out "Example 1")
+(run "
+  var x,y;
+  { x = 3;
+    y = 4;
+    print +(x,y)
+  }")
+
+(out "Example 2")
 (run "
   var x,y,z;
   { x = 3;
@@ -19,3 +28,27 @@
     print z
   }
   ")
+
+; TODO: incorrect result
+(out "Example 3")
+(run "
+  var x;
+  { x = 3;
+    print x;
+    var x; {x = 4; print x};
+    print x
+  }
+  ")
+
+; TODO: need multiarg extension
+(out "Example 4")
+(run "
+  var f,x;
+  { f = proc(x) proc(y) *(x,y);
+    x = 3;
+    print ((f 4) x)
+  }
+  ")
+
+; TODO: bring back automatic test facilities
+; by keeping a list of string printed
