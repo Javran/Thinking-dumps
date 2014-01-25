@@ -22,7 +22,7 @@
 
   (define run
     (lambda (string)
-      (value-of-program (scan&parse string))))
+      (result-of-program (scan&parse string))))
   
   ;; run-all : () -> Unspecified
 

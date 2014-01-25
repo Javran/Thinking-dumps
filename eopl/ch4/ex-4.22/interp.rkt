@@ -8,8 +8,11 @@
   (require "data-structures.rkt")
   (require "environments.rkt")
   (require "store.rkt")
+  (require (only-in racket foldl))
   
   (provide value-of-program value-of instrument-let instrument-newref)
+
+  (provide result-of-program result-of)
 
 ;;;;;;;;;;;;;;;; switches for instrument-let ;;;;;;;;;;;;;;;;
 
@@ -27,6 +30,58 @@
       (cases program pgm
         (a-program (exp1)
           (value-of exp1 (init-env))))))
+
+  (define (result-of-program pgm)
+    (initialize-store!)
+    (cases program pgm
+      (a-program (stmt)
+        (result-of stmt (init-env)))))
+
+  ; should return the environment modified
+  (define (result-of stmt env)
+    (cases statement stmt
+      (assign-stmt (var exp1)
+        (begin
+          (define val1 (value-of exp1 env))
+          (define loc1 (apply-env env var))
+          (setref! loc1 val1)
+          env))
+      (print-stmt (exp1)
+        (begin
+          (pretty-print (value-of exp1 env))
+          env))
+      (chain-stmt (stmts)
+        (if (null? stmts)
+          ; empty list, done
+          env
+          (result-of (chain-stmt (cdr stmts))
+                     (result-of (car stmts) env))))
+      (if-stmt (exp1 stmt-conseq stmt-alter)
+        (begin
+          (define val1 (expval->bool (value-of exp1 env)))
+          (if val1
+            (result-of stmt-conseq env)
+            (result-of stmt-alter env))))
+      (while-stmt (exp1 stmt1)
+        (begin
+          (define val1 (expval->bool (value-of exp1 env)))
+          (if val1
+            ; call for `stmt1`'s side effect, and use the modified env
+            (result-of
+              (while-stmt exp1 stmt1)
+              (result-of stmt1 env))
+            env)))
+      (var-stmt (vars next-stmt)
+        (begin
+          ; the initial value is not specified
+          ;   so anything will be acceptable
+          (define locs (map (lambda (l)
+                              (newref (bool-val #f)))
+                            vars))
+          (define new-env
+            (foldl extend-env env vars locs))
+          (result-of next-stmt new-env)))
+      (else 'todo)))
 
   ;; value-of : Exp * Env -> ExpVal
   ;; Page: 118, 119
@@ -50,6 +105,22 @@
               (num-val
                 (- num1 num2)))))
 
+        (sum-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (num-val
+                (+ num1 num2)))))
+
+        (prod-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (num-val
+                (* num1 num2)))))
+
         ;\commentbox{\zerotestspec}
         (zero?-exp (exp1)
           (let ((val1 (value-of exp1 env)))
@@ -64,6 +135,15 @@
             (if (expval->bool val1)
               (value-of exp2 env)
               (value-of exp3 env))))
+
+        (not-exp (exp1)
+          (let ((val1 (value-of exp1 env)))
+            (bool-val
+              ; can use `not` here
+              ;   but I want to make sure
+              ;   the return value is either #t or #f
+              (if (expval->bool val1)
+                #f #t))))
 
         ;\commentbox{\ma{\theletspecsplit}}
         (let-exp (var exp1 body)       

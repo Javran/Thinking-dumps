@@ -19,7 +19,7 @@
       ))
   
   (define the-grammar
-    '((program (expression) a-program)
+    '((program (statement) a-program)
 
       (expression (number) const-exp)
 
@@ -28,8 +28,20 @@
         diff-exp)
       
       (expression
+        ("+" "(" expression "," expression ")")
+        sum-exp)
+
+      (expression
+        ("*" "(" expression "," expression ")")
+        prod-exp)
+
+      (expression
        ("zero?" "(" expression ")")
        zero?-exp)
+
+      (expression
+        ("not" "(" expression ")")
+        not-exp)
 
       (expression
        ("if" expression "then" expression "else" expression)

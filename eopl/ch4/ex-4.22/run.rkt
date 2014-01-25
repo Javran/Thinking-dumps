@@ -6,4 +6,16 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
-(test-all)
+(run "
+  var x,y,z;
+  { x = 3;
+    y = 4;
+    z = 0;
+    while not(zero?(x))
+    {
+      z = +(z,y) ;
+      x = -(x,1)
+    };
+    print z
+  }
+  ")
