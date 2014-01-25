@@ -22,10 +22,7 @@
 
   (define (test)
     (define env
-      (extend-environment
-        '(true false)
-        '(#t #f)
-        the-empty-environment))
+      (init-env))
 
     (define testcases
       (list
@@ -38,6 +35,8 @@
         (mat '(if true 10 20) env 10)
         (mat '(if 'false 10 20) env 10)
         (mat '(if false 10 20) env 20)
+        (mat '(if (= 1 1) (+ 10 20) (* 10 20)) env 30)
+        (mat '(if (= 0 1) (+ 10 20) (* 10 20)) env 200)
         ))
     (do-test eval-if testcases)
     'ok)

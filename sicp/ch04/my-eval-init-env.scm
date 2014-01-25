@@ -27,9 +27,12 @@
             (lift-primitive-pair 'eqv?)
             )))
     (extend-environment
-      (map car proc-list)
-      (map cdr proc-list)
-      the-empty-environment)))
+      '(true false)
+      '(#t   #f)
+      (extend-environment
+        (map car proc-list)
+        (map cdr proc-list)
+        the-empty-environment))))
 
 (define (test-init-env)
   (let ((env (init-env)))
