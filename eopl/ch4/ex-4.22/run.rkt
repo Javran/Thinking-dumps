@@ -7,6 +7,9 @@
 (require "./data-structures.rkt")
 (require "./printer.rkt")
 
+
+(test-all)
+
 (print-to-screen #t)
 
 (out "Example 1")
@@ -32,7 +35,6 @@
   }
   ")
 
-; TODO: incorrect result
 (out "Example 3")
 (run "
   var x;
@@ -52,6 +54,3 @@
     print ((f 4) x)
   }
   ")
-
-; TODO: bring back automatic test facilities
-; by keeping a list of string printed

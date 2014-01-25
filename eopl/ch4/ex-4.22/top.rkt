@@ -8,6 +8,8 @@
   (require "lang.rkt")             ; for scan&parse
   (require "interp.rkt")           ; for value-of-program
   (require "tests.rkt")            ; for test-list
+  (require "printer.rkt")
+  (require (only-in racket format))
   
   (provide run run-all)
   
@@ -18,11 +20,12 @@
 
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   
-  ;; run : String -> ExpVal
-
+  ;; run : String -> [String] (return all strings printed)
   (define run
     (lambda (string)
-      (result-of-program (scan&parse string))))
+      (begin
+        (result-of-program (scan&parse string))
+        (get-printed))))
   
   ;; run-all : () -> Unspecified
 
@@ -35,8 +38,12 @@
   
   (define equal-answer?
     (lambda (ans correct-ans)
-      (equal? ans (sloppy->expval correct-ans))))
+      (equal? ans (sloppy->strlist correct-ans))))
   
+  ; quick and dirty, correct if we don't print procedures
+  (define (sloppy->strlist sloppy-val)
+    (list (format "~A" sloppy-val)))
+
   (define sloppy->expval 
     (lambda (sloppy-val)
       (cond
