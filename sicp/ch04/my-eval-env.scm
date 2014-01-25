@@ -188,7 +188,7 @@
       (mat 'b env1 'bbb)
       (mat 'b env2 'new-b)))
   
-  'done)
+  'ok)
 
 (if *my-eval-do-test*
   (test))

@@ -90,4 +90,4 @@
   (set! my-eval-get get)
   (set! my-eval-put! put!)
   (set! my-eval-test-installed-handlers test-all-slots)
-  'done)
+  'ok)
