@@ -14,6 +14,9 @@
 
 ; procedure support
 (load "./my-eval-apply.scm")
+(load "./my-eval-init-env.scm")
+
+; basic environment
 
 ; build-in handler
 (load "./my-eval-e-simple.scm")
@@ -86,7 +89,10 @@
 (install-eval-lambda)
 
 (if *my-eval-do-test*
-  (my-eval-test-installed-handlers)
+  (begin
+    (test-my-apply)
+    (test-init-env)
+    (my-eval-test-installed-handlers)
+    )
   'skipped)
 
-(test-my-apply)
