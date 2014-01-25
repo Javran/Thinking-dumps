@@ -162,9 +162,9 @@ in ((f 44) 33)"
 
       (example-ex-4-22-4 "
         var f,x;
-        { f = proc(x) proc(y) *(x,y);
+        { f = proc(x,y) *(x,y);
           x = 3;
-          print ((f 4) x)
+          print (f 4 x)
         }" (12))
 
       ; make sure the print order is correct
