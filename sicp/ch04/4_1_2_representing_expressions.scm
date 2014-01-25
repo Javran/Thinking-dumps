@@ -33,7 +33,7 @@
     ; form: (define <var> <value>)
     (cadr exp)
     ; `(cadr exp)` is a list
-    (caddr exp)))
+    (caadr exp)))
 (define (definition-value exp)
   (if (symbol? (cadr exp))
     ; first form
