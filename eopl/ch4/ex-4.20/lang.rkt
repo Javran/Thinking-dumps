@@ -41,6 +41,10 @@
        let-exp)   
 
       (expression
+       ("letmutable" identifier "=" expression "in" expression)
+       letmutable-exp)   
+
+      (expression
        ("proc" "(" identifier ")" expression)
        proc-exp)
 

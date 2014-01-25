@@ -50,8 +50,8 @@
 
         ;\commentbox{\diffspec}
         (diff-exp (exp1 exp2)
-          (let ((val1 (value-of exp1 env))
-                (val2 (value-of exp2 env)))
+          (let ((val1 (ensure-value (value-of exp1 env)))
+                (val2 (ensure-value (value-of exp2 env))))
             (let ((num1 (expval->num val1))
                   (num2 (expval->num val2)))
               (num-val
@@ -59,7 +59,7 @@
 
         ;\commentbox{\zerotestspec}
         (zero?-exp (exp1)
-          (let ((val1 (value-of exp1 env)))
+          (let ((val1 (ensure-value (value-of exp1 env))))
             (let ((num1 (expval->num val1)))
               (if (zero? num1)
                 (bool-val #t)
@@ -67,7 +67,7 @@
               
         ;\commentbox{\ma{\theifspec}}
         (if-exp (exp1 exp2 exp3)
-          (let ((val1 (value-of exp1 env)))
+          (let ((val1 (ensure-value (value-of exp1 env))))
             (if (expval->bool val1)
               (value-of exp2 env)
               (value-of exp3 env))))
@@ -77,6 +77,11 @@
           (let ((v1 (value-of exp1 env)))
             (value-of body
               (extend-env var v1 env))))
+
+        (letmutable-exp (var exp1 body)
+          (let ((v1 (value-of exp1 env)))
+            (value-of body
+              (extend-env var (expval-newref v1) env))))
         
         (proc-exp (var body)
           (proc-val (procedure var body env)))
@@ -103,7 +108,7 @@
         (assign-exp (var exp1)
           ; todo
           (begin
-            (setref!
+            (expval-setref!
               (apply-env env var)
               (value-of exp1 env))
             (num-val 27)))
