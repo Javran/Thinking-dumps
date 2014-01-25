@@ -131,6 +131,47 @@ let f = proc (x) proc (y)
                   end
 in ((f 44) 33)"
 	12)
+
+      (example-ex-4-22-1 "
+        var x,y;
+        { x = 3;
+          y = 4;
+          print +(x,y)
+        }" (7))
       
+      (example-ex-4-22-2 "
+        var x,y,z;
+        { x = 3;
+          y = 4;
+          z = 0;
+          while not(zero?(x))
+          {
+            z = +(z,y) ;
+            x = -(x,1)
+          };
+          print z
+        }" (12))
+
+      (example-ex-4-22-3 "
+        var x;
+        { x = 3;
+          print x;
+          var x; {x = 4; print x};
+          print x
+        }" (3 4 3))
+
+      (example-ex-4-22-4 "
+        var f,x;
+        { f = proc(x) proc(y) *(x,y);
+          x = 3;
+          print ((f 4) x)
+        }" (12))
+
+      ; make sure the print order is correct
+      (print-order "
+        { print 1;
+          print 2;
+          print 3 }" (1 2 3))
+
       ))
   )

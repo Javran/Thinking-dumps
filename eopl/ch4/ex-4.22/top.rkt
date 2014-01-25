@@ -11,7 +11,7 @@
   (require "printer.rkt")
   (require (only-in racket format))
   
-  (provide run run-all)
+  (provide run run-all run-one)
   
    ;;; interface for book test ;;;
   (provide test-all)
@@ -42,7 +42,10 @@
   
   ; quick and dirty, correct if we don't print procedures
   (define (sloppy->strlist sloppy-val)
-    (list (format "~A" sloppy-val)))
+    (if (list? sloppy-val)
+      ; if the sloppy value is a list, convert it to a list of strings
+      (map (lambda (x) (format "~A" x)) sloppy-val)
+      (list (format "~A" sloppy-val))))
 
   (define sloppy->expval 
     (lambda (sloppy-val)

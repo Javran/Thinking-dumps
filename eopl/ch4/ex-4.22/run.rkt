@@ -7,50 +7,19 @@
 (require "./data-structures.rkt")
 (require "./printer.rkt")
 
-
 (test-all)
+(newline)
 
 (print-to-screen #t)
 
 (out "Example 1")
-(run "
-  var x,y;
-  { x = 3;
-    y = 4;
-    print +(x,y)
-  }")
+(run-one 'example-ex-4-22-1)
 
 (out "Example 2")
-(run "
-  var x,y,z;
-  { x = 3;
-    y = 4;
-    z = 0;
-    while not(zero?(x))
-    {
-      z = +(z,y) ;
-      x = -(x,1)
-    };
-    print z
-  }
-  ")
+(run-one 'example-ex-4-22-2)
 
 (out "Example 3")
-(run "
-  var x;
-  { x = 3;
-    print x;
-    var x; {x = 4; print x};
-    print x
-  }
-  ")
+(run-one 'example-ex-4-22-3)
 
-; TODO: need multiarg extension
 (out "Example 4")
-(run "
-  var f,x;
-  { f = proc(x) proc(y) *(x,y);
-    x = 3;
-    print ((f 4) x)
-  }
-  ")
+(run-one 'example-ex-4-22-4)
