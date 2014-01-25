@@ -5,6 +5,9 @@
 
 (require "./top.rkt")
 (require "./data-structures.rkt")
+(require "./printer.rkt")
+
+(print-to-screen #t)
 
 (out "Example 1")
 (run "

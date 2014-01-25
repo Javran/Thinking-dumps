@@ -8,6 +8,7 @@
   (require "data-structures.rkt")
   (require "environments.rkt")
   (require "store.rkt")
+  (require "printer.rkt")
   (require (only-in racket foldl))
   
   (provide value-of-program value-of instrument-let instrument-newref)
@@ -27,12 +28,14 @@
   (define value-of-program 
     (lambda (pgm)
       (initialize-store!)
+      (initialize-printer!)
       (cases program pgm
         (a-program (exp1)
           (value-of exp1 (init-env))))))
 
   (define (result-of-program pgm)
     (initialize-store!)
+    (initialize-printer!)
     (cases program pgm
       (a-program (stmt)
         (result-of stmt (init-env)))))
@@ -50,7 +53,7 @@
         (begin
           (define val1
             (expval->printable (value-of exp1 env)))
-          (pretty-print
+          (send-to-printer
             (cases expval val1
               (num-val (n) n)
               (bool-val (b) b)
