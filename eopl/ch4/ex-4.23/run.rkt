@@ -9,6 +9,8 @@
 
 (test-all)
 
+; based on ex 4.22
+
 (print-to-screen #t)
 
 ; read an integer `n`, print from 1 to `n`
