@@ -30,9 +30,7 @@
 (load "./my-eval-e-if.scm")
 (load "./my-eval-e-begin.scm")
 (load "./my-eval-e-lambda.scm")
-
-; TODO:
-; * cond
+(load "./my-eval-e-cond.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -87,6 +85,7 @@
 (install-eval-set!)
 (install-eval-begin)
 (install-eval-lambda)
+(install-eval-cond)
 
 (if *my-eval-do-test*
   (begin
@@ -95,4 +94,3 @@
     (my-eval-test-installed-handlers)
     )
   'skipped)
-

@@ -5,17 +5,24 @@
 (define (make-begin exp-seq)
   (cons 'begin exp-seq))
 
+; test if `seq` is a sequence with exactly one exp
+(define (last-exp? seq)
+  ; `seq` must not be empty
+  (null? (cdr seq)))
+
+(define first-exp car)
+(define rest-exps cdr)
+
+; turn a seq of exps into a begin-exp
+(define (sequence->exp seq)
+  (cond ((null? seq) seq)
+        ((last-exp? seq) (first-exp seq))
+        (else (make-begin seq))))
+
 (define (install-eval-begin)
 
   (define begin-actions cdr)
 
-  ; test if `seq` is a sequence with exactly one exp
-  (define (last-exp? seq)
-    ; `seq` must not be empty
-    (null? (cdr seq)))
-
-  (define first-exp car)
-  (define rest-exps cdr)
 
   (define (eval-sequence exps env)
     (cond ((null? exps)

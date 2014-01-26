@@ -1,4 +1,6 @@
 ; handle if-exp
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))
 
 (define (install-eval-if)
 
