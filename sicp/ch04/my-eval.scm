@@ -31,6 +31,8 @@
 (load "./my-eval-e-begin.scm")
 (load "./my-eval-e-lambda.scm")
 (load "./my-eval-e-cond.scm")
+(load "./my-eval-e-and.scm")
+(load "./my-eval-e-or.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -86,6 +88,8 @@
 (install-eval-begin)
 (install-eval-lambda)
 (install-eval-cond)
+(install-eval-and)
+(install-eval-or)
 
 (if *my-eval-do-test*
   (begin
