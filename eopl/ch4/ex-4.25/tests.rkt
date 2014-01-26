@@ -190,5 +190,14 @@ in ((f 44) 33)"
           print y;
           print +(x,y)
         } " (9 2 11))
+
+      (test-var-assign-3 "
+        var a=1,b=a;
+        {
+          a = 9;
+          print a;
+          print b;
+          print +(a,b)
+        } " error)
       ))
   )
