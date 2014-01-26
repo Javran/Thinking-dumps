@@ -9,3 +9,4 @@
 * exercise 4.18 - almost done (by default), will write LaTex answer if time permits
 * exercise 4.26 - will do if time permits
 * exercise 4.27 - will do if time permits
+* exercise 4.28 - will do if time permits
