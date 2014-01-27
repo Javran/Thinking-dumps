@@ -2,17 +2,19 @@
 module MPC.Monad
 where
 
-import Control.Monad
+-- shadowing conflicting definitions in Prelude
+import qualified Prelude as P
+import qualified Control.Monad as M
 
 -- the exception monad
 
-data Maybe1 a = Just1 a | Nothing1
-    deriving Show
+data Maybe a = Just a | Nothing
+    deriving P.Show
 
-maybe1 :: b -> (a -> b) -> Maybe1 a -> b
-maybe1 _ convert (Just1 x) = convert x
-maybe1 fail _ _ = fail
+maybe :: b -> (a -> b) -> Maybe a -> b
+maybe _ convert (Just x) = convert x
+maybe fail _ _ = fail
 
-instance Monad Maybe1 where
-    return = Just1
-    m >>= f = maybe1 Nothing1 f m
+instance M.Monad Maybe where
+    return = Just
+    m >>= f = maybe Nothing f m

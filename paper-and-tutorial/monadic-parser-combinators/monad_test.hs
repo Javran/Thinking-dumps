@@ -1,14 +1,15 @@
+import Prelude hiding (Maybe,Just,Nothing)
 import Control.Monad
 
 import MPC.Monad
 
 -- plus n if it has something inside
-maybePlus :: Int -> Int -> Maybe1 Int
-maybePlus n x = Just1 $ x + n
+maybePlus :: Int -> Int -> Maybe Int
+maybePlus n x = Just $ x + n
 
 -- fail if it is not less than n
-maybeLessThan :: Int -> Int -> Maybe1 Int
-maybeLessThan n x = if x < n then Just1 x else Nothing1
+maybeLessThan :: Int -> Int -> Maybe Int
+maybeLessThan n x = if x < n then Just x else Nothing
 
 main = do
     -- 1 + 3 + 10 = 14
