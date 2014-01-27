@@ -33,6 +33,7 @@
 (load "./my-eval-e-cond.scm")
 (load "./my-eval-e-and.scm")
 (load "./my-eval-e-or.scm")
+(load "./my-eval-e-let.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -90,6 +91,7 @@
 (install-eval-cond)
 (install-eval-and)
 (install-eval-or)
+(install-eval-let)
 
 (if *my-eval-do-test*
   (begin
