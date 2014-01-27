@@ -10,3 +10,4 @@
 * exercise 4.26 - will do if time permits
 * exercise 4.27 - will do if time permits
 * exercise 4.28 - will do if time permits
+* exercise 4.31 - will do if time permits
