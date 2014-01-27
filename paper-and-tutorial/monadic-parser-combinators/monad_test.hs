@@ -15,7 +15,7 @@ maybeLessThan n x = if x < n then Just x else Nothing
 -- 1 + 3 + 10 = 14
 testR = Just 1 >>= maybePlus 3 >>= maybePlus 10
 
-tests = TestList
+exceptionMonadTests = TestList
     [ TestCase
         (assertEqual "should return 14"
             testR
@@ -26,4 +26,4 @@ tests = TestList
             Nothing)
     ]
 
-main = runTestTT tests
+main = runTestTT exceptionMonadTests
