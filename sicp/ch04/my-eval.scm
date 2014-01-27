@@ -4,7 +4,7 @@
 ; my `eval` and `apply` implementaton.
 
 ; test flag, set to #t will perform tests when components are loaded
-(define *my-eval-do-test* #t)
+(define *my-eval-do-test* #f)
 
 ; basic components
 (load "./my-eval-handler.scm")
