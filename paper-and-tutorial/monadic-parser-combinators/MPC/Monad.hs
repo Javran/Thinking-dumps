@@ -9,7 +9,7 @@ import qualified Control.Monad as M
 -- the exception monad
 
 data Maybe a = Just a | Nothing
-    deriving P.Show
+    deriving (P.Show, P.Eq)
 
 maybe :: b -> (a -> b) -> Maybe a -> b
 maybe _ convert (Just x) = convert x
