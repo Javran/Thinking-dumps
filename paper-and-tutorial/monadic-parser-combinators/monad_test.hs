@@ -12,9 +12,6 @@ maybePlus n x = Just $ x + n
 maybeLessThan :: Int -> Int -> Maybe Int
 maybeLessThan n x = if x < n then Just x else Nothing
 
--- 1 + 3 + 10 = 14
-testR = Just 1 >>= maybePlus 3 >>= maybePlus 10
-
 exceptionMonadTests = TestList
     [ TestCase
         (assertEqual "should return 14"
@@ -25,5 +22,31 @@ exceptionMonadTests = TestList
             (testR >>= maybeLessThan 10 >>= maybePlus 1 >>= maybePlus 2)
             Nothing)
     ]
+    where
+        -- 1 + 3 + 10 = 14
+        testR = Just 1 >>= maybePlus 3 >>= maybePlus 10
 
-main = runTestTT exceptionMonadTests
+nondetMonadTests = TestList
+    [ TestCase
+        (assertEqual "half way of Pascal's triangle"
+            ([1]                 >>= split1 >>= split1 >>= split1)
+            (toList (Lst 1 Empty >>= split2 >>= split2 >>= split2)))
+    , TestCase
+        (assertEqual "test guard" 
+            (do
+                x <- [1..20]
+                guard $ odd x
+                return x)
+            (toList 
+                (do x <- fromList [1..20]
+                    guard $ odd x
+                    return x)))
+    ]
+    where
+        split1 x = [x, x+1]
+        split2 x = Lst x (Lst (x+1) Empty)
+
+main = mapM_ runTestTT
+    [ exceptionMonadTests
+    , nondetMonadTests
+    ]
