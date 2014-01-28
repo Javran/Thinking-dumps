@@ -40,6 +40,12 @@
        ("let" identifier "=" expression "in" expression)
        let-exp)   
 
+      ;; alternatively, we can use:
+      ;; (expression
+      ;;   ("letref" identifier "=" identifier "in" expression)
+      ;;   letref-exp)
+      ;; but this one is more flexible, we can have extension
+      ;;   to support expressions that returns references.
       (expression
        ("letref" identifier "=" expression "in" expression)
        letref-exp)   
