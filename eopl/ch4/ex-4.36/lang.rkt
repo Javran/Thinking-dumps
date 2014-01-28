@@ -82,6 +82,9 @@
         ("setright" expression "=" expression)
         setright-exp)
 
+      ;; might conflict with `call-exp` if we define `arrayref`'s grammar
+      ;;   to be something like `(arrayref a b)`
+      ;;   so we just following the grammar in ex 4.29
       (expression
         ("newarray" "(" expression "," expression ")")
         newarray-exp)
