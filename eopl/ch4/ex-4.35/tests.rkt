@@ -142,6 +142,10 @@ in ((f 44) 33)"
         in let y = 10
         in begin (f ref y); y end" 9)
 
+      ;; answer to the question: the value should be 10,
+      ;;   because now the procedure can see the reference
+      ;;   and modify the value it points to
+      ;;   so the `swap` procedure works.
       (example-from-ex-4-35 "
         let a = 3
         in let b = 4
@@ -157,9 +161,6 @@ in ((f 44) 33)"
                ((swap ref a) ref b);
                -(a,b)
              end" 1)
-
-
-                        
       
       ))
   )
