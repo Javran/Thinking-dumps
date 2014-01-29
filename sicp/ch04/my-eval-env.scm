@@ -91,7 +91,7 @@
     (scan (frame-variables frame)
           (frame-values    frame))))
 
-(define (test)
+(define (test-environment)
   (define env (extend-environment
                 '(a b c)
                 '(1 2 3)
@@ -191,4 +191,4 @@
   'ok)
 
 (if *my-eval-do-test*
-  (test))
+  (test-environment))
