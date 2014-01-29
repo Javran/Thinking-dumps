@@ -25,7 +25,7 @@
     ; 2-layer
     (define env
       (extend-environment
-        '(a) '(10) the-empty-environment))
+        (list 'a) (list 10) the-empty-environment))
 
     (define env1
       (extend-environment

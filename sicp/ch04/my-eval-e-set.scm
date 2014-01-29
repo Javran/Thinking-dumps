@@ -10,20 +10,15 @@
       env)
     'ok)
 
-  ; ONLY RUN THIS TEST ONCE.
-  ;   I don't know what is the fucking underlying implementation
-  ;   but it does keep the previous environment
-  ;   so side effect remains, the test will fail if you call this twice.
-  ; TODO: workaround?
-  ;   I don't think it worth a try to solve this,
-  ;   so I might just leave it here forever.
   (define (test)
     ; test 3-layer environments
 
     ; env -> env1 -> env2
     ;            \-> env3
-    ; workaround: use (list ...) rather than '(...)
-    ;   not sure why, but it works anyway
+    ; here we use (list ...) rather than '(...)
+    ;   since the consequence of using `set-car!` on
+    ;   quoted data is undefine, we should avoid using quotations
+    ;   to do the test
     (define env
       (extend-environment
         (list 'a 'b 'c)
