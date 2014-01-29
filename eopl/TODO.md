@@ -12,3 +12,4 @@
 * exercise 4.28 - will do if time permits
 * exercise 4.31 - will do if time permits
 * exercise 4.34 - will write spec if time permits
+* exercise 4.41 - will do if time permits
