@@ -77,4 +77,4 @@
       test))
 
   (handler-register! handler)
-  'done)
+  'ok)

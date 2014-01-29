@@ -10,6 +10,7 @@
 
 (define (clause-arrow? clause)
   (eq? (cadr clause) '=>))
+
 ; (<predicate> => <handler>)
 ;                    ^- the third element
 (define clause-handler caddr)

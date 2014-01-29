@@ -4,7 +4,7 @@
 ; my `eval` and `apply` implementaton.
 
 ; test flag, set to #t will perform tests when components are loaded
-(define *my-eval-do-test* #t)
+(define *my-eval-do-test* #f)
 
 ; basic components
 (load "./my-eval-handler.scm")
@@ -14,6 +14,9 @@
 
 ; procedure support
 (load "./my-eval-apply.scm")
+(load "./my-eval-init-env.scm")
+
+; basic environment
 
 ; build-in handler
 (load "./my-eval-e-simple.scm")
@@ -27,9 +30,11 @@
 (load "./my-eval-e-if.scm")
 (load "./my-eval-e-begin.scm")
 (load "./my-eval-e-lambda.scm")
-
-; TODO:
-; * cond
+(load "./my-eval-e-cond.scm")
+(load "./my-eval-e-and.scm")
+(load "./my-eval-e-or.scm")
+(load "./my-eval-e-let.scm")
+(load "./my-eval-e-let-star.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -84,9 +89,16 @@
 (install-eval-set!)
 (install-eval-begin)
 (install-eval-lambda)
+(install-eval-cond)
+(install-eval-and)
+(install-eval-or)
+(install-eval-let)
+(install-eval-let*)
 
 (if *my-eval-do-test*
-  (my-eval-test-installed-handlers)
+  (begin
+    (test-my-apply)
+    (test-init-env)
+    (my-eval-test-installed-handlers)
+    )
   'skipped)
-
-(test-my-apply)
