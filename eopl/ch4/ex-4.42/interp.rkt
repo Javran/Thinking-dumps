@@ -64,6 +64,11 @@
             (value-of exp1 env)
             (value-of exp2 env)))
 
+        (let-exp (var exp1 body)       
+          (let ((val (value-of exp1 env)))
+            (value-of body
+              (extend-env var (newref val) env))))
+
         ; (let ((<var> <exp1>))
         ;   <body>)
         ; =>
@@ -72,7 +77,7 @@
         ;  <exp1>)
         ; because `call-exp` is lazy on its arg
         ;   so does `let-exp`
-        (let-exp (var exp1 body)       
+        (letz-exp (var exp1 body)       
           (value-of
             (call-exp
               ; rator
@@ -80,7 +85,6 @@
               ; rand
               exp1)
             env))
-
         (proc-exp (var body)
 	  (proc-val
 	    (procedure var body env)))

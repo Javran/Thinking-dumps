@@ -107,18 +107,13 @@ in let times4 = (fix t4m)
                           in begin set x = 27; x end"
         27)
 
-      ;; side effect no longer works,
-      ;;   because `d` will be evaluated only once
       (gensym-test
 "let g = let count = 0 in proc(d) 
                         let d = set count = -(count,-1)
                         in count
 in -((g 11), (g 22))"
-0)
+-1)
 
-      ;; side effect no longer works,
-      ;;   because `d = set x = 13` will not be forced,
-      ;;   `x` will be `0` when `(odd -99)` is called
       (even-odd-via-set "
 let x = 0
 in letrec even(d) = if zero?(x) then 1 
@@ -127,7 +122,7 @@ in letrec even(d) = if zero?(x) then 1
               odd(d)  = if zero?(x) then 0 
                                   else let d = set x = -(x,1)
                                        in (even d)
-   in let d = set x = 13 in (odd -99)" 0)
+   in let d = set x = 13 in (odd -99)" 1)
       
      ;; even more primitive testing for mutable pairs
 
@@ -169,5 +164,26 @@ in -((g 22), (g 22))"
 in -((g 22), (g 22))"
 -1)
 
+      ;; side effect no longer works,
+      ;;   because `d` will be evaluated only once
+      (lazy-gensym-test
+"letz g = letz count = 0 in proc(d) 
+                        letz d = set count = -(count,-1)
+                        in count
+in -((g 11), (g 22))"
+0)
+
+      ;; side effect no longer works,
+      ;;   because `d = set x = 13` will not be forced,
+      ;;   `x` will be `0` when `(odd -99)` is called
+      (lazy-even-odd-via-set "
+letz x = 0
+in letrec even(d) = if zero?(x) then 1 
+                                  else letz d = set x = -(x,1)
+                                       in (odd d)
+              odd(d)  = if zero?(x) then 0 
+                                  else letz d = set x = -(x,1)
+                                       in (even d)
+   in letz d = set x = 13 in (odd -99)" 0)
       ))
   )
