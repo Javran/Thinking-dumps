@@ -53,3 +53,12 @@ fromList (x:xs) = Lst x (fromList xs)
 toList :: Lst a -> [a]
 toList Empty = []
 toList (Lst x xs) = x : toList xs
+
+-- the state monad
+newtype State s a = State { runState :: s -> (a,s) }
+
+instance Monad (State s) where
+    return x = State $ \s -> (x,s)
+    m >>= f = State $ \s1 ->
+        let (a1,s2) = runState m s1
+        in runState (f a1) s2

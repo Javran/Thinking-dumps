@@ -2,7 +2,7 @@ import Prelude hiding (Maybe,Just,Nothing)
 import Control.Monad
 
 import MPC.Monad
-import Test.HUnit
+import Test.HUnit hiding (State)
 
 -- plus n if it has something inside
 maybePlus :: Int -> Int -> Maybe Int
@@ -46,7 +46,35 @@ nondetMonadTests = TestList
         split1 x = [x, x+1]
         split2 x = Lst x (Lst (x+1) Empty)
 
+-- make a stack and see how it works
+pop :: State [a] a
+pop = State $ \(x:xs) -> (x,xs)
+
+push :: a -> State [a] ()
+push v = State $ \xs -> ((), v:xs)
+
+stateMonadTests = TestList
+    [ TestCase
+        (assertEqual "simulate a stack"
+            (runState pop [1])
+            (1,[]))
+    , TestCase
+        (assertEqual "more complex example"
+            (runState m [])
+            ((),[9,3,1]))
+    ]
+    where
+        m = do
+            push 1
+            push 2
+            push 4
+            pop
+            pop
+            push 3
+            push 9
+
 main = mapM_ runTestTT
     [ exceptionMonadTests
     , nondetMonadTests
+    , stateMonadTests
     ]
