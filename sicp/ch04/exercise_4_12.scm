@@ -26,29 +26,16 @@
   (cons (make-frame vars vals) base-env))
 
 (define (lookup-variable-value var env)
-  ; travel through environments
-  (define (env-loop env)
-    (if (empty-environment? env)
-      (error "unbound variable" var)
-      ; search a frame for the corresponding value
-      (let ((result (find-in-frame var (first-frame env))))
-        (if result
-          ; symbol found
-          (car result)
-          ; empty frame, next one
-          (env-loop (enclosing-environment env))))))
-  (env-loop env))
+  ; the "!" in `traverse-environment!`
+  ;   is caused by its third argument
+  ;   since `car` does not have side effects
+  ;   neither does `lookup-variable-value`
+  (traverse-environment! var env car))
 
 ; pretty similiar to `lookup-variable-value`
 (define (set-variable-value! var val env)
-  (define (env-loop env)
-    (if (empty-environment? env)
-      (error "unbound variable" var)
-      (let ((result (find-in-frame var (first-frame env))))
-        (if result
-          (set-car! result val)
-          (env-loop (enclosing-environment env))))))
-  (env-loop env))
+  (traverse-environment! var env
+    (lambda (vals) (set-car! vals val))))
 
 (define (define-variable! var val env)
   ; seems the `env` requires to be a non-empty env
@@ -80,6 +67,25 @@
             (scan (cdr vars) (cdr vals)))))
   (scan (frame-variables frame)
         (frame-values    frame)))
+
+; traverse through the environment,
+;   searching the first occurrence of `var`
+;   when found, `cont!` is called with 
+;   non-false return value of `find-in-frame`
+;   `cont!` is allowed to have side effects.
+(define (traverse-environment! var env cont!)
+  ; travel through environments
+  (define (env-loop env)
+    (if (empty-environment? env)
+      (error "unbound variable" var)
+      ; search a frame for the corresponding value
+      (let ((result (find-in-frame var (first-frame env))))
+        (if result
+          ; symbol found
+          (cont! result)
+          ; empty frame, next one
+          (env-loop (enclosing-environment env))))))
+  (env-loop env))
 
 (test-environment
   lookup-variable-value
