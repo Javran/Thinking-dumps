@@ -2,7 +2,7 @@ import Prelude hiding (Maybe,Just,Nothing)
 import Control.Monad
 
 import MPC.Monad
-import Test.HUnit hiding (State)
+import Test.HUnit (Test(..), assertEqual, runTestTT)
 
 -- plus n if it has something inside
 maybePlus :: Int -> Int -> Maybe Int
