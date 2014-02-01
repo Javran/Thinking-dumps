@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
 -- let's try to make our own version of monad
 module MPC.Monad
 where
@@ -47,8 +48,7 @@ instance MonadPlus Lst where
     mplus = plusLst
 
 fromList :: [a] -> Lst a
-fromList [] = Empty
-fromList (x:xs) = Lst x (fromList xs)
+fromList xs = foldr Lst Empty xs
 
 toList :: Lst a -> [a]
 toList Empty = []
@@ -62,3 +62,18 @@ instance Monad (State s) where
     m >>= f = State $ \s1 ->
         let (a1,s2) = runState m s1
         in runState (f a1) s2
+
+class Monad m => StateMonad m s where
+    -- apply a function on the current state
+    update :: (s -> s) -> m s
+    -- replace the previous state with a new one
+    --   returns the old state
+    set    :: s -> m s
+    -- return the current state
+    fetch  :: m s
+
+    set newS = update $ const newS
+    fetch    = update id
+
+instance StateMonad (State s) s where
+    update f = State $ \s -> (s, f s)

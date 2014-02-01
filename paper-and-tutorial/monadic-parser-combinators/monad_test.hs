@@ -28,7 +28,7 @@ exceptionMonadTests = TestList
 
 nondetMonadTests = TestList
     [ TestCase
-        (assertEqual "half way of Pascal's triangle"
+        (assertEqual "half way to Pascal's triangle"
             ([1]                 >>= split1 >>= split1 >>= split1)
             (toList (Lst 1 Empty >>= split2 >>= split2 >>= split2)))
     , TestCase
@@ -60,11 +60,21 @@ stateMonadTests = TestList
             (1,[]))
     , TestCase
         (assertEqual "more complex example"
-            (runState m [])
+            (runState mTest1 [])
             ((),[9,3,1]))
+    , TestCase
+        (assertEqual "StateMonad test: set and fetch"
+            -- the state is never used, because of
+            --   `set` is followed immediately
+            (runState mTest2 undefined)
+            ([2,3],[2,3]))
+    , TestCase
+        (assertEqual "StateMonad test: update and fetch"
+            (runState mTest3 [])
+            ([1,2,3],[2,4,6]))
     ]
     where
-        m = do
+        mTest1 = do
             push 1
             push 2
             push 4
@@ -72,9 +82,23 @@ stateMonadTests = TestList
             pop
             push 3
             push 9
+        mTest2 :: State [Int] [Int]
+        mTest2 = do
+            set ([1,2,3] :: [Int])
+            pop
+            fetch
+        mTest3 :: State [Int] [Int]
+        mTest3 = do
+            push 3
+            push 2
+            push 1
+            -- double every element in the stack
+            update $ map (* (2 :: Int))
 
-main = mapM_ runTestTT
+allTests = TestList
     [ exceptionMonadTests
     , nondetMonadTests
     , stateMonadTests
     ]
+
+main = runTestTT allTests
