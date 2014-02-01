@@ -4,8 +4,10 @@ module MPC.Monad
 where
 
 -- shadowing conflicting definitions in Prelude
-import Prelude hiding (Maybe, Just, Nothing, maybe)
+import Prelude hiding (foldr, Maybe, Just, Nothing, maybe)
 import Control.Monad
+import Data.Foldable hiding (toList)
+import Data.Monoid
 
 -- the exception monad
 
@@ -30,6 +32,10 @@ instance Functor Lst where
         Empty -> Empty
         Lst x xrest -> Lst (f x) (fmap f xrest)
 
+instance Foldable Lst where
+    foldMap _ Empty = mempty
+    foldMap f (Lst a b) = f a `mappend` foldMap f b
+
 concatLst :: Lst (Lst a) -> Lst a
 concatLst Empty = Empty
 concatLst (Lst x xs) =
@@ -48,11 +54,13 @@ instance MonadPlus Lst where
     mplus = plusLst
 
 fromList :: [a] -> Lst a
-fromList xs = foldr Lst Empty xs
+fromList = foldr Lst Empty
 
+-- try Foldable
 toList :: Lst a -> [a]
-toList Empty = []
-toList (Lst x xs) = x : toList xs
+toList = foldr (:) []
+-- toList Empty = []
+-- toList (Lst x xs) = x : toList xs
 
 -- the state monad
 newtype State s a = State { runState :: s -> (a,s) }
@@ -77,3 +85,15 @@ class Monad m => StateMonad m s where
 
 instance StateMonad (State s) s where
     update f = State $ \s -> (s, f s)
+
+newtype StateM m s a = StateM
+    { runStateM :: s -> m (a,s) }
+
+instance Monad m => Monad (StateM m s) where
+    return x = StateM $ \s -> return (x,s)
+    m >>= f = StateM $ \s1 ->
+        let m1 = runStateM m s1
+        in m1 >>= \(a1,s2) -> runStateM (f a1) s2
+
+instance Monad m => StateMonad (StateM m s) s where
+    update f = StateM $ \s -> return (s, f s)
