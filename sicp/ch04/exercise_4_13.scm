@@ -118,7 +118,9 @@
          (vals (frame-values    frame)))
     (cond ((assq var (cdr frame)) =>
              (lambda (the-pair)
-               (set-cdr! the-pair val) 'ok))
+               (remove-from-blacklist! var env)
+               (set-cdr! the-pair val) 
+               'ok))
           (else
             (add-binding-to-frame! var val frame)))))
 
@@ -129,17 +131,50 @@
   set-variable-value!)
 (out "Test passed.")
 
-
 ; ==== special form: (make-unbound! <var>)
 
 (define (eval-make-unbound! exp env)
   (add-to-blacklist! (cadr exp) env))
 
 (define (test-make-unbound!)
-  ; I won't do the test,
-  ;   because it will cause an error that
-  ;   keeps the whole program from proceeding.
-  'wont-test)
+  (define env1
+    (extend-environment
+      (list 'a 'b 'c)
+      (list 10 20 30)
+      the-empty-environment))
+
+  (define env2
+    (extend-environment
+      (list 'c)
+      (list 40)
+      env1))
+
+  (assert-no-error
+    (lambda ()
+      (my-eval `b env2))
+    "simple lookup")
+
+  (my-eval `(make-unbound! c) env2)
+
+  (assert-error
+    (lambda ()
+      (my-eval `c env2))
+    "the variable has been blacklisted")
+
+  (assert-no-error
+    (lambda ()
+      (my-eval `c env1))
+    "blacklist should not have effects on enclosing environments")
+
+  (my-eval `(define c 10) env2)
+
+  (assert-no-error
+    (lambda ()
+      (my-eval `c env2))
+    "the variable should be unblocked")
+
+  'ok)
+
 
 (define make-unbound!-handler
   (make-handler
@@ -153,9 +188,5 @@
 (test-my-apply)
 (test-init-env)
 (my-eval-test-installed-handlers)
-
-; start my tests here
-
-
 
 (end-script)
