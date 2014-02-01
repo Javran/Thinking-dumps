@@ -23,6 +23,8 @@
 ; as I think it's more natural to think the structure
 ;   as an alist, rather than two lists of the same length.
 
+(load "./my-eval.scm")
+
 (load "./exercise_4_11_common.scm")
 
 (define the-empty-environment nil)
@@ -126,5 +128,34 @@
   define-variable!
   set-variable-value!)
 (out "Test passed.")
+
+
+; ==== special form: (make-unbound! <var>)
+
+(define (eval-make-unbound! exp env)
+  (add-to-blacklist! (cadr exp) env))
+
+(define (test-make-unbound!)
+  ; I won't do the test,
+  ;   because it will cause an error that
+  ;   keeps the whole program from proceeding.
+  'wont-test)
+
+(define make-unbound!-handler
+  (make-handler
+    'make-unbound!
+    eval-make-unbound!
+    test-make-unbound!))
+
+(handler-register! make-unbound!-handler)
+
+;; force test to make sure this new env impl works
+(test-my-apply)
+(test-init-env)
+(my-eval-test-installed-handlers)
+
+; start my tests here
+
+
 
 (end-script)
