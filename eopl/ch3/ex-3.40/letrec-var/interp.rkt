@@ -58,9 +58,14 @@
         (call-exp (rator rand)          
           (let ((proc (expval->proc (value-of rator nameless-env)))
                 (arg (value-of rand nameless-env)))
-	    (apply-procedure proc arg)))
+            (apply-procedure proc arg)))
 
         (nameless-var-exp (n)
+          (apply-nameless-env nameless-env n))
+
+        (nameless-letrec-var-exp (n)
+          ; I can't see the point of this letrec-var-exp
+          ;   the environment don't even have the proc needed 
           (apply-nameless-env nameless-env n))
 
         (nameless-let-exp (exp1 body)

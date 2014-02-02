@@ -6,4 +6,7 @@
 (require "./top.rkt")
 (require "./data-structures.rkt")
 
-(test-all)
+      (run
+        "letrec f(x) = if zero?(x)  then 0 else -((f -(x,1)), -2) in (f 4)"
+        )
+; (test-all)
