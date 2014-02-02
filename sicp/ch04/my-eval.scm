@@ -102,3 +102,5 @@
     (my-eval-test-installed-handlers)
     )
   'skipped)
+
+(load "./my-eval-driver-loop.scm")

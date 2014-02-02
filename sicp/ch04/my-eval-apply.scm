@@ -6,7 +6,8 @@
 ; * (list 'proc 'compound <args> <body> <env>)
 
 (define (proc? proc)
-  (and (> (length proc) 2)
+  (and (list? proc)
+       (> (length proc) 2)
        (eq? (car proc) 'proc)))
 
 (define (proc-primitive? proc)
