@@ -25,6 +25,10 @@
             (lift-primitive-pair 'zero?)
             (lift-primitive-pair 'eq?)
             (lift-primitive-pair 'eqv?)
+            (lift-primitive-pair 'car)
+            (lift-primitive-pair 'cdr)
+            (lift-primitive-pair 'cons)
+            (lift-primitive-pair 'null?)
             )))
     (extend-environment
       '(true false)
@@ -51,5 +55,12 @@
         (mat '(eq? 'a 'b) env #f)
         ; compound
         (mat '(= (* 1 2 3 4) (* 2 (+ 10 2))) env #t)
+        ; test list-related primitives
+        (mat `(cons 1 '(2 3)) env '(1 2 3))
+        (mat `(cons 'a 'b) env '(a . b))
+        (mat `(car '(1 2)) env 1)
+        (mat `(cdr '(1 2)) env '(2))
+        (mat `(null? '()) env #t)
+        (mat `(null? '(1)) env #f)
         )
       equal?)))
