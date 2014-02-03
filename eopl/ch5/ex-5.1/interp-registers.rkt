@@ -106,58 +106,65 @@
   ;; Page 169 and 170
   (define apply-cont
     (lambda ()                          
-      (cases continuation cont
-          
-        (end-cont ()
-          (eopl:printf "End of computation.~%")
-          val)
+      (case (cont-type cont)
+        [(end) (end-cont-e cont
+           (lambda ()
+             (eopl:printf "End of computation.~%")
+             val))]
         ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
-        (zero1-cont (saved-cont)
-          ;; (apply-cont cont
-          ;;   (bool-val
-          ;;     (zero? (expval->num val))))
-          (set! cont saved-cont)
-          (set! val (bool-val (zero? (expval->num val))))
-          (apply-cont))
-        (let-exp-cont (var body saved-env saved-cont)
-          ;; (value-of/k body (extend-env id val env) cont)                     
-          (set! cont saved-cont)
-          (set! exp body)
-          (set! env (extend-env var val saved-env))
-          (value-of/k))
-        (if-test-cont (exp2 exp3 saved-env saved-cont)
-          (set! cont saved-cont)
-          (if (expval->bool val)
-            (set! exp exp2)
-            (set! exp exp3))
-          (set! env saved-env)
-          (value-of/k))
-        (diff1-cont (exp2 saved-env saved-cont)
-          ;; (value-of/k exp2 env (diff2-cont val cont)))
-          (set! cont (diff2-cont val saved-cont))
-          (set! exp exp2)
-          (set! env saved-env)
-          (value-of/k))
-        (diff2-cont (val1 saved-cont)
-          ;; (apply-cont cont (num-val (- num1 num2)))))
-          (let ((num1 (expval->num val1))
-                (num2 (expval->num val)))
-            (set! cont saved-cont)
-            (set! val (num-val (- num1 num2)))
-            (apply-cont)))
-        (rator-cont (rand saved-env saved-cont)
-          ;; (value-of/k rand env (rand-cont val cont))
-          (set! cont (rand-cont val saved-cont))
-          (set! exp rand)
-          (set! env saved-env)
-          (value-of/k))
-        (rand-cont (rator-val saved-cont)
-          (let ((rator-proc (expval->proc rator-val)))
-            ;; (apply-procedure rator-proc rator-val cont)
-            (set! cont saved-cont)
-            (set! proc1 rator-proc)
-            (set! val val)
-            (apply-procedure/k)))
+        [(zero1) (zero1-cont-e cont
+           (lambda (saved-cont)
+             ;; (apply-cont cont
+             ;;   (bool-val
+             ;;     (zero? (expval->num val))))
+             (set! cont saved-cont)
+             (set! val (bool-val (zero? (expval->num val))))
+             (apply-cont)))]
+        [(let-exp) (let-exp-cont-e cont
+           (lambda (var body saved-env saved-cont)
+             ;; (value-of/k body (extend-env id val env) cont)                     
+             (set! cont saved-cont)
+             (set! exp body)
+             (set! env (extend-env var val saved-env))
+             (value-of/k)))]
+        [(if-test) (if-test-cont-e cont
+           (lambda (exp2 exp3 saved-env saved-cont)
+             (set! cont saved-cont)
+             (if (expval->bool val)
+               (set! exp exp2)
+               (set! exp exp3))
+             (set! env saved-env)
+             (value-of/k)))]
+        [(diff1) (diff1-cont-e cont
+           (lambda (exp2 saved-env saved-cont)
+             ;; (value-of/k exp2 env (diff2-cont val cont)))
+             (set! cont (diff2-cont val saved-cont))
+             (set! exp exp2)
+             (set! env saved-env)
+             (value-of/k)))]
+        [(diff2) (diff2-cont-e cont
+           (lambda (val1 saved-cont)
+             ;; (apply-cont cont (num-val (- num1 num2)))))
+             (let ((num1 (expval->num val1))
+                   (num2 (expval->num val)))
+               (set! cont saved-cont)
+               (set! val (num-val (- num1 num2)))
+               (apply-cont))))]
+        [(rator) (rator-cont-e cont
+           (lambda (rand saved-env saved-cont)
+             ;; (value-of/k rand env (rand-cont val cont))
+             (set! cont (rand-cont val saved-cont))
+             (set! exp rand)
+             (set! env saved-env)
+             (value-of/k)))]
+        [(rand) (rand-cont-e cont
+            (lambda (rator-val saved-cont)
+              (let ((rator-proc (expval->proc rator-val)))
+                ;; (apply-procedure rator-proc rator-val cont)
+                (set! cont saved-cont)
+                (set! proc1 rator-proc)
+                (set! val val)
+                (apply-procedure/k))))]
         )))
 
   ;; apply-procedure : Proc * ExpVal -> ExpVal
