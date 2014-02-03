@@ -35,9 +35,6 @@
                 (const-exp (num) (num-val num))
 
         (diff-exp (exp1 exp2)
-          ;(eopl:printf "Env: ~A~%" nameless-env)
-          ;(eopl:printf "Exp1: ~A~%" exp1)
-          ;(eopl:printf "Exp2: ~A~%" exp2)
           (let ((val1
                   (expval->num
                     (value-of exp1 nameless-env)))
