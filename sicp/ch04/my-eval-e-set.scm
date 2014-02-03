@@ -15,25 +15,29 @@
 
     ; env -> env1 -> env2
     ;            \-> env3
+    ; here we use (list ...) rather than '(...)
+    ;   since the consequence of using `set-car!` on
+    ;   quoted data is undefine, we should avoid using quotations
+    ;   to do the test
     (define env
       (extend-environment
-        '(a b c)
-        '(1 2 3)
+        (list 'a 'b 'c)
+        (list 1 2 3)
         the-empty-environment))
     (define env1
       (extend-environment
-        '(c d e)
-        '(#\c #\d #\e)
+        (list 'c 'd 'e)
+        (list #\c #\d #\e)
         env))
     (define env2
       (extend-environment
-        '(d e f)
-        '("d" "e" "f")
+        (list 'd 'e 'f)
+        (list "d" "e" "f")
         env1))
     (define env3
       (extend-environment
-        '(a b c)
-        '("a3" "b3" "c3")
+        (list 'a 'b 'c)
+        (list "a3" "b3" "c3")
         env1))
 
     (eval-set! '(set! a "ax") env3)
@@ -59,7 +63,7 @@
         (mat 'a env2 "ay")
         (mat 'a env3 "ax"))
       equal?)
-    'done)
+    'ok)
   
   (define handler
     (make-handler
@@ -68,4 +72,4 @@
       test))
 
   (handler-register! handler)
-  'done)
+  'ok)

@@ -1,18 +1,18 @@
+; form #1: (define <var> <val>)
+; form #2: (define (proc-name . args) <body>)
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+    (cadr exp)
+    (caadr exp)))
+
+(define (definition-value exp)
+  (if (symbol? (cadr exp))
+    (caddr exp)
+    (make-lambda (cdadr exp)
+                 (cddr exp))))
 ; require: quote
 (define (install-eval-define)
 
-  ; form #1: (define <var> <val>)
-  ; form #2: (define (proc-name . args) <body>)
-  (define (definition-variable exp)
-    (if (symbol? (cadr exp))
-      (cadr exp)
-      (caddr exp)))
-
-  (define (definition-value exp)
-    (if (symbol? (cadr exp))
-      (caddr exp)
-      (make-lambda (cdadr exp)
-                   (cddr exp))))
 
   (define (eval-define exp env)
     (define-variable!
@@ -25,7 +25,7 @@
     ; 2-layer
     (define env
       (extend-environment
-        '(a) '(10) the-empty-environment))
+        (list 'a) (list 10) the-empty-environment))
 
     (define env1
       (extend-environment
@@ -59,7 +59,26 @@
         (mat 'b env1 "bbb")
         (mat 'c env1 "ccc")))
 
-    'done)
+    (eval-define
+      '(define (proc-branch a b c)
+         (if a b c))
+      env)
+
+    (eval-define
+      '(define (proc-const a)
+         12345)
+      env)
+
+    (do-test
+      my-eval
+      (list
+        (mat '(proc-branch #t 1 2) env 1)
+        (mat '(proc-branch #f 1 2) env 2)
+        (mat '(proc-const 0) env 12345)
+        (mat '(proc-const #t) env 12345)
+        ))
+
+    'ok)
 
   (define handler
     (make-handler
@@ -68,4 +87,4 @@
       test))
 
   (handler-register! handler)
-  'done)
+  'ok)

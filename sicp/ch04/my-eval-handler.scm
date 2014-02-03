@@ -28,17 +28,15 @@
 (define handler-proc caddr)
 (define handler-test cadddr)
 
+(define (handler-run-test h)
+  (if (handler-test h)
+    ((handler-test h))
+    'no-test-available))
+
 (define (handler-eval handler exp env)
   ((handler-proc handler)
    exp
    env))
 
 (define (handler-register! h)
-  (if (and *my-eval-do-test*
-           (handler-test h))
-    ; TODO: delay all tests
-    ;   (call `(test-all)` or something explicitly)
-    ;   to make sure every handler is installed
-    ;   so all handlers can feel free to use `my-eval`
-    ((handler-test h)))
   (my-eval-put! (handler-slot h) h))

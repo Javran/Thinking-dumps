@@ -4,13 +4,19 @@
 ; my `eval` and `apply` implementaton.
 
 ; test flag, set to #t will perform tests when components are loaded
-(define *my-eval-do-test* #t)
+(define *my-eval-do-test* #f)
 
 ; basic components
 (load "./my-eval-handler.scm")
 (load "./my-eval-data-directed.scm")
 (load "./my-eval-env.scm")
 (load "./my-eval-utils.scm")
+
+; procedure support
+(load "./my-eval-apply.scm")
+(load "./my-eval-init-env.scm")
+
+; basic environment
 
 ; build-in handler
 (load "./my-eval-e-simple.scm")
@@ -21,13 +27,14 @@
 (load "./my-eval-e-quote.scm")
 (load "./my-eval-e-set.scm")
 (load "./my-eval-e-define.scm")
-
-; TODO:
-; * if
-; * lambda
-; * begin
-; * cond
-; * application
+(load "./my-eval-e-if.scm")
+(load "./my-eval-e-begin.scm")
+(load "./my-eval-e-lambda.scm")
+(load "./my-eval-e-cond.scm")
+(load "./my-eval-e-and.scm")
+(load "./my-eval-e-or.scm")
+(load "./my-eval-e-let.scm")
+(load "./my-eval-e-let-star.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -77,5 +84,23 @@
       (error "unknown expression:" exp))))
 
 (install-eval-quote)
-(install-eval-set!)
 (install-eval-define)
+(install-eval-if)
+(install-eval-set!)
+(install-eval-begin)
+(install-eval-lambda)
+(install-eval-cond)
+(install-eval-and)
+(install-eval-or)
+(install-eval-let)
+(install-eval-let*)
+
+(if *my-eval-do-test*
+  (begin
+    (test-my-apply)
+    (test-init-env)
+    (my-eval-test-installed-handlers)
+    )
+  'skipped)
+
+(load "./my-eval-driver-loop.scm")
