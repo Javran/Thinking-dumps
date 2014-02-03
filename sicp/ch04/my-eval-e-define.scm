@@ -1,18 +1,18 @@
+; form #1: (define <var> <val>)
+; form #2: (define (proc-name . args) <body>)
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+    (cadr exp)
+    (caadr exp)))
+
+(define (definition-value exp)
+  (if (symbol? (cadr exp))
+    (caddr exp)
+    (make-lambda (cdadr exp)
+                 (cddr exp))))
 ; require: quote
 (define (install-eval-define)
 
-  ; form #1: (define <var> <val>)
-  ; form #2: (define (proc-name . args) <body>)
-  (define (definition-variable exp)
-    (if (symbol? (cadr exp))
-      (cadr exp)
-      (caadr exp)))
-
-  (define (definition-value exp)
-    (if (symbol? (cadr exp))
-      (caddr exp)
-      (make-lambda (cdadr exp)
-                   (cddr exp))))
 
   (define (eval-define exp env)
     (define-variable!
