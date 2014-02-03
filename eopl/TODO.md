@@ -4,3 +4,13 @@
 * exercise 3.42 - will do if time permits
 * exercise 3.43 - will do if time permits
 * exercise 3.44 - will do if time permits
+* exercise 4.12 - will do if time permits
+* exercise 4.13 - will do if time permits
+* exercise 4.18 - almost done (by default), will write LaTex answer if time permits
+* exercise 4.26 - will do if time permits
+* exercise 4.27 - will do if time permits
+* exercise 4.28 - will do if time permits
+* exercise 4.31 - will do if time permits
+* exercise 4.34 - will write spec if time permits
+* exercise 4.41 - will do if time permits
+* ex 3.40 .. - define recursive-function / use a recursive ref(in senv)
