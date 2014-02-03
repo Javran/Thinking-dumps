@@ -46,37 +46,6 @@
 
   ;; Page: 148
   (define identifier? symbol?)
-#|
-  (define-datatype continuation continuation?
-    (end-cont)                 
-    (zero1-cont
-      (saved-cont continuation?))
-    (let-exp-cont
-      (var identifier?)
-      (body expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
-    (if-test-cont 
-      (exp2 expression?)
-      (exp3 expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
-    (diff1-cont                
-      (exp2 expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
-    (diff2-cont                
-      (val1 expval?)
-      (saved-cont continuation?))
-    (rator-cont            
-      (rand expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
-    (rand-cont             
-      (val1 expval?)
-      (saved-cont continuation?)))
-|#
-
 
   ; procedural representaion:
   ; (list 'cont <type> <accessor0> <accessor1> ...)
@@ -119,17 +88,7 @@
         (map (lambda (f) (f))
              (cddr cont))))
     (cons constructor extractor))
-          
-  ; -p: pair
-  ; -c: constructor
-  ; -e: extractor
-  (define end-cont-p
-    (make-continuation 'end))
-
-  (define zero1-cont-p
-    (make-continuation 'zero1
-      continuation?))
-
+  
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
   (define-datatype proc proc?
@@ -151,5 +110,75 @@
       (b-var symbol?)
       (p-body expression?)
       (saved-env environment?)))
+
+  ; -p: pair
+  ;   : constructor
+  ; -e: extractor
+  (define end-cont-p
+    (make-continuation 'end))
+
+  (define end-cont   (car end-cont-p))
+  (define end-cont-e (cdr end-cont-p))
+
+  (define zero1-cont-p
+    (make-continuation 'zero1
+      continuation?))
+
+  (define zero1-cont   (car zero1-cont-p))
+  (define zero1-cont-e (cdr zero1-cont-p))
+
+  (define let-exp-cont-p
+    (make-continuation 'let-exp
+      identifier?
+      expression?
+      environment?
+      continuation?))
+
+  (define let-exp-cont   (car let-exp-cont-p))
+  (define let-exp-cont-e (cdr let-exp-cont-p))
+
+  (define if-test-cont-p
+    (make-continuation 'if-test
+      expression?
+      expression?
+      environment?
+      continuation?))
+
+  (define if-test-cont   (car if-test-cont-p))
+  (define if-test-cont-e (cdr if-test-cont-p))
+
+  (define diff1-cont-p                
+    (make-continuation 'diff1
+      expression?
+      environment?
+      continuation?))
+
+  (define diff1-cont   (car diff1-cont-p))
+  (define diff1-cont-e (cdr diff1-cont-p))
+
+  (define diff2-cont-p               
+    (make-continuation 'diff2
+      expval?
+      continuation?))
+
+  (define diff2-cont   (car diff2-cont-p))
+  (define diff2-cont-e (cdr diff2-cont-p))
+
+  (define rator-cont-p
+    (make-continuation 'rator
+      expression?
+      environment?
+      continuation?))
+
+  (define rator-cont   (car rator-cont-p))
+  (define rator-cont-e (cdr rator-cont-p))
+
+  (define rand-cont-p
+    (make-continuation 'rand
+      expval?
+      continuation?))
+
+  (define rand-cont   (car rand-cont-p))
+  (define rand-cont-e (cdr rand-cont-p))
 
 )
