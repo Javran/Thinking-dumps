@@ -60,7 +60,15 @@
         (cons-exp (exp1 exp2)
           (value-of/k exp1 env
             (cons1-cont exp2 env cont)))
-        (else 'todo)
+        (null?-exp (exp1)
+          (value-of/k exp1 env
+            (null?-cont cont)))
+        (car-exp (exp1)
+          (value-of/k exp1 env
+            (car-cont cont)))
+        (cdr-exp (exp1)
+          (value-of/k exp1 env
+            (cdr-cont cont)))
    )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -105,6 +113,17 @@
         (cons2-cont (val1 saved-cont)
           (apply-cont saved-cont
             (list-val (cons val1 (expval->list val)))))
+        (null?-cont (saved-cont)
+          (apply-cont saved-cont
+            (bool-val
+              (null? (expval->list val)))))
+        (car-cont (saved-cont)
+          (apply-cont saved-cont
+            (car (expval->list val))))
+        (cdr-cont (saved-cont)
+          (apply-cont saved-cont
+            (list-val
+              (cdr (expval->list val)))))
        )))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer

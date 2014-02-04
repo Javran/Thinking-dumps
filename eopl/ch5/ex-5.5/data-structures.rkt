@@ -89,6 +89,12 @@
     (cons2-cont
       (val1 expval?)
       (saved-cont continuation?))
+    (null?-cont
+      (saved-cont continuation?))
+    (car-cont
+      (saved-cont continuation?))
+    (cdr-cont
+      (saved-cont continuation?))
     )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
