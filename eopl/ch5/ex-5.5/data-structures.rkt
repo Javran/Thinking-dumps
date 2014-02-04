@@ -14,32 +14,40 @@
     (bool-val
       (boolean boolean?))
     (proc-val 
-      (proc proc?)))
+      (proc proc?))
+    (list-val
+      (elements (list-of expval?))))
 
 ;;; extractors:
 
   (define expval->num
     (lambda (v)
       (cases expval v
-	(num-val (num) num)
-	(else (expval-extractor-error 'num v)))))
+	      (num-val (num) num)
+        (else (expval-extractor-error 'num v)))))
 
   (define expval->bool
     (lambda (v)
       (cases expval v
-	(bool-val (bool) bool)
-	(else (expval-extractor-error 'bool v)))))
+	      (bool-val (bool) bool)
+        (else (expval-extractor-error 'bool v)))))
 
   (define expval->proc
     (lambda (v)
       (cases expval v
-	(proc-val (proc) proc)
-	(else (expval-extractor-error 'proc v)))))
+        (proc-val (proc) proc)
+        (else (expval-extractor-error 'proc v)))))
+
+  (define expval->list
+    (lambda (v)
+      (cases expval v
+        (list-val (elements) elements)
+        (else (expval-extractor-error 'list v)))))
 
   (define expval-extractor-error
     (lambda (variant value)
       (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
-	variant value)))
+	      variant value)))
 
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
@@ -73,7 +81,15 @@
       (saved-cont continuation?))
     (rand-cont             
       (val1 expval?)
-      (saved-cont continuation?)))
+      (saved-cont continuation?))
+    (cons1-cont
+      (exp2 expression?)
+      (saved-env environment?)
+      (saved-cont continuation?))
+    (cons2-cont
+      (val1 expval?)
+      (saved-cont continuation?))
+    )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 

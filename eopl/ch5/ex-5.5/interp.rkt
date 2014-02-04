@@ -55,6 +55,11 @@
         (call-exp (rator rand) 
           (value-of/k rator env
             (rator-cont rand env cont)))
+        (empty-list-exp ()
+          (apply-cont cont (list-val '())))
+        (cons-exp (exp1 exp2)
+          (value-of/k exp1 env
+            (cons1-cont exp2 env cont)))
         (else 'todo)
    )))
 
@@ -94,7 +99,13 @@
         (rand-cont (val1 saved-cont)
           (let ((proc (expval->proc val1)))
             (apply-procedure/k proc val saved-cont)))
-        )))
+        (cons1-cont (exp2 saved-env saved-cont)
+          (value-of/k exp2
+            saved-env (cons2-cont val saved-cont)))
+        (cons2-cont (val1 saved-cont)
+          (apply-cont saved-cont
+            (list-val (cons val1 (expval->list val)))))
+       )))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
   ;; Page 152 and 155
