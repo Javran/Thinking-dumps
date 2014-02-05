@@ -1,7 +1,7 @@
 (module data-structures (lib "eopl.ss" "eopl")
 
   (require "lang.rkt")                  ; for expression?
-  (require "../../common.rkt")
+  (require "../../../common.rkt")
 
   (provide (all-defined-out))               ; too many things to list
 
