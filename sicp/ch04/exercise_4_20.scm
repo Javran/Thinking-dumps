@@ -32,19 +32,11 @@
   (define exps (map cadr binding-pairs))
   (define body
     (cddr exp))
-  'todo)
-
-(out (letrec->let `(letrec ((odd  (lambda (x) 
-                                    (if (zero? x)
-                                      #f (even? (- x 1)))))
-                            (even (lambda (x)
-                                    (if (zero? x)
-                                      #t (odd?  (- x 1))))))
-                     foo
-                     bar
-                     body
-                     (do-something)
-                     (odd 10))))
-
+  `(letrec ,(map (lambda (var)
+                   `(,var '*unassigned*))
+                 vars)
+     ,@(map (lambda (var exp) `(set! ,var ,exp))
+            vars exps)
+     ,@body))
 
 (end-script)
