@@ -67,7 +67,7 @@
     (empty-env)
     (extend-env 
       (bvar symbol?)
-      (bval expval?)
+      (bval reference?)
       (saved-env environment?))
     (extend-env-rec
       (p-name symbol?)

@@ -13,6 +13,7 @@
   (require "lang.rkt")
   (require "data-structures.rkt")
   (require "environments.rkt")
+  (require "store.rkt")
 
   (provide value-of-program value-of/k)
 
@@ -22,6 +23,7 @@
   ;; Page: 143 and 154
   (define value-of-program 
     (lambda (pgm)
+      (initialize-store!)
       (cases program pgm
         (a-program (exp1)
           (value-of/k exp1 (init-env)   
@@ -37,7 +39,7 @@
     (lambda (exp env cont)
       (cases expression exp
         (const-exp (num) (apply-cont cont (num-val num)))
-        (var-exp (var) (apply-cont cont (apply-env env var)))
+        (var-exp (var) (apply-cont cont (deref (apply-env env var))))
         (proc-exp (var body)
           (apply-cont cont 
             (proc-val (procedure var body env))))
@@ -55,7 +57,7 @@
           (value-of/k exp1 env
             (lambda (val)
               (value-of/k body
-                (extend-env var val env) cont))))
+                (extend-env var (newref val) env) cont))))
         (if-exp (exp1 exp2 exp3)
           (value-of/k exp1 env
             (lambda (val)
@@ -79,6 +81,27 @@
                 (lambda (rand-val)
                   (let ((proc (expval->proc rator-val)))
                     (apply-procedure/k proc rand-val cont)))))))
+        (begin-exp (exp1 exps)
+          (define (begin-cont-maker exps cont)
+            (lambda (val)
+              (if (null? exps)
+                (apply-cont cont val)
+                (value-of/k (car exps) env
+                  (begin-cont-maker (cdr exps) cont)))))
+          (value-of/k exp1 env
+            (lambda (val1)
+              (if (null? exps)
+                (apply-cont cont val1)
+                (value-of/k (car exps) env
+                  (begin-cont-maker (cdr exps) cont))))))
+        (assign-exp (var exp1)
+          (value-of/k exp1 env
+            (lambda (val)
+              (begin
+                (setref!
+                  (apply-env env var)
+                  val)
+                (apply-cont cont 'invalid)))))
    )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -90,11 +113,11 @@
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
   ;; Page 152 and 155
   (define apply-procedure/k
-    (lambda (proc1 arg cont)
+    (lambda (proc1 val cont)
       (cases proc proc1
         (procedure (var body saved-env)
           (value-of/k body
-            (extend-env var arg saved-env)
+            (extend-env var (newref val) saved-env)
             cont)))))
   
   )
