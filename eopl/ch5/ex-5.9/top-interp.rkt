@@ -8,7 +8,6 @@
   (require "lang.rkt")             ; for scan&parse
   (require "interp.rkt")           ; for value-of-program
   (require "tests.rkt")            ; for test-list
-  (require "store.rkt")
   
   (provide (all-defined-out))
   (provide (all-from-out "interp.rkt"))
@@ -20,7 +19,6 @@
 
   (define run
     (lambda (string)
-      (initialize-store!)
       (value-of-program (scan&parse string))))
   
   ;; run-all : () -> Unspecified
