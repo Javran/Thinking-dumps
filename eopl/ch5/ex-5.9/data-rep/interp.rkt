@@ -13,6 +13,7 @@
   (require "lang.rkt")
   (require "data-structures.rkt")
   (require "environments.rkt")
+  (require "store.rkt")
 
   (provide value-of-program value-of/k)
 
@@ -31,8 +32,10 @@
   (define value-of/k
     (lambda (exp env cont)
       (cases expression exp
-        (const-exp (num) (apply-cont cont (num-val num)))
-        (var-exp (var) (apply-cont cont (apply-env env var)))
+        (const-exp (num)
+          (apply-cont cont (num-val num)))
+        (var-exp (var)
+          (apply-cont cont (deref (apply-env env var))))
         (proc-exp (var body)
           (apply-cont cont 
             (proc-val (procedure var body env))))
@@ -55,6 +58,12 @@
         (call-exp (rator rand) 
           (value-of/k rator env
             (rator-cont rand env cont)))
+        (begin-exp (exp1 exps)
+          (value-of/k exp1 env
+            (begin-cont exps env cont)))
+        (assign-exp (var exp1)
+          (value-of/k exp1 env
+            (assign-cont (apply-env env var) cont)))
    )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -74,7 +83,7 @@
               (zero? (expval->num val)))))
         (let-exp-cont (var body saved-env saved-cont)
           (value-of/k body
-            (extend-env var val saved-env) saved-cont))
+            (extend-env var (newref val) saved-env) saved-cont))
         (if-test-cont (exp2 exp3 saved-env saved-cont)
           (if (expval->bool val)
              (value-of/k exp2 saved-env saved-cont)
@@ -93,6 +102,16 @@
         (rand-cont (val1 saved-cont)
           (let ((proc (expval->proc val1)))
             (apply-procedure/k proc val saved-cont)))
+        (begin-cont (exps saved-env saved-cont)
+          (if (null? exps)
+            ; no more expression, return the most recent one
+            (apply-cont saved-cont val)
+            ; consume one
+            (value-of/k (car exps) saved-env
+              (begin-cont (cdr exps) saved-env saved-cont))))
+        (assign-cont (ref cont)
+          (setref! ref val)
+          (apply-cont cont 'invalid))
         )))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
@@ -102,7 +121,7 @@
       (cases proc proc1
         (procedure (var body saved-env)
           (value-of/k body
-            (extend-env var arg saved-env)
+            (extend-env var (newref arg) saved-env)
             cont)))))
   
   )

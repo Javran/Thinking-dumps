@@ -113,16 +113,6 @@ in let times4 = (fix t4m)
 in -((g 11), (g 22))"
 -1)
 
-      (even-odd-via-set "
-let x = 0
-in letrec even(d) = if zero?(x) then 1 
-                                  else let d = set x = -(x,1)
-                                       in (odd d)
-              odd(d)  = if zero?(x) then 0 
-                                  else let d = set x = -(x,1)
-                                       in (even d)
-   in let d = set x = 13 in (odd -99)" 1)
-
       (example-for-book-1 "
 let f = proc (x) proc (y) 
                   begin
