@@ -15,3 +15,4 @@
 * exercise 4.41 - will do if time permits
 * exercise 3.40 .. - use a recursive ref(in senv)
 * exercise 5.10 - don't understand
+* exercise 5.11 - done but with question
