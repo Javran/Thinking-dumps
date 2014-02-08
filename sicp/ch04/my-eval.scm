@@ -4,7 +4,7 @@
 ; my `eval` and `apply` implementaton.
 
 ; test flag, set to #t will perform tests when components are loaded
-(define *my-eval-do-test* #f)
+(define *my-eval-do-test* #t)
 
 ; basic components
 (load "./my-eval-handler.scm")
@@ -35,6 +35,7 @@
 (load "./my-eval-e-or.scm")
 (load "./my-eval-e-let.scm")
 (load "./my-eval-e-let-star.scm")
+(load "./my-eval-e-letrec.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -94,6 +95,7 @@
 (install-eval-or)
 (install-eval-let)
 (install-eval-let*)
+(install-eval-letrec)
 
 (if *my-eval-do-test*
   (begin
