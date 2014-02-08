@@ -13,4 +13,5 @@
 * exercise 4.31 - will do if time permits
 * exercise 4.34 - will write spec if time permits
 * exercise 4.41 - will do if time permits
-* ex 3.40 .. - define recursive-function / use a recursive ref(in senv)
+* exercise 3.40 .. - use a recursive ref(in senv)
+* exercise 5.10 - don't understand
