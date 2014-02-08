@@ -32,11 +32,38 @@
   (define exps (map cadr binding-pairs))
   (define body
     (cddr exp))
-  `(letrec ,(map (lambda (var)
+  `(let ,(map (lambda (var)
                    `(,var '*unassigned*))
                  vars)
      ,@(map (lambda (var exp) `(set! ,var ,exp))
             vars exps)
      ,@body))
+
+(do-test
+  (lambda (exp1)
+    (eval (letrec->let exp1)
+          user-initial-environment))
+  (list
+    (mat `(letrec ((fact (lambda (n)
+                           (if (= n 0)
+                             1
+                             (* n (fact (- n 1)))))))
+            (fact 4))
+         24)
+    (mat `(letrec ((f1 (lambda (n)
+                         (if (= n 0)
+                           1
+                           (* n (f2 (- n 1))))))
+                   (f2 (lambda (n)
+                         (if (= n 0)
+                           1
+                           (* n (f3 (- n 1))))))
+                   (f3 (lambda (n)
+                         (if (= n 0)
+                           1
+                           (* n (f1 (- n 1)))))))
+            (f3 10))
+         3628800)
+    ))
 
 (end-script)
