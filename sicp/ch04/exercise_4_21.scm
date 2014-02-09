@@ -28,9 +28,14 @@
          (+ (ft ft (- k 1))
             (ft ft (- k 2))))))))
 
-(out (fib 4))
-
-
-
+(do-test
+  fib
+  (list
+    (mat 0 0)
+    (mat 1 1)
+    (mat 2 1)
+    (mat 4 3)
+    (mat 10 55)))
+(newline)
 
 (end-script)
