@@ -38,4 +38,23 @@
     (mat 10 55)))
 (newline)
 
+(define even?-native even?)
+
+(define even? #f)
+
+(define (even? x)
+  ((lambda (even? odd?) (even? even? odd? x))
+   (lambda (ev? od? n)
+     (if (= n 0) #t (od? ev? od? (- n 1))))
+   (lambda (ev? od? n)
+     (if (= n 0) #f (ev? ev? od? (- n 1))))))
+
+(define test-inputs
+  (list-in-range 0 10))
+
+(do-test
+  even?
+  (map mat test-inputs
+           (map even?-native test-inputs)))
+
 (end-script)
