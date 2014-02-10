@@ -4,15 +4,9 @@
   ;; test with  (interp-run-all) or (registers-run-all)
   ;; (run-all) will run both.
 
-  (require (prefix-in interp- "top-interp.rkt"))
-  (require (prefix-in registers- "top-interp-registers.rkt"))
+  (require "top-interp.rkt")
   
-  (provide interp-run registers-run run-all)
-
-  (define run-all
-    (lambda ()
-      (interp-run-all)
-      (registers-run-all)))
+  (provide run run-all)
 
    ;;; interface for book test ;;;
   (provide test-all)
