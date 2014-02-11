@@ -18,4 +18,22 @@
 ;   (define (eval exp env)
 ;     ((analyze exp) env))
 
+(define (analyze-self-evaluating exp)
+  ; for self-evaluating expressions,
+  ;   we wrap the result inside a function
+  ;   and when this function be called with
+  ;   an environment, this function returns `exp`
+  (lambda (env) exp))
+
+(define (analyze-quoted exp)
+  ; fetch text of quotation, same way as before
+  (let ((qval (text-of-quotation exp)))
+    (lambda (env) qval)))
+
+(define (analyze-variable exp)
+  ; first one that uses the given env
+  (lambda (env)
+    (lookup-variable-value exp env)))
+
+
 (end-script)
