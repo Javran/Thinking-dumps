@@ -35,5 +35,33 @@
   (lambda (env)
     (lookup-variable-value exp env)))
 
+(define (analyze-assignment exp)
+  (let ((var (assignment-variable exp))
+        ; notice here we use recursive call
+        ;   to analyze this portion of exp
+        (vproc (analyze (assignment-value exp))))
+    (lambda (env)
+      (set-variable-value! var (vproc env) env)
+      'ok)))
+
+(define (analyze-definition exp)
+  (let ((var (definition-variable exp))
+        (vproc (analyze (definition-value exp))))
+    (lambda (env)
+      (define-variable! var (vproc env) env)
+      'ok)))
+
+(define (analyze-if exp)
+  ; since we don't know what the outcome of
+  ;   pproc wiil be, we do analyze on both branch
+  ;   this will not be an issue because every expression
+  ;   will only get analyzed once.
+  (let ((pproc (analyze (if-predicate exp)))
+        (cproc (analyze (if-consequent exp)))
+        (aproc (analyze (if-alternative exp))))
+    (lambda (env)
+      (if (true? (pproc env))
+          (cproc env)
+          (aproc env)))))
 
 (end-script)
