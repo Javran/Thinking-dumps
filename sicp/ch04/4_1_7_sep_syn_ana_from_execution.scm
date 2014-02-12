@@ -64,4 +64,58 @@
           (cproc env)
           (aproc env)))))
 
+(define (analyze-lambda exp)
+  (let ((vars (lambda-parameters exp))
+        (bproc (analyze-sequence (lambda-body exp))))
+    (lambda (env)
+      (make-procedure vars bproc env))))
+
+(define (analyze-sequence exps)
+  ; note that this function accepts
+  ;   a sequence of expressions rather than
+  ;   a single expression.
+  (define (sequentially proc1 proc2)
+    ; run proc1, and then run proc2
+    ;   both proc1 and proc2 are analyzed procs
+    (lambda (env)
+      (proc1 env)
+      (proc2 env)))
+  (define (loop first-proc rest-procs)
+    ; loop through the procs
+    (if (null? rest-procs)
+        ; for the last expression,
+        ;   we also return its value
+        first-proc
+        (loop (sequentially first-proc (car rest-procs))
+              (cdr rest-procs))))
+  (let ((procs (map analyze exps)))
+    ; break down procedures into analyezed components
+    (if (null? procs)
+        ; let's consider an empty sequence an error
+        (error "Empty sequence: ANALYZE"))
+    (loop (car procs) (cdr procs))))
+
+(define (analyze-application exp)
+  (let ((fproc (analyze (operator exp)))
+        (aprocs (map analyze (operands exp))))
+    (lambda (env)
+      (execute-application
+       (fproc env)
+       (map (lambda (aproc) (aproc env))
+            aprocs)))))
+
+(define (execute-application proc args)
+  (cond ((primitive-procedure? proc)
+         (apply-primitive-procedure proc args))
+        ((compound-procedure? proc)
+         ((procedure-body proc)
+          (extend-environment
+           (procedure-parameters proc)
+           args
+           (procedure-environment proc))))
+        (else
+         (error "Unknown procedure type:
+                 EXECUTE-APPLICATION"
+                 proc))))          
+         
 (end-script)
