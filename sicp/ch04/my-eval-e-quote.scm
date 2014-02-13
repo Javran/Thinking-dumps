@@ -1,5 +1,8 @@
 ; handle quotations
 
+(define quoted?
+  (list-tagged-with 'quote))
+
 (define (install-eval-quote)
 
   (define text-of-quotation cadr)

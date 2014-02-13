@@ -36,6 +36,7 @@
 (load "./my-eval-e-let.scm")
 (load "./my-eval-e-let-star.scm")
 (load "./my-eval-e-letrec.scm")
+(load "./my-eval-e-analyze.scm")
 
 (define (my-eval exp env)
   ; `try-xxx` are all supposed to return:
@@ -96,6 +97,7 @@
 (install-eval-let)
 (install-eval-let*)
 (install-eval-letrec)
+(install-eval-analyze)
 
 (if *my-eval-do-test*
   (begin
