@@ -15,15 +15,19 @@
   (define (analyze-quoted exp)
     (lambda (env)
       (cadr exp)))
-  
+
+  (define (analyze-variable exp)
+    (lambda (env)
+      (lookup-variable-value exp env)))
+
   (define (eval-analyze aexp env)
     (let ((exp (cadr aexp)))
       (cond ((self-evaluating? exp)
              (analyze-self-evaluating exp))
             ((quoted? exp)
              (analyze-quoted exp))
-            ;; ((variable? exp)
-            ;;  (analyze-variable exp))
+            ((variable? exp)
+             (analyze-variable exp))
             ;; ((assignment? exp)
             ;;  (analyze-assignment exp))
             ;; ((definition? exp)
@@ -34,8 +38,11 @@
   (define (test)
     (define (analyze-and-go exp env)
       ((eval-analyze `(analyze ,exp) env) env))
-    (define env (init-env))
-    
+    (define env (extend-environment
+                 '(a b c)
+                 '(1 #t "foo")
+                 (init-env)))
+
     (do-test
      analyze-and-go
      (list
@@ -44,10 +51,13 @@
       (mat #f env #f)
       (mat '(quote v) env 'v)
       (mat '(quote ((foo) bar)) env '((foo) bar))
+      (mat 'a env 1)
+      (mat 'b env #t)
+      (mat 'c env "foo")
       )
      equal?)
     'todo)
-     
+
   (define handler
     (make-handler
      'analyze
