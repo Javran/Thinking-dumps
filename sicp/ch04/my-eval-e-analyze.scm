@@ -20,6 +20,15 @@
     (lambda (env)
       (lookup-variable-value exp env)))
 
+  (define (analyze-definition exp)
+    (lambda (env)
+      (let ((var (definition-variable exp))
+            (val (definition-value exp)))
+        (define-variable! var val env))))
+
+  (define definition?
+    (list-tagged-with 'define))
+
   (define (eval-analyze aexp env)
     (let ((exp (cadr aexp)))
       (cond ((self-evaluating? exp)
@@ -28,10 +37,10 @@
              (analyze-quoted exp))
             ((variable? exp)
              (analyze-variable exp))
-            ;; ((assignment? exp)
-            ;;  (analyze-assignment exp))
-            ;; ((definition? exp)
-            ;;  (analyze-definition exp))
+            ((assignment? exp)
+             (analyze-assignment exp))
+            ((definition? exp)
+             (analyze-definition exp))
             (else
              'todo))))
 
@@ -39,8 +48,8 @@
     (define (analyze-and-go exp env)
       ((eval-analyze `(analyze ,exp) env) env))
     (define env (extend-environment
-                 '(a b c)
-                 '(1 #t "foo")
+                 (list 'a 'b 'c)
+                 (list 1 #t "foo")
                  (init-env)))
 
     (do-test
@@ -49,12 +58,26 @@
       (mat 1 env 1)
       (mat #t env #t)
       (mat #f env #f)
-      (mat '(quote v) env 'v)
-      (mat '(quote ((foo) bar)) env '((foo) bar))
-      (mat 'a env 1)
-      (mat 'b env #t)
-      (mat 'c env "foo")
+      (mat `(quote v) env 'v)
+      (mat `(quote ((foo) bar)) env '((foo) bar))
+      (mat `a env 1)
+      (mat `b env #t)
+      (mat `c env "foo")
       )
+     equal?)
+
+    ; test `define`
+    (analyze-and-go `(define a 10) env)
+    (analyze-and-go `(define b 20) env)
+    (analyze-and-go `(define d 40) env)
+
+    (do-test
+     lookup-variable-value
+     (list
+      (mat 'a env 10)
+      (mat 'b env 20)
+      (mat 'c env "foo")
+      (mat 'd env 40))
      equal?)
     'todo)
 
