@@ -1,3 +1,7 @@
+; Local variables:
+; proc-entry: "./my-eval.scm"
+; End:
+
 ; not sure about
 ;   how we can introduce the change
 ;   from this section without doing too much change
