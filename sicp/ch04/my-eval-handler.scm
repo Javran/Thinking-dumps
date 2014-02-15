@@ -1,10 +1,12 @@
-; data structure:
+; data structure:m
 ;   handler is a list:
 ;     (list 'handler
-;           <slot>
+;           <slot-eval>
+;           <slot-analyze>
 ;           <proc>
 ;           <test-proc>)
-;   <slot>      : slot that this handler can deal with
+;   <slot-xxx>  : slot that this handler can deal with
+;                 xxx = eval / analyze for `eval` / `analyze` modes
 ;   <proc>      : the procedure of type Exp x Env -> ExpVal
 ;                 the handler itself
 ;   <test-proc> : a procedure that accepts zero argument
@@ -12,11 +14,13 @@
 
 (define (make-handler
           slot
-          proc
+          proc-eval
+          proc-analyze
           test-proc)
   (list 'handler
         slot
-        proc
+        proc-eval
+        proc-analyze
         test-proc))
 
 (define (handler? h)
@@ -25,8 +29,9 @@
        (eq? (car h) 'handler)))
 
 (define handler-slot cadr)
-(define handler-proc caddr)
-(define handler-test cadddr)
+(define handler-proc-eval caddr)
+(define handler-proc-analyze cadddr)
+(define handler-test (compose car cddddr))
 
 (define (handler-run-test h)
   (if (handler-test h)
@@ -34,7 +39,7 @@
     'no-test-available))
 
 (define (handler-eval handler exp env)
-  ((handler-proc handler)
+  ((handler-proc-eval handler)
    exp
    env))
 

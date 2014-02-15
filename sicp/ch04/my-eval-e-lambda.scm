@@ -53,12 +53,13 @@
 
     (do-test my-eval testcases)
 
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'lambda
       eval-lambda
+      'todo
       test))
 
   (handler-register! handler)

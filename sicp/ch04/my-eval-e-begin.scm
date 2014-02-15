@@ -65,12 +65,13 @@
         (mat '(begin (if #f 10 20) 30) env 30)
         ))
     (do-test eval-begin testcases)
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'begin
       eval-begin
+      'todo
       test))
 
   (handler-register! handler)

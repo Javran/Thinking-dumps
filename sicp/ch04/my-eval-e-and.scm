@@ -21,7 +21,7 @@
   (define (test)
     (let ((env (init-env)))
       (do-test
-        eval-and 
+        eval-and
         (list
           (mat '(and) env #t)
           (mat '(and (= 1 1) (= 2 2)) env #t)
@@ -29,12 +29,13 @@
           (mat '(and 1 2 3 4) env 4)
           (mat '(and 1) env 1)
           ))
-      'ok))
+      'analyze))
 
   (define handler
     (make-handler
       'and
       eval-and
+      'todo
       test))
 
   (handler-register! handler)

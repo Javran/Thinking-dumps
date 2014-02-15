@@ -26,12 +26,13 @@
           (mat '(or (quote symbol)) env 'symbol)
           (mat '(or #f #f 1) env 1)
           ))
-      'ok))
+      'analyze))
 
   (define handler
     (make-handler
       'or
       eval-or
+      'todo
       test))
 
   (handler-register! handler)

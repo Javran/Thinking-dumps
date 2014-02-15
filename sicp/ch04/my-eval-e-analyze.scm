@@ -100,12 +100,13 @@
       (mat 'a env 11)
       (mat 'b env 22)))
 
-    'todo)
+    'analyze)
 
   (define handler
     (make-handler
      'analyze
      eval-analyze
+     'todo
      test))
 
   (handler-register! handler)

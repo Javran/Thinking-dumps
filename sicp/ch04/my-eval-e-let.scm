@@ -86,12 +86,13 @@
           (mat `(let proc ((i 1) (acc 0))
                   (if (<= i 100) (proc (+ i 1) (+ i acc)) acc)) env 5050)
           ))
-      'ok))
+      'analyze))
 
   (define handler
     (make-handler
       'let
       eval-let
+      'todo
       test))
 
   (handler-register! handler)

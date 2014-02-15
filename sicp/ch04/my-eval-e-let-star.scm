@@ -55,16 +55,17 @@
                        (y (+ 1 x))
                        (z (* 2 y)))
                   (+ x y z)) env 7)
-          (mat `(let* ((x 3)         
+          (mat `(let* ((x 3)
                        (y (+ x 2))    ; y = 5
                        (z (+ x y 5))) ; z = 3 + 5 + 5
                   (* x z)) env 39)))
-      'ok))
+      'analyze))
 
   (define handler
     (make-handler
       'let*
       eval-let*
+      'todo
       test))
 
   (handler-register! handler)

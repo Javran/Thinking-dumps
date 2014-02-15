@@ -42,12 +42,13 @@
                   (f3 10)) env
                3628800)
           ))
-      'ok))
+      'analyze))
 
   (define handler
     (make-handler
       'letrec
       eval-letrec
+      'todo
       test))
 
   (handler-register! handler)

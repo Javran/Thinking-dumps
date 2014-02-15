@@ -17,12 +17,13 @@
               (mat '(quote "a") #f "a")
               (mat '(quote 1) #f 1))))
       (do-test eval-quote testcases equal?))
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'quote
       eval-quote
+      'todo
       test))
 
   (handler-register! handler)

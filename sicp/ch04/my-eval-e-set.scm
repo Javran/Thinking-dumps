@@ -51,7 +51,7 @@
         (mat 'a env2 1)
         (mat 'a env3 "ax"))
       equal?)
-    
+
     ; anything other than `env3` should be changed
     (eval-set! '(set! a "ay") env1)
 
@@ -63,12 +63,13 @@
         (mat 'a env2 "ay")
         (mat 'a env3 "ax"))
       equal?)
-    'ok)
-  
+    'analyze)
+
   (define handler
     (make-handler
       'set!
       eval-set!
+      'todo
       test))
 
   (handler-register! handler)

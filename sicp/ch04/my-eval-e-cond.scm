@@ -127,12 +127,13 @@
              (extend-environment
                '(a) '(3) env) 60)
         ))
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'cond
       eval-cond
+      'todo
       test))
 
   (handler-register! handler)

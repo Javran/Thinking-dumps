@@ -1,3 +1,7 @@
+; Local variables:
+; proc-entry: "./my-eval.scm"
+; End:
+
 ; form #1: (define <var> <val>)
 ; form #2: (define (proc-name . args) <body>)
 (define (definition-variable exp)
@@ -10,9 +14,9 @@
     (caddr exp)
     (make-lambda (cdadr exp)
                  (cddr exp))))
+
 ; require: quote
 (define (install-eval-define)
-
 
   (define (eval-define exp env)
     (define-variable!
@@ -78,12 +82,13 @@
         (mat '(proc-const #t) env 12345)
         ))
 
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'define
       eval-define
+      'todo
       test))
 
   (handler-register! handler)

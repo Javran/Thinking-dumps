@@ -41,12 +41,13 @@
         (mat '(if (= 0 1) (+ 10 20) (* 10 20)) env 200)
         ))
     (do-test eval-if testcases)
-    'ok)
+    'analyze)
 
   (define handler
     (make-handler
       'if
       eval-if
+      'todo
       test))
 
   (handler-register! handler)
