@@ -1,7 +1,7 @@
-(define (install-eval-set!)
+(define assignment-variable cadr)
+(define assignment-value   caddr)
 
-  (define assignment-variable cadr)
-  (define assignment-value   caddr)
+(define (install-eval-set!)
 
   (define (eval-set! exp env)
     (set-variable-value!

@@ -30,6 +30,15 @@
             (val (definition-value exp)))
         (define-variable! var val env))))
 
+  (define (analyze-assignment exp)
+    (lambda (env)
+      (let ((var (assignment-variable exp))
+            (val (assignment-value exp)))
+        (set-variable-value! var val env))))
+
+  (define assignment?
+    (list-tagged-with 'set!))
+
   (define definition?
     (list-tagged-with 'define))
 
@@ -67,8 +76,7 @@
       (mat `a env 1)
       (mat `b env #t)
       (mat `c env "foo")
-      )
-     equal?)
+      ))
 
     ; test `define`
     (analyze-and-go `(define a 10) env)
@@ -81,8 +89,17 @@
       (mat 'a env 10)
       (mat 'b env 20)
       (mat 'c env "foo")
-      (mat 'd env 40))
-     equal?)
+      (mat 'd env 40)))
+
+    ; test `set!`
+    (analyze-and-go `(set! a 11) env)
+    (analyze-and-go `(set! b 22) env)
+    (do-test
+     lookup-variable-value
+     (list
+      (mat 'a env 11)
+      (mat 'b env 22)))
+
     'todo)
 
   (define handler
