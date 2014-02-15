@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+; TODO: change everything into `analyze` structure.
+
 ; my `eval` and `apply` implementaton.
 
 ; test flag, set to #t will perform tests when components are loaded
@@ -85,24 +87,24 @@
       (result->val result)
       (error "unknown expression:" exp))))
 
-(install-eval-quote)
-(install-eval-define)
-(install-eval-if)
-(install-eval-set!)
-(install-eval-begin)
-(install-eval-lambda)
-(install-eval-cond)
-(install-eval-and)
-(install-eval-or)
-(install-eval-let)
-(install-eval-let*)
-(install-eval-letrec)
-(install-eval-analyze)
+;; (install-eval-quote)
+;; (install-eval-define)
+;; (install-eval-if)
+;; (install-eval-set!)
+;; (install-eval-begin)
+;; (install-eval-lambda)
+;; (install-eval-cond)
+;; (install-eval-and)
+;; (install-eval-or)
+;; (install-eval-let)
+;; (install-eval-let*)
+;; (install-eval-letrec)
+;; (install-eval-analyze)
 
 (if *my-eval-do-test*
   (begin
-    (test-my-apply)
-    (test-init-env)
+    ;; (test-my-apply)
+    ;; (test-init-env)
     (my-eval-test-installed-handlers)
     )
   'skipped)
