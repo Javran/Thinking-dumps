@@ -20,10 +20,52 @@
 
   ;; the trampoline
   ;; trampoline : Bounce -> FinalAnswer
-  (define (trampoline bounce)
-    (if (expval? bounce)
-        bounce
-        (trampoline (bounce))))
+  (define (trampoline bounce1)
+    (if (expval? bounce1)
+        bounce1
+        (trampoline
+          (cases bounce bounce1
+            (bounce-app-cont (cont val)
+              (cases continuation cont
+                (end-cont ()
+                  (begin
+                    (eopl:printf
+                     "End of computation.~%")
+                    val))
+                ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
+                (zero1-cont (saved-cont)
+                  (apply-cont saved-cont
+                              (bool-val
+                               (zero? (expval->num val)))))
+                (let-exp-cont (var body saved-env saved-cont)
+                  (value-of/k body
+                              (extend-env var val saved-env) saved-cont))
+                (if-test-cont (exp2 exp3 saved-env saved-cont)
+                  (if (expval->bool val)
+                      (value-of/k exp2 saved-env saved-cont)
+                      (value-of/k exp3 saved-env saved-cont)))
+                (diff1-cont (exp2 saved-env saved-cont)
+                  (value-of/k exp2
+                              saved-env (diff2-cont val saved-cont)))
+                (diff2-cont (val1 saved-cont)
+                  (let ((num1 (expval->num val1))
+                        (num2 (expval->num val)))
+                    (apply-cont saved-cont
+                                (num-val (- num1 num2)))))
+                (rator-cont (rand saved-env saved-cont)
+                  (value-of/k rand saved-env
+                              (rand-cont val saved-cont)))
+                (rand-cont (val1 saved-cont)
+                  (let ((proc (expval->proc val1)))
+                    (apply-procedure/k proc val saved-cont)))
+              ))
+            (bounce-app-proc (proc1 arg cont)
+              (cases proc proc1
+                (procedure (var body saved-env)
+                  (value-of/k body
+                              (extend-env var arg saved-env)
+                              cont))))))))
+
 
   ;; value-of-program : Program -> FinalAnswer
   ;; Page: 143 and 154
@@ -68,49 +110,12 @@
   ;; Page: 148
   (define apply-cont
     (lambda (cont val)
-      (lambda ()
-        (cases continuation cont
-          (end-cont ()
-            (begin
-              (eopl:printf
-                "End of computation.~%")
-              val))
-          ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
-          (zero1-cont (saved-cont)
-            (apply-cont saved-cont
-              (bool-val
-                (zero? (expval->num val)))))
-          (let-exp-cont (var body saved-env saved-cont)
-            (value-of/k body
-              (extend-env var val saved-env) saved-cont))
-          (if-test-cont (exp2 exp3 saved-env saved-cont)
-            (if (expval->bool val)
-               (value-of/k exp2 saved-env saved-cont)
-               (value-of/k exp3 saved-env saved-cont)))
-          (diff1-cont (exp2 saved-env saved-cont)
-            (value-of/k exp2
-              saved-env (diff2-cont val saved-cont)))
-          (diff2-cont (val1 saved-cont)
-            (let ((num1 (expval->num val1))
-                  (num2 (expval->num val)))
-              (apply-cont saved-cont
-                (num-val (- num1 num2)))))
-          (rator-cont (rand saved-env saved-cont)
-            (value-of/k rand saved-env
-              (rand-cont val saved-cont)))
-          (rand-cont (val1 saved-cont)
-            (let ((proc (expval->proc val1)))
-              (apply-procedure/k proc val saved-cont)))
-        ))))
+      (bounce-app-cont cont val)))
 
-  ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
+  ;; apply-procedure/k : Proc * ExpVal * Cont -> Bounce
   ;; Page 152 and 155
   (define apply-procedure/k
     (lambda (proc1 arg cont)
-      (lambda ()
-        (cases proc proc1
-          (procedure (var body saved-env)
-            (value-of/k body
-              (extend-env var arg saved-env)
-              cont))))))
+      (bounce-app-proc proc1 arg cont)))
+
   )
