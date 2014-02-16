@@ -3,23 +3,15 @@
 ; End:
 
 (define (my-eval-interpret exp env)
-  ; `try-xxx` are all supposed to return:
-  ; either `(list <value>)` or `#f`
-  (define (eval-succeeded? result)
-    result)
-  (define (result->val result)
-    (car result))
-  (define (val->result val)
-    (list val))
 
   ; try simple form evaluation
   (define (try-simple-eval exp env)
     (cond ((self-evaluating? exp)
-            (val->result exp))
+            (just exp))
           ((variable? exp)
-            (val->result
+            (just
               (lookup-variable-value exp env)))
-          (else #f)))
+          (else nothing)))
 
   ; try to dispatch according to slot (i.e. the tag)
   (define (try-dispatch-eval exp env)
@@ -27,24 +19,32 @@
       ; try to fetch the handler
       (let ((handler (my-eval-get (car exp))))
         (if handler
-          (val->result
+          (just
             (handler-eval handler exp env))
-          #f))
-      #f))
+          nothing))
+      nothing))
 
   ; try application
   (define (try-app-eval exp env)
     (if (application? exp)
-      (val->result
+      (just
         (my-apply
           (my-eval (operator exp) env)
           (list-of-values (operands exp) env)))
-      #f))
+      nothing))
 
-  (let ((result
-          (or (try-simple-eval   exp env)
-              (try-dispatch-eval exp env)
-              (try-app-eval      exp env))))
-    (if result
-      (result->val result)
-      (error "unknown expression:" exp))))
+  ((maybe
+    ; if evaluation is succeeded,
+    ;   simply return the result.
+    identity
+    ; else we raise an error
+    (lambda ()
+      (error "unknown expression:" exp)))
+   ; try all possible eval
+   ;   here special form `or`
+   ;   makes it a `First Monoid`
+   (or (try-simple-eval   exp env)
+       (try-dispatch-eval exp env)
+       (try-app-eval      exp env)
+       nothing)))
+
