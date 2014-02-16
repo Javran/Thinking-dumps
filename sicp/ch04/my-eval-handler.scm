@@ -43,5 +43,9 @@
    exp
    env))
 
+(define (handler-analyze handler exp)
+  ((handler-proc-analyze handler)
+   exp))
+
 (define (handler-register! h)
   (my-eval-put! (handler-slot h) h))

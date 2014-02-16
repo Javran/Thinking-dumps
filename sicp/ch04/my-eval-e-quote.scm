@@ -10,21 +10,34 @@
   (define (eval-quote exp env)
     (text-of-quotation exp))
 
+  (define (analyze-quote exp)
+    ;; the `exp` should be a constant
+    ;; so we call `text-of-quotation` before
+    ;; the evaluation
+    (let ((result (text-of-quotation exp)))
+      (const result)))
+
   (define (test)
     (let ((testcases
             (list
               (mat '(quote a) #f 'a)
               (mat '(quote "a") #f "a")
               (mat '(quote 1) #f 1))))
-      (do-test eval-quote testcases equal?))
-    'analyze)
+      (do-test eval-quote testcases equal?)
+      (do-test
+       (analyze->eval analyze-quote) testcases))
+    'ok)
 
   (define handler
     (make-handler
       'quote
       eval-quote
-      'todo
+      analyze-quote
       test))
 
   (handler-register! handler)
   'ok)
+
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:

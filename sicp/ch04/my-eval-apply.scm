@@ -1,10 +1,8 @@
-; procedure and application
 
 ; procedure datatype
 ; data structure:
 ; * (list 'proc 'primitive <the proc>)
 ; * (list 'proc 'compound <args> <body> <env>)
-
 (define (proc? proc)
   (and (list? proc)
        (> (length proc) 2)
@@ -56,6 +54,7 @@
   (define vars (proc-vars proc))
   (define body (proc-body proc))
   (define env  (proc-env  proc))
+
   (my-eval
     ; by definition, the procedure body
     ;   is a sequence of expresssions
@@ -67,7 +66,7 @@
   (define apply-proc
     (cond ((proc-primitive? proc)
             apply-proc-primitive)
-          ((proc-compound? proc) 
+          ((proc-compound? proc)
             apply-proc-compound)
           (else
             (error
@@ -100,12 +99,14 @@
       ; args
       (list 'p 'a 'b)
       ;
-      (list 
+      (list
         (list 'if 'p 'a 'b))
       env1))
-
+  
+  (my-apply proc-id '(#f))
+  
   (define testcases1
-    (list 
+    (list
       (mat proc+ '(1 2 3) 6)
       (mat proc- '(10 20) -10)
       (mat proc* '(1 4 9) 36)
@@ -129,9 +130,13 @@
       (mat '(+ 1 2 3 4) env2 10)
       (mat '(* (+ 1 2) (- 3 4)) env2 -3)
       (mat '(+ (* 1 2) (* 3 4)) env2 14)
-      (mat '(- (* 3 4 5) (* 2 (- 7 2))) env2 50))) 
+      (mat '(- (* 3 4 5) (* 2 (- 7 2))) env2 50)))
 
   ; test indirectly by calling `my-eval`
   (do-test my-eval testcases2)
 
   'ok)
+
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:

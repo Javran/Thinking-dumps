@@ -54,29 +54,29 @@
 ; change this value according
 ;   to change the evaluation approach
 (define *my-eval-approach*
-  'interpret)
+  'analyze)
 
 (define my-eval
   (cadr (assoc *my-eval-approach* eval-approaches)))
 
 (install-eval-quote)
-(install-eval-define)
-(install-eval-if)
-(install-eval-set!)
-(install-eval-begin)
-(install-eval-lambda)
-(install-eval-cond)
-(install-eval-and)
-(install-eval-or)
-(install-eval-let)
-(install-eval-let*)
-(install-eval-letrec)
-(install-eval-analyze)
+;; (install-eval-define)
+;; (install-eval-if)
+;; (install-eval-set!)
+;; (install-eval-begin)
+;; (install-eval-lambda)
+;; (install-eval-cond)
+;; (install-eval-and)
+;; (install-eval-or)
+;; (install-eval-let)
+;; (install-eval-let*)
+;; (install-eval-letrec)
+;; (install-eval-analyze)
 
 (if *my-eval-do-test*
   (begin
-    (test-my-apply)
-    (test-init-env)
+    ; (test-my-apply)
+    ; (test-init-env)
     (my-eval-test-installed-handlers)
     )
   'skipped)
