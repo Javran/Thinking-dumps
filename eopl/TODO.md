@@ -18,3 +18,7 @@
 * exercise 5.11 - done but with question
 * exercise 5.15 - with do if time permits
 * exercise 5.16 - with do if time permits
+* exercise 5.20 - not sure how to do this
+* exercise 5.21 - will do if time permits
+* exercise 5.22 - will do if time permits
+
