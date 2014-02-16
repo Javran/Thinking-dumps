@@ -1,6 +1,6 @@
-; Local variables:
-; proc-entry: ""
-; End:
+;; Local variables:
+;; proc-entry: ""
+;; End:
 
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
