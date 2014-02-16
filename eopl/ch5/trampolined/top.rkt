@@ -5,13 +5,13 @@
   ;; (run-all) will run both.
 
   (require "top-interp.rkt")
-  
+
   (provide run run-all)
 
    ;;; interface for book test ;;;
   (provide test-all)
-  (define (test-all) 
+  (define (test-all)
     (run-all))
 
-  
+
   )

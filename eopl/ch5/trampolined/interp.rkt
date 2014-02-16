@@ -1,5 +1,5 @@
 (module interp (lib "eopl.ss" "eopl")
-  
+
   ;; cps interpreter for the LETREC language, using the data structure
   ;; representation of continuations (Figure 5.3).
 
@@ -24,10 +24,10 @@
     (if (expval? bounce)
         bounce
         (trampoline (bounce))))
-  
+
   ;; value-of-program : Program -> FinalAnswer
   ;; Page: 143 and 154
-  (define value-of-program 
+  (define value-of-program
     (lambda (pgm)
       (cases program pgm
         (a-program (exp1)
@@ -41,7 +41,7 @@
         (const-exp (num) (apply-cont cont (num-val num)))
         (var-exp (var) (apply-cont cont (apply-env env var)))
         (proc-exp (var body)
-          (apply-cont cont 
+          (apply-cont cont
             (proc-val (procedure var body env))))
         (letrec-exp (p-name b-var p-body letrec-body)
           (value-of/k letrec-body
@@ -58,8 +58,8 @@
             (if-test-cont exp2 exp3 env cont)))
         (diff-exp (exp1 exp2)
           (value-of/k exp1 env
-            (diff1-cont exp2 env cont)))        
-        (call-exp (rator rand) 
+            (diff1-cont exp2 env cont)))
+        (call-exp (rator rand)
           (value-of/k rator env
             (rator-cont rand env cont)))
    )))
@@ -69,7 +69,7 @@
   (define apply-cont
     (lambda (cont val)
       (cases continuation cont
-        (end-cont () 
+        (end-cont ()
           (begin
             (eopl:printf
               "End of computation.~%")
@@ -113,7 +113,3 @@
               (extend-env var arg saved-env)
               cont))))))
   )
-  
-
-
-  

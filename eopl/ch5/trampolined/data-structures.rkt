@@ -13,7 +13,7 @@
       (value number?))
     (bool-val
       (boolean boolean?))
-    (proc-val 
+    (proc-val
       (proc proc?)))
 
 ;;; extractors:
@@ -47,7 +47,7 @@
   (define identifier? symbol?)
 
   (define-datatype continuation continuation?
-    (end-cont)                 
+    (end-cont)
     (zero1-cont
       (saved-cont continuation?))
     (let-exp-cont
@@ -55,23 +55,23 @@
       (body expression?)
       (saved-env environment?)
       (saved-cont continuation?))
-    (if-test-cont 
+    (if-test-cont
       (exp2 expression?)
       (exp3 expression?)
       (saved-env environment?)
       (saved-cont continuation?))
-    (diff1-cont                
+    (diff1-cont
       (exp2 expression?)
       (saved-env environment?)
       (saved-cont continuation?))
-    (diff2-cont                
+    (diff2-cont
       (val1 expval?)
       (saved-cont continuation?))
-    (rator-cont            
+    (rator-cont
       (rand expression?)
       (saved-env environment?)
       (saved-cont continuation?))
-    (rand-cont             
+    (rand-cont
       (val1 expval?)
       (saved-cont continuation?)))
 
@@ -82,12 +82,12 @@
       (bvar symbol?)
       (body expression?)
       (env environment?)))
-  
+
 ;;;;;;;;;;;;;;;; environment structures ;;;;;;;;;;;;;;;;
 
   (define-datatype environment environment?
     (empty-env)
-    (extend-env 
+    (extend-env
       (bvar symbol?)
       (bval expval?)
       (saved-env environment?))
