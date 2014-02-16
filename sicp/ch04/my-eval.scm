@@ -38,7 +38,7 @@
 (load "./my-eval-e-letrec.scm")
 (load "./my-eval-e-analyze.scm")
 
-(define (my-eval exp env)
+(define (my-eval-interpret exp env)
   ; `try-xxx` are all supposed to return:
   ; either `(list <value>)` or `#f`
   (define (eval-succeeded? result)
@@ -84,6 +84,23 @@
     (if result
       (result->val result)
       (error "unknown expression:" exp))))
+
+(define (my-eval-analyze exp env)
+  'todo)
+
+;; all supported eval approaches
+(define eval-approaches
+   (list
+    (list 'interpret
+          my-eval-interpret)
+    (list 'analyze
+          my-eval-analyze)))
+
+(define *my-eval-approach*
+  'interpret)
+
+(define my-eval
+  (cadr (assoc *my-eval-approach* eval-approaches)))
 
 (install-eval-quote)
 (install-eval-define)
