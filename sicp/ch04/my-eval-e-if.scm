@@ -52,21 +52,15 @@
     (do-test eval-if testcases)
     'ok)
 
-  (define (test)
-    (let ((result
-           (list
-            (test-eval eval-if)
-            (test-eval (analyze->eval analyze-if)))))
-      (if (equal? result '(ok ok))
-          'ok
-          result)))
-
   (define handler
     (make-handler
       'if
       eval-if
       analyze-if
-      test))
+      (test-both
+       test-eval
+       eval-if
+       analyze-if)))
 
   (handler-register! handler)
   'ok)

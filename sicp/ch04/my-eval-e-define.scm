@@ -94,22 +94,15 @@
 
     'analyze-need-lambda)
 
-  (define (test)
-    (let ((result
-           (list
-            (test-eval eval-define)
-            (test-eval (analyze->eval analyze-define)))))
-      ;; anything failed -> fail and return the result
-      (if (equal? result '(ok ok))
-          'ok
-          result)))
-
   (define handler
     (make-handler
       'define
       eval-define
       analyze-define
-      test))
+      (test-both
+       test-eval
+       eval-define
+       analyze-define)))
 
   (handler-register! handler)
   'ok)

@@ -25,6 +25,29 @@
     (cons (my-eval (first-operand exps) env)
           (list-of-values (rest-operands exps) env))))
 
+;; to test both implementations
+;; (i.e. `interpret` approach vs `analyze` approach)
+;; `test-eval-xxx` should be used in the following form:
+;;   (test-eval-xxx <eval-xxx>)
+;; return a list of test results if some of the tests
+;; does not properly returns a `ok`,
+;; return 'ok otherwise.
+;; this procedure is intended to produce a thunk
+;; so we can directly put it in the `test` field of handler
+(define (test-both test-eval-xxx
+                      eval-xxx
+                      analyze-xxx)
+  (lambda ()
+    (let ((result
+           (list
+            (test-eval-xxx eval-xxx)
+            (test-eval-xxx (analyze->eval analyze-xxx)))))
+      (if (equal? result '(ok ok))
+          'ok
+          result))))
+
+;; sorry for the ambiguity I made:
+;; it's a test for utils, not test-utils.
 (define (test-utils)
   ; test list-tagged-with and tagged-list?
   (let ((testcases

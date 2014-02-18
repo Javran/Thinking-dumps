@@ -17,15 +17,13 @@
     (let ((result (text-of-quotation exp)))
       (const result)))
 
-  (define (test)
+  (define (test-eval eval-quote)
     (let ((testcases
-            (list
-              (mat '(quote a) #f 'a)
-              (mat '(quote "a") #f "a")
-              (mat '(quote 1) #f 1))))
-      (do-test eval-quote testcases)
-      (do-test
-       (analyze->eval analyze-quote) testcases))
+           (list
+            (mat '(quote a) #f 'a)
+            (mat '(quote "a") #f "a")
+            (mat '(quote 1) #f 1))))
+      (do-test eval-quote testcases))
     'ok)
 
   (define handler
@@ -33,7 +31,10 @@
       'quote
       eval-quote
       analyze-quote
-      test))
+      (test-both
+       test-eval
+       eval-quote
+       analyze-quote)))
 
   (handler-register! handler)
   'ok)
