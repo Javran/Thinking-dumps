@@ -59,9 +59,23 @@
 (define my-eval
   (cadr (assoc *my-eval-approach* eval-approaches)))
 
+;; here I have some concerns about using `my-eval` procedure
+;; in the handlers' implementations,
+;; as when we are running in `interpret` mode,
+;; we don't have to use an analyze-based version of `my-eval`
+;; (and verse visa),
+;; But finally I choose to go with that
+;; because of the following two reasons:
+;; * `my-eval` should behavior equally well (in terms of the outcome)
+;; * we can easily mutate the global variables
+;;   to switch between two impls, and if there's anything wrong,
+;;   one of the implementation must be wrong
+;;   because we don't assume anything more than the representation
+;;   of environments on the `my-eval`
+
 (install-eval-quote)
 (install-eval-define)
-;; (install-eval-if)
+(install-eval-if)
 ;; (install-eval-set!)
 ;; (install-eval-begin)
 ;; (install-eval-lambda)

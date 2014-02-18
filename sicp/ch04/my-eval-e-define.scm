@@ -21,7 +21,7 @@
   (define (eval-define exp env)
     (define-variable!
       (definition-variable exp)
-      (my-eval-interpret (definition-value exp) env)
+      (my-eval (definition-value exp) env)
       env)
     'ok)
 

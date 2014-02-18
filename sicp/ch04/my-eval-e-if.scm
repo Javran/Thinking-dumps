@@ -22,7 +22,16 @@
       (my-eval (if-consequent exp) env)
       (my-eval (if-alternative exp) env)))
 
-  (define (test)
+  (define (analyze-if exp)
+    (let ((pproc (my-analyze (if-predicate exp)))
+          (cproc (my-analyze (if-consequent exp)))
+          (aproc (my-analyze (if-alternative exp))))
+      (lambda (env)
+        (if (true? (pproc env))
+            (cproc env)
+            (aproc env)))))
+
+  (define (test-eval eval-if)
     (define env
       (init-env))
 
@@ -41,14 +50,26 @@
         (mat '(if (= 0 1) (+ 10 20) (* 10 20)) env 200)
         ))
     (do-test eval-if testcases)
-    'analyze)
+    'ok)
+
+  (define (test)
+    (let ((result
+           (list
+            (test-eval eval-if)
+            (test-eval (analyze->eval analyze-if)))))
+      (if (equal? result '(ok ok))
+          'ok
+          result)))
 
   (define handler
     (make-handler
       'if
       eval-if
-      'todo
+      analyze-if
       test))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
