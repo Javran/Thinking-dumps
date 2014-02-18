@@ -60,7 +60,7 @@
   (cadr (assoc *my-eval-approach* eval-approaches)))
 
 (install-eval-quote)
-;; (install-eval-define)
+(install-eval-define)
 ;; (install-eval-if)
 ;; (install-eval-set!)
 ;; (install-eval-begin)

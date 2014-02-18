@@ -21,11 +21,21 @@
   (define (eval-define exp env)
     (define-variable!
       (definition-variable exp)
-      (my-eval (definition-value exp) env)
+      (my-eval-interpret (definition-value exp) env)
       env)
     'ok)
 
-  (define (test)
+  (define (analyze-define exp)
+    (let ((var (definition-variable exp))
+          (vproc (my-analyze (definition-value exp))))
+      (lambda (env)
+        (define-variable!
+          var
+          (vproc env)
+          env)
+        'ok)))
+
+  (define (test-eval eval-define)
     ; 2-layer
     (define env
       (extend-environment
@@ -63,32 +73,42 @@
         (mat 'b env1 "bbb")
         (mat 'c env1 "ccc")))
 
-    (eval-define
-      '(define (proc-branch a b c)
-         (if a b c))
-      env)
+    ;; (eval-define
+    ;;   '(define (proc-branch a b c)
+    ;;      (if a b c))
+    ;;   env)
 
-    (eval-define
-      '(define (proc-const a)
-         12345)
-      env)
+    ;; (eval-define
+    ;;   '(define (proc-const a)
+    ;;      12345)
+    ;;   env)
 
-    (do-test
-      my-eval
-      (list
-        (mat '(proc-branch #t 1 2) env 1)
-        (mat '(proc-branch #f 1 2) env 2)
-        (mat '(proc-const 0) env 12345)
-        (mat '(proc-const #t) env 12345)
-        ))
+    ;; (do-test
+    ;;   my-eval
+    ;;   (list
+    ;;     (mat '(proc-branch #t 1 2) env 1)
+    ;;     (mat '(proc-branch #f 1 2) env 2)
+    ;;     (mat '(proc-const 0) env 12345)
+    ;;     (mat '(proc-const #t) env 12345)
+    ;;     ))
 
-    'analyze)
+    'analyze-need-lambda)
+
+  (define (test)
+    (let ((result
+           (list
+            (test-eval eval-define)
+            (test-eval (analyze->eval analyze-define)))))
+      ;; anything failed -> fail and return the result
+      (if (equal? result '(ok ok))
+          'ok
+          result)))
 
   (define handler
     (make-handler
       'define
       eval-define
-      'todo
+      analyze-define
       test))
 
   (handler-register! handler)
