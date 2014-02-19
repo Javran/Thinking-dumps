@@ -10,7 +10,17 @@
       env)
     'ok)
 
-  (define (test)
+  (define (analyze-set! exp)
+    (let ((var (assignment-variable exp))
+          (vproc (my-analyze (assignment-value exp))))
+      (lambda (env)
+        (set-variable-value!
+         var
+         (vproc env)
+         env)
+        'ok)))
+
+  (define (test-eval eval-set!)
     ; test 3-layer environments
 
     ; env -> env1 -> env2
@@ -63,14 +73,21 @@
         (mat 'a env2 "ay")
         (mat 'a env3 "ax"))
       equal?)
-    'analyze)
+    'ok)
 
   (define handler
     (make-handler
       'set!
       eval-set!
-      'todo
-      test))
+      analyze-set!
+      (test-both
+       test-eval
+       eval-set!
+       analyze-set!)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
+

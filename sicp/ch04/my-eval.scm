@@ -76,7 +76,7 @@
 (install-eval-quote)
 (install-eval-define)
 (install-eval-if)
-;; (install-eval-set!)
+(install-eval-set!)
 ;; (install-eval-begin)
 ;; (install-eval-lambda)
 ;; (install-eval-cond)
