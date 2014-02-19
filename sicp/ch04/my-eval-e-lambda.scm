@@ -19,7 +19,19 @@
       (lambda-body exp)
       env))
 
-  (define (test)
+  (define (analyze-lambda exp)
+    (let ((vars (lambda-parameters exp))
+          (bproc (my-analyze
+                  (make-begin
+                   (lambda-body exp)))))
+    (lambda (env)
+      (make-procedure
+       vars
+       ; TODO: analyze exp
+       (lambda-body exp)
+       env))))
+
+  (define (test-eval eval-lambda)
     (define env
       the-empty-environment)
 
@@ -53,14 +65,23 @@
 
     (do-test my-eval testcases)
 
-    'analyze)
+    ;; we might need to bring back function application
+    ;; before we can run tests here.
+    'analyze-app)
 
   (define handler
     (make-handler
       'lambda
       eval-lambda
-      'todo
-      test))
+      analyze-lambda
+      (test-both
+       test-eval
+       eval-lambda
+       analyze-lambda
+       )))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
