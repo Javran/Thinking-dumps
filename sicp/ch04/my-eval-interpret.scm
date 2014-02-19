@@ -47,14 +47,3 @@
        (try-dispatch-eval exp env)
        (try-app-eval      exp env)
        nothing)))
-
-(define (my-apply-interpret proc args)
-  (define apply-proc
-    (cond ((proc-primitive? proc)
-            apply-proc-primitive)
-          ((proc-compound? proc)
-            apply-proc-compound)
-          (else
-            (error
-              "Unknown procedure type: APPLY" proc))))
-  (apply-proc proc args))

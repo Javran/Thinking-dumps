@@ -14,7 +14,7 @@
 (load "./my-eval-maybe.scm")
 
 ; procedure support
-(load "./my-eval-apply-base.scm")
+(load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
 
 ; basic environment
@@ -45,25 +45,20 @@
 (load "./my-eval-interpret.scm")
 (load "./my-eval-analyze.scm")
 
-;; TODO: `apply` and `eval` should agree
-;; on the data structure, which means for
-;; `eval-interpret`, we should have an `apply-interpret`
-;; and the same thing apply to `eval-analyze`
-;; I plan to:
-;; split `my-eval-apply.scm` into two parts
-;; * my-eval-apply-base.scm (basic operations)
-;; * my-eval-apply-interpret.scm (support for `eval-interpret`)
-;; * my-eval-apply-analyze.scm (support for `eval-analyze`) (new)
+;; previously I said `apply` should agree with `eval`
+;; but maybe I was wrong:
+;; the thing is that in analyze-strategy, we should
+;; use another data structure to represent a procedure
+;; rather than using `make-procedure`, which essentially
+;; causes `apply` disagree with the structure of `proc-compound`.
 
 ;; all supported eval approaches
 (define eval-approaches
-   (list
-    (list 'interpret
-          my-eval-interpret
-          my-apply-interpret)
-    (list 'analyze
-          my-eval-analyze
-          my-apply-analyze)))
+  (list
+   (list 'interpret
+         my-eval-interpret)
+   (list 'analyze
+         my-eval-analyze)))
 
 ; change this value according
 ;   to change the evaluation approach
@@ -72,9 +67,6 @@
 
 (define my-eval
   (cadr (assoc *my-eval-approach* eval-approaches)))
-
-(define my-apply
-  (caddr (assoc *my-eval-approach* eval-approaches)))
 
 ;; here I have some concerns about using `my-eval` procedure
 ;; in the handlers' implementations,
@@ -111,5 +103,8 @@
     (my-eval-test-installed-handlers)
     )
   'skipped)
+
+(format #t "; [my-eval] approach: ~s~%"
+        *my-eval-approach*)
 
 (load "./my-eval-driver-loop.scm")

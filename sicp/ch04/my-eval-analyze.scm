@@ -53,8 +53,7 @@
          (apply-proc-primitive proc args))
         ((proc-compound? proc)
          (apply-proc-compound proc args))
-        ((proc-analyzed-compound? proc)
-         (apply-proc-analyzed-compound proc args))
+        
         (else
          (error
           "Unknown procedure type: APPLY" proc))))

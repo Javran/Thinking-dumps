@@ -62,10 +62,7 @@
         ))
 
     (do-test my-eval testcases)
-
-    ;; we might need to bring back function application
-    ;; before we can run tests here.
-    'analyze-app)
+    'ok)
 
   (define handler
     (make-handler

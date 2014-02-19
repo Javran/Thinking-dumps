@@ -81,6 +81,19 @@
     (extend-environment vars args env))
   (abody body-env))
 
+(define (my-apply proc args)
+  (define apply-proc
+    (cond ((proc-primitive? proc)
+           apply-proc-primitive)
+          ((proc-compound? proc)
+           apply-proc-compound)
+          ((proc-analyzed-compound? proc)
+           apply-proc-analyzed-compound)
+          (else
+           (error
+            "Unknown procedure type: APPLY" proc))))
+  (apply-proc proc args))
+
 (define (test-my-apply)
   (define env1
     the-empty-environment)
