@@ -23,7 +23,6 @@
 
   (define begin-actions cdr)
 
-
   (define (eval-sequence exps env)
     (cond ((null? exps)
             ; let's allow empty seq
@@ -43,10 +42,36 @@
             (my-eval (first-exp exps) env)
             (eval-sequence (rest-exps exps) env))))
 
+  (define (analyze-sequence exps)
+    ;; this procedure sequentially
+    ;; evaluates procs
+    (define (sequentially proc1 proc2)
+      (lambda (env)
+        (proc1 env)
+        (proc2 env)))
+    ;; starts a loop, run procs in order,
+    ;; and return the result from the final proc
+    (define (loop first-proc rest-procs)
+      (if (null? rest-procs)
+          first-proc
+          (loop (sequentially first-proc (car rest-procs))
+                (cdr rest-procs))))
+    (let ((procs (map my-analyze exps)))
+      (if (null? procs)
+          ;; different from book, I simply
+          ;; allow a sequence of procs
+          ;; to be an empty string
+          ;; but it will return #f
+          (const #f)
+          (loop (car procs) (cdr procs)))))
+
   (define (eval-begin exp env)
     (eval-sequence (begin-actions exp) env))
 
-  (define (test)
+  (define (analyze-begin exp)
+    (analyze-sequence (begin-actions exp)))
+
+  (define (test-eval eval-begin)
     (define env
       (extend-environment
         (list 'a 'b 'c)
@@ -65,15 +90,21 @@
         (mat '(begin (if #f 10 20) 30) env 30)
         ))
     (do-test eval-begin testcases)
-    'analyze)
+    'ok)
 
   (define handler
     (make-handler
       'begin
       eval-begin
-      'todo
-      test))
+      analyze-begin
+      (test-both
+       test-eval
+       eval-begin
+       analyze-begin)))
 
   (handler-register! handler)
 
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
