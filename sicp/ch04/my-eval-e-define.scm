@@ -1,7 +1,3 @@
-; Local variables:
-; proc-entry: "./my-eval.scm"
-; End:
-
 ; form #1: (define <var> <val>)
 ; form #2: (define (proc-name . args) <body>)
 (define (definition-variable exp)
@@ -73,26 +69,26 @@
         (mat 'b env1 "bbb")
         (mat 'c env1 "ccc")))
 
-    ;; (eval-define
-    ;;   '(define (proc-branch a b c)
-    ;;      (if a b c))
-    ;;   env)
+    (eval-define
+      '(define (proc-branch a b c)
+         (if a b c))
+      env)
 
-    ;; (eval-define
-    ;;   '(define (proc-const a)
-    ;;      12345)
-    ;;   env)
+    (eval-define
+      '(define (proc-const a)
+         12345)
+      env)
 
-    ;; (do-test
-    ;;   my-eval
-    ;;   (list
-    ;;     (mat '(proc-branch #t 1 2) env 1)
-    ;;     (mat '(proc-branch #f 1 2) env 2)
-    ;;     (mat '(proc-const 0) env 12345)
-    ;;     (mat '(proc-const #t) env 12345)
-    ;;     ))
+    (do-test
+      my-eval
+      (list
+        (mat '(proc-branch #t 1 2) env 1)
+        (mat '(proc-branch #f 1 2) env 2)
+        (mat '(proc-const 0) env 12345)
+        (mat '(proc-const #t) env 12345)
+        ))
 
-    'analyze-need-lambda)
+    'ok)
 
   (define handler
     (make-handler
@@ -106,3 +102,7 @@
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
+
