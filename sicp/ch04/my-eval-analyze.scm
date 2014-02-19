@@ -1,7 +1,3 @@
-;; Local variables:
-;; proc-entry: "./my-eval.scm"
-;; End:
-
 (define (my-analyze exp)
   ;; a simple form is either a self-evaluating s-exp
   ;; or a variable that needs to be looked up from the env
@@ -25,6 +21,7 @@
               nothing))
         nothing))
 
+  ;; TODO: my-apply should have different impl as well.
   ;; try application
   (define (try-app-analyze exp)
     (if (application? exp)
@@ -54,3 +51,6 @@
 
 (define my-eval-analyze
   (analyze->eval my-analyze))
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:

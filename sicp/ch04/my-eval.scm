@@ -43,6 +43,17 @@
 (load "./my-eval-interpret.scm")
 (load "./my-eval-analyze.scm")
 
+
+;; TODO: `apply` and `eval` should agree
+;; on the data structure, which means for
+;; `eval-interpret`, we should have an `apply-interpret`
+;; and the same thing apply to `eval-analyze`
+;; I plan to:
+;; split `my-eval-apply.scm` into two parts
+;; * my-eval-apply-base.scm (basic operations)
+;; * my-eval-apply-interpret.scm (support for `eval-interpret`)
+;; * my-eval-apply-analyze.scm (support for `eval-analyze`) (new)
+
 ;; all supported eval approaches
 (define eval-approaches
    (list
@@ -89,8 +100,8 @@
 
 (if *my-eval-do-test*
   (begin
-    ; (test-my-apply)
-    ; (test-init-env)
+    (test-my-apply)
+    (test-init-env)
     (my-eval-test-installed-handlers)
     )
   'skipped)

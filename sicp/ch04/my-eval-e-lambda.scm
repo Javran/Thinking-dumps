@@ -21,8 +21,7 @@
 
   (define (analyze-lambda exp)
     (let ((vars (lambda-parameters exp))
-          (bproc (my-analyze
-                  (make-begin
+          (bproc (my-analyze (make-begin
                    (lambda-body exp)))))
     (lambda (env)
       (make-procedure
