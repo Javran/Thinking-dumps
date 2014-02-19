@@ -2,7 +2,7 @@
 ;   lift it into the implemented language
 ;   return a pair,
 ;   whose `car` is the symbol,
-;     and `cdr` is the value (the primitive lifted) 
+;     and `cdr` is the value (the primitive lifted)
 (define (lift-primitive-pair sym)
   (cons sym
         (make-proc-primitive

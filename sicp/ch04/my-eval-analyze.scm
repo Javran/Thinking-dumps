@@ -26,11 +26,17 @@
   (define (try-app-analyze exp)
     (if (application? exp)
         (just
-         (lambda (env)
-           (my-apply
-            (my-eval (operator exp) env)
-            (list-of-values (operands exp) env))))
+         ;; analyze everything in the s-exp
+         (let ((rator (my-analyze (operator exp)))
+               (rands (map my-analyze (operands exp))))
+           (lambda (env)
+             ;; provide each exp with an `env`
+             (my-apply
+              (rator env)
+              (map (lambda (rand) (rand env))
+                   rands)))))
         nothing))
+
   ((maybe
     ;; if the analysis goes well, return the result
     identity
@@ -42,6 +48,27 @@
        (try-app-analyze exp)
        nothing)))
 
+(define (my-apply-analyze proc args)
+  (cond ((proc-primitive? proc)
+         (apply-proc-primitive proc args))
+        ((proc-compound? proc)
+         (apply-proc-compound proc args))
+        ((proc-analyzed-compound? proc)
+         (apply-proc-analyzed-compound proc args))
+        (else
+         (error
+          "Unknown procedure type: APPLY" proc))))
+
+(define (my-apply-interpret proc args)
+  (define apply-proc
+    (cond ((proc-primitive? proc)
+            apply-proc-primitive)
+          ((proc-compound? proc)
+            apply-proc-compound)
+          (else
+            (error
+              "Unknown procedure type: APPLY" proc))))
+  (apply-proc proc args))
 ;; an analyze-xxx is a procedure of form `(analyze-xxx exp)`
 ;; this procedure turns an analyzer into a `(eval-xxx exp env)`
 (define (analyze->eval analyze-xxx)

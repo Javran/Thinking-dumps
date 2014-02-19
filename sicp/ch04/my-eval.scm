@@ -14,7 +14,7 @@
 (load "./my-eval-maybe.scm")
 
 ; procedure support
-(load "./my-eval-apply.scm")
+(load "./my-eval-apply-base.scm")
 (load "./my-eval-init-env.scm")
 
 ; basic environment
@@ -39,10 +39,11 @@
 (load "./my-eval-e-letrec.scm")
 (load "./my-eval-e-analyze.scm")
 
-; evaluation approaches
+;; evaluation approaches
+;; notice that the implementation of `apply-<strategy>`
+;; is now in the following corresponding files
 (load "./my-eval-interpret.scm")
 (load "./my-eval-analyze.scm")
-
 
 ;; TODO: `apply` and `eval` should agree
 ;; on the data structure, which means for
@@ -58,9 +59,11 @@
 (define eval-approaches
    (list
     (list 'interpret
-          my-eval-interpret)
+          my-eval-interpret
+          my-apply-interpret)
     (list 'analyze
-          my-eval-analyze)))
+          my-eval-analyze
+          my-apply-analyze)))
 
 ; change this value according
 ;   to change the evaluation approach
@@ -69,6 +72,9 @@
 
 (define my-eval
   (cadr (assoc *my-eval-approach* eval-approaches)))
+
+(define my-apply
+  (caddr (assoc *my-eval-approach* eval-approaches)))
 
 ;; here I have some concerns about using `my-eval` procedure
 ;; in the handlers' implementations,

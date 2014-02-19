@@ -1,4 +1,3 @@
-
 ; procedure datatype
 ; data structure:
 ; * (list 'proc 'primitive <the proc>)
@@ -16,11 +15,18 @@
   (and (proc? proc)
        (eq? (cadr proc) 'compound)))
 
+(define (proc-analyzed-compound? proc)
+  (and (proc? proc)
+       (eq? (cadr proc) 'analyzed-compound)))
+
 (define (make-proc-primitive prim)
   (list 'proc 'primitive prim))
 
 (define (make-procedure vars body env)
   (list 'proc 'compound vars body env))
+
+(define (make-analyzed-procedure vars abody env)
+  (list 'proc 'analyzed-compound vars abody env))
 
 ; fetch the data fields of a procedure
 (define proc-fields cddr)
@@ -28,10 +34,15 @@
 ; accessor for primitive procedures
 (define proc-prim (compose car   proc-fields))
 
-; accessor for compound procedures
+;; accessor for compound procedures
 (define proc-vars (compose car   proc-fields))
 (define proc-body (compose cadr  proc-fields))
 (define proc-env  (compose caddr proc-fields))
+
+;; accessor for analyzed compound procedures
+(define proc-a-vars proc-vars)
+(define proc-a-body proc-body)
+(define proc-a-env  proc-env)
 
 ; application is just a non-empty list
 (define (application? exp)
@@ -61,17 +72,14 @@
     (make-begin body)
     (extend-environment vars args env)))
 
-; my-apply
-(define (my-apply proc args)
-  (define apply-proc
-    (cond ((proc-primitive? proc)
-            apply-proc-primitive)
-          ((proc-compound? proc)
-            apply-proc-compound)
-          (else
-            (error
-              "Unknown procedure type: APPLY" proc))))
-  (apply-proc proc args))
+(define (apply-proc-analyzed-compound proc args)
+  (define vars  (proc-a-vars proc))
+  (define abody (proc-a-body proc))
+  (define env   (proc-a-env  proc))
+
+  (define body-env
+    (extend-environment vars args env))
+  (abody body-env))
 
 (define (test-my-apply)
   (define env1
@@ -87,24 +95,18 @@
     (make-proc-primitive *))
 
   (define proc-id
-    (make-procedure
-      ; args
-      (list 'x)
-      ; body
-      (list 'x)
-      env1))
+    (my-eval
+     `(lambda (x) x)
+     env1))
 
   (define proc-branch
-    (make-procedure
-      ; args
-      (list 'p 'a 'b)
-      ;
-      (list
-        (list 'if 'p 'a 'b))
-      env1))
-  
+    (my-eval
+     `(lambda (p a b)
+        (if p a b))
+     env1))
+
   (my-apply proc-id '(#f))
-  
+
   (define testcases1
     (list
       (mat proc+ '(1 2 3) 6)

@@ -24,10 +24,9 @@
           (bproc (my-analyze (make-begin
                    (lambda-body exp)))))
     (lambda (env)
-      (make-procedure
+      (make-analyzed-procedure
        vars
-       ; TODO: analyze exp
-       (lambda-body exp)
+       bproc
        env))))
 
   (define (test-eval eval-lambda)
