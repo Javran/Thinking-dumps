@@ -75,7 +75,10 @@
   (define (eval-cond exp env)
     (my-eval (cond->if exp) env))
 
-  (define (test)
+  (define (analyze-cond exp)
+    (my-analyze (cond->if exp)))
+
+  (define (test-eval eval-cond)
     (define env
       (init-env))
 
@@ -127,14 +130,21 @@
              (extend-environment
                '(a) '(3) env) 60)
         ))
-    'analyze)
+    'ok)
 
   (define handler
     (make-handler
       'cond
       eval-cond
-      'todo
-      test))
+      analyze-cond
+      (test-both
+       test-eval
+       eval-cond
+       analyze-cond)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
+
