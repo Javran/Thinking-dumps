@@ -46,7 +46,10 @@
   (define (eval-let* exp env)
     (my-eval (let*->nested-lets exp) env))
 
-  (define (test)
+  (define (analyze-let* exp)
+    (my-analyze (let*->nested-lets exp)))
+
+  (define (test-eval eval-let*)
     (let ((env (init-env)))
       (do-test
         eval-let*
@@ -59,14 +62,20 @@
                        (y (+ x 2))    ; y = 5
                        (z (+ x y 5))) ; z = 3 + 5 + 5
                   (* x z)) env 39)))
-      'analyze))
+      'ok))
 
   (define handler
     (make-handler
       'let*
       eval-let*
-      'todo
-      test))
+      analyze-let*
+      (test-both
+       test-eval
+       eval-let*
+       analyze-let*)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
