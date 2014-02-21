@@ -22,7 +22,8 @@
     (define exps (cdr exp))
     ;; we are just doing analysis,
     ;; so don't care too much about efficiency
-    (define analyzed-exps (map my-analyze exps))
+    (define analyzed-exps
+      (map my-analyze exps))
 
     ;; analyze-aux :: [Analyzed] -> Analyzed
     (define (analyze-aux analyzed-exps)
