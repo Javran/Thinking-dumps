@@ -89,7 +89,7 @@
 (install-eval-begin)
 (install-eval-lambda)
 (install-eval-cond)
-;; (install-eval-and)
+(install-eval-and)
 ;; (install-eval-or)
 ;; (install-eval-let)
 ;; (install-eval-let*)

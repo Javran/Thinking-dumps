@@ -18,7 +18,36 @@
                 #f))))
     (eval-and-aux (cdr exp) env))
 
-  (define (test)
+  (define (analyze-and exp)
+    (define exps (cdr exp))
+    ;; we are just doing analysis,
+    ;; so don't care too much about efficiency
+    (define analyzed-exps (map my-analyze exps))
+
+    ;; analyze-aux :: [Analyzed] -> Analyzed
+    (define (analyze-aux analyzed-exps)
+      (if (null? analyzed-exps)
+          ;; (and) => #t
+          ;; (and x (and) => (and x #t) => x
+          (const #t)
+          ;; the benefit of `analyze` is that
+          ;; we only do the analyze once,
+          ;; and then store it somewhere.
+          (let ((hd (car analyzed-exps))
+                (tl (cdr analyzed-exps)))
+            (if (null? (cdr analyzed-exps))
+                ;; a list containing exactly one element
+                hd
+                ;; otherwise, do evaluation as needed.
+                (lambda (env)
+                  (if (true? (hd env))
+                      ;; keep going
+                      ((analyze-aux tl) env)
+                      #f))))))
+
+    (analyze-aux analyzed-exps))
+
+  (define (test-eval eval-and)
     (let ((env (init-env)))
       (do-test
         eval-and
@@ -29,14 +58,20 @@
           (mat '(and 1 2 3 4) env 4)
           (mat '(and 1) env 1)
           ))
-      'analyze))
+      'ok))
 
   (define handler
     (make-handler
       'and
       eval-and
-      'todo
-      test))
+      analyze-and
+      (test-both
+       test-eval
+       eval-and
+       analyze-and)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
