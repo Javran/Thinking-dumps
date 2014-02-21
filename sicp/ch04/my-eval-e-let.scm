@@ -53,7 +53,10 @@
   (define (eval-let exp env)
     (my-eval (let->combination exp) env))
 
-  (define (test)
+  (define (analyze-let exp)
+    (my-analyze (let->combination exp)))
+
+  (define (test-eval eval-let)
     (let ((env (init-env)))
       (do-test
         eval-let
@@ -86,14 +89,20 @@
           (mat `(let proc ((i 1) (acc 0))
                   (if (<= i 100) (proc (+ i 1) (+ i acc)) acc)) env 5050)
           ))
-      'analyze))
+      'ok))
 
   (define handler
     (make-handler
       'let
       eval-let
-      'todo
-      test))
+      analyze-let
+      (test-both
+       test-eval
+       eval-let
+       analyze-let)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:

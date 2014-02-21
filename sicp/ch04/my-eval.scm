@@ -91,7 +91,7 @@
 (install-eval-cond)
 (install-eval-and)
 (install-eval-or)
-;; (install-eval-let)
+(install-eval-let)
 ;; (install-eval-let*)
 ;; (install-eval-letrec)
 ;; (install-eval-analyze)
