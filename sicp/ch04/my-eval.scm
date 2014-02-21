@@ -93,7 +93,7 @@
 (install-eval-or)
 (install-eval-let)
 (install-eval-let*)
-;; (install-eval-letrec)
+(install-eval-letrec)
 ;; (install-eval-analyze)
 
 (if *my-eval-do-test*

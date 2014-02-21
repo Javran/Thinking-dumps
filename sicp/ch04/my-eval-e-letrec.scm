@@ -16,7 +16,10 @@
   (define (eval-letrec exp env)
     (my-eval (letrec->let exp) env))
 
-  (define (test)
+  (define (analyze-letrec exp)
+    (my-analyze (letrec->let exp)))
+
+  (define (test-eval eval-letrec)
     (let ((env (init-env)))
       (do-test
         eval-letrec
@@ -42,14 +45,21 @@
                   (f3 10)) env
                3628800)
           ))
-      'analyze))
+      'ok))
 
   (define handler
     (make-handler
       'letrec
       eval-letrec
-      'todo
-      test))
+      analyze-letrec
+      (test-both
+       test-eval
+       eval-letrec
+       analyze-letrec)))
 
   (handler-register! handler)
   'ok)
+;; Local variables:
+;; proc-entry: "./my-eval.scm"
+;; End:
+
