@@ -37,7 +37,6 @@
 (load "./my-eval-e-let.scm")
 (load "./my-eval-e-let-star.scm")
 (load "./my-eval-e-letrec.scm")
-(load "./my-eval-e-analyze.scm")
 
 ;; evaluation approaches
 ;; notice that the implementation of `apply-<strategy>`
@@ -94,7 +93,6 @@
 (install-eval-let)
 (install-eval-let*)
 (install-eval-letrec)
-;; (install-eval-analyze)
 
 (if *my-eval-do-test*
   (begin
