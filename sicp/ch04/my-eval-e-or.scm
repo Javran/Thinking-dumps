@@ -28,11 +28,14 @@
                 (tl (cdr analyzed-exps)))
             (if (null? (cdr analyzed-exps))
                 hd
-                (lambda (env)
-                  (let ((result (hd env)))
-                    (if (true? result)
-                        result
-                        ((analyze-aux tl) env))))))))
+                (let ((analyzed-tls (analyze-aux tl)))
+                  ;; force it, just making sure.
+                  analyzed-tls
+                  (lambda (env)
+                    (let ((result (hd env)))
+                      (if (true? result)
+                          result
+                          (analyzed-tls env)))))))))
     (analyze-aux analyzed-exps))
 
   (define (test-eval eval-or)

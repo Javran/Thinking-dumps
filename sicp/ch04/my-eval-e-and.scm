@@ -40,11 +40,14 @@
                 ;; a list containing exactly one element
                 hd
                 ;; otherwise, do evaluation as needed.
-                (lambda (env)
-                  (if (true? (hd env))
-                      ;; keep going
-                      ((analyze-aux tl) env)
-                      #f))))))
+                (let ((analyzed-tls (analyze-aux tl)))
+                  ; force it..
+                  analyzed-tls
+                  (lambda (env)
+                    (if (true? (hd env))
+                        ;; keep going
+                        (analyzed-tls env)
+                        #f)))))))
 
     (analyze-aux analyzed-exps))
 
