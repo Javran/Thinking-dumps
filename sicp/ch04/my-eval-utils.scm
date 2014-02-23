@@ -62,5 +62,10 @@
     (do-test (list-tagged-with 't1) testcases)
     (do-test proc testcases)))
 
+(define (my-eval-message fmt . msgs)
+  (let ((message
+         (apply format `(#f ,fmt ,@msgs))))
+    (format #t "; [my-eval]: ~A~%" message)))
+
 (if *my-eval-do-test*
   (test-utils))

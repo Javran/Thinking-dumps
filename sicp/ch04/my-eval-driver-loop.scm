@@ -23,5 +23,9 @@
                '<proc-env>))
     (out object)))
 
-(define (my-eval-start)
+(define (my-eval-start-using-approach approach)
+  (my-eval-select-approach approach)
   (driver-loop (init-env)))
+
+(define (my-eval-start)
+  (my-eval-start-using-approach 'analyze))

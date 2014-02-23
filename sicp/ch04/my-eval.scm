@@ -68,6 +68,8 @@
   'uninitialized)
 
 (define (my-eval-select-approach approach)
+  (my-eval-message
+   "switching to approach: ~A" approach)
   (set! *my-eval-approach* approach)
   (set! my-eval
         (cadr (assoc *my-eval-approach* eval-approaches))))
@@ -113,17 +115,17 @@
 (install-eval-let*)
 (install-eval-letrec)
 
-(my-eval-select-approach 'analyze)
-
 (if *my-eval-do-test*
-  (begin
-    (test-my-apply)
-    (test-init-env)
-    (my-eval-test-installed-handlers)
-    )
-  'skipped)
-
-(format #t "; [my-eval] approach: ~s~%"
-        *my-eval-approach*)
+    ;; test all approaches
+    (for-each
+     (lambda (approach)
+       (begin
+         (my-eval-select-approach approach)
+         (test-my-apply)
+         (test-init-env)
+         (my-eval-test-installed-handlers)
+         ))
+     (map car eval-approaches))
+    'skipped)
 
 (load "./my-eval-driver-loop.scm")
