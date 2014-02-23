@@ -62,10 +62,15 @@
 ; change this value according
 ;   to change the evaluation approach
 (define *my-eval-approach*
-  'analyze)
+  'uninitialized)
 
 (define my-eval
-  (cadr (assoc *my-eval-approach* eval-approaches)))
+  'uninitialized)
+
+(define (my-eval-select-approach approach)
+  (set! *my-eval-approach* approach)
+  (set! my-eval
+        (cadr (assoc *my-eval-approach* eval-approaches))))
 
 ;; here I have some concerns about using `my-eval` procedure
 ;; in the handlers' implementations,
@@ -81,6 +86,20 @@
 ;;   because we don't assume anything more than the representation
 ;;   of environments on the `my-eval`
 
+;; we have some problem with this implementation,
+;; and I think we shouldn't keep `eval` as a global variable
+;; for each handlers to use.
+;; When I design this system, it only assumes support for
+;; `interpret` mode, and as the `analyze` mode comes,
+;; this approach becomes only a `workaround` despite that
+;; it sounds not something really bad.
+
+;; the biggest problem here is:
+;; we can only have one "eval-session",
+;; i.e. we cannot keep two "eval" instances living
+;; without mutating the global variable
+;; (i.e. `*my-eval-approach*` and `my-eval`)
+
 (install-eval-quote)
 (install-eval-define)
 (install-eval-if)
@@ -93,6 +112,8 @@
 (install-eval-let)
 (install-eval-let*)
 (install-eval-letrec)
+
+(my-eval-select-approach 'analyze)
 
 (if *my-eval-do-test*
   (begin
