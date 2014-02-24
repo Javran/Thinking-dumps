@@ -5,7 +5,7 @@ Sorry about that.
 # Mutural recursive procedures
 
 I actually can't see what is the problem.
-As long as we can guarantee that when a procedure is 
+As long as we can guarantee that when a procedure is
 evaluated, the environment contains all the definitions
 needed, everything will be fine.
 
