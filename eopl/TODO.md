@@ -13,4 +13,12 @@
 * exercise 4.31 - will do if time permits
 * exercise 4.34 - will write spec if time permits
 * exercise 4.41 - will do if time permits
-* ex 3.40 .. - define recursive-function / use a recursive ref(in senv)
+* exercise 3.40 .. - use a recursive ref(in senv)
+* exercise 5.10 - don't understand
+* exercise 5.11 - done but with question
+* exercise 5.15 - with do if time permits
+* exercise 5.16 - with do if time permits
+* exercise 5.20 - not sure how to do this
+* exercise 5.21 - will do if time permits
+* exercise 5.22 - will do if time permits
+
