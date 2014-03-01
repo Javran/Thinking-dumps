@@ -19,9 +19,10 @@ Explanation:
 
 * response #1
 
-    Trivial output, no function application is involved,
-    count is initialized to `0` so the result should be `0`.
-
+    I thought the output should be `0` but it turns out I was wrong:
+    unlike what happens in Haskell, `w` gets partially evaluated when
+    we are defining it, the delayed part is only the argument (i.e. `x`)
+    itself. The correct answer would be `1` here.
 
 * response #2
 
