@@ -4,7 +4,7 @@ The output:
     ;;; L-Eval input:
     count
     ;;; L-Eval value:
-    0   ; response #1
+    1   ; response #1
     ;;; L-Eval input:
     w
     ;;; L-Eval value:
