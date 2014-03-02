@@ -1,61 +1,59 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-;; one way to implement memoize a function
-;; might be make a function accept another
-;; "more optimized version" of itself.
-;; Suppose there is a recursive function `f`:
-;;
-;;   (define (f n) ... (f (- n 1)) ...)
-;;
-;; the problem of memoizing this function is:
-;; `f` itself cannot benefit from memoization,
-;; that is, `(f n)` cannot reuse the result
-;; of `(f (- n 1))`, so here we make a room
-;; for the "optimized version of f",
-;; the new style would be:
-;;
-;;   (define (f f1)
-;;     (lambda (n)
-;;       ... (f1 (- n 1)) ...))
+;; it's confusing here what the "memoization"
+;; refers to, it could be "function memoization" or
+;; "thunk memoization".
 
-;; `memoize` takes a function `f`
-;; that accepts another function `f1` as
-;; the `optimized version` of itself.
-(define (memoize f)
-  (let ((retval-alist nil))
-    (define (memoized-f . args)
-      (cond ((assoc args retval-alist) =>
-             cadr)
-            (else
-             (let ((result (apply (f memoized-f) args)))
-               (set! retval-alist
-                     (cons (list args result)
-                           retval-alist))
-               result))))
-    memoized-f))
+(define (thunk-no-memo exp env)
+  (list 'thunk-nm
+        (lambda ()
+          (eval exp env))))
 
-;; Exhibit a program that runs more slowly
+(define (thunk-memo exp env)
+  (let ((data (list 'thunk-m 'unused)))
+    (set-car! (cdr data)
+              (lambda ()
+                (let ((result (eval exp env)))
+                  (set-car! data 'thunk-mv)
+                  (set-car! (cdr data) result)
+                  result)))
+    data))
+
+;; force a thunk,
+;; if variavle `thunk` is not a thunk,
+;; just return it.
+(define (force-th thunk)
+  (if (non-empty? thunk)
+      (case (car thunk)
+        ((thunk-nm thunk-m) ((cadr thunk)))
+        (else (cadr thunk)))
+      thunk))
+
+(define env user-initial-environment)
+
+;; Exhibit a program that runs much more slowly
 ;; without memoization
-(define (fib-aux fib)
-  (lambda (n)
-    (if (<= n 1)
-        n
-        (+ (fib (- n 1))
-           (fib (- n 2))))))
 
-(define (fib n)
-  ((fib-aux fib) n))
+;; a simple example would be just calling
+;; a costly function for multiple times
+(define (gen-costly-thunk thunk-xxx)
+  (thunk-xxx
+  `(fold-left + 0 '(1 1000))
+  env))
 
-(define (fib-1 n)
-  ((memoize fib-aux) n))
+(define (test-thunk-maybe-memo thunk)
+  (for-each
+   (lambda (t)
+     (force-th t))
+   (map (const thunk)
+        (list-in-range 1 1000))))
 
-(time-test fib 25)
-(time-test fib-1 25)
+(time-test test-thunk-maybe-memo (gen-costly-thunk thunk-memo))
+(time-test test-thunk-maybe-memo (gen-costly-thunk thunk-no-memo))
 
-;; here the observation should be that
-;; the first one takes significantly
-;; more time to compute the same thing.
+;; here we expect the version without memoization
+;; to take a significantly longer time to run
 
 (end-script)
 
