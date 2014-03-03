@@ -63,3 +63,12 @@ Cy\'s proposed version fully evaluates a sequence,
 in this case, the value to be forced is just numbers
 without side effects.
 So Cy\'s version makes no difference in terms of program outputs.
+
+# Question d
+
+It is not a bad idea but somehow confusing to make
+the strictness of a sequence depend on the inner procedure\'s strictness.
+
+It might be little more verbose, but I think we should use
+laziness explicitly rather than relying on the underlying mechanism.
+That is, make good use of `delay` and `force`.
