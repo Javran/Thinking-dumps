@@ -13,7 +13,7 @@
 (install-eval-delay)
 (install-eval-force)
 
-(install-eval-define-eea)
+(install-eval-define-eaa)
 
 (newline)
 (out "===== new extensions are inserted, retesting ...")

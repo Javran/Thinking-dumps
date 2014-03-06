@@ -29,6 +29,7 @@
             (lift-primitive-pair 'cdr)
             (lift-primitive-pair 'cons)
             (lift-primitive-pair 'null?)
+            (lift-primitive-pair 'list)
             )))
     (extend-environment
       '(true false)
@@ -62,5 +63,6 @@
         (mat `(cdr '(1 2)) env '(2))
         (mat `(null? '()) env #t)
         (mat `(null? '(1)) env #f)
+        (mat `(list 'a 'b) env '(a b))
         )
       equal?)))
