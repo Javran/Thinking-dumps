@@ -6,10 +6,14 @@
 
 (load "./exercise_4_31_delay_force.scm")
 
+(load "./exercise_4_31_eaa.scm")
+
 (test-promise)
 
 (install-eval-delay)
 (install-eval-force)
+
+(install-eval-define-eea)
 
 (newline)
 (out "===== new extensions are inserted, retesting ...")
