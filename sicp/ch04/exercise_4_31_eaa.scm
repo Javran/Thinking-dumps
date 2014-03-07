@@ -127,6 +127,31 @@
 
   (handler-register! handler)
   'ok)
+
+(define (install-eval-call-eaa)
+
+  (define (eval-call-eaa exp env)
+    'todo)
+
+  (define (analyze-call-eaa exp)
+    'todo)
+
+  (define (test-eval eval-call-eaa)
+    'todo)
+
+  (define handler
+    (make-handler
+     'call-eaa
+     eval-call-eaa
+     analyze-call-eaa
+     (test-both
+      test-eval
+      eval-call-eaa
+      analyze-call-eaa)))
+
+  (handler-register! handler)
+  'ok)
+
 ;; Local variables:
 ;; proc-entry: "./exercise_4_31.scm"
 ;; End:
