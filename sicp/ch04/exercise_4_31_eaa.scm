@@ -130,14 +130,81 @@
 
 (define (install-eval-call-eaa)
 
+  (define call-eaa-proc-exp cadr)
+  (define call-eaa-arg-exps cddr)
+
+  ;; we can not make decision about
+  ;; how to do the transformation until
+  ;; we evaluate the proc and get back the spec
+  (define (call-eaa->proc-app exp env)
+
+    ;; this auxiluary function
+    ;; uses the annotation to do the transformation
+    ;; on the argument expressions, and then
+    ;; evaluate each transformed expressions
+    ;; so they will be ready to be applied.
+    (define (annot-argexp->transformed
+             annot argexp)
+      (case (cadr annot)
+        ((call-by-value) argexp)
+        ((call-by-name) `(lambda () ,argexp))
+        ((call-by-need) `(delay ,argexp))
+        (else (error "unknown annotation:"
+                     annot))))
+
+    (let ((proc-exp (call-eaa-proc-exp exp))
+          (arg-exps (call-eaa-arg-exps exp)))
+      (let ((proc-val (my-eval proc-exp env)))
+        (if (and (list? proc-val)
+                 (= (length proc-val) 3)
+                 (eq? (car proc-val) 'proc-eaa))
+            ;; if call-eaa is called on the right structure
+            (let ((wrapped-proc (caddr proc-val))
+                  (annotations  (cadr  proc-val)))
+              (let ((transformed-arg-exps
+                     (map annot-argexp->transformed
+                          annotations
+                          arg-exps)))
+                (let ((transformed-args
+                       (map (lambda (exp)
+                              (my-eval exp env))
+                            transformed-arg-exps)))
+                  (my-apply wrapped-proc transformed-args))))
+            ;; otherwise, the structure is invalid
+            (error "invalid data for call-eaa:"
+                   exp)))))
+
   (define (eval-call-eaa exp env)
-    'todo)
+    (call-eaa->proc-app exp env))
 
   (define (analyze-call-eaa exp)
-    'todo)
+    (lambda (env)
+      (call-eaa->proc-app exp env)))
 
   (define (test-eval eval-call-eaa)
-    'todo)
+    ;; we use the same example used in `define-eaa`
+    ;; but `call-eaa` will take care of the transformation
+    (define env (init-env))
+
+    (define sample-1
+      `(define-eaa (f1 a (b lazy) c (d lazy-memo))
+         (+ a (b) c (force d))))
+
+    (define sample-2
+      `(define-eaa (f2 a (b lazy) (c lazy-memo))
+         (- a (b) (force c))))
+
+    (my-eval sample-1 env)
+    (my-eval sample-2 env)
+
+    (do-test
+     eval-call-eaa
+     (list
+      (mat `(call-eaa f1 1 2 3 4) env 10)
+      (mat `(call-eaa f2 10 8 3) env -1)
+      ))
+
+    'ok)
 
   (define handler
     (make-handler

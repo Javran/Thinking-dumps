@@ -14,6 +14,7 @@
 (install-eval-force)
 
 (install-eval-define-eaa)
+(install-eval-call-eaa)
 
 (newline)
 (out "===== new extensions are inserted, retesting ...")
@@ -70,6 +71,29 @@
 ;;   which will eventually be transformed to:
 ;;
 ;;   (proc a (lambda () b) c (delay d))
+
+(out "An example:")
+
+(define env (init-env))
+(define code
+  `(define-eaa (f a (b lazy) c (d lazy-memo))
+     (- (- a (b))
+         (- c (force d)))))
+
+(my-eval code env)
+
+(out "Code:")
+(pretty-print code)(newline)
+
+(out "Apply with: 10 20 30 40")
+(out "Actual result:")
+
+(out (my-eval `(call-eaa f 12 34 77 88)
+              env))
+
+(out "Expected result:"
+     (- (- 12 34)
+        (- 77 88)))
 
 (end-script)
 
