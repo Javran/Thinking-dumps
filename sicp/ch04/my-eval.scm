@@ -115,17 +115,20 @@
 (install-eval-let*)
 (install-eval-letrec)
 
+(define (my-eval-test-all)
+  (for-each
+   (lambda (approach)
+     (begin
+       (my-eval-select-approach approach)
+       (test-my-apply)
+       (test-init-env)
+       (my-eval-test-installed-handlers)
+       ))
+   (map car eval-approaches)))
+
 (if *my-eval-do-test*
     ;; test all approaches
-    (for-each
-     (lambda (approach)
-       (begin
-         (my-eval-select-approach approach)
-         (test-my-apply)
-         (test-init-env)
-         (my-eval-test-installed-handlers)
-         ))
-     (map car eval-approaches))
+    (my-eval-test-all)
     'skipped)
 
 (load "./my-eval-driver-loop.scm")
