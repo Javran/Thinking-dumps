@@ -15,3 +15,8 @@
     We can implement `cons` as a non-primitive, as long as the evaluator
     is lazy (Therefore apply arguments to `(define (cons x y) ...)` will not
     the evaluation of `x` and `y`).
+
+    Advantage: lists and streams are identical, no more `delay` and `force` trick
+
+    Disadvantage: more unpredictable, hard to answer when will an expression
+    be evalautated.
