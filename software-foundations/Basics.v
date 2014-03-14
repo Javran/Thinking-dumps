@@ -237,8 +237,12 @@ Proof.
 Theorem plus_id_exercise : forall n m o : nat,
   n = m -> m = o -> n + m = m + o.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m o.
+  intros Hnm Hmo.
+  rewrite -> Hnm.
+  rewrite <- Hmo.
+  reflexivity.
+  Qed.
 
 (** As we've seen in earlier examples, the [Admitted] command
     tells Coq that we want to skip trying to prove this theorem and
@@ -267,7 +271,11 @@ Theorem mult_S_1 : forall n m : nat,
   m = S n -> 
   m * (1 + n) = m * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m.
+  intros H.
+  rewrite -> plus_1_l.
+  rewrite <- H.
+  reflexivity. Qed.
 (** [] *)
 
 
@@ -353,7 +361,9 @@ Proof.
 Theorem zero_nbeq_plus_1 : forall n : nat,
   beq_nat 0 (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. destruct n as [|n'].
+  reflexivity.
+  reflexivity. Qed.
 (** [] *)
 
 (* ###################################################################### *)
@@ -368,13 +378,26 @@ Theorem identity_fn_applied_twice :
   (forall (x : bool), f x = x) ->
   forall (b : bool), f (f b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f Hfix b.
+  rewrite -> Hfix.
+  rewrite -> Hfix.
+  reflexivity. Qed.
 
 (** Now state and prove a theorem [negation_fn_applied_twice] similar
     to the previous one but where the second hypothesis says that the
     function [f] has the property that [f x = negb x].*)
-
-(* FILL IN HERE *)
+Theorem negation_fn_applied_twice :
+  forall (f : bool -> bool), 
+  (forall (x : bool), f x = negb x) ->
+  forall (b : bool), f (f b) = b.
+Proof.
+  intros f Hnot b.
+  rewrite -> Hnot.
+  rewrite -> Hnot.
+  destruct b.
+  reflexivity.
+  reflexivity.
+  Qed.
 
 (** **** Exercise: 2 stars (andb_eq_orb) *)
 (** Prove the following theorem.  (You may want to first prove a
@@ -385,7 +408,16 @@ Theorem andb_eq_orb :
   (andb b c = orb b c) ->
   b = c.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c.
+  destruct b.
+  simpl.
+  intro H.
+  rewrite -> H.
+  reflexivity.
+  simpl.
+  intro H.
+  exact H.
+  Qed.
 
 (** **** Exercise: 3 stars (binary) *)
 (** Consider a different, more efficient representation of natural
@@ -422,43 +454,56 @@ Proof.
         converting it to unary and then incrementing. 
 *)
 
-(* FILL IN HERE *)
+Inductive bin : Type :=
+  | Zero : bin
+  | Twice : bin -> bin
+  | Onemore : bin -> bin.
+
+Fixpoint bin_succ (n : bin) : bin :=
+  match n with
+  (* 0 + 1 = 1 *)
+  | Zero => Onemore Zero
+  (* 2*x + 1 = (2*x) + 1 *)
+  | Twice n' => Onemore n'
+  (* (2*x + 1) + 1 = 2 *(x + 1) *)
+  | Onemore n' => Twice (bin_succ n')
+  end.
+
+Fixpoint bin_to_unary (n : bin) : nat :=
+  match n with
+  | Zero => O
+  | Twice n' => bin_to_unary(n') + bin_to_unary(n')
+  | Onemore n' => S (bin_to_unary n')
+  end.
+
+Example bin_to_unary_test1 : bin_to_unary Zero = 0.
+Proof. reflexivity. Qed.
+Example bin_to_unary_test2 : bin_to_unary (Twice (Onemore Zero)) = 2.
+Proof. reflexivity. Qed.
+Example bin_to_unary_test3 : bin_to_unary (Onemore (Twice (Onemore Zero))) = 3.
+Proof. reflexivity. Qed.
+
+Example bin_succ_test1 :
+  bin_to_unary (bin_succ (Twice (Twice Zero))) =
+  bin_to_unary (Onemore Zero).
+Proof. reflexivity. Qed.
+
+Example bin_succ_test2 :
+  bin_to_unary (bin_succ (Twice (Onemore Zero))) =
+  bin_to_unary (Onemore (Onemore Zero)).
+Proof. reflexivity. Qed.
+
+Example bin_succ_test3 :
+  bin_to_unary (bin_succ (Onemore (Twice (Onemore Zero)))) =
+  bin_to_unary (Twice (Onemore (Onemore Zero))).
+Proof. simpl. reflexivity. Qed.
+
+(* todo: eq notation for bin *)
+
 (** [] *)
 
 (* ###################################################################### *)
 (** * Optional Material *)
-
-(** ** More on Notation *)
-
-Notation "x + y" := (plus x y)  
-                       (at level 50, left associativity) 
-                       : nat_scope.
-Notation "x * y" := (mult x y)  
-                       (at level 40, left associativity) 
-                       : nat_scope.
-
-(** For each notation-symbol in Coq we can specify its _precedence level_
-    and its _associativity_. The precedence level n can be specified by the
-    keywords [at level n] and it is helpful to disambiguate
-    expressions containing different symbols. The associativity is helpful
-    to disambiguate expressions containing more occurrences of the same 
-    symbol. For example, the parameters specified above for [+] and [*]
-    say that the expression [1+2*3*4] is a shorthand for the expression
-    [(1+((2*3)*4))]. Coq uses precedence levels from 0 to 100, and 
-    _left_, _right_, or _no_ associativity.
-
-    Each notation-symbol in Coq is also active in a _notation scope_.  
-    Coq tries to guess what scope you mean, so when you write [S(O*O)] 
-    it guesses [nat_scope], but when you write the cartesian
-    product (tuple) type [bool*bool] it guesses [type_scope].
-    Occasionally you have to help it out with percent-notation by
-    writing [(x*y)%nat], and sometimes in Coq's feedback to you it
-    will use [%nat] to indicate what scope a notation is in.
-
-    Notation scopes also apply to numeral notation (3,4,5, etc.), so you
-    may sometimes see [0%nat] which means [O], or [0%Z] which means the
-    Integer zero.
-*)
 
 (** ** [Fixpoint]s and Structural Recursion *)
 
