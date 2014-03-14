@@ -5,216 +5,6 @@
    Please ignore. *)
 Definition admit {T: Type} : T.  Admitted.
 
-(* ###################################################################### *)
-(** * Introduction *)
-
-(** The functional programming style brings programming closer to
-    mathematics: If a procedure or method has no side effects, then
-    pretty much all you need to understand about it is how it maps
-    inputs to outputs -- that is, you can think of its behavior as
-    just computing a mathematical function.  This is one reason for
-    the word "functional" in "functional programming."  This direct
-    connection between programs and simple mathematical objects
-    supports both sound informal reasoning and formal proofs of
-    correctness.
-
-    The other sense in which functional programming is "functional" is
-    that it emphasizes the use of functions (or methods) as
-    _first-class_ values -- i.e., values that can be passed as
-    arguments to other functions, returned as results, stored in data
-    structures, etc.  The recognition that functions can be treated as
-    data in this way enables a host of useful idioms, as we will see.
-
-    Other common features of functional languages include _algebraic
-    data types_ and _pattern matching_, which make it easy to construct
-    and manipulate rich data structures, and sophisticated
-    _polymorphic type systems_ that support abstraction and code
-    reuse.  Coq shares all of these features.
-*)
-
-
-(* ###################################################################### *)
-(** * Enumerated Types *)
-
-(** One unusual aspect of Coq is that its set of built-in
-    features is _extremely_ small.  For example, instead of providing
-    the usual palette of atomic data types (booleans, integers,
-    strings, etc.), Coq offers an extremely powerful mechanism for
-    defining new data types from scratch -- so powerful that all these
-    familiar types arise as instances.  
-
-    Naturally, the Coq distribution comes with an extensive standard
-    library providing definitions of booleans, numbers, and many
-    common data structures like lists and hash tables.  But there is
-    nothing magic or primitive about these library definitions: they
-    are ordinary user code.
-
-    To see how this works, let's start with a very simple example. *)
-
-(* ###################################################################### *)
-(** ** Days of the Week *)
-
-(** The following declaration tells Coq that we are defining
-    a new set of data values -- a _type_. *)
-
-Inductive day : Type :=
-  | monday : day
-  | tuesday : day
-  | wednesday : day
-  | thursday : day
-  | friday : day
-  | saturday : day
-  | sunday : day.
-
-(** The type is called [day], and its members are [monday],
-    [tuesday], etc.  The second through eighth lines of the definition
-    can be read "[monday] is a [day], [tuesday] is a [day], etc."
-
-    Having defined [day], we can write functions that operate on
-    days. *)
-
-Definition next_weekday (d:day) : day :=
-  match d with
-  | monday    => tuesday
-  | tuesday   => wednesday
-  | wednesday => thursday
-  | thursday  => friday
-  | friday    => monday
-  | saturday  => monday
-  | sunday    => monday
-  end.
-
-(** One thing to note is that the argument and return types of
-    this function are explicitly declared.  Like most functional
-    programming languages, Coq can often work out these types even if
-    they are not given explicitly -- i.e., it performs some _type
-    inference_ -- but we'll always include them to make reading
-    easier. *)
-
-(** Having defined a function, we should check that it works on
-    some examples.  There are actually three different ways to do this
-    in Coq.  First, we can use the command [Eval compute] to evaluate a
-    compound expression involving [next_weekday].  *)
-
-Eval compute in (next_weekday friday).
-   (* ==> monday : day *)
-Eval compute in (next_weekday (next_weekday saturday)).
-   (* ==> tuesday : day *)
-
-(** If you have a computer handy, now would be an excellent
-    moment to fire up the Coq interpreter under your favorite IDE --
-    either CoqIde or Proof General -- and try this for yourself.  Load
-    this file ([Basics.v]) from the book's accompanying Coq sources,
-    find the above example, submit it to Coq, and observe the
-    result. *)
-
-(** The keyword [compute] tells Coq precisely how to
-    evaluate the expression we give it.  For the moment, [compute] is
-    the only one we'll need; later on we'll see some alternatives that
-    are sometimes useful. *)
-
-(** Second, we can record what we _expect_ the result to be in
-    the form of a Coq example: *)
-
-Example test_next_weekday:
-  (next_weekday (next_weekday saturday)) = tuesday.
-
-(** This declaration does two things: it makes an
-    assertion (that the second weekday after [saturday] is [tuesday]),
-    and it gives the assertion a name that can be used to refer to it
-    later. *)
-(** Having made the assertion, we can also ask Coq to verify it,
-    like this: *)
-
-Proof. simpl. reflexivity.  Qed.
-
-
-(** The details are not important for now (we'll come back to
-    them in a bit), but essentially this can be read as "The assertion
-    we've just made can be proved by observing that both sides of the
-    equality evaluate to the same thing, after some simplification." *)
-
-(** Third, we can ask Coq to "extract," from a [Definition], a
-    program in some other, more conventional, programming
-    language (OCaml, Scheme, or Haskell) with a high-performance
-    compiler.  This facility is very interesting, since it gives us a
-    way to construct _fully certified_ programs in mainstream
-    languages.  Indeed, this is one of the main uses for which Coq was
-    developed.  We'll come back to this topic in later chapters.
-    More information can also be found in the Coq'Art book by Bertot
-    and Casteran, as well as the Coq reference manual. *)
-
-
-(* ###################################################################### *)
-(** ** Booleans *)
-
-(** In a similar way, we can define the type [bool] of booleans,
-    with members [true] and [false]. *)
-
-Inductive bool : Type :=
-  | true : bool
-  | false : bool.
-
-(** Although we are rolling our own booleans here for the sake
-    of building up everything from scratch, Coq does, of course,
-    provide a default implementation of the booleans in its standard
-    library, together with a multitude of useful functions and
-    lemmas.  (Take a look at [Coq.Init.Datatypes] in the Coq library
-    documentation if you're interested.)  Whenever possible, we'll
-    name our own definitions and theorems so that they exactly
-    coincide with the ones in the standard library. *)
-
-(** Functions over booleans can be defined in the same way as
-    above: *)
-
-Definition negb (b:bool) : bool := 
-  match b with
-  | true => false
-  | false => true
-  end.
-
-Definition andb (b1:bool) (b2:bool) : bool := 
-  match b1 with 
-  | true => b2 
-  | false => false
-  end.
-
-Definition orb (b1:bool) (b2:bool) : bool := 
-  match b1 with 
-  | true => true
-  | false => b2
-  end.
-
-(** The last two illustrate the syntax for multi-argument
-    function definitions. *)
-
-(** The following four "unit tests" constitute a complete
-    specification -- a truth table -- for the [orb] function: *)
-
-Example test_orb1:  (orb true  false) = true. 
-Proof. reflexivity.  Qed.
-Example test_orb2:  (orb false false) = false.
-Proof. reflexivity.  Qed.
-Example test_orb3:  (orb false true)  = true.
-Proof. reflexivity.  Qed.
-Example test_orb4:  (orb true  true)  = true.
-Proof. reflexivity.  Qed.
-
-(** (Note that we've dropped the [simpl] in the proofs.  It's not
-    actually needed because [reflexivity] will automatically perform
-    simplification.) *)
-
-(** _A note on notation_: We use square brackets to delimit
-    fragments of Coq code in comments in .v files; this convention,
-    also used by the [coqdoc] documentation tool, keeps them visually
-    separate from the surrounding text.  In the html version of the
-    files, these pieces of text appear in a [different font]. *)
-
-(** The values [Admitted] and [admit] can be used to fill
-    a hole in an incomplete definition or proof.  We'll use them in the
-    following exercises.  In general, your job in the exercises is 
-    to replace [admit] or [Admitted] with real definitions or proofs. *)
-
 (** **** Exercise: 1 star (nandb) *)
 (** Complete the definition of the following function, then make
     sure that the [Example] assertions below can each be verified by
@@ -224,19 +14,16 @@ Proof. reflexivity.  Qed.
     its inputs are [false]. *)
 
 Definition nandb (b1:bool) (b2:bool) : bool :=
-  (* FILL IN HERE *) admit.
-
-(** Remove "[Admitted.]" and fill in each proof with 
-    "[Proof. reflexivity. Qed.]" *)
+  negb (andb b1 b2).
 
 Example test_nandb1:               (nandb true false) = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_nandb2:               (nandb false false) = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_nandb3:               (nandb false true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_nandb4:               (nandb true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (andb3) *)
@@ -245,230 +32,17 @@ Example test_nandb4:               (nandb true true) = false.
     otherwise. *)
 
 Definition andb3 (b1:bool) (b2:bool) (b3:bool) : bool :=
-  (* FILL IN HERE *) admit.
+  andb (andb b1 b2) b3.
 
 Example test_andb31:                 (andb3 true true true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_andb32:                 (andb3 false true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_andb33:                 (andb3 true false true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_andb34:                 (andb3 true true false) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
-
-(* ###################################################################### *)
-(** ** Function Types *)
-
-(** The [Check] command causes Coq to print the type of an
-    expression.  For example, the type of [negb true] is [bool]. *)
-
-Check true.
-(* ===> true : bool *)
-Check (negb true).
-(* ===> negb true : bool *)
-
-(** Functions like [negb] itself are also data values, just like
-    [true] and [false].  Their types are called _function types_, and
-    they are written with arrows. *)
-
-Check negb.
-(* ===> negb : bool -> bool *)
-
-(** The type of [negb], written [bool -> bool] and pronounced
-    "[bool] arrow [bool]," can be read, "Given an input of type
-    [bool], this function produces an output of type [bool]."
-    Similarly, the type of [andb], written [bool -> bool -> bool], can
-    be read, "Given two inputs, both of type [bool], this function
-    produces an output of type [bool]." *)
-
-(* ###################################################################### *)
-(** ** Numbers *)
-
-(** _Technical digression_: Coq provides a fairly sophisticated
-    _module system_, to aid in organizing large developments.  In this
-    course we won't need most of its features, but one is useful: If
-    we enclose a collection of declarations between [Module X] and
-    [End X] markers, then, in the remainder of the file after the
-    [End], these definitions will be referred to by names like [X.foo]
-    instead of just [foo].  Here, we use this feature to introduce the
-    definition of the type [nat] in an inner module so that it does
-    not shadow the one from the standard library. *)
-
-Module Playground1.
-
-(** The types we have defined so far are examples of "enumerated
-    types": their definitions explicitly enumerate a finite set of
-    elements.  A more interesting way of defining a type is to give a
-    collection of "inductive rules" describing its elements.  For
-    example, we can define the natural numbers as follows: *)
-
-Inductive nat : Type :=
-  | O : nat
-  | S : nat -> nat.
-
-(** The clauses of this definition can be read: 
-      - [O] is a natural number (note that this is the letter "[O]," not
-        the numeral "[0]").
-      - [S] is a "constructor" that takes a natural number and yields
-        another one -- that is, if [n] is a natural number, then [S n]
-        is too.
-
-    Let's look at this in a little more detail.  
-
-    Every inductively defined set ([day], [nat], [bool], etc.) is
-    actually a set of _expressions_.  The definition of [nat] says how
-    expressions in the set [nat] can be constructed:
-
-    - the expression [O] belongs to the set [nat]; 
-    - if [n] is an expression belonging to the set [nat], then [S n]
-      is also an expression belonging to the set [nat]; and
-    - expressions formed in these two ways are the only ones belonging
-      to the set [nat].
-
-    The same rules apply for our definitions of [day] and [bool]. The
-    annotations we used for their constructors are analogous to the
-    one for the [O] constructor, and indicate that each of those
-    constructors doesn't take any arguments. *)
-
-(** These three conditions are the precise force of the
-    [Inductive] declaration.  They imply that the expression [O], the
-    expression [S O], the expression [S (S O)], the expression
-    [S (S (S O))], and so on all belong to the set [nat], while other
-    expressions like [true], [andb true false], and [S (S false)] do
-    not.
-
-    We can write simple functions that pattern match on natural
-    numbers just as we did above -- for example, the predecessor
-    function: *)
-
-Definition pred (n : nat) : nat :=
-  match n with
-    | O => O
-    | S n' => n'
-  end.
-
-(** The second branch can be read: "if [n] has the form [S n']
-    for some [n'], then return [n']."  *)
-
-End Playground1.
-
-Definition minustwo (n : nat) : nat :=
-  match n with
-    | O => O
-    | S O => O
-    | S (S n') => n'
-  end.
-
-(** Because natural numbers are such a pervasive form of data,
-    Coq provides a tiny bit of built-in magic for parsing and printing
-    them: ordinary arabic numerals can be used as an alternative to
-    the "unary" notation defined by the constructors [S] and [O].  Coq
-    prints numbers in arabic form by default: *)
-
-Check (S (S (S (S O)))).
-Eval simpl in (minustwo 4).
-
-(** The constructor [S] has the type [nat -> nat], just like the
-    functions [minustwo] and [pred]: *)
-
-Check S.
-Check pred.
-Check minustwo.
-
-(** These are all things that can be applied to a number to yield a
-    number.  However, there is a fundamental difference: functions
-    like [pred] and [minustwo] come with _computation rules_ -- e.g.,
-    the definition of [pred] says that [pred 2] can be simplified to
-    [1] -- while the definition of [S] has no such behavior attached.
-    Although it is like a function in the sense that it can be applied
-    to an argument, it does not _do_ anything at all! *)
-
-(** For most function definitions over numbers, pure pattern
-    matching is not enough: we also need recursion.  For example, to
-    check that a number [n] is even, we may need to recursively check
-    whether [n-2] is even.  To write such functions, we use the
-    keyword [Fixpoint]. *)
-
-Fixpoint evenb (n:nat) : bool :=
-  match n with
-  | O        => true
-  | S O      => false
-  | S (S n') => evenb n'
-  end.
-
-(** We can define [oddb] by a similar [Fixpoint] declaration, but here
-    is a simpler definition that will be a bit easier to work with: *)
-
-Definition oddb (n:nat) : bool   :=   negb (evenb n).
-
-Example test_oddb1:    (oddb (S O)) = true.
-Proof. reflexivity.  Qed.
-Example test_oddb2:    (oddb (S (S (S (S O))))) = false.
-Proof. reflexivity.  Qed.
-
-(** Naturally, we can also define multi-argument functions by
-    recursion.  (Once again, we use a module to avoid polluting the
-    namespace.) *)
-
-Module Playground2.
-
-Fixpoint plus (n : nat) (m : nat) : nat :=
-  match n with
-    | O => m
-    | S n' => S (plus n' m)
-  end.
-
-(** Adding three to two now gives us five, as we'd expect. *)
-
-Eval simpl in (plus (S (S (S O))) (S (S O))).
-
-(** The simplification that Coq performs to reach this conclusion can
-    be visualized as follows: *)
-
-(*  [plus (S (S (S O))) (S (S O))]    
-==> [S (plus (S (S O)) (S (S O)))] by the second clause of the [match]
-==> [S (S (plus (S O) (S (S O))))] by the second clause of the [match]
-==> [S (S (S (plus O (S (S O)))))] by the second clause of the [match]
-==> [S (S (S (S (S O))))]          by the first clause of the [match]
-*)
-
-(** As a notational convenience, if two or more arguments have
-    the same type, they can be written together.  In the following
-    definition, [(n m : nat)] means just the same as if we had written
-    [(n : nat) (m : nat)]. *)
-
-Fixpoint mult (n m : nat) : nat :=
-  match n with
-    | O => O
-    | S n' => plus m (mult n' m)
-  end.
-
-Example test_mult1: (mult 3 3) = 9.
-Proof. reflexivity.  Qed.
-
-(** You can match two expressions at once by putting a comma
-    between them: *)
-
-Fixpoint minus (n m:nat) : nat :=
-  match n, m with
-  | O   , _    => O
-  | S _ , O    => n
-  | S n', S m' => minus n' m'
-  end.
-
-(** The _ in the first line is a _wildcard pattern_.  Writing _ in a
-    pattern is the same as writing some variable that doesn't get used
-    on the right-hand side.  This avoids the need to invent a bogus
-    variable name. *)
-
-End Playground2.
-
-Fixpoint exp (base power : nat) : nat :=
-  match power with
-    | O => S O
-    | S p => mult base (exp base p)
-  end.
 
 (** **** Exercise: 1 star (factorial) *)
 (** Recall the standard factorial function:
@@ -479,47 +53,16 @@ Fixpoint exp (base power : nat) : nat :=
     Translate this into Coq. *)
 
 Fixpoint factorial (n:nat) : nat := 
-(* FILL IN HERE *) admit.
+  match n with
+  | O => S O
+  | S n' => mult n (factorial n')
+  end.
 
 Example test_factorial1:          (factorial 3) = 6.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_factorial2:          (factorial 5) = (mult 10 12).
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
-
-(** We can make numerical expressions a little easier to read and
-    write by introducing "notations" for addition, multiplication, and
-    subtraction. *)
-
-Notation "x + y" := (plus x y)  
-                       (at level 50, left associativity) 
-                       : nat_scope.
-Notation "x - y" := (minus x y)  
-                       (at level 50, left associativity) 
-                       : nat_scope.
-Notation "x * y" := (mult x y)  
-                       (at level 40, left associativity) 
-                       : nat_scope.
-
-Check ((0 + 1) + 1).
-
-(** (The [level], [associativity], and [nat_scope] annotations
-   control how these notations are treated by Coq's parser.  The
-   details are not important, but interested readers can refer to the
-   "More on Notation" subsection in the "Optional Material" section at
-   the end of this chapter.) *)
-
-(** Note that these do not change the definitions we've already
-    made: they are simply instructions to the Coq parser to accept [x
-    + y] in place of [plus x y] and, conversely, to the Coq
-    pretty-printer to display [plus x y] as [x + y]. *)
-
-(** When we say that Coq comes with nothing built-in, we really
-    mean it: even equality testing for numbers is a user-defined
-    operation! *)
-(** The [beq_nat] function tests [nat]ural numbers for [eq]uality,
-    yielding a [b]oolean.  Note the use of nested [match]es (we could
-    also have used a simultaneous match, as we did in [minus].)  *)
 
 Fixpoint beq_nat (n m : nat) : bool :=
   match n with
@@ -546,13 +89,6 @@ Fixpoint ble_nat (n m : nat) : bool :=
       end
   end.
 
-Example test_ble_nat1:             (ble_nat 2 2) = true.
-Proof. reflexivity.  Qed.
-Example test_ble_nat2:             (ble_nat 2 4) = true.
-Proof. reflexivity.  Qed.
-Example test_ble_nat3:             (ble_nat 4 2) = false.
-Proof. reflexivity.  Qed.
-
 (** **** Exercise: 2 stars (blt_nat) *)
 (** The [blt_nat] function tests [nat]ural numbers for [l]ess-[t]han,
     yielding a [b]oolean.  Instead of making up a new [Fixpoint] for
@@ -563,14 +99,14 @@ Proof. reflexivity.  Qed.
     simple, elegant solution for which [simpl] suffices. *)
 
 Definition blt_nat (n m : nat) : bool :=
-  (* FILL IN HERE *) admit.
+  ble_nat (S n) m.
 
 Example test_blt_nat1:             (blt_nat 2 2) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_blt_nat2:             (blt_nat 2 4) = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_blt_nat3:             (blt_nat 4 2) = false.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (* ###################################################################### *)
