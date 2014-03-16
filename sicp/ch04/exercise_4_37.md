@@ -13,3 +13,6 @@ before going down to the deeper search space.
 However, these optimizations does not do much in terms of
 narrowing down the search space, what is really important
 is that we no longer need to blindly try `k`, which is a big win.
+
+FYI: I wrote a program in Haskell to demonstrate the similarity
+between "list monad" and "amb". Please check out `./exercise_4_37.hs`.
