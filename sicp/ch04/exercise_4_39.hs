@@ -13,6 +13,8 @@
   To show that the search space will be impacted by changing the position
   of a constraint, see the definitiion of `demoSearchSpaceEffect`
   in the following code.
+
+  `demoCondOrder` shows that the order of constraint matters
 -}
 
 import Control.Monad (guard)
@@ -169,16 +171,79 @@ puzzleSolutions2 = do
            , ("Smith", smith)
            ]
 
+puzzleSolutions3 :: ListT (Writer [Int]) [(String, Int)]
+puzzleSolutions3 = do
+    let floors = ListT (return [1..5])
+    let record x = lift $ tell [x]
+
+    baker    <- floors
+    cooper   <- floors
+    fletcher <- floors
+    miller   <- floors
+    smith    <- floors
+
+    -- live on different floors
+    guard (distinct [baker, cooper, fletcher, miller, smith])
+    record 1
+
+    -- Baker does not live on the top floor
+    guard (baker /= 5)
+    record 2
+
+    -- Cooper does not live on the bottom floor
+    guard (cooper /= 1)
+    record 3
+
+    -- Fletcher does not live on either the top or the bottom floor
+    guard (fletcher /= 1 && fletcher /= 5)
+    record 4
+
+    -- Miller lives on a higher floor than does Cooper
+    guard (miller > cooper)
+    record 5
+
+    -- Smith does not live on a floor adjacent to Fletcher's
+    guard (abs (smith - fletcher) > 1)
+    record 6
+
+    -- Fletcher does not live on a floor adjacent to Cooper's
+    guard (abs (fletcher - cooper) > 1)
+    record 7
+
+    return [ ("Baker", baker)
+           , ("Cooper", cooper)
+           , ("Fletcher", fletcher)
+           , ("Miller", miller)
+           , ("Smith", smith)
+           ]
+
 freqCount :: Ord a => [a] -> [(a,Int)]
 freqCount xs = map (head &&& length) $ group $ sort xs
 
 main :: IO ()
 main = do
     demoSearchSpaceEffect
+    demoCondOrder
+
+demoCondOrder :: IO ()
+demoCondOrder = do
+    -- the only difference is that the order of constraints are changed
     let (answers1, records1) = runWriter $ runListT puzzleSolutions1
         (answers2, records2) = runWriter $ runListT puzzleSolutions2
+        (answers3, records3) = runWriter $ runListT puzzleSolutions3
 
+    -- we observe how the search space decreases by logging whenever
+    -- a guard is passed.
     print answers1
     print answers2
+    print answers3
+
+    -- then we count frequence to see after each guard, how many possibilities
+    -- are remained.
     print $ freqCount records1
+    -- output: [(1,120),(2,96),(3,78),(4,42),(5,15),(6,8),(7,1)]
     print $ freqCount records2
+    -- output: [(1,1500),(2,750),(3,36),(4,32),(5,25),(6,7),(7,1)]
+    print $ freqCount records3
+
+    -- we can see that the first one is better
