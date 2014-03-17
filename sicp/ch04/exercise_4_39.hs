@@ -16,7 +16,11 @@
 -}
 
 import Control.Monad (guard)
-import Data.List (nub)
+import Data.List
+
+import Control.Monad.List
+import Control.Monad.Writer
+import Control.Arrow
 
 demoSearchSpaceEffect :: IO ()
 demoSearchSpaceEffect = do
@@ -73,9 +77,10 @@ distinct xs = length xs == length ys
     where
         ys = nub xs
 
-puzzleSolutions :: [[(String, Int)]]
-puzzleSolutions = do
-    let floors = [1..5]
+puzzleSolutions1 :: ListT (Writer [Int]) [(String, Int)]
+puzzleSolutions1 = do
+    let floors = ListT (return [1..5])
+    let record x = lift $ tell [x]
 
     baker    <- floors
     cooper   <- floors
@@ -85,24 +90,31 @@ puzzleSolutions = do
 
     -- live on different floors
     guard (distinct [baker, cooper, fletcher, miller, smith])
+    record 1
 
     -- Baker does not live on the top floor
     guard (baker /= 5)
+    record 2
 
     -- Cooper does not live on the bottom floor
     guard (cooper /= 1)
+    record 3
 
     -- Fletcher does not live on either the top or the bottom floor
     guard (fletcher /= 1 && fletcher /= 5)
+    record 4
 
     -- Miller lives on a higher floor than does Cooper
     guard (miller > cooper)
+    record 5
 
     -- Smith does not live on a floor adjacent to Fletcher's
     guard (abs (smith - fletcher) > 1)
+    record 6
 
     -- Fletcher does not live on a floor adjacent to Cooper's
     guard (abs (fletcher - cooper) > 1)
+    record 7
 
     return [ ("Baker", baker)
            , ("Cooper", cooper)
@@ -111,9 +123,62 @@ puzzleSolutions = do
            , ("Smith", smith)
            ]
 
+puzzleSolutions2 :: ListT (Writer [Int]) [(String, Int)]
+puzzleSolutions2 = do
+    let floors = ListT (return [1..5])
+    let record x = lift $ tell [x]
+
+    baker    <- floors
+    cooper   <- floors
+    fletcher <- floors
+    miller   <- floors
+    smith    <- floors
+
+    -- Smith does not live on a floor adjacent to Fletcher's
+    guard (abs (smith - fletcher) > 1)
+    record 1
+
+    -- Fletcher does not live on a floor adjacent to Cooper's
+    guard (abs (fletcher - cooper) > 1)
+    record 2
+
+    -- live on different floors
+    guard (distinct [baker, cooper, fletcher, miller, smith])
+    record 3
+
+    -- Baker does not live on the top floor
+    guard (baker /= 5)
+    record 4
+
+    -- Cooper does not live on the bottom floor
+    guard (cooper /= 1)
+    record 5
+
+    -- Fletcher does not live on either the top or the bottom floor
+    guard (fletcher /= 1 && fletcher /= 5)
+    record 6
+
+    -- Miller lives on a higher floor than does Cooper
+    guard (miller > cooper)
+    record 7
+
+    return [ ("Baker", baker)
+           , ("Cooper", cooper)
+           , ("Fletcher", fletcher)
+           , ("Miller", miller)
+           , ("Smith", smith)
+           ]
+
+freqCount :: Ord a => [a] -> [(a,Int)]
+freqCount xs = map (head &&& length) $ group $ sort xs
+
 main :: IO ()
 main = do
     demoSearchSpaceEffect
-    print puzzleSolutions
--- there should only be one solution:
--- i.e.: [[("Baker",3),("Cooper",2),("Fletcher",4),("Miller",5),("Smith",1)]]
+    let (answers1, records1) = runWriter $ runListT puzzleSolutions1
+        (answers2, records2) = runWriter $ runListT puzzleSolutions2
+
+    print answers1
+    print answers2
+    print $ freqCount records1
+    print $ freqCount records2
