@@ -186,28 +186,28 @@ puzzleSolutions3 = do
     guard (distinct [baker, cooper, fletcher, miller, smith])
     record 1
 
-    -- Baker does not live on the top floor
-    guard (baker /= 5)
+    -- Smith does not live on a floor adjacent to Fletcher's
+    guard (abs (smith - fletcher) > 1)
     record 2
 
-    -- Cooper does not live on the bottom floor
-    guard (cooper /= 1)
+    -- Fletcher does not live on a floor adjacent to Cooper's
+    guard (abs (fletcher - cooper) > 1)
     record 3
 
     -- Fletcher does not live on either the top or the bottom floor
     guard (fletcher /= 1 && fletcher /= 5)
-    record 4
+    record 5
 
     -- Miller lives on a higher floor than does Cooper
     guard (miller > cooper)
-    record 5
+    record 4
 
-    -- Smith does not live on a floor adjacent to Fletcher's
-    guard (abs (smith - fletcher) > 1)
+    -- Baker does not live on the top floor
+    guard (baker /= 5)
     record 6
 
-    -- Fletcher does not live on a floor adjacent to Cooper's
-    guard (abs (fletcher - cooper) > 1)
+    -- Cooper does not live on the bottom floor
+    guard (cooper /= 1)
     record 7
 
     return [ ("Baker", baker)
@@ -245,5 +245,11 @@ demoCondOrder = do
     print $ freqCount records2
     -- output: [(1,1500),(2,750),(3,36),(4,32),(5,25),(6,7),(7,1)]
     print $ freqCount records3
+    -- output: [(1,120),(2,72),(3,36),(4,6),(5,12),(6,4),(7,1)]
 
-    -- we can see that the first one is better
+    -- we can see that the first one is better than the second one
+    -- by moving constraints around, we are able to
+    -- find a slightly faster solution,
+    -- you can compare `record3` and `record1`
+    -- and find that in `puzzleSolution3`, the search space decreases
+    -- slightly faster.
