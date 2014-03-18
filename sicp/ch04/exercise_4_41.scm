@@ -18,7 +18,7 @@
 
 (define solutions '())
 
-(define (not-adjecent a b)
+(define (not-adjecent? a b)
   (> (abs (- a b)) 1))
 
 (define (distinct-list? xs)
@@ -48,7 +48,7 @@
              (> cooper 1)
              ;; 7. Fletcher does not live on a floor
              ;; adjacent to Cooper's
-             (not-adjecent fletcher cooper))
+             (not-adjecent? fletcher cooper))
             (try-miller fletcher cooper 1)
             ;; else
             'skip)
@@ -71,7 +71,7 @@
       (begin
         ;; 6. Smith does not live on a floor adjacent
         ;; to Fletcher's
-        (if (not-adjecent smith fletcher)
+        (if (not-adjecent? smith fletcher)
             (try-baker fletcher cooper miller smith 1)
             ;; else
             'skip)
@@ -89,6 +89,7 @@
         (try-baker fletcher cooper miller smith (add1 baker)))))
 
 (define (try-distinct fletcher cooper miller smith baker)
+  ;; 1. They live on different floors
   (if (distinct-list? (list fletcher cooper miller smith baker))
       (let ((solution
              (list
