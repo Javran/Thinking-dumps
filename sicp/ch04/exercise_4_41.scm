@@ -89,11 +89,18 @@
         (try-baker fletcher cooper miller smith (add1 baker)))))
 
 (define (try-distinct fletcher cooper miller smith baker)
-  (let ((solution (list fletcher cooper miller smith baker)))
-    (if (distinct-list? solution)
-        (set! solutions (cons solution solutions))
-        ;; else
-        'skip)))
+  (if (distinct-list? (list fletcher cooper miller smith baker))
+      (let ((solution
+             (list
+              `(fletcher ,fletcher)
+              `(cooper   ,cooper)
+              `(miller   ,miller)
+              `(smith    ,smith)
+              `(baker    ,baker)
+              )))
+        (set! solutions (cons solution solutions)))
+      ;; else
+      'skip))
 
 (try-fletcher 1)
 
