@@ -46,3 +46,5 @@ solutions = do
 
 main :: IO ()
 main = print solutions
+-- only one answer:
+-- [[("Betty",3),("Ethel",5),("Joan",2),("Kitty",1),("Mary",4)]]
