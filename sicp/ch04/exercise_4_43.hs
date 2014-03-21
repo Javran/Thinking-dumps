@@ -1,16 +1,5 @@
 import Control.Monad
-import Data.Maybe
 import Data.List
--- <First>  <Last>    <Daughter First name>
---          Moore     Mary Ann (! Lorna)
--- Colonel  Downing   !Melissa
--- ?        Hall      !Rosalind
--- Barnacle Hood      !Gabrielle (Melissa)
--- ?        Parker
-
--- relations:
--- <x> owns <y> -> <x>'s daughter is not <y>
--- <x> daughterIs <y>
 
 data LastName = Moore
               | Downing
@@ -33,16 +22,14 @@ distinct :: Eq e => [e] -> Bool
 distinct [] = True
 distinct (x:xs) = x `notElem` xs && distinct xs
 
--- not working, maybe we should also keep track of yacht as well.
-
--- last name(father), daughter's first name
 solutions :: [[ (LastName, FirstName) ]]
 solutions = do
     let lasts = universe
         firsts = universe
 
-    -- lXXX : XXX 's last name is lXXX
+    -- lFIRST : FIRST's last name is lFIRST
     -- (father is determined by his last name)
+    -- yLAST : LAST owns the yacht named yLAST
 
     let lMaryAnn  = Moore
         yHood     = Gabrielle
@@ -52,25 +39,28 @@ solutions = do
         lMelissa  = Hood
 
     lLorna     <- delete Moore lasts
-    lRosalind  <- delete Hall lasts
-    lGabrielle <- delete Hood lasts
+    lRosalind  <- delete Hall  lasts
+    lGabrielle <- delete Hood  lasts
     yParker    <- firsts
 
-    let yOwns = [ (Moore, yMoore)
-                , (Downing, yDowning)
-                , (Hall, yHall)
-                , (Hood, yHood)
-                , (Parker, yParker) ]
+    let yOwns = -- <who> owns <yacht name>
+            [ (Moore,   yMoore)
+            , (Downing, yDowning)
+            , (Hall,    yHall)
+            , (Hood,    yHood)
+            , (Parker,  yParker) ]
 
-        daughterIs =  [ (lMaryAnn, MaryAnn)
-                      , (lLorna, Lorna)
-                      , (lMelissa, Melissa)
-                      , (lRosalind, Rosalind)
-                      , (lGabrielle, Gabrielle)
-                      ]
+        daughterIs = -- <lastname>'s daughter is <firstname>
+            [ (lMaryAnn,   MaryAnn)
+            , (lLorna,     Lorna)
+            , (lMelissa,   Melissa)
+            , (lRosalind,  Rosalind)
+            , (lGabrielle, Gabrielle)
+            ]
+        fullName = daughterIs -- daughter's full name
 
-    guard $ distinct $ map snd yOwns
-    guard $ distinct $ map fst daughterIs
+    guard . distinct . map snd $ yOwns
+    guard . distinct . map fst $ daughterIs
 
     -- those constraints can be determined before searching
     -- guard $ lMaryAnn == Moore
@@ -83,7 +73,7 @@ solutions = do
     -- guard $ lMelissa == Hood
 
     guard $ lookup lGabrielle yOwns == lookup Parker daughterIs
-    return daughterIs
+    return fullName
 
 main :: IO ()
 main = print solutions
