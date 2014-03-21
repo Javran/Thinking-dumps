@@ -22,8 +22,8 @@ distinct :: Eq e => [e] -> Bool
 distinct [] = True
 distinct (x:xs) = x `notElem` xs && distinct xs
 
-solutions :: [[ (LastName, FirstName) ]]
-solutions = do
+solutions :: Bool -> [[ (LastName, FirstName) ]]
+solutions q2 = do
     let lasts = universe
         firsts = universe
 
@@ -31,12 +31,13 @@ solutions = do
     -- (father is determined by his last name)
     -- yLAST : LAST owns the yacht named yLAST
 
-    let lMaryAnn  = Moore
-        yHood     = Gabrielle
+    let yHood     = Gabrielle
         yMoore    = Lorna
         yHall     = Rosalind
         yDowning  = Melissa
         lMelissa  = Hood
+
+    lMaryAnn   <- if q2 then lasts else [Moore]
 
     lLorna     <- delete Moore lasts
     lRosalind  <- delete Hall  lasts
@@ -76,4 +77,8 @@ solutions = do
     return fullName
 
 main :: IO ()
-main = print solutions
+main = do
+    putStrLn "Question 1"
+    mapM_ print (solutions False)
+    putStrLn "Question 2"
+    mapM_ print (solutions True)
