@@ -18,16 +18,27 @@ data LastName = Moore
               | Parker
                 deriving (Eq, Enum, Bounded, Show)
 
+data FirstName = MaryAnn
+               | Lorna
+               | Melissa
+               | Rosalind
+               | Gabrielle
+                 deriving (Eq, Enum, Bounded, Show)
+
+universe :: (Enum e, Bounded e) => [e]
+universe = [minBound .. maxBound]
+
 distinct :: Eq e => [e] -> Bool
 distinct [] = True
 distinct (x:xs) = x `notElem` xs && distinct xs
 
 -- not working, maybe we should also keep track of yacht as well.
 
-solutions :: [[ (String, LastName) ]]
+-- last name(father), daughter's first name
+solutions :: [[ (LastName, FirstName) ]]
 solutions = do
-    let lasts = [minBound .. maxBound]
-        lXXX `yachtIs` yyy = guard $ lXXX /= yyy
+    let lasts = universe :: [LastName]
+        firsts = universe :: [FirstName]
     -- lXXX : XXX 's last name is lXXX
     -- (father is determined by his last name)
 
@@ -37,37 +48,52 @@ solutions = do
     lRosalind  <- lasts
     lGabrielle <- lasts
 
-    let relations =
-            [ ("MaryAnn"   , lMaryAnn   )
-            , ("Lorna"     , lLorna     )
-            , ("Melissa"   , lMelissa   )
-            , ("Rosalind"  , lRosalind  )
-            , ("Gabrielle" , lGabrielle )
-            ]
-        colookup b pairs = fromJust (lookup b (map (\(x,y)->(y,x)) pairs))
+    yMoore   <- firsts
+    yDowning <- firsts
+    yHall    <- firsts
+    yHood    <- firsts
+    yParker  <- firsts
 
-    guard $ distinct $ map snd relations
+    guard $ distinct [lMaryAnn, lLorna, lMelissa, lRosalind, lGabrielle]
+    guard $ distinct [yMoore, yDowning, yHall, yHood, yParker]
+
+    let yOwns = [ (Moore, yMoore)
+                , (Downing, yDowning)
+                , (Hall, yHall)
+                , (Hood, yHood)
+                , (Parker, yParker) ]
+
+    let fatherIs =  [ (lMaryAnn, MaryAnn)
+                    , (lLorna, Lorna)
+                    , (lMelissa, Melissa)
+                    , (lRosalind, Rosalind)
+                    , (lGabrielle, Gabrielle)
+                    ]
 
     guard $ lMaryAnn == Moore
+    guard $ yMoore /= MaryAnn
 
+    guard $ yHood == Gabrielle
     guard $ lGabrielle /= Hood
 
+    guard $ yMoore == Lorna
     guard $ lLorna /= Moore
 
+    guard $ yHall == Rosalind
     guard $ lRosalind /= Hall
 
-    --guard $ lMelissa /= Downing
+    guard $ yDowning == Melissa
+    guard $ lMelissa /= Downing
 
     guard $ lMelissa == Hood
 
-    let parkerDau = colookup Parker relations
+    let (Just dauOfParker) = lookup lGabrielle yOwns
+        (Just firstName) = lookup Parker fatherIs
 
-    guard $ "Garbrielle" /= parkerDau
-    -- guard $ any (\yyy -> lGabrielle /= yyy && lYYY == Parker) undefined
-    -- > if "Lorna" Parker
-    -- > co-lookup lYYY will find "Lorna",
-    -- > lGabrielle owns "Lorna"
-    return relations
+    guard $ dauOfParker == firstName
+    guard $ lGabrielle /= Parker
+
+    return fatherIs
 
 main :: IO ()
 main = print solutions
