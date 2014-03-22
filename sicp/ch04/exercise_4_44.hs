@@ -23,5 +23,15 @@ eightQueens b = do
            next <- all2
            eightQueens (next:b)
 
+solutionPrint :: [Int] -> IO ()
+solutionPrint b = do
+    putStr "  " -- header
+    putStrLn $ concatMap show [(0::Int)..7]
+    -- for each row (the solution place them in reversed order)
+    mapM_ (\(c,pos) ->
+               putStrLn (show c ++ " " ++ replicate pos ' ' ++ "x" ) )
+              $ zip [(0::Int)..] (reverse b)
+    putStrLn ""
+
 main :: IO ()
-main = print (eightQueens [])
+main = mapM_ solutionPrint (eightQueens [])
