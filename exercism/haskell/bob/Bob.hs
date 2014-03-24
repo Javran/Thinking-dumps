@@ -8,6 +8,7 @@ import Data.Maybe
 safeLast :: [a] -> Maybe a
 safeLast = listToMaybe . reverse
 
+-- | have question mark at the end
 isQuestion :: String -> Bool
 isQuestion = safeLast >>>
              maybe
@@ -16,15 +17,14 @@ isQuestion = safeLast >>>
                  -- a question mark at the end
                  (== '?')
 
--- | the string has some alphas, and all alphas are uppers
+-- | contain some alpha, and all alphas are uppers
 isYell :: String -> Bool
-                              -- <seen uppers?> <keep going?>
-isYell xs = foldr go (const True) xs False
-    where
-        go i acc seenUpper
-           | isUpper i = acc True
-           | isAlpha i && isLower i = False
-           | not (isAlpha i) = acc seenUpper
+isYell = (any isAlpha
+         -- ^ at least contains some alphas
+         &&& (filter isAlpha >>> all isUpper))
+         -- ^ all alphas being uppers
+         >>> uncurry (&&)
+         -- ^ both conds are required
 
 responseFor :: String -> String
 responseFor = responseFor' . stripAll
@@ -33,12 +33,12 @@ responseFor = responseFor' . stripAll
         stripR = reverse . stripL . reverse
         stripAll = stripR . stripL
 
-responseFor' :: String -> String
-responseFor' s
-    | null s       = "Fine. Be that way!"
-    | isYell s     = "Woah, chill out!"
-    | isQuestion s = "Sure."
-    | otherwise    = "Whatever."
+        responseFor' :: String -> String
+        responseFor' s
+            | null s       = "Fine. Be that way!"
+            | isYell s     = "Woah, chill out!"
+            | isQuestion s = "Sure."
+            | otherwise    = "Whatever."
 
 -- Local variables:
 -- proc-entry: "bob_test.hs"
