@@ -5,13 +5,13 @@ where
 
 import Data.Char (toLower)
 import Data.List (sort)
+import Control.Arrow ((&&&), (>>>))
 
 anagramsFor :: String -> [String] -> [String]
-anagramsFor x = filter (== x) -- ^ equal to `x`
-              . filter (/= x) -- ^ exclude itself
-              . sortedImageOf -- ^ to lowercase and sort
+anagramsFor x = map (id &&& loweredAndSorted) -- split data into: <origin, imaged>
+            >>> filter (/= (x,x'))            -- exclude x itself
+            >>> filter ((== x') . snd)        -- imaged data == imaged x
+            >>> map fst                       -- return the origin tied to it
     where
         loweredAndSorted = sort . map toLower
-        -- convert and keep the lowered
-        -- and sorted result
-        sortedImageOf = map loweredAndSorted
+        x' = loweredAndSorted x
