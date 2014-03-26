@@ -1,13 +1,17 @@
 module Anagram
+    ( anagramsFor
+    )
 where
 
 import Data.Char (toLower)
 import Data.List (sort)
-import Data.Function (on)
 
 anagramsFor :: String -> [String] -> [String]
-anagramsFor x = filter (`equalInTermsOf` x) -- ^ (==) when both lowered and sorted
-              . filter (/= x)               -- ^ exclude itself
+anagramsFor x = filter (== x) -- ^ equal to `x`
+              . filter (/= x) -- ^ exclude itself
+              . sortedImageOf -- ^ to lowercase and sort
     where
-        equalInTermsOf = (==) `on` loweredAndSorted
         loweredAndSorted = sort . map toLower
+        -- convert and keep the lowered
+        -- and sorted result
+        sortedImageOf = map loweredAndSorted
