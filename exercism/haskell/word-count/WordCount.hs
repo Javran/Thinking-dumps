@@ -1,6 +1,8 @@
 {-# LANGUAGE TupleSections #-}
 
 module WordCount
+    ( wordCount
+    )
 where
 
 import qualified Data.Map.Strict as M
