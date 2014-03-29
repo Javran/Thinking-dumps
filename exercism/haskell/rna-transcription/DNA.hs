@@ -1,20 +1,24 @@
 module DNA
+    ( toRNA
+    )
 where
 
--- ^ personally I think it's a bad name ...
-toRNA :: String -> String
-toRNA = map (toRNAComplement . fromDNA)
+type DNucleo = Char -- ^ nucleotides
+type RNucleo = Char
 
--- ^ convert DNA char to its RNA counterpart
-fromDNA :: Char -> Char
-fromDNA 'T' = 'U'
-fromDNA  r  =  r
+type DNA = [DNucleo]
+type RNA = [RNucleo]
 
--- ^ convert RNA to its complement
-toRNAComplement :: Char -> Char
-toRNAComplement x = case x of
+-- ^ transcribe DNA to RNA
+-- see also: http://en.wikipedia.org/wiki/Transcription_(genetics)
+toRNA :: DNA -> RNA
+toRNA = map toRNucleo
+
+-- ^ convert DNucleo to RNucleo
+toRNucleo :: DNucleo -> RNucleo
+toRNucleo x = case x of
     'A' -> 'U'
-    'U' -> 'A'
+    'T' -> 'A'
     'G' -> 'C'
     'C' -> 'G'
-    _   -> error "Invalid RNA char"
+    _   -> error "Invalid DNucleo"
