@@ -1,0 +1,26 @@
+let makeEven =
+  proc (makerO)
+    proc (makerE)
+      proc (x)
+        if zero?(x)
+          then 1
+          else (((makerO makerE) makerO) -(x,1))
+in
+let makeOdd =
+  proc (makerE)
+    proc (makerO)
+      proc (x)
+        if zero?(x)
+          then 0
+          else (((makerE makerO) makerE) -(x,1))
+in
+let odd =
+  proc (x)
+    (((makeOdd makeEven) makeOdd) x)
+in
+let even =
+  proc (x)
+    (((makeEven makeOdd) makeEven) x)
+in
+
+

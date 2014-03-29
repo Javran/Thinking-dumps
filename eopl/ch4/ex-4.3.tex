@@ -1,0 +1,18 @@
+\section*{Exercise 4.3}
+
+Specification for \texttt{call-exp}
+
+\begin{center}
+\begin{lstlisting}[mathescape]
+
+(value-of $rator$ $\rho$ $\sigma_0$) = ($result_1$, $\sigma_1$)
+
+(value-of $rand$ $\rho$ $\sigma_1$) = ($result_2$, $\sigma_2$)
+
+(value-of (call-exp $rator$ $rand$) $\rho$ $\sigma_0$) =
+(let ((proc (expval->proc (value-of $rator$ $\rho$ $\sigma_0$)))
+      (arg  (value-of $rand$ $\rho$ $\sigma_1$)))
+  (apply-procedure proc arg $\sigma_2$)) =
+($result$, $\sigma_3$)
+\end{lstlisting}
+\end{center}

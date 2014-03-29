@@ -1,0 +1,31 @@
+\section*{Exercise 2.4}
+
+Denote stack as an array \texttt{[a,b,c,d]} and the left most element \texttt{a}
+is the top of the stack.
+
+\begin{align*}
+    \texttt{(empty-stack)} &= \lceil \texttt{[]}\rceil \\
+    \texttt{(push x }\lceil \texttt{s} \rceil \texttt{)}
+        &= \lceil \texttt{a:s} \rceil \\
+    \texttt{(pop } \lceil \texttt{a:s} \rceil \texttt{)}
+        &= \lceil \texttt{s} \rceil \\
+    \texttt{(top } \lceil \texttt{a:s} \rceil \texttt{)}
+        &= \texttt{a} \\
+    \texttt{(empty-stack? } \lceil \texttt{s} \rceil \texttt{)}
+        &= \texttt{(null? s)}
+\end{align*}
+
+Constructors:
+
+\begin{itemize}
+    \item\texttt{empty-stack}
+    \item\texttt{push}
+    \item\texttt{pop}
+\end{itemize}
+
+Observers:
+
+\begin{itemize}
+    \item\texttt{top}
+    \item\texttt{empty-stack?}
+\end{itemize}

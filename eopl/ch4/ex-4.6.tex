@@ -1,0 +1,17 @@
+\section*{Exercise 4.6}
+
+Make a \texttt{setref-exp} returns the value of the right-hand side.
+
+\begin{prooftree}
+\AxiomC{
+    \texttt{(value-of $exp_1$ $\rho$ $\sigma_0$) $=$ ($l$, $\sigma_1$)}
+}
+\AxiomC{
+    \texttt{(value-of $exp_2$ $\rho$ $\sigma_1$) $=$ ($val$, $\sigma_2$)}
+}
+\BinaryInfC{
+    \texttt{(value-of (setref-exp $exp_1$ $exp_2$) $\rho$ $\sigma_2$) \
+    $=$ ($val$,[$l=val$]$\sigma_2$)
+    }
+}
+\end{prooftree}

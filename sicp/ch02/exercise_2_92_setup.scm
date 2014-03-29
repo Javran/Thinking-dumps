@@ -6,6 +6,12 @@
 (define (same-variable? v1 v2)
   (and (variable? v1) (variable? v2) (equal? v1 v2)))
 
+; when (variable-less? v1 v2) returns #t,
+;   that means v1 should be put outside
+(define (variable-less? v1 v2)
+  (string<? (symbol->string v1)
+            (symbol->string v2)))
+
 (load "./exercise_2_92_poly_term_package.scm")
 (load "./exercise_2_92_poly_generic.scm")
 (load "./exercise_2_92_poly_termlist_sparse_package.scm")
@@ -66,8 +72,27 @@
 (define first-term ((curry2 apply-generic) 'first-term))
 (define rest-terms ((curry2 apply-generic) 'rest-terms))
 (define empty? ((curry2 apply-generic) 'empty?))
-(define order-list ((curry2 apply-generic) 'order-list))
-(define coeff-list ((curry2 apply-generic) 'coeff-list))
+
+(define (map-poly-term f ls)
+  (if (empty? ls)
+    nil
+    (cons (f (first-term ls))
+          (map-poly-term f (rest-terms ls)))))
+
+(define order-list ((curry2 map-poly-term) order))
+(define coeff-list ((curry2 map-poly-term) coeff))
+
+(define (is-poly? data)
+  (eq? 'polynominal (type-tag data)))
+
+(define (simplify data)
+  (define extract
+    (get 'extract 'polynominal-package))
+  (define drop-coeffs
+    (get 'drop-coeffs 'polynominal-package))
+  (cond ((is-poly? data)
+         (drop-coeffs (extract data)))
+        (else (drop data))))
 
 (run-tests 
   (list 

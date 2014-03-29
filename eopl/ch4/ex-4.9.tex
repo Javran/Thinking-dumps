@@ -1,0 +1,13 @@
+\section*{Exercise 4.9}
+
+The lost is the flexibility of the store length.
+
+To implement the store in constant time, we have to avoid
+using something like \texttt{vector-append}.
+So we are enforced
+to use a store of fixed length.
+
+So we can no longer maintain a store that has theoretically unlimited length. 
+
+The correctness is guaranteed only if the store is capable of storing everything
+the program needed.

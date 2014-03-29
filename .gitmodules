@@ -1,0 +1,3 @@
+[submodule "eopl/eopl3"]
+	path = eopl/eopl3
+	url = https://github.com/mwand/eopl3.git

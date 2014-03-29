@@ -1,0 +1,19 @@
+let times =
+  proc (mulA)
+    proc (mulB)
+      let makemult =
+        proc (maker)
+          proc (x)
+            if zero?(x)
+              then 0
+              else -(((maker maker) -(x,1)), -(0,mulA))
+      in let timesA = proc (x) ((makemult makemult) x)
+         in (timesA mulB)
+in let makefact =
+     proc (maker)
+       proc (x)
+         if zero?(x)
+           then 1
+           else ((times x) ((maker maker) -(x,1)))
+   in let factorial = proc (x) ((makefact makefact) x)
+      in (factorial 8)

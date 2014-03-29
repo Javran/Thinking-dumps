@@ -1,0 +1,67 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{indentfirst}
+\usepackage{bussproofs}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{minted}
+
+\newcommand{\MyAns}[2]{\input{./ch#1/ex-#1.#2.tex}}
+
+\newenvironment{scprooftree}[1]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+    {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+
+\title{
+My Exercise Answers to \\
+Essentials of Programming Languages \\
+(Non-coding part)
+}
+\author{Javran Cheng}
+\date{}
+
+\begin{document}
+\maketitle
+
+\lstset{language=Lisp}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true}
+
+\MyAns{1}{1}
+\MyAns{1}{2}
+\MyAns{1}{3}
+\MyAns{1}{4}
+\MyAns{1}{5}
+\MyAns{1}{6}
+\MyAns{1}{10}
+\MyAns{1}{11}
+\MyAns{1}{14}
+
+\MyAns{2}{4}
+
+\MyAns{3}{1}
+\MyAns{3}{2}
+\MyAns{3}{3}
+\MyAns{3}{4}
+\MyAns{3}{5}
+\MyAns{3}{11}
+\MyAns{3}{30}
+
+\MyAns{4}{1}
+\MyAns{4}{2}
+\MyAns{4}{3}
+\MyAns{4}{4}
+\MyAns{4}{5}
+\MyAns{4}{6}
+\MyAns{4}{7}
+\MyAns{4}{8}
+\MyAns{4}{9}
+\MyAns{4}{10}
+\MyAns{4}{14}
+\MyAns{4}{15}
+\MyAns{4}{17}
+
+\MyAns{5}{2}
+
+\end{document}

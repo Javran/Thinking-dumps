@@ -7,6 +7,16 @@
       (error "assertion failed.")
       (error "assertion failed:" (car reason)))))
 
+; make the assertion that the thunk given will raise an error
+(define (assert-error thunk . reason)
+  (let ((result (condition? (ignore-errors thunk))))
+    (apply assert (cons result reason))))
+
+; make the assertion that the thunk given will not raise any error
+(define (assert-no-error thunk . reason)
+  (let ((result (condition? (ignore-errors thunk))))
+    (apply assert (cons (not result) reason))))
+
 (define (do-test-ex proc testcases correct? on-correct on-wrong)
   ; proc:
   ;   procedure to be tested
