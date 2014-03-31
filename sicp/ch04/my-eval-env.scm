@@ -100,7 +100,7 @@
   ; rebind some variables
   (define-variable! 'c 'cval env)
   (define-variable! 'b 'bval env)
-  
+
   ; define new variable
   (define-variable! 'd 'd env)
 
@@ -123,7 +123,7 @@
                  '(b)
                  '(bb22)
                  env))
-  
+
   ; test lookup-variable-value in nested env structure
   (do-test
     lookup-variable-value
@@ -187,7 +187,7 @@
       (mat 'b env  'bbb)
       (mat 'b env1 'bbb)
       (mat 'b env2 'new-b)))
-  
+
   'ok)
 
 (if *my-eval-do-test*

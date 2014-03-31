@@ -3,9 +3,9 @@
 (define quoted?
   (list-tagged-with 'quote))
 
-(define (install-eval-quote)
+(define text-of-quotation cadr)
 
-  (define text-of-quotation cadr)
+(define (install-eval-quote)
 
   (define (eval-quote exp env)
     (text-of-quotation exp))

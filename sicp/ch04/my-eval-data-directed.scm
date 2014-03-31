@@ -1,7 +1,7 @@
 ; infrastructure for data-directed style
 
 (define my-eval-get #f)
-(define my-eval-put! #f) 
+(define my-eval-put! #f)
 (define my-eval-test-installed-handlers #f)
 
 ; definition:
@@ -10,7 +10,7 @@
 ;           the handler that deals with let-expression
 ;  handler: handler structure,
 ;           please refer to "./my-eval-handler.scm"
-; 
+;
 ; data structure:
 ; `eval-handler-alist` is an alist
 ;   key: a symbol the slot name
@@ -21,7 +21,7 @@
 
   ; modify `alist` to insert / replace
   ;   handler of `slot` with `handler`
-  ; return: a pair with 
+  ; return: a pair with
   ;   `car` set to the modified alist
   ;   `cdr` set to the old handler, or #f
   (define (put-handler slot handler alist)
@@ -77,7 +77,7 @@
            slots))
     (define not-ok
       (map
-        car 
+        car
         (filter
           (lambda (pair)
             (not (eq? (cdr pair) 'ok)))
