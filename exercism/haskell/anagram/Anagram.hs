@@ -1,13 +1,17 @@
 module Anagram
+    ( anagramsFor
+    )
 where
 
 import Data.Char (toLower)
 import Data.List (sort)
-import Data.Function (on)
+import Control.Arrow ((&&&), (>>>))
 
 anagramsFor :: String -> [String] -> [String]
-anagramsFor x = filter (`equalInTermsOf` x) -- ^ (==) when both lowered and sorted
-              . filter (/= x)               -- ^ exclude itself
+anagramsFor x = map (id &&& loweredAndSorted) -- split data into: <origin, imaged>
+            >>> filter (/= (x,x'))            -- exclude x itself
+            >>> filter ((== x') . snd)        -- imaged data == imaged x
+            >>> map fst                       -- return the origin tied to it
     where
-        equalInTermsOf = (==) `on` loweredAndSorted
         loweredAndSorted = sort . map toLower
+        x' = loweredAndSorted x
