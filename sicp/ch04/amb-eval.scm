@@ -15,6 +15,7 @@
 (load "./my-eval-init-env.scm")
 
 (load "./amb-eval-e-simple.scm")
+(load "./amb-eval-e-lambda.scm")
 
 
 
