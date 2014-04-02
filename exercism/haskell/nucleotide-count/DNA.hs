@@ -19,7 +19,7 @@ isNucleo = (`elem` "TACGU")
 count :: Char -> String -> Int
 count c
     | isNucleo c = length . filter (== c)
-    | otherwise  = error (printf "invalid nucleotide '%c'" c)
+    | otherwise  = error ("invalid nucleotide " ++ show c)
 
 -- | count occurences of all nucleotides given a DNA string
 nucleotideCounts :: String -> M.Map Char Int
