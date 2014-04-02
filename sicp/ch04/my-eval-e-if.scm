@@ -2,18 +2,18 @@
 (define (make-if predicate consequent alternative)
   (list 'if predicate consequent alternative))
 
-(define (install-eval-if)
-
-  ; (if <if-predicate>
-  ;   <if-consequent>
-  ;   [<if-alternative>])
-  (define if-predicate cadr)
-  (define if-consequent caddr)
-  (define (if-alternative exp)
-    ; allowing the else part not filled.
-    (if (non-empty? (cdddr exp))
+;; (if <if-predicate>
+;;   <if-consequent>
+;;   [<if-alternative>])
+(define if-predicate cadr)
+(define if-consequent caddr)
+(define (if-alternative exp)
+  ;; allowing the else part not filled.
+  (if (non-empty? (cdddr exp))
       (cadddr exp)
       '#f))
+
+(define (install-eval-if)
 
   (define (eval-if exp env)
     ; use `true?` here allows the language to be implemented
