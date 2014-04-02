@@ -1,0 +1,42 @@
+%%% Local Variables:
+%%% coding: utf-8
+%%% End:
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\title{My Exercise Answers to
+Basic Category Theory }
+\author{Javran Cheng}
+
+\begin{document}
+
+\maketitle
+
+\section{Category and Functors}
+
+\paragraph{Exercise 1}
+
+Assume there are more than one arrow whose domain and codomain are all $X$,
+we are going to prove by contradiction that the arrow $id_X$ is unique.
+
+Pick up two such arrows: $id1_X$ and $id2_X$ and $id1_x \neq id2_x$.
+
+According to the property of identity arrow:
+
+\begin{align*}
+id1_X \circ id2_X & = id1_X \\
+id1_X \circ id2_X & = id2_X \\
+\therefore id1_X & = id2_X
+\end{align*}
+
+This conflicts with our assumption that $id1_x \neq id2_x$,
+thus the identity function $id_X$ is unique.
+
+
+
+\end{document}
