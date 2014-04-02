@@ -7,7 +7,6 @@ module DNA
 where
 
 import qualified Data.Map.Strict as M
-import Text.Printf
 
 -- | test if the given char is nucleotide
 isNucleo :: Char -> Bool
