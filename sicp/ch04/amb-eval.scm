@@ -16,8 +16,7 @@
 
 (load "./amb-eval-e-simple.scm")
 (load "./amb-eval-e-lambda.scm")
-
-
+(load "./amb-eval-e-if.scm")
 
 (end-script)
 
