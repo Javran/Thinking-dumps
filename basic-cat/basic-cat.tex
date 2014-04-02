@@ -19,6 +19,8 @@ Basic Category Theory }
 
 \section{Category and Functors}
 
+\subsection{Exercises}
+
 \paragraph{Exercise 1}
 
 Assume there are more than one arrow whose domain and codomain are all $X$,
@@ -37,6 +39,59 @@ id1_X \circ id2_X & = id2_X \\
 This conflicts with our assumption that $id1_x \neq id2_x$,
 thus the identity function $id_X$ is unique.
 
+\paragraph{Exercise 2}
 
+\subparagraph{Proof a preorder forms a category}
+
+We check every property of category holds.
+
+\begin{itemize}
+\item{object}: $\forall x, x \in X$ are the objects
+\item{morphism}: Given any relation $x \le y$,
+there is an morphism from $x$ to $y$.
+\item{composition}: If $f: x \rightarrow y$ and $g: y \rightarrow z$,
+the compostion is $g \circ f: x \rightarrow z$. And $g \circ f$ corresponses to
+$x \le z$, which is true by the transitivity of the preorder set.
+item{associativity}: Suppose we have:
+\begin{align*}
+f &: x \rightarrow y & (x \le y) \\
+g &: y \rightarrow z & (y \le z) \\
+h &: z \rightarrow w & (z \le w)
+\end{align*}
+Therefore:
+\begin{align*}
+g \circ f &: x \rightarrow z & (x \le z) \\
+h \circ g &: y \rightarrow w & (y \le w) \\
+h \circ (g \circ f) &: x \rightarrow w & (x \le w) \\
+(h \circ g) \circ f) &: x \rightarrow w & (x \le w)
+\end{align*}
+
+The associativity of composition holds because
+$h \circ (g \circ f) = (h \circ g) \circ f$
+\item{identity}: $\forall x \in X, id_x: x \rightarrow x \quad (x \le x)$
+\end{itemize}
+
+\subparagraph{Proof the converse}
+
+To prove the converse, we need to check every property of preorder set holds for
+$\mathcal{C}_0$, if $\mathcal{C}$ is a category.
+
+\begin{itemize}
+\item{element}: the set elements are all objects in $\mathcal{C}$.
+\item{binary relation}: each morphism $f: a \rightarrow b$ in $\mathcal{C}$
+corresponses to a pair $(a,b) \in (\le)$, or $a \le b$.
+\item{reflexivity}: for each object $x \in \mathcal{C}_0$, there is an identity morphism
+$id_x$. This morphism corresponses to the relation $x \le x$.
+\item{transitivity}: $\forall a,b,c,f,g \in \mathcal{C}$, if
+ $f: a \rightarrow b$ and $g: b \rightarrow c$, then $g \circ f: a \rightarrow c$.
+This means in $\mathcal{C}_0$, $\forall a,b,c \in \mathcal{C}_0$,
+if $a \le b$ and $b \le c$, then $a \le c$. Thus transitivity holds for $\le$.
+\end{itemize}
+
+\subsection{Some notes}
+
+\paragraph{Composition implies existency}
+For two morphisms $f$ and $g$ of a category $\mathcal{C}$, the result of composing $g \circ f$
+must also be a morphism of $\mathcal{C}$.
 
 \end{document}
