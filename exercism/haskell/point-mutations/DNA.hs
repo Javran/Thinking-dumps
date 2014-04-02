@@ -17,5 +17,7 @@ where
 hammingDistance :: String -> String -> Int
 hammingDistance = countMismatch .: pairwiseCompare
     where
-        pairwiseCompare = zipWith (==)
-        countMismatch = length . filter not
+        -- compare and count things that does not equal
+        -- `zipWith` does the work of removing extra chars from the end.
+        pairwiseCompare = zipWith (/=)
+        countMismatch = length . filter id
