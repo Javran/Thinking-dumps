@@ -18,6 +18,7 @@
 (load "./amb-eval-e-lambda.scm")
 (load "./amb-eval-e-if.scm")
 (load "./amb-eval-e-begin.scm")
+(load "./amb-eval-e-define.scm")
 
 (end-script)
 
