@@ -88,6 +88,63 @@ This means in $\mathcal{C}_0$, $\forall a,b,c \in \mathcal{C}_0$,
 if $a \le b$ and $b \le c$, then $a \le c$. Thus transitivity holds for $\le$.
 \end{itemize}
 
+\newpage
+\paragraph{Exercise 3}
+
+Despite the exercise does not define explicitly
+about what is \textit{substring}, I guess a \textit{substring}
+should be consecutive.
+For example, ``ab'' is a substring of ``aabb'', but is not a substring of ``accb''.
+
+Let $\mathop{concat}(A_1,A_2,\ldots,A_n)$ be the concatenation of strings
+$A_1,A_2\ldots,A_n$ in order.
+
+Let $\mathop{rm}(A)$ be the result of the operation of successively removing form $xx^{-1}$
+and $x^{-1}x$ from A until $A \in \tilde{A}$.
+
+Let the corresponding element of a character $a$ be $\mathop{inv}(a)$.
+i.e. $inv(a) = a^{-1}, inv(a^{-1}) = a$.
+
+Therefore $A \star B = \mathop{rm}(\mathop{concat}(A,B))$.
+
+For now, I just assume for all possible $A$, $\mathop{rm}(A)$ is unique, i.e. $\mathop{rm}$
+is a function. (Since I don't know how to prove that.)
+
+Another assumption: $\mathop{rm}(\mathop{concat}(\mathop{rm}(A),\mathop{rm}(B)))
+=\mathop{rm}(\mathop{concat}(A,B))$.
+
+\subparagraph{Proof $\langle \tilde{A}, \star \rangle$ is a group}
+
+Prove by the definition of group.
+
+\begin{itemize}
+  \item{Closure}: the definition of $\star$ shows the result must be
+    an element of $\tilde{A}$.
+  \item{Associativity}:
+    \begin{align*}
+      (A \star B) \star C
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(A,B)),C)) \\
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(A,B)),\mathop{rm}(C))) \\
+      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(\mathop{concat}(A,B),C))) \\
+      & = \mathop{rm}(\mathop{concat}(A,B,C)) \\
+      A \star (B \star C)
+      & = \mathop{rm}(\mathop{concat}(A,\mathop{rm}({\mathop{concat}}(B,C)))) \\
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}(A),\mathop{rm}({\mathop{concat}}(B,C)))) \\
+      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(A,\mathop{concat}(B,C)))) \\
+      & = \mathop{rm}(\mathop{concat}(A,B,C))
+    \end{align*}
+    Therefore $(A \star B) \star C = A \star (B \star C)$.
+  \item{Identity element}:
+    The empty string $\varnothing$ is the identity element.
+  \item{Inverse element}:
+    The inverse element for empty string is the empty string.
+    For any other given string $a_1,a_2,\ldots,a_n$ in $\tilde{A}$,
+    its inverse is $\mathop{inv}(a_n),\mathop{inv}(a_{n-1}),\ldots,\mathop{inv}(a_1)$.
+    Because $a_i\mathop{inv}(a_i)$ and $\mathop{inv}(a_i)a_i$ are of the form
+    $xx^{-1}$ and $x^{-1}x$. We know for any string $A$ and its inverse $B$ in $\tilde{A}$,
+    $A \star B = \varnothing = B \star A$.
+\end{itemize}
+
 \subsection{Some notes}
 
 \paragraph{Composition implies existency}
