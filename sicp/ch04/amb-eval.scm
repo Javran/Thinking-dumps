@@ -19,6 +19,7 @@
 (load "./amb-eval-e-if.scm")
 (load "./amb-eval-e-begin.scm")
 (load "./amb-eval-e-define.scm")
+(load "./amb-eval-e-set.scm")
 
 (end-script)
 
