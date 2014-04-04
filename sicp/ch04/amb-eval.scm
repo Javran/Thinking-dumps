@@ -21,6 +21,9 @@
 (load "./amb-eval-e-define.scm")
 (load "./amb-eval-e-set.scm")
 
+;; TODO: try to have a complete document about what's going on here.
+;; just copying the code from book won't make much sense
+
 (define (get-args aprocs env succeed fail)
   (if (null? aprocs)
       (succeed '() fail)
