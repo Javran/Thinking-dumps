@@ -1,14 +1,11 @@
-; data structure:m
+; data structure:
 ;   handler is a list:
 ;     (list 'handler
 ;           <slot-eval>
 ;           <slot-analyze>
-;           <proc>
 ;           <test-proc>)
 ;   <slot-xxx>  : slot that this handler can deal with
 ;                 xxx = eval / analyze for `eval` / `analyze` modes
-;   <proc>      : the procedure of type Exp x Env -> ExpVal
-;                 the handler itself
 ;   <test-proc> : a procedure that accepts zero argument
 ;                 do the handler self-test when called
 
