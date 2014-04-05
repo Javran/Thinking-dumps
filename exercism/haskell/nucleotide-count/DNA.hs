@@ -7,7 +7,6 @@ module DNA
 where
 
 import qualified Data.Map.Strict as M
-import Text.Printf
 
 -- | test if the given char is nucleotide
 isNucleo :: Char -> Bool
@@ -19,7 +18,7 @@ isNucleo = (`elem` "TACGU")
 count :: Char -> String -> Int
 count c
     | isNucleo c = length . filter (== c)
-    | otherwise  = error (printf "invalid nucleotide '%c'" c)
+    | otherwise  = error ("invalid nucleotide " ++ show c)
 
 -- | count occurences of all nucleotides given a DNA string
 nucleotideCounts :: String -> M.Map Char Int
