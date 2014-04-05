@@ -24,3 +24,7 @@ cabal.sandbox.config
 cabal.config
 
 *.pdf
+
+# coq
+*.glob
+*.vo
