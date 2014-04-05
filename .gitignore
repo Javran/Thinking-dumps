@@ -22,3 +22,8 @@ cabal-dev
 .cabal-sandbox/
 cabal.sandbox.config
 cabal.config
+
+# LaTeX files
+*.aux
+*.log
+*.pdf
