@@ -14,7 +14,8 @@
 (load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
 
-(load "./amb-eval-e-simple.scm")
+(load "./amb-eval-analyze.scm")
+
 (load "./amb-eval-e-lambda.scm")
 (load "./amb-eval-e-if.scm")
 (load "./amb-eval-e-begin.scm")
@@ -57,7 +58,6 @@
         (else (error "Unknown procedure type: EXECUTE-APPLICATION"
                      proc))))
 
-
 ;; don't know where to put it for now...
 ;; looks like written in CPS..
 (define (analyze-application exp)
@@ -75,6 +75,9 @@
                             proc args succeed fail3))
                          fail2))
              fail))))
+
+(out (amb-eval #\a #f (lambda (exp fail)
+                          exp) (lambda () #f)))
 
 (end-script)
 

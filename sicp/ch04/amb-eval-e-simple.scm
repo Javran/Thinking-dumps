@@ -1,3 +1,4 @@
+(load "./my-eval-e-simple.scm")
 (load "./my-eval-e-quote.scm")
 ;; simple expressions include:
 ;; * self-evaluating
