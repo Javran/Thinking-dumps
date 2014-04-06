@@ -413,6 +413,34 @@ Qed.
     in the proof of this one.)  You may find that [plus_swap] comes in
     handy. *)
 
+
+Theorem mult_ldistr : forall a b c : nat,
+  a * (b + c) = a * b + a * c.
+Proof.
+  intros a b c.
+  induction a as [|a'].
+  Case "a = 0".
+    simpl. reflexivity.
+  Case "a = S a'".
+    simpl. rewrite -> IHa'.
+    assert (H1: forall x y: nat,  b + x + y = b + (x + y)).
+      intros x y. rewrite -> plus_assoc. reflexivity.
+    rewrite H1. rewrite H1.
+    assert (H2: c + (a' * b + a' * c) = a' * b + (c + a' * c)).
+      rewrite -> plus_swap. reflexivity.
+    rewrite -> H2. reflexivity. 
+Qed.
+
+Theorem mult_n_1 : forall n : nat,
+  n * 1 = n.
+Proof.
+  intros n. induction n as [|n'].
+  Case "n = 0".
+    reflexivity.
+  Case "n = S n'".
+    simpl. rewrite IHn'. reflexivity.
+Qed.
+
 Theorem mult_comm : forall m n : nat,
  m * n = n * m.
 Proof.
@@ -427,25 +455,8 @@ Proof.
     rewrite <- IHn'.
     rewrite -> plus_comm.
     rewrite <- plus_1_l.
-    rewrite -> plus_comm.
-    assert (H : forall a b c : nat, a * (b + c) = a * b + a * c).
-      intros a b c.
-      induction a as [|a'].
-      SCase "a = 0".
-        simpl. reflexivity.
-      SCase "a = S a'".
-        simpl. rewrite -> IHa'. 
-        assert (H1: c + (a' * b + a' * c) = a' * b + (c + a' * c)).
-          rewrite -> plus_swap. reflexivity.
-        assert (H2: forall x y: nat,  b + x + y = b + (x + y)).
-          intros x y.
-          rewrite -> plus_assoc. reflexivity.
-        rewrite -> H2. rewrite -> H1. rewrite <- H2. reflexivity. 
-    rewrite <- plus_comm.
-    rewrite -> H. 
-    assert (mult_m_1 : forall m : nat, m * 1 = m).
-      intros m0. induction m0 as [|m0']. reflexivity. simpl. rewrite IHm0'. reflexivity.
-    rewrite mult_m_1. rewrite plus_comm. reflexivity.
+    rewrite -> mult_ldistr. 
+    rewrite mult_n_1. rewrite plus_comm. reflexivity.
 Qed.
 (** [] *)
 
@@ -456,7 +467,17 @@ Qed.
 Theorem evenb_n__oddb_Sn : forall n : nat,
   evenb n = negb (evenb (S n)).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [|n'].
+  Case "n = 0".
+    reflexivity.
+  Case "n = S n'".
+    simpl. rewrite IHn'.
+    destruct n' as [|n''].
+    SCase "n' = 0".
+      reflexivity.
+    SCase "n' = S n''".
+      simpl. rewrite negb_involutive. reflexivity.
+Qed.
 (** [] *)
 
 (* ###################################################################### *)
@@ -474,31 +495,48 @@ Proof.
 Theorem ble_nat_refl : forall n:nat,
   true = ble_nat n n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  induction n as [|n'].
+  Case "n = 0". reflexivity.
+  Case "n = S n'". rewrite IHn'. simpl. reflexivity.
+Qed.
 
 Theorem zero_nbeq_S : forall n:nat,
   beq_nat 0 (S n) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. reflexivity.
+Qed.
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b. destruct b.
+  Case "b = true". reflexivity.
+  Case "b = false". reflexivity.
+Qed.
 
 Theorem plus_ble_compat_l : forall n m p : nat, 
   ble_nat n m = true -> ble_nat (p + n) (p + m) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p H.
+  induction p as [|p'].
+  Case "p = 0".
+    simpl. rewrite H. reflexivity.
+  Case "p = S p'".
+    simpl. rewrite IHp'. reflexivity.
+Qed.
 
 Theorem S_nbeq_0 : forall n:nat,
   beq_nat (S n) 0 = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. reflexivity.
+Qed.
 
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  simpl. rewrite plus_0_r. reflexivity.
+Qed.
 
 Theorem all3_spec : forall b c : bool,
     orb
@@ -507,17 +545,57 @@ Theorem all3_spec : forall b c : bool,
                (negb c))
   = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c.
+  destruct b.
+  Case "b = true".
+    simpl. destruct c. reflexivity. reflexivity.
+  Case "b = false".
+    simpl. destruct c. reflexivity. reflexivity.
+Qed.
 
 Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  induction p as [|p'].
+  Case "p = 0".
+    rewrite mult_0_r. rewrite mult_0_r. rewrite mult_0_r.
+    reflexivity.
+  Case "p = S p'".
+    assert (H : forall k : nat, k * S p' = k + k * p').
+      intros k. induction k. reflexivity. simpl. rewrite IHk.
+      rewrite plus_assoc. rewrite plus_assoc.
+      assert (H1: p' + k = k + p'). rewrite plus_comm. reflexivity.
+      rewrite H1. reflexivity.
+    rewrite H. rewrite IHp'. rewrite H. rewrite H. 
+    rewrite plus_assoc. rewrite plus_assoc.
+    assert (H2: n + m + n * p' = n + n * p' + m).
+      rewrite <- plus_assoc. rewrite <- plus_assoc.
+      assert (H3 : m + n * p' = n * p' + m).
+        rewrite plus_comm. reflexivity.
+      rewrite H3. reflexivity.
+    rewrite H2. reflexivity.
+Qed.
 
 Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  induction n as [|n'].
+  Case "n = 0".
+    reflexivity.
+  Case "n = S n'".
+    rewrite mult_comm.
+    simpl. rewrite mult_plus_distr_r. rewrite <- IHn'. rewrite plus_comm.
+    assert (H : m * p = 1 * (m * p)).
+      rewrite mult_1_l. reflexivity.
+    assert (n' * (m * p) + m * p = (n' + 1) * (m * p)).
+      rewrite mult_plus_distr_r. rewrite mult_1_l. reflexivity.
+    rewrite H0. rewrite mult_comm.
+    assert (S n' = n' + 1).
+      rewrite plus_comm. rewrite <- plus_1_l. reflexivity.
+    rewrite H1. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (beq_nat_refl) *)
@@ -530,7 +608,10 @@ problem using the theorem no matter which way we state it. *)
 Theorem beq_nat_refl : forall n : nat, 
   true = beq_nat n n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [|n'].
+  Case "n = 0". reflexivity.
+  Case "n = S n'". simpl. rewrite IHn'. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (plus_swap') *)
@@ -548,7 +629,11 @@ Proof.
 Theorem plus_swap' : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  rewrite plus_assoc. rewrite plus_assoc.
+  replace (n + m) with (m + n).
+  reflexivity. rewrite plus_comm. reflexivity.
+Qed.
 (** [] *)
 
 
