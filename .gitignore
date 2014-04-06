@@ -27,3 +27,9 @@ cabal.config
 *.aux
 *.log
 *.pdf
+
+# coq
+*.glob
+*.vo
+/software-foundations/Basics.vo
+/software-foundations/Induction.glob
