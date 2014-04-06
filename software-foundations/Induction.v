@@ -304,10 +304,15 @@ Qed.
 (** **** Exercise: 1 star (destruct_induction) *)
 (** Briefly explain the difference between the tactics
     [destruct] and [induction].  
-
-(* FILL IN HERE *)
-
 *)
+
+(** Both [destruct] and [induction] provides a way of deconstructing
+    a value, while [destruct] does case analysis on the corresponding type,
+    [induction] works on base cases (non-recursive portion of the data) and later
+    provide hypotheses for inductive steps.
+*)
+
+
 (** [] *)
 
 
@@ -395,8 +400,13 @@ Proof.
 Theorem plus_swap : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros n m p.
+  rewrite -> plus_comm.
+  assert (H: n + p = p + n).
+  Case "n + p = p + n".
+    rewrite -> plus_comm. reflexivity.
+  rewrite -> H. rewrite -> plus_assoc. reflexivity.
+Qed.
 
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
@@ -406,7 +416,37 @@ Proof.
 Theorem mult_comm : forall m n : nat,
  m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros m n.
+  induction n as [|n'].
+  Case "n = 0".
+    simpl.
+    rewrite -> mult_0_r.
+    reflexivity.
+  Case "n = S n'".
+    simpl.
+    rewrite <- IHn'.
+    rewrite -> plus_comm.
+    rewrite <- plus_1_l.
+    rewrite -> plus_comm.
+    assert (H : forall a b c : nat, a * (b + c) = a * b + a * c).
+      intros a b c.
+      induction a as [|a'].
+      SCase "a = 0".
+        simpl. reflexivity.
+      SCase "a = S a'".
+        simpl. rewrite -> IHa'. 
+        assert (H1: c + (a' * b + a' * c) = a' * b + (c + a' * c)).
+          rewrite -> plus_swap. reflexivity.
+        assert (H2: forall x y: nat,  b + x + y = b + (x + y)).
+          intros x y.
+          rewrite -> plus_assoc. reflexivity.
+        rewrite -> H2. rewrite -> H1. rewrite <- H2. reflexivity. 
+    rewrite <- plus_comm.
+    rewrite -> H. 
+    assert (mult_m_1 : forall m : nat, m * 1 = m).
+      intros m0. induction m0 as [|m0']. reflexivity. simpl. rewrite IHm0'. reflexivity.
+    rewrite mult_m_1. rewrite plus_comm. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (evenb_n__oddb_Sn) *)
