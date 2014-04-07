@@ -24,6 +24,15 @@
 
 (install-amb-if)
 
+(define (run-slot-test slot)
+  (let ((handler (my-eval-get slot)))
+    (out handler)
+    (if (ahandler? handler)
+        (ahandler-run-test handler)
+        (error "no such slot" slot))))
+
+(run-slot-test 'if)
+
 ;; TODO: try to have a complete document about what's going on here.
 ;; just copying the code from book won't make much sense
 
