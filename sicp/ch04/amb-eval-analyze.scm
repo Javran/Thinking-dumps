@@ -43,3 +43,7 @@
 ;; the amb eval procedure
 (define (amb-eval exp env succeed fail)
   ((amb-analyze exp) env succeed fail))
+
+;; Local variables:
+;; proc-entry: "./amb-eval.scm"
+;; End:

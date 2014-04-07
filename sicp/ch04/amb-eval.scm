@@ -1,8 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-;; try to use the framework of my-eval.
-
+;; using the framework of my-eval.
+;; disabling all tests for compatibility.
 (define *my-eval-do-test* #f)
 
 (load "./my-eval-handler.scm")
@@ -21,6 +21,8 @@
 (load "./amb-eval-e-begin.scm")
 (load "./amb-eval-e-define.scm")
 (load "./amb-eval-e-set.scm")
+
+(install-amb-if)
 
 ;; TODO: try to have a complete document about what's going on here.
 ;; just copying the code from book won't make much sense
@@ -76,8 +78,10 @@
                          fail2))
              fail))))
 
-(out (amb-eval #\a #f (lambda (exp fail)
-                          exp) (lambda () #f)))
+(out (amb-eval `(if #f 10 20)
+               (init-env)
+               (lambda (exp fail) exp)
+               (lambda () #f)))
 
 (end-script)
 
