@@ -1,20 +1,24 @@
 (define (analyze-sequence exps)
   (define (sequentially a b)
-    ;; evaluate a, then b
+    ;; run a, then b
     (lambda (env succeed fail)
       (a env
-         ;; success cont for calling a
+         ;; on success, control goes to this function
          (lambda (a-value fail2)
+           ;; run b
            (b env succeed fail2))
-         ;; failure cont for calling a
+         ;; on failure, control goes to "fail" to cleanup
          fail)))
+
   (define (loop first-proc rest-procs)
     (if (null? rest-procs)
         first-proc
         (loop (sequentially first-proc
                             (car rest-procs))
               (cdr rest-procs))))
+
   (let ((procs (map analyze exps)))
     (if (null? procs)
+        ;; sequence cannot be empty
         (error "Empty sequence: ANALYZE"))
     (loop (car procs) (cdr procs))))

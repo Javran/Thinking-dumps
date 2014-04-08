@@ -21,6 +21,8 @@
 
   (define (test)
     (let* ((env (init-env))
+           ;; TODO: a default proc for tests
+           ;; e.g.: default success handler / failure handler
           (tester (lambda (exp)
                     (amb-eval
                      exp
@@ -32,7 +34,7 @@
        (list
         (mat `(if #t 10 20) 10)
         (mat `(if #f 11 22) 22))))
-    'todo)
+    'ok)
 
   (define handler
     (make-amb-handler
