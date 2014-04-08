@@ -1,6 +1,7 @@
 (load "./my-eval-maybe.scm")
 (load "./amb-eval-e-simple.scm")
 (load "./amb-eval-ahandler.scm")
+(load "./amb-eval-apply.scm")
 
 ;; the amb analyze procedure
 (define (amb-analyze exp)
