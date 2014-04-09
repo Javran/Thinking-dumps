@@ -25,14 +25,23 @@
           fail2))
        fail)))
 
+;; application for amb-analyze
+(define (apply-proc-analyzed-compound-amb proc args succeed fail)
+  (define vars  (proc-a-vars proc))
+  (define abody (proc-a-body proc))
+  (define env   (proc-a-env  proc))
+
+  (define body-env
+    (extend-environment vars args env))
+  (abody body-env succeed fail))
+
 ;; TODO: need some adjustment regarding the existing system of my-eval.
 (define (execute-application proc args succeed fail)
   (cond ((proc-primitive? proc)
          (succeed (apply-proc-primitive proc args)
                   fail))
         ((proc-analyzed-compound? proc)
-         (succeed (apply-proc-analyzed-compound proc args)
-                  fail))
+         (apply-proc-analyzed-compound-amb proc args succeed fail))
         (else (error "Unknown procedure type: EXECUTE-APPLICATION"
                      proc))))
 

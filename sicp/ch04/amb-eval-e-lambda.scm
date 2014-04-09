@@ -16,6 +16,11 @@
   (define (test)
     (out "testing lambda...")
     (out
+     (amb-eval `(lambda (x) (+ x x))
+               (init-env)
+               (lambda (exp fail) exp)
+               (lambda () #f)))
+    (out
      (amb-eval `((lambda (x) (+ x x)) 20)
                (init-env)
                (lambda (exp fail) exp)
