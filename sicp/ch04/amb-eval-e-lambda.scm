@@ -10,11 +10,16 @@
           (bproc (analyze-sequence (lambda-body exp))))
       (lambda (env succeed fail)
         ;; on success, make the procedure.
-        (succeed (make-procedure vars bproc env)
+        (succeed (make-analyzed-procedure vars bproc env)
                  fail))))
 
   (define (test)
-    ;; cannot test, function application is not yet done
+    (out "testing lambda...")
+    (out
+     (amb-eval `((lambda (x) (+ x x)) 20)
+               (init-env)
+               (lambda (exp fail) exp)
+               (lambda () #f)))
     'todo)
 
   (define handler
@@ -25,3 +30,7 @@
 
   (ahandler-register! handler)
   'ok)
+
+;; Local variables:
+;; proc-entry: "./amb-eval.scm"
+;; End:

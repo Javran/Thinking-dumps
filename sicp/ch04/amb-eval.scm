@@ -21,6 +21,7 @@
 (load "./amb-eval-e-set.scm")
 
 (install-amb-if)
+(install-amb-lambda)
 
 (define (run-slot-test slot)
   (let ((handler (my-eval-get slot)))
@@ -30,6 +31,7 @@
         (error "no such slot" slot))))
 
 (run-slot-test 'if)
+(run-slot-test 'lambda)
 
 ;; TODO: try to have a complete document about what's going on here.
 ;; just copying the code from book won't make much sense

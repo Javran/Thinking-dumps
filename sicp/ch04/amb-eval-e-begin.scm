@@ -17,8 +17,12 @@
                             (car rest-procs))
               (cdr rest-procs))))
 
-  (let ((procs (map analyze exps)))
+  (let ((procs (map amb-analyze exps)))
     (if (null? procs)
         ;; sequence cannot be empty
         (error "Empty sequence: ANALYZE"))
     (loop (car procs) (cdr procs))))
+
+;; Local variables:
+;; proc-entry: "./amb-eval.scm"
+;; End:
