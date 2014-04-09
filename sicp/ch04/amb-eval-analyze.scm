@@ -28,7 +28,10 @@
 
   ;; try to analyze an application
  (define (try-app-analyze exp)
-   'todo)
+   (if (application? exp)
+       (just
+        (analyze-application exp))
+       nothing))
 
  ((maybe
     ;; if the analysis goes well, return the result

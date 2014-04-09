@@ -1,5 +1,7 @@
 ;;; amb evaluator, procedure application
 
+(load "./my-eval-apply.scm")
+
 ;; evaluate all arguments in order
 (define (get-args aprocs env succeed fail)
   ;; the argument list is empty, return nil (empty list)
@@ -25,17 +27,12 @@
 
 ;; TODO: need some adjustment regarding the existing system of my-eval.
 (define (execute-application proc args succeed fail)
-  (cond ((primitive-procedure? proc)
-         (succeed (apply-primitive-procedure proc args)
+  (cond ((proc-primitive? proc)
+         (succeed (apply-proc-primitive proc args)
                   fail))
-        ((compound-procedure? proc)
-         ((procedure-body proc)
-          (extend-environment
-           (procedure-parameters proc)
-           args
-           (procedure-environment proc))
-          succeed
-          fail))
+        ((proc-analyzed-compound? proc)
+         (succeed (apply-proc-analyzed-compound proc args)
+                  fail))
         (else (error "Unknown procedure type: EXECUTE-APPLICATION"
                      proc))))
 

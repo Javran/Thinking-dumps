@@ -22,7 +22,6 @@
 
 (install-amb-if)
 
-
 (define (run-slot-test slot)
   (let ((handler (my-eval-get slot)))
     (out handler)
@@ -37,7 +36,7 @@
 
 
 
-(out (amb-eval `(if #f 10 20)
+(out (amb-eval `(* 10 20)
                (init-env)
                (lambda (exp fail) exp)
                (lambda () #f)))
