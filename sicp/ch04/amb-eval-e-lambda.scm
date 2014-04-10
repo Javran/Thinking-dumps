@@ -1,5 +1,6 @@
 (load "./my-eval-e-lambda.scm")
 (load "./amb-eval-e-begin.scm")
+(load "./amb-eval-test.scm")
 
 (define (install-amb-lambda)
 
@@ -14,18 +15,14 @@
                  fail))))
 
   (define (test)
-    (out "testing lambda...")
-    (out
-     (amb-eval `(lambda (x) (+ x x))
-               (init-env)
-               (lambda (exp fail) exp)
-               (lambda () #f)))
-    (out
-     (amb-eval `((lambda (x) (+ x x)) 20)
-               (init-env)
-               (lambda (exp fail) exp)
-               (lambda () #f)))
-    'todo)
+    (let ((env (init-env)))
+      (do-test
+       test-eval
+       (list
+        (mat `((lambda (x) (+ x x)) 20) env 40)
+        )
+       (test-compare equal?)))
+    'ok)
 
   (define handler
     (make-amb-handler

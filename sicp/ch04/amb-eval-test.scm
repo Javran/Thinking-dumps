@@ -18,7 +18,7 @@
 ;; assume the result is wrapped in a "just"
 ;; and when `expected` is "failure", that means a failure on computation
 ;; deal with the result comparison properly
-(define (test-cmp equal1?)
+(define (test-compare equal1?)
   (lambda (result expected)
     (if (eq? expected 'failure)
         ;; a symbol "failure" means a failure on computation
