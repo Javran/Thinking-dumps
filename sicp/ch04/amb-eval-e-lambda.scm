@@ -20,6 +20,9 @@
        test-eval
        (list
         (mat `((lambda (x) (+ x x)) 20) env 40)
+        (mat `((lambda (x y) (x y))
+               (lambda (x) (+ x 20))
+               30) env 50)
         )
        (test-compare equal?)))
     'ok)
