@@ -28,6 +28,8 @@
 (define (install-amb-begin)
 
   (define analyze-begin
+    ;; remove `begin`, and the rest of the expression
+    ;; should be an non-empty sequence of s-exp.
     (compose analyze-sequence cdr))
 
   (define (test)
@@ -35,8 +37,11 @@
     (do-test
      test-eval
      (list
+      ;; the last result is returned
       (mat `(begin 1 2 3) env 3)
+      ;; handle "singleton" properly
       (mat `(begin #t) env #t)
+      ;; embeded expression test
       (mat `(begin 1 2 (begin 3 4 (begin 5 6))) env 6)
       )
      (test-compare equal?)))
