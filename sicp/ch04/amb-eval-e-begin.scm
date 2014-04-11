@@ -1,3 +1,5 @@
+(load "./amb-eval-test.scm")
+
 (define (analyze-sequence exps)
   (define (sequentially a b)
     ;; run a, then b
@@ -22,6 +24,32 @@
         ;; sequence cannot be empty
         (error "Empty sequence: ANALYZE"))
     (loop (car procs) (cdr procs))))
+
+(define (install-amb-begin)
+
+  (define analyze-begin
+    (compose analyze-sequence cdr))
+
+  (define (test)
+    (let ((env (init-env)))
+    (do-test
+     test-eval
+     (list
+      (mat `(begin 1 2 3) env 3)
+      (mat `(begin #t) env #t)
+      (mat `(begin 1 2 (begin 3 4 (begin 5 6))) env 6)
+      )
+     (test-compare equal?)))
+    'ok)
+
+  (define handler
+    (make-amb-handler
+     'begin
+     analyze-begin
+     test))
+
+  (ahandler-register! handler)
+  'ok)
 
 ;; Local variables:
 ;; proc-entry: "./amb-eval.scm"
