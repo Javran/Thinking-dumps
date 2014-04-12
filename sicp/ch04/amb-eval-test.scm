@@ -29,13 +29,19 @@
 
 ;; run test in a specified slot
 (define (run-slot-test slot)
+  (format #t "Testing slot: ~A " slot)
   (let ((handler (my-eval-get slot)))
     (if (ahandler? handler)
         (ahandler-run-test handler)
         (error "no such slot" slot))))
 
+(define (test-result-print result)
+  (if (eq? result 'ok)
+      (out "Passed")
+      (format #t "NotPassing: ~A~%" result)))
+
 ;; run tests on all registered handlers
 (define (run-all-slot-tests)
   (for-each
-   run-slot-test
+   (compose test-result-print run-slot-test)
    (my-eval-get-all-slot-names)))
