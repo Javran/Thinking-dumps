@@ -23,6 +23,7 @@
 (install-amb-if)
 (install-amb-lambda)
 (install-amb-begin)
+(install-amb-define)
 
 (define (run-slot-test slot)
   (let ((handler (my-eval-get slot)))
@@ -33,6 +34,7 @@
 (run-slot-test 'if)
 (run-slot-test 'lambda)
 (run-slot-test 'begin)
+(run-slot-test 'define)
 
 (end-script)
 
