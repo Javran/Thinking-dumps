@@ -3,6 +3,7 @@
 (define my-eval-get #f)
 (define my-eval-put! #f)
 (define my-eval-test-installed-handlers #f)
+(define my-eval-get-all-slot-names #f)
 
 ; definition:
 ;  slot: a symbol, the syntax structure name, the tag of the expression
@@ -90,4 +91,7 @@
   (set! my-eval-get get)
   (set! my-eval-put! put!)
   (set! my-eval-test-installed-handlers test-all-slots)
+  (set! my-eval-get-all-slot-names
+        (lambda ()
+          (map car eval-handler-alist)))
   'ok)

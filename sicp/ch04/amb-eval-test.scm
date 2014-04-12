@@ -26,3 +26,16 @@
         ;; otherwise, use equal1? to compare
         (equal1? (from-just result)
                  expected))))
+
+;; run test in a specified slot
+(define (run-slot-test slot)
+  (let ((handler (my-eval-get slot)))
+    (if (ahandler? handler)
+        (ahandler-run-test handler)
+        (error "no such slot" slot))))
+
+;; run tests on all registered handlers
+(define (run-all-slot-tests)
+  (for-each
+   run-slot-test
+   (my-eval-get-all-slot-names)))

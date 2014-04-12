@@ -12,6 +12,8 @@
 (load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
 
+(load "./amb-eval-test.scm")
+
 (load "./amb-eval-analyze.scm")
 
 (load "./amb-eval-e-lambda.scm")
@@ -25,16 +27,7 @@
 (install-amb-begin)
 (install-amb-define)
 
-(define (run-slot-test slot)
-  (let ((handler (my-eval-get slot)))
-    (if (ahandler? handler)
-        (ahandler-run-test handler)
-        (error "no such slot" slot))))
-
-(run-slot-test 'if)
-(run-slot-test 'lambda)
-(run-slot-test 'begin)
-(run-slot-test 'define)
+(run-all-slot-tests)
 
 (end-script)
 
