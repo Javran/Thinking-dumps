@@ -1,6 +1,9 @@
+(load "./my-eval-e-set.scm")
+(load "./amb-eval-test.scm")
+
 (define (analyze-assignment exp)
   (let ((var (assignment-variable exp))
-        (vproc (analyze (assignment-value exp))))
+        (vproc (amb-analyze (assignment-value exp))))
     (lambda (env succeed fail)
       (vproc env
              (lambda (val fail2)
@@ -15,3 +18,35 @@
                              var old-value env)
                             (fail2)))))
              fail))))
+
+(define (install-amb-set!)
+
+  (define analyze-set!
+    analyze-assignment)
+
+  (define (test)
+    (let ((env (init-env)))
+      (test-eval `(define x #f) env)
+      (test-eval `(define y #f) env)
+      (test-eval `(define f #f) env)
+
+      (test-eval `(set! x 20) env)
+      (test-eval `(set! f (lambda (f) (* f f))) env)
+      (test-eval `(set! y (f x)) env)
+
+      (do-test
+       test-eval
+       (list
+        (mat `x env 20)
+        (mat `y env 400))
+       (test-compare equal?))
+      'ok))
+
+  (define handler
+    (make-amb-handler
+     'set!
+     analyze-set!
+     test))
+
+  (ahandler-register! handler)
+  'ok)

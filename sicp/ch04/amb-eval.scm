@@ -26,6 +26,7 @@
 (install-amb-lambda)
 (install-amb-begin)
 (install-amb-define)
+(install-amb-set!)
 
 (run-all-slot-tests)
 
