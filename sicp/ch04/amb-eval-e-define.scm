@@ -29,12 +29,16 @@
        (test-compare equal?))
 
       (test-eval `(define x 3) env)
+      (test-eval `(define (f x) (+ x x)) env)
 
       (do-test
        test-eval
        (list
         (mat `x env 3)
-        (mat `y env 2))
+        (mat `y env 2)
+        (mat `(f x) env 6)
+        (mat `(f (f x)) env 12)
+        )
        (test-compare equal?))
 
       'ok))
