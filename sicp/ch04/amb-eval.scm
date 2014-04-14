@@ -21,14 +21,23 @@
 (load "./amb-eval-e-begin.scm")
 (load "./amb-eval-e-define.scm")
 (load "./amb-eval-e-set.scm")
+(load "./amb-eval-e-amb.scm")
 
 (install-amb-if)
 (install-amb-lambda)
 (install-amb-begin)
 (install-amb-define)
 (install-amb-set!)
+(install-amb-amb)
 
 (run-all-slot-tests)
+
+(out (amb-eval `(+ (amb 1) (amb 10 20 30))
+          (init-env)
+          (lambda (exp fail)
+            exp)
+          (lambda ()
+            'error)))
 
 (end-script)
 
