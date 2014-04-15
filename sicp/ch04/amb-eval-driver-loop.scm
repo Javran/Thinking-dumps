@@ -1,3 +1,5 @@
+(load "./my-eval-driver-loop.scm")
+
 (define input-prompt "amb-eval> ")
 (define output-prompt "")
 
@@ -8,24 +10,22 @@
       (if (eq? input 'try-again)
           (try-again)
           (begin
-            (newline)
-            (display "<Staring a new problem>")
+            (out "amb-eval: starting a new problem.")
             (amb-eval
              input
-             the-global-environment
+             (init-env)
              ;; ambeval success
              (lambda (val next-alternative)
-               (announce-ouput output-prompt)
+               (announce-output output-prompt)
                (user-print val)
                (internal-loop next-alternative))
              ;; ambeval failure
              (lambda ()
-               (announce-ouput
-                (display "<no more values of>")
+               (announce-output "amb-eval: no more values of ")
                 (user-print input)
-                (driver-loop))))))))
+                (driver-loop)))))))
   (internal-loop
    (lambda ()
      (newline)
-     (display "<no current problem>")
+     (out "amb-eval: no current problem")
      (driver-loop))))

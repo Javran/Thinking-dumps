@@ -11,6 +11,7 @@
 
 (load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
+(load "./amb-eval-driver-loop.scm")
 
 (load "./amb-eval-test.scm")
 
@@ -32,12 +33,7 @@
 
 (run-all-slot-tests)
 
-(out (amb-eval `(+ (amb 1) (amb 10 20 30))
-          (init-env)
-          (lambda (exp fail)
-            exp)
-          (lambda ()
-            'error)))
+(driver-loop)
 
 (end-script)
 
