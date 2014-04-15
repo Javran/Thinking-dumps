@@ -31,11 +31,11 @@
 (install-amb-set!)
 (install-amb-amb)
 
+;; disable slot tests when being used as a module
+;; user can still call this procedure explictly
 (run-all-slot-tests)
 
-(driver-loop)
-
-(end-script)
+;; it's recommended using `(amb-repl)` to start the driver loop
 
 ;; Local variables:
 ;; proc-entry: ""

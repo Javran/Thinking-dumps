@@ -3,6 +3,12 @@
 (define input-prompt "amb-eval> ")
 (define output-prompt "")
 
+;; output amb informations, newline is appended
+(define (amb-info fmt . args)
+  (display "amb-eval: ")
+  (apply format `(#t ,fmt ,@args))
+  (newline))
+
 (define (driver-loop)
   (define (internal-loop try-again)
     (prompt-for-input input-prompt)
@@ -10,7 +16,7 @@
       (if (eq? input 'try-again)
           (try-again)
           (begin
-            (out "amb-eval: starting a new problem.")
+            (amb-info "starting a new problem.")
             (amb-eval
              input
              (init-env)
@@ -21,11 +27,12 @@
                (internal-loop next-alternative))
              ;; ambeval failure
              (lambda ()
-               (announce-output "amb-eval: no more values of ")
-                (user-print input)
-                (driver-loop)))))))
+               (amb-info "no more values of ~A" input)
+               (driver-loop)))))))
   (internal-loop
    (lambda ()
      (newline)
-     (out "amb-eval: no current problem")
+     (amb-info "no current problem")
      (driver-loop))))
+
+;; TODO: amb-repl and amb-repl-with <env>
