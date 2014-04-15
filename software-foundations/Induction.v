@@ -650,7 +650,22 @@ Qed.
     wanting to change your original definitions to make the property
     easier to prove, feel free to do so.) *)
 
-(* FILL IN HERE *)
+Theorem binary_commute : forall b : bin,
+  bin_to_unary (bin_succ b) = S (bin_to_unary b).
+Proof.
+  intros b. induction b as [|bt|bp].
+  Case "b = Zero.".
+    reflexivity.
+  Case "b = Twice bt".
+    reflexivity.
+  Case "b = TwicePlusOne bp".
+    simpl. rewrite IHbp. 
+    assert (forall a b : nat, S a + S b = S (S (a + b))).
+      intros a b. induction a as [|a'].
+      SCase "a = 0". reflexivity.
+      SCase "a = S a'". simpl. rewrite <- plus_n_Sm. reflexivity.
+    rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 
@@ -679,7 +694,63 @@ Qed.
     here. 
 *)
 
-(* FILL IN HERE *)
+Fixpoint unary_to_bin (n : nat) : bin :=
+  match n with
+  | O => Zero
+  | S n' => bin_succ (unary_to_bin n')
+  end.
+
+(* we don't need examples here, which is implied by the following theorem *)
+Theorem binary_inverse : forall n : nat,
+  bin_to_unary (unary_to_bin n) = n.
+Proof.
+  intros n. induction n as [|n'].
+  Case "n = 0". reflexivity.
+  Case "n = S n'". 
+    simpl. rewrite binary_commute.
+    rewrite IHn'. reflexivity.
+Qed.
+
+(* not able to define a bin_plus for now 
+Fixpoint bin_plus (b1 b2 : bin) : bin :=
+  match b1 with
+  (* 0 + b2 = b2 *)
+  | Zero => b2
+  (* 2*bt + b2 =  *)
+  | Twice bt => bin_plus b2 (bin_plus bt bt)
+  | TwicePlusOne bp => b2
+  end.
+
+*)
+
+Theorem unary_inverse : forall b : bin,
+  unary_to_bin (bin_to_unary b) = b.
+Proof.
+  intros b. induction b as [|bt|bp].
+  Case "b = Zero". reflexivity.
+  Case "b = Twice bt". simpl.
+    (* assert (forall n m : nat, unary_to_bin (n + m) = unary_to_bin n + unary_to_bin m). *)
+Abort.
+
+(* I guess the problem is one number might have multiple representations
+   since there are multiple ways of defining [succ(TwicePlusOne bp)] (2n+2 or 2(n+1))
+   and this might lead to multiple representation of the same value (TODO)
+*)
+
+Definition normalize (b : bin) : bin :=
+ unary_to_bin (bin_to_unary b).
+
+Theorem normalize_expand : forall b : bin,
+  normalize b = unary_to_bin (bin_to_unary b).
+Proof. reflexivity. Qed.
+
+(* I guess "prove it" means to prove the following,
+   it doesn't make sense to prove a definition anyway *)
+Theorem unary_inverse : forall b : bin,
+  unary_to_bin (bin_to_unary (normalize b)) = normalize b.
+Proof.
+  intros b. rewrite normalize_expand. rewrite binary_inverse. reflexivity.
+Qed.
 (** [] *)
 
 (* ###################################################################### *)
