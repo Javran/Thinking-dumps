@@ -926,7 +926,7 @@ Proof.
 Inductive bin : Type :=
   | Zero : bin
   | Twice : bin -> bin
-  | Onemore : bin -> bin.
+  | TwicePlusOne : bin -> bin.
 
 (* equality test for [nat] *)
 Fixpoint unary_eq (n1 n2 : nat) : bool :=
@@ -957,14 +957,14 @@ Fixpoint bin_to_unary (n : bin) : nat :=
   match n with
   | Zero => O
   | Twice n' => bin_to_unary(n') + bin_to_unary(n')
-  | Onemore n' => S (bin_to_unary n')
+  | TwicePlusOne n' => S (bin_to_unary n' + bin_to_unary n')
   end.
 
 Example bin_to_unary_test1 : bin_to_unary Zero = 0.
 Proof. reflexivity. Qed.
-Example bin_to_unary_test2 : bin_to_unary (Twice (Onemore Zero)) = 2.
+Example bin_to_unary_test2 : bin_to_unary (Twice (TwicePlusOne Zero)) = 2.
 Proof. reflexivity. Qed.
-Example bin_to_unary_test3 : bin_to_unary (Onemore (Twice (Onemore Zero))) = 3.
+Example bin_to_unary_test3 : bin_to_unary (TwicePlusOne (Twice (TwicePlusOne Zero))) = 5.
 Proof. reflexivity. Qed.
 
 (* equality test for [bin] *)
@@ -976,33 +976,33 @@ Example bin_eq_test1 : bin_eq Zero Zero = true.
 Proof. reflexivity. Qed.
 Example bin_eq_test2 : bin_eq (Twice Zero) Zero = true.
 Proof. reflexivity. Qed.
-Example bin_eq_test3 : bin_eq Zero (Onemore Zero) = false.
+Example bin_eq_test3 : bin_eq Zero (TwicePlusOne Zero) = false.
 Proof. reflexivity. Qed.
 
 (* successor for [bin] *)
 Fixpoint bin_succ (n : bin) : bin :=
   match n with
   (* 0 + 1 = 1 *)
-  | Zero => Onemore Zero
+  | Zero => TwicePlusOne Zero
   (* 2*x + 1 = (2*x) + 1 *)
-  | Twice n' => Onemore n'
+  | Twice n' => TwicePlusOne n'
   (* (2*x + 1) + 1 = 2 *(x + 1) *)
-  | Onemore n' => Twice (bin_succ n')
+  | TwicePlusOne n' => Twice (bin_succ n')
   end.
 
 Example bin_succ_test1 :
   bin_eq (bin_succ (Twice (Twice Zero)))
-         (Onemore Zero)
+         (TwicePlusOne Zero)
          = true.
 Proof. reflexivity. Qed.
 Example bin_succ_test2 :
-  bin_eq (bin_succ (Twice (Onemore Zero)))
-         (Onemore (Onemore Zero))
+  bin_eq (bin_succ (Twice (TwicePlusOne Zero)))
+         (TwicePlusOne (TwicePlusOne Zero))
          = true.
 Proof. reflexivity. Qed.
 Example bin_succ_test3 :
-  bin_eq (bin_succ (Onemore (Twice (Onemore Zero)))) 
-         (Twice (Onemore (Onemore Zero)))
+  bin_eq (bin_succ (TwicePlusOne (Twice (TwicePlusOne Zero)))) 
+         (Twice (TwicePlusOne (TwicePlusOne Zero)))
          = true.
 Proof. simpl. reflexivity. Qed.
 (** [] *)
