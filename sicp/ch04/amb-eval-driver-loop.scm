@@ -9,7 +9,30 @@
   (apply format `(#t ,fmt ,@args))
   (newline))
 
+;; run REPL with a given environment
 (define (amb-repl-with env)
+
+  ;; called when user has issued "try-again"
+  ;; without staring a problem
+  (define on-failure-no-current-problem
+    (lambda ()
+      (amb-info "no current problem")
+      (amb-repl-with env)))
+
+  ;; called when user has issued "try-again"
+  ;; but no more values are available
+  (define (on-failure-no-more-values-of exp)
+    (lambda ()
+      (amb-info "no more values of ~A" exp)
+      (amb-repl-with env)))
+
+  ;; called when the computation has succeeded
+  (define on-success
+    (lambda (val next-alternative)
+      (announce-output output-prompt)
+      (user-print val)
+      (internal-loop next-alternative)))
+
   (define (internal-loop try-again)
     (prompt-for-input input-prompt)
     (let ((input (read)))
@@ -21,19 +44,11 @@
              input
              env
              ;; ambeval success
-             (lambda (val next-alternative)
-               (announce-output output-prompt)
-               (user-print val)
-               (internal-loop next-alternative))
+             on-success
              ;; ambeval failure
-             (lambda ()
-               (amb-info "no more values of ~A" input)
-               (amb-repl-with env)))))))
-  (internal-loop
-   (lambda ()
-     (newline)
-     (amb-info "no current problem")
-     (amb-repl-with env))))
+             (on-failure-no-more-values-of input)
+             )))))
+  (internal-loop on-failure-no-current-problem))
 
 (define (amb-repl)
   (amb-repl-with (init-env)))
