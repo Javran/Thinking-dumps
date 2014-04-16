@@ -31,5 +31,3 @@ cabal.config
 # coq
 *.glob
 *.vo
-/software-foundations/Basics.vo
-/software-foundations/Induction.glob
