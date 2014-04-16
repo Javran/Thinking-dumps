@@ -88,54 +88,105 @@ This means in $\mathcal{C}_0$, $\forall a,b,c \in \mathcal{C}_0$,
 if $a \le b$ and $b \le c$, then $a \le c$. Thus transitivity holds for $\le$.
 \end{itemize}
 
-\newpage
 \paragraph{Exercise 3}
 
 Despite the exercise does not define explicitly
 about what is \textit{substring}, I guess a \textit{substring}
 should be consecutive.
-For example, ``ab'' is a substring of ``aabb'', but is not a substring of ``accb''.
-
-Let $\mathop{concat}(A_1,A_2,\ldots,A_n)$ be the concatenation of strings
-$A_1,A_2\ldots,A_n$ in order.
-
-Let $\mathop{rm}(A)$ be the result of the operation of successively removing form $xx^{-1}$
-and $x^{-1}x$ from A until $A \in \tilde{A}$.
-
-Let the corresponding element of a character $a$ be $\mathop{inv}(a)$.
-i.e. $inv(a) = a^{-1}, inv(a^{-1}) = a$.
-
-Therefore $A \star B = \mathop{rm}(\mathop{concat}(A,B))$.
-
-For now, I just assume for all possible $A$, $\mathop{rm}(A)$ is unique, i.e. $\mathop{rm}$
-is a function. (Since I don't know how to prove that.)
-
-Another assumption: $\mathop{rm}(\mathop{concat}(\mathop{rm}(A),\mathop{rm}(B)))
-=\mathop{rm}(\mathop{concat}(A,B))$.
-
-% TODO: 'A' is also used for the set name..
+For example, ``xy'' is a substring of ``xxyy'', but is not a substring of ``xzzy''.
 
 \subparagraph{Proof $\langle \tilde{A}, \star \rangle$ is a group}
 
-Prove by the definition of group.
+Let $\mathop{concat}(X_1,X_2,\ldots,X_n)$ be the concatenation of strings
+$X_1,X_2\ldots,X_n$ in order.
+
+Let $\mathop{rm}(X)$ be the result of the operation of successively removing form $xx^{-1}$
+and $x^{-1}x$ from $X$ until $X \in \tilde{A}$.
+
+Therefore $X \star Y = \mathop{rm}(\mathop{concat}(X,Y))$.
+
+Let the corresponding element of a character $c$ be $\mathop{inv}(c)$.
+i.e. $inv(c) = c^{-1}, inv(c^{-1}) = c$.
+
+\begin{proof}
+For any given string $X = a_1,a_2,\ldots,a_n$ on alphabet $A \cup A^{-1}$,
+$rm(X)$ can only have one result. In other words, $rm$ is a function.
+
+First observe that for any given $X$, we can perform finite steps
+of deletion to get a result $X'$ in $\tilde{A}$. Then we can do the
+reverse: starting from $X'$, we take steps by putting substring of form $x x^{-1}$ or
+$x^{-1} x$ into it. After a finite steps, $X$ should be contained in the list of
+possible results because it only takes a finite step for $X$ to reach $X'$,
+so does the reverse.
+
+Through these operations, in any given step, let $X_1$ be the current
+string before insertion, and $X_2$ be the result after insertion,
+we will show that no matter how the insertion is performed, operation $rm(X_2)$
+will have only one result. Therefore for any given $X$, $rm(X)$ can only have
+one result, and therefore $rm(X)$ is a function of $X$.
+
+For every step, we insert a single pair, either of form $x x^{-1}$ or of form
+$x^{-1} x$.
+
+We do case analysis on the insertion step:
+
+\paragraph{Case 1: the pair are inserted before or after the whole string}
+Consider $c \mathop{inv}(c)$ is inserted before the whole string $a_1,a_2,\ldots,a_n$,
+if the string is empty or if $a_1 \neq c$, there is no way to divert the result.
+If $a_1 = c$, then the resulting string is $c,inv(c),c,a_2,\ldots,a_n$.
+Although there are two ways of deleting character pair on this part of string,
+the result will always be $c,a_2,\ldots,a_n$. Because the operation is symmetric,
+the same property holds if we are inserting pairs after the whole string.
+
+\paragraph{Case 2: the pair are inserted between two characters}
+Consider $c \mathop{inv}(c)$ is inserted between $a_i$ and $a_j$ in string
+$a_1,\ldots,a_i,a_j,\ldots,a_n$.
+
+\begin{itemize}
+  \item{$a_i = inv(c), a_j = c$}
+
+    The result will be $a_1,\ldots,inv(c),c,inv(c),c,\ldots,a_n$,
+    they are several ways of removing pairs from it, but all the deletions
+    will end up with the same result. (There are certainly some cases concerning
+    the $\ldots$ parts in $a_1,\ldots,a_i$, but I do not think this will make any difference
+    about the conclusion).
+
+  \item{$a_i = inv(c), a_j \neq c$}
+
+    No matter how the delection is performed, the $a_i\ldots a_j$ portion will
+    always be $inv(c),a_j$ after delection.
+
+  \item{$a_i \neq inv(c), a_j = c$ or $a_i \neq inv(c), a_j \neq c$}
+
+    Similiar result holds.
+\end{itemize}
+
+Therefore for any $X$, $rm(X)$ is a function.
+\end{proof}
+
+In addition, regarding the property of this delection. We know that:
+ $\mathop{rm}(\mathop{concat}(\mathop{rm}(X),\mathop{rm}(Y)))
+=\mathop{rm}(\mathop{concat}(X,Y))$.
+
+Now proof $\langle \tilde{A}, \star \rangle$ is a group by the definition of group.
 
 \begin{itemize}
   \item{Closure}: the definition of $\star$ shows the result must be
     an element of $\tilde{A}$.
   \item{Associativity}:
     \begin{align*}
-      (A \star B) \star C
-      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(A,B)),C)) \\
-      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(A,B)),\mathop{rm}(C))) \\
-      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(\mathop{concat}(A,B),C))) \\
-      & = \mathop{rm}(\mathop{concat}(A,B,C)) \\
-      A \star (B \star C)
-      & = \mathop{rm}(\mathop{concat}(A,\mathop{rm}({\mathop{concat}}(B,C)))) \\
-      & = \mathop{rm}(\mathop{concat}(\mathop{rm}(A),\mathop{rm}({\mathop{concat}}(B,C)))) \\
-      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(A,\mathop{concat}(B,C)))) \\
-      & = \mathop{rm}(\mathop{concat}(A,B,C))
+      (X \star Y) \star Z
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(X,Y)),Z)) \\
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}({\mathop{concat}}(X,Y)),\mathop{rm}(Z))) \\
+      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(\mathop{concat}(X,Y),Z))) \\
+      & = \mathop{rm}(\mathop{concat}(X,Y,Z)) \\
+      X \star (Y \star Z)
+      & = \mathop{rm}(\mathop{concat}(X,\mathop{rm}({\mathop{concat}}(Y,Z)))) \\
+      & = \mathop{rm}(\mathop{concat}(\mathop{rm}(X),\mathop{rm}({\mathop{concat}}(Y,Z)))) \\
+      & = \mathop{rm}(\mathop{rm}(\mathop{concat}(X,\mathop{concat}(Y,Z)))) \\
+      & = \mathop{rm}(\mathop{concat}(X,Y,Z))
     \end{align*}
-    Therefore $(A \star B) \star C = A \star (B \star C)$.
+    Therefore $(X \star Y) \star Z = X \star (Y \star Z)$.
   \item{Identity element}:
     The empty string $\varnothing$ is the identity element.
   \item{Inverse element}:
@@ -143,9 +194,22 @@ Prove by the definition of group.
     For any other given string $a_1,a_2,\ldots,a_n$ in $\tilde{A}$,
     its inverse is $\mathop{inv}(a_n),\mathop{inv}(a_{n-1}),\ldots,\mathop{inv}(a_1)$.
     Because $a_i\mathop{inv}(a_i)$ and $\mathop{inv}(a_i)a_i$ are of the form
-    $xx^{-1}$ and $x^{-1}x$. We know for any string $A$ and its inverse $B$ in $\tilde{A}$,
-    $A \star B = \varnothing = B \star A$.
+    $xx^{-1}$ and $x^{-1}x$. We know for any string $X$ and its inverse $Y$ in $\tilde{A}$,
+    $X \star Y = \varnothing = Y \star X$.
 \end{itemize}
+
+\subparagraph{Prove the assignment $A \mapsto \tilde{A}$ is part of a functor:
+$Set \rightarrow Grp$}
+
+Consider these factors:
+
+\begin{itemize}
+  \item{$A$ is surely a set}
+  \item{$\tilde{A}$ forms a group: $\langle \tilde{A}, \star \rangle$}
+\end{itemize}
+
+By the definition of functor, we know the assignment is part of a functor
+from $Set$ to $Grp$.
 
 \subsection{Some notes}
 
