@@ -9,7 +9,7 @@
   (apply format `(#t ,fmt ,@args))
   (newline))
 
-(define (driver-loop)
+(define (amb-repl-with env)
   (define (internal-loop try-again)
     (prompt-for-input input-prompt)
     (let ((input (read)))
@@ -19,7 +19,7 @@
             (amb-info "starting a new problem.")
             (amb-eval
              input
-             (init-env)
+             env
              ;; ambeval success
              (lambda (val next-alternative)
                (announce-output output-prompt)
@@ -28,11 +28,15 @@
              ;; ambeval failure
              (lambda ()
                (amb-info "no more values of ~A" input)
-               (driver-loop)))))))
+               (amb-repl-with env)))))))
   (internal-loop
    (lambda ()
      (newline)
      (amb-info "no current problem")
-     (driver-loop))))
+     (amb-repl-with env))))
 
-;; TODO: amb-repl and amb-repl-with <env>
+(define (amb-repl)
+  (amb-repl-with (init-env)))
+
+;; compatibility with definitions in the book
+(define driver-loop amb-repl)
