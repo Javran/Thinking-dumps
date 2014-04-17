@@ -1,3 +1,5 @@
+(load "./amb-eval-test.scm")
+
 (define amb-choices cdr)
 
 (define (analyze-amb exp)
@@ -18,6 +20,15 @@
   ;; analyze-amb is defined outside
 
   (define (test)
+    (let ((env (init-env)))
+      (do-test
+       test-eval
+       (list
+        (mat `(amb) env 'failure)
+        (mat `(amb 1 2 3) env 1)
+        (mat `(amb "a" "b") env "a")
+        )
+       (test-compare equal?)))
     'todo)
 
   (define handler
