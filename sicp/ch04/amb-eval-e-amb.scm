@@ -27,9 +27,10 @@
         (mat `(amb) env 'failure)
         (mat `(amb 1 2 3) env 1)
         (mat `(amb "a" "b") env "a")
+        (mat `(amb 'c 'd 'e) env 'c)
         )
        (test-compare equal?)))
-    'todo)
+    'ok)
 
   (define handler
     (make-amb-handler
