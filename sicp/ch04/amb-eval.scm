@@ -17,6 +17,7 @@
 
 (load "./amb-eval-analyze.scm")
 
+(load "./amb-eval-e-quote.scm")
 (load "./amb-eval-e-lambda.scm")
 (load "./amb-eval-e-if.scm")
 (load "./amb-eval-e-begin.scm")
@@ -24,8 +25,9 @@
 (load "./amb-eval-e-set.scm")
 (load "./amb-eval-e-amb.scm")
 
-(install-amb-if)
+(install-amb-quote)
 (install-amb-lambda)
+(install-amb-if)
 (install-amb-begin)
 (install-amb-define)
 (install-amb-set!)
