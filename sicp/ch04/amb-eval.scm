@@ -1,3 +1,7 @@
+;; despite that the whole system is working,
+;; we need to automatically fetch all the solutions.
+;; I don't have a good idea for now.
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
