@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\title{My Exercise Answers to \\
+Introduction to Category Theory}
+\author{Javran Cheng}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\cat}[1]{\textbf{#1}}
+\newcommand{\fcomp}{\circ}
+
+\section{Categories}
+
+\subsection{Categories defined}
+
+\subsubsection{Observe that sets and functions do form a category \cat{Set}}
+
+\begin{itemize}
+  \item Objects are sets.
+  \item Arrows are total functions, because function are just binary relations
+    between two sets.
+  \item Composition is the function composition.
+  \item Associativity holds because $(h \fcomp g) \fcomp f = h \fcomp (g \fcomp f)$
+    always holds for compatible functions.
+  \item Identity arrows are functions that relates each element of a set to itself.
+    Therefore the requirement $id_B \fcomp f = f = f \fcomp id_A$ becomes trivial.
+\end{itemize}
+
+
+
+\end{document}
