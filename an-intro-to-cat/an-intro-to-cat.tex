@@ -34,6 +34,19 @@ Introduction to Category Theory}
     Therefore the requirement $id_B \fcomp f = f = f \fcomp id_A$ becomes trivial.
 \end{itemize}
 
+\subsubsection{Each poset is a category, and each monoid is a category}
 
+\paragraph{Each poset is a category} For any given poset, each element in it
+is the corresponding object in the category. And each $\le$ relation corresponses
+to an arrow in the category. Since $\le$ relation is transitive, the associativity
+of arrow composition holds. And the identity for each object $A$ in the category is $(A,A)$,
+this is because $A \le A$ holds (The binary relation is reflexive).
+
+\paragraph{Each monoid is a category} For any given monoid $(M, \star , 1)$, the corresponding
+category has only one element, which is the monoid itself. Every element in
+this monoid is an arrow from the only object to itself. The arrow composition is
+the binary relation $\star$. (We can observe that for any two arrows $f$ and $g$, $f \star g$
+does form another arrow, and that $(f \star g) \star h = f \star (g \star h)$
+is guaranteed by the property held by the monoid).
 
 \end{document}
