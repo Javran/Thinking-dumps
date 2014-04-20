@@ -16,8 +16,10 @@ Introduction to Category Theory}
 
 \maketitle
 
-\newcommand{\cat}[1]{\textbf{#1}}
+\newcommand{\cat}[1]{\textit{#1}}
 \newcommand{\fcomp}{\circ}
+
+\newcommand{\nat}{\mathbb{N}}
 
 \section{Categories}
 
@@ -55,11 +57,11 @@ is guaranteed by the property held by the monoid).
 
 \subsubsection{The category \cat{Pno}}
 
-\paragraph{Verify that \cat{Pno} is a category}
+\paragraph{(a) Verify that \cat{Pno} is a category}
 
 \begin{itemize}
   \item Objects are $(A, \alpha, a)$ described in the question.
-  \item Arrows are functions $f : A \rightarrow B$ as described in the question
+  \item Arrows are functions $f : A \rTo B$ as described in the question
   \item Arrow composition.
     Suppose two arrows are:
     \begin{diagram}
@@ -88,6 +90,59 @@ is guaranteed by the property held by the monoid).
   \item Associativity holds by the function composition.
   \item For each object $(A,\alpha, a)$, $id_A \fcomp \alpha = \alpha \fcomp id_A$ and
     $id_A(a) = a$. So the identity arrow is the identity function on $A$ viewed as a morphism.
-
 \end{itemize}
+
+Therefore $\cat{Pno}$ is a category.
+
+\paragraph{(b) Show that $(\nat, succ, 0)$ is a $\cat{Pno}$-object}
+
+\begin{itemize}
+  \item $\nat$ is a set.
+  \item $succ$ is of type $\nat \rTo \nat$.
+  \item $0 \in \nat$ is a nominated element.
+\end{itemize}
+
+Therefore, $(\nat, succ, 0)$ is a $\cat{Pno}$-object.
+
+\paragraph{(c) Unique arrow and the behavior of the carrying function}\mbox{}
+
+We know that $succ(0) = 1, succ(1) = 2, \ldots, succ(n) = n + 1$.
+In order to describe the behavior of the carrying function $\alpha$,
+We observe the value of $\alpha(f(0)), \alpha(f(1)), \ldots, \alpha(f(n))$:
+
+\begin{align*}
+\alpha(f(0)) & = (f \fcomp succ)(0) = (f \fcomp succ^1)(0) \\
+\alpha(f(1)) & = \alpha(f \fcomp succ (0)) = (f \fcomp succ \fcomp succ)(0)
+= (f \fcomp succ^2)(0) \\
+& \ldots
+\end{align*}
+
+To sum up, $\forall n \in \nat$:
+\begin{align*}
+& \alpha(f(n)) \\
+= &(\alpha \fcomp f)(succ^n(0)) \\
+= &(\alpha \fcomp f \fcomp succ^n) (0) \\
+= &(f \fcomp succ \fcomp succ^n) (0) \\
+= &(f \fcomp succ^{n+1})(0) \\
+= &f(n+1)
+\end{align*}
+
+And also:
+
+\begin{align*}
+& f(n) \\
+= & (f \fcomp succ^{n})(0) \\
+= & (\alpha^n \fcomp f)(0) \\
+= & \alpha^n(a)
+\end{align*}
+
+Therefore the behavior of $\alpha$ is: $\forall a_1 \in A, \exists n_1 \in \nat$
+s.t. $f(n_1) = a_1$, applying $\alpha$ to $a_1$ produces the same result as
+applying $succ$ to $n_1$ and then applying $f$ to the resulting value does.
+
+We can informally says that $\alpha$ to $(A,a)$ is like $succ$ to $(\nat,0)$.
+
+The uniqueness of $f$ is also established, because from $f(n) = \alpha^n(a)$,
+we know that $f$ is totally determined by $\alpha$ and $a$.
+
 \end{document}
