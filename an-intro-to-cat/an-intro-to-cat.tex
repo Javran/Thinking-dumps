@@ -6,6 +6,8 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 
+\usepackage{diagrams}
+
 \title{My Exercise Answers to \\
 Introduction to Category Theory}
 \author{Javran Cheng}
@@ -49,4 +51,43 @@ the binary relation $\star$. (We can observe that for any two arrows $f$ and $g$
 does form another arrow, and that $(f \star g) \star h = f \star (g \star h)$
 is guaranteed by the property held by the monoid).
 
+\subsection{Categories of structured sets}
+
+\subsubsection{The category \cat{Pno}}
+
+\paragraph{Verify that \cat{Pno} is a category}
+
+\begin{itemize}
+  \item Objects are $(A, \alpha, a)$ described in the question.
+  \item Arrows are functions $f : A \rightarrow B$ as described in the question
+  \item Arrow composition.
+    Suppose two arrows are:
+    \begin{diagram}
+      (A,\alpha,a) & & \rTo^f & &
+      (B,\beta,b)  & & \rTo^g & &
+      (C,\gamma,c)
+    \end{diagram}
+    Where $f$ and $g$ preserves the structure:
+    \begin{align*}
+      f \fcomp \alpha & = \beta  \fcomp f & \quad f(a) = b \\
+      g \fcomp \beta  & = \gamma \fcomp g & \quad g(b) = c
+    \end{align*}
+    We can observe that:
+    \begin{align*}
+        & g \fcomp f \fcomp \alpha \\
+      = & g \fcomp \beta  \fcomp f \\
+      = & \gamma \fcomp g \fcomp f
+    \end{align*}
+    and that:
+    \begin{align*}
+      (g \fcomp f)(a) = g(b) = c
+    \end{align*}
+
+    Therefore the arrow composition is the function composition.
+
+  \item Associativity holds by the function composition.
+  \item For each object $(A,\alpha, a)$, $id_A \fcomp \alpha = \alpha \fcomp id_A$ and
+    $id_A(a) = a$. So the identity arrow is the identity function on $A$ viewed as a morphism.
+
+\end{itemize}
 \end{document}
