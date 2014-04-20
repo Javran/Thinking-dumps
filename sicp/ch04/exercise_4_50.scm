@@ -23,20 +23,36 @@
      (list-in-range 0 (- len 2)))
     (vector->list xsv)))
 
+;; remove the element at a given position
+(define (remove-at xs ind)
+  (cond ((null? xs) nil)
+        ((= ind 0) (cdr xs))
+        (else (cons (car xs)
+                    (remove-at
+                     (cdr xs) (sub1 ind))))))
+
+;; move the element at a given place to the head of the list
+(define (move-to-head xs ind)
+  (let ((val (list-ref xs ind)))
+    (cons val (remove-at xs ind))))
+
 (define (install-amb-ramb)
 
   (define (analyze-ramb exp)
-    ;; the only difference: `cprocs` is shuffled
-    (let ((cprocs (shuffle (map amb-analyze (amb-choices exp)))))
+    ;; vectorize the list for random access
+    (let ((cprocs (map amb-analyze (amb-choices exp))))
       (lambda (env succeed fail)
         (define (try-next choices)
           (if (null? choices)
               (fail)
-              ((car choices)
-               env
-               succeed
-               (lambda ()
-                 (try-next (cdr choices))))))
+              (let* ((choice-ind
+                      (random-range-in 0 (sub1 (length choices))))
+                     (choices1 (move-to-head choices choice-ind)))
+                ((car choices1)
+                 env
+                 succeed
+                 (lambda ()
+                   (try-next (cdr choices1)))))))
         (try-next cprocs))))
 
   (define (test)
