@@ -57,8 +57,12 @@
           (if (null? choices)
               (fail)
               (let* ((choice-ind
+                      ;; pick up one randomly
                       (random-range-in 0 (sub1 (length choices))))
-                     (choices1 (move-to-head choices choice-ind)))
+                     (choices1
+                      ;; move it to the head to be consumed
+                      ;; by the following computation
+                      (move-to-head choices choice-ind)))
                 ((car choices1)
                  env
                  succeed
@@ -67,7 +71,18 @@
         (try-next cprocs))))
 
   (define (test)
-    'todo)
+    (let ((env (init-env)))
+      ;; for random generated output,
+      ;; we can only examine that all the values are produced
+      (do-test
+       amb-eval-all
+       (list
+        (mat `(ramb 1 2 3) env `(1 2 3))
+        (mat `(+ (ramb 1 2) (ramb 3 4)) env `(4 5 5 6))
+        )
+       (lambda (actual expected)
+         (equal? expected (sort actual <)))))
+    'ok)
 
   (define handler
     (make-amb-handler
