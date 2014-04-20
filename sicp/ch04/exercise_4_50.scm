@@ -25,15 +25,26 @@
 
 ;; remove the element at a given position
 (define (remove-at xs ind)
-  (cond ((null? xs) nil)
-        ((= ind 0) (cdr xs))
-        (else (cons (car xs)
-                    (remove-at
-                     (cdr xs) (sub1 ind))))))
+  (cond
+   ;; nothing to do with empty list
+   ;; and negative index
+   ((or (null? xs)
+        (< ind 0))
+    xs)
+   ;; remove the head
+   ((= ind 0)
+    (cdr xs))
+   (else
+    (cons (car xs)
+          (remove-at
+           (cdr xs) (sub1 ind))))))
 
 ;; move the element at a given place to the head of the list
 (define (move-to-head xs ind)
+  ;; fetch the element
   (let ((val (list-ref xs ind)))
+    ;; remove it from the list and then attach it
+    ;; to the head of the list
     (cons val (remove-at xs ind))))
 
 (define (install-amb-ramb)
