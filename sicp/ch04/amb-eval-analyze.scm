@@ -48,6 +48,17 @@
 (define (amb-eval exp env succeed fail)
   ((amb-analyze exp) env succeed fail))
 
+;; the amb eval procedure which looks like
+;; a normal eval procedure, and returns a list of all possible solutions
+(define (amb-eval-all exp env)
+  (define (build-up-results result next-alternative)
+    (cons result (next-alternative)))
+
+  (define (result-list-end) '())
+
+  (amb-eval exp env
+            build-up-results result-list-end))
+
 ;; Local variables:
 ;; proc-entry: "./amb-eval.scm"
 ;; End:
