@@ -41,7 +41,7 @@
 
 ;; disable slot tests when being used as a module
 ;; user can still call this procedure explictly
-(run-all-slot-tests)
+;; (run-all-slot-tests)
 
 ;; it's recommended using `(amb-repl)` to start the driver loop
 
