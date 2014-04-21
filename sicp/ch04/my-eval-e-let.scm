@@ -7,8 +7,7 @@
 (define (make-let bindings body)
   (cons 'let (cons bindings body)))
 
-(define (install-eval-let)
-  (define (let->combination exp)
+(define (let->combination exp)
     (define (named-let? exp)
       ; the second element
       ;   should be a symbol
@@ -50,6 +49,8 @@
         (named-let->combination exp)
         (normal-let->combination exp)))
 
+(define (install-eval-let)
+
   (define (eval-let exp env)
     (my-eval (let->combination exp) env))
 
@@ -61,6 +62,7 @@
       (do-test
         eval-let
         (list
+          ;; test normal let
           (mat `(let ((x 1)
                       (y 2)
                       (z 3))
@@ -75,7 +77,7 @@
                   (let ((a (+ a 20)))
                     (let ((a (* a 30)))
                       (+ a a)))) env 1800)
-          ; test named let
+          ;; test named let
           (mat `(let fib-iter ((a 1) (b 0) (count 10))
                   (if (= count 0)
                     b
