@@ -180,4 +180,47 @@ we know that $f$ is totally determined by $\alpha$ and $a$.
   \item Identity arrow is the identity function viewed as a morphism.
 \end{itemize}
 
+\subsubsection{Show that these pairs are the objects of a category}
+
+% TODO: notice the case that we mention category before we show that it is a category
+%   need some modifications to eliminate this kind of mistakes
+
+\begin{itemize}
+  \item Objects are of form $(A,R)$, where $A$ is a set and $R \subseteq A \times A$
+    is a binary relation on $A$.
+  \item Arrows: Suppose two arbitrary objects in this category is $(A,R)$ and $(B,S)$.
+    The arrow $f$:
+
+    \begin{diagram}
+      (A,R) & & \rTo^f & & (B,S)
+    \end{diagram}
+
+    is a function of type $f : A \times A \rTo B \times B$ such that
+    $\forall a_1,a_2 \in A$, if $(a_1,a_2) \in R$, then $f(a_1,a_2) = (b_1,b_2) \in S$.
+  \item Arrow composition: for any two compatible arrows $f$ and $g$:
+
+    \begin{diagram}
+      (A,R) & & \rTo^f & & (B,S) & & \rTo^g & & (C,T)
+    \end{diagram}
+
+    We know:
+
+    \begin{align*}
+      \forall (a_1,a_2) \in R, f(a_1,a_2) \in S \quad
+      \forall (b_1,b_2) \in S, g(b_1,b_2) \in T
+    \end{align*}
+
+    Thus:
+
+    \begin{align*}
+      \forall (a_1,a_2) \in R, g(f(a_1,a_2)) = (g \fcomp f)(a_1,a_2) \in T
+    \end{align*}
+
+    Therefore the arrow composition is function composition.
+
+  \item Composition associativity holds because the arrow composition
+    is function composition.
+  \item Identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
 \end{document}
