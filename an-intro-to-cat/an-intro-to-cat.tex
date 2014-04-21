@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage{diagrams}
+
+\title{My Exercise Answers to \\
+Introduction to Category Theory}
+\author{Javran Cheng}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\cat}[1]{\textit{#1}}
+\newcommand{\fcomp}{\circ}
+
+\newcommand{\nat}{\mathbb{N}}
+
+\section{Categories}
+
+\subsection{Categories defined}
+
+\subsubsection{Observe that sets and functions do form a category \cat{Set}}
+
+\begin{itemize}
+  \item Objects are sets.
+  \item Arrows are total functions, because function are just binary relations
+    between two sets.
+  \item Composition is the function composition.
+  \item Associativity holds because $(h \fcomp g) \fcomp f = h \fcomp (g \fcomp f)$
+    always holds for compatible functions.
+  \item Identity arrows are functions that relates each element of a set to itself.
+    Therefore the requirement $id_B \fcomp f = f = f \fcomp id_A$ becomes trivial.
+\end{itemize}
+
+\subsubsection{Each poset is a category, and each monoid is a category}
+
+\paragraph{Each poset is a category} For any given poset, each element in it
+is the corresponding object in the category. And each $\le$ relation corresponses
+to an arrow in the category. Since $\le$ relation is transitive, the associativity
+of arrow composition holds. And the identity for each object $A$ in the category is $(A,A)$,
+this is because $A \le A$ holds (The binary relation is reflexive).
+
+\paragraph{Each monoid is a category} For any given monoid $(M, \star , 1)$, the corresponding
+category has only one element, which is the monoid itself. Every element in
+this monoid is an arrow from the only object to itself. The arrow composition is
+the binary relation $\star$. (We can observe that for any two arrows $f$ and $g$, $f \star g$
+does form another arrow, and that $(f \star g) \star h = f \star (g \star h)$
+is guaranteed by the property held by the monoid).
+
+\subsection{Categories of structured sets}
+
+\subsubsection{The category \cat{Pno}}
+
+\paragraph{(a) Verify that \cat{Pno} is a category}
+
+\begin{itemize}
+  \item Objects are $(A, \alpha, a)$ described in the question.
+  \item Arrows are functions $f : A \rTo B$ as described in the question
+  \item Arrow composition.
+    Suppose two arrows are:
+    \begin{diagram}
+      (A,\alpha,a) & & \rTo^f & &
+      (B,\beta,b)  & & \rTo^g & &
+      (C,\gamma,c)
+    \end{diagram}
+    Where $f$ and $g$ preserves the structure:
+    \begin{align*}
+      f \fcomp \alpha & = \beta  \fcomp f & \quad f(a) = b \\
+      g \fcomp \beta  & = \gamma \fcomp g & \quad g(b) = c
+    \end{align*}
+    We can observe that:
+    \begin{align*}
+        & g \fcomp f \fcomp \alpha \\
+      = & g \fcomp \beta  \fcomp f \\
+      = & \gamma \fcomp g \fcomp f
+    \end{align*}
+    and that:
+    \begin{align*}
+      (g \fcomp f)(a) = g(b) = c
+    \end{align*}
+
+    Therefore the arrow composition is the function composition.
+
+  \item Associativity holds by the function composition.
+  \item For each object $(A,\alpha, a)$, $id_A \fcomp \alpha = \alpha \fcomp id_A$ and
+    $id_A(a) = a$. So the identity arrow is the identity function on $A$ viewed as a morphism.
+\end{itemize}
+
+Therefore $\cat{Pno}$ is a category.
+
+\paragraph{(b) Show that $(\nat, succ, 0)$ is a $\cat{Pno}$-object}
+
+\begin{itemize}
+  \item $\nat$ is a set.
+  \item $succ$ is of type $\nat \rTo \nat$.
+  \item $0 \in \nat$ is a nominated element.
+\end{itemize}
+
+Therefore, $(\nat, succ, 0)$ is a $\cat{Pno}$-object.
+
+\paragraph{(c) Unique arrow and the behavior of the carrying function}\mbox{}
+
+We know that $succ(0) = 1, succ(1) = 2, \ldots, succ(n) = n + 1$.
+In order to describe the behavior of the carrying function $\alpha$,
+We observe the value of $\alpha(f(0)), \alpha(f(1)), \ldots, \alpha(f(n))$:
+
+\begin{align*}
+\alpha(f(0)) & = (f \fcomp succ)(0) = (f \fcomp succ^1)(0) \\
+\alpha(f(1)) & = \alpha(f \fcomp succ (0)) = (f \fcomp succ \fcomp succ)(0)
+= (f \fcomp succ^2)(0) \\
+& \ldots
+\end{align*}
+
+To sum up, $\forall n \in \nat$:
+\begin{align*}
+& \alpha(f(n)) \\
+= &(\alpha \fcomp f)(succ^n(0)) \\
+= &(\alpha \fcomp f \fcomp succ^n) (0) \\
+= &(f \fcomp succ \fcomp succ^n) (0) \\
+= &(f \fcomp succ^{n+1})(0) \\
+= &f(n+1)
+\end{align*}
+
+And also:
+
+\begin{align*}
+& f(n) \\
+= & (f \fcomp succ^{n})(0) \\
+= & (\alpha^n \fcomp f)(0) \\
+= & \alpha^n(a)
+\end{align*}
+
+Therefore the behavior of $\alpha$ is: $\forall a_1 \in A, \exists n_1 \in \nat$
+s.t. $f(n_1) = a_1$, applying $\alpha$ to $a_1$ produces the same result as
+applying $succ$ to $n_1$ and then applying $f$ to the resulting value does.
+
+We can informally says that $\alpha$ to $(A,a)$ is like $succ$ to $(\nat,0)$.
+
+The uniqueness of $f$ is also established, because from $f(n) = \alpha^n(a)$,
+we know that $f$ is totally determined by $\alpha$ and $a$.
+
+\end{document}
