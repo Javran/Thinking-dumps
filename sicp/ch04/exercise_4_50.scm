@@ -97,12 +97,50 @@
 
 (run-all-slot-tests)
 
-;; maybe the randomness is not enough,
-;; consider put `random` inside the analyze,
-;; only do it on the fly, and as needed
-(out (amb-eval-all `(list (ramb 1 2)
-                          (ramb 3 4)
-                          (ramb 'a 'b 'c)) (init-env)))
+;; the following two results should be the same when sorted
+;; except that first one might not be in a deterministic order
+(out (amb-eval-all
+      `(list (ramb 1 2)
+             (ramb 3 4)
+             (ramb 'a 'b 'c))
+      (init-env)))
+
+(out (amb-eval-all
+      `(list (amb 1 2)
+             (amb 3 4)
+             (amb 'a 'b 'c))
+      (init-env)))
+
+;; How this can help with Alyssa's problem in exercise 4.49?
+
+;; suppose we want to generate a list that contains only "a"s and "b"s
+
+(define (run-demo-using amb-impl-symb)
+  (out (take 5
+           (amb-eval-all
+            `(begin
+               (define (demo1 n)
+                 (if (= n 0)
+                     '()
+                     (cons (,amb-impl-symb 'a 'b) (demo1 (- n 1)))))
+               (demo1 4))
+            (init-env)))))
+
+;; if we use "amb", the result will look like:
+(run-demo-using 'amb)
+
+;; from the result we can observe that "b" won't have any chance to
+;; appear in the resulting list before "a". And this behavior might get stuck
+;; if the length of the list is infinite.
+
+;; on the other hand, if we allow candidates to be attempted in a random order,
+;; we will have less chance to get stuck somewhere.
+;; consider a modified version:
+(run-demo-using 'ramb)
+
+;; in this version, we don't always pick up the first candidate,
+;; which somehow solves the problem of getting stuck
+;; because of the recursive structure
 
 (end-script)
 
