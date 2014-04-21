@@ -145,4 +145,39 @@ We can informally says that $\alpha$ to $(A,a)$ is like $succ$ to $(\nat,0)$.
 The uniqueness of $f$ is also established, because from $f(n) = \alpha^n(a)$,
 we know that $f$ is totally determined by $\alpha$ and $a$.
 
+\subsubsection{Category $\cat{SetD}$}
+
+\begin{itemize}
+  \item Objects are of form $(A,X)$ which $A$ is a set and $X \subseteq A$.
+  \item Arrows are functions of type $f: A \rTo B$ between two objects
+    $(A,X)$ and $(B,Y)$
+    where $\forall x \in X, f(x) \in Y$.
+  \item Arrow composition. For any two compatible arrows $f$, $g$,
+    we have the diagram:
+
+    \begin{diagram}
+      (A,X) & & \rTo^f & &
+      (B,Y) & & \rTo^g & &
+      (C,Z)
+    \end{diagram}
+
+    For arrow $f$ and $g$, the following constraints hold, respectively:
+
+    \begin{align*}
+      \forall x \in X, f(x) = y_x, y_x \in Y \quad \forall y \in Y, g(y) = z_y, z_y \in Z
+    \end{align*}
+
+    Therefore:
+
+    \begin{align*}
+      \forall x \in X, g(f(x)) = (g \fcomp f)(x) \in Z
+    \end{align*}
+
+    Therefore the arrow composition is function composition.
+
+  \item Composition associativity. The associativity holds because
+    the arrow composition is function composition.
+  \item Identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
 \end{document}
