@@ -40,6 +40,18 @@
         (mat `x env 20)
         (mat `y env 400))
        (test-compare equal?))
+
+      (do-test
+       amb-eval-all
+       (list
+        ;; set! cannot be permanent
+        (mat `(begin
+                (define count 0)
+                (set! count (+ count 1))
+                (amb 'a 'b 'c 'd)
+                count)
+             env
+             '(1 1 1 1))))
       'ok))
 
   (define handler
