@@ -48,7 +48,7 @@
 (run-all-slot-tests)
 
 (define (test-prog l)
-  `(if-fail (let ((x (amb (quote ,@l))))
+  `(if-fail (let ((x (amb ,@l)))
               (define (require x)
                 (if x 'pass (amb)))
               (require (even? x))
