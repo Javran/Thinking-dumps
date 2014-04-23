@@ -47,6 +47,14 @@
 
 (run-all-slot-tests)
 
+(define (test-prog l)
+  `(if-fail (let ((x (amb (quote ,@l))))
+              (define (require x)
+                (if x 'pass (amb)))
+              (require (even? x))
+              x)
+            'all-odd))
+
 (end-script)
 
 ;; Local variables:
