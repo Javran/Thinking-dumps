@@ -223,4 +223,24 @@ we know that $f$ is totally determined by $\alpha$ and $a$.
   \item Identity arrow is the identity function viewed as a morphism.
 \end{itemize}
 
+\subsubsection{Category \cat{Top}}
+
+Skip this exercise for a while.
+
+\subsubsection{Show that $C[A,A]$ is a monoid under composition}
+
+\begin{itemize}
+  \item Elements in the set are all arrows in $C[A,A]$
+  \item Binary operation $\star$ is arrow composition, which is function composition.
+  \item The nominated element in the set is the identity arrow $id_A$.
+  \item From the property of identity arrow, we know that $\forall s \in C[A,A]$,
+    $id_A \star s = s = s \star id_A$.
+  \item From the associativity enforced by the category,
+    we know that $\forall s_1,s_2,s_3 \in C[A,A]$,
+    $(s_1 \star s_2) \star s_3 = s_1 \star (s_2 \star s_3)$.
+
+Therefore $C[A,A]$ is a monoid under composition.
+
+\end{itemize}
+
 \end{document}
