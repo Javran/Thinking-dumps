@@ -30,6 +30,8 @@
             (lift-primitive-pair 'cons)
             (lift-primitive-pair 'null?)
             (lift-primitive-pair 'list)
+            (lift-primitive-pair 'even?)
+            (lift-primitive-pair 'odd?)
             )))
     (extend-environment
       '(true false)
