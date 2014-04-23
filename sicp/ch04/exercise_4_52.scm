@@ -10,6 +10,7 @@
   (define try-body cadr)
   (define fallback-val caddr)
 
+  ;; TODO: is this esentially "(amb (amb 1 2) 'failback)"?
   (define (analyze-if-fail exp)
     (let ((try-body-a (amb-analyze (try-body exp)))
           (fallback-val-a (amb-analyze (fallback-val exp))))
@@ -24,7 +25,14 @@
             fail))))))
 
   (define (test)
-    'todo)
+    (let ((env (init-env)))
+      (do-test
+       amb-eval-all
+       (list
+        ;; test the failback value
+        (mat `(if-fail 1 'ok) env '(1 ok))
+        (mat `(if-fail (amb 1 2 3) 4) env '(1 2 3 4))))
+      'ok))
 
   (define handler
     (make-amb-handler
@@ -38,8 +46,6 @@
 (install-amb-if-fail)
 
 (run-all-slot-tests)
-
-(out (amb-eval-all `(if-fail (amb 1 2 3) 'ok) (init-env)))
 
 (end-script)
 
