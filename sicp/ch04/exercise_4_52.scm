@@ -55,6 +55,9 @@
               x)
             'all-odd))
 
+(out (amb-eval-all (test-prog '(1 3 5)) (init-env)))
+(out (amb-eval-all (test-prog '(1 3 5 8)) (init-env)))
+
 (end-script)
 
 ;; Local variables:
