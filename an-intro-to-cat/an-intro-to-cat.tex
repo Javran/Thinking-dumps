@@ -243,4 +243,68 @@ Therefore $C[A,A]$ is a monoid under composition.
 
 \end{itemize}
 
+\subsubsection{The composition of partial functions is associative}
+
+Recall the diagram
+for objects $A$, $B$, $C$ and arrows $f : A \rTo B$, $g : B \rTo C$:
+
+\begin{diagram}
+  A      & \rTo^f               & B       & \rTo^g               & C \\
+  \uInto & \ruTo>{\bar{f}}      & \uInto  & \ruTo>{\bar{g}} \\
+  X      &                      & Y       &              \\
+  \uInto & \ruTo>{\bar{f}_{|U}} \\
+  U
+\end{diagram}
+
+Now we add another object $D$ and an arrow $h : C \rTo D$,
+and show a similar diagram about objects $B$, $C$, $D$ and arrows $g$, $h$:
+
+\begin{diagram}
+  B      & \rTo^g               & C       & \rTo^h               & D \\
+  \uInto & \ruTo>{\bar{g}}      & \uInto  & \ruTo>{\bar{h}} \\
+  Y      &                      & Z       &              \\
+  \uInto & \ruTo>{\bar{g}_{|V}} \\
+  V
+\end{diagram}
+
+Here $Z$ is the domain of total function $\bar{h}$, which is determined by $h$,
+$V$ is a subset of $Y$, such that:
+
+\begin{align*}
+b \in V \Leftrightarrow b \in Y \text{ and } \bar{g}(b) \in Z
+\end{align*}
+
+Observe the two diagrams above we can find out the ``triangle'' between $B$, $Y$, $C$
+overlaps, and the corresponding objects and arrows are equivalent.
+So we can combine this two diagrams together to form a larger one:
+
+\begin{diagram}
+  A      & \rTo^f               & B       & \rTo^g               & C      & \rTo^h & D \\
+  \uInto & \ruTo>{\bar{f}}      & \uInto  & \ruTo>{\bar{g}}      & \uInto & \ruTo>{\bar{h}} \\
+  X      &                      & Y       &                      & Z \\
+  \uInto & \ruTo>{\bar{f}_{|U}} & \uInto  & \ruTo>{\bar{g}_{|V}} \\
+  U      &                      & V \\
+  \uInto & \ruTo>{\bar{f}_{|W}} \\
+  W
+\end{diagram}
+
+In the diagram above, $W$ is a subset of $U$, such that:
+
+\begin{align*}
+a \in W \Leftrightarrow a \in U \text{ and } \bar{f}(a) \in V
+\end{align*}
+
+Now we have 3 total functions $\bar{f}_{|W}$, $\bar{g}_{|V}$ and $\bar{h}$,
+which are compatible for function composition. Thus we can conclude that:
+
+\begin{align*}
+\overline{(f \fcomp g) \fcomp h} =
+(\bar{f}_{|W} \fcomp \bar{g}_{|V}) \fcomp \bar{h} =
+\bar{f}_{|W} \fcomp (\bar{g}_{|V} \fcomp \bar{h}) =
+\overline{f \fcomp (g \fcomp h)}
+\end{align*}
+
+Therefore for $\cat{Pfn}$, the arrow composition (the partial function composition)
+is associative.
+
 \end{document}
