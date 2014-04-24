@@ -3,6 +3,14 @@
 
 (load "./amb-eval.scm")
 
+;; still not sure if my solution is the true intention of
+;; exercise 4.52, but here my solution does match the output
+;; given in the exercise.
+;; The weird thing is: in the exercise, if the list does not
+;; contain any odd numbers, "all-odd" is print, and if the list
+;; has one even number, what will happen after that even number
+;; get printed? "all-odd" sounds not good literally.
+
 (define (install-amb-if-fail)
 
   ;; (if-fail <try-body> <fallback value>)
@@ -10,7 +18,10 @@
   (define try-body cadr)
   (define fallback-val caddr)
 
-  ;; TODO: is this esentially "(amb (amb 1 2) 'failback)"?
+  (define (analyze-if-fail-derived exp)
+    (amb-analyze `(amb ,(try-body exp)
+                       ,(fallback-val exp))))
+
   (define (analyze-if-fail exp)
     (let ((try-body-a (amb-analyze (try-body exp)))
           (fallback-val-a (amb-analyze (fallback-val exp))))
@@ -37,7 +48,9 @@
   (define handler
     (make-amb-handler
      'if-fail
+     ;; the following two analyzers work equally well.
      analyze-if-fail
+     ;; analyze-if-fail-derived
      test))
 
   (ahandler-register! handler)
