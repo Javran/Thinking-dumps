@@ -5,6 +5,8 @@
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{xspace}
+\usepackage{indentfirst}
 
 \usepackage{diagrams}
 
@@ -343,8 +345,8 @@ And the other way around does not work neither. This is just the best attempt I 
 }%
 
 {%
-\newcommand{\rset}{R-\cat{Set}}
-\newcommand{\setr}{\cat{Set}-R}
+\newcommand{\rset}{R-\cat{Set}\xspace}
+\newcommand{\setr}{\cat{Set}-R\xspace}
 \subsubsection{Verify that \rset and \setr are categories}
 
 Let $(R)$ be a fixed, but arbitrary monoid.
@@ -394,6 +396,8 @@ First we focus on \rset.
     of function composition.
   \item The identity arrow is the identity function viewed as a morphism.
 \end{itemize}
+
+Therefore we can conclude that \rset is a category.
 
 }%
 \end{document}
