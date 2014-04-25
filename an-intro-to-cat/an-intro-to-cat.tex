@@ -342,4 +342,58 @@ you cannot convert \cat{Pfn} into \setbot and convert it back to get the same ca
 And the other way around does not work neither. This is just the best attempt I have so far.
 }%
 
+{%
+\newcommand{\rset}{R-\cat{Set}}
+\newcommand{\setr}{\cat{Set}-R}
+\subsubsection{Verify that \rset and \setr are categories}
+
+Let $(R)$ be a fixed, but arbitrary monoid.
+
+First we focus on \rset.
+
+\begin{itemize}
+  \item Objects are $R$-sets.
+  \item Arrows are functions. Consider two objects
+    and an arrow in this structured set:
+    \begin{diagram}
+      A & \rTo^f & B
+    \end{diagram}
+    For any element $a \in A$, let $f(a) = b$ where $b \in B$.
+    Let $r,s \in R$. We need to verify that the following property holds:
+    \begin{align*}
+      s(rb) = (sr)b \quad
+      1b = b
+    \end{align*}
+    Observe that:
+    \begin{align*}
+      s(rb) & = s(r f(a)) = s(f(ra)) = f(s(ra)) \\
+      (sr)b & = (sr)f(a) = f((sr)a) = f(s(ra))
+    \end{align*}
+    In addition:
+    \begin{align*}
+      1b = 1f(a) = f(1a) = f(a) = b
+    \end{align*}
+    Therefore the function $f$ is a valid arrow between two objects.
+  \item Arrow composition is function composition.
+    Consider combining two arrows $f : A \rTo B$ and $g : B \rTo C$.
+    Let $f(a) = b$, $g(b) = c$, where $a \in A, b \in B, c \in C$.
+    Then we have the following properties:
+    \begin{align*}
+      f(ra) = rf(a) \quad g(rb) = rg(b)
+    \end{align*}
+    where $r \in R$.
+
+    Consider the resulting arrow of composing $f$ and $g$:
+    \begin{align*}
+      (g \fcomp f)(ra) &= g(f(ra)) \\
+      r (g \fcomp f)(a) & = r(g(f(a))) = g(r(f(a))) = g(f(ra))
+    \end{align*}
+
+    Therefore $g \fcomp f$ is a valid arrow that preserves the property.
+  \item The associativity for arrows holds because of the associativity
+    of function composition.
+  \item The identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+}%
 \end{document}
