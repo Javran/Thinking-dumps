@@ -307,4 +307,39 @@ which are compatible for function composition. Thus we can conclude that:
 Therefore for $\cat{Pfn}$, the arrow composition (the partial function composition)
 is associative.
 
+{%
+\newcommand{\setbot}{\cat{$Set_\bot$}}
+\subsubsection{Show that \setbot and \cat{Pfn}
+are ``essentially the same'' category}
+
+In order to see that two categories are ``essentially the same'',
+we need to show that \setbot can be converted to \cat{Pfn}
+and also that \cat{Pfn} can be converted to \setbot
+
+In \setbot, the function $\phi : S \rTo T$ is a total function,
+and we can restrict the domain of $\phi$ to ${\bot}$.
+By adding this restriction, $\phi_\bot(x)$ is not defined for $a \in (S - \{\bot\})$
+and thus $\phi_\bot$ is now a partial function. And keeping the same objects but
+changing every arrrows from $f : S \rTo T$ to $f_\bot : \bot_S \rTo \bot_T$
+will convert a \setbot into a \cat{Pfn}, which is proved to be a category.
+
+On the other hand, for any two object $S$ and $T$ in \cat{Pfn}, we divide it into two parts:
+$X$ and $(S - X)$, $Y$ and $(T - Y)$, respectively.
+And for arrows we only take functions whose domains are $X$ and codomains are $Y$.
+By taking these arrows, we can guaranteed the property that $\phi(\bot_S) = \bot_T$
+by taking the set $X$ as $\bot_S$, $Y$ as $\bot_T$, a ``modified version'' of
+the original arrow as $\phi$(See below).
+
+By saying ``modified version'', I mean the original arrow is not a total function
+from $S$ to $T$, however $\phi$ are required to be total. The property of pointed
+set does not say anything about elements other than $\bot$. Therefore we can just
+make some deterministic decisions to make elements in $S - X$ into $T$ to make
+the arrow a total function. By doing this, we form a \setbot.
+
+This is by no means a proper proof or even a reasonable observation,
+because there are still some problems in my interpretation. For example,
+you cannot convert \cat{Pfn} into \setbot and convert it back to get the same category.
+And the other way around does not work neither. This is just the best attempt I have so far.
+}%
+
 \end{document}
