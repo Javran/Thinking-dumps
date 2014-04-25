@@ -32,6 +32,9 @@
             (lift-primitive-pair 'list)
             (lift-primitive-pair 'even?)
             (lift-primitive-pair 'odd?)
+            (lift-primitive-pair 'not)
+            (lift-primitive-pair 'remainder)
+            (lift-primitive-pair 'quotient)
             )))
     (extend-environment
       '(true false)
