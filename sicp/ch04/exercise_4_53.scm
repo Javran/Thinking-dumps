@@ -30,6 +30,31 @@
 
 (run-all-slot-tests)
 
+(out
+ (amb-eval-all
+  `(begin
+     (define (require b)
+       (if b 'pass (amb)))
+     (define (an-element-of items)
+       (require (not (null? items)))
+       (amb (car items)
+            (an-element-of (cdr items))))
+
+     ,prime-sum-pair-prog
+     ,prime?-prog
+
+     (let ((pairs '()))
+       (if-fail
+        (let ((p (prime-sum-pair '(1 3 5 8)
+                                 '(20 35 110))))
+          (permanent-set! pairs (cons p pairs))
+          (amb))
+        pairs)))
+  (init-env)))
+
+;; the output should be:
+;; (((8 35) (3 110) (3 20)))
+
 (end-script)
 
 ;; Local variables:
