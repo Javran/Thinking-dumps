@@ -13,9 +13,14 @@
         (pproc env
                (lambda (pred-value fail2)
                  ;; the negation is not necessary
-                 (if (not pred-value)
-                     (fail2)
-                     (succeed 'ok fail2)))
+                 ;; the following code is my answer to ex 4.54
+                 ;; but we can do sligthly better.
+                 ;; (if (not pred-value)
+                 ;;    (fail2)
+                 ;;    (succeed 'ok fail2)))
+                 (if pred-value
+                     (succeed 'ok fail2)
+                     (fail2)))
                fail))))
 
   (define (test)
