@@ -16,6 +16,7 @@
 (load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
 (load "./amb-eval-driver-loop.scm")
+(load "./amb-eval-init-env.scm")
 
 (load "./amb-eval-test.scm")
 
