@@ -354,7 +354,7 @@ Let $(R)$ be a fixed, but arbitrary monoid.
 First we focus on \rset.
 
 \begin{itemize}
-  \item Objects are $R$-sets.
+  \item Objects are left $R$-sets.
   \item Arrows are functions. Consider two objects
     and an arrow in this structured set:
     \begin{diagram}
@@ -388,7 +388,7 @@ First we focus on \rset.
     Consider the resulting arrow of composing $f$ and $g$:
     \begin{align*}
       (g \fcomp f)(ra) &= g(f(ra)) \\
-      r (g \fcomp f)(a) & = r(g(f(a))) = g(r(f(a))) = g(f(ra))
+      r (g \fcomp f)(a) & = r g(f(a)) = g(r(f(a))) = g(f(ra))
     \end{align*}
 
     Therefore $g \fcomp f$ is a valid arrow that preserves the property.
@@ -398,6 +398,60 @@ First we focus on \rset.
 \end{itemize}
 
 Therefore we can conclude that \rset is a category.
+
+For \setr, we have a similar proof:
+
+\begin{itemize}
+  \item Objects are right $R$-sets.
+  \item Arrows are functions. Consider two objects
+    and an arrow in this structured set:
+    \begin{diagram}
+      A & \rTo^f & B
+    \end{diagram}
+    For any element $a \in A$, let $f(a) = b$ where $b \in B$.
+    Let $r,s \in R$. We need to verify that the following property holds:
+    \begin{align*}
+      (br)s = b(rs) \quad
+      b = b1
+    \end{align*}
+    Observe that:
+    \begin{align*}
+      (br)s & = (f(a)r)s = f(ar)s = f((ar)s) = f(a(rs)) \\
+      b(rs) & = f(a)(rs) = f(a(rs))
+    \end{align*}
+    In addition:
+    \begin{align*}
+      b1 = f(a)1 = f(a1) = f(a) = b
+    \end{align*}
+    Therefore the function $f$ is a valid arrow between two objects.
+  \item Arrow composition is function composition.
+    Consider combining two arrows $f : A \rTo B$ and $g : B \rTo C$.
+    Let $f(a) = b$, $g(b) = c$, where $a \in A, b \in B, c \in C$.
+    Then we have the following properties:
+    \begin{align*}
+      f(ar) = f(a)r \quad g(br) = g(b)r
+    \end{align*}
+    where $r \in R$.
+
+    Consider the resulting arrow of composing $f$ and $g$:
+    \begin{align*}
+      (g \fcomp f)(ar) &= g(f(ar)) \\
+      (g \fcomp f)(a)r & = g(f(a)) r = g(f(a)r) = g(f(ar))
+    \end{align*}
+
+    Therefore $g \fcomp f$ is a valid arrow that preserves the property.
+  \item The associativity for arrows holds because of the associativity
+    of function composition.
+  \item The identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+Therefore we can conclude that \setr is a category.
+
+I can see the idea of ``structured set''. For now
+my understanding is that the ``structure'' is actually
+a bunch of properties carried with the set. And these properties
+turn out to be quite useful when proving that some ``structured sets''
+are categories.
 
 }%
 \end{document}
