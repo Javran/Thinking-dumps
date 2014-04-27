@@ -29,12 +29,32 @@
 ;; by using the strategy above we are able to traverse all
 ;; the possible solutions.
 
-(define (a-pythagorean-triple-starting-from low)
-  (let ((j (an-integer-starting-from low)))
-    (let ((i (an-integer-between low j)))
-      (let ((maybe-k (sqrt (* i i) (* j j))))
-        (require (integer? maybe-k))
-        (list i j k)))))
+(load "./amb-eval.scm")
+
+(define the-source-code
+  `(begin
+     (define (an-integer-between a b)
+       (define (add1 x) (+ x 1))
+       (if (<= a b)
+           (amb a (an-integer-between (add1 a) b))
+           (amb)))
+     (define (an-integer-starting-from n)
+       (amb n
+            (an-integer-starting-from (+ n 1))))
+     (define (a-pythagorean-triple-starting-from low)
+       (let ((j (an-integer-starting-from low)))
+         (let ((i (an-integer-between low j)))
+           (let ((maybe-k (sqrt (+ (* i i) (* j j)))))
+             (require (integer? maybe-k))
+             (list i j maybe-k)))))
+     (a-pythagorean-triple-starting-from 1)))
+
+(out
+ (stream-take
+  10
+  (amb-eval-stream
+   the-source-code
+   (amb-init-env))))
 
 (end-script)
 

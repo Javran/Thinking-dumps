@@ -35,6 +35,8 @@
             (lift-primitive-pair 'not)
             (lift-primitive-pair 'remainder)
             (lift-primitive-pair 'quotient)
+            (lift-primitive-pair 'sqrt)
+            (lift-primitive-pair 'integer?)
             )))
     (extend-environment
       '(true false)
