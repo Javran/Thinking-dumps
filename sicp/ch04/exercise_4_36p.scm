@@ -2,7 +2,7 @@
 (load "../common/test-utils.scm")
 
 ;; simply changing `an-integer-between` to
-;; `an-integer-staring-from` will not work
+;; `an-integer-starting-from` will not work
 ;; because `try-again` will spend infinite time
 ;; searching through the last integer (i.e. `k`
 ;; in the previous exercise) while keep other group
@@ -29,8 +29,8 @@
 ;; by using the strategy above we are able to traverse all
 ;; the possible solutions.
 
-(define (a-pythagorean-triple-staring-from low)
-  (let ((j (an-integer-staring-from low)))
+(define (a-pythagorean-triple-starting-from low)
+  (let ((j (an-integer-starting-from low)))
     (let ((i (an-integer-between low j)))
       (let ((maybe-k (sqrt (* i i) (* j j))))
         (require (integer? maybe-k))
