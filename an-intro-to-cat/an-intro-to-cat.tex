@@ -454,4 +454,33 @@ turn out to be quite useful when proving that some ``structured sets''
 are categories.
 
 }%
+
+\subsection{An arrow need not be a function}
+
+\subsubsection{Show that strictly positive integers as objects and matrices as arrows
+gives a category}
+
+\begin{itemize}
+  \item Objects are strictly positive integers.
+  \item Let $m$ and $n$ be two objects, the arrow between them
+    ($n \rTo^A m$)
+    is an $m \times n$ matrix $A$.
+  \item Given two compatible matrices:
+    $n \rTo^B k$ and $k \rTo^A m$,
+    the arrow composition is given by the matrix product $AB$:
+    $n \rTo^{A \fcomp B} m$.
+  \item The associativity holds because for any three compatible matrices $A$,$B$ and $C$,
+    the matrix multiplication is associative: $(AB)C = A(BC)$.
+    Therefore the associativity for arrow composition is obtained from the matrix
+    multiplication.
+  \item For any object $n$, the identity arrow is the identity matrix $E_n$.
+    It holds that $f \fcomp id_n = f = id_m \fcomp f$ for any arrow $f : n \rTo^A m$
+    ($A$ is the corresponding matrix of $f$) because of the following property for
+    matrix multiplication holds: $ A \times E_n = A = E_m \times A$.
+\end{itemize}
+
+Therefore this gives a category. If we have to say that this example somehow cheats,
+I think the cheating part is that this category just uses matrix multiplication
+to make every property necessary to form a category hold.
+
 \end{document}
