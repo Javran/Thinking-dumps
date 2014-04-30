@@ -5,11 +5,6 @@
 
 (define prog
   `(begin
-     (define (distinct? items)
-       (cond ((null? items) #t)
-             ((null? (cdr items)) #t)
-             ((member (car items) (cdr items)) #f)
-             (else (distinct? (cdr items)))))
 
      (define (solve)
        (let ((places '(1 2 3 4 5)))
