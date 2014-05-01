@@ -54,10 +54,25 @@
                    (eight-queens (cons next current-board))))))))
      (eight-queens '())))
 
-(out (amb-eval-all prog (amb-init-env)))
-
 ;; one solution for example, is:
 ;; (3 1 6 2 5 7 4 0)
+(define (print-board board)
+  ;; board visualization
+  (out "  01234567")
+  (for-each (lambda (p)
+              (let ((c (car p))
+                    (pos (cdr p)))
+                (format #t "~A ~A~%"
+                        c
+                        (string-pad-left "x" pos))))
+            (map cons (list-in-range 0 7)
+                 (reverse board)))
+  (newline))
+
+(define all-solutions
+  (amb-eval-all prog (amb-init-env)))
+
+(for-each print-board all-solutions)
 
 (end-script)
 
