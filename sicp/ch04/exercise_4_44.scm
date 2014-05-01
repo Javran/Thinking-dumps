@@ -19,7 +19,7 @@
      (define (reverse xs)
        (if (null? xs)
            '()
-           (append (revserse (cdr xs))
+           (append (reverse (cdr xs))
                    (list (car xs)))))
 
      (define (count-down xs c)
@@ -54,7 +54,10 @@
                    (eight-queens (cons next current-board))))))))
      (eight-queens '())))
 
+(out (amb-eval-all prog (amb-init-env)))
 
+;; one solution for example, is:
+;; (3 1 6 2 5 7 4 0)
 
 (end-script)
 
