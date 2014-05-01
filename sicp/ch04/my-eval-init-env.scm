@@ -40,6 +40,7 @@
             (lift-primitive-pair 'member)
             (lift-primitive-pair 'delete)
             (lift-primitive-pair 'abs)
+            (lift-primitive-pair 'append)
             )))
     (extend-environment
       '(true false)
