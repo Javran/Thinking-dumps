@@ -38,6 +38,7 @@
             (lift-primitive-pair 'sqrt)
             (lift-primitive-pair 'integer?)
             (lift-primitive-pair 'member)
+            (lift-primitive-pair 'delete)
             (lift-primitive-pair 'abs)
             )))
     (extend-environment
