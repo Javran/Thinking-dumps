@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./amb-eval.scm")
+
 ;; I'll only extend noun phrases to include adjectives
 ;; and extend verb phrases to include adverbs
 ;; Just show some possibility
