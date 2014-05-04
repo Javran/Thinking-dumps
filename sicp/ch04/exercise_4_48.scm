@@ -48,29 +48,41 @@
          (list (car word-list) found-word)))
 
      ;; prepostional phrase is a preposition followed by noun phrase
+     ;; prep-phrase ::= prep noun-phrase
      (define (parse-prepositional-phrase)
        (list 'prep-phrase
              (parse-word prepositions)
              (parse-noun-phrase)))
 
      ;; now a sentence is noun phrase + verb phrase
+     ;; sentence ::= noun-phrase verb-phrase
      (define (parse-sentence)
        (list 'sentence
              (parse-noun-phrase)
              (parse-verb-phrase)))
 
-     ;; verb phrase: a verb (maybe followed by prepositional phrase
+     ;; verb phrase: a verb (maybe followed by prepositional phrase)
      ;; e.g.: * eats to a cat with the cat ..
      ;;       * studies with a student
      ;;       * lectures
      ;; (well we don't do sanity check here)
+     ;; verb-phrase ::= verb | verb-phrase prep-phrase
+     ;; =>
+     ;; verb-phrase ::= adverb verb-phrase | verb-phrase prep-phrase | verb
+     ;; here I find the the exact meaning of "maybe-extend" is unclear
      (define (parse-verb-phrase)
+       ;; verb-phrase ::= verb | verb-phrase prep-phrase
        (define (maybe-extend verb-phrase)
-         (amb verb-phrase
-              (maybe-extend
-               (list 'verb-phrase
-                     verb-phrase
-                     (parse-prepositional-phrase)))))
+         (amb
+          verb-phrase
+          (maybe-extend
+           (list 'verb-phrase
+                 verb-phrase
+                 (parse-prepositional-phrase)))
+          (maybe-extend
+           (list 'verb-phrase
+                 verb-phrase
+                 (parse-word adverbs)))))
        (maybe-extend (parse-word verbs)))
 
      ;; a simple noun phrase is an article followed by a noun
@@ -103,6 +115,9 @@
          sent))
      ,src
      ))
+
+(out (amb-eval-all (run-source-in-env `(parse '(the student eats nicely with the cat)))
+                   (amb-init-env)))
 
 (end-script)
 
