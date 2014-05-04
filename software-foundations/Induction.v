@@ -711,38 +711,29 @@ Proof.
     rewrite IHn'. reflexivity.
 Qed.
 
-(* not able to define a bin_plus for now 
-Fixpoint bin_plus (b1 b2 : bin) : bin :=
-  match b1 with
-  (* 0 + b2 = b2 *)
-  | Zero => b2
-  (* 2*bt + b2 =  *)
-  | Twice bt => bin_plus b2 (bin_plus bt bt)
-  | TwicePlusOne bp => b2
-  end.
-
-*)
-
-Theorem unary_inverse : forall b : bin,
-  unary_to_bin (bin_to_unary b) = b.
-Proof.
-  intros b. induction b as [|bt|bp].
-  Case "b = Zero". reflexivity.
-  Case "b = Twice bt". simpl.
-    (* assert (forall n m : nat, unary_to_bin (n + m) = unary_to_bin n + unary_to_bin m). *)
-Abort.
-
 (* I guess the problem is one number might have multiple representations
-   since there are multiple ways of defining [succ(TwicePlusOne bp)] (2n+2 or 2(n+1))
-   and this might lead to multiple representation of the same value (TODO)
+   We can verify that: Zero = Twice Zero = Twice (Twice Zero) ...
+   and the equality cannot be established between recursive types
 *)
 
+(*
 Definition normalize (b : bin) : bin :=
- unary_to_bin (bin_to_unary b).
+  unary_to_bin (bin_to_unary b).
+*)
+
+Fixpoint normalize (b : bin) : bin :=
+  match b with
+  | Zero => Zero
+  | Twice Zero => Zero
+  | Twice b' => Twice (normalize b')
+  | TwicePlusOne b' => TwicePlusOne (normalize b')
+  end.
 
 Theorem normalize_expand : forall b : bin,
   normalize b = unary_to_bin (bin_to_unary b).
-Proof. reflexivity. Qed.
+Proof.
+Abort.
+
 
 (* I guess "prove it" means to prove the following,
    it doesn't make sense to prove a definition anyway *)
