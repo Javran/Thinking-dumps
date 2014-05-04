@@ -16,6 +16,7 @@
 (load "./my-eval-apply.scm")
 (load "./my-eval-init-env.scm")
 (load "./amb-eval-driver-loop.scm")
+(load "./amb-eval-init-env.scm")
 
 (load "./amb-eval-test.scm")
 
@@ -29,6 +30,7 @@
 (load "./amb-eval-e-set.scm")
 (load "./amb-eval-e-amb.scm")
 (load "./amb-eval-e-let.scm")
+(load "./amb-eval-e-cond.scm")
 
 (install-amb-quote)
 (install-amb-lambda)
@@ -38,6 +40,7 @@
 (install-amb-set!)
 (install-amb-amb)
 (install-amb-let)
+(install-amb-cond)
 
 ;; disable slot tests when being used as a module
 ;; user can still call this procedure explictly

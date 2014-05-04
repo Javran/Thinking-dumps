@@ -17,7 +17,6 @@
   `demoCondOrder` shows that the order of constraint matters
 -}
 
-import Control.Monad (guard)
 import Data.List
 
 import Control.Monad.List

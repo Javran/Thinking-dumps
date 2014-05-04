@@ -1,76 +1,77 @@
-; handle cond-exp
-; from ./exercise_4_5.scm
+;; handle cond-exp
+;; from ./exercise_4_5.scm
 
-(define (install-eval-cond)
-  ; (cond <clause #1>
-  ;       <clause #2>
-  ;       ...
-  ;       [(else ...)])
+;; (cond <clause #1>
+;;       <clause #2>
+;;       ...
+;;       [(else ...)])
 
-  ; a list of clauses
-  (define cond-clauses cdr)
+;; a list of clauses
+(define cond-clauses cdr)
 
-  ; each clause:
-  ; (<exp1> <seq-of-exps>)
-  ; <exp1>: predicate
-  ; <seq-of-exps>: actions
-  (define cond-predicate car)
-  (define cond-actions cdr)
+;; each clause:
+;; (<exp1> <seq-of-exps>)
+;; <exp1>: predicate
+;; <seq-of-exps>: actions
+(define cond-predicate car)
+(define cond-actions cdr)
 
 
-  (define (clause-arrow? clause)
-    (eq? (cadr clause) '=>))
+(define (clause-arrow? clause)
+  (eq? (cadr clause) '=>))
 
-  ; (<predicate> => <handler>)
-  ;                    ^- the third element
-  (define clause-handler caddr)
+;; (<predicate> => <handler>)
+;;                    ^- the third element
+(define clause-handler caddr)
 
-  (define (cond-else-clause? clause)
-    (eq? (cond-predicate clause) 'else))
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
 
-  (define (cond->if exp)
-    (define (expand-clauses clauses)
-      (if (null? clauses)
-        ; no case is given
+(define (cond->if exp)
+  (define (expand-clauses clauses)
+    (if (null? clauses)
+        ;; no case is given
         'false
         (let ((first (car clauses))
               (rest  (cdr clauses)))
           (if (cond-else-clause? first)
-            (if (null? rest)
-              ; else part ... convert the seq to exp
-              (sequence->exp (cond-actions first))
-              (error "ELSE clause isn't last: COND->IF"
-                     clauses))
-            ; ((lambda (result)
-            ;    (if result
-            ;      <action>
-            ;      ...))
-            ;  <predicate>)
-            (let ((result-sym (gensym)))
-              ; make an application
-              (list
-                ; operator
-                (make-lambda
-                  ; parameters
+              (if (null? rest)
+                  ;; else part ... convert the seq to exp
+                  (sequence->exp (cond-actions first))
+                  (error "ELSE clause isn't last: COND->IF"
+                         clauses))
+              ;; ((lambda (result)
+              ;;    (if result
+              ;;      <action>
+              ;;      ...))
+              ;;  <predicate>)
+              (let ((result-sym (gensym)))
+                ;; make an application
+                (list
+                 ;; operator
+                 (make-lambda
+                  ;; parameters
                   (list result-sym)
-                  ; body
+                  ;; body
                   (list
-                    (make-if
-                      result-sym ; use cached result
-                      (if (clause-arrow? first)
-                        ; the extended syntax
-                        ;   should be an application
+                   (make-if
+                    result-sym          ; use cached result
+                    (if (clause-arrow? first)
+                        ;; the extended syntax
+                        ;;   should be an application
                         (list
-                          ; operator
-                          (clause-handler first)
-                          ; operand
-                          result-sym)
-                        ; the original syntax
+                         ;; operator
+                         (clause-handler first)
+                         ;; operand
+                         result-sym)
+                        ;; the original syntax
                         (sequence->exp (cond-actions first)))
-                      (expand-clauses rest))))
-                ; operand
-                (cond-predicate first)))))))
-    (expand-clauses (cond-clauses exp)))
+                    (expand-clauses rest))))
+                 ;; operand
+                 (cond-predicate first)))))))
+  (expand-clauses (cond-clauses exp)))
+
+(define (install-eval-cond)
 
   (define (eval-cond exp env)
     (my-eval (cond->if exp) env))

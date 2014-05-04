@@ -59,6 +59,27 @@
   (amb-eval exp env
             build-up-results result-list-end))
 
+;; a lazy stream of the evaluation results
+(define (amb-eval-stream exp env)
+  (define (build-up-results-lazy
+           result
+           next-alternative)
+    (cons-stream result (next-alternative)))
+
+  (define (result-list-end) '())
+
+  (amb-eval exp env
+            build-up-results-lazy result-list-end))
+
+;; take first few elements from the stream
+;; and convert them into lists
+(define (stream-take n xs)
+  (if (<= n 0)
+      '()
+      (cons
+       (stream-car xs)
+       (stream-take (sub1 n) (stream-cdr xs)))))
+
 ;; Local variables:
 ;; proc-entry: "./amb-eval.scm"
 ;; End:
