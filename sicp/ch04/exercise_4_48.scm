@@ -68,7 +68,7 @@
      ;; (well we don't do sanity check here)
      ;; verb-phrase ::= verb | verb-phrase prep-phrase
      ;; =>
-     ;; verb-phrase ::= adverb verb-phrase | verb-phrase prep-phrase | verb
+     ;; verb-phrase ::= verb-phrase adverb | verb-phrase prep-phrase | verb
      ;; here I find the the exact meaning of "maybe-extend" is unclear
      (define (parse-verb-phrase)
        ;; verb-phrase ::= verb | verb-phrase prep-phrase
@@ -87,10 +87,9 @@
 
      ;; a simple noun phrase is an article followed by a noun
      (define (parse-simple-noun-phrase)
-       (list 'simple-noun-phrase
-             (parse-word articles)
-             (parse-word nouns)))
-
+       (cons 'simple-noun-phrase
+             (cons (parse-word articles)
+                   (list (parse-word nouns)))))
 
      ;; a noun phrase is: a simple one, might be followed by props
      (define (parse-noun-phrase)
