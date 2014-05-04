@@ -5,6 +5,8 @@
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{xspace}
+\usepackage{indentfirst}
 
 \usepackage{diagrams}
 
@@ -144,5 +146,341 @@ We can informally says that $\alpha$ to $(A,a)$ is like $succ$ to $(\nat,0)$.
 
 The uniqueness of $f$ is also established, because from $f(n) = \alpha^n(a)$,
 we know that $f$ is totally determined by $\alpha$ and $a$.
+
+\subsubsection{Category $\cat{SetD}$}
+
+\begin{itemize}
+  \item Objects are of form $(A,X)$ which $A$ is a set and $X \subseteq A$.
+  \item Arrows are functions of type $f: A \rTo B$ between two objects
+    $(A,X)$ and $(B,Y)$
+    where $\forall x \in X, f(x) \in Y$.
+  \item Arrow composition. For any two compatible arrows $f$, $g$,
+    we have the diagram:
+
+    \begin{diagram}
+      (A,X) & & \rTo^f & &
+      (B,Y) & & \rTo^g & &
+      (C,Z)
+    \end{diagram}
+
+    For arrow $f$ and $g$, the following constraints hold, respectively:
+
+    \begin{align*}
+      \forall x \in X, f(x) = y_x, y_x \in Y \quad \forall y \in Y, g(y) = z_y, z_y \in Z
+    \end{align*}
+
+    Therefore:
+
+    \begin{align*}
+      \forall x \in X, g(f(x)) = (g \fcomp f)(x) \in Z
+    \end{align*}
+
+    Therefore the arrow composition is function composition.
+
+  \item Composition associativity. The associativity holds because
+    the arrow composition is function composition.
+  \item Identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+\subsubsection{Show that these pairs are the objects of a category}
+
+% TODO: notice the case that we mention category before we show that it is a category
+%   need some modifications to eliminate this kind of mistakes
+
+\begin{itemize}
+  \item Objects are of form $(A,R)$, where $A$ is a set and $R \subseteq A \times A$
+    is a binary relation on $A$.
+  \item Arrows: Suppose two arbitrary objects in this category is $(A,R)$ and $(B,S)$.
+    The arrow $f$:
+
+    \begin{diagram}
+      (A,R) & & \rTo^f & & (B,S)
+    \end{diagram}
+
+    is a function of type $f : A \times A \rTo B \times B$ such that
+    $\forall a_1,a_2 \in A$, if $(a_1,a_2) \in R$, then $f(a_1,a_2) = (b_1,b_2) \in S$.
+  \item Arrow composition: for any two compatible arrows $f$ and $g$:
+
+    \begin{diagram}
+      (A,R) & & \rTo^f & & (B,S) & & \rTo^g & & (C,T)
+    \end{diagram}
+
+    We know:
+
+    \begin{align*}
+      \forall (a_1,a_2) \in R, f(a_1,a_2) \in S \quad
+      \forall (b_1,b_2) \in S, g(b_1,b_2) \in T
+    \end{align*}
+
+    Thus:
+
+    \begin{align*}
+      \forall (a_1,a_2) \in R, g(f(a_1,a_2)) = (g \fcomp f)(a_1,a_2) \in T
+    \end{align*}
+
+    Therefore the arrow composition is function composition.
+
+  \item Composition associativity holds because the arrow composition
+    is function composition.
+  \item Identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+\subsubsection{Category \cat{Top}}
+
+Skip this exercise for a while.
+
+\subsubsection{Show that $C[A,A]$ is a monoid under composition}
+
+\begin{itemize}
+  \item Elements in the set are all arrows in $C[A,A]$
+  \item Binary operation $\star$ is arrow composition, which is function composition.
+  \item The nominated element in the set is the identity arrow $id_A$.
+  \item From the property of identity arrow, we know that $\forall s \in C[A,A]$,
+    $id_A \star s = s = s \star id_A$.
+  \item From the associativity enforced by the category,
+    we know that $\forall s_1,s_2,s_3 \in C[A,A]$,
+    $(s_1 \star s_2) \star s_3 = s_1 \star (s_2 \star s_3)$.
+
+Therefore $C[A,A]$ is a monoid under composition.
+
+\end{itemize}
+
+\subsubsection{The composition of partial functions is associative}
+
+Recall the diagram
+for objects $A$, $B$, $C$ and arrows $f : A \rTo B$, $g : B \rTo C$:
+
+\begin{diagram}
+  A      & \rTo^f               & B       & \rTo^g               & C \\
+  \uInto & \ruTo>{\bar{f}}      & \uInto  & \ruTo>{\bar{g}} \\
+  X      &                      & Y       &              \\
+  \uInto & \ruTo>{\bar{f}_{|U}} \\
+  U
+\end{diagram}
+
+Now we add another object $D$ and an arrow $h : C \rTo D$,
+and show a similar diagram about objects $B$, $C$, $D$ and arrows $g$, $h$:
+
+\begin{diagram}
+  B      & \rTo^g               & C       & \rTo^h               & D \\
+  \uInto & \ruTo>{\bar{g}}      & \uInto  & \ruTo>{\bar{h}} \\
+  Y      &                      & Z       &              \\
+  \uInto & \ruTo>{\bar{g}_{|V}} \\
+  V
+\end{diagram}
+
+Here $Z$ is the domain of total function $\bar{h}$, which is determined by $h$,
+$V$ is a subset of $Y$, such that:
+
+\begin{align*}
+b \in V \Leftrightarrow b \in Y \text{ and } \bar{g}(b) \in Z
+\end{align*}
+
+Observe the two diagrams above we can find out the ``triangle'' between $B$, $Y$, $C$
+overlaps, and the corresponding objects and arrows are equivalent.
+So we can combine this two diagrams together to form a larger one:
+
+\begin{diagram}
+  A      & \rTo^f               & B       & \rTo^g               & C      & \rTo^h & D \\
+  \uInto & \ruTo>{\bar{f}}      & \uInto  & \ruTo>{\bar{g}}      & \uInto & \ruTo>{\bar{h}} \\
+  X      &                      & Y       &                      & Z \\
+  \uInto & \ruTo>{\bar{f}_{|U}} & \uInto  & \ruTo>{\bar{g}_{|V}} \\
+  U      &                      & V \\
+  \uInto & \ruTo>{\bar{f}_{|W}} \\
+  W
+\end{diagram}
+
+In the diagram above, $W$ is a subset of $U$, such that:
+
+\begin{align*}
+a \in W \Leftrightarrow a \in U \text{ and } \bar{f}(a) \in V
+\end{align*}
+
+Now we have 3 total functions $\bar{f}_{|W}$, $\bar{g}_{|V}$ and $\bar{h}$,
+which are compatible for function composition. Thus we can conclude that:
+
+\begin{align*}
+\overline{(f \fcomp g) \fcomp h} =
+(\bar{f}_{|W} \fcomp \bar{g}_{|V}) \fcomp \bar{h} =
+\bar{f}_{|W} \fcomp (\bar{g}_{|V} \fcomp \bar{h}) =
+\overline{f \fcomp (g \fcomp h)}
+\end{align*}
+
+Therefore for $\cat{Pfn}$, the arrow composition (the partial function composition)
+is associative.
+
+{%
+\newcommand{\setbot}{\cat{$Set_\bot$}}
+\subsubsection{Show that \setbot and \cat{Pfn}
+are ``essentially the same'' category}
+
+In order to see that two categories are ``essentially the same'',
+we need to show that \setbot can be converted to \cat{Pfn}
+and also that \cat{Pfn} can be converted to \setbot
+
+In \setbot, the function $\phi : S \rTo T$ is a total function,
+and we can restrict the domain of $\phi$ to ${\bot}$.
+By adding this restriction, $\phi_\bot(x)$ is not defined for $a \in (S - \{\bot\})$
+and thus $\phi_\bot$ is now a partial function. And keeping the same objects but
+changing every arrrows from $f : S \rTo T$ to $f_\bot : \bot_S \rTo \bot_T$
+will convert a \setbot into a \cat{Pfn}, which is proved to be a category.
+
+On the other hand, for any two object $S$ and $T$ in \cat{Pfn}, we divide it into two parts:
+$X$ and $(S - X)$, $Y$ and $(T - Y)$, respectively.
+And for arrows we only take functions whose domains are $X$ and codomains are $Y$.
+By taking these arrows, we can guaranteed the property that $\phi(\bot_S) = \bot_T$
+by taking the set $X$ as $\bot_S$, $Y$ as $\bot_T$, a ``modified version'' of
+the original arrow as $\phi$(See below).
+
+By saying ``modified version'', I mean the original arrow is not a total function
+from $S$ to $T$, however $\phi$ are required to be total. The property of pointed
+set does not say anything about elements other than $\bot$. Therefore we can just
+make some deterministic decisions to make elements in $S - X$ into $T$ to make
+the arrow a total function. By doing this, we form a \setbot.
+
+This is by no means a proper proof or even a reasonable observation,
+because there are still some problems in my interpretation. For example,
+you cannot convert \cat{Pfn} into \setbot and convert it back to get the same category.
+And the other way around does not work neither. This is just the best attempt I have so far.
+}%
+
+{%
+\newcommand{\rset}{R-\cat{Set}\xspace}
+\newcommand{\setr}{\cat{Set}-R\xspace}
+\subsubsection{Verify that \rset and \setr are categories}
+
+Let $(R)$ be a fixed, but arbitrary monoid.
+
+First we focus on \rset.
+
+\begin{itemize}
+  \item Objects are left $R$-sets.
+  \item Arrows are functions. Consider two objects
+    and an arrow in this structured set:
+    \begin{diagram}
+      A & \rTo^f & B
+    \end{diagram}
+    For any element $a \in A$, let $f(a) = b$ where $b \in B$.
+    Let $r,s \in R$. We need to verify that the following property holds:
+    \begin{align*}
+      s(rb) = (sr)b \quad
+      1b = b
+    \end{align*}
+    Observe that:
+    \begin{align*}
+      s(rb) & = s(r f(a)) = s(f(ra)) = f(s(ra)) \\
+      (sr)b & = (sr)f(a) = f((sr)a) = f(s(ra))
+    \end{align*}
+    In addition:
+    \begin{align*}
+      1b = 1f(a) = f(1a) = f(a) = b
+    \end{align*}
+    Therefore the function $f$ is a valid arrow between two objects.
+  \item Arrow composition is function composition.
+    Consider combining two arrows $f : A \rTo B$ and $g : B \rTo C$.
+    Let $f(a) = b$, $g(b) = c$, where $a \in A, b \in B, c \in C$.
+    Then we have the following properties:
+    \begin{align*}
+      f(ra) = rf(a) \quad g(rb) = rg(b)
+    \end{align*}
+    where $r \in R$.
+
+    Consider the resulting arrow of composing $f$ and $g$:
+    \begin{align*}
+      (g \fcomp f)(ra) &= g(f(ra)) \\
+      r (g \fcomp f)(a) & = r g(f(a)) = g(r(f(a))) = g(f(ra))
+    \end{align*}
+
+    Therefore $g \fcomp f$ is a valid arrow that preserves the property.
+  \item The associativity for arrows holds because of the associativity
+    of function composition.
+  \item The identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+Therefore we can conclude that \rset is a category.
+
+For \setr, we have a similar proof:
+
+\begin{itemize}
+  \item Objects are right $R$-sets.
+  \item Arrows are functions. Consider two objects
+    and an arrow in this structured set:
+    \begin{diagram}
+      A & \rTo^f & B
+    \end{diagram}
+    For any element $a \in A$, let $f(a) = b$ where $b \in B$.
+    Let $r,s \in R$. We need to verify that the following property holds:
+    \begin{align*}
+      (br)s = b(rs) \quad
+      b = b1
+    \end{align*}
+    Observe that:
+    \begin{align*}
+      (br)s & = (f(a)r)s = f(ar)s = f((ar)s) = f(a(rs)) \\
+      b(rs) & = f(a)(rs) = f(a(rs))
+    \end{align*}
+    In addition:
+    \begin{align*}
+      b1 = f(a)1 = f(a1) = f(a) = b
+    \end{align*}
+    Therefore the function $f$ is a valid arrow between two objects.
+  \item Arrow composition is function composition.
+    Consider combining two arrows $f : A \rTo B$ and $g : B \rTo C$.
+    Let $f(a) = b$, $g(b) = c$, where $a \in A, b \in B, c \in C$.
+    Then we have the following properties:
+    \begin{align*}
+      f(ar) = f(a)r \quad g(br) = g(b)r
+    \end{align*}
+    where $r \in R$.
+
+    Consider the resulting arrow of composing $f$ and $g$:
+    \begin{align*}
+      (g \fcomp f)(ar) &= g(f(ar)) \\
+      (g \fcomp f)(a)r & = g(f(a)) r = g(f(a)r) = g(f(ar))
+    \end{align*}
+
+    Therefore $g \fcomp f$ is a valid arrow that preserves the property.
+  \item The associativity for arrows holds because of the associativity
+    of function composition.
+  \item The identity arrow is the identity function viewed as a morphism.
+\end{itemize}
+
+Therefore we can conclude that \setr is a category.
+
+I can see the idea of ``structured set''. For now
+my understanding is that the ``structure'' is actually
+a bunch of properties carried with the set. And these properties
+turn out to be quite useful when proving that some ``structured sets''
+are categories.
+
+}%
+
+\subsection{An arrow need not be a function}
+
+\subsubsection{Show that strictly positive integers as objects and matrices as arrows
+gives a category}
+
+\begin{itemize}
+  \item Objects are strictly positive integers.
+  \item Let $m$ and $n$ be two objects, the arrow between them
+    ($n \rTo^A m$)
+    is an $m \times n$ matrix $A$.
+  \item Given two compatible matrices:
+    $n \rTo^B k$ and $k \rTo^A m$,
+    the arrow composition is given by the matrix product $AB$:
+    $n \rTo^{A \fcomp B} m$.
+  \item The associativity holds because for any three compatible matrices $A$,$B$ and $C$,
+    the matrix multiplication is associative: $(AB)C = A(BC)$.
+    Therefore the associativity for arrow composition is obtained from the matrix
+    multiplication.
+  \item For any object $n$, the identity arrow is the identity matrix $E_n$.
+    It holds that $f \fcomp id_n = f = id_m \fcomp f$ for any arrow $f : n \rTo^A m$
+    ($A$ is the corresponding matrix of $f$) because of the following property for
+    matrix multiplication holds: $ A \times E_n = A = E_m \times A$.
+\end{itemize}
+
+Therefore this gives a category. If we have to say that this example somehow cheats,
+I think the cheating part is that this category just uses matrix multiplication
+to make every property necessary to form a category hold.
 
 \end{document}
