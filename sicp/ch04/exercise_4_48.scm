@@ -87,9 +87,14 @@
 
      ;; a simple noun phrase is an article followed by a noun
      (define (parse-simple-noun-phrase)
+       (define (parse-adj*-noun)
+         (amb (list 'adj-noun-phrase
+                    (parse-word adjectives)
+                    (parse-adj*-noun))
+              (list (parse-word nouns))))
        (cons 'simple-noun-phrase
              (cons (parse-word articles)
-                   (list (parse-word nouns)))))
+                   (parse-adj*-noun))))
 
      ;; a noun phrase is: a simple one, might be followed by props
      (define (parse-noun-phrase)
@@ -115,8 +120,11 @@
      ,src
      ))
 
-(out (amb-eval-all (run-source-in-env `(parse '(the student eats nicely with the cat)))
-                   (amb-init-env)))
+(out (amb-eval-all
+      (run-source-in-env
+       `(parse
+         '(the good new student eats nicely with the bad old cat)))
+      (amb-init-env)))
 
 (end-script)
 
