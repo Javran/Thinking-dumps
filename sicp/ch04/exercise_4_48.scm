@@ -16,15 +16,15 @@
 
      (define nouns
        '(noun
-         student professor cat class))
+         student professor cat class fox dog))
 
      (define adjectives
        '(adjective
-         good bad new old))
+         quick brown lazy good bad new old))
 
      (define verbs
        '(verb
-         studies lectures eats sleeps))
+         studies lectures eats sleeps jumps))
 
      (define adverbs
        '(adverb
@@ -36,7 +36,7 @@
 
      (define prepositions
        '(prep
-         for to in by with))
+         for to in by with over))
 
      ;; given a word list, try to parse the next data
      (define (parse-word word-list)
@@ -124,6 +124,12 @@
       (run-source-in-env
        `(parse
          '(the good new student eats nicely with the bad old cat)))
+      (amb-init-env)))
+
+(out (amb-eval-all
+      (run-source-in-env
+       `(parse
+         '(the quick brown fox jumps over the lazy dog)))
       (amb-init-env)))
 
 (end-script)
