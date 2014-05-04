@@ -8,7 +8,6 @@ module School
 where
 
 import Control.Arrow
-import Data.Function
 import Data.List
 import Data.Maybe
 
@@ -30,8 +29,7 @@ add g n = M.alter (Just . maybe onFailure onSuccess) g
 
 -- | convert `School` to list, with elements sorted by grade and name
 sorted :: School -> [(Int, [String])]
-sorted =   M.toList                  -- convert to list
-       >>> sortBy (compare `on` fst) -- sort by comparing grade
+sorted =   M.toAscList               -- convert to list
        >>> (map . second) sort       -- walk into the second part(name list)
                                      -- of each element, sort it.
 -- | sorted list of all names in a grade
