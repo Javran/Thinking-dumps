@@ -20,6 +20,15 @@
        ))
    (amb-init-env))))
 
+;; from the result we could see that the first few sentences are:
+;; * the student studies for the student
+;; * the student studies for the student for the student ...
+;; which is uninteresting. This is because the recursion get stuck
+;; on one of the recursively defined structures and cannot get out
+;; to try the next, more interesting alternatives.
+;; Even if there are listed as a possible candicate, they don't
+;; get a chance to appear
+
 (end-script)
 
 ;; Local variables:
