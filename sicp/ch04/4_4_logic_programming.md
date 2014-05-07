@@ -28,3 +28,9 @@ User might just pick up an interface of the black box
 values and get results back. The distinction between input interface
 and output interface are not fixed.
 
+# Nondeterministic program
+
+Nondeterministic program gives a way that
+something happens simultaneously within different worlds.
+We just gives all the possible inputs and all the possible
+outputs will be returned.
