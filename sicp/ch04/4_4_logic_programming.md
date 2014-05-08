@@ -28,9 +28,20 @@ User might just pick up an interface of the black box
 values and get results back. The distinction between input interface
 and output interface are not fixed.
 
-# Nondeterministic program
+# Nondeterministic programming
 
 Nondeterministic program gives a way that
 something happens simultaneously within different worlds.
 We just gives all the possible inputs and all the possible
 outputs will be returned.
+
+# Logic programming
+
+Unification: symbolic pattern matching.
+
+In my understanding, logic programming allows us
+to not just write down function but also describe
+relations.
+
+Basic idea: a "what is" fact can be used to solve a number of
+different problems that would have different "how to" components.
