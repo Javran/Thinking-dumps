@@ -48,5 +48,11 @@ can_do_job(computerWizard, computerProgrammer).
 can_do_job(computerWizard, computerTechnician).
 can_do_job(computerProgrammer, computerProgrammerTrainee).
 
-% who's address is near Cambridge?
-query(findall(A, address(A,cambridge,_,_), _)).
+% simple queries
+% all computer programmers
+query(findall(X, job(X,computerProgrammer),_)).
+% all addresses
+query(findall([X,Y1,Y2,Y3], address(X,Y1,Y2,Y3),_)).
+% supervisor of themselves
+query(findall(X, supervisor(X,X)),_).
+% no result because there isn't one
