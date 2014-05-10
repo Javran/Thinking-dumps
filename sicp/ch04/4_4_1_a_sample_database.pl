@@ -19,7 +19,7 @@ job(bitdiddleBen, computerWizard).
 job(hackerAlyssaP, computerProgrammer).
 job(fectCyD, computerProgrammer).
 job(tweakitLem, computerTechnician).
-job(reasonerLouis, computerTrainee).
+job(reasonerLouis, computerProgrammerTrainee).
 job(warbucksOliver, administrationBigWheel).
 job(scroogeEben, accountingChiefAccountant).
 job(cratchetRobert, accountingScrivener).
@@ -42,7 +42,11 @@ supervisor(reasonerLouis, hackerAlyssaP).
 supervisor(bitdiddleBen, warbucksOliver).
 supervisor(scroogeEben, warbucksOliver).
 supervisor(cratchetRobert, scroogeEben).
-supervisor(warbucksOliver).
+supervisor(aullDeWitt, swarbucksOliver).
+
+can_do_job(computerWizard, computerProgrammer).
+can_do_job(computerWizard, computerTechnician).
+can_do_job(computerProgrammer, computerProgrammerTrainee).
 
 % who's address is near Cambridge?
 query(findall(A, address(A,cambridge,_,_), _)).
