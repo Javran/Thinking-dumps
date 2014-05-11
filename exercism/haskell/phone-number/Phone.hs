@@ -7,6 +7,7 @@ where
 
 import Data.Char
 import Data.Maybe
+import Data.List.Split
 import Text.Printf
 
 -- | the normalized phone number considered as bad number
@@ -24,9 +25,9 @@ number = fromMaybe badNumber . normalizeNum . pureNumber
         normalizeNum s
               -- 10 digit phone num is good
             | len == 10 = Just s
-              -- 11 digit phone num is
+              -- 11 digit phone num with leading @1@ is good.
             | len == 11 && head s == '1' = Just (tail s)
-              -- length should be either 11 or 10 digits
+              -- otherwise, the number is bad
             | otherwise = Nothing
             where
                 len = length s
@@ -39,16 +40,9 @@ areaCode = take 3 . number
 prettyPrint :: String -> String
 prettyPrint xs = printf "(%s) %s-%s" area p1 p2
     where
+        -- how we split a number into parts
+        phoneSpec = [3,3,4] :: [Int]
         -- normalize
         nxs = number xs
         -- split by group
-        (area:p1:p2:_) = splitByGroup [3,3,4] nxs
-
--- | split a list according to the first list given.
---   @splitByGroup [a1,a2]@ is the same as
---   @splitAt a1@ to fetch the first sublist,
---   and call @splitAt a2@ on the rest of its result.
-splitByGroup :: [Int] -> [a] -> [[a]]
-splitByGroup [] xs = [xs]
-splitByGroup (l:ls) xs = a1 : splitByGroup ls a2
-    where (a1,a2) = splitAt l xs
+        (area:p1:p2:_) = splitPlaces phoneSpec nxs
