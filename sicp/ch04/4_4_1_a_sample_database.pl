@@ -15,15 +15,15 @@ address(scroogeEben, weston, [shady,lane,10]).
 address(cratchetRobert, allston, [nHarvard,street,16]).
 address(aullDeWitt, slumerville, [onion,square,5]).
 
-job(bitdiddleBen, computerWizard).
-job(hackerAlyssaP, computerProgrammer).
-job(fectCyD, computerProgrammer).
-job(tweakitLem, computerTechnician).
-job(reasonerLouis, computerProgrammerTrainee).
-job(warbucksOliver, administrationBigWheel).
-job(scroogeEben, accountingChiefAccountant).
-job(cratchetRobert, accountingScrivener).
-job(aullDeWitt, administrationSecretary).
+job(bitdiddleBen, [computer,wizard]).
+job(hackerAlyssaP, [computer,programmer]).
+job(fectCyD, [computer,programmer]).
+job(tweakitLem, [computer,technician]).
+job(reasonerLouis, [computer,programmer,trainee]).
+job(warbucksOliver, [administration,big,wheel]).
+job(scroogeEben, [accounting,chief,accountant]).
+job(cratchetRobert, [accounting,scrivener]).
+job(aullDeWitt, [administration,secretary]).
 
 salary(bitdiddleBen, 60000).
 salary(hackerAlyssaP, 40000).
@@ -44,15 +44,19 @@ supervisor(scroogeEben, warbucksOliver).
 supervisor(cratchetRobert, scroogeEben).
 supervisor(aullDeWitt, swarbucksOliver).
 
-can_do_job(computerWizard, computerProgrammer).
-can_do_job(computerWizard, computerTechnician).
-can_do_job(computerProgrammer, computerProgrammerTrainee).
+can_do_job(computerWizard, [computer,programmer]).
+can_do_job(computerWizard, [computer,technician]).
+can_do_job(computerProgrammer, [computer,programmer,trainee]).
 
 % simple queries
 % all computer programmers
-query(findall(X, job(X,computerProgrammer),_)).
+query(findall(X, job(X,[computer,programmer]),_)).
 % all addresses
 query(findall([X,Y1,Y2], address(X,Y1,Y2),_)).
 % supervisor of themselves
-query(findall(X, supervisor(X,X)),_).
+% query(findall(X, supervisor(X,X)),_).
 % no result because there isn't one
+% commented out because for now a query of no result seems to halt
+% all the following queries
+% who has a job that looks like "Computer XXX"
+query(findall([X,[computer,T]], job(X,[computer,T]),_)).
