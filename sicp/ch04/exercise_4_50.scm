@@ -142,6 +142,36 @@
 ;; which somehow solves the problem of getting stuck
 ;; because of the recursive structure
 
+(newline) (newline)
+;; finally we have all the tools to solve this problem.
+
+(load "./natural_language_common.scm")
+
+(for-each
+ (lambda (e)
+   (pretty-print e) (newline) (newline))
+ (stream-take
+  5
+  (amb-eval-stream
+   (run-source-in-env
+    `(begin
+       (define (an-random-element-of xs)
+         (if (null? xs)
+             (ramb)
+             (ramb (car xs)
+                   (an-random-element-of (cdr xs)))))
+
+       (define (parse-word word-list)
+         (list (car word-list)
+               (an-random-element-of (cdr word-list))))
+       (parse '())
+       ))
+   (amb-init-env))))
+
+;; now we can see the result is more interesting.
+;; thanks to the randomness, every candidate will now get a chance
+;; to show up in the generated sentence.
+
 (end-script)
 
 ;; Local variables:

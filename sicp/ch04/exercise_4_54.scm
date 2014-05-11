@@ -57,6 +57,18 @@
 
 (run-all-slot-tests)
 
+(out (amb-eval-all
+      `(let ((a (amb 1 2 3))
+             (b (amb 4 5 6)))
+         (let ((prod (* a b)))
+           (require (> prod 4))
+           (list a b prod)))
+      (init-env)))
+
+;; remember to use "init-env" here,
+;; which does not have "require?" by default
+;; otherwise it will take a while to tell which "require" are we using
+
 (end-script)
 
 ;; Local variables:

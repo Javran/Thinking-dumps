@@ -1,6 +1,4 @@
-(Partial answer, still missing an implementation)
-
-Suppose we are generating a list of characters that matches regular expression:
+Suppose we are generating a list of characters that matches regular expression
 `A+B+`, when using `amb`, the enumeration will alway begin with the first possible solution
 and then move to the second one.
 In this case, the string generated will be `A`, `AA`, `AAA`, ..., which get stuck in the branch
