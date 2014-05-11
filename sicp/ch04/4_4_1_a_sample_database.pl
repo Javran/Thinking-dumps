@@ -5,15 +5,15 @@
 % seems like in prolog the rules are not allowed to interleave
 % otherwise only the latest definition will be used.
 
-address(bitdiddleBen, slumerville, ridgeRoad, 10).
-address(hackerAlyssaP, cambridge, massAve, 78).
-address(fectCyD, cambridge, amesStreet, 3).
-address(tweakitLemE, boston, bayStateRoad, 22).
-address(reasonerLouis, slumerville, pineTreeRoad, 80).
-address(warbucksOliver, swellesley, topHeapRoad, nil).
-address(scroogeEben, weston, shadyLane, 10).
-address(cratchetRobert, allston, nHarvardStreet, 16).
-address(aullDeWitt, slumerville, onionSquare, 5).
+address(bitdiddleBen, slumerville, [ridge,road,10]).
+address(hackerAlyssaP, cambridge, [mass,ave,78]).
+address(fectCyD, cambridge, [ames,street,3]).
+address(tweakitLemE, boston, [bay,state,road,22]).
+address(reasonerLouis, slumerville, [pineTree, road, 80]).
+address(warbucksOliver, swellesley, [topHeap,road,nil]).
+address(scroogeEben, weston, [shady,lane,10]).
+address(cratchetRobert, allston, [nHarvard,street,16]).
+address(aullDeWitt, slumerville, [onion,square,5]).
 
 job(bitdiddleBen, computerWizard).
 job(hackerAlyssaP, computerProgrammer).
@@ -52,7 +52,7 @@ can_do_job(computerProgrammer, computerProgrammerTrainee).
 % all computer programmers
 query(findall(X, job(X,computerProgrammer),_)).
 % all addresses
-query(findall([X,Y1,Y2,Y3], address(X,Y1,Y2,Y3),_)).
+query(findall([X,Y1,Y2], address(X,Y1,Y2),_)).
 % supervisor of themselves
 query(findall(X, supervisor(X,X)),_).
 % no result because there isn't one
