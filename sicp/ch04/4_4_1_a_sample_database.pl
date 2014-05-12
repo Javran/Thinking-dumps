@@ -60,3 +60,5 @@ query(findall([X,Y1,Y2], address(X,Y1,Y2),_)).
 % all the following queries
 % who has a job that looks like "Computer XXX"
 query(findall([X,[computer,T]], job(X,[computer,T]),_)).
+% who has a job that begins witn "Computer" (note the difference)
+query(findall([X,[computer|T]], job(X,[computer|T]),_)).
