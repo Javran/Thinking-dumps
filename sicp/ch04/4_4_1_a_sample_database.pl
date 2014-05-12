@@ -46,4 +46,3 @@ supervisor(aullDeWitt, swarbucksOliver).
 can_do_job(computerWizard, [computer,programmer]).
 can_do_job(computerWizard, [computer,technician]).
 can_do_job(computerProgrammer, [computer,programmer,trainee]).
-
