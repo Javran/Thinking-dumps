@@ -2,10 +2,6 @@
 :- initialization(run).
 
 % compound queries
-addressOfProgrammer(Person,[Where1,Where2]) :-
-    % all the following queries should return successfully
-    % (or we can say that all conditions need to be satisfied)
-    job(Person, [computer,programmer]),
-    address(Person, Where1, Where2).
 
-query(findall([P,W], addressOfProgrammer(P,W), _)).
+% find the addresses of all the computer programmers:
+query(findall([P,W1,W2], (job(P,[computer,programmer]),address(P,W1,W2)  ), _)).
