@@ -43,6 +43,6 @@ supervisor(scroogeEben, warbucksOliver).
 supervisor(cratchetRobert, scroogeEben).
 supervisor(aullDeWitt, swarbucksOliver).
 
-can_do_job(computerWizard, [computer,programmer]).
-can_do_job(computerWizard, [computer,technician]).
-can_do_job(computerProgrammer, [computer,programmer,trainee]).
+can-do-job(computerWizard, [computer,programmer]).
+can-do-job(computerWizard, [computer,technician]).
+can-do-job(computerProgrammer, [computer,programmer,trainee]).
