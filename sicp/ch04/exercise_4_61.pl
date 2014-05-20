@@ -13,5 +13,13 @@ x_next_to_y_in(X,Y,[V|Z]) :-
 % - [2,3],4
 query(findall([X,Y], x_next_to_y_in(X,Y,[1,[2,3],4]),_)).
 
-
+% and also there are two matches in the following list
+% if Y = 1:
+% - [X,Y] = [2,1]
+% - [X,Y] = [3,1]
+% therefore we have X = 2 or X = 3
 query(findall(X,x_next_to_y_in(X,1,[2,1,3,1]),_)).
+
+% however, if we put X = 1 in the constraint,
+% there will be only one match, which is X = 1, Y = 3
+query(findall(X,x_next_to_y_in(1,X,[2,1,3,1]),_)).
