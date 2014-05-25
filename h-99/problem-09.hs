@@ -1,10 +1,9 @@
 pack :: Eq a => [a] -> [[a]]
 pack [] = []
-pack (h:t) = if null grouped
-               then [[h]]
-               else (if head (head grouped) == h
-                       then (h:head grouped):tail grouped
-                       else [h]:grouped)
+pack (h:t)
+ | null grouped = [[h]]
+ | head (head grouped) == h = (h:head grouped):tail grouped
+ | otherwise = [h]:grouped
     where grouped = pack t
 
 main :: IO ()
