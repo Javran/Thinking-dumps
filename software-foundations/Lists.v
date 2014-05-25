@@ -447,7 +447,22 @@ Example test_subset2:              subset [1;2;2] [2;1;4;1] = false.
     you haven't learned yet.  Feel free to ask for help if you get
     stuck! *)
 
-(* FILL IN HERE *)
+(*
+ * add an element to the bag, and counting its occurrence,
+ * is the same as taking the successor of the result of counting
+ * on the original bag
+ *)
+Theorem count_add_theorem: forall v : nat, forall s : bag,
+  count v (add v s) = S (count v s).
+Proof.
+  intros v k. simpl.
+  assert (forall n : nat, beq_nat n n = true).
+    intros n. induction n as [|n'].
+    Case "n = 0". reflexivity.
+    Case "n = S n'". simpl. rewrite IHn'. reflexivity.
+  assert (beq_nat v v = true). apply H. rewrite H0.
+  reflexivity. Qed.
+
 (** [] *)
 
 (* ###################################################### *)
