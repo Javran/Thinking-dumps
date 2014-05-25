@@ -22,3 +22,8 @@ Both pattern matching and unification produces streams,
 and we combine them together to have all the possible answers.
 
 ## The query evaluator and the driver loop
+
+(Well, pretty sure things are mixed together now,
+the relationship between `qeval` and `eval`,
+and what a driver loop can do, don't have to
+be explained here.)
