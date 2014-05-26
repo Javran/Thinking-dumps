@@ -20,5 +20,9 @@ so this rule always matches itself and goes to its body
 in order to match other variables,
 which eventually results in an infinite loop.
 
-TODO: need some specific example about the question describe
-in the exercise.
+In other words, `(outranked-by ?staff-person ?boss)` with an unbounded
+`?staff-person` is the same as `(outranked-by ?middle-manager ?boss)`
+with an unbounded `?middle-manager`. This causes the infinite loop.
+However, if the condition `(supervisor ?staff-person ?middle-manager)`
+comes before this condition, then `?middle-manager` will be bound
+to something and break this infinite loop.
