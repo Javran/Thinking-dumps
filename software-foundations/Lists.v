@@ -462,7 +462,6 @@ Proof.
     Case "n = S n'". simpl. rewrite IHn'. reflexivity.
   assert (beq_nat v v = true). apply H. rewrite H0.
   reflexivity. Qed.
-
 (** [] *)
 
 (* ###################################################### *)
@@ -761,8 +760,6 @@ Proof.
 
 (** Keep [SearchAbout] in mind as you do the following exercises and
     throughout the rest of the course; it can save you a lot of time! *)
-    
-
 
 (* ###################################################### *)
 (** ** List Exercises, Part 1 *)
@@ -773,13 +770,26 @@ Proof.
 Theorem app_nil_end : forall l : natlist, 
   l ++ [] = l.   
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l. induction l as [|h t].
+  Case "l = nil". reflexivity.
+  Case "l = h :: t". simpl. rewrite IHt. reflexivity. Qed.
 
+Lemma rev_involutive_helper : forall h : nat, forall t : natlist,
+  rev (snoc t h) = h :: rev t.
+Proof.
+  intros h t. induction t as [|h1 t1].
+  Case "t = nil". reflexivity.
+  Case "t = h1 t1". simpl. rewrite IHt1. reflexivity.
+Qed.
 
 Theorem rev_involutive : forall l : natlist,
   rev (rev l) = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l. induction l as [|h t].
+  Case "l = nil". reflexivity.
+  Case "l = h t". simpl.
+    rewrite rev_involutive_helper. rewrite IHt. reflexivity.
+Qed.
 
 (** There is a short solution to the next exercise.  If you find
     yourself getting tangled up, step back and try to look for a
@@ -788,18 +798,28 @@ Proof.
 Theorem app_ass4 : forall l1 l2 l3 l4 : natlist,
   l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2 l3 l4.
+  rewrite app_ass. rewrite app_ass. reflexivity.
+Qed.
 
 Theorem snoc_append : forall (l:natlist) (n:nat),
   snoc l n = l ++ [n].
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l n. induction l as [|h t].
+  Case "l = nil". reflexivity.
+  Case "l = h t". simpl. rewrite IHt. reflexivity.
+Qed.
 
 
 Theorem distr_rev : forall l1 l2 : natlist,
   rev (l1 ++ l2) = (rev l2) ++ (rev l1).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2. induction l1 as [|h1 t1].
+  Case "l1 = nil". simpl. rewrite app_nil_end. reflexivity.
+  Case "l1 = h1 t1".
+    simpl. rewrite snoc_append. rewrite snoc_append.
+    rewrite IHt1. rewrite app_ass. reflexivity.
+Qed.
 
 (** An exercise about your implementation of [nonzeros]: *)
 
@@ -1050,4 +1070,3 @@ End Dictionary.
 End NatList.
 
 (* $Date: 2013-07-17 16:19:11 -0400 (Wed, 17 Jul 2013) $ *)
-
