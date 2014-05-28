@@ -6,6 +6,7 @@ removeNonUppercase st =
 addThree :: Int -> Int -> Int -> Int
 addThree x y z = x + y + z
 
+main :: IO ()
 main = do
     putStrLn "Types"
     print ('a'         :: Char)
