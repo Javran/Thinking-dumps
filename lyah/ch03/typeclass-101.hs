@@ -35,7 +35,6 @@ use "fromIntegral" to convert ints to floating numbers
 -}
 
 data TypeAB = A | B
-    deriving (Show)
 
 instance Eq TypeAB where
     A == A = True
@@ -48,6 +47,10 @@ instance Ord TypeAB where
         | t1 == A  = LT -- t2 can only be B, we define A < B
         | otherwise = GT -- t1 can only be B, and t2 can only be A
 
+instance Show TypeAB where
+    show A = "<A>"
+    show B = "<B>"
+
 main :: IO ()
 main = do
     exampleTypeClass "Eq"
@@ -58,5 +61,8 @@ main = do
     print (A < B) -- True
     print (B >= A) -- True
     print (B < A) -- False
+    exampleTypeClass "Show"
+    print A -- <A>
+    print B -- <B>
     where
         exampleTypeClass tpc = putStrLn ("typeclass: " ++ tpc)
