@@ -34,6 +34,8 @@ Floating:
 use "fromIntegral" to convert ints to floating numbers
 -}
 
+import Data.List
+
 data TypeAB = A | B
 
 instance Eq TypeAB where
@@ -51,6 +53,12 @@ instance Show TypeAB where
     show A = "<A>"
     show B = "<B>"
 
+instance Read TypeAB where
+    readsPrec _ str
+        | "<A>" `isSuffixOf` str = [(A, drop 3 str)]
+        | "<B>" `isSuffixOf` str = [(B, drop 3 str)]
+        | otherwise = []
+
 main :: IO ()
 main = do
     exampleTypeClass "Eq"
@@ -64,5 +72,10 @@ main = do
     exampleTypeClass "Show"
     print A -- <A>
     print B -- <B>
+    exampleTypeClass "Read"
+    print (read "<A>" :: TypeAB)
+    print (read "<B>" :: TypeAB)
+    -- would raise error if the string cannot be parsed
+    print (reads "No" :: [(TypeAB, String)])
     where
         exampleTypeClass tpc = putStrLn ("typeclass: " ++ tpc)
