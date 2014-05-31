@@ -59,6 +59,14 @@ instance Read TypeAB where
         | "<B>" `isSuffixOf` str = [(B, drop 3 str)]
         | otherwise = []
 
+instance Enum TypeAB where
+    toEnum 0 = A
+    toEnum 1 = B
+    toEnum _ = error "TypeAB: out of range"
+
+    fromEnum A = 0
+    fromEnum B = 1
+
 main :: IO ()
 main = do
     exampleTypeClass "Eq"
@@ -77,5 +85,7 @@ main = do
     print (read "<B>" :: TypeAB)
     -- would raise error if the string cannot be parsed
     print (reads "No" :: [(TypeAB, String)])
+    exampleTypeClass "Enum"
+    print [A .. B]
     where
         exampleTypeClass tpc = putStrLn ("typeclass: " ++ tpc)
