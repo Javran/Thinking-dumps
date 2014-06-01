@@ -67,6 +67,10 @@ instance Enum TypeAB where
     fromEnum A = 0
     fromEnum B = 1
 
+instance Bounded TypeAB where
+    minBound = A
+    maxBound = B
+
 main :: IO ()
 main = do
     exampleTypeClass "Eq"
@@ -87,5 +91,8 @@ main = do
     print (reads "No" :: [(TypeAB, String)])
     exampleTypeClass "Enum"
     print [A .. B]
+    exampleTypeClass "Bounded"
+    print (minBound :: TypeAB)
+    print (maxBound :: TypeAB)
     where
         exampleTypeClass tpc = putStrLn ("typeclass: " ++ tpc)
