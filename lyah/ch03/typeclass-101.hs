@@ -36,7 +36,16 @@ use "fromIntegral" to convert ints to floating numbers
 
 import Data.List
 import Data.Maybe
-import Data.Function
+-- import Data.Function (on)
+import Data.Profunctor
+
+newtype BinFunc a b = BinFunc
+    { runBinFunc :: a -> a -> b }
+
+instance Profunctor BinFunc where
+    dimap f g (BinFunc bin) = BinFunc pbin
+        where
+            pbin a b = g (bin (f a) (f b))
 
 data TypeAB = A | B
 
@@ -91,11 +100,16 @@ instance Num Mod5 where
     fromInteger n = [Zero .. Four] !! (fromIntegral n `mod` 5)
     signum = const One
     abs = id
+    negate = intToMod5 . (\x -> 5 - x) . mod5ToInt
+    {-
     a + b = intToMod5 (a ^+^ b)
         where (^+^) = (+) `on` mod5ToInt
-    negate = intToMod5 . (\x -> 5 - x) . mod5ToInt
+
     a * b = intToMod5 (a ^*^ b)
         where (^*^) = (*) `on` mod5ToInt
+    -}
+    (+) = runBinFunc (dimap mod5ToInt intToMod5 (BinFunc (+)))
+    (*) = runBinFunc (dimap mod5ToInt intToMod5 (BinFunc (*)))
 
 test :: IO ()
 test = do
