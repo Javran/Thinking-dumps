@@ -35,6 +35,8 @@ use "fromIntegral" to convert ints to floating numbers
 -}
 
 import Data.List
+import Data.Maybe
+import Data.Function
 
 data TypeAB = A | B
 
@@ -71,6 +73,45 @@ instance Bounded TypeAB where
     minBound = A
     maxBound = B
 
+data Mod5
+    = Zero
+    | One
+    | Two
+    | Three
+    | Four
+    deriving (Eq, Show, Enum, Bounded)
+
+mod5ToInt :: Mod5 -> Int
+mod5ToInt = fromJust . (`elemIndex` [Zero .. Four])
+
+intToMod5 :: Int -> Mod5
+intToMod5 = ([Zero .. Four] !! ) . (`mod` 5)
+
+instance Num Mod5 where
+    fromInteger n = [Zero .. Four] !! (fromIntegral n `mod` 5)
+    signum = const One
+    abs = id
+    a + b = intToMod5 (a ^+^ b)
+        where (^+^) = (+) `on` mod5ToInt
+    negate = intToMod5 . (\x -> 5 - x) . mod5ToInt
+    a * b = intToMod5 (a ^*^ b)
+        where (^*^) = (*) `on` mod5ToInt
+
+test :: IO ()
+test = do
+
+    let univ = [Zero .. Four]
+        tests = [ (x,y) | x <- univ, y <- univ ]
+        test1 = map (\(x,y) -> (x,y,x+y)) tests
+        test2 = map (\(x,y) -> (x,y,x*y)) tests
+        test3 = map (\(x,y) -> (x,y,x-y)) tests
+    putStrLn "test plus:"
+    mapM_ print test1
+    putStrLn "test mult:"
+    mapM_ print test2
+    putStrLn "test minu:"
+    mapM_ print test3
+
 main :: IO ()
 main = do
     exampleTypeClass "Eq"
@@ -94,5 +135,6 @@ main = do
     exampleTypeClass "Bounded"
     print (minBound :: TypeAB)
     print (maxBound :: TypeAB)
+    test
     where
         exampleTypeClass tpc = putStrLn ("typeclass: " ++ tpc)
