@@ -33,9 +33,9 @@ tell (x:y:_) = "This list is long. The first two elements are: " ++ show x ++ " 
 
 main :: IO ()
 main = do
-     print $ lucky 7
-     print $ lucky 8
-     print $ sayMe 2
-     print $ factorial 10
+     print $ lucky (7 :: Int)
+     print $ lucky (8 :: Int)
+     print $ sayMe (2 :: Int)
+     print $ factorial (10 :: Int)
      print $ charName 'a'
-     mapM_ (print . tell) [[],[1],[1,2],[1,2,3]]
+     mapM_ (print . tell) [[],[1 :: Int],[1,2],[1,2,3]]
