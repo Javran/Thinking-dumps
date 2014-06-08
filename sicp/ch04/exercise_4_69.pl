@@ -36,12 +36,32 @@ last_pair([X],[X]).
 last_pair([_|T],X) :-
     last_pair(T,X).
 
-% actually I can't see why I need to define this weird rule
-% and what's the point of checking if the list ends in word "grandson"
 ends_in_grandson(X) :-
     last_pair(X,Y),
     Y = [grandson].
 
+% Irad is the great-grandson of Adam
+% Adam's great-grandson is Irad
+% the first "argument" is a list,
+% which is of form: [grandson], [great,great,...,grandson]
+% great([grandson],...) queries for great grandson
+% great([great,grandson],...) queries for great-great grandson
+great([grandson], adam, irad).
+great([great|Rels],X,Y) :-
+    % note that the order of these conditions does matter.
+    % thanks to the hint given by:
+    % http://d.hatena.ne.jp/torilon/20100227/1267287564
+    % X's son is Z
+    son(X,Z),
+    % Z's <Rels> is Y
+    great(Rels,Z,Y),
+    % the relationship list should be ended in "grandson"
+    ends_in_grandson(Rels).
+
 query(findall(X,ends_in_grandson([great,great,grandson]),_)).
 query(findall(X,ends_in_grandson([great]),_)).
 query(findall(X,ends_in_grandson([grandson]),_)).
+
+query(findall([G,GGS], great([grandson],G,GGS),_)).
+query(findall([G,GGS], great([great,great,great,great,grandson],G,GGS),_)).
+query(findall(Rels,great(Rels,adam,irad),_)).
