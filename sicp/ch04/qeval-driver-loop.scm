@@ -8,6 +8,19 @@
 (define input-prompt "qeval> ")
 (define output-prompt "")
 
+(define (instantiate-exp exp frame unbound-var-handler)
+  (define (copy exo)
+    (cond ((var? exp)
+           (let ((binding (binding-in-frame exp frame)))
+             (if binding
+                 (copy (binding-value binding))
+                 (unbound-var-handler exp frame))))
+          ((pair? exp)
+           (cons (copy (car exp))
+                 (copy (cdr exp))))
+          (else exp)))
+  (copy exp))
+
 (define (query-driver-loop)
   (prompt-for-input input-prompt)
   (let ((q (query-syntax-process (read))))
