@@ -43,6 +43,13 @@
              (qeval q (singleton-stream '()))))
            (query-driver-loop)))))
 
+;; needs data-directed dispatching supports here
+(define (qeval query frame-stream)
+  (let ((qproc (get (type query) 'qeval)))
+    (if qproc
+        (qproc (contents query) frame-stream)
+        (simple-query query frame-stream))))
+
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:
