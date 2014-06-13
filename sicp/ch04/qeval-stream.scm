@@ -21,3 +21,18 @@
        (interleave-delayed
         (force delayed-s2)
         (delay (stream-cdr s1))))))
+
+;; using "flatmap" here would lead to confusion
+;; instead I use "stream-intermap" to indicate
+;; that the flatten process is done by taking
+;; the interleave of streams
+(define (stream-intermap proc s)
+  (define (interleave-flatten-stream stream)
+    (if (stream-null? stream)
+        the-empty-stream
+        (interleave-delayed
+         (stream-car stream)
+         (delay
+           (interleave-flatten-stream
+            (stream-cdr stream))))))
+  (interleave-flatten-stream (stream-map proc s)))
