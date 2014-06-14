@@ -40,6 +40,9 @@
             (stream-cdr stream))))))
   (interleave-flatten-stream (stream-map proc s)))
 
+(define (singleton-stream x)
+  (cons-stream x the-empty-stream))
+
 (define (qeval-stream-tests)
   ;; convert between stream and list for
   ;; some functions
@@ -64,7 +67,7 @@
           (mat '() '(1 2 3) '(1 2 3))
           (mat '(1 2 3 4) '(5 6) '(1 5 2 6 3 4)))))
     (do-test (func-converter interleave-delayed) testcases))
-  ;; stream-intermap
+  ;; stream-intermap tests
   (let ((testcases
          (list
           (mat (lambda (x)
@@ -77,6 +80,16 @@
                  (stream-intermap
                   proc
                   (list->stream s))))))
+    (do-test func testcases))
+  ;; singleton-stream tests
+  (let ((testcases
+         (list
+          (mat 1 '(1))
+          (mat 'a '(a))))
+         (func
+          (lambda (x)
+            (stream->list
+             (singleton-stream x)))))
     (do-test func testcases))
   'ok)
 
