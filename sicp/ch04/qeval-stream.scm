@@ -1,4 +1,7 @@
 ;; extra stream operations for qeval
+;; status: working, tested
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
 
 ;; same as "stream-append" except that
 ;; the second argument is delayed
@@ -15,7 +18,7 @@
 ;; the second argument is delayed
 (define (interleave-delayed s1 delayed-s2)
   (if (stream-null? s1)
-      (force s2)
+      (force delayed-s2)
       (cons-stream
        (stream-car s1)
        (interleave-delayed
@@ -36,3 +39,45 @@
            (interleave-flatten-stream
             (stream-cdr stream))))))
   (interleave-flatten-stream (stream-map proc s)))
+
+(define (qeval-stream-tests)
+  ;; convert between stream and list for
+  ;; some functions
+  (define (func-converter func)
+    (lambda (s1 s2)
+      (stream->list
+       (func
+        (list->stream s1)
+        (delay (list->stream s2))))))
+  ;; stream-append-delayed tests
+  (let ((testcases
+         (list
+          (mat '(1 2 3) '(4 5 6) '(1 2 3 4 5 6))
+          (mat '() '() '())
+          (mat '(1 2 3) '() '(1 2 3))
+          (mat '() '(1 2 3) '(1 2 3)))))
+    (do-test (func-converter stream-append-delayed) testcases))
+  ;; interleave-delayed tests
+  (let ((testcases
+         (list
+          (mat '(1 2) '(3 4 5 6) '(1 3 2 4 5 6))
+          (mat '() '(1 2 3) '(1 2 3))
+          (mat '(1 2 3 4) '(5 6) '(1 5 2 6 3 4)))))
+    (do-test (func-converter interleave-delayed) testcases))
+  ;; stream-intermap
+  (let ((testcases
+         (list
+          (mat (lambda (x)
+                 (list->stream
+                  (list x x)))
+               '(1 2 3)
+               '(1 2 1 3 2 3))))
+        (func (lambda (proc s)
+                (stream->list
+                 (stream-intermap
+                  proc
+                  (list->stream s))))))
+    (do-test func testcases))
+  'ok)
+
+(qeval-stream-tests)
