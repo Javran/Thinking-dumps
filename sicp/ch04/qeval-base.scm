@@ -1,3 +1,6 @@
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
 ;; utils
 (define (list-tagged-with tag)
   (lambda (l)
@@ -74,3 +77,13 @@
               (string->symbol
                (substring chars 1 (string-length chars))))
         symbol)))
+
+(define (test-expand-question-mark)
+  (do-test
+   expand-question-mark
+   (list
+    (mat '?test '(? test))
+    (mat 'whatever 'whatever)
+    (mat '?symbol '(? symbol)))))
+
+(test-expand-question-mark)
