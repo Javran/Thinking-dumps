@@ -1,3 +1,10 @@
+;; utils
+(define (list-tagged-with tag)
+  (lambda (l)
+    (and
+      (list? l)
+      (non-empty? l)
+      (eq? (car l) tag))))
 
 ;; a special form is identified by the "car" part
 ;; of it, which is called "type".
@@ -21,3 +28,29 @@
 
 (define (add-assertion-body exp)
   (car (contents exp)))
+
+;; conjunctions
+(define empty-conjunction? null?)
+(define first-conjunct car)
+(define rest-conjuncts cdr)
+
+;; disjunctions
+(define empty-disjunction? null?)
+(define first-disjunct car)
+(define rest-disjuncts cdr)
+
+;; "not"
+(define negated-query car)
+
+;; lisp-value
+(define predicate car)
+(define args cdr)
+
+;; syntax of rules
+(define rule?
+  (list-tagged-with 'rule))
+(define conclusion cadr)
+(define (rule-body rule)
+  (if (null? (cddr rule))
+      '(always-true)
+      (caddr rule)))
