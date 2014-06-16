@@ -1,6 +1,11 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(define *qeval-tests* #t)
+
+(load "./qeval-frames.scm")
+;; the following code is still unconfirmed
+
 ;; this should be the main file.
 ;; TODO list:
 ;; * data directed dispatch
