@@ -59,6 +59,7 @@
       (caddr rule)))
 
 ;; query syntax (unconfirmed)
+;; not sure how this is used for now
 (define (query-syntax-process exp)
   (map-over-symbols expand-question-mark exp))
 
@@ -86,4 +87,26 @@
     (mat 'whatever 'whatever)
     (mat '?symbol '(? symbol)))))
 
-(test-expand-question-mark)
+;; (test-expand-question-mark)
+
+(define var?
+  (list-tagged-with '?))
+(define constant-symbol? symbol?)
+
+(define rule-counter 0)
+(define (new-rule-application-id)
+  (set! rule-counter (add1 rule-counter))
+  rule-counter)
+
+(define (make-new-variable var rule-application-id)
+  (cons '? (cons rule-application-id (cdr vanr))))
+
+(define (contract-question-mark variable)
+  (string->symbol
+   (string-append
+    "?"
+    (if (number? (cadr variable))
+        (string-append (symbol->string (caddr variable))
+                       "-"
+                       (number->string (cadr variable)))
+        (symbol->string (cadr variable))))))
