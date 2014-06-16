@@ -207,4 +207,7 @@
       (lambda (x) (>= x n)))
     ))
 
+(define (to-bool v)
+  (if v #t #f))
+
 'done
