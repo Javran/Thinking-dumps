@@ -3,6 +3,8 @@
 
 (define *qeval-tests* #t)
 
+(load "./qeval-base.scm")
+(load "./qeval-transform.scm")
 (load "./qeval-frames.scm")
 ;; the following code is still unconfirmed
 
