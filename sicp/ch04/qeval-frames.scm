@@ -1,5 +1,11 @@
-;; frames are represented as lists of bindings
+;; frames are like environments,
+;; represented as a list of pairs
+;; where key and value are represented as a pair in scheme
 
+;; we use "make-binding" to make key value pairs
+;; use "extend" to extend an existing frame
+;; and use "binding-in-frame" to retrieve a specified binding
+;; from the frames
 (define empty-frame nil)
 (define make-binding cons)
 (define binding-varlable car)
