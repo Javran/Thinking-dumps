@@ -1,6 +1,3 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
 ;; utils
 (define (list-tagged-with tag)
   (lambda (l)
@@ -57,37 +54,6 @@
   (if (null? (cddr rule))
       '(always-true)
       (caddr rule)))
-
-;; query syntax (unconfirmed)
-;; not sure how this is used for now
-(define (query-syntax-process exp)
-  (map-over-symbols expand-question-mark exp))
-
-(define (map-over-symbols proc exp)
-  (cond ((non-empty? exp)
-         (cons (map-over-symbols proc (car exp))
-               (map-over-symbols proc (cdr exp))))
-        ((symbol? exp)
-         (proc exp))
-        (else exp)))
-
-(define (expand-question-mark symbol)
-  (let ((chars (symbol->string symbol)))
-    (if (string=? (substring chars 0 1) "?")
-        (list '?
-              (string->symbol
-               (substring chars 1 (string-length chars))))
-        symbol)))
-
-(define (test-expand-question-mark)
-  (do-test
-   expand-question-mark
-   (list
-    (mat '?test '(? test))
-    (mat 'whatever 'whatever)
-    (mat '?symbol '(? symbol)))))
-
-;; (test-expand-question-mark)
 
 (define var?
   (list-tagged-with '?))
