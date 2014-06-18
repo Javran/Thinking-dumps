@@ -54,25 +54,3 @@
   (if (null? (cddr rule))
       '(always-true)
       (caddr rule)))
-
-(define var?
-  (list-tagged-with '?))
-(define constant-symbol? symbol?)
-
-(define rule-counter 0)
-(define (new-rule-application-id)
-  (set! rule-counter (add1 rule-counter))
-  rule-counter)
-
-(define (make-new-variable var rule-application-id)
-  (cons '? (cons rule-application-id (cdr vanr))))
-
-(define (contract-question-mark variable)
-  (string->symbol
-   (string-append
-    "?"
-    (if (number? (cadr variable))
-        (string-append (symbol->string (caddr variable))
-                       "-"
-                       (number->string (cadr variable)))
-        (symbol->string (cadr variable))))))
