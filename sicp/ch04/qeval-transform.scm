@@ -73,6 +73,26 @@
       (mat '(job ?x ?y) '(job (? x) (? y)))
       (mat '?symbol '(? symbol))
       (mat '(job x y) '(job x y)))))
+
+  (define (test-make-new-variable)
+    (do-test
+     make-new-variable
+     (list
+      (mat '(? var) 1 '(? 1 var))
+      (mat '(? sym) 123 '(? 123 sym)))))
+
+  (define (test-contract-question-mark)
+    (do-test
+     contract-question-mark
+     (list
+      (mat '(? 10 var) '?var-10)
+      (mat '(? 1 one) '?one-1)
+      (mat '(? var) '?var))))
+
+  (test-expand-question-mark)
+  (test-query-syntax-process)
+  (test-make-new-variable)
+  (test-contract-question-mark)
   'ok)
 
 (if *qeval-tests*
