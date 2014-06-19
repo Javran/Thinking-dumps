@@ -29,6 +29,9 @@
 (define (add-assertion-body exp)
   (car (contents exp)))
 
+;; still not sure about how the following procedures would be used,
+;; Maybe it is related to the data-directed mechanism.
+
 ;; conjunctions
 (define empty-conjunction? null?)
 (define first-conjunct car)

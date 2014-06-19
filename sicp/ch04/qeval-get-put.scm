@@ -9,29 +9,30 @@
 
   ;; update a key-value pair in an alist
   (define (put-alist key val alist)
-    (cons (list key val)
+    (cons (cons key val)
           (del-assoc key alist)))
 
   (define (put-proc key1 key2 proc table)
     ;; use the first key to find the subtable
-    (let ((subtable (assoc key1 table)))
+    (let ((result (assoc key1 table)))
       ;; create an empty one if it does not exist
-      (let ((new-subtable (if subtable subtable nil)))
+      (let ((subtable (if result (cdr result) nil)))
         (put-alist
          key1
          (put-alist
           key2
           proc
-          new-subtable)
+          subtable)
          table))))
 
   ;; assume "#f" can never be a valid value
   (define (get-proc key1 key2 table)
-    (let ((subtable (assoc key1 table)))
-      (if subtable
-          (let ((subsubtable (assoc key2 subtable)))
-            (if subsubtable
-                (cdr subsubtable)
+    (let ((result (assoc key1 table)))
+      (if result
+          (let* ((subtable (cdr result))
+                 (result (assoc key2 subtable)))
+            (if result
+                (cdr result)
                 #f))
           #f)))
 
@@ -49,3 +50,33 @@
   (set! get get-impl)
   (set! proc-table-initialize! initialize)
   'ok)
+
+(define (test-get-put)
+  (proc-table-initialize!)
+  (do-test
+   get
+   (list
+    (mat 'a 'b #f)
+    (mat 'c 'd #f)))
+  (put 'a 'b "ab")
+  (put 10 20 "10-20")
+  (put '(1 2 3) '(2 3 4) 'complex)
+  (do-test
+   get
+   (list
+    (mat 'a 'b "ab")
+    (mat 'no-such 'value #f)
+    (mat 10 20 "10-20")
+    (mat '(1 2 3) '(2 3 4) 'complex)))
+  'ok)
+
+(if *qeval-tests*
+    (test-get-put)
+    'ok)
+
+;; testcases might modify the table,
+;; so we might need to initialize it here.
+(proc-table-initialize!)
+;; Local variables:
+;; proc-entry: "qeval.scm"
+;; End:

@@ -6,6 +6,8 @@
 (load "./qeval-base.scm")
 (load "./qeval-transform.scm")
 (load "./qeval-frames.scm")
+
+(load "./qeval-get-put.scm")
 ;; the following code is still unconfirmed
 
 ;; this should be the main file.
