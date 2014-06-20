@@ -8,13 +8,9 @@
 (load "./qeval-frames.scm")
 
 (load "./qeval-get-put.scm")
+(load "./qeval-stream.scm")
 ;; the following code is still unconfirmed
-
 ;; this should be the main file.
-;; TODO list:
-;; * data directed dispatch
-;;   (use my handler-register style instead,
-;;    which also enables some unit tests)
 
 (define (find-assertions pattern frame)
   (stream-flatmap

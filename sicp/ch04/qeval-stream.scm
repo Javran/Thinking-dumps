@@ -1,8 +1,3 @@
-;; extra stream operations for qeval
-;; status: working, tested
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
 ;; same as "stream-append" except that
 ;; the second argument is delayed
 (define (stream-append-delayed s1 delayed-s2)
@@ -93,4 +88,6 @@
     (do-test func testcases))
   'ok)
 
-(qeval-stream-tests)
+(if *qeval-tests*
+    (qeval-stream-tests)
+    'ok)
