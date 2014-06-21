@@ -51,6 +51,8 @@
 (define (get-all-rules) THE-RULES)
 (define (get-indexed-rules pattern)
   (stream-append
+   ;; different from assertions, rules might have variables
+   ;; in conclusion, we put all possible rules together to form another stream
    (get-stream (index-key-of pattern) 'rule-stream)
    (get-stream '? 'rule-stream)))
 
@@ -74,6 +76,7 @@
                (cons-stream
                 assertion
                 current-assertion-stream))))))
+
 (define (add-assertion! assertion)
   (store-assertion-in-index assertion)
   (let ((old-assertions THE-ASSERTIONS))
