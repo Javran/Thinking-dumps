@@ -1,3 +1,10 @@
+;; dependencies:
+;; - qeval-stream
+;; - qeval-base
+;; - qeval-transform
+;; - qeval-database
+;; - qeval-frames
+
 (define (depends-on? exp var frame)
   (define (tree-walk e)
     (cond ((var? e)
@@ -65,7 +72,11 @@
                  (singleton-stream unify-result))))))
 
 (define (apply-rules pattern frame)
-  (stream-flatmap
+  (stream-intermap
    (lambda (rule)
      (apply-a-rule rule pattern frame))
    (fetch-rules pattern frame)))
+
+;; Local variables:
+;; proc-entry: "./qeval.scm"
+;; End:

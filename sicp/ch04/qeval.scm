@@ -10,6 +10,9 @@
 (load "./qeval-get-put.scm")
 (load "./qeval-stream.scm")
 (load "./qeval-database.scm")
+
+(load "./qeval-rules-and-unif.scm")
+
 ;; the following code is still unconfirmed
 ;; this should be the main file.
 
@@ -48,8 +51,6 @@
         (pattern-match
          (binding-value binding) dat frame)
         (extend var dat frame))))
-
-
 
 ;; Local variables:
 ;; proc-entry: ""
