@@ -71,6 +71,9 @@
            'failed)
           (else (extend var val frame)))))
 
+;; change variables in a rule to unique names
+;; to prevent the variables from different rule applications
+;; from becoming confused with each other
 (define (rename-variables-in rule)
   (let ((rule-application-id (new-rule-application-id)))
     (define (tree-walk exp)
@@ -84,16 +87,24 @@
     (tree-walk rule)))
 
 (define (apply-a-rule rule query-pattern query-frame)
+  ;; rename variables and work on the renamed one
   (let ((clean-rule (rename-variables-in rule)))
+    ;; try to do the unification
     (let ((unify-result
            (unify-match query-pattern
                         (conclusion clean-rule)
                         query-frame)))
       (if (eq? unify-result 'failed)
+          ;; the unification has failed,
+          ;; an empty stream is returned since no valid solution
+          ;; is available
           the-empty-stream
+          ;; if it is possible to unify the pattern with the conclusion,
+          ;; we need to further check if the rule body makes sense
           (qeval (rule-body clean-rule)
                  (singleton-stream unify-result))))))
 
+;; TODO: need some testcases somehow
 (define (apply-rules pattern frame)
   (stream-intermap
    (lambda (rule)
