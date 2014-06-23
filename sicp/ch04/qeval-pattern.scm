@@ -1,18 +1,6 @@
-(define (find-assertions pattern frame)
-  (stream-intermap
-   (lambda (datum)
-     (check-an-assertion datum pattern frame))
-   (fetch-assertions pattern frame)))
-
-(define (check-an-assertion
-         assertion
-         query-pat
-         query-frame)
-  (let ((match-result
-         (pattern-match query-pat assertion query-frame)))
-    (if (eq? match-result 'failed)
-        the-empty-stream
-        (singleton-stream match-result))))
+;; dependencies
+;; - qeval-database
+;; - qeval-stream
 
 (define (pattern-match pat dat frame)
   (cond ((eq? frame 'failed) 'failed)
@@ -33,6 +21,27 @@
         (pattern-match
          (binding-value binding) dat frame)
         (extend var dat frame))))
+
+;; do pattern matching to tell if the pattern matches
+;; with the assertion
+(define (check-an-assertion
+         assertion
+         query-pat
+         query-frame)
+  (let ((match-result
+         (pattern-match query-pat assertion query-frame)))
+    (if (eq? match-result 'failed)
+        the-empty-stream
+        (singleton-stream match-result))))
+
+;; extend the frame by using "pattern" to
+;; search the database.
+;; return a stream of frames that satisfies all assertions
+(define (find-assertions pattern frame)
+  (stream-intermap
+   (lambda (datum)
+     (check-an-assertion datum pattern frame))
+   (fetch-assertions pattern frame)))
 
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
