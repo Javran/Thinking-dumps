@@ -42,13 +42,6 @@
 (define first-disjunct car)
 (define rest-disjuncts cdr)
 
-;; "not"
-(define negated-query car)
-
-;; lisp-value
-(define predicate car)
-(define args cdr)
-
 ;; syntax of rules
 ;; rules are of the form:
 ;; '(rule <conclusion> [rule-body])

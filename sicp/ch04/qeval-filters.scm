@@ -3,6 +3,9 @@
 ;; - qeval-get-put
 ;; - qeval-base
 
+;; "not" query accessor
+(define negated-query car)
+
 (define (negate operands frame-stream)
   (stream-intermap
    (lambda (frame)
@@ -23,6 +26,10 @@
   (apply (eval (predicate exp)
                user-initial-environment)
          (args exp)))
+
+;; lisp-value query accessors
+(define predicate car)
+(define args cdr)
 
 ;; TODO: still not sure about "instantiate-exp"
 (define (lisp-value call frame-stream)
