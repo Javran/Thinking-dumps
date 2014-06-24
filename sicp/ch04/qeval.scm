@@ -11,6 +11,8 @@
 (load "./qeval-stream.scm")
 (load "./qeval-database.scm")
 
+(load "./qeval-filters.scm")
+
 (load "./qeval-pattern.scm")
 (load "./qeval-rules-and-unif.scm")
 
