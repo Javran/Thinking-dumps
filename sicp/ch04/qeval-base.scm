@@ -32,15 +32,6 @@
 ;; still not sure about how the following procedures would be used,
 ;; Maybe it is related to the data-directed mechanism.
 
-;; conjunctions
-(define empty-conjunction? null?)
-(define first-conjunct car)
-(define rest-conjuncts cdr)
-
-;; disjunctions
-(define empty-disjunction? null?)
-(define first-disjunct car)
-(define rest-disjuncts cdr)
 
 ;; syntax of rules
 ;; rules are of the form:
