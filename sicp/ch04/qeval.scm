@@ -11,11 +11,11 @@
 (load "./qeval-stream.scm")
 (load "./qeval-database.scm")
 
-(load "./qeval-compound-queries.scm")
-(load "./qeval-filters.scm")
-
 (load "./qeval-pattern.scm")
 (load "./qeval-rules-and-unif.scm")
+
+(load "./qeval-compound-queries.scm")
+(load "./qeval-filters.scm")
 
 ;; the following code is still unconfirmed
 ;; this should be the main file.

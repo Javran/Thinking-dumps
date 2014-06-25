@@ -32,7 +32,6 @@
 ;; still not sure about how the following procedures would be used,
 ;; Maybe it is related to the data-directed mechanism.
 
-
 ;; syntax of rules
 ;; rules are of the form:
 ;; '(rule <conclusion> [rule-body])
