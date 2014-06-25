@@ -1,10 +1,3 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
-;; not sure how the system will be implemented yet,
-;; so we just move codes from the book to here
-;; hoping "my-eval" can be somehow reused to form this new system
-
 (define input-prompt "qeval> ")
 (define output-prompt "")
 
@@ -72,5 +65,5 @@
         (simple-query query frame-stream))))
 
 ;; Local variables:
-;; proc-entry: ""
+;; proc-entry: "./qeval.scm"
 ;; End:

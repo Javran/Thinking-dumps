@@ -1,6 +1,7 @@
-(load "./qeval-base.scm")
-(load "./qeval-transform.scm")
-(load "./qeval-get-put.scm")
+;; dependencies:
+;; - qeval-base
+;; - qeval-transform
+;; - qeval-get-put
 
 ;; a big stream of all the assertions
 (define THE-ASSERTIONS the-empty-stream)
