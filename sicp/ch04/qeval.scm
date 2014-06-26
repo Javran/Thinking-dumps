@@ -26,6 +26,8 @@
   (set! THE-ASSERTIONS the-empty-stream)
   (set! THE-RULES the-empty-stream))
 
+(load "./qeval-tests.scm")
+
 (for-each
  add-rule-or-assertion!
  '((lisps mit-scheme)
