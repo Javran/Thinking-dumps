@@ -20,6 +20,12 @@
 
 (load "./qeval-driver-loop.scm")
 
+;; initialize everything
+(define (qeval-initialize!)
+  (proc-table-initialize!)
+  (set! THE-ASSERTIONS the-empty-stream)
+  (set! THE-RULES the-empty-stream))
+
 (for-each
  add-rule-or-assertion!
  '((lisps mit-scheme)
