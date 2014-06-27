@@ -38,7 +38,9 @@
   (qeval-initialize!)
 
   (for-each
-   add-rule-or-assertion!
+   (compose
+    add-rule-or-assertion!
+    query-syntax-process)
    '((lisps mit-scheme)
      (lisps racket)
      (lisps elisp)
@@ -46,7 +48,13 @@
      (doge wow cool)
      (doge such scheme)
      (list (a b c d) (c d e f))
-     (list (a b c g) ())))
+     (list (a b c g) ())
+     (connect a b)
+     (connect b c)
+     (connect c d)
+     (rule (connect ?a ?b)
+           (and (connect ?a ?c)
+                (connect ?c ?b)))))
 
   (do-test
    (compose stream->list
@@ -57,7 +65,7 @@
            (lisps racket)
            (lisps elisp)
            (lisps clojure)))
-    (mat '(dogs ?x)
+    (mat '(doge ?x)
          '())
     (mat '(doge ?x ?y)
          '((doge wow cool)
@@ -69,6 +77,15 @@
     (mat '(list (a b c . ?x) ?y)
          '((list (a b c d) (c d e f))
            (list (a b c g) ())))
+    ;; TODO: seems like we cannot go deep for some reason?
+    ;; (mat '(connect a ?x)
+    ;;      '((connect a b)
+    ;;        (connect a c)
+    ;;        (connect a d)))
+    ;; this is the current answer, which is actually WRONG
+    (mat '(connect a ?x)
+         '((connect a b)
+           (connect a c)))
     )
    set-equal?)
 

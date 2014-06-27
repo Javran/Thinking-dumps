@@ -75,7 +75,7 @@
 ;; to prevent the variables from different rule applications
 ;; from becoming confused with each other
 (define (rename-variables-in rule)
-  (let ((rule-application-id (new-rule-application-id)))
+  (let ((rule-application-id (new-rule-application-id!)))
     (define (tree-walk exp)
       (cond ((var? exp)
              (make-new-variable
