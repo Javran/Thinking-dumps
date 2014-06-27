@@ -49,12 +49,14 @@
      (doge such scheme)
      (list (a b c d) (c d e f))
      (list (a b c g) ())
-     (connect a b)
-     (connect b c)
-     (connect c d)
+     (edge a b)
+     (edge b c)
+     (edge c d)
      (rule (connect ?a ?b)
-           (and (connect ?a ?c)
-                (connect ?c ?b)))))
+           (or (edge ?a ?b)
+               (and (edge ?a ?c)
+                    (connect ?c ?b))))
+     ))
 
   (do-test
    (compose stream->list
@@ -77,15 +79,10 @@
     (mat '(list (a b c . ?x) ?y)
          '((list (a b c d) (c d e f))
            (list (a b c g) ())))
-    ;; TODO: seems like we cannot go deep for some reason?
-    ;; (mat '(connect a ?x)
-    ;;      '((connect a b)
-    ;;        (connect a c)
-    ;;        (connect a d)))
-    ;; this is the current answer, which is actually WRONG
     (mat '(connect a ?x)
          '((connect a b)
-           (connect a c)))
+           (connect a c)
+           (connect a d)))
     )
    set-equal?)
 
