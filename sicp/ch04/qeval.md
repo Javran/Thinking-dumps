@@ -36,6 +36,40 @@ Utilities for operation on streams
 
     create a stream that has exactly one element: `<x>`.
 
+## qeval-data-directed.scm
+
+Implementation of data-directed scheme,
+described in 2.4.3 of SICP.
+
+The data are represented as a pair, whose `car` part is its type
+and `cdr` part is its content. Two procedures `get` and `put` is used
+to set up and retrieve the corresponding handler according to the tag (i.e. `car` part)
+of any given data. The tag comparison is done by `eq?`.
+
+* `list-tagged-with <tag>`
+
+    `(list-tagged-with <tag>)` produces a predicate that tests if a given data is valid
+    and tagged with a specified tag. (e.g. `((list-tagged-with 'foo) 'data)` produces `#f`,
+    `((list-tagged-with 'foo) '(foo data))` produces `#t`).
+
+* `type <data>` and `content <data>`
+
+    Type and content accessors, should be used on valid data.
+
+* `put <key1> <key2> <val>`
+
+    Put an arbitrary value (except `#f`) into the global lookup table.
+    `<key1>` and `<key2>` could be arbitrary and the key comparison is done by `equal?`.
+
+* `get <key1> <key2>`
+
+    Retrieve arbitrary data (except `#f`) from the global lookup table.
+    Returns `#f` if the value cannot be found.
+
+* `proc-table-initialize!`
+
+    Initialize data-directed scheme by removing all values from the global lookup table.
+
 ## qeval-base.scm
 
 ## qeval-compound-queries.scm
@@ -47,8 +81,6 @@ Utilities for operation on streams
 ## qeval-filters.scm
 
 ## qeval-frames.scm
-
-## qeval-data-directed.scm
 
 ## qeval-pattern.scm
 

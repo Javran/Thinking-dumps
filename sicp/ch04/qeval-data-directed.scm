@@ -74,7 +74,7 @@
   (set! proc-table-initialize! initialize)
   'ok)
 
-(define (test-get-put)
+(define (qeval-data-directed-test) ; TODO: name
   (proc-table-initialize!)
   (do-test
    get
@@ -94,7 +94,7 @@
   'ok)
 
 (if *qeval-tests*
-    (test-get-put)
+    (qeval-data-directed-test)
     'ok)
 
 ;; testcases might modify the table,

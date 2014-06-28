@@ -3,21 +3,18 @@
 
 (define *qeval-tests* #t)
 
+(load "./qeval-data-directed.scm")
+(load "./qeval-stream.scm")
+
 (load "./qeval-base.scm")
 (load "./qeval-transform.scm")
 (load "./qeval-frames.scm")
-
-(load "./qeval-data-directed.scm")
-(load "./qeval-stream.scm")
 (load "./qeval-database.scm")
-
 (load "./qeval-pattern.scm")
 (load "./qeval-rules-and-unif.scm")
-
 (load "./qeval-simple-query.scm")
 (load "./qeval-compound-queries.scm")
 (load "./qeval-filters.scm")
-
 (load "./qeval-driver-loop.scm")
 
 ;; initialize everything
