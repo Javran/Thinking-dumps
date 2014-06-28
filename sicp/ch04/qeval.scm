@@ -3,12 +3,12 @@
 
 (define *qeval-tests* #t)
 
-(load "./qeval-data-directed.scm")
 (load "./qeval-stream.scm")
+(load "./qeval-data-directed.scm")
+(load "./qeval-frame.scm")
 
 (load "./qeval-base.scm")
 (load "./qeval-transform.scm")
-(load "./qeval-frames.scm")
 (load "./qeval-database.scm")
 (load "./qeval-pattern.scm")
 (load "./qeval-rules-and-unif.scm")

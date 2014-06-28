@@ -7,15 +7,16 @@
 ;; and use "binding-in-frame" to retrieve a specified binding
 ;; from the frames
 (define empty-frame nil)
-(define make-binding cons)
-(define binding-varlable car)
-(define binding-value cdr)
 
-(define binding-in-frame assoc)
+(define make-binding cons)
 (define (extend variable value frame)
   (cons (make-binding variable value) frame))
 
-(define (frames-tests)
+(define binding-varlable car)
+(define binding-value cdr)
+(define binding-in-frame assoc)
+
+(define (qeval-frame-tests)
   (let ((frame (fold-left
                 (lambda (acc p)
                   (extend (car p) (cdr p) acc))
@@ -45,7 +46,7 @@
   'ok)
 
 (if *qeval-tests*
-    (frames-tests)
+    (qeval-frame-tests)
     'ok)
 
 ;; Local variables:
