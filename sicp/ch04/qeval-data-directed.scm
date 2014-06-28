@@ -1,4 +1,5 @@
-;; utils
+;; generate a predicate to test if a given data
+;; is tagged with a specified tag.
 (define (list-tagged-with tag)
   (lambda (l)
     (and
@@ -14,7 +15,6 @@
       (car exp)
       (error "Unknown expression TYPE"
              exp)))
-
 (define (contents exp)
   (if (pair? exp)
       (cdr exp)
@@ -74,8 +74,29 @@
   (set! proc-table-initialize! initialize)
   'ok)
 
-(define (qeval-data-directed-test) ; TODO: name
+(define (qeval-data-directed-tests)
+  ;; test "list-tagged-with"
+  (do-test
+   (list-tagged-with 'tag)
+   (list
+    (mat '(tag1 tag) #f)
+    (mat '() #f)
+    (mat #f #f)
+    (mat '(tag . data) #f)
+    (mat '(tag data) #t)))
+  ;; test "type" and "contents"
+  (do-test
+   type
+   (list
+    (mat '(a b) 'a)
+    (mat '(ty cont) 'ty)))
+  (do-test
+   contents
+   (list
+    (mat '(a b) '(b))
+    (mat '(ty cont) '(cont))))
   (proc-table-initialize!)
+  ;; test "get" and "put"
   (do-test
    get
    (list
@@ -94,7 +115,7 @@
   'ok)
 
 (if *qeval-tests*
-    (qeval-data-directed-test)
+    (qeval-data-directed-tests)
     'ok)
 
 ;; testcases might modify the table,

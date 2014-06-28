@@ -8,7 +8,7 @@ TODO: still working
 
 * `qeval-initialize!`
 
-    clean up the database.
+    Clean up the database.
 
 ## qeval-stream.scm
 
@@ -16,25 +16,25 @@ Utilities for operation on streams
 
 * `stream-append-delayed <s1> <delayed-s2>`
 
-    append stream `<s2>` to `<s1>`, where `<s2>` is the result
+    Append stream `<s2>` to `<s1>`, where `<s2>` is the result
     of forcing `<delayed-s2>`.
 
 * `interleave-delayed <s1> <delayed-s2>`
 
-    interleave two streams so that the elements from both streams
+    Interleave two streams so that the elements from both streams
     will show up alternatively. When one of the stream has run out
     of element, the stream continues with all the rest elements in the
     other stream.
 
 * `stream-intermap <proc> <s>`
 
-    similar to the stream version of `flatmap`, `<proc>` is applied to each element
+    Similar to the stream version of `flatmap`, `<proc>` is applied to each element
     in the stream, and the resulting streams are interleaved together to form
     a single stream. `(<proc> <e>)` should produce a stream for each element in `<s>`.
 
 * `singleton-stream <x>`
 
-    create a stream that has exactly one element: `<x>`.
+    Create a stream that has exactly one element: `<x>`.
 
 ## qeval-data-directed.scm
 
@@ -52,7 +52,7 @@ of any given data. The tag comparison is done by `eq?`.
     and tagged with a specified tag. (e.g. `((list-tagged-with 'foo) 'data)` produces `#f`,
     `((list-tagged-with 'foo) '(foo data))` produces `#t`).
 
-* `type <data>` and `content <data>`
+* `type <data>` and `contents <data>`
 
     Type and content accessors, should be used on valid data.
 
