@@ -7,7 +7,7 @@
 (load "./qeval-transform.scm")
 (load "./qeval-frames.scm")
 
-(load "./qeval-get-put.scm")
+(load "./qeval-data-directed.scm")
 (load "./qeval-stream.scm")
 (load "./qeval-database.scm")
 
@@ -27,7 +27,6 @@
   (set! THE-RULES the-empty-stream))
 
 (load "./qeval-tests.scm")
-
 
 ;; Local variables:
 ;; proc-entry: ""
