@@ -96,7 +96,6 @@ Frames are like environments which keep track of variables and the values they a
     Lookup the frame using `<var>` as a key, return the binding with `<var>` as key on success,
     return `#f` on failure.
 
-
 ## qeval-base.scm
 
 ## qeval-compound-queries.scm

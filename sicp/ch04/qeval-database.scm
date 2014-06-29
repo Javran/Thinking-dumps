@@ -3,6 +3,14 @@
 ;; - qeval-transform
 ;; - qeval-get-put
 
+;; an assertion to be added is a list
+;; which begins with symbol "assert!"
+(define (assertion-to-be-added? exp)
+  (eq? (type exp) 'assert!))
+
+(define (add-assertion-body exp)
+  (car (contents exp)))
+
 ;; a big stream of all the assertions
 (define THE-ASSERTIONS the-empty-stream)
 
@@ -20,7 +28,6 @@
   (let ((key (car pat)))
     (if (var? key) '? key)))
 
-;; TODO: move to get-put
 ;; get a stream, return an empty stream if not found
 (define (get-stream key1 key2)
   (let ((s (get key1 key2)))

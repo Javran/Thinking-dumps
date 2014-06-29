@@ -1,11 +1,3 @@
-;; an assertion to be added is a list
-;; which begins with symbol "assert!"
-(define (assertion-to-be-added? exp)
-  (eq? (type exp) 'assert!))
-
-(define (add-assertion-body exp)
-  (car (contents exp)))
-
 ;; syntax of rules
 ;; rules are of the form:
 ;; '(rule <conclusion> [rule-body])
