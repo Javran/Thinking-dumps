@@ -1,4 +1,5 @@
-;; transform variables to make it easier for processing
+;; query syntax transformation between internal representation
+;; and the representation from user input / for visualization
 
 (define (query-syntax-process exp)
   ;; search symbols recursively and apply "proc" to it
@@ -19,8 +20,6 @@
           symbol)))
   (map-over-symbols expand-question-mark exp))
 
-;; deal with the expression after transformation
-
 ;; a variable is of form (? <var>)
 (define var?
   (list-tagged-with '?))
@@ -39,8 +38,6 @@
       (set! rule-counter (add1 rule-counter))
       rule-counter)))
 
-;; TODO: not sure about what's the structure of "var"
-;; seems like "var" should be of form "(? <var>)"
 ;; the generated variable is of form "(? <num> <var>)"
 (define (make-new-variable var rule-application-id)
   `(? ,rule-application-id ,@(cdr var)))
@@ -56,7 +53,7 @@
                        (number->string (cadr variable)))
         (symbol->string (cadr variable))))))
 
-(define (test-qeval-transform)
+(define (test-qeval-syntax-trans)
   (define (test-query-syntax-process)
     (do-test
      query-syntax-process
@@ -86,7 +83,7 @@
   'ok)
 
 (if *qeval-tests*
-    (test-qeval-transform)
+    (test-qeval-syntax-trans)
     'ok)
 
 ;; local variables:
