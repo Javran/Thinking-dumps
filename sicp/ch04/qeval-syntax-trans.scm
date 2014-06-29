@@ -20,7 +20,7 @@
           symbol)))
   (map-over-symbols expand-question-mark exp))
 
-;; a variable is of form (? <var>)
+;; a variable is of form (? <var>) or (? <num> <var>)
 (define var?
   (list-tagged-with '?))
 ;; a constant symbol is a scheme symbol

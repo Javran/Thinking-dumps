@@ -96,6 +96,50 @@ Frames are like environments which keep track of variables and the values they a
     Lookup the frame using `<var>` as a key, return the binding with `<var>` as key on success,
     return `#f` on failure.
 
+## qeval-syntax-trans.scm
+
+Query syntax transformation between internal and external representation.
+
+To better distinct constant symbols from variables that might be bound to some
+values laterly, the internal representation is slightly different from the external one.
+
+Symbols like `'foo` will be transformed to `'(? foo)`. When doing rule application,
+`'(? foo)` can be further transformed to `'(? 10 foo)`
+(this is also a valid internal representation), where `10` is a number guaranteed
+to be unique to avoid confusion between different applications.
+
+The transformation also has benefits that we can tell if a given symbol is
+a constant symbol or a variable by simple predicates.
+
+* `(query-syntax-process <exp>)`
+
+    Transform an expression into its internal representation. This is done
+    by transforming each variable to a list tagged with `'?`.
+    (e.g. `'(job ?x ?y symb)` will be transformed to `'(job (? x) (? y) symb)`)
+
+* `(var? <data>)` and `(constant-symbol? <data>)`
+
+    Test if a given data is a variable or a constant symbol (internal representation)
+    (e.g. `(var? '(? var))` produces `#t`, `(constant-symbol? 'symb)` produces `#t`,
+    `(var? 'symb)` produces `#f` and `(constant-symbol? '(? var))` produces `#f`)
+
+* `(new-rule-application-id!)`
+
+    Generate unique numbers for rule applications when called.
+
+* `(make-new-variable <var> <id>)`
+
+    Make new variable based on an internal variable `<var>`, with
+    `<id>` as its identifier. A typical usage is like:
+    `(make-new-variable (? var) (new-rule-application-id!))`
+    which might produce `'(? 1 var)`, where `1` can be arbitrary.
+
+* `(contract-question-mark <var>)`
+
+    Transform internal variable to its external representation.
+    (e.g. `(contract-question-mark (? foo)` produces `'?foo`,
+    `(contract-question-mark (? 2 foo)` produces `?foo-2`)
+
 ## qeval-base.scm
 
 ## qeval-compound-queries.scm
@@ -111,7 +155,5 @@ Frames are like environments which keep track of variables and the values they a
 ## qeval-rules-and-unif.scm
 
 ## qeval-simple-query.scm
-
-## qeval-transform.scm
 
 ## qeval-tests.scm
