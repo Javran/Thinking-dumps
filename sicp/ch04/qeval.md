@@ -140,20 +140,18 @@ a constant symbol or a variable by simple predicates.
     (e.g. `(contract-question-mark (? foo)` produces `'?foo`,
     `(contract-question-mark (? 2 foo)` produces `?foo-2`)
 
-## qeval-base.scm
-
-## qeval-compound-queries.scm
-
 ## qeval-database.scm
-
-## qeval-driver-loop.scm
-
-## qeval-filters.scm
 
 ## qeval-pattern.scm
 
 ## qeval-rules-and-unif.scm
 
 ## qeval-simple-query.scm
+
+## qeval-compound-queries.scm
+
+## qeval-filters.scm
+
+## qeval-driver-loop.scm
 
 ## qeval-tests.scm
