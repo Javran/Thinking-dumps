@@ -8,7 +8,6 @@
 (load "./qeval-frame.scm")
 (load "./qeval-syntax-trans.scm")
 
-(load "./qeval-base.scm")
 (load "./qeval-database.scm")
 (load "./qeval-pattern.scm")
 (load "./qeval-rules-and-unif.scm")
