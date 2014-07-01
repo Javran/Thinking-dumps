@@ -31,13 +31,13 @@
   (let ((key (car pat)))
     (if (var? key) '? key)))
 
+;; the following functions can't be purely tested.
+;; TODO tests in qeval-tests
+
 ;; get a stream, return an empty stream if not found
 (define (get-stream key1 key2)
   (let ((s (get key1 key2)))
     (or s the-empty-stream)))
-
-;; the following functions can't be purely tested.
-;; TODO tests in qeval-tests
 
 ;; a big stream of all the assertions
 (define THE-ASSERTIONS the-empty-stream)
@@ -154,6 +154,19 @@
    (list
     (mat '(assert! (fruit orange)) '(fruit orange))
     (mat '(assert! (rule whatever)) '(rule whatever))))
+
+  ;; use-index? and index-key-of
+  (do-test
+   use-index?
+   (list
+    (mat '(const (? a) (? 10 b)) #t)
+    (mat '((? a) (? b)) #f)))
+
+  (do-test
+   index-key-of
+   (list
+    (mat '(const (? a) (? 10 b)) 'const)
+    (mat '((? a) (? b)) '?)))
 
   'ok)
 
