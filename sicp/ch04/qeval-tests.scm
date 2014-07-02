@@ -34,6 +34,37 @@
   (mat '() '(1 2) #f)
   (mat '(1 2) '() #f)))
 
+(define (qeval-database-tests-2)
+  (qeval-initialize!)
+
+  (for-each
+   add-rule-or-assertion!
+   '((assert1 foo)
+     (assert1 bar)
+     (assert2 a)
+     (assert2 1 2 3 4)
+     (rule (both (? x) (? y))
+           (and (good (? x)) (good (? y))))
+     (rule (good (? a)))
+     (rule ((? not) (? indexable)))))
+
+  (do-test
+   fetch-assertions
+   (list
+    ;; indexable assertions
+    (mat '(assert1 (? x)) 'not-used
+         '((assert1 foo) (assert1 bar)))
+    (mat '(assert2 (? y) 2 3 (? z)) 'not-used
+         '((assert2 a) (assert2 1 2 3 4)))
+    ;; not indexable, return all assertions
+    (mat '((pat pat) (foo bar)) 'not-used
+         '((assert1 foo) (assert1 bar) (assert2 a) (assert2 1 2 3 4))))
+   (lambda (actual expected)
+     (set-equal? (stream->list actual) expected)))
+
+  (qeval-initialize!)
+  'ok)
+
 (define (qeval-simple-query-tests)
   (qeval-initialize!)
 
@@ -89,6 +120,7 @@
   (qeval-initialize!))
 
 (define (qeval-tests)
+  (qeval-database-tests-2)
   (qeval-simple-query-tests)
   'ok)
 
