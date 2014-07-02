@@ -31,9 +31,6 @@
   (let ((key (car pat)))
     (if (var? key) '? key)))
 
-;; the following functions can't be purely tested.
-;; TODO tests in qeval-tests
-
 ;; get a stream, return an empty stream if not found
 (define (get-stream key1 key2)
   (let ((s (get key1 key2)))
@@ -74,11 +71,18 @@
 
 ;; add rules or assertions to database
 (define (add-rule-or-assertion! assertion)
-  ;; TODO
-  ;; more compact, but I think more detailed explanation should be written here
+  ;; assertions and rules are indexable if they begin with
+  ;; either a constant symbol or a variable
+  ;; for constant symbols, the first index will be the symbol itself,
+  ;; for variables, the first index will be symbol "?".
+  ;; see also: index-key-of
   (define (indexable? pat)
     (or (constant-symbol? (car pat))
         (var? (car pat))))
+
+  ;; all assertions will be added to "THE-ASSERTION"
+  ;; additionally, indexable assertions will also be installed
+  ;; in the global table
   (define (add-assertion! assertion)
     (define (store-assertion-in-index assertion)
       (if (indexable? assertion)
@@ -97,6 +101,9 @@
             (cons-stream assertion old-assertions))
       'ok))
 
+  ;; all rules will be added to "THE-RULES"
+  ;; additionally, indexable rules will also be installed
+  ;; in the global table
   (define (add-rule! rule)
     (define (store-rule-in-index rule)
       (let ((pattern (conclusion rule)))
