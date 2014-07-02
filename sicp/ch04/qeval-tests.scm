@@ -62,6 +62,26 @@
    (lambda (actual expected)
      (set-equal? (stream->list actual) expected)))
 
+  (do-test
+   fetch-rules
+   (list
+    ;; indexable rules
+    (mat '(both 'a 'b) 'not-used
+         '((rule (both (? x) (? y))
+                 (and (good (? x)) (good (? y))))
+           (rule ((? not) (? indexable)))))
+    (mat '(good 't) 'not-used
+         '((rule (good (? a)))
+           (rule ((? not) (? indexable)))))
+    ;; not indexable, return all rules
+    (mat '((not indexable)) 'not-used
+         '((rule  (both (? x) (? y))
+                 (and (good (? x)) (good (? y))))
+           (rule (good (? a)))
+           (rule ((? not) (? indexable))))))
+   (lambda (actual expected)
+     (set-equal? (stream->list actual) expected)))
+
   (qeval-initialize!)
   'ok)
 
