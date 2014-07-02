@@ -42,8 +42,8 @@
 ;; a big stream of all the assertions
 (define THE-ASSERTIONS the-empty-stream)
 
-;; "frame" is not use in the body of "fetch-assertions"
-;; not sure what's the point of having this parameter.
+;; "frame" is not currently used, but cleverer optimization
+;; can make good use of frame information when fetching assertions
 (define (fetch-assertions pattern frame)
   (define (get-all-assertions) THE-ASSERTIONS)
   ;; assertion is indexed in a way that
@@ -58,6 +58,8 @@
 ;; rules are also big streams
 (define THE-RULES the-empty-stream)
 
+;; "frame" is not currently used, but cleverer optimization
+;; can make good use of frame information when fetching rules
 (define (fetch-rules pattern frame)
   (define (get-all-rules) THE-RULES)
   (define (get-indexed-rules pattern)
