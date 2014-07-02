@@ -15,8 +15,6 @@
                (qeval (first-conjunct conjuncts)
                       frame-stream))))
 
-(put 'and 'qeval conjoin)
-
 ;; disjunctions
 (define empty-disjunction? null?)
 (define first-disjunct car)
@@ -35,7 +33,10 @@
        (delay (disjoin (rest-disjuncts disjuncts)
                        frame-stream)))))
 
-(put 'or 'qeval disjoin)
+(define (install-handlers-1)
+  (put 'and 'qeval conjoin)
+  (put 'or 'qeval disjoin)
+  'ok)
 
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"

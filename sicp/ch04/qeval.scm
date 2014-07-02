@@ -18,7 +18,9 @@
 
 ;; initialize everything
 (define (qeval-initialize!)
-  ;; proc-table should not be resetted.
+  (proc-table-initialize!)
+  (install-handlers-1)
+  (install-handlers-2)
   (set! THE-ASSERTIONS the-empty-stream)
   (set! THE-RULES the-empty-stream))
 

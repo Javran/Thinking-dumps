@@ -20,8 +20,6 @@
          the-empty-stream))
    frame-stream))
 
-(put 'not 'qeval negate)
-
 (define (execute exp)
   (apply (eval (predicate exp)
                user-initial-environment)
@@ -46,13 +44,15 @@
          the-empty-stream))
    frame-stream))
 
-(put 'lisp-value 'qeval lisp-value)
-
 ;; an "always-true" special form always returns the stream
 ;; without additional constraints
 (define (always-true ignore frame-stream) frame-stream)
-(put 'always-true 'qeval always-true)
 
+(define (install-handlers-2)
+  (put 'not 'qeval negate)
+  (put 'lisp-value 'qeval lisp-value)
+  (put 'always-true 'qeval always-true)
+  'ok)
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
 ;; End:
