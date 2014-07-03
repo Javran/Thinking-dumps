@@ -236,6 +236,12 @@ and second index `'rule-stream`.
     as hints to narrow down the size of the stream. For now `<frame>`
     is not used.
 
+* `(add-rule-or-assertion! <assertion>)`
+
+    Add either a rule or an assertion to the system. (Recall that
+    rule is of form `(rule <conclusion> [body])` and all the other
+    forms are regarded as assertions)
+
 ## qeval-pattern.scm
 
 ## qeval-rules-and-unif.scm
