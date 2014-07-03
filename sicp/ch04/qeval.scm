@@ -11,16 +11,13 @@
 (load "./qeval-database.scm")
 (load "./qeval-pattern-matching.scm")
 (load "./qeval-unification.scm")
-(load "./qeval-simple-query.scm")
-(load "./qeval-compound-queries.scm")
-(load "./qeval-filters.scm")
+(load "./qeval-handlers.scm")
 (load "./qeval-driver-loop.scm")
 
 ;; initialize everything
 (define (qeval-initialize!)
   (proc-table-initialize!)
-  (install-handlers-1)
-  (install-handlers-2)
+  (install-handlers)
   (set! THE-ASSERTIONS the-empty-stream)
   (set! THE-RULES the-empty-stream))
 
