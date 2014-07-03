@@ -183,6 +183,39 @@ and second index is the symbol `'rule-stream`. Rules that begins with
 a variable will be stored into a stream with its first index begin `'?`
 and second index `'rule-stream`.
 
+### Definitions
+
+* `(rule? <data>)`
+
+    Test whether the data is a rule
+
+* `(conclusion <data>)` and `(rule-body <data>)`
+
+    Accessors for rules
+
+* `(assertion-to-be-added? <exp>)`
+
+    Tests if an internal expresion is a command of adding
+    an assertion or a rule. (e.g. `(assert! (what (an assertion)))`)
+
+* `(add-assertion-body <exp>)`
+
+    Access the assertion / rule of the `assert!` expression.
+
+* `(use-index? <data>)`
+
+    Test if the assertion / rule uses constant symbol as its `car` part.
+    These assertions / rules can be indexed.
+
+* `(index-key-of <data>)`
+
+    (Internal use only) Calculate the proper first index for assertions and rules.
+
+* `(get-stream <key1> <key2>)`
+
+    A wrapper that fetchs data from the global table using two indices.
+    It return value is guaranteed to be a proper stream for adding assertions / rules.
+
 ## qeval-pattern.scm
 
 ## qeval-rules-and-unif.scm
