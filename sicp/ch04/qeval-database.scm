@@ -84,6 +84,7 @@
   ;; additionally, indexable assertions will also be installed
   ;; in the global table
   (define (add-assertion! assertion)
+    ;; index assertion if possible
     (define (store-assertion-in-index assertion)
       (if (indexable? assertion)
           (let ((key (index-key-of assertion)))
@@ -105,6 +106,7 @@
   ;; additionally, indexable rules will also be installed
   ;; in the global table
   (define (add-rule! rule)
+    ;; index rule if possible
     (define (store-rule-in-index rule)
       (let ((pattern (conclusion rule)))
         (if (indexable? pattern)
