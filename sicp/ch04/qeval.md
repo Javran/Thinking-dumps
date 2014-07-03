@@ -137,10 +137,38 @@ a constant symbol or a variable by simple predicates.
 * `(contract-question-mark <var>)`
 
     Transform internal variable to its external representation.
-    (e.g. `(contract-question-mark (? foo)` produces `'?foo`,
-    `(contract-question-mark (? 2 foo)` produces `?foo-2`)
+    (e.g. `(contract-question-mark (? foo))` produces `'?foo`,
+    `(contract-question-mark (? 2 foo))` produces `?foo-2`)
 
 ## qeval-database.scm
+
+Query system database management. Defines formats for assertions and rules.
+Specifies how assertions and rules are stored in this system.
+
+### Assertions
+
+Assertions are represented and stored as pairs, whose `car` part is
+not equal to the symbol `'rule`. The following data are all valid assertions:
+
+* `'(foo bar)`
+* `'(foo)`
+* `'(user (address (10 0 0 1)) (tel 123456))`
+* `'(can be improper . list)`
+
+All assertions are stored as it is on the stream `THE-ASSERTIONS`.
+In addition, assertion that begins with constant symbol will also be stored
+to a global table. With the constant symbol as the first index and
+symbol `'assertion-stream` as the second index.
+(The global table used for data directed programming is being reused here.)
+
+### Rules
+
+Rules are lists of 2 or 3 elements with `'rule` as their `car` part.
+The second element is the conclusion. The third element is optional and
+defaults to `'(always-true)` (which stands for an always-true rule as
+its name suggests). The rule body part (namely the third element)
+can contain complex queries and will be handled by either simple handler or
+handlers stored in the global table according to the query itself.
 
 ## qeval-pattern.scm
 
