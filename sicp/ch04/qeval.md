@@ -216,6 +216,26 @@ and second index `'rule-stream`.
     A wrapper that fetchs data from the global table using two indices.
     It return value is guaranteed to be a proper stream for adding assertions / rules.
 
+* `THE-ASSERTIONS`
+
+    The stream that stores all the assertions.
+
+* `(fetch-assertions <pattern> <frame>)`
+
+    Fetch a stream of assertions, `<pattern>` and `<frame>` are used
+    as hints to narrow down the size of the stream. For now `<frame>`
+    is not used.
+
+* `THE-RULES`
+
+    The stream that stores all the rules.
+
+* `(fetch-rules <pattern> <frame>)`
+
+    Fetch a stream of rules, `<pattern>` and `<frame>` are used
+    as hints to narrow down the size of the stream. For now `<frame>`
+    is not used.
+
 ## qeval-pattern.scm
 
 ## qeval-rules-and-unif.scm
