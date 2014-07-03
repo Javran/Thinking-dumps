@@ -9,8 +9,8 @@
 (load "./qeval-syntax-trans.scm")
 
 (load "./qeval-database.scm")
-(load "./qeval-pattern.scm")
-(load "./qeval-rules-and-unif.scm")
+(load "./qeval-pattern-matching.scm")
+(load "./qeval-unification.scm")
 (load "./qeval-simple-query.scm")
 (load "./qeval-compound-queries.scm")
 (load "./qeval-filters.scm")
