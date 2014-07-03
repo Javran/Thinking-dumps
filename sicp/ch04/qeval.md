@@ -145,6 +145,11 @@ a constant symbol or a variable by simple predicates.
 Query system database management. Defines formats for assertions and rules.
 Specifies how assertions and rules are stored in this system.
 
+In theory, merely using two streams: `THE-ASSERTIONS` and `THE-RULES`
+will also work, since pattern matching or unification will be following
+to eliminate invalid solutions, but we can index some of the stored
+assertions and rules to speed up this part a little bit.
+
 ### Assertions
 
 Assertions are represented and stored as pairs, whose `car` part is
@@ -169,6 +174,14 @@ defaults to `'(always-true)` (which stands for an always-true rule as
 its name suggests). The rule body part (namely the third element)
 can contain complex queries and will be handled by either simple handler or
 handlers stored in the global table according to the query itself.
+
+Like assertions, `THE-RULES` holds all rules in the system.
+Rules that begin with a constant symbol or a variable are
+also stored in a global table. Rules that begins with a constant symbol
+will be stored in a stream whose first index is the constant symbol,
+and second index is the symbol `'rule-stream`. Rules that begins with
+a variable will be stored into a stream with its first index begin `'?`
+and second index `'rule-stream`.
 
 ## qeval-pattern.scm
 
