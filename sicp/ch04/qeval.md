@@ -10,6 +10,14 @@ TODO: still working
 
     Clean up the database.
 
+## qeval-utils.scm
+
+Some miscellaneous functions.
+
+* `(set-equal? <s1> <s2>)`
+
+    Test set equality of two data, ordering doesn't matter.
+
 ## qeval-stream.scm
 
 Utilities for operation on streams
