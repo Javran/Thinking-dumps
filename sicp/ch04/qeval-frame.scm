@@ -16,6 +16,8 @@
 (define binding-value cdr)
 (define binding-in-frame assoc)
 
+(define alist->frame identity)
+
 (define (qeval-frame-tests)
   (let ((frame (fold-left
                 (lambda (acc p)

@@ -96,6 +96,10 @@ Frames are like environments which keep track of variables and the values they a
     Lookup the frame using `<var>` as a key, return the binding with `<var>` as key on success,
     return `#f` on failure.
 
+* `(alist->frame <data>)`
+
+    Convert from an alist (whose elements are all key-value pairs) to a frame.
+
 ## qeval-syntax-trans.scm
 
 Query syntax transformation between internal and external representation.
