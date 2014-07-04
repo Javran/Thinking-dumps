@@ -56,6 +56,53 @@
      (check-an-assertion datum pattern frame))
    (fetch-assertions pattern frame)))
 
+(define (qeval-pattern-matching-tests)
+  ;; pattern-match and extend-if-consistent
+  ;; are mutual recursive functions.
+  ;; we test pattern-match only but hopefully
+  ;; it should also have a nice coverage on extend-if-consistent
+  (do-test
+   pattern-match
+   (list
+    ;; case #1: fresh variable on the left side
+    (mat 'x 'x 'failed 'failed)
+    (mat 'x 'y 'failed 'failed)
+    (mat '(() a (b c d))
+         '(() a (b c d))
+         empty-frame
+         empty-frame)
+    (mat '(? x) '(a b c d) empty-frame
+         (alist->frame '(((? x) . (a b c d)))))
+    (mat '(? x) '(? y) empty-frame
+         (alist->frame '(((? x) . (? y)))))
+    ;; for assertions, there shouldn't be variables on the right hand side
+    (mat '((? x) a b c) '(d a (? y)) (alist->frame '( ((? y) . (b c)) ))
+         'failed)
+    (mat '((? x) a . (? y)) '(d a b c) (alist->frame '( ((? z) . whatever) ))
+         (alist->frame '( ((? x) . d)
+                          ((? y) . (b c))
+                          ((? z) . whatever) )))
+    ;; case #2: bound variable on the left side
+    (mat '(? x) '(a b c) (alist->frame '(( (? x) . (a b c))))
+         (alist->frame '(( (? x) . (a b c)))))
+    (mat '(? x) '(a b c) (alist->frame '(( (? x) . (a . (? y)) )))
+         (alist->frame '(( (? x) . (a . (? y)))
+                         ( (? y) . (b c)))))
+    ;; cannot match '(a b) against '(a b <?>)
+    (mat '(? x) '(a b) (alist->frame '(( (? x) . (a b (? y)))))
+         'failed)
+    )
+   (lambda (actual expected)
+     (or (and (eq? actual 'failed)
+              (eq? expected 'failed))
+         (set-equal? actual expected))))
+
+  'ok)
+
+(if *qeval-tests*
+    (qeval-pattern-matching-tests)
+    'ok)
+
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
 ;; End:
