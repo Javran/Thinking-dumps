@@ -18,6 +18,12 @@ Some miscellaneous functions.
 
     Test set equality of two data, ordering doesn't matter.
 
+* `(result-frame-equal? <r1> <r2>)`
+
+    Test whether two resulting frames are equal.
+    This predicate holds only if `<r1>` and `<r2>` are both `failed` symbols
+    or if frame `<r1>` and frame `<r2>` contain same set of variable-value bindings.
+
 ## qeval-stream.scm
 
 Utilities for operation on streams

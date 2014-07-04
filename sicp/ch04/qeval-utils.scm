@@ -8,6 +8,7 @@
           (cdr s1)
           (delete (car s1) s2)))))
 
+;; TODO: refactor
 (do-test
  set-equal?
  (list
@@ -16,3 +17,12 @@
        '((a b (c (d))) 1) #t)
   (mat '() '(1 2) #f)
   (mat '(1 2) '() #f)))
+
+(define (result-frame-equal? r1 r2)
+  (or (and (eq? r1 'failed)
+           (eq? r2 'failed))
+      (set-equal? r1 r2)))
+
+;; Local variables:
+;; proc-entry: "./qeval.scm"
+;; End:

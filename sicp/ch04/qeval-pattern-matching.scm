@@ -88,10 +88,7 @@
     (mat '(? x) '(a b) (alist->frame '(( (? x) . (a b (? y)))))
          'failed)
     )
-   (lambda (actual expected)
-     (or (and (eq? actual 'failed)
-              (eq? expected 'failed))
-         (set-equal? actual expected))))
+   result-frame-equal?)
 
   'ok)
 
