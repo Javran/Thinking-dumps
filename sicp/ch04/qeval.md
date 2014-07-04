@@ -242,15 +242,11 @@ and second index `'rule-stream`.
     rule is of form `(rule <conclusion> [body])` and all the other
     forms are regarded as assertions)
 
-## qeval-pattern.scm
+## qeval-pattern-matching.scm
 
-## qeval-rules-and-unif.scm
+## qeval-unification.scm
 
-## qeval-simple-query.scm
-
-## qeval-compound-queries.scm
-
-## qeval-filters.scm
+## qeval-handlers.scm
 
 ## qeval-driver-loop.scm
 
