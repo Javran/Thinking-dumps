@@ -21,16 +21,21 @@
         (else 'failed)))
 
 (define (extend-if-possible var val frame)
-  ;; whether an expression proposed to be the value
+  ;; tests whether an expression proposed to be the value
   ;; of a pattern variable depends on the variable.
   ;; in other words, is "var" involved in the expression part?
-  ;; TODO: find some testcases
   (define (depends-on? exp var frame)
     (define (tree-walk e)
       (cond ((var? e)
              (if (equal? var e)
                  ;; if the variable is exactly the expression,
                  ;; then yes
+                 ;; surely (depends-on? var var frame) is always true,
+                 ;; but in that case, the program should branch into
+                 ;; the `((equal? p1 p2) frame)` case
+                 ;; in `(unify-match p1 p2 frame)`
+                 ;; so let's don't worry about the problem that
+                 ;; a variable depends on itself.
                  #t
                  (let ((b (binding-in-frame e frame)))
                    (if b
@@ -67,6 +72,12 @@
            ;; find a "?y" such that "?y" is equal to the expression
            ;; involving "?y". We reject this kind of expression
            ;; even sometimes it is possible and meaningful
+           ;; here we are always safe to say that (equal? val var)
+           ;; can't be true (or otherwise the case should have been captured in
+           ;; the body of `unify-match`),
+           ;; here we are saying if `val` depends on `var`, then we don't have
+           ;; a general solution, and it's safe to say that this extension has
+           ;; resulted in a failure.
            'failed)
           (else (extend var val frame)))))
 
@@ -103,7 +114,6 @@
           (qeval (rule-body clean-rule)
                  (singleton-stream unify-result))))))
 
-;; TODO: need some testcases somehow
 (define (apply-rules pattern frame)
   (stream-intermap
    (lambda (rule)
