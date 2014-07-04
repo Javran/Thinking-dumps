@@ -34,7 +34,7 @@
   (mat '() '(1 2) #f)
   (mat '(1 2) '() #f)))
 
-(define (qeval-database-tests-2)
+(define (qeval-database-tests-db)
   (qeval-initialize!)
 
   (for-each
@@ -140,7 +140,7 @@
   (qeval-initialize!))
 
 (define (qeval-tests)
-  (qeval-database-tests-2)
+  (qeval-database-tests-db)
   (qeval-simple-query-tests)
   'ok)
 
