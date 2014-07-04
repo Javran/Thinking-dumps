@@ -5,31 +5,6 @@
 ;; - qeval-database
 ;; - qeval-frames
 
-;; whether an expression proposed to be the value
-;; of a pattern variable depends on the variable.
-;; in other words, is "var" involved in the expression part?
-;; TODO: find some testcases
-(define (depends-on? exp var frame)
-  (define (tree-walk e)
-    (cond ((var? e)
-           (if (equal? var e)
-               ;; if the variable is exactly the expression,
-               ;; then yes
-               #t
-               (let ((b (binding-in-frame e frame)))
-                 (if b
-                     ;; the expression is a variable
-                     ;; and it has a binding in the frame,
-                     ;; we examine it recursively
-                     (tree-walk (binding-value b))
-                     #f))))
-          ;; recursively run on the structure
-          ((pair? e)
-           (or (tree-walk (car e))
-               (tree-walk (cdr e))))
-          (else #f)))
-  (tree-walk exp))
-
 ;; try unifying two patterns and extend the existing frame
 ;; if this is not possible, return a symbol "failed"
 (define (unify-match p1 p2 frame)
@@ -46,6 +21,30 @@
         (else 'failed)))
 
 (define (extend-if-possible var val frame)
+  ;; whether an expression proposed to be the value
+  ;; of a pattern variable depends on the variable.
+  ;; in other words, is "var" involved in the expression part?
+  ;; TODO: find some testcases
+  (define (depends-on? exp var frame)
+    (define (tree-walk e)
+      (cond ((var? e)
+             (if (equal? var e)
+                 ;; if the variable is exactly the expression,
+                 ;; then yes
+                 #t
+                 (let ((b (binding-in-frame e frame)))
+                   (if b
+                       ;; the expression is a variable
+                       ;; and it has a binding in the frame,
+                       ;; we examine it recursively
+                       (tree-walk (binding-value b))
+                       #f))))
+            ;; recursively run on the structure
+            ((pair? e)
+             (or (tree-walk (car e))
+                 (tree-walk (cdr e))))
+            (else #f)))
+    (tree-walk exp))
   (let ((binding (binding-in-frame var frame)))
     (cond (binding
            ;; the variable has been bound to a value,
@@ -71,22 +70,22 @@
            'failed)
           (else (extend var val frame)))))
 
-;; change variables in a rule to unique names
-;; to prevent the variables from different rule applications
-;; from becoming confused with each other
-(define (rename-variables-in rule)
-  (let ((rule-application-id (new-rule-application-id!)))
-    (define (tree-walk exp)
-      (cond ((var? exp)
-             (make-new-variable
-              exp rule-application-id))
-            ((pair? exp)
-             (cons (tree-walk (car exp))
-                   (tree-walk (cdr exp))))
-            (else exp)))
-    (tree-walk rule)))
-
 (define (apply-a-rule rule query-pattern query-frame)
+  ;; change variables in a rule to unique names
+  ;; to prevent the variables from different rule applications
+  ;; from becoming confused with each other
+  (define (rename-variables-in rule)
+    (let ((rule-application-id (new-rule-application-id!)))
+      (define (tree-walk exp)
+        (cond ((var? exp)
+               (make-new-variable
+                exp rule-application-id))
+              ((pair? exp)
+               (cons (tree-walk (car exp))
+                     (tree-walk (cdr exp))))
+              (else exp)))
+      (tree-walk rule)))
+
   ;; rename variables and work on the renamed one
   (let ((clean-rule (rename-variables-in rule)))
     ;; try to do the unification
