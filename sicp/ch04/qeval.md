@@ -272,27 +272,26 @@ Pattern matching algorithm.
     bound to proper values. If the pattern matching isn't possible
     the symbol `'failed` will be returned instead.
 
-* `(extend-if-consistent <var> <dat> <frame>)`
-
-    Try to extend `<var>` to match against `<dat>`.
-    `dat` shouldn't contain variables.
-    Returns the extended frame with variables in the pattern
-    bound to proper values. If the pattern matching isn't possible
-    the symbol `'failed` will be returned instead.
-
-* `(check-an-assertion <assert> <qpat> <qframe>)`
-
-    Check if the pattern can be matched against the assertion
-    with the current variable bindings in `<frame>`.
-    The return value is always a stream containing only vaild
-    extended frames.
-
 * `(find-assertions <pat> <frame>)`
 
     Try to do pattern matching against related assertions,
     return a stream of valid extended frames.
 
 ## qeval-unification.scm
+
+Unification algorithm.
+
+* `(unify-match <p1> <p2> <frame>)`
+
+    Unify two patterns `<p1>` and `<p2>` based on existing bindings
+    specified by `<frame>`, return the extended frame if the unification
+    is possible, otherwise symbol `'failed` is returned.
+
+* `(apply-rules <pat> <frame>)`
+
+    Based on existing bindings specified by `<frame>`,
+    apply rules that matches `<pat>`. Return a stream of extended frames
+    which satisfies these rules.
 
 ## qeval-handlers.scm
 
