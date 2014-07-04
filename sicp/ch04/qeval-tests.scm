@@ -87,16 +87,27 @@
      (edge a b)
      (edge b c)
      (edge c d)
+     (only-a a)
      (rule (connect ?a ?b)
            (or (edge ?a ?b)
                (and (edge ?a ?c)
                     (connect ?c ?b))))
+     (rule (test-or1 ?a)
+           (or (doge wow ?a)
+               (edge a ?a)))
+     (rule (test-or2 ?a)
+           (or (only-a ?a)
+               (edge ?a b)))
+     (rule (test-or3 ?a)
+           (or (no such)
+               (assertions)))
      ))
 
   (do-test
    (compose stream->list
             qeval4test)
    (list
+    ;; simple query test
     (mat '(lisps ?x)
          '((lisps mit-scheme)
            (lisps racket)
@@ -114,10 +125,23 @@
     (mat '(list (a b c . ?x) ?y)
          '((list (a b c d) (c d e f))
            (list (a b c g) ())))
+    ;; compound query test
     (mat '(connect a ?x)
          '((connect a b)
            (connect a c)
            (connect a d)))
+    ;; "or" handler
+    (mat '(test-or1 ?x)
+         '((test-or1 cool)
+           (test-or1 b)))
+    (mat '(test-or2 ?x)
+         '((test-or2 a)))
+    (mat '(tset-or3 ?x)
+         '())
+    ;; "and" handler
+    ;; "not" handler
+    ;; "lisp-value" handler
+    ;; "always-true" handler
     )
    set-equal?)
 
