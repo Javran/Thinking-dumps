@@ -66,9 +66,12 @@
   (qeval-initialize!)
   'ok)
 
-(define (qeval-simple-query-tests)
+(define (qeval-query-tests)
   (qeval-initialize!)
 
+  ;; cover database queries and
+  ;; pattern matching and unification
+  ;; in real database queries
   (for-each
    (compose
     add-rule-or-assertion!
@@ -122,7 +125,7 @@
 
 (define (qeval-tests)
   (qeval-database-tests-db)
-  (qeval-simple-query-tests)
+  (qeval-query-tests)
   'ok)
 
 (if *qeval-tests*
