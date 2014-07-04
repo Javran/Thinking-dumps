@@ -21,6 +21,7 @@
         (else 'failed)))
 
 (define (extend-if-possible var val frame)
+
   ;; tests whether an expression proposed to be the value
   ;; of a pattern variable depends on the variable.
   ;; in other words, is "var" involved in the expression part?
@@ -119,6 +120,65 @@
    (lambda (rule)
      (apply-a-rule rule pattern frame))
    (fetch-rules pattern frame)))
+
+(define (qeval-unification-tests)
+  ;; we only tests `unify-match`, but it's possible
+  ;; that testcases for `unify-match` would have a nice
+  ;; coverage on these module functions.
+  (do-test
+   unify-match
+   (list
+    ;; case: failure propagation
+    (mat 'a 'a 'failed 'failed)
+    (mat 'a 'b 'failed 'failed)
+    ;; case: exactly equal
+    (mat '((? x) (? y))
+         '((? x) (? y))
+         empty-frame
+         empty-frame)
+    ;; case: extend to each other
+    (mat '(a (? x)) '((? y) b) empty-frame
+         (alist->frame '(((? x) . b) ((? y) . a))))
+    ;; case: more recursive
+    (mat '(   a   ((? b) (   c     d e f)))
+         '((? a)  (   b  ((? c) . (? def))))
+         (alist->frame '(((? z) . un-related-var)))
+         (alist->frame '(( (? z) . un-related-var)
+                         ( (? a) . a)
+                         ( (? b) . b)
+                         ( (? c) . c)
+                         ( (? def) . (d e f)))))
+    ;; case: cannot be matched
+    (mat '((? x) a b c) '(a a b c (? y)) empty-frame
+         'failed)
+    ;; case: matching nil
+    (mat '((? x) a b c) '(a a b c . (? y)) empty-frame
+         (alist->frame '( ((? x) . a)
+                          ((? y) . ()))))
+    ;; case: depends on each other
+    (mat '((? x) b c) '((? y) b c)
+         (alist->frame '( ( (? y) . (a b (? x)))))
+         'failed)
+    (mat '((? y) b c) '((? x) b c)
+         (alist->frame '( ( (? y) . (a b (? x)))))
+         'failed)
+    ;; case: more cases on extend-if-possible
+    (mat '(? x) '(? y)
+         (alist->frame '( ( (? x) . (   a (? b) (? c)) )
+                          ( (? y) . ((? a)   b     c ) )))
+         (alist->frame '( ( (? x) . (   a (? b) (? c)) )
+                          ( (? y) . ((? a)   b     c ) )
+                          ( (? a) . a)
+                          ( (? b) . b)
+                          ( (? c) . c) )))
+    )
+   result-frame-equal?)
+
+  'ok)
+
+(if *qeval-tests*
+    (qeval-unification-tests)
+    'ok)
 
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
