@@ -1,12 +1,22 @@
+(define (remove-duplicates xs)
+  (if (null? xs)
+      '()
+      (cons (car xs)
+            (delete
+             (car xs)
+             (remove-duplicates (cdr xs))))))
+
 ;; if two sets are equal
 ;; (order is not taken into account)
-(define (set-equal? s1 s2)
-  (cond ((null? s1) (null? s2))
-        ((null? s2) (null? s1))
-        (else
-         (set-equal?
-          (cdr s1)
-          (delete (car s1) s2)))))
+(define (set-equal? s1a s2a)
+  (let ((s1 (remove-duplicates s1a))
+        (s2 (remove-duplicates s2a)))
+    (cond ((null? s1) (null? s2))
+          ((null? s2) (null? s1))
+          (else
+           (set-equal?
+            (cdr s1)
+            (delete (car s1) s2))))))
 
 ;; TODO: refactor
 (do-test
