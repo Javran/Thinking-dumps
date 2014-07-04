@@ -1,3 +1,4 @@
+;; use pattern matching to find valid frames
 (define (simple-query query-pattern frame-stream)
   (stream-intermap
    (lambda (frame)
@@ -60,20 +61,24 @@
          the-empty-stream))
    frame-stream))
 
+;; lisp-value query accessors
+(define predicate car)
+(define args cdr)
+
+;; to execute an expression
+;; is to evaluate it as if it was lisp code
 (define (execute exp)
   (apply (eval (predicate exp)
                user-initial-environment)
          (args exp)))
 
-;; lisp-value query accessors
-(define predicate car)
-(define args cdr)
-
-;; TODO: still not sure about "instantiate-exp"
+;; lisp-value handler: evaluate the pattern
+;; as if it was lisp code
 (define (lisp-value call frame-stream)
   (stream-intermap
    (lambda (frame)
      (if (execute
+          ;; fill in variables according to the frame
           (instantiate-exp
            call
            frame
