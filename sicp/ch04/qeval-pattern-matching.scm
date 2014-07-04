@@ -1,8 +1,5 @@
-;; dependencies
-;; - qeval-database
-;; - qeval-stream
-;; TODO: tests
-
+;; pattern matching between `pat` and `dat`,
+;; `dat` shouldn't contain variables
 (define (pattern-match pat dat frame)
         ;; the pattern matching has failed.
   (cond ((eq? frame 'failed) 'failed)
@@ -23,7 +20,6 @@
 
 ;; test and extend the existing frame with binding (var, dat) if
 ;; it is consistent
-;; TODO: some test cases?
 (define (extend-if-consistent var dat frame)
   (let ((binding (binding-in-frame var frame)))
     (if binding
