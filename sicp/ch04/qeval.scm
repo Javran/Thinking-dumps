@@ -3,6 +3,8 @@
 
 (define *qeval-tests* #t)
 
+(load "./qeval-utils.scm")
+
 (load "./qeval-stream.scm")
 (load "./qeval-data-directed.scm")
 (load "./qeval-frame.scm")
