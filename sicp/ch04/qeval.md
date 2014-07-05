@@ -295,6 +295,52 @@ Unification algorithm.
 
 ## qeval-handlers.scm
 
+Simple query and compound query handlers.
+Query handlers are all of form `(<handler-name> <pat> <frame-stream>)`,
+which takes a pattern and a stream of frames and returns
+a stream of valid extended frames. When these handlers
+are properly installed, the `qeval` will pick up one of them
+according to the data, and pass the arguments to them.
+
+* `(simple-query <pat> <frame-stream>)`
+
+    Handle simple queries, `<pat>` is used to do
+    pattern matching against all related assertions.
+
+* `(conjoin <pat> <frame-stream>)`
+
+    Handle querys of form `(and <pat1> <pat2> ...)`.
+    The query fails if any of its sub patterns fails to match.
+
+* `(disjoin <pat> <frame-stream>)`
+
+    Handle queries of form `(or <pat1> <pat2> ...)`.
+    The query fails if none of its sub patterns finds a match.
+
+* `(negate <pat> <frame-stream>)`
+
+    Handle queries of form `(not <pat>)`.
+    The query succeeds if the sub pattern fails and fails if
+    the sub pattern succeeds.
+
+* `(lisp-value <pat> <frame-stream>)`
+
+    Handle queries of form `(lisp-value <call> <arg1> <arg2> ...)`.
+    It evaluates `(<call> <arg1> <arg2> ... <arg3>)` as if
+    it was a lisp expression.
+
+* `(always-true <pat> <frame-stream>)`
+
+    This handler always returns true, it just returns back
+    `<frame-stream>`.
+
+* `(install-handlers)`
+
+    Install all the handlers in this module.
+    It is necessary to install all the handlers every time
+    when the global table (i.e. the `proc-table`) gets
+    initialized.
+
 ## qeval-driver-loop.scm
 
 ## qeval-tests.scm
