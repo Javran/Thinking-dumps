@@ -20,6 +20,8 @@
              (qeval q (singleton-stream '()))))
            (query-driver-loop)))))
 
+(define qeval-repl query-driver-loop)
+
 ;; evaluate assertions / rules / queries
 ;; on a stream of frames
 (define (qeval query frame-stream)
