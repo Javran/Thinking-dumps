@@ -33,6 +33,22 @@
            (eq? r2 'failed))
       (set-equal? r1 r2)))
 
+;; to "instantiate" an expression is
+;; to replace variables with their values
+(define (instantiate-exp exp frame unbound-var-handler)
+  (define (copy exp)
+    (cond ((var? exp)
+           (let ((binding (binding-in-frame exp frame)))
+             (if binding
+                 (copy (binding-value binding))
+                 ;; call handler if the value cannot be found
+                 (unbound-var-handler exp frame))))
+          ((pair? exp)
+           (cons (copy (car exp))
+                 (copy (cdr exp))))
+          (else exp)))
+  (copy exp))
+
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
 ;; End:
