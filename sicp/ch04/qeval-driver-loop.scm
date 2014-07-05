@@ -1,21 +1,24 @@
 (define (query-driver-loop)
   (define (display-stream s)
-    (define (display-stream-intern s)
+    (define display-element-limit 100)
+    (define (display-stream-intern s limit)
       ;; stream->list would work, but
       ;; not for cases that the stream is infinite.
-      ;; we print out lines as many as possible,
-      ;; even we know that it does not terminate.
       (if (stream-null? s)
           'ok
-          (begin
-            (out (stream-car s))
-            (display-stream-intern (stream-cdr s)))))
+          (if (< limit display-element-limit)
+              (begin
+                (out (stream-car s))
+                (display-stream-intern
+                 (stream-cdr s)
+                 (add1 limit)))
+              (out "qeval: output limit reached"))))
     (if (stream-null? s)
         ;; it's better to display something
-        ;; instead of keeping scilence
+        ;; instead of keeping silence
         ;; when no result is available
         (out "qeval: no result")
-        (display-stream-intern s)))
+        (display-stream-intern s 0)))
 
   (display "qeval> ")
   (let ((q (query-syntax-process (read))))
