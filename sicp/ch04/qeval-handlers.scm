@@ -9,13 +9,13 @@
       (delay (apply-rules query-pattern frame))))
    frame-stream))
 
-;; conjunctions
-(define empty-conjunction? null?)
-(define first-conjunct car)
-(define rest-conjuncts cdr)
-
 ;; conjunction handler
 (define (conjoin conjuncts frame-stream)
+  ;; conjunction accessors
+  (define empty-conjunction? null?)
+  (define first-conjunct car)
+  (define rest-conjuncts cdr)
+
   (if (empty-conjunction? conjuncts)
       ;; for empty, always true
       frame-stream
@@ -26,14 +26,14 @@
                (qeval (first-conjunct conjuncts)
                       frame-stream))))
 
-;; disjunctions
-(define empty-disjunction? null?)
-(define first-disjunct car)
-(define rest-disjuncts cdr)
-
 ;; disjunction handler
 (define (disjoin disjuncts frame-stream)
-  (if (empty-conjunction? disjuncts)
+  ;; disjunction accessors
+  (define empty-disjunction? null?)
+  (define first-disjunct car)
+  (define rest-disjuncts cdr)
+
+  (if (empty-disjunction? disjuncts)
       ;; if the list is empty, always false
       the-empty-stream
       ;; merge together all possible frames
@@ -44,10 +44,10 @@
        (delay (disjoin (rest-disjuncts disjuncts)
                        frame-stream)))))
 
-;; "not" query accessor
-(define negated-query car)
-
 (define (negate operands frame-stream)
+  ;; "not" query accessor
+  (define negated-query car)
+
   (stream-intermap
    (lambda (frame)
      (if (stream-null?
@@ -61,20 +61,20 @@
          the-empty-stream))
    frame-stream))
 
-;; lisp-value query accessors
-(define predicate car)
-(define args cdr)
-
-;; to execute an expression
-;; is to evaluate it as if it was lisp code
-(define (execute exp)
-  (apply (eval (predicate exp)
-               user-initial-environment)
-         (args exp)))
-
 ;; lisp-value handler: evaluate the pattern
 ;; as if it was lisp code
 (define (lisp-value call frame-stream)
+  ;; lisp-value query accessors
+  (define predicate car)
+  (define args cdr)
+
+  ;; to execute an expression
+  ;; is to evaluate it as if it was lisp code
+  (define (execute exp)
+    (apply (eval (predicate exp)
+                 user-initial-environment)
+           (args exp)))
+
   (stream-intermap
    (lambda (frame)
      (if (execute
