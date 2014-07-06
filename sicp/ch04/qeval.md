@@ -14,7 +14,9 @@ TODO: still working
 
 Some miscellaneous functions.
 
-TODO: still working
+* `(remove-duplicates <list>)`
+
+    Remove duplicate elements from a list. The first occurrence in the list is kept.
 
 * `(set-equal? <s1> <s2>)`
 
@@ -25,6 +27,19 @@ TODO: still working
     Test whether two resulting frames are equal.
     This predicate holds only if `<r1>` and `<r2>` are both `failed` symbols
     or if frame `<r1>` and frame `<r2>` contain same set of variable-value bindings.
+
+* `(instantiate-exp <exp> <frame> <unbound-var-handler>)`
+
+    Replace variables in `<exp>` with their values in the `<frame>`.
+    If the value isn't present, `(unbound-var-handler <missing-var> <frame>)`
+    will be called to produce its replacement (or signal an error) instead.
+
+* `((inflate-query <query>) <frame>)`
+
+    Replace variables in `<query>` with their values in the `<frame>`.
+    If the value isn't present, the variable will be transformed
+    to its externl representation instead.
+    The query should be given in its internal representation.
 
 ## qeval-stream.scm
 
