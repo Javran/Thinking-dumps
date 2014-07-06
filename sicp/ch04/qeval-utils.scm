@@ -49,6 +49,14 @@
           (else exp)))
   (copy exp))
 
+(define (inflate-query q)
+  (lambda (frame)
+    (instantiate-exp
+     q
+     frame
+     (lambda (v f)
+       (contract-question-mark v)))))
+
 ;; Local variables:
 ;; proc-entry: "./qeval.scm"
 ;; End:

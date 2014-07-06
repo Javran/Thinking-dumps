@@ -1,13 +1,5 @@
 ;; a collection of testcases that might have side effects to the system
 
-(define (inflate-query q)
-  (lambda (frame)
-    (instantiate-exp
-     q
-     frame
-     (lambda (v f)
-       (contract-question-mark v)))))
-
 ;; qeval wrapped for tests
 (define (qeval4test query)
   (let ((q (query-syntax-process query)))
