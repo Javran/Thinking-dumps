@@ -1,25 +1,15 @@
 ;; a collection of testcases that might have side effects to the system
 
-;; qeval wrapped for tests
-(define (qeval4test query)
-  (let ((q (query-syntax-process query)))
-    (stream-map
-     (inflate-query q)
-     (qeval q (singleton-stream '())))))
-
 (define (qeval-database-tests-db)
-  (qeval-initialize!)
-
-  (for-each
-   add-rule-or-assertion!
-   '((assert1 foo)
-     (assert1 bar)
-     (assert2 a)
-     (assert2 1 2 3 4)
-     (rule (both (? x) (? y))
-           (and (good (? x)) (good (? y))))
-     (rule (good (? a)))
-     (rule ((? not) (? indexable)))))
+  (qe-fresh-asserts!
+   '(assert1 foo)
+   '(assert1 bar)
+   '(assert2 a)
+   '(assert2 1 2 3 4)
+   '(rule (both ?x ?y)
+          (and (good ?x) (good ?y)))
+   '(rule (good ?a))
+   '(rule (?not ?indexable)))
 
   (do-test
    fetch-assertions
@@ -64,10 +54,8 @@
   ;; cover database queries and
   ;; pattern matching and unification
   ;; in real database queries
-  (for-each
-   (compose
-    add-rule-or-assertion!
-    query-syntax-process)
+  (apply
+   qe-fresh-asserts!
    '((lisps mit-scheme)
      (lisps racket)
      (lisps elisp)
@@ -90,8 +78,7 @@
      ))
 
   (do-test
-   (compose stream->list
-            qeval4test)
+   qe-all
    (list
     ;; simple query test
     (mat '(lisps ?x)

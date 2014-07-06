@@ -381,10 +381,6 @@ Driver loop and `qeval` function for qeval.
 
 A collection of testcases that require to be tested against a database.
 
-* `(qeval4test <query>)`
-
-    (Internal use only) A helper procedure for testcases.
-
 ## qeval-export.scm
 
 TODO: this is a planned module, to be implemented
