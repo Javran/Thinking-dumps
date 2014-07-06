@@ -44,6 +44,10 @@
           (else exp)))
   (copy exp))
 
+;; fill in the variables using the value in the frame
+;; if the value for a variable isn't present,
+;; the variable will be transformed to its externl representation
+;; instead
 (define (inflate-query q)
   (lambda (frame)
     (instantiate-exp
@@ -90,6 +94,13 @@
          '(((? x) . (a)))
          #f)))
 
+  ;; I'm being a little sloppy here
+  ;; because I think instantiate-exp and inflate-query
+  ;; should have been proved working by being used
+  ;; by other procedures.
+  ;; More importantly, these two functions
+  ;; need definition which comes from other modules
+  ;; I don't think it's suitable to load these dependencies here.
   'ok)
 
 (if *qeval-tests*
