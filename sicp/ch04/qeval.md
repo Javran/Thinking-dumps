@@ -14,6 +14,8 @@ TODO: still working
 
 Some miscellaneous functions.
 
+TODO: still working
+
 * `(set-equal? <s1> <s2>)`
 
     Test set equality of two data, ordering doesn't matter.
@@ -343,4 +345,16 @@ according to the data, and pass the arguments to them.
 
 ## qeval-driver-loop.scm
 
+Driver loop and `qeval` function for qeval.
+
+* `(query-driver-loop)` or `(qeval-repl)`
+
+    Launch qeval driver loop. There are equivalent.
+
+* `(qeval <query> <frame-stream>)`
+
+    Perform a query on the current database.
+    Querires and frame values should be in their internal representation.
+
 ## qeval-tests.scm
+
