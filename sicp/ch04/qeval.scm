@@ -14,6 +14,7 @@
 (load "./qeval-unification.scm")
 (load "./qeval-handlers.scm")
 (load "./qeval-driver-loop.scm")
+(load "./qeval-export.scm")
 
 (load "./qeval-tests.scm")
 
