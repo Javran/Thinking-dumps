@@ -73,3 +73,33 @@
          (lambda (xs sym n)
            (map (arith sym n) xs))))
   (do-test proc testcases equal?))
+
+;; test stream-take and stream-drop
+(begin
+  (define ints
+    (cons-stream 1 (stream-map add1 ints)))
+
+  (define (stream-list-equal? actual expected)
+    (equal? (stream->list actual)
+            expected))
+
+  (do-test
+   stream-take
+   (list
+    (mat 0 ints '())
+    (mat 2 ints '(1 2))
+    (mat -1 ints '()))
+   stream-list-equal?)
+
+  (do-test
+   stream-drop
+   (list
+    (mat -1 (list->stream '(1 2 3 4))
+         '(1 2 3 4))
+    (mat 20 (list->stream '(1 2 3 4 5))
+         '())
+    (mat 2 (list->stream '(1 2 3 4))
+         '(3 4)))
+    stream-list-equal?)
+
+  'ok)

@@ -207,4 +207,21 @@
       (lambda (x) (>= x n)))
     ))
 
+(define (to-bool v)
+  (if v #t #f))
+
+(define (stream-take n xs)
+  (if (<= n 0)
+      (stream)
+      (cons-stream
+       (stream-car xs)
+       (stream-take (sub1 n)
+                    (stream-cdr xs)))))
+
+(define (stream-drop n xs)
+  (if (or (<= n 0) (stream-null? xs))
+      xs
+      (stream-drop (sub1 n)
+                   (stream-cdr xs))))
+
 'done

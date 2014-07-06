@@ -41,7 +41,7 @@ supervisor(reasonerLouis, hackerAlyssaP).
 supervisor(bitdiddleBen, warbucksOliver).
 supervisor(scroogeEben, warbucksOliver).
 supervisor(cratchetRobert, scroogeEben).
-supervisor(aullDeWitt, swarbucksOliver).
+supervisor(aullDeWitt, warbucksOliver).
 
 can_do_job([computer,wizard], [computer,programmer]).
 can_do_job([computer,wizard], [computer,technician]).
