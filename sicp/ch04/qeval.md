@@ -3,14 +3,45 @@
 ## qeval.scm
 
 Put together each components to form this system.
-
-TODO: still working
+To play with this system, use functions defined in `qeval-export.scm`.
 
 * `*qeval-tests*`
 
     Set this variable to `#t` to enable tests,
     `#f` to turn off all the tests.
     Only works when set before any related module is loaded.
+
+## qeval-export.scm
+
+Use functions from this module to play with the system.
+First use `qe-fresh-asserts!` or `qe-asserts!` to insert assertions,
+and then `qe-all`, `qe-stream` and `qe-stream-with-frames` can be used
+to perform queries.
+
+* `(qe-all <query>)`
+
+    Perform query on current database, return a list
+    of all valid results.
+
+* `(qe-stream <query>)`
+
+    Perform query on current database, return a stream
+    of all vaild results.
+
+* `(qe-stream-with-frames <query> <frame-stream>)`
+
+    Perform query `<query>` based on a stream of frames from
+    `<frame-stream>`. Return a stream of valid results.
+
+* `(qe-fresh-asserts! <assert1> <assert2> ...)`
+
+    Clean up the database and put assertions and rules into this system.
+    `(qe-fresh-asserts!)` alone is the same as `(qeval-initialize!)`.
+
+* `(qe-asserts! <assert1> <assert2> ...)`
+
+    Put assertions and rules into this system.
+    Existing assertions and rules are kept.
 
 ## qeval-utils.scm
 
@@ -380,17 +411,3 @@ Driver loop and `qeval` function for qeval.
 ## qeval-tests.scm
 
 A collection of testcases that require to be tested against a database.
-
-## qeval-export.scm
-
-TODO: this is a planned module, to be implemented
-
-* `(qe-all <query>)`
-
-* `(qe-stream <query>)`
-
-* `(qe-stream-with-frame <query> <frame>)`
-
-* `(qe-fresh-asserts! <assert1> <assert2> ...)`
-
-* `(qe-asserts! <assert1> <assert2> ...)`
