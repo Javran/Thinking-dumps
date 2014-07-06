@@ -15,13 +15,6 @@
 (load "./qeval-handlers.scm")
 (load "./qeval-driver-loop.scm")
 
-;; initialize everything
-(define (qeval-initialize!)
-  (proc-table-initialize!)
-  (install-handlers)
-  (set! THE-ASSERTIONS the-empty-stream)
-  (set! THE-RULES the-empty-stream))
-
 (load "./qeval-tests.scm")
 
 ;; Local variables:

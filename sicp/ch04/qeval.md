@@ -6,9 +6,7 @@ Put together each components to form this system.
 
 TODO: still working
 
-* `(qeval-initialize!)`
 
-    Clean up the database.
 
 ## qeval-utils.scm
 
@@ -40,6 +38,10 @@ Some miscellaneous functions.
     If the value isn't present, the variable will be transformed
     to its externl representation instead.
     The query should be given in its internal representation.
+
+* `(qeval-initialize!)`
+
+    Clean up the database, reinstall handlers.
 
 ## qeval-stream.scm
 

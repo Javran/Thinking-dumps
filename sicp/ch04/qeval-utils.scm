@@ -56,6 +56,13 @@
      (lambda (v f)
        (contract-question-mark v)))))
 
+;; initialize everything
+(define (qeval-initialize!)
+  (proc-table-initialize!)
+  (install-handlers)
+  (set! THE-ASSERTIONS the-empty-stream)
+  (set! THE-RULES the-empty-stream))
+
 (define (qeval-utils-tests)
   (do-test
    remove-duplicates
