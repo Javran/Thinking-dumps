@@ -6,7 +6,11 @@ Put together each components to form this system.
 
 TODO: still working
 
+* `*qeval-tests*`
 
+    Set this variable to `#t` to enable tests,
+    `#f` to turn off all the tests.
+    Only works when set before any related module is loaded.
 
 ## qeval-utils.scm
 
@@ -380,3 +384,17 @@ A collection of testcases that require to be tested against a database.
 * `(qeval4test <query>)`
 
     (Internal use only) A helper procedure for testcases.
+
+## qeval-export.scm
+
+TODO: this is a planned module, to be implemented
+
+* `(qe-all <query>)`
+
+* `(qe-stream <query>)`
+
+* `(qe-stream-with-frame <query> <frame>)`
+
+* `(qe-fresh-asserts! <assert1> <assert2> ...)`
+
+* `(qe-asserts! <assert1> <assert2> ...)`
