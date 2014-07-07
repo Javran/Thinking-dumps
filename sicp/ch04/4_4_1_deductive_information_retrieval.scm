@@ -75,7 +75,12 @@
    (supervisor (Aull DeWitt)
                (Warbucks Oliver))
 
-   )
+   (rule (can-do-job (computer wizard) (computer programmer)))
+   (rule (can-do-job (computer wizard) (computer technician)))
+   (rule (can-do-job (computer programmer) (computer programmer trainee)))
+   (rule (can-do-job (administration secretary) (administration big wheel)))
+
+   ))
 
 (end-script)
 
