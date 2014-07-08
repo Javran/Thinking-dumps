@@ -46,3 +46,4 @@ supervisor(aullDeWitt, warbucksOliver).
 can_do_job([computer,wizard], [computer,programmer]).
 can_do_job([computer,wizard], [computer,technician]).
 can_do_job([computer,programmer], [computer,programmer,trainee]).
+can_do_job([administration,secretary], [administration,big,wheel]).
