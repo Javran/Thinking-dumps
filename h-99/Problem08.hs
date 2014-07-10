@@ -1,4 +1,5 @@
-import Data.Maybe
+module Problem08 where
+
 import Data.List
 
 compress :: Eq a => [a] -> [a]

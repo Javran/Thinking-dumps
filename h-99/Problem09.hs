@@ -1,3 +1,5 @@
+module Problem09 where
+
 pack :: Eq a => [a] -> [[a]]
 -- packing an empty list results in another empty list
 pack [] = []
