@@ -1,4 +1,9 @@
-(load "./4_4_1_rules.scm")
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
+(load "./qeval.scm")
+
+(qe-fresh-asserts!)
 
 (apply
  qe-asserts!
