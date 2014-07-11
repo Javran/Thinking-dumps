@@ -61,15 +61,6 @@
          the-empty-stream))
    frame-stream))
 
-;; TODO: document
-;; to execute an expression
-;; is to evaluate it as if it was lisp code
-;; (internal use only)
-(define (execute exp)
-  (apply (eval (predicate exp)
-               user-initial-environment)
-         (args exp)))
-
 ;; lisp-value handler: evaluate the pattern
 ;; as if it was lisp code
 (define (lisp-value call frame-stream)
@@ -77,6 +68,12 @@
   (define predicate car)
   (define args cdr)
 
+  ;; to execute an expression
+  ;; is to evaluate it as if it was lisp code
+  (define (execute exp)
+    (apply (eval (predicate exp)
+                 user-initial-environment)
+           (args exp)))
   (stream-intermap
    (lambda (frame)
      (if (execute
@@ -100,21 +97,33 @@
   ;; format: (lisp-eval <func> <return-var> <arg1> <arg2> ...)
   ;; call = (<func> <return-var> <arg1> <arg2> ...)
   (define predicate car)
-  (define return-var cadr)
+  (define return-pat cadr)
   (define args cddr)
+
+  (define (execute exp)
+    (apply (eval (car exp)
+                 user-initial-environment)
+           (cdr exp)))
 
   (stream-intermap
    (lambda (frame)
      (let* ((eval-result
              (execute
+              ;; to avoid accidentally
+              ;; instantiate return-val,
+              ;; we just skip it.
+              ;; so in procedure "execute"
+              ;; we should instead use "car" and "cdr"
+              ;; instead of field accessors for calls
               (instantiate-exp
-               call
+               (cons (predicate call)
+                     (args call))
                frame
                (lambda (v f)
                  (error "Unknown pat var: LIST-EVAL"
                         v)))))
             (match-result
-             (pattern-match eval-result frame)))
+             (pattern-match (return-pat call) eval-result frame)))
        (if (eq? match-result 'failed)
            the-empty-stream
            (singleton-stream match-result))))
