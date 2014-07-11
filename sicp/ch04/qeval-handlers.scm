@@ -61,19 +61,21 @@
          the-empty-stream))
    frame-stream))
 
+;; TODO: document
+;; to execute an expression
+;; is to evaluate it as if it was lisp code
+;; (internal use only)
+(define (execute exp)
+  (apply (eval (predicate exp)
+               user-initial-environment)
+         (args exp)))
+
 ;; lisp-value handler: evaluate the pattern
 ;; as if it was lisp code
 (define (lisp-value call frame-stream)
   ;; lisp-value query accessors
   (define predicate car)
   (define args cdr)
-
-  ;; to execute an expression
-  ;; is to evaluate it as if it was lisp code
-  (define (execute exp)
-    (apply (eval (predicate exp)
-                 user-initial-environment)
-           (args exp)))
 
   (stream-intermap
    (lambda (frame)
@@ -93,12 +95,38 @@
 ;; without additional constraints
 (define (always-true ignore frame-stream) frame-stream)
 
+;; TODO: document
+(define (lisp-eval call frame-stream)
+  ;; format: (lisp-eval <func> <return-var> <arg1> <arg2> ...)
+  ;; call = (<func> <return-var> <arg1> <arg2> ...)
+  (define predicate car)
+  (define return-var cadr)
+  (define args cddr)
+
+  (stream-intermap
+   (lambda (frame)
+     (let* ((eval-result
+             (execute
+              (instantiate-exp
+               call
+               frame
+               (lambda (v f)
+                 (error "Unknown pat var: LIST-EVAL"
+                        v)))))
+            (match-result
+             (pattern-match eval-result frame)))
+       (if (eq? match-result 'failed)
+           the-empty-stream
+           (singleton-stream match-result))))
+   frame-stream))
+
 (define (install-handlers)
   (put 'and 'qeval conjoin)
   (put 'or 'qeval disjoin)
   (put 'not 'qeval negate)
   (put 'lisp-value 'qeval lisp-value)
   (put 'always-true 'qeval always-true)
+  (put 'lisp-eval 'qeval lisp-eval)
   'ok)
 
 ;; Local variables:
