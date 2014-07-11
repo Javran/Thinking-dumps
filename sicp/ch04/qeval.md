@@ -380,13 +380,19 @@ according to the data, and pass the arguments to them.
 * `(lisp-value <pat> <frame-stream>)`
 
     Handle queries of form `(lisp-value <call> <arg1> <arg2> ...)`.
-    It evaluates `(<call> <arg1> <arg2> ... <arg3>)` as if
+    It evaluates `(<call> <arg1> <arg2> ...)` as if
     it was a lisp expression.
 
 * `(always-true <pat> <frame-stream>)`
 
     This handler always returns true, it just returns back
     `<frame-stream>`.
+
+* `(lisp-eval <pat> <frame-stream>)`
+
+    Handle queries of form `(lisp-eval <func> <return-pat> <arg1> <arg2> ...)`.
+    It evaluates `(<func> <arg1> <arg2> ...)` as if it was a lisp expresion.
+    The result will be pattern-matched against `<return-pat>`.
 
 * `(install-handlers)`
 

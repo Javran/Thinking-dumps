@@ -92,7 +92,8 @@
 ;; without additional constraints
 (define (always-true ignore frame-stream) frame-stream)
 
-;; TODO: document
+;; evaluate the call as if it was a lisp-expression
+;; and do pattern matching on the resulting value.
 (define (lisp-eval call frame-stream)
   ;; format: (lisp-eval <func> <return-var> <arg1> <arg2> ...)
   ;; call = (<func> <return-var> <arg1> <arg2> ...)
