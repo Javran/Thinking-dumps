@@ -28,6 +28,8 @@
 
 ;; Since the problem only needs us to outline a method to salvage the situation
 ;; I recommend adding a handler to filter out duplicate elemeents.
+;; (and to remove duplicated function, one might specify a predicate
+;; or something equivalent to indicate the identity of a specific data.)
 ;; and accumulation functions should be used on the filtered list.
 
 (end-script)
