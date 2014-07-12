@@ -508,7 +508,7 @@ Fixpoint split
            : (list X) * (list Y) :=
   match l with
   | [] => ([],[])
-  | (a,b) :: xs => let (a',b') := split xs in (a :: a', b :: b')
+  | (a,b) :: xs => (a :: fst (split xs) , b :: snd (split xs))
   end.
 
 
