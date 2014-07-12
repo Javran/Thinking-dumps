@@ -1,6 +1,24 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./qeval.scm")
+
+(apply
+ qe-fresh-asserts!
+ '(
+   (edge a b)
+   (edge b c)
+   (edge c a)
+
+   (rule (link ?x ?z)
+         (and (link ?x ?y)
+              (edge ?y ?z)))))
+
+(out (stream->list
+      (stream-take 10 (qe-stream '(link a a)))))
+
+#|
+
 ;; from: 4_4_1_rules.scm
 ;; "outranked-by" modified according to exercise 4.64.
 (load "./4_4_1_deductive_information_retrieval.scm")
@@ -27,6 +45,8 @@
    ))
 
 (qe-all '(outranked-by (Bitdiddle Ben) ?who))
+
+|#
 
 (end-script)
 
