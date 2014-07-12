@@ -1250,7 +1250,13 @@ Theorem override_permute : forall (X:Type) x1 x2 k1 k2 k3 (f : nat->X),
   beq_nat k2 k1 = false ->
   (override (override f k2 x2) k1 x1) k3 = (override (override f k1 x1) k2 x2) k3.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x1 x2 k1 k2 k3 f eq1.
+  unfold override. destruct (beq_nat k1 k3) eqn:H13.
+  Case "beq_nat k1 k3 = true".
+    assert (k1 = k3). apply beq_nat_true. apply H13.
+    rewrite <- H. rewrite eq1. reflexivity.
+  Case "beq_nat k1 k3 = false". reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (filter_exercise) *)
@@ -1261,7 +1267,20 @@ Theorem filter_exercise : forall (X : Type) (test : X -> bool)
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X test x l lf.
+  generalize dependent lf. generalize dependent x.
+  induction l as [|a l'].
+  Case "l = nil". intros x lf eq1.
+    unfold filter in eq1. inversion eq1.
+  Case "l = a :: l'". destruct (test a) eqn:Htx.
+    SCase "test a = true".
+      intros x lf eq1. unfold filter in eq1.
+      rewrite Htx in eq1. inversion eq1.
+      rewrite <- H0. apply Htx.
+    SCase "test a = false". intros x lf eq1.
+      apply IHl' with lf. unfold filter in eq1.
+      rewrite Htx in eq1. apply eq1.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced (forall_exists_challenge) *)
@@ -1290,7 +1309,51 @@ Proof.
     Prove that [existsb'] and [existsb] have the same behavior.
 *)
 
-(* FILL IN HERE *)
+Fixpoint forallb {X : Type} (f : X -> bool) (xs : list X) : bool :=
+  match xs with
+  | [] => true
+  | h :: t => if f h then forallb f t else false
+  end.
+
+Fixpoint existsb {X : Type} (f : X -> bool) (xs : list X) : bool :=
+  match xs with
+  | [] => false
+  | h :: t => if f h then true else existsb f t
+  end.
+
+Definition existsb' {X : Type} (f : X -> bool) (xs : list X) : bool :=
+  negb (forallb (fun x => negb (f x)) xs).
+
+Example forallb_1 :
+  forallb oddb [1;2;3] = false.
+Proof. reflexivity. Qed.
+
+Example forallb_2 :
+  forallb oddb [1;3;5] = true.
+Proof. reflexivity. Qed.
+
+Example existsb_1 :
+  existsb oddb [2;4;6] = false.
+Proof. reflexivity. Qed.
+
+Example existsb_2 :
+  existsb oddb [2;4;5] = true.
+Proof. reflexivity. Qed.
+
+Theorem same_existsb_existsb' : forall (X : Type) (f : X -> bool) (xs : list X),
+  existsb f xs = existsb' f xs.
+Proof.
+  intros X f xs. induction xs as [|h t].
+  Case "xs = nil". unfold existsb.
+    unfold existsb'. unfold forallb. reflexivity.
+  Case "xs = h :: t". destruct (f h) eqn:Hfh.
+    SCase "f h = true". unfold existsb. unfold existsb'.
+      rewrite Hfh. simpl. rewrite Hfh. reflexivity.
+    SCase "f h = false".
+      unfold existsb. rewrite Hfh. fold (@existsb X).
+      rewrite IHt. unfold existsb'. unfold forallb.
+      rewrite Hfh. reflexivity.
+Qed.
 (** [] *)
 
 (* $Date: 2013-07-17 16:19:11 -0400 (Wed, 17 Jul 2013) $ *)
