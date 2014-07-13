@@ -1168,56 +1168,6 @@ Definition split_combine_statement : Prop :=
    -> combine l1 l2 = l
    -> split l = (l1,l2).
 
-Lemma fst_split_l : forall (X Y : Type)
-                           (l1 : list X) (l2 : list Y)
-                           (l : list (X * Y)),
-  length l1 = length l ->
-  l = combine l1 l2 ->
-  fst (split l) = l1.
-Proof.
-  intros X Y l1. induction l1 as [|x1 l1'].
-  Case "l1 = nil". intros l2 l eq1 eq2. simpl in eq2.
-    rewrite eq2. reflexivity.
-  Case "l1 = x1 :: l1'". intros l2 l eq1 eq2. simpl in eq1.
-    destruct l2 as [|x2 l2'].
-    SCase "l2 = nil". simpl in eq2. rewrite eq2 in eq1.
-      inversion eq1.
-    SCase "l2 = x2 :: l2'". simpl in eq2.
-      rewrite eq2. simpl. apply f_equal. apply IHl1' with l2'.
-      rewrite eq2 in eq1. simpl in eq1. inversion eq1.
-      reflexivity. reflexivity.
-Qed.
-
-Lemma combine_l_nil : forall (X Y : Type)
-                             (l : list X),
-  combine l (@nil Y) = [].
-Proof.
-  intros X Y l. induction l as [|x l'].
-  Case "l = nil". reflexivity.
-  Case "l = x :: l'". reflexivity.
-Qed.
-
-Lemma snd_split_l : forall (X Y : Type)
-                           (l1 : list X) (l2 : list Y)
-                           (l : list (X * Y)),
-  length l2 = length l ->
-  l = combine l1 l2 ->
-  snd (split l) = l2.
-Proof.
-  intros X Y l1 l2. generalize dependent l1.
-  induction l2 as [|x2 l2'].
-  Case "l2 = nil". intros l1 l eq1 eq2. rewrite combine_l_nil in eq2.
-    rewrite eq2. reflexivity.
-  Case "l2 = x2 :: l2'". intros l1 l eq1 eq2. simpl in eq1.
-    destruct l1 as [|x1 l1'].
-    SCase "l1 = nil". simpl in eq2. rewrite eq2 in eq1.
-      inversion eq1.
-    SCase "l1 = x1 :: l1'". simpl in eq2.
-      rewrite eq2. simpl. apply f_equal. apply IHl2' with l1'.
-      rewrite eq2 in eq1. simpl in eq1. inversion eq1.
-      reflexivity. reflexivity.
-Qed.
-
 Theorem split_combine : split_combine_statement.
 Proof.
   intros X Y l1. induction l1 as [|x1 l1'].
@@ -1234,14 +1184,11 @@ Proof.
       SSCase "l = nil". simpl in eq1. inversion eq1.
       SSCase "l = (a,b) :: l'".
         simpl in eq1. inversion eq1. simpl in eq2. inversion eq2.
-        inversion eq3.
-        assert (fst (split l') = l1') as Hfst.
-          apply fst_split_l with l2'. apply H0. symmetry. apply H4.
-        assert (snd (split l') = l2') as Hsnd.
-          apply snd_split_l with l1'. apply H1. symmetry. apply H4.
-        rewrite <- Hfst. rewrite <- Hsnd. simpl.
-        rewrite Hfst. rewrite Hsnd. rewrite H4.
-        rewrite Hfst. rewrite Hsnd. reflexivity.
+        inversion eq3. simpl.
+        assert (split (combine l1' l2') = (l1',l2')) as IH.
+          apply IHl1'. rewrite H4. apply H0. rewrite H4. apply H1.
+          reflexivity.
+        rewrite IH. reflexivity.
 Qed.
 (** [] *)
 
