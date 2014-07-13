@@ -13,6 +13,7 @@
    (son Adam Cain)
    (son Cain Enoch)
    (son Enoch Irad)
+   (son Irad Mehujael)
    (son Mehujael Methushael)
    (son Methushael Lamech)
    (wife Lamech Ada)
