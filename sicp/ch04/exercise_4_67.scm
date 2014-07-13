@@ -3,6 +3,9 @@
 
 (load "./qeval.scm")
 
+;; will come back to this problem later
+;; for now I have not yet come up with good strategy.
+
 (apply
  qe-fresh-asserts!
  '(
