@@ -1163,34 +1163,26 @@ Qed.
 Definition split_combine_statement : Prop :=
   forall (X : Type) (Y : Type)
          (l1 : list X) (l2 : list Y) (l : list (X * Y)),
-      length l1 = length l
-   -> length l2 = length l
+      length l1 = length l2
    -> combine l1 l2 = l
    -> split l = (l1,l2).
+(** [] *)
 
 Theorem split_combine : split_combine_statement.
 Proof.
   intros X Y l1. induction l1 as [|x1 l1'].
-  Case "l1 = nil". intros l2. destruct l2 as [|x2 l2'].
-    SCase "l2 = nil". intros l eq1 eq2 eq3. simpl in eq3. rewrite <- eq3.
-      reflexivity.
-    SCase "l2 = x2 :: l2'". intros l eq1 eq2 eq3.
-      simpl in eq3. rewrite <- eq3 in eq2. inversion eq2.
-  Case "l1 = x1 l1'". intros l2. destruct l2 as [|x2 l2'].
-    SCase "l2 = nil". intros l eq1 eq2 eq3.
-      simpl in eq3. rewrite <- eq3 in eq1. inversion eq1.
-    SCase "l2 = x2 :: l2". intros l eq1 eq2 eq3.
-      simpl in eq3. rewrite <- eq3. destruct l as [|(a,b) l'].
-      SSCase "l = nil". simpl in eq1. inversion eq1.
-      SSCase "l = (a,b) :: l'".
-        simpl in eq1. inversion eq1. simpl in eq2. inversion eq2.
-        inversion eq3. simpl.
-        assert (split (combine l1' l2') = (l1',l2')) as IH.
-          apply IHl1'. rewrite H4. apply H0. rewrite H4. apply H1.
-          reflexivity.
-        rewrite IH. reflexivity.
+  Case "l1 = nil". intros l2 l eq1 eq2. destruct l2 as [|x2 l2'].
+    SCase "l2 = nil". simpl in eq2. rewrite <- eq2. reflexivity.
+    SCase "l2 = x2 :: l2'". inversion eq1.
+  Case "l1 = x1 l1'". intros l2 l eq1 eq2. destruct l2 as [|x2 l2'].
+    SCase "l2 = nil". inversion eq1.
+    SCase "l2 = x2 l2'". destruct l as [|(a,b) l'].
+      SSCase "l = nil". inversion eq2.
+      SSCase "l = (a,b) :: l'". inversion eq1. inversion eq2.
+      assert (split (combine l1' l2') = (l1',l2')) as IH.
+        apply IHl1'. apply H0. reflexivity.
+      simpl. rewrite IH. reflexivity.
 Qed.
-(** [] *)
 
 (** **** Exercise: 3 stars (override_permute) *)
 Theorem override_permute : forall (X:Type) x1 x2 k1 k2 k3 (f : nat->X),
