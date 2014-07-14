@@ -491,6 +491,9 @@ Proof.
   inversion E as [| n' E'].
   Case "E = ev_0". simpl. apply ev_0.
   Case "E = ev_SS n' E'". simpl. apply E'.  Qed.
+(* p.s. it turns out "inversion" can be used here and nothing will be changed
+   so this example might be a little bit confusing...
+*)
 
 (** **** Exercise: 1 star, optional (ev_minus2_n) *)
 (** What happens if we try to use [destruct] on [n] instead of [inversion] on [E]? *)
@@ -626,8 +629,36 @@ Inductive pal {X:Type} : list X -> Prop :=
     that
      forall l, l = rev l -> pal l.
 *)
+
+Fixpoint list_head {X : Type} (l : list X) : option X :=
+  match l with
+  | [] => None
+  | h :: t => Some h
+  end.
+
+Definition list_last {X : Type} (l : list X) : option X :=
+  list_head (rev l).
+
+Theorem palindrome_head_last : forall (X : Type) (l : list X),
+  l = rev l -> list_head l = list_last l.
+Proof.
+  intros X l Hl. unfold list_last. rewrite <- Hl. reflexivity.
+Qed.
+
+Fixpoint list_tail {X : Type} (l : list X) : option (list X) :=
+  match l with
+  | [] => None
+  | h :: t => Some t
+  end.
+
+Definition list_init {X : Type} (l : list X) : option (list X) :=
+  match list_tail (rev l) with
+  | None => None
+  | Some l' => Some (rev l')
+  end.
+
 Theorem palindrome_converse : forall (X : Type) (l : list X),
-  l = @rev X l -> pal l.
+  l = rev l -> pal l.
 Proof.
   intros X l eq1. induction l as [|h t].
   Case "l = nil". apply pal_nil.
