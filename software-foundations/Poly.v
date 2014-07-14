@@ -511,6 +511,25 @@ Fixpoint split
   | (a,b) :: xs => (a :: fst (split xs) , b :: snd (split xs))
   end.
 
+Fixpoint split'
+           {X Y : Type} (l : list (X*Y))
+           : (list X) * (list Y) :=
+  match l with
+  | [] => ([],[])
+  | (a,b) :: xs => let (a',b') := split' xs in (a::a', b::b')
+  end.
+
+Theorem split_split' : forall (X Y : Type) (l : list (X*Y)),
+  split l = split' l.
+Proof.
+  intros X Y l. induction l as [|h t].
+  Case "l = nil". reflexivity.
+  Case "l = h :: t".
+    assert (fst (split t) = fst (split' t)) as Hfs. apply f_equal. apply IHt.
+    assert (snd (split t) = snd (split' t)) as Hsn. apply f_equal. apply IHt.
+    simpl. destruct (split' t). rewrite Hfs. rewrite Hsn. reflexivity.
+Qed.
+
 Example test_split:
   split [(1,false);(2,false)] = ([1;2],[false;false]).
 Proof. reflexivity. Qed.
