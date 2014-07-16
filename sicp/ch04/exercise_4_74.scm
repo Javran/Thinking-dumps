@@ -35,6 +35,14 @@
  (lambda (actual expected)
    (apply equal? actual)))
 
+;; (stream-intermap proc s) and (simple-stream-flatmap proc s)
+;; should always produce the same result given that
+;; the elements of `s` are all either empty streams or singletons
+;; This is because "(interleave-delayed a b)" will always put the first
+;; element of `a` to the stream prior to the first element of `b`.
+;; And given that `a` and `b` are neither empty streams or singletons,
+;; the resulting list is the same as simply appending `a` to `b`.
+
 (end-script)
 
 ;; Local variables:
