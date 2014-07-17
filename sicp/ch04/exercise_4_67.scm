@@ -3,19 +3,26 @@
 
 (load "./qeval.scm")
 
-;; will come back to this problem later
-;; for now I have not yet come up with good strategy.
-
 (apply
  qe-fresh-asserts!
  '(
    (edge a b)
    (edge b c)
-   (edge c a)
+   (edge c d)
 
+   (rule (link ?x ?y) (edge ?x ?y))
    (rule (link ?x ?z)
-         (and (link ?x ?y)
-              (edge ?y ?z)))))
+         (and (link ?y ?z)
+              (edge ?x ?y)))
+
+   (rule (link2 ?x ?y) (edge ?x ?y))
+   (rule (link2 ?x ?z)
+         (and (edge ?x ?y)
+              (link2 ?y ?z)))
+
+   ))
+
+(out (qe-all '(link a d)))
 
 (out (stream->list
       (stream-take 10 (qe-stream '(link a a)))))
