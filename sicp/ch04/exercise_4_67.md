@@ -3,6 +3,14 @@ put problematic rules into this system and I will make no attempt
 to turn a problematic rule into a correct one, as it might be
 a really complex task.
 
+Therefore, when a loop is detected, we simply abort the current query
+and signal an error. We could just return an empty stream instead,
+but I think that makes a misleading situation where
+the query system returns nothing and you think this is because
+no valid results are found while the real story is that the query system
+detects something wrong (in this case, an infinite loop)
+but you have no feedback.
+
 We solve this problem by studying the cases where the qeval system
 get stuck into an infinte loop.
 
@@ -36,3 +44,4 @@ an infinite loop because we have flipped two sub-queries in `and` part
 on purpose (The correct one should put `(edge ?x ?y)` earlier,
 or otherwise `(link ?y ?z)` and `(link ?x ?y)` are essentially the same query
 and we are actually making no progess.
+
