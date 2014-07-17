@@ -3,6 +3,22 @@
 
 (load "./qeval.scm")
 
+;; test if the data is a variable with id
+(define (id-var? data)
+  (and (list? data)
+       (= (length data) 3)
+       (eq? (car data) '?)
+       (number? (cadr data))))
+
+;; generate a predicate to test if the data
+;; is the predecessor of id-var
+;; e.g. the predecessor of (? 2 a) is (? 1 a)
+(define (pred-of? id-var)
+  (lambda (data)
+    (and (id-var? data)
+         (eq? (caddr data) (caddr id-var))
+         (= (cadr data) (sub1 (cadr id-var))))))
+
 #|
 (apply
  qe-fresh-asserts!
