@@ -3,6 +3,7 @@
 
 (load "./qeval.scm")
 
+#|
 (apply
  qe-fresh-asserts!
  '(
@@ -10,11 +11,13 @@
    (edge b c)
    (edge c d)
 
+   ;; wrong rule
    (rule (link ?x ?y) (edge ?x ?y))
    (rule (link ?x ?z)
          (and (link ?y ?z)
               (edge ?x ?y)))
 
+   ;; correct one
    (rule (link2 ?x ?y) (edge ?x ?y))
    (rule (link2 ?x ?z)
          (and (edge ?x ?y)
@@ -23,11 +26,6 @@
    ))
 
 (out (qe-all '(link a d)))
-
-(out (stream->list
-      (stream-take 10 (qe-stream '(link a a)))))
-
-#|
 
 ;; from: 4_4_1_rules.scm
 ;; "outranked-by" modified according to exercise 4.64.
