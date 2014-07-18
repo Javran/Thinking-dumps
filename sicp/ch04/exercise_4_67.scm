@@ -33,6 +33,25 @@
                     l
                     (loop (add1 l) (cdr fr)))))))))
 
+(define (looping-frame? frame)
+  ;; decrease id in group1
+  ;; to make it looks exactly like group2 if possible
+  (define (tree-walk data)
+    (cond ((id-var? data)
+           `(? ,(add1 (cadr data)) ,(caddr data)))
+          ((pair? data)
+           (cons (tree-walk (car data))
+                 (tree-walk (cdr data))))
+          (else data)))
+
+  (let ((group-len (find-binding-group-len frame)))
+    (if (> (* 2 group-len) (length frame))
+        #f
+        (let ((group1 (sublist frame 0 group-len))
+              (group2 (sublist frame group-len (* 2 group-len))))
+          (equal? (tree-walk group1) group2)
+        ))))
+
 (do-test
  find-binding-group-len
  (list
