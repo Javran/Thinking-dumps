@@ -12,7 +12,7 @@
 (define (extend variable value frame)
   (cons (make-binding variable value) frame))
 
-(define binding-varlable car)
+(define binding-variable car)
 (define binding-value cdr)
 (define binding-in-frame assoc)
 
@@ -34,7 +34,7 @@
        (or (and x y)
            (and (not x) (not y)))))
     (do-test
-     binding-varlable
+     binding-variable
      (list
       (mat (binding-in-frame 'a frame) 'a)
       (mat (binding-in-frame 'b frame) 'b)

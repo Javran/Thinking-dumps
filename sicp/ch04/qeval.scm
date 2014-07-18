@@ -16,6 +16,8 @@
 (load "./qeval-export.scm")
 (load "./qeval-tests.scm")
 
+(qe-fresh-asserts!)
+
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:

@@ -74,7 +74,6 @@
     (apply (eval (predicate exp)
                  user-initial-environment)
            (args exp)))
-
   (stream-intermap
    (lambda (frame)
      (if (execute
@@ -93,12 +92,51 @@
 ;; without additional constraints
 (define (always-true ignore frame-stream) frame-stream)
 
+;; evaluate the call as if it was a lisp-expression
+;; and do pattern matching on the resulting value.
+(define (lisp-eval call frame-stream)
+  ;; format: (lisp-eval <func> <return-var> <arg1> <arg2> ...)
+  ;; call = (<func> <return-var> <arg1> <arg2> ...)
+  (define predicate car)
+  (define return-pat cadr)
+  (define args cddr)
+
+  (define (execute exp)
+    (apply (eval (car exp)
+                 user-initial-environment)
+           (cdr exp)))
+
+  (stream-intermap
+   (lambda (frame)
+     (let* ((eval-result
+             (execute
+              ;; to avoid accidentally
+              ;; instantiate return-val,
+              ;; we just skip it.
+              ;; so in procedure "execute"
+              ;; we should instead use "car" and "cdr"
+              ;; instead of field accessors for calls
+              (instantiate-exp
+               (cons (predicate call)
+                     (args call))
+               frame
+               (lambda (v f)
+                 (error "Unknown pat var: LIST-EVAL"
+                        v)))))
+            (match-result
+             (pattern-match (return-pat call) eval-result frame)))
+       (if (eq? match-result 'failed)
+           the-empty-stream
+           (singleton-stream match-result))))
+   frame-stream))
+
 (define (install-handlers)
   (put 'and 'qeval conjoin)
   (put 'or 'qeval disjoin)
   (put 'not 'qeval negate)
   (put 'lisp-value 'qeval lisp-value)
   (put 'always-true 'qeval always-true)
+  (put 'lisp-eval 'qeval lisp-eval)
   'ok)
 
 ;; Local variables:

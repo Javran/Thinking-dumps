@@ -46,7 +46,9 @@ ends_in_grandson(X) :-
 % which is of form: [grandson], [great,great,...,grandson]
 % great([grandson],...) queries for great grandson
 % great([great,grandson],...) queries for great-great grandson
-great([grandson], adam, irad).
+great([grandson], X, Y) :-
+    son(X,Z),
+    grandson(Z,Y).
 great([great|Rels],X,Y) :-
     % note that the order of these conditions does matter.
     % thanks to the hint given by:
@@ -58,9 +60,10 @@ great([great|Rels],X,Y) :-
     % the relationship list should be ended in "grandson"
     ends_in_grandson(Rels).
 
-query(findall(X,ends_in_grandson([great,great,grandson]),_)).
-query(findall(X,ends_in_grandson([great]),_)).
-query(findall(X,ends_in_grandson([grandson]),_)).
+% Commented out for clearer output
+% query(findall(X,ends_in_grandson([great,great,grandson]),_)).
+% query(findall(X,ends_in_grandson([great]),_)).
+% query(findall(X,ends_in_grandson([grandson]),_)).
 
 query(findall([G,GGS], great([grandson],G,GGS),_)).
 query(findall([G,GGS], great([great,great,great,great,grandson],G,GGS),_)).
