@@ -19,6 +19,21 @@
          (eq? (caddr data) (caddr id-var))
          (= (cadr data) (sub1 (cadr id-var))))))
 
+;; find binding group length
+(define (find-binding-group-len frame)
+  (if (null? frame)
+      #f
+      (let ((pred? (pred-of? (car frame))))
+        (let loop ((l 1)
+                   (fr (cdr frame)))
+          (if (null? fr)
+              #f
+              (if (pred? (car fr))
+                  l
+                  (loop (add1 l) (cdr fr))))))))
+
+
+
 #|
 (apply
  qe-fresh-asserts!
