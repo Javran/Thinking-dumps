@@ -23,34 +23,17 @@
 (define (find-binding-group-len frame)
   (if (null? frame)
       #f
-      (let ((frame-vars (map binding-variable frame)))
-        (let ((pred? (pred-of? (car frame-vars))))
-          (let loop ((l 1)
-                     (fr (cdr frame-vars)))
-            (if (null? fr)
-                #f
-                (if (pred? (car fr))
-                    l
-                    (loop (add1 l) (cdr fr)))))))))
-
-(define (looping-frame? frame)
-  ;; decrease id in group1
-  ;; to make it looks exactly like group2 if possible
-  (define (tree-walk data)
-    (cond ((id-var? data)
-           `(? ,(add1 (cadr data)) ,(caddr data)))
-          ((pair? data)
-           (cons (tree-walk (car data))
-                 (tree-walk (cdr data))))
-          (else data)))
-
-  (let ((group-len (find-binding-group-len frame)))
-    (if (> (* 2 group-len) (length frame))
-        #f
-        (let ((group1 (sublist frame 0 group-len))
-              (group2 (sublist frame group-len (* 2 group-len))))
-          (equal? (tree-walk group1) group2)
-        ))))
+      (if (id-var? (binding-variable (car frame)))
+          (let ((frame-vars (map binding-variable frame)))
+            (let ((pred? (pred-of? (car frame-vars))))
+              (let loop ((l 1)
+                         (fr (cdr frame-vars)))
+                (if (null? fr)
+                    #f
+                    (if (pred? (car fr))
+                        l
+                        (loop (add1 l) (cdr fr)))))))
+          #f)))
 
 (do-test
  find-binding-group-len
@@ -62,58 +45,98 @@
   (mat '( ((? 2 x) . a) ((? 2 z) . b) ) #f)
   ))
 
-#|
-(apply
- qe-fresh-asserts!
- '(
-   (edge a b)
-   (edge b c)
-   (edge c d)
+(define (looping-frame? frame)
+  ;; decrease id in group1
+  ;; to make it looks exactly like group2 if possible
+  (define (tree-walk data)
+    (cond ((id-var? data)
+           `(? ,(sub1 (cadr data)) ,(caddr data)))
+          ((pair? data)
+           (cons (tree-walk (car data))
+                 (tree-walk (cdr data))))
+          (else data)))
 
-   ;; wrong rule
-   (rule (link ?x ?y) (edge ?x ?y))
-   (rule (link ?x ?z)
-         (and (link ?y ?z)
-              (edge ?x ?y)))
+  (let ((group-len (find-binding-group-len frame)))
+    (if group-len
+        (if (> (* 2 group-len) (length frame))
+            #f
+            (let ((group1 (sublist frame 0 group-len))
+                  (group2 (sublist frame group-len (* 2 group-len))))
+              (equal? (tree-walk group1) group2)
+              ))
+        #f)))
 
-   ;; correct one
-   (rule (link2 ?x ?y) (edge ?x ?y))
-   (rule (link2 ?x ?z)
-         (and (edge ?x ?y)
-              (link2 ?y ?z)))
+;; modify the existing impl:
+;; use pattern matching to find valid frames
+(define (simple-query-mod query-pattern frame-stream)
+  (stream-intermap
+   (lambda (frame)
+     (if (looping-frame? frame)
+         (error "an infinite loop detected, aborting...")
+         'ok)
+     (stream-append-delayed
+      ;; search against assertions
+      (find-assertions query-pattern frame)
+      ;; search against rules
+      (delay (apply-rules query-pattern frame))))
+   frame-stream))
 
-   ))
+(define simple-query simple-query-mod)
+(assert-error
+ (lambda ()
+   (apply
+    qe-fresh-asserts!
+    '(
+      (edge a b)
+      (edge b c)
+      (edge c d)
 
-(out (qe-all '(link a d)))
+      ;; wrong rule
+      (rule (link ?x ?y) (edge ?x ?y))
+      (rule (link ?x ?z)
+            (and (link ?y ?z)
+                 (edge ?x ?y)))
+
+      ;; correct one
+      (rule (link2 ?x ?y) (edge ?x ?y))
+      (rule (link2 ?x ?z)
+            (and (edge ?x ?y)
+                 (link2 ?y ?z)))
+
+      ))
+
+   (out (qe-all '(link a d)))))
 
 ;; from: 4_4_1_rules.scm
 ;; "outranked-by" modified according to exercise 4.64.
 (load "./4_4_1_deductive_information_retrieval.scm")
 
-(apply
- qe-asserts!
- '(
-   (rule (lives-near ?person-1 ?person-2)
-         (and (address ?person-1 (?town . ?rest-1))
-              (address ?person-2 (?town . ?rest-2))
-              (not (same ?person-1 ?person-2))))
+(define simple-query simple-query-mod)
 
-   (rule (same ?x ?x))
+(assert-error
+ (lambda ()
+   (apply
+    qe-asserts!
+    '(
+      (rule (lives-near ?person-1 ?person-2)
+            (and (address ?person-1 (?town . ?rest-1))
+                 (address ?person-2 (?town . ?rest-2))
+                 (not (same ?person-1 ?person-2))))
 
-   (rule (wheel ?person)
-         (and (supervisor ?middle-manager ?person)
-              (supervisor ?x ?middle-manager)))
+      (rule (same ?x ?x))
 
-   (rule (outranked-by ?staff-person ?boss)
-         (or (supervisor ?staff-person ?boss)
-             (and (outranked-by ?middle-manager ?boss)
-                  (supervisor ?staff-person ?middle-manager))))
+      (rule (wheel ?person)
+            (and (supervisor ?middle-manager ?person)
+                 (supervisor ?x ?middle-manager)))
 
-   ))
+      (rule (outranked-by ?staff-person ?boss)
+            (or (supervisor ?staff-person ?boss)
+                (and (outranked-by ?middle-manager ?boss)
+                     (supervisor ?staff-person ?middle-manager))))
 
-(qe-all '(outranked-by (Bitdiddle Ben) ?who))
+      ))
 
-|#
+   (qe-all '(outranked-by (Bitdiddle Ben) ?who))))
 
 (end-script)
 
