@@ -1,3 +1,5 @@
+module Problem07 where
+
 data NestedList a
     = Elem a
     | List [NestedList a]
@@ -14,4 +16,3 @@ main = do
         t2 = List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]]
         t3 = List []
     mapM_ (print . flatten) [t1, t2, t3]
-

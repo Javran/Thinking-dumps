@@ -1,3 +1,5 @@
+module Problem06 where
+
 import Control.Arrow
 
 -- keep track of a pair of indices,
