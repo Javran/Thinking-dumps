@@ -23,16 +23,25 @@
 (define (find-binding-group-len frame)
   (if (null? frame)
       #f
-      (let ((pred? (pred-of? (car frame))))
-        (let loop ((l 1)
-                   (fr (cdr frame)))
-          (if (null? fr)
-              #f
-              (if (pred? (car fr))
-                  l
-                  (loop (add1 l) (cdr fr))))))))
+      (let ((frame-vars (map binding-variable frame)))
+        (let ((pred? (pred-of? (car frame-vars))))
+          (let loop ((l 1)
+                     (fr (cdr frame-vars)))
+            (if (null? fr)
+                #f
+                (if (pred? (car fr))
+                    l
+                    (loop (add1 l) (cdr fr)))))))))
 
-
+(do-test
+ find-binding-group-len
+ (list
+  (mat '( ((? 2 x) . a) ((? 1 x) . a)) 1)
+  (mat '( ((? 2 x) . a) ((? 2 z) . b) ((? 2 t) . c)
+          ((? 1 x) . a) ((? 1 z) . b) ((? 1 t) . c)) 3)
+  (mat '() #f)
+  (mat '( ((? 2 x) . a) ((? 2 z) . b) ) #f)
+  ))
 
 #|
 (apply
