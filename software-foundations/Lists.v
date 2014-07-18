@@ -844,7 +844,14 @@ Qed.
        ([::]), [snoc], and [app] ([++]).
      - Prove it. *)
 
-(* FILL IN HERE *)
+Theorem cons_app_cnos_exercise : forall (m n : nat) (ms ns : natlist),
+  cons m ms ++ snoc ns n = (cons m (snoc (ms ++ ns) n)).
+Proof.
+  intros m n ms ns. simpl.
+  rewrite snoc_append. rewrite snoc_append.
+  rewrite app_ass. reflexivity.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (bag_proofs) *)
@@ -854,7 +861,8 @@ Qed.
 Theorem count_member_nonzero : forall (s : bag),
   ble_nat 1 (count 1 (1 :: s)) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s. reflexivity.
+Qed.
 
 (** The following lemma about [ble_nat] might help you in the next proof. *)
 
@@ -870,14 +878,37 @@ Proof.
 Theorem remove_decreases_count: forall (s : bag),
   ble_nat (count 0 (remove_one 0 s)) (count 0 s) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s. induction s as [|n s'].
+  Case "s = nil". reflexivity.
+  Case "s = cons n s'". simpl.
+    induction n as [|n'].
+    SCase "n = 0". simpl. rewrite ble_n_Sn. reflexivity.
+    SCase "n = S n'". simpl. rewrite IHs'. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (bag_count_sum) *)
 (** Write down an interesting theorem about bags involving the
     functions [count] and [sum], and prove it.*)
 
-(* FILL IN HERE *)
+Lemma plus_n_0 : forall n : nat,
+  n + 0 = n.
+Proof.
+  intros n. induction n as [|n'].
+  Case "n = 0". reflexivity.
+  Case "n = S n'". simpl. rewrite IHn'. reflexivity.
+Qed.
+
+Theorem count_sum_exercise : forall (n : nat) (xs ys : natlist),
+  count n xs + count n ys = count n (sum xs ys).
+Proof.
+  intros n xs ys.
+  induction xs as [|x' xs'].
+  Case "xs = nil". reflexivity.
+  Case "xs = x' :: xs'". simpl. destruct (beq_nat x' n).
+    SCase "x' = n". rewrite <- IHxs'. reflexivity.
+    SCase "x' /= n". rewrite IHxs'. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced (rev_injective) *)
@@ -887,8 +918,15 @@ Proof.
 
 There is a hard way and an easy way to solve this exercise.
 *)
-
-(* FILL IN HERE *)
+Theorem rev_inj : forall (l1 l2 : natlist),
+  rev l1 = rev l2 -> l1 = l2.
+Proof.
+  intros l1 l2 H.
+  assert (rev (rev l1) = rev (rev l2)).
+    rewrite H. reflexivity.
+  rewrite <- rev_involutive. rewrite <- H0.
+  rewrite rev_involutive. reflexivity.
+Qed.
 (** [] *)
 
 
@@ -970,16 +1008,19 @@ Definition option_elim (d : nat) (o : natoption) : nat :=
    have to pass a default element for the [nil] case.  *)
 
 Definition hd_opt (l : natlist) : natoption :=
-  (* FILL IN HERE *) admit.
+  match l with
+  | [] => None
+  | h :: d => Some h
+  end.
 
 Example test_hd_opt1 : hd_opt [] = None.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_opt2 : hd_opt [1] = Some 1.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_opt3 : hd_opt [5;6] = Some 5.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, optional (option_elim_hd) *)
@@ -988,7 +1029,10 @@ Example test_hd_opt3 : hd_opt [5;6] = Some 5.
 Theorem option_elim_hd : forall (l:natlist) (default:nat),
   hd default l = option_elim default (hd_opt l).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l default. induction l as [|n l'].
+  Case "l = nil". reflexivity.
+  Case "l = cons n l'". reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars (beq_natlist) *)
@@ -997,19 +1041,40 @@ Proof.
     yields [true] for every list [l]. *)
 
 Fixpoint beq_natlist (l1 l2 : natlist) : bool :=
-  (* FILL IN HERE *) admit.
+  match l1 with
+  | [] => match l2 with
+          | [] => true
+          | y :: ys => false
+          end
+  | x :: xs => match l2 with
+               | [] => false
+               | y :: ys => andb (beq_nat x y) (beq_natlist xs ys)
+               end
+  end.
 
 Example test_beq_natlist1 :   (beq_natlist nil nil = true).
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_beq_natlist2 :   beq_natlist [1;2;3] [1;2;3] = true.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_beq_natlist3 :   beq_natlist [1;2;3] [1;2;4] = false.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
+
+Lemma beq_nat_refl : forall (n : nat),
+  beq_nat n n = true.
+Proof.
+  intros n. induction n as [| n'].
+  Case "n = 0". reflexivity.
+  Case "n = S n'". simpl. rewrite IHn'. reflexivity.
+Qed.
 
 Theorem beq_natlist_refl : forall l:natlist,
   true = beq_natlist l l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l. induction l as [| n l'].
+  Case "l = nil". reflexivity.
+  Case "l = cons n l'". simpl. rewrite <- IHl'.
+    rewrite beq_nat_refl. reflexivity.
+Qed.
 (** [] *)
 
 (* ###################################################### *)
@@ -1057,7 +1122,8 @@ Fixpoint find (key : nat) (d : dictionary) : natoption :=
 Theorem dictionary_invariant1' : forall (d : dictionary) (k v: nat),
   (find k (insert k v d)) = Some v.
 Proof.
- (* FILL IN HERE *) Admitted.
+  intros d k v. simpl. rewrite beq_nat_refl. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (dictionary_invariant2) *)
@@ -1066,7 +1132,8 @@ Proof.
 Theorem dictionary_invariant2' : forall (d : dictionary) (m n o: nat),
   beq_nat m n = false -> find m d = find m (insert n o d).
 Proof.
- (* FILL IN HERE *) Admitted.
+  intros d m n o H. simpl. rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 
