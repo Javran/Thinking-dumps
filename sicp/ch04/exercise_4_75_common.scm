@@ -1,8 +1,3 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
-(load "./qeval.scm")
-
 (define (singleton-stream? s)
   (and (not (stream-null? s))
        (stream-null? (stream-cdr s))))
@@ -20,9 +15,3 @@
 
 (define (install-handler-unique)
   (put 'unique 'qeval uniquely-asserted))
-
-(end-script)
-
-;; Local variables:
-;; proc-entry: ""
-;; End:
