@@ -11,4 +11,3 @@ primeFactorsMult = map swap . encode . primeFactors
 
 main :: IO ()
 main = print $ primeFactorsMult 315
-
