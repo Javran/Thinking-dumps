@@ -55,6 +55,10 @@
        (list->stream '(a b c d))
        (list->stream (list-in-range 1 3)))))
 
+;; A big problem here is that when a rule is applied,
+;; the variable names are changed, since we are runing two sub-terms
+;; separately, how can we tell the relationship between two frame bindings?
+
 (end-script)
 
 ;; Local variables:
