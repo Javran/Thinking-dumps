@@ -59,6 +59,39 @@
 ;; the variable names are changed, since we are runing two sub-terms
 ;; separately, how can we tell the relationship between two frame bindings?
 
+(load "./qeval.scm")
+
+(define (conjoin conjuncts frame-stream)
+  ;; conjunction accessors
+  (define empty-conjunction? null?)
+  (define first-conjunct car)
+  (define rest-conjuncts cdr)
+  (if (empty-conjunction? conjuncts)
+      frame-stream
+      (let ((res1 (qeval (first-conjunct conjuncts) frame-stream))
+            (res2 (qeval (cadr conjuncts) frame-stream)))
+        (out res1 res2 frame-stream)
+        (error "testing"))))
+
+(apply
+ qe-fresh-asserts!
+ '(
+   (nat z)
+
+   (rule (nat (s ?n))
+         (nat ?n))
+
+   (rule (plus ?a z ?a) (nat ?a))
+   (rule (plus z ?b ?b) (nat ?b))
+   (rule (plus (s ?a) (s ?b) (s ?c))
+         (and (nat ?a)
+              (nat ?b)
+              (plus ?a (s ?b) ?c)))
+
+   ))
+
+(out (qe-all '(plus (s (s z)) (s (s (s z))) ?a)))
+
 (end-script)
 
 ;; Local variables:
