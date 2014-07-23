@@ -92,6 +92,22 @@
 
 (out (qe-all '(plus (s (s z)) (s (s (s z))) ?a)))
 
+;; Some more notes:
+;; pretend that we evaluate each conjunction with same frame,
+;; therefore we are still sharing some of the variable bindings
+;; And actually there is no confliction between variables
+;; because we've transformed variables to make them unique
+
+;; I think currently a potential method would be:
+;; let first conjunction and rests of the conjunctions run separately
+;; figure out some way to say that these two frames are "compatible"
+;; here suppose first conjunction generates a binding `a` related to
+;; the original binding `c`, and rest of the conjunctions also have a
+;; binding `b`, now we need to come up with some ways to tell
+;; if both `a ~ c` and `b ~ c`  can be satisfied.
+;; if the "compatible check" fails, then we just remove that frame
+;; from the stream
+
 (end-script)
 
 ;; Local variables:
