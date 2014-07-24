@@ -6,29 +6,31 @@ where
 
 import System.Random
 import Control.Applicative
-import Control.Monad
 import Control.Monad.Random
 import Data.IORef
 
-type Factory = IORef StdGen
+type RHandler = IORef String
 
 -- | produce a robot name
-robotName :: Factory -> IO String
-robotName = readIORef >=> evalRandT robotNameAp
+robotName :: RHandler -> IO String
+robotName = readIORef
 
 -- | randomly generate a robot name
 robotNameAp :: (MonadRandom m, Applicative m) => m String
-robotNameAp = (++) <$> replicateM 2 mkChar
-                   <*> replicateM 3 mkNum
+robotNameAp = mapM getRandomR (rep' ch ++ rep' nu)
     where
-        mkChar = getRandomR ('A','Z')
-        mkNum  = getRandomR ('0','9')
+        rep' = uncurry replicate
+        ch = (2,('A','Z'))
+        nu = (3,('0','9'))
 
 -- | make a new robot
-mkRobot :: IO Factory
-mkRobot = newStdGen >>= newIORef
+mkRobot :: IO RHandler
+mkRobot = genNewName >>= newIORef
 
 -- | reset factory
-resetName :: Factory -> IO ()
-resetName ref = newStdGen >>= writeIORef ref
+resetName :: RHandler -> IO ()
+resetName ref = genNewName >>= writeIORef ref
 
+-- | generate a new name
+genNewName :: IO String
+genNewName = newStdGen >>= evalRandT robotNameAp
