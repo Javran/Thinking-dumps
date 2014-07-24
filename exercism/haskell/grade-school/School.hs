@@ -8,8 +8,8 @@ module School
 where
 
 import Control.Arrow
+import Data.Foldable (fold)
 import Data.List
-import Data.Maybe
 
 import qualified Data.Map.Strict as M
 
@@ -21,19 +21,15 @@ empty = M.empty
 
 -- | add new record to a 'School'
 add :: Int -> String -> School -> School
-add g n = M.alter (Just . maybe onFailure onSuccess) g
-    where
-        -- try searching by key and alter the value
-        onSuccess = (n :) -- ^ found, prepend new name to it
-        onFailure = [n]   -- ^ not found, make a singleton
+add g n = M.insertWith (++) g [n]
 
 -- | convert `School` to list, with elements sorted by grade and name
 sorted :: School -> [(Int, [String])]
-sorted =   M.toAscList               -- convert to list
-       >>> (map . second) sort       -- walk into the second part(name list)
-                                     -- of each element, sort it.
+         -- convert to list, for each value, sort by name
+sorted = (map . second) sort . M.toAscList
+
 -- | sorted list of all names in a grade
 grade :: Int -> School -> [String]
-grade g =   M.lookup g   -- lookup g from the dict
-        >>> fromMaybe [] -- convert result to list (listToMaybe >>> concat)
-        >>> sort         -- sort result
+grade g =   M.lookup g
+        >>> fold       -- Maybe [a] -> [a]
+        >>> sort
