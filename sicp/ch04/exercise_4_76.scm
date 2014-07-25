@@ -61,37 +61,6 @@
 
 (load "./qeval.scm")
 
-(define (conjoin conjuncts frame-stream)
-  ;; conjunction accessors
-  (define empty-conjunction? null?)
-  (define first-conjunct car)
-  (define rest-conjuncts cdr)
-  (if (empty-conjunction? conjuncts)
-      frame-stream
-      (let ((res1 (qeval (first-conjunct conjuncts) frame-stream))
-            (res2 (qeval (cadr conjuncts) frame-stream)))
-        (out res1 res2 frame-stream)
-        (error "testing"))))
-
-(apply
- qe-fresh-asserts!
- '(
-   (nat z)
-
-   (rule (nat (s ?n))
-         (nat ?n))
-
-   (rule (plus ?a z ?a) (nat ?a))
-   (rule (plus z ?b ?b) (nat ?b))
-   (rule (plus (s ?a) (s ?b) (s ?c))
-         (and (nat ?a)
-              (nat ?b)
-              (plus ?a (s ?b) ?c)))
-
-   ))
-
-(out (qe-all '(plus (s (s z)) (s (s (s z))) ?a)))
-
 ;; Some more notes:
 ;; pretend that we evaluate each conjunction with same frame,
 ;; therefore we are still sharing some of the variable bindings
@@ -117,6 +86,31 @@
 ;; and to merge these three frames together (some of the frames
 ;; must be exactly the same, remember we only add bindings to
 ;; the frame but not change existing ones
+
+(define (merge-frames frame1 frame2)
+  (let ((vars1 (map binding-variable frame1))
+        (vars2 (map binding-variable frame2)))
+    (let ((common-vars
+           (filter
+            (lambda (var)
+              (member var vars2))
+            vars1)))
+      (let ((frame3
+             (let loop ((vars common-vars)
+                        (new-frame empty-frame))
+               (if (eq? new-frame 'failed)
+                   'failed
+                   (if (null? vars)
+                       new-frame
+                       (loop
+                        (cdr vars)
+                        (unify-match2
+                         (car vars)
+                         frame1
+                         frame2
+                         new-frame)))))))
+        (merge-with-new-frame
+         frame1 frame2 frame3)))))
 
 (end-script)
 
