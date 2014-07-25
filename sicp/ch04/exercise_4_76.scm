@@ -108,6 +108,16 @@
 ;; if the "compatible check" fails, then we just remove that frame
 ;; from the stream
 
+;; Here is a potential approach:
+;; we only compare bindings in common
+;; say that we are given two frames, which must share some bindings
+;; we compare all the variables in common, and try to unify
+;; the value of the same variable with two different frames
+;; the unification is done on two frames, producing a new frame
+;; and to merge these three frames together (some of the frames
+;; must be exactly the same, remember we only add bindings to
+;; the frame but not change existing ones
+
 (end-script)
 
 ;; Local variables:
