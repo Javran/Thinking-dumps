@@ -91,11 +91,15 @@
   (let ((vars1 (map binding-variable frame1))
         (vars2 (map binding-variable frame2)))
     (let ((common-vars
+           ;; the variables in common
+           ;; are those variables in vars1
+           ;; which also appears in vars2
            (filter
             (lambda (var)
               (member var vars2))
             vars1)))
       (let ((frame3
+             ;; keep extending the new frame if possible
              (let loop ((vars common-vars)
                         (new-frame empty-frame))
                (if (eq? new-frame 'failed)
@@ -111,6 +115,9 @@
                          new-frame)))))))
         (merge-with-new-frame
          frame1 frame2 frame3)))))
+
+;; TODO: unify-match2
+;; TODO: merge-with-new-frame
 
 (end-script)
 
