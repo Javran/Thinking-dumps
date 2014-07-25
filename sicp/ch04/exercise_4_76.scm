@@ -110,11 +110,29 @@
                         (cdr vars)
                         (unify-match2
                          (car vars)
+                         (car vars)
                          frame1
                          frame2
                          new-frame)))))))
         (merge-with-new-frame
          frame1 frame2 frame3)))))
+
+(define (unify-match2 v1 v2 fr1 fr2 newfr)
+  (define (lookup k fr)
+    ;; lookup the fresh bindings first
+    ;; the actual frame is examined only
+    ;; if there is no fresh binding for the
+    ;; variable in question
+    (or (binding-in-frame k newfr)
+        (binding-in-frame k fr)))
+  (let ((p1 (lookup v1 fr1))
+        (p2 (lookup v2 fr2)))
+    (cond ((eq? newfr 'failed) 'failed)
+          ((equal? p1 p2) (error)))
+    (error)))
+
+;; not working ... wrong somewhere
+
 
 ;; TODO: unify-match2
 ;; TODO: merge-with-new-frame
