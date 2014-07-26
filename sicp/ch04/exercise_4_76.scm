@@ -134,7 +134,29 @@
     (define (lookup k fr)
       (or (binding-in-frame k newfr)
           (binding-in-frame k fr)))
-    (define depends-on? 'todo)
+    (define (depends-on? v1 v2)
+      ;; we don't need to pass 'newfr' here
+      ;; as depends-on? can actually obtain it from
+      ;; its environment (and we won't give 'newfr'
+      ;; another value as well)
+      (define (tree-walk e)
+        (cond ((var? e)
+               (if (equal? var e)
+                   ;; TODO: I guess this might cause some trouble
+                   ;; for now I just admit it and see what happens
+                   #t
+                   (let ((b (lookup e fr2)))
+                     (if b
+                         (tree-walk (binding-value b))
+                         #f))))
+              ((pair? e)
+               (or (tree-walk (car e))
+                   (tree-walk (cdr e))))
+              (else #f)))
+      ;; because of the manner that `depends-on?` is called
+      ;; `v1` is surely a variable, so we are only interested
+      ;; in `v2`
+      (tree-walk v2))
 
     (let ((binding-v1 (lookup v1 fr1)))
       (cond
@@ -154,7 +176,7 @@
                newfr)
               ;; both are vars and unbound
               (extend v1 v2 newfr))))
-       ((depends-on? v1 fr1 v2 fr2 newfr)
+       ((depends-on? v1 v2)
         'failed)
        (else (extend v1 v2 newfr)))))
 
