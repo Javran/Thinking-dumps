@@ -125,6 +125,40 @@
     ;; variable in question
     (or (binding-in-frame k newfr)
         (binding-in-frame k fr)))
+
+  (define (extend-if-possible-2
+           v1 fr1 v2 fr2 newfr)
+    ;; rebind lookup here, as now "newfr"
+    ;; has a different meaning
+    ;; TOOD: make the code look better
+    (define (lookup k fr)
+      (or (binding-in-frame k newfr)
+          (binding-in-frame k fr)))
+    (define depends-on? 'todo)
+
+    (let ((binding-v1 (lookup v1 fr1)))
+      (cond
+       ;; v1 is bound, use the lookup result
+       (binding-v1
+        (unify-match2
+         (binding-value binding-v1) fr1
+         v2 fr2
+         newfr))
+       ;; start from here, cases for v1 is not bound
+       ((var? v2)
+        (let ((binding-v2 (lookup v2 fr2)))
+          (if binding-v2
+              (unify-match2
+               v1 fr1
+               (binding-value binding-v2) fr2
+               newfr)
+              ;; both are vars and unbound
+              (extend v1 v2 newfr))))
+       ((depends-on? v1 fr1 v2 fr2 newfr)
+        'failed)
+       (else (extend v1 v2 newfr)))))
+
+
   (let ((p1 (lookup v1 fr1))
         (p2 (lookup v2 fr2)))
     ;; we need to be careful here
