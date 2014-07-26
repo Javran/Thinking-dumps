@@ -109,15 +109,15 @@
                        (loop
                         (cdr vars)
                         (unify-match2
-                         (car vars)
-                         (car vars)
+                         (car vars1)
                          frame1
+                         (car vars2)
                          frame2
                          new-frame)))))))
         (merge-with-new-frame
          frame1 frame2 frame3)))))
 
-(define (unify-match2 v1 v2 fr1 fr2 newfr)
+(define (unify-match2 v1 fr1 v2 fr2 newfr)
   (define (lookup k fr)
     ;; lookup the fresh bindings first
     ;; the actual frame is examined only
@@ -139,10 +139,13 @@
           ;; now we can confirm that
           ;; both p1 and p2 are not variables
           ((and (pair? p1) (pair? p2))
-           (unify-match2 (cdr p1) (cdr p2) fr1 fr2
-                         (unify-match2 (car p1)
-                                       (car p2)
-                                       newfr)))
+           (unify-match2
+            (cdr p1) fr1
+            (cdr p2) fr2
+            (unify-match2
+             (car p1) fr1
+             (car p2) fr2
+             newfr)))
           ;; now we can confirm that
           ;; p1 and p2 are not both pairs
           ;; and I think it's safe to use "equal?" here
