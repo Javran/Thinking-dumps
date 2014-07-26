@@ -127,14 +127,28 @@
         (binding-in-frame k fr)))
   (let ((p1 (lookup v1 fr1))
         (p2 (lookup v2 fr2)))
+    ;; we need to be careful here
+    ;; since the same variable might be bound to
+    ;; totally different things
+    ;; therefore simply test `equal?` might go wrong
     (cond ((eq? newfr 'failed) 'failed)
-          ((equal? p1 p2) (error)))
-    (error)))
+          ((var? p1) (extend-if-possible-2
+                      p1 fr1 p2 fr2 newfr))
+          ((var? p2) (extend-if-possible-2
+                      p2 fr2 p1 fr1 newfr))
+          ;; now we can confirm that
+          ;; both p1 and p2 are not variables
+          ((and (pair? p1) (pair? p2))
+           (unify-match2 (cdr p1) (cdr p2) fr1 fr2
+                         (unify-match2 (car p1)
+                                       (car p2)
+                                       newfr)))
+          ;; now we can confirm that
+          ;; p1 and p2 are not both pairs
+          ;; and I think it's safe to use "equal?" here
+          ((equal? p1 p2) newfr)
+          (else 'failed))))
 
-;; not working ... wrong somewhere
-
-
-;; TODO: unify-match2
 ;; TODO: merge-with-new-frame
 
 (end-script)
