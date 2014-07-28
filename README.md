@@ -7,7 +7,7 @@ from which I'd like to find something new.
 
 So I name this repo "Thinking dumps".
 
-Please feel free to use the codes or share your thinking with me. 
+Please feel free to use the codes or share your thinking with me.
 
 ## Seven Languages in Seven Weeks
 
@@ -24,3 +24,9 @@ Author: Dorai Sitaram
 Link: [t-y-scheme](http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html)
 
 Directory: `ty-scheme`
+
+## Learn You The Node.js For Much Win!
+
+Link: [learnyounode](https://github.com/rvagg/learnyounode)
+
+Directory: [learnyounode](/learnyounode)
