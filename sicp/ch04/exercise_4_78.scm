@@ -48,6 +48,25 @@
 
 (out (qe-all '(append (a b c) (d e f) ?x)))
 
+;; a more basic case will be: how to do pattern matching
+;; and unification in amb?
+
+(apply
+ qe-fresh-asserts!
+
+ '(
+   (pat (a b c))
+   (pat (d e))
+   ))
+
+(out (qe-all '(pat (?a . ?b))))
+(out (qe-all '(pat (?a ?b))))
+
+;; I believe solving these questions would help somehow,
+;; but now I don't have a clear idea about how to implement this
+;; Maybe I'll skip these questions and move to chapter 5.
+;; Will come back later.
+
 (end-script)
 
 ;; Local variables:
