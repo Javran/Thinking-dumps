@@ -33,6 +33,21 @@
            (cons a b)))
       (amb-init-env)))
 
+;; now we need to figure out how to "append" in amb...
+
+(apply
+ qe-fresh-asserts!
+
+ '(
+   (rule (append () ?b ?b))
+
+   (rule (append (?ah . ?al) ?b (?ah . ?c))
+         (append ?al ?b ?c))
+
+   ))
+
+(out (qe-all '(append (a b c) (d e f) ?x)))
+
 (end-script)
 
 ;; Local variables:
