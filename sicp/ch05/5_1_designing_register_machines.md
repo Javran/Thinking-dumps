@@ -5,6 +5,15 @@ The original program is:
           a
           (gcd b (remainder a b))))
 
+To design a register machine, we must design its data paths and the controllers.
+Data paths are registers and operations and the controllers are sequence of these
+operations.
+
+Note: Maybe here I can make an analogy between a register machine
+and a register based bytecode machine. Data paths are instructions including
+the way to pass values among registers and the way to combine certain values
+to yield a result. And the controller might be like a sequence of instructions
+to arrange these instructions to form a meaningful program.
 
 About data path:
 
@@ -23,3 +32,9 @@ operations:
 * `a <- b`
 * `t <- r` `r <- rem a b`
 * `b <- t`
+
+About controller diagrams:
+
+* Rectangles: data path (the "button" to be pushed)
+* Arrow: sequence
+* Diamond: a decision
