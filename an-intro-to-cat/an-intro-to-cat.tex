@@ -49,11 +49,16 @@ of arrow composition holds. And the identity for each object $A$ in the category
 this is because $A \le A$ holds (The binary relation is reflexive).
 
 \paragraph{Each monoid is a category} For any given monoid $(M, \star , 1)$, the corresponding
-category has only one element, which is the monoid itself. Every element in
-this monoid is an arrow from the only object to itself. The arrow composition is
-the binary relation $\star$. (We can observe that for any two arrows $f$ and $g$, $f \star g$
+category has only one object (Here we don't need to care about
+what exactly the object is, which isn't important). Every element in
+this monoid is an arrow from the only object to itself.
+The arrow composition is
+the binary relation $\star$. We can observe that for any two arrows $f$ and $g$, $f \star g$
 does form another arrow, and that $(f \star g) \star h = f \star (g \star h)$
-is guaranteed by the property held by the monoid).
+is guaranteed by the property held by the monoid.
+And because the unit $1$ correponses to the identity arrow,
+the requirement that $1 \star m = m = m \star 1$ holds trivially (where $m$ are
+elements in the monoid).
 
 \subsection{Categories of structured sets}
 
