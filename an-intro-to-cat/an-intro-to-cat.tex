@@ -192,13 +192,10 @@ we know that $f$ is determined by $\alpha$ and $a$.
 
 \subsubsection{Show that these pairs are the objects of a category}
 
-% TODO: notice the case that we mention category before we show that it is a category
-%   need some modifications to eliminate this kind of mistakes
-
 \begin{itemize}
   \item Objects are of form $(A,R)$, where $A$ is a set and $R \subseteq A \times A$
     is a binary relation on $A$.
-  \item Arrows: Suppose two arbitrary objects in this category is $(A,R)$ and $(B,S)$.
+  \item Arrows: Suppose two arbitrary objects are $(A,R)$ and $(B,S)$.
     The arrow $f$:
 
     \begin{diagram}
@@ -230,14 +227,89 @@ we know that $f$ is determined by $\alpha$ and $a$.
 
   \item Composition associativity holds because the arrow composition
     is function composition.
-  \item Identity arrow is the identity function viewed as a morphism.
+  \item Each identity arrow is the corresponding identity function viewed as a morphism.
 \end{itemize}
 
 \subsubsection{Category \cat{Top}}
 
-Skip this exercise for a while.
+\newcommand{\inv}[1]{#1^\leftarrow}
+\newcommand{\op}[1]{\mathcal{O}#1}
+
+We first prove a lemma:
+For arbitrary topological spaces $(S,\op{S})$, $(T,\op{T})$ and $(U,\op{U})$,
+suppose we have 2 continuous map:
+
+\begin{diagram}
+  (S,\op{S}) & \rTo^\phi & (T,\op{T}) & \rTo^\psi & (U,\op{U})
+\end{diagram}
+
+Then $\forall W \in \op{U}, (\inv{\phi} \fcomp \inv{\psi})(W) \in \op{S} \Rightarrow \
+\inv{(\psi \fcomp \phi)}(W) \in \op{S}$.
+
+\begin{proof}
+
+We have the following facts:
+
+\begin{enumerate}
+  \item $\phi : S \rTo T$
+  \item $\psi : T \rTo U$
+  \item $\forall V \in \op{T}, \inv{\phi}(V) \in \op{S}$
+  \item $\forall W \in \op{U}, \inv{\psi}(W) \in \op{T}$
+  \item $\forall V \in \op{T}, x \in S, x \in \inv{\phi}(V) \Leftrightarrow \phi(x) \in V$
+  \item $\forall W \in \op{U}, y \in T, y \in \inv{\psi}(W) \Leftrightarrow \psi(y) \in W$
+\end{enumerate}
+
+According to fact 3 and fact 4, we have:
+
+\begin{equation*}
+  \forall W \in \op{U}, \inv{\phi}(\inv{\psi}(W)) = (\inv{\phi} \fcomp \inv{\psi})(W) \in \op{S}
+\end{equation*}
+
+Since $\inv{\psi}(W) \in \op{T}$, according to fact 5:
+
+\begin{equation*}
+  \forall W \in \op{U}, x \in \inv{\phi}(\inv{\psi}(W)), \phi(x) \in \inv{\psi}(W)
+\end{equation*}
+
+Since $\phi(x) \in T$. According to fact 6:
+
+\begin{equation*}
+  \forall W \in \op{U}, x \in \inv{\phi}(\inv{\psi}(W)), \
+ \psi(\phi(x)) = (\psi \fcomp \phi)(x) \in W
+\end{equation*}
+
+Therefore:
+
+\begin{equation*}
+ \forall W \in \op{U}, x \in \inv{(\psi \fcomp \phi)}(W), \inv{(\psi \fcomp \phi)}(W) \in \op{S}
+\end{equation*}
+
+\end{proof}
+
+To show that $\cat{Top}$ is a category:
+
+\begin{itemize}
+  \item Objects are topological spaces
+  \item Arrows are continuous maps between topological spaces.
+  \item The arrow composition is the function composition of continuous maps.
+    For arbitrary topological spaces $(S,\op{S})$, $(T,\op{T})$ and $(U,\op{U})$,
+    suppose we have 2 continuous map:
+    \begin{diagram}
+      (S,\op{S}) & \rTo^\phi & (T,\op{T}) & \rTo^\psi & (U,\op{U})
+    \end{diagram}
+    According to the lemma, we know that $\forall W \in \op{U},
+    \inv{(\psi \fcomp \phi)}(W) \in \op{S}$.
+    Therefore the function composition yields another continuous map $\psi \fcomp \phi : S \rTo U$.
+  \item The associativity for arrow composition holds because the associativity for
+    function composition holds
+  \item Each identity arrow is the corresponding identity function viewed as
+    a continuous map.
+\end{itemize}
 
 \subsubsection{Show that $C[A,A]$ is a monoid under composition}
+
+% TODO: notice the case that we mention category before we show that it is a category
+%   need some modifications to eliminate this kind of mistakes
 
 \begin{itemize}
   \item Elements in the set are all arrows in $C[A,A]$
