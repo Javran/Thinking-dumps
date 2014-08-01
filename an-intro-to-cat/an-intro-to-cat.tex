@@ -95,8 +95,11 @@ elements in the monoid).
     Therefore the arrow composition is the function composition.
 
   \item Associativity holds by the function composition.
-  \item For each object $(A,\alpha, a)$, $id_A \fcomp \alpha = \alpha \fcomp id_A$ and
-    $id_A(a) = a$. So the identity arrow is the identity function on $A$ viewed as a morphism.
+  \item For each arrow $f : A \rTo B$, let $id_A(a) = a$ for all elements in $A$,
+    let $id_B(b) = b$ for all elements in $B$. We can observe that
+    $id_B \fcomp f = f = f \fcomp id_A$.
+    Therefore the identity arrow is the identity function viewed as a morphism.
+
 \end{itemize}
 
 Therefore $\cat{Pno}$ is a category.
@@ -150,7 +153,7 @@ applying $succ$ to $n_1$ and then applying $f$ to the resulting value does.
 We can informally says that $\alpha$ to $(A,a)$ is like $succ$ to $(\nat,0)$.
 
 The uniqueness of $f$ is also established, because from $f(n) = \alpha^n(a)$,
-we know that $f$ is totally determined by $\alpha$ and $a$.
+we know that $f$ is determined by $\alpha$ and $a$.
 
 \subsubsection{Category $\cat{SetD}$}
 
