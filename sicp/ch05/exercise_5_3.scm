@@ -15,7 +15,7 @@
   '(controller
     (assign guess (const 1.0))
     test-good
-    ;; expanded "good-enough?"
+    ;; "good-enough?" starts here
     (assign result (op square) (reg guess))
     (assign t1 (reg result))
     (assign result (op -) (reg t1) (reg x))
@@ -29,3 +29,29 @@
     (goto (label test-good))
     iter-done
     (assign result (reg guess))))
+
+;; version 3 expands "improve"
+(define sqrt-machine-v3
+  '(controller
+    (assign guess (const 1.0))
+    test-good
+    ;; "good-enough?" starts here
+    (assign result (op square) (reg guess))
+    (assign t1 (reg result))
+    (assign result (op -) (reg t1) (reg x))
+    (assign t1 (reg result))
+    (assign result (op abs) (reg t1))
+    (test (op <) (reg result) (const 0.001))
+    ;; "good-enough?" ends here
+    (branch (label iter-done))
+    ;; "improve" starts here
+    (assign result (op /) (reg x) (reg guess))
+    (assign t1 (reg result))
+    (assign result (op average) (reg guess) (reg t1))
+    ;; "improve" ends here
+    (assign guess (reg result))
+    (goto (label test-good))
+    iter-done
+    (assign result (reg guess))))
+
+;; TODO: run it if possible
