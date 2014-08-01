@@ -1,3 +1,4 @@
+;; TODO: run if if possible
 (define factorial-machine
   '(controller
       (assign product (const 1))
