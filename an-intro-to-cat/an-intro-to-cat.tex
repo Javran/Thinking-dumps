@@ -658,4 +658,46 @@ The associativity of composition holds since:
 
 And each identity arrow is the corresponding identity function viewed as graph morphism.
 
+\subsubsection{With the obvious composition this does form a category}
+
+The objects and arrows are given here. So we only need to find a way to compose arrows,
+verify its associativity, and find identity arrows.
+
+Consider two new compatible arrows:
+
+\begin{diagram}
+  (A,R) & \rTo^{(f,\phi)} & (B,S) & \rTo^{(g,\psi)} & (C,T)
+\end{diagram}
+
+where $A,B,C$ are \cat{A}-objects and $R,S,T$ are \cat{S}-objects.
+
+The arrow composition can be defined as:
+
+\begin{align*}
+  (g,\psi) \fcomp (f,\phi) = (g \fcomp f, \phi \fcomp \psi)
+\end{align*}
+
+We can verify that:
+
+\begin{diagram}
+  A & \rTo^{g \fcomp f} & C & R & \lTo^{\phi \fcomp \psi} & T
+\end{diagram}
+
+Therefore arrow composition produces another arrow between $(A,R)$ and $(C,T)$.
+
+Given 3 arbitrary compatible arrows $(f,\phi), (g,\psi), (h,\eta)$,
+we need to show that the arrow composition is associativity:
+
+\begin{align*}
+  & (h,\eta) \fcomp ((g,\psi) \fcomp (f,\phi)) \\
+  = & (h,\eta) \fcomp (g \fcomp f, \phi \fcomp \psi) \\
+  = & (h \fcomp (g \fcomp f), (\phi \fcomp \psi) \fcomp \eta) \\
+  = & ((h \fcomp g) \fcomp f, \phi \fcomp (\psi \fcomp \eta)) \\
+  = & (h \fcomp g, \psi \fcomp \eta) \fcomp (f, \phi) \\
+  = & ((h,\eta) \fcomp (g,\psi)) \fcomp (f,\phi)
+\end{align*}
+
+And each identity arrow is the corresponding pair of identity functions
+viewed as a pair of arrows.
+
 \end{document}
