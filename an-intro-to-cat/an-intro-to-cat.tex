@@ -581,4 +581,81 @@ Therefore this gives a category. If we have to say that this example somehow che
 I think the cheating part is that this category just uses matrix multiplication
 to make every property necessary to form a category hold.
 
+\subsubsection{With the appropriate notion of composition,
+ graphs and their morphisms form a category}
+
+Suppose we have three directed graphs, namely $(N,E), (M,F), (O,G)$:
+
+\begin{diagram}
+  E & \pile{\rTo^{\sigma_0} \\ \rTo_{\tau_0}} & N & \
+  F & \pile{\rTo^{\sigma_1} \\ \rTo_{\tau_1}} & M & \
+  G & \pile{\rTo^{\sigma_2} \\ \rTo_{\tau_2}} & O & \
+\end{diagram}
+
+and two morphisms $f,g$ between them:
+
+\begin{diagram}
+  (N,E) & \rTo^f & (M,F) & \rTo^g & (O,G)
+\end{diagram}
+
+Graph morphism $f$ consists of two functions $f_0, f_1$, such that:
+
+\begin{align*}
+  \sigma_1 \fcomp f_1 = f_0 \fcomp \sigma_0 \qquad \
+  \tau_1 \fcomp f_1 = f_0 \fcomp \tau_0
+\end{align*}
+
+Similarly, for graph morphism $g$ we have:
+
+\begin{align*}
+  \sigma_2 \fcomp g_1 = g_0 \fcomp \sigma_1 \qquad \
+  \tau_2 \fcomp f_1 = f_0 \fcomp \tau_1
+\end{align*}
+
+Suppose $E_0, F_0, G_0$ are edges in $E,F,G$ respectively
+and $N_0 = \sigma_0(E_0), M_0 = \sigma_1(F_0), O_0 = \sigma_2(G_0)$.
+
+We have the following diagram:
+
+\begin{diagram}
+  E_0             & \rTo^{f_1} & F_0             & \rTo^{g_1} & G_0 \\
+  \dTo^{\sigma_0} &            & \dTo^{\sigma_1} &            & \dTo^{\sigma_2} \\
+  N_0             & \rTo^{f_0} & M_0             & \rTo^{g_0} & O_0
+\end{diagram}
+
+Since $\sigma_1 \fcomp f_1 = f_0 \fcomp \sigma_0$
+and $\sigma_2 \fcomp g_1 = g_0 \fcomp \sigma_1$,
+we know that $g_0 \fcomp \sigma_1 \fcomp f_1 = g_0 \fcomp f_0 \fcomp \sigma_0 \
+= \sigma_2 \fcomp g_1 \fcomp f_1$.
+
+Similarly, we can conclude that $g_0 \fcomp f_0 \fcomp \tau_0 \
+= \tau_2 \fcomp g_1 \fcomp f_1$.
+
+If we denote graph morphisms as pairs of functions, then $f = (f_0,f_1)$ and $g = (g_0,g_1)$.
+And we can define the composition of $f$ and $g$ as:
+
+\begin{equation*}
+  g \fcomp f = (g_0 \fcomp f_0, g_1 \fcomp f_1)
+\end{equation*}
+
+And the composition preserves the property that the following holds:
+
+\begin{align*}
+  \sigma_2 \fcomp (g_1 \fcomp f_1) & = (g_0 \fcomp f_0) \fcomp \sigma_0 \\
+  \tau_2 \fcomp (g_1 \fcomp f_1) & = (g_0 \fcomp f_0) \fcomp \tau_0
+\end{align*}
+
+Therefore we can verify that by taking graphs as objects, graph morphisms as arrows,
+and the graph morphism composition defined above as arrow composition, we can form a category.
+The associativity of composition holds since:
+
+\begin{align*}
+  & (h \fcomp g) \fcomp f \\
+  = & ((h_0 \fcomp g_0) \fcomp f_0, (h_1 \fcomp g_1) \fcomp f_1) \\
+  = & (h_0 \fcomp (g_0 \fcomp f_0), h_1 \fcomp (g_1 \fcomp f_1)) \\
+  = & h \fcomp (g \fcomp f)
+\end{align*}
+
+And each identity arrow is the corresponding identity function viewed as graph morphism.
+
 \end{document}
