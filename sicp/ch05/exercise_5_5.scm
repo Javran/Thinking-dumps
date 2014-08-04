@@ -6,6 +6,18 @@
        (not (null? c))
        (eq? 'controller (car c))))
 
+;; let's define machine state structure
+;; (list 'machine-state <insns> <lbl-insn-alist> <stack> <regs>)
+;; where `insns` is the current list of pending instructions
+;; `lbl-insn-alist` is a list of label - instruction list pairs
+;; `stack` is the current stack
+;; `regs` is the current registers
+(define ms-insns cadr)
+(define (ms-get-insns label ms)
+  (cadr (assoc label (caddr ms))))
+(define ms-stack cadddr)
+(define ms-regs  (compose car cddddr))
+
 ;; instead of hand-simulation, let's try to write one simulator
 (define (run-machine controller-desc)
   (let ((instructions (cdr controller-desc)))
