@@ -38,6 +38,14 @@
         (cadr result)
         #f)))
 
+(define (ms-set-reg name val ms)
+  (list 'machine-state
+        (ms-insns ms)
+        (ms-jump-alist ms)
+        (ms-stack ms)
+        (cons (list name val)
+              (del-assoc name (ms-regs ms)))))
+
 ;; accepts a list of instructions
 (define (make-jump-alist instructions)
   (let loop ((insns instructions)
@@ -66,7 +74,15 @@
          (val (ms-get-reg var ms)))
     (ms-stack-push val ms)))
 
+(define (handle-restore body ms)
+  (let* ((var (car body))
+         (val (ms-stack-top ms)))
+    (ms-set-reg var val
+                (ms-stack-pop ms))))
+
 (out (handle-save '(n) (list 'machine-state '(a b c) '() '(1 2 3) '((x 100) (n 400)))))
+(out (handle-restore '(new-var)
+                     (list 'machine-state '(a b c) '() '(1 2 3) '((x 100)))))
 
 (end-script)
 
