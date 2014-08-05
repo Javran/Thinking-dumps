@@ -79,6 +79,26 @@
            ms)
           ms))))
 
+(define (handle-test body ms)
+  (let ((type (caar body))
+        (arg  (cadar body))
+        (args (cdr body)))
+    (define (get-value data)
+      (let ((type (car data))
+            (arg  (cadr data)))
+        (cond
+         ((eq? type 'const) arg)
+         ((eq? type 'reg) (ms-reg-get arg ms))
+         (else
+          (error "unknown type"
+                 type)))))
+    (assert (eq? type 'op))
+    (let ((operator (eval arg user-initial-environment))
+          (operands (map get-value args)))
+      (ms-test-flag-set
+       (apply operator operands)
+       ms))))
+
 (end-script)
 
 ;; Local variables:

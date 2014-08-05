@@ -81,3 +81,5 @@
 
 (define ms-test-flag
   ((curry2 ms-get-field) 'test-flag))
+(define (ms-test-flag-set v ms)
+  (ms-set-field 'test-flag v ms))
