@@ -10,7 +10,7 @@
             #f)))
 
     (define (set key val)
-      (set! table
+      (set! *table*
             (cons (list key val)
                   (del-assoc key *table*))))
 
