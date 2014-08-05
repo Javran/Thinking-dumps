@@ -45,21 +45,23 @@
     (ms-reg-set var val
                 (ms-stack-pop ms))))
 
-(out (handle-save
-      '(n)
-      '(machine-state
-        ((insns (a b c))
-         (jump-alist ())
-         (stack (1 2 3))
-         (regs ((x 100) (n 400)))))))
+(define (handle-goto body ms)
+  (let ((type (caar body))
+        (arg  (cadar body)))
+    (let ((lbl
+           (cond
+            ((eq? type 'reg)
+             (ms-reg-get arg ms))
+            ((eq? type 'label)
+             arg)
+            (else
+             (error "unknown type:"
+                    type)))))
+      (ms-insns-set
+       (ms-query-label lbl ms)
+       ms))))
 
-(out (handle-restore
-      '(new-var)
-      '(machine-state
-        ((insns (a b c))
-         (jump-alist ())
-         (stack (1 2 3))
-         (regs ((x 100)))))))
+
 
 (end-script)
 

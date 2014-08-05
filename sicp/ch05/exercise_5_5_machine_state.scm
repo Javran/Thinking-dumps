@@ -73,3 +73,6 @@
 
 (define (ms-reg-get reg ms)
   (cadr (assoc reg (ms-regs ms))))
+
+(define (ms-insns-set insns ms)
+  (ms-set-field 'insns insns ms))
