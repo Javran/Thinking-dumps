@@ -26,7 +26,7 @@ isBalanced (Branch _ l r) =
     && abs (height l - height r) <= 1
 
 symCbalTrees :: Int -> [Tree Char]
-symCbalTrees = filter (\x -> isBalanced x && symmetric x) . genTrees
+symCbalTrees = filter ((&&) <$> isBalanced <*> symmetric) . genTrees
 
 main :: IO ()
 main = mapM_ print $ symCbalTrees 5
