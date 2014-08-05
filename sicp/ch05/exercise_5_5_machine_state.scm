@@ -8,6 +8,7 @@
 ;; `jump-alist` is a list of label-instruction list pairs
 ;; `stack` is the current stack
 ;; `regs` is the current registers
+;; `test-flag' is the result of previous compuation (default to #f)
 
 (define (machine-state? data)
   (and (list? data)
@@ -41,7 +42,8 @@
     ((insns ())
      (jump-alist ())
      (stack ())
-     (regs ()))))
+     (regs ())
+     (test-flag #f))))
 
 (define ms-insns
   ((curry2 ms-get-field) 'insns))
@@ -76,3 +78,6 @@
 
 (define (ms-insns-set insns ms)
   (ms-set-field 'insns insns ms))
+
+(define ms-test-flag
+  ((curry2 ms-get-field) 'test-flag))

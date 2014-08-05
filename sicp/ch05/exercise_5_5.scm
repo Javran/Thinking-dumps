@@ -61,7 +61,23 @@
        (ms-query-label lbl ms)
        ms))))
 
-
+(define (handle-branch body ms)
+  (let ((type (caar body))
+        (arg  (cadar body)))
+    (let ((lbl
+           (cond
+            ((eq? type 'reg)
+             (ms-reg-get arg ms))
+            ((eq? type 'label)
+             arg)
+            (else
+             (error "unknown type:"
+                    type)))))
+      (if (ms-test-flag ms)
+          (ms-insns-set
+           (ms-query-label lbl ms)
+           ms)
+          ms))))
 
 (end-script)
 
