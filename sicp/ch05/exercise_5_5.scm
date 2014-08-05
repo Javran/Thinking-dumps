@@ -99,6 +99,34 @@
        (apply operator operands)
        ms))))
 
+(define (handle-assign body ms)
+  (let ((target (car body))
+        (type (caadr body))
+        (arg  (cadadr body))
+        (args (cddr body)))
+    (define (get-value data)
+      (let ((type (car data))
+            (arg  (cadr data)))
+        (cond
+         ((eq? type 'const) arg)
+         ((eq? type 'reg) (ms-reg-get arg ms))
+         (else
+          (error "unknown type"
+                 type)))))
+    (let ((new-val
+           (cond
+            ((eq? type 'label) arg)
+            ((eq? type 'const) arg)
+            ((eq? type 'reg) (ms-reg-get arg ms))
+            ((eq? type 'op)
+             (let ((operator (eval arg user-initial-environment))
+                   (operands (map get-value args)))
+               (apply operator operands)))
+            (else
+             (error "unknown type"
+                    type)))))
+      (ms-reg-set target new-val ms))))
+
 (end-script)
 
 ;; Local variables:
