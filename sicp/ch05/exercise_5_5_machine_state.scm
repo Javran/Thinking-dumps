@@ -10,16 +10,21 @@
 ;; `regs` is the current registers
 ;; `test-flag' is the result of previous compuation (default to #f)
 
+;; test if the given object is a machine state object
+;; (alist is not examined)
 (define (machine-state? data)
   (and (list? data)
        (not (null? data))
        (eq? (car data) 'machine-state)))
 
+;; raises an error if the object is invalid
+;; otherwise nothing happens
 (define (ensure-machine-state data)
   (if (machine-state? data)
       'ok
       (error "invalid machine state object")))
 
+;; basic field accessors and mutators
 (define (ms-get-field key data)
   (ensure-machine-state data)
   (let ((alist (cadr data)))
@@ -37,14 +42,7 @@
   (let ((old-val (ms-get-field key data)))
     (ms-set-field key (proc old-val) data)))
 
-(define (make-empty-machine)
-  `(machine-state
-    ((insns ())
-     (jump-alist ())
-     (stack ())
-     (regs ())
-     (test-flag #f))))
-
+;; field accessors
 (define ms-insns
   ((curry2 ms-get-field) 'insns))
 (define ms-jump-alist
@@ -54,10 +52,13 @@
 (define ms-regs
   ((curry2 ms-get-field) 'regs))
 
+;; fetch a list of instructions using a label
+;; `jump-alist` must contain this label
 (define (ms-query-label lbl ms)
   (let ((jump-alist (ms-jump-alist ms)))
     (cadr (assoc lbl jump-alist))))
 
+;; stack operations
 (define ms-stack-top
   (compose car ms-stack))
 (define (ms-stack-pop ms)
@@ -65,6 +66,7 @@
 (define (ms-stack-push v ms)
   (ms-modify-field 'stack ((curry2 cons) v) ms))
 
+;; register getter and setter
 (define (ms-reg-set reg val ms)
   (ms-modify-field
    'regs
@@ -72,14 +74,23 @@
      (cons (list reg val)
            (del-assoc reg alist)))
    ms))
-
 (define (ms-reg-get reg ms)
   (cadr (assoc reg (ms-regs ms))))
 
+;; change the list of current instructions
 (define (ms-insns-set insns ms)
   (ms-set-field 'insns insns ms))
 
+;; test flag getter and setter
 (define ms-test-flag
   ((curry2 ms-get-field) 'test-flag))
 (define (ms-test-flag-set v ms)
   (ms-set-field 'test-flag v ms))
+
+(define (make-empty-machine)
+  `(machine-state
+    ((insns ())
+     (jump-alist ())
+     (stack ())
+     (regs ())
+     (test-flag #f))))
