@@ -40,8 +40,7 @@
         ms
         ;; simulate the next insn
         (let ((insn (car insns)))
-          (out (ms-regs ms))
-          (out insn)
+          (ms-pretty-print ms)
           (run-machine
            (simulate-insn
             insn

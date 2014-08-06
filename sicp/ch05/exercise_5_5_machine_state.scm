@@ -102,3 +102,31 @@
      (stack ())
      (regs ())
      (test-flag #f))))
+
+(define (ms-pretty-print ms)
+  (out "==== Machine State Dump ====")
+  (format #t "PC: ~A~%"
+          (let ((insns (ms-insns ms)))
+            (if (null? insns)
+                "N/A"
+                (car insns))))
+  (format #t "Stack: ~A~%" (ms-stack ms))
+  (format #t "TestFlag: ~A (~A)~%"
+          (if (ms-test-flag ms)
+              "True" "False")
+          (ms-test-flag ms))
+  (out "Registers:")
+  (for-each
+   (lambda (pair)
+     (format #t "  ~A: ~A~%" (car pair) (cadr pair)))
+   (sort
+    (ms-regs ms)
+    (lambda (pa pb)
+      (string<=?
+       (symbol->string (car pa))
+       (symbol->string (car pb))))))
+  (out "----------------------------"))
+
+;; Local variables:
+;; proc-entry: "./exercise_5_5.scm"
+;; End:

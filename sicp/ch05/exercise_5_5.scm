@@ -32,10 +32,11 @@
 
 (define (fac-machine-state)
   (ms-reg-set
-   'n 10
-   (make-machine-with-insns (cdr fac-machine-controller))))
+   'n 5
+   (make-machine-with-insns
+    (cdr fac-machine-controller))))
 
-(out (run-machine (fac-machine-state)))
+(ms-pretty-print (run-machine (fac-machine-state)))
 
 (end-script)
 
