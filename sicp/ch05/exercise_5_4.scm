@@ -1,4 +1,9 @@
-(define expt-machine
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
+(load "./exercise_5_5_common.scm")
+
+(define expt-machine-1
   '(controller
     (assign continue (label expt-done))
     expt-loop
@@ -30,7 +35,7 @@
     (assign continue (label expt-done))
     expt-loop
     (test (op =) (reg counter) (const 0))
-    (branch expt-immediate)
+    (branch (label expt-immediate))
     (assign result (op -) (reg counter) (const 1))
     (assign counter (reg result))
     (assign result (op *) (reg b) (reg product))
@@ -47,3 +52,18 @@
     (goto (reg continue))
 
     expt-done))
+
+(define n 5)
+(define b (expt 123456 (/ 1 n)))
+
+(out "expt-machine-1 (recursive):")
+(ms-pretty-print
+ (execute-controller-with-regs
+  expt-machine-1
+  `((b ,b) (n ,n))))
+
+(out "expt-machine-2 (iterative):")
+(ms-pretty-print
+ (execute-controller-with-regs
+  expt-machine-2
+  `((b ,b) (n ,n))))
