@@ -175,4 +175,57 @@ we need to show that the arrow composition is associativity:
 And each identity arrow is the corresponding pair of identity functions
 viewed as a pair of arrows.
 
+\subsubsection{With the obvious composition this does form a category (SetR)}
+
+The arrow composition can be defined in the following way:
+
+For two arbitrary compatible arrows $(f,\phi)$ and $(g,\psi)$, where
+
+\begin{diagram}
+  (A,R) & \rTo^{(f,\phi)} & (B,S) & \rTo^{(g,\psi)} & (C,T)
+\end{diagram}
+
+The arrow composition is:
+
+\begin{align*}
+  (g,\psi) \fcomp (f,\phi) = (g \fcomp f, \phi \fcomp \psi)
+\end{align*}
+
+We need to prove that the arrow composition produces an arrow from $(A,R)$ to $(C,T)$,
+which has the following property:
+
+\begin{align*}
+  \forall a \in A, t \in T, (g \fcomp f)(a (\phi \fcomp \psi)(t)) = \
+  (g \fcomp f)(a)t
+\end{align*}
+
+\begin{proof}
+  The following facts are known:
+
+  \begin{align*}
+    \forall a \in A, s \in S, & f(a\phi(s)) = f(a)s \\
+    \forall b \in B, t \in T, & g(b\psi(t)) = g(b)t
+  \end{align*}
+
+  Since $\psi(t) \in S$, we know that
+  $ f(a \phi(\psi(t))) = f(a (\phi \fcomp \psi)(t)) = f(a) \psi(t) $.
+
+  Therefore $\forall a \in A, t \in T$,
+
+  \begin{align*}
+    & (g \fcomp f)(a (\phi \fcomp \psi)(t)) \\
+    = & g(f(a (\phi \fcomp \psi)(t)) ) \\
+    = & g(f(a) \psi(t) ) & f(a) \in B \\
+    = & g(f(a))t = (g \fcomp f)(a)t
+  \end{align*}
+
+\end{proof}
+
+The associativity of arrow composition holds in the same way that
+the arrow composition in exercise $1.3.1$ holds, and each identity arrow
+is the corresponding pair of identity functions viewed as an arrow.
+
+Therefore, using the arrow composition decribed above
+gives a category.
+
 \end{document}
