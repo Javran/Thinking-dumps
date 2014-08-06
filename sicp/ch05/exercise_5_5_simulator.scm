@@ -45,3 +45,10 @@
            (simulate-insn
             insn
             (ms-insns-inc ms)))))))
+
+(define (execute-controller-with-regs controller regs)
+  (run-machine
+   (ms-set-field
+    'regs regs
+    (make-machine-with-insns
+     (cdr controller)))))
