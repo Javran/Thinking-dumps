@@ -1,4 +1,8 @@
-;; TODO: run if if possible
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
+(load "./exercise_5_5_common.scm")
+
 (define factorial-machine
   '(controller
       (assign product (const 1))
@@ -14,3 +18,8 @@
       (assign counter (reg t2))
       (goto (label test-counter-gt-n))
     factorial-done))
+
+(ms-pretty-print
+ (execute-controller-with-regs
+  factorial-machine
+  '((n 5))))

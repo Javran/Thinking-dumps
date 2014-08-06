@@ -1,11 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./data-directed.scm")
-
-(load "./exercise_5_5_machine_state.scm")
-(load "./exercise_5_5_handlers.scm")
-(load "./exercise_5_5_simulator.scm")
+(load "./exercise_5_5_common.scm")
 
 ;; instead of hand-simulation, let's try to write one simulator
 
