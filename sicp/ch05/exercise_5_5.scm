@@ -3,36 +3,39 @@
 
 (load "./data-directed.scm")
 
-(define (controller-description? c)
-  (and (list? c)
-       (not (null? c))
-       (eq? 'controller (car c))))
-
 (load "./exercise_5_5_machine_state.scm")
 (load "./exercise_5_5_handlers.scm")
-
-;; accepts a list of instructions
-(define (make-jump-alist instructions)
-  (let loop ((insns instructions)
-             (jump-alist '()))
-    (if (null? insns)
-        jump-alist
-        (if (symbol? (car insns))
-            ;; add a new label
-            (loop
-             (cdr insns)
-             (cons (list (car insns) (cdr insns))
-                   jump-alist))
-            ;; skip it
-            (loop
-             (cdr insns)
-             jump-alist)))))
+(load "./exercise_5_5_simulator.scm")
 
 ;; instead of hand-simulation, let's try to write one simulator
-(define (run-machine controller-desc)
-  (let ((instructions (cdr controller-desc)))
-    (let ((label-insn-alist (make-jump-alist instructions)))
-      'todo)))
+
+(define fac-machine-controller
+  '(controller
+    (assign continue (label fact-done))
+    fact-loop
+    (test (op =) (reg n) (const 1))
+    (branch (label base-case))
+    (save continue)
+    (save n)
+    (assign n (op -) (reg n) (const 1))
+    (assign continue (label after-fact))
+    (goto (label fact-loop))
+    after-fact
+    (restore n)
+    (restore continue)
+    (assign val (op *) (reg n) (reg val))
+    (goto (reg continue))
+    base-case
+    (assign val (const 1))
+    (goto (reg continue))
+    fact-done))
+
+(define (fac-machine-state)
+  (ms-reg-set
+   'n 10
+   (make-machine-with-insns (cdr fac-machine-controller))))
+
+(out (run-machine (fac-machine-state)))
 
 (end-script)
 
