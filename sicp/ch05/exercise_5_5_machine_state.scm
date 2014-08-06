@@ -58,6 +58,10 @@
   (let ((jump-alist (ms-jump-alist ms)))
     (cadr (assoc lbl jump-alist))))
 
+;; set jump-alist
+(define (ms-jump-alist-set jal ms)
+  (ms-set-field 'jump-alist jal ms))
+
 ;; stack operations
 (define ms-stack-top
   (compose car ms-stack))
@@ -80,6 +84,9 @@
 ;; change the list of current instructions
 (define (ms-insns-set insns ms)
   (ms-set-field 'insns insns ms))
+;; move to the next instruction
+(define (ms-insns-inc ms)
+  (ms-modify-field 'insns cdr ms))
 
 ;; test flag getter and setter
 (define ms-test-flag
@@ -87,6 +94,7 @@
 (define (ms-test-flag-set v ms)
   (ms-set-field 'test-flag v ms))
 
+;; create an empty machine
 (define (make-empty-machine)
   `(machine-state
     ((insns ())
