@@ -1,0 +1,34 @@
+\subsection{Categories defined}
+
+\subsubsection{Observe that sets and functions do form a category \cat{Set}}
+
+\begin{itemize}
+  \item Objects are sets.
+  \item Arrows are total functions, because function are just binary relations
+    between two sets.
+  \item Composition is the function composition.
+  \item Associativity holds because $(h \fcomp g) \fcomp f = h \fcomp (g \fcomp f)$
+    always holds for compatible functions.
+  \item Identity arrows are functions that relates each element of a set to itself.
+    Therefore the requirement $id_B \fcomp f = f = f \fcomp id_A$ becomes trivial.
+\end{itemize}
+
+\subsubsection{Each poset is a category, and each monoid is a category}
+
+\paragraph{Each poset is a category} For any given poset, each element in it
+is the corresponding object in the category. And each $\le$ relation corresponses
+to an arrow in the category. Since $\le$ relation is transitive, the associativity
+of arrow composition holds. And the identity for each object $A$ in the structured set is $(A,A)$,
+this is because $A \le A$ holds (The binary relation is reflexive).
+
+\paragraph{Each monoid is a category} For any given monoid $(M, \star , 1)$, the corresponding
+category has only one object (Here we don't need to care about
+what exactly the object is, which isn't important). Every element in
+this monoid is an arrow from the only object to itself.
+The arrow composition is
+the binary relation $\star$. We can observe that for any two arrows $f$ and $g$, $f \star g$
+does form another arrow, and that $(f \star g) \star h = f \star (g \star h)$
+is guaranteed by the property held by the monoid.
+And because the unit $1$ correponses to the identity arrow,
+the requirement that $1 \star m = m = m \star 1$ holds trivially (where $m$ are
+elements in the monoid).
