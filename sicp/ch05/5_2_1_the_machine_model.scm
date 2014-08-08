@@ -36,3 +36,30 @@
   ((register 'set) value))
 (define (get-reg-name register)
   (register 'name))
+
+;; stack
+(define (make-stack)
+  (let ((s '()))
+    (define (push x)
+      (set! s (cons x s)))
+    (define pop
+      (let ((top (if (null? s)
+                     (error "empty stack: POP")
+                     (car s))))
+        (set! s (cdr s))
+        top))
+    (define (initialize)
+      (set! s '())
+      'done)
+    (define (dispatch message)
+      (cond ((eq? message 'push) push)
+            ((eq? message 'pop) pop)
+            ((eq? message 'initialize) (initialize))
+            (else
+             (error "Unknown request: STACK"
+                    message))))
+    dispatch))
+
+(define (pop stack) (stack 'pop))
+(define (push stack value) ((stack 'push) value))
+
