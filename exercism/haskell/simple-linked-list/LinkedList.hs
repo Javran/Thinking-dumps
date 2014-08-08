@@ -1,14 +1,23 @@
 {-# LANGUAGE DeriveFoldable #-}
 module LinkedList
+    ( LinkedList
+    , nil
+    , new
+    , isNil
+    , datum
+    , next
+    , fromList
+    , toList
+    , reverseLinkedList
+    )
 where
 
-import Prelude hiding (foldl,foldr)
-import Data.Foldable
+import qualified Data.Foldable as F
 
 data LinkedList a
     = Nil
     | Cons a (LinkedList a)
-      deriving (Foldable)
+      deriving (F.Foldable)
 
 nil :: LinkedList a
 nil = Nil
@@ -32,7 +41,7 @@ fromList :: [a] -> LinkedList a
 fromList = foldr Cons Nil
 
 toList :: LinkedList a -> [a]
-toList = foldr (:) []
+toList = F.toList
 
 reverseLinkedList :: LinkedList a -> LinkedList a
-reverseLinkedList = foldl (flip Cons) Nil
+reverseLinkedList = F.foldl (flip Cons) Nil
