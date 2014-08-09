@@ -13,15 +13,16 @@ import Prelude hiding
   ( length, reverse, map, filter, foldr, (++), concat )
 
 foldl' :: (b -> a -> b) -> b -> [a] -> b
-foldl' f seed xs = foldr go id xs seed
-    where go x g a = g (f a x)
+foldl' _ z [] = z
+foldl' f z (x:xs) = let z' = f z x
+                    in z' `seq` foldl' f (f z x) xs
 
 foldr :: (a -> b -> b) -> b -> [a] -> b
 foldr _ seed [] = seed
 foldr f seed (x:xs) = f x (foldr f seed xs)
 
 length :: [a] -> Int
-length = foldr (\_ i -> i + 1) 0
+length = foldl' (\acc _ -> acc + 1) 0
 
 reverse :: [a] -> [a]
 reverse = foldl' (flip (:)) []
