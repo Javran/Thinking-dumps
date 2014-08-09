@@ -1,4 +1,7 @@
 module SpaceAge
+    ( Planet(..)
+    , ageOn
+    )
 where
 
 data Planet
