@@ -14,7 +14,7 @@ sumOfMultiples xs upBound = sum $ takeWhile (< upBound) multiples
         -- , [b,2b,3b,...]
         -- , ...
         -- ]
-        xsMultiples = map (\x -> map (* x) [1..]) xs
+        xsMultiples = map (\x -> iterate (+ x) x) xs
         -- ordered list merge, thanks to laziness.
         multiples = foldr OL.union [] xsMultiples
 
