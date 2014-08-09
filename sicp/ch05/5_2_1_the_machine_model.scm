@@ -14,6 +14,7 @@
     machine))
 
 ;; registers
+;; TODO: the register name doesn't seem necessary
 (define (make-register name)
   (let ((contents '*unassigned*))
     (define (dispatch message)
