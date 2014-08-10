@@ -59,3 +59,44 @@
 
 (define (test-condition test-instruction)
   (cdr test-instruction))
+
+;; branch
+(define (make-branch inst machine labels flag pc)
+  (let ((dest (branch-dest inst)))
+    (if (label-exp? dest)
+        (let ((insts
+               (lookup-label
+                labels
+                (label-exp-label dest))))
+          (lambda ()
+            (if (get-contents flag)
+                (set-contents! pc insts)
+                (advance-pc pc))))
+        ;; just wondering why we need to print out these
+        ;; error info while the error only happens when
+        ;; being used internally.
+        (error "Bad BRANCH instruction: ASSEMBLE" inst))))
+
+(define (branch-dest branch-instruction)
+  (cadr branch-instruction))
+
+;; goto
+(define (make-goto inst machine labels pc)
+  (let ((dest (goto-dest inst)))
+    (cond ((label-exp? dest)
+           (let ((insts (lookup-label
+                         labels
+                         (label-exp-label dest))))
+             (lambda ()
+               (set-contents! pc insts))))
+          ((register-exp? dest)
+           (let ((reg (get-register
+                       machine
+                       (register-exp-reg dest))))
+             (lambda ()
+               (set-contents! pc (get-contents reg)))))
+          (else
+           (error "Bad GOTO instruction: ASSEMBLE"
+                  inst)))))
+(define (goto-dest goto-instruction)
+  (cadr goto-instruction))
