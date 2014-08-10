@@ -44,3 +44,18 @@
   (cadr assign-instruction))
 (define (assign-value-exp assign-instruction)
   (cddr assign-instruction))
+
+;; test
+(define (make-test inst machine labels opeartions flag pc)
+  (let ((condition (test-condition inst)))
+    (if (opeartion-exp? condition)
+        (let ((condition-proc
+               (make-opeartion-exp
+                condition machine labels operations)))
+          (lambda ()
+            (set-contents! flag (condition-proc))
+            (advance-pc)))
+        (error "Bad TEST instruction: ASSEMBLE" inst))))
+
+(define (test-condition test-instruction)
+  (cdr test-instruction))
