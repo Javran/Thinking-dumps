@@ -28,3 +28,28 @@
   (tagget-list? exp 'label))
 (define (label-exp-label exp)
   (cadr exp))
+
+(define (make-operation-exp exp machine la bles operations)
+  (let ((op (lookup-prim (operation-exp-op exp)
+                         opeartions))
+        (aprocs
+         (map (lambda (e)
+                (make-primitive-exp e machine labels))
+              (opeartion-exp-operands exp))))
+    (lambda ()
+      (apply op (map (lambda (p) (p)) aprocs)))))
+
+(define (operation-exp? exp)
+  (and (pair? exp) (tagged-list? (car exp) 'op)))
+(define (operation-exp-op operation-exp)
+  (cadr (car operation-exp)))
+
+(define (opeartion-exp-operands operation-exp)
+  (cdr operation-exp))
+
+(define (lookup-prim symbol operations)
+  (let ((val (assoc symbol operations)))
+    (if val
+        (cadr val)
+        (error "Unknown operation: ASSEMBLE"
+               symbol))))
