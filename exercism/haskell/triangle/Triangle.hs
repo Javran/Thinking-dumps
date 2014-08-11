@@ -21,7 +21,7 @@ triangleType a b c = triangleType' . sort $ [a,b,c]
         -- x <= z ==> x < z + y
         -- y <= z ==> y < z + x
         --            z < x + y to be verified
-            if z < x + y || x <= 0
+            if z < x + y && x > 0
               then case () of
                      _ | x == z -> Equilateral -- x == y == z implied
                      _ | x == y || y == z -> Isosceles
