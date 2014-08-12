@@ -14,9 +14,8 @@ data TriangleType
       deriving (Eq, Show) -- why Show is necessary?
 
 triangleType :: Int -> Int -> Int -> TriangleType
-triangleType a b c = triangleType' . sort $ [a,b,c]
-    where
-        triangleType' [x,y,z] =
+triangleType a b c
+    | [x,y,z] <- sort [a,b,c] =
         -- x <= y <= z always holds, assume x > 0
         -- x <= z ==> x < z + y
         -- y <= z ==> y < z + x
@@ -27,4 +26,4 @@ triangleType a b c = triangleType' . sort $ [a,b,c]
                      _ | x == y || y == z -> Isosceles
                      _ -> Scalene
               else Illogical
-        triangleType' _ = undefined -- just impossible
+    | otherwise = undefined -- just impossible
