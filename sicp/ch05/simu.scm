@@ -1,19 +1,7 @@
 ;; Let's try to create a better machine simulator
 ;; and name it "simu"
 
-(load "./data-directed.scm")
-
-(define set-handler #f)
-(define get-handler #f)
-(define init-handler-table! #f)
-
-(let* ((f-alist (global-table-functions))
-       (set1 (cadr (assoc 'set f-alist)))
-       (get1 (cadr (assoc 'get f-alist)))
-       (init1 (cadr (assoc 'init f-alist))))
-  (set! set-handler set1)
-  (set! get-handler get1)
-  (set! init-handler-table! init1))
+(load "./simu_handlers.scm")
 
 (define (make-execution-procedure
          inst labels machine pc flag stack ops)
@@ -21,7 +9,10 @@
   ;; which is error prone.
   ;; since we only run this once for each instruction,
   ;; I think the performance won't be an issue
-  'todo)
+  (let ((handler (get-handler (car inst))))
+    (if handler
+        (handler inst labels machine pc flag stack ops)
+        (error "unknown instruction:" inst))))
 
 ;; Local variables:
 ;; proc-entry: ""
