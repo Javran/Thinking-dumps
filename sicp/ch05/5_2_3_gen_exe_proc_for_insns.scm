@@ -40,11 +40,6 @@
         (set-contents! target (value-proc))
         (advance-pc pc)))))
 
-(define (assign-reg-name assign-instruction)
-  (cadr assign-instruction))
-(define (assign-value-exp assign-instruction)
-  (cddr assign-instruction))
-
 ;; test
 (define (make-test inst machine labels opeartions flag pc)
   (let ((condition (test-condition inst)))
@@ -56,9 +51,6 @@
             (set-contents! flag (condition-proc))
             (advance-pc)))
         (error "Bad TEST instruction: ASSEMBLE" inst))))
-
-(define (test-condition test-instruction)
-  (cdr test-instruction))
 
 ;; branch
 (define (make-branch inst machine labels flag pc)
@@ -98,8 +90,6 @@
           (else
            (error "Bad GOTO instruction: ASSEMBLE"
                   inst)))))
-(define (goto-dest goto-instruction)
-  (cadr goto-instruction))
 
 (define (make-save inst machine stack pc)
   (let ((reg (get-register machine
@@ -116,6 +106,7 @@
       (set-contents! reg (pop stack))
       (advance-pc pc))))
 
+;; no idea about this awful name
 (define (stack-inst-reg-name stack-instruction)
   (cadr stack-instruction))
 
@@ -129,4 +120,4 @@
           (lambda ()
             (action-proc) (advance-pc pc)))
         (error "Bad PERFORM instruction: ASSEMBLE" inst))))
-(define (perform-action inst) (cdr inst))
+
