@@ -11,3 +11,26 @@
   (set! set-handler set1)
   (set! get-handler get1)
   (set! init-handler-table! init1))
+
+;; handler type:
+;; (<handler> inst labels machine pc flag stack ops)
+(define (assign-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (test-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (branch-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (goto-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (save-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (restore-handler inst labels machine pc flag stack ops)
+  'todo)
+
+(define (perform-handler inst labels machine pc flag stack ops)
+  'todo)
