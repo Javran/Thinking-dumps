@@ -30,7 +30,7 @@
     * `(save <register-name>)`
     * `(restore <register-name>)`
 
-* `const`
+* `const` (this is not an instruction, just some kind of data)
 
     * `(const <data>)`
         * I think there's no limit no what kind of data it can store:
