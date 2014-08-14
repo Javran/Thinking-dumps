@@ -39,7 +39,19 @@
         (advance-pc pc)))))
 
 (define (test-handler inst labels machine pc flag stack ops)
-  'todo)
+  ;; instruction destruction
+  (let ((condition (test-condition inst)))
+    (if (opeartion-exp? condition)
+        (let ((condition-proc
+               (make-opeartion-exp
+                condition machine labels operations)))
+          (lambda ()
+            ;; execute the "operation", and then set the flag
+            (set-contents! flag (condition-proc))
+            (advance-pc)))
+        ;; original error message is too verbose
+        (error "TEST: bad instruction: "
+               inst))))
 
 (define (branch-handler inst labels machine pc flag stack ops)
   'todo)
