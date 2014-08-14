@@ -31,11 +31,11 @@
 
 (define (make-operation-exp exp machine la bles operations)
   (let ((op (lookup-prim (operation-exp-op exp)
-                         opeartions))
+                         operations))
         (aprocs
          (map (lambda (e)
                 (make-primitive-exp e machine labels))
-              (opeartion-exp-operands exp))))
+              (operation-exp-operands exp))))
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
 
@@ -43,8 +43,7 @@
   (and (pair? exp) (tagged-list? (car exp) 'op)))
 (define (operation-exp-op operation-exp)
   (cadr (car operation-exp)))
-
-(define (opeartion-exp-operands operation-exp)
+(define (operation-exp-operands operation-exp)
   (cdr operation-exp))
 
 (define (lookup-prim symbol operations)

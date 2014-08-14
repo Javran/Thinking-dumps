@@ -1,7 +1,14 @@
 ;; Let's try to create a better machine simulator
 ;; and name it "simu"
 
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
+;; toggle tests
+(define *simu-test* #t)
+
 (load "./simu_handlers.scm")
+(load "./simu_accessors.scm")
 
 (define (make-execution-procedure
          inst labels machine pc flag stack ops)
