@@ -15,7 +15,20 @@
 ;; handler type:
 ;; (<handler> inst labels machine pc flag stack ops)
 (define (assign-handler inst labels machine pc flag stack ops)
-  'todo)
+  (let ((target
+         (get-register machine (assign-reg-name inst)))
+        (value-exp
+         (assign-value-exp inst)))
+    (let ((value-proc
+           (if (opeartion-exp? value-exp)
+               (make-opeartion-exp
+                value-exp machine labels operations)
+               (make-primitive-exp
+                (car value-exp) machine labels))))
+      (lambda ()
+        (set-contents! target (value-proc))
+        (advance-pc pc)))))
+
 
 (define (test-handler inst labels machine pc flag stack ops)
   'todo)
