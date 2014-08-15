@@ -54,7 +54,25 @@
                inst))))
 
 (define (branch-handler inst labels machine pc flag stack ops)
-  'todo)
+  ;; instruction destruction
+  (let ((dest (branch-dest inst)))
+    ;; must be a label (might extend to "goto"
+    ;; but this functionality is not seen in the book)
+    (if (label-exp? dest)
+        (let ((insts
+               (lookup-label
+                labels
+                (label-exp-label dest))))
+          (lambda ()
+            ;; check the flag first and then make the decision
+            ;; of either jumping or advancing pc
+            (if (get-contents flag)
+                (set-contents! pc insts)
+                (advance-pc pc))))
+        ;; just wondering why we need to print out these
+        ;; error info while the error only happens when
+        ;; being used internally.
+        (error "BRANCH: bad instruction: " inst))))
 
 (define (goto-handler inst labels machine pc flag stack ops)
   'todo)
