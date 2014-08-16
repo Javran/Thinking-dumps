@@ -1,5 +1,7 @@
 (load "./data-directed.scm")
 
+;; ==== build handler lookup table
+
 (define set-handler #f)
 (define get-handler #f)
 (define init-handler-table! #f)
@@ -11,6 +13,10 @@
   (set! set-handler set1)
   (set! get-handler get1)
   (set! init-handler-table! init1))
+
+;; ====
+;; * (set-handler <slot> <handler>) to set a handler
+;; * (get-handler <slot>) to retrieve a handler
 
 ;; analyze the list of instructions once for all,
 ;; yielding "thunks" which can be used multiple times
@@ -37,6 +43,7 @@
         ;; to the instruction, advance "pc"
         (set-contents! target (value-proc))
         (advance-pc pc)))))
+(set-handler 'assign assign-handler)
 
 (define (test-handler inst labels machine pc flag stack ops)
   ;; instruction destruction
@@ -52,6 +59,7 @@
         ;; original error message is too verbose
         (error "TEST: bad instruction: "
                inst))))
+(set-handler 'test test-handler)
 
 (define (branch-handler inst labels machine pc flag stack ops)
   ;; instruction destruction
@@ -73,6 +81,7 @@
         ;; error info while the error only happens when
         ;; being used internally.
         (error "BRANCH: bad instruction: " inst))))
+(set-handler 'branch branch-handler)
 
 (define (goto-handler inst labels machine pc flag stack ops)
   'todo)
