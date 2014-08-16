@@ -31,8 +31,8 @@
         (value-exp
          (assign-value-exp inst)))
     (let ((value-proc
-           (if (opeartion-exp? value-exp)
-               (make-opeartion-exp
+           (if (operation-exp? value-exp)
+               (make-operation-exp
                 value-exp machine labels operations)
                (make-primitive-exp
                 (car value-exp) machine labels))))
@@ -41,11 +41,11 @@
         (advance-pc pc)))))
 
 ;; test
-(define (make-test inst machine labels opeartions flag pc)
+(define (make-test inst machine labels operations flag pc)
   (let ((condition (test-condition inst)))
-    (if (opeartion-exp? condition)
+    (if (operation-exp? condition)
         (let ((condition-proc
-               (make-opeartion-exp
+               (make-operation-exp
                 condition machine labels operations)))
           (lambda ()
             (set-contents! flag (condition-proc))

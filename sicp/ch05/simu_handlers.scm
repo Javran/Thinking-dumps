@@ -33,7 +33,7 @@
          (assign-value-exp inst)))
     (let ((value-proc
            ;; yields a value when run as a procedure
-           (if (opeartion-exp? value-exp)
+           (if (operation-exp? value-exp)
                (make-operation-exp
                 value-exp machine labels operations)
                (make-primitive-exp
@@ -48,9 +48,9 @@
 (define (test-handler inst labels machine pc flag stack ops)
   ;; instruction destruction
   (let ((condition (test-condition inst)))
-    (if (opeartion-exp? condition)
+    (if (operation-exp? condition)
         (let ((condition-proc
-               (make-opeartion-exp
+               (make-operation-exp
                 condition machine labels operations)))
           (lambda ()
             ;; execute the "operation", and then set the flag

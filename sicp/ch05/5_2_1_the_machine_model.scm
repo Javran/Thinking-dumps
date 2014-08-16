@@ -8,7 +8,7 @@
      (lambda (register-name)
        ((machine 'allocate-register) register-name))
      register-names)
-    ((machine 'install-opeartions) ops)
+    ((machine 'install-operations) ops)
     ((machine 'install-instruction-sequence)
      (assemble controller-text machine))
     machine))
@@ -23,9 +23,6 @@
        ((eq? message 'set)
         (lambda (value)
           (set! contents value)))
-       ;; seems like the "name" is not used anywhere...
-       ;; let's make it useful.
-       ((eq? message 'name) name)
        (else
         (error "unknown request: REGISTER"
                message))))
@@ -110,7 +107,7 @@
                allocate-register)
               ((eq? message 'get-register)
                lookup-register)
-              ((eq? message 'install-opeartions)
+              ((eq? message 'install-operations)
                (lambda (ops)
                  (set! the-ops (append the-ops ops))))
               ((eq? message 'stack) stack)

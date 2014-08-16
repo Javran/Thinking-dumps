@@ -21,6 +21,21 @@
         (handler inst labels machine pc flag stack ops)
         (error "unknown instruction:" inst))))
 
+;; TODO: not confident if the current system will be working,
+;; try to at least make some handlers work.
+(let* ((inst '(assign a (op +) (reg b) (const 10)))
+       (labels '*not-used*)
+       (machine (make-machine
+                 ;; register names
+                 '(a b)
+                 ;; operations (not sure how to represent
+                 'todo
+                 ;; controller text
+                 'todo))
+       (handler (get-handler (car inst))))
+  'ok)
+
+
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:
