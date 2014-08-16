@@ -1,3 +1,74 @@
+;; / ==== lightweight implementation of a (pure) stack
+(define (empty-stack) '())
+
+(define stack-push cons)
+(define stack-pop cdr)
+(define stack-top car)
+;; \ ====
+
+;; / ==== abstract machine operations
+(define (empty-machine)
+  (vector
+   '*unassigned* ; 0: PC
+   '*unassigned* ; 1: flag
+   (empty-stack) ; 2: stack
+   '()           ; 3: empty instruction sequence
+   '()           ; 4: register-table
+   ))
+
+;; internal use only, give machine fields
+(define (machine-intern-ref symbol)
+  (case symbol
+    ((pc) 0)
+    ((flag) 1)
+    ((stack) 2)
+    ((instruction-sequence) 3)
+    ((register-table) 4)
+    (else (error "MACHINE: unknown internal ref: "
+                 symbol))))
+(define (machine-intern-field m sym)
+  (vector-ref
+   m
+   (machine-intern-ref sym)))
+(define (machine-intern-set-field! m sym new-val)
+  (vector-set!
+   m
+   (machine-intern-ref sym)
+   new-val))
+
+;; accessors
+
+;; direct accessors: machine-<field-name>
+(define machine-pc
+  ((curry2 vector-ref)
+   (machine-intern-ref 'pc)))
+(define machine-flag
+  ((curry2 vector-ref)
+   (machine-intern-ref 'flag)))
+(define machine-stack
+  ((curry2 vector-ref)
+   (machine-intern-ref 'stack)))
+(define machine-instruction-sequence
+  ((curry2 vector-ref)
+   (machine-intern-ref 'instruction-sequence)))
+(define machine-register-table
+  ((curry2 vector-ref)
+   (machine-intern-ref 'register-table)))
+
+(define (machine-set-pc! m new-pc)
+  (vector-set!
+   m
+   (machine-intern-ref 'pc)
+   new-pc))
+
+(define (machine-set-flag! m new-flag)
+  (vector-set!
+   m
+   (machine-intern-ref 'flag)
+   new-pc))
+
+;; \ ====
+
 (define (make-machine register-names
                       ops
                       controller-text)
