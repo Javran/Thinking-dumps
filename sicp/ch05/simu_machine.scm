@@ -66,6 +66,15 @@
 (define (machine-set-register-table! m new-reg-tab)
   (machine-intern-set-field! m 'register-table new-reg-tab))
 
+;; indirect accessors:
+;; TODO: we need to work with registers first
+(define (machine-allocate-registers! m regs)
+  ;; since "allocate-register" happens only at the creation of
+  ;; a machine, we may just do it in one procedure
+  ;; which we also have the benefit of detecting multiple defined registers
+  ;; without too much pains
+  'todo)
+
 ;; \ ====
 
 (define (make-machine register-names
