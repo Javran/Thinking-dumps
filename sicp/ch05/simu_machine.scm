@@ -56,16 +56,15 @@
    (machine-intern-ref 'register-table)))
 
 (define (machine-set-pc! m new-pc)
-  (vector-set!
-   m
-   (machine-intern-ref 'pc)
-   new-pc))
-
+  (machine-intern-set-field! m 'pc new-pc))
 (define (machine-set-flag! m new-flag)
-  (vector-set!
-   m
-   (machine-intern-ref 'flag)
-   new-pc))
+  (machine-intern-set-field! m 'flag new-flag))
+(define (machine-set-stack! m new-stack)
+  (machine-intern-set-field! m 'stack new-stack))
+(define (machine-set-instruction-sequence! m new-insn-seq)
+  (machine-intern-set-field! m 'instruction-sequence new-insn-seq))
+(define (machine-set-register-table! m new-reg-tab)
+  (machine-intern-set-field! m 'register-table new-reg-tab))
 
 ;; \ ====
 
