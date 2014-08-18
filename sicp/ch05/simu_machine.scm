@@ -75,6 +75,9 @@
   ;; a machine, we may just do it in one procedure
   ;; which we also have the benefit of detecting multiple defined registers
   ;; without too much pains
+  (assert (same-length? regs
+                        (remove-duplicates regs))
+          "duplicated register name")
   (machine-set-register-table!
    m
    (map (lambda (name)
