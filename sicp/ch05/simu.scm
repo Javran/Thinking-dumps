@@ -9,6 +9,7 @@
 
 (load "./simu_handlers.scm")
 (load "./simu_accessors.scm")
+(load "./simu_machine.scm")
 
 (define (make-execution-procedure
          inst labels machine pc flag stack ops)
