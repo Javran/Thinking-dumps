@@ -21,11 +21,11 @@
 ;; internal use only, give machine fields
 (define (machine-intern-ref symbol)
   (case symbol
-    ((pc) 0)
-    ((flag) 1)
-    ((stack) 2)
+    ((pc)                   0)
+    ((flag)                 1)
+    ((stack)                2)
     ((instruction-sequence) 3)
-    ((register-table) 4)
+    ((register-table)       4)
     (else (error "MACHINE: unknown internal ref: "
                  symbol))))
 (define (machine-intern-field m sym)
@@ -75,9 +75,18 @@
   ;; a machine, we may just do it in one procedure
   ;; which we also have the benefit of detecting multiple defined registers
   ;; without too much pains
-  (assert (same-length? regs
-                        (remove-duplicates regs))
-          "duplicated register name")
+
+  ;; detect duplicated registers
+  (let loop ((regs regs))
+    (if (null? regs)
+        'ok
+        (let ((hd (car regs))
+              (tl (cdr regs)))
+          (if (memq hd tl)
+              (error "duplicated register name:"
+                     hd)
+              (loop tl)))))
+
   (machine-set-register-table!
    m
    (map (lambda (name)
