@@ -96,7 +96,22 @@
    m
    (map (lambda (name)
           (list name (new-register)))
-        regs)))
+        regs))
+  m)
+
+(define (machine-reg-get m reg)
+  (let ((reg-info (assoc reg (machine-register-table m))))
+    (if reg-info
+        (register-get (cadr reg-info))
+        (error "register not defined:"
+               reg))))
+
+(define (machine-reg-set! m reg val)
+  (let ((reg-info (assoc reg (machine-register-table m))))
+    (if reg-info
+        (register-set! (cadr reg-info) val)
+        (error "register not defined:"
+               reg))))
 
 ;; \ ====
 
