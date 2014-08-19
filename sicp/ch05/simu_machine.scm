@@ -41,20 +41,25 @@
 ;; accessors
 
 ;; direct accessors: machine-<field-name>
-(define machine-pc
-  ((curry2 vector-ref)
+(define (machine-pc m)
+  (vector-ref
+   m
    (machine-intern-ref 'pc)))
-(define machine-flag
-  ((curry2 vector-ref)
+(define (machine-flag m)
+  (vector-ref
+   m
    (machine-intern-ref 'flag)))
-(define machine-stack
-  ((curry2 vector-ref)
+(define (machine-stack m)
+  (vector-ref
+   m
    (machine-intern-ref 'stack)))
-(define machine-instruction-sequence
-  ((curry2 vector-ref)
+(define (machine-instruction-sequence m)
+  (vector-ref
+   m
    (machine-intern-ref 'instruction-sequence)))
-(define machine-register-table
-  ((curry2 vector-ref)
+(define (machine-register-table m)
+  (vector-ref
+   m
    (machine-intern-ref 'register-table)))
 
 (define (machine-set-pc! m new-pc)
