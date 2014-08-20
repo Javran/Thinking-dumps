@@ -35,21 +35,26 @@
         insn-text
         ;; deal with real instructions
         (cons insn-text
-              (make-execution-procedure machine))))
+              (make-execution-procedure insn-text machine))))
   (let ((insns (map make-instruction controller-text)))
     ;; TODO
     (for-each out insns))
   )
 
-(define (make-execution-procedure
-         inst labels machine pc flag stack ops)
+(define (make-execution-procedure insn-text machine)
   ;; TODO: make alists instead of passing these arguments
   ;; which is error prone.
   ;; since we only run this once for each instruction,
   ;; I think the performance won't be an issue
-  (let ((handler (get-handler (car inst))))
+  (let ((handler (get-handler (car insn-text))))
     (if handler
-        (handler inst labels machine pc flag stack ops)
+        (let ((jump-table (machine-jump-table machine))
+              (pc (machine-find-register machine 'pc))
+              (flag (machine-find-register machine 'flag))
+              (stack (machine-stack machine))
+              (ops (machine-operations machine)))
+          ;; TODO: rearrange arguments
+          (handler insn-text labels machine pc flag stack ops))
         (error "unknown instruction:" inst))))
 
 ;; TODO: not confident if the current system will be working,
