@@ -1,11 +1,16 @@
+(load "./simu_utils.scm")
 (load "./simu_register.scm")
 
-;; / ==== lightweight implementation of a (pure) stack
-(define (empty-stack) '())
+;; / ==== lightweight implementation of a stack
+(define (empty-stack) (vector '()))
 
-(define stack-push cons)
-(define stack-pop cdr)
-(define stack-top car)
+(define (stack-push! st e)
+  (vector-modify! st 0 (lambda (stack)
+                         (cons e stack))))
+(define (stack-pop! st)
+  (vector-modify! st 0 cdr))
+(define (stack-top st)
+  (car (vector-ref 0 st)))
 ;; \ ====
 
 ;; / ==== abstract machine operations
