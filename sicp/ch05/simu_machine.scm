@@ -103,19 +103,17 @@
           (list name (new-register)))
         `(pc flag ,@regs))))
 
-(define (machine-reg-get m reg)
+(define (machine-find-register m reg)
   (let ((reg-info (assoc reg (machine-register-table m))))
     (if reg-info
-        (register-get (cadr reg-info))
-        (error "register not defined:"
-               reg))))
+        (cadr reg-info)
+        (error "register not defined:" reg))))
+
+(define (machine-reg-get m reg)
+  (register-get (machine-find-register m reg)))
 
 (define (machine-reg-set! m reg val)
-  (let ((reg-info (assoc reg (machine-register-table m))))
-    (if reg-info
-        (register-set! (cadr reg-info) val)
-        (error "register not defined:"
-               reg))))
+  (register-set! (machine-find-register m reg) val))
 
 ;; TODO: install-instruction-sequence
 ;;       execute
