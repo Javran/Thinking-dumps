@@ -11,10 +11,11 @@
 ;; / ==== abstract machine operations
 (define (empty-machine)
   (vector
-   (empty-stack)                       ; 0: stack
-   '()                                 ; 1: instruction sequence
-   '()                                 ; 2: register-table
-   '()                                 ; 3: operations
+   (empty-stack)                        ; 0: stack
+   '()                                  ; 1: instruction sequence
+   '()                                  ; 2: register-table
+   '()                                  ; 3: operations
+   '()                                  ; 4: jump-table
    ))
 
 ;; internal use only, return machine field reference numbers
@@ -24,6 +25,7 @@
     ((instruction-sequence) 1)
     ((register-table)       2)
     ((operations)           3)
+    ((jump-table)           4)
     (else (error "MACHINE: unknown internal ref: "
                  symbol))))
 (define (machine-intern-field m sym)
@@ -55,6 +57,10 @@
   (vector-ref
    m
    (machine-intern-ref 'operations)))
+(define (machine-jump-table m)
+  (vector-ref
+   m
+   (machine-intern-ref 'jump-table)))
 
 (define (machine-set-stack! m new-stack)
   (machine-intern-set-field! m 'stack new-stack))
@@ -62,8 +68,10 @@
   (machine-intern-set-field! m 'instruction-sequence new-insn-seq))
 (define (machine-set-register-table! m new-reg-tab)
   (machine-intern-set-field! m 'register-table new-reg-tab))
-(define (machine-set-operations m new-ops)
+(define (machine-set-operations! m new-ops)
   (machine-intern-set-field! m 'operations new-ops))
+(define (machine-set-jump-table! m new-tbl)
+  (machine-intern-set-field! m 'jump-table new-tbl))
 
 ;; indirect accessors:
 ;; `regs` is a list of register names
