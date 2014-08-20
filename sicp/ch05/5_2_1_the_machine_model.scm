@@ -127,10 +127,15 @@
 (define (get-register machine reg-name)
   ((machine 'get-register) reg-name))
 
+;; what we eventually have after "assemble":
+;; a list of instructions with its corresponding execution procedure
+;; an alist of label-instructions (for jumping)
 (define (assemble controller-text machine)
   (extract-labels
    controller-text
    (lambda (insts labels)
+     ;; this happens AFTER "extract-labels" is done
+     ;; which causes some confusions
      (update-insts! insts labels machine)
      insts)))
 
@@ -139,7 +144,7 @@
       (receive '() '())
       (extract-labels
        (cdr text)
-       ;; kind of hating this unnessary complexity...
+       ;; kind of hate this unnessary complexity...
        (lambda (insts labels)
          (let ((next-inst (car text)))
            (if (symbol? next-inst)
