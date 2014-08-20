@@ -12,6 +12,35 @@
 (load "./simu_accessors.scm")
 (load "./simu_machine.scm")
 
+(define (assemble controller-text machine)
+  ;; expected input: a list of instruction texts (including labels)
+  ;; we don't have to do all the things in one pass
+  ;; as this won't be the bottleneck of the whole program
+  ;; we also don't need to perform the continuation passing trick
+  ;;
+  ;; to be clear with terms:
+  ;; instruction text is what the instruction looks like in controller text
+  ;; (e.g. (assign x (const 1)))
+  ;; instruction execution procedure is a procedure without arguments.
+  ;; it performs the operation described by the instruction text when executed.
+  ;; instruction is a pair consisted of instruction text and instruction-exec-proc
+  ;;
+  ;; in the first pass, we simply turn instruction text into
+  ;; a pair: (<instruction-text> . <instruction-execution-procedure>)
+
+  ;; and in the second pass, we make the label-instruction alist
+  (define (make-instruction insn-text)
+    (if (symbol? insn-text)
+        ;; labels are kept as it is when making instructions
+        insn-text
+        ;; deal with real instructions
+        (cons insn-text
+              (make-execution-procedure machine))))
+  (let ((insns (map make-instruction controller-text)))
+    ;; TODO
+    (for-each out insns))
+  )
+
 (define (make-execution-procedure
          inst labels machine pc flag stack ops)
   ;; TODO: make alists instead of passing these arguments
