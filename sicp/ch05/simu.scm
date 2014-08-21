@@ -36,9 +36,42 @@
         ;; deal with real instructions
         (cons insn-text
               (make-execution-procedure insn-text machine))))
+
+  ;; despite that the original program does not consider this issue,
+  ;; but it's entirely possible that two labels can point to the same location
+  ;; which might result in some labels being accidentally included in
+  ;; the instruction list. (e.g. instruction-text list:
+  ;; (lbl1 lbl2 (assign foo (reg bar))) => ( (lbl1 (lbl2 (assign ...)))
+  ;;                                         (lbl2 (assign ...)) )
+  ;; while we really want: ( (lbl1 (assign ...))
+  ;;                         (lbl2 (assign ...)) )
+  ;; ).
+  ;; here we drop labels in front of any actual instructions
+  ;; to get the expected result
+  (define (drop-labels insns)
+    (if (null? insns)
+        insns
+        (if (symbol? (car insns))
+            (drop-labels (cdr insns))
+            insns)))
+
   (let ((insns (map make-instruction controller-text)))
-    (out (machine-register-table machine))
-  ))
+    (let ((jump-table
+           (let loop ((table '())
+                      (insns insns))
+             (if (null? insns)
+                 table
+                 (let ((hd (car insns))
+                       (tl (cdr insns)))
+                   (if (symbol? hd)
+                       ;; label detected
+                       (loop (cons (list hd (drop-labels tl))
+                                   table)
+                             tl)
+                       (loop table
+                             tl)))))))
+      (machine-set-instruction-sequence! machine (drop-labels insns))
+      (machine-set-jump-table! machine jump-table))))
 
 (define (make-execution-procedure insn-text machine)
   ;; TODO: make alists instead of passing these arguments
@@ -62,10 +95,15 @@
   (machine-define-registers!
    machine
    '(a b c d))
-  (assemble '((assign a (const 1))
+  (assemble '(labela
+              labelb
+              labelc
+              (assign a (const 1))
               (assign b (const 2))
+              labelk
               (assign c (const 3))
-              (assign d (const 4)))
+              (assign d (const 4))
+              labelg)
             machine))
 
 ;; Local variables:
