@@ -48,6 +48,7 @@
   ;; ).
   ;; here we drop labels in front of any actual instructions
   ;; to get the expected result
+  ;; TODO: might not work, we need to filter out symbols
   (define (drop-labels insns)
     (if (null? insns)
         insns
