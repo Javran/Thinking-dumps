@@ -46,15 +46,9 @@
   ;; while we really want: ( (lbl1 (assign ...))
   ;;                         (lbl2 (assign ...)) )
   ;; ).
-  ;; here we drop labels in front of any actual instructions
-  ;; to get the expected result
-  ;; TODO: might not work, we need to filter out symbols
+  ;; here we drop all the labels to get the expected result
   (define (drop-labels insns)
-    (if (null? insns)
-        insns
-        (if (symbol? (car insns))
-            (drop-labels (cdr insns))
-            insns)))
+    (filter (compose not symbol?) insns))
 
   (let ((insns (map make-instruction controller-text)))
     (let ((jump-table
@@ -75,10 +69,6 @@
       (machine-set-jump-table! machine jump-table))))
 
 (define (make-execution-procedure insn-text machine)
-  ;; TODO: make alists instead of passing these arguments
-  ;; which is error prone.
-  ;; since we only run this once for each instruction,
-  ;; I think the performance won't be an issue
   (let ((handler (get-handler (car insn-text))))
     (if handler
         (let ((jump-table (machine-jump-table machine))
