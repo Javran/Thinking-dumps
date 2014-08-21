@@ -25,10 +25,11 @@
 ;; handler type:
 ;; (<handler> inst labels machine pc flag stack ops)
 (define (assign-handler inst labels machine pc flag stack ops)
-  ;; TODO: wouldn't it be a better idea to let
-  ;; instruction handlers destruct the instruction in question?
-  (let ((target
-         (get-register machine (assign-reg-name inst)))
+  ;; accessors for "assign"
+  ;; (assign <reg> @<value-exp> ..)
+  (define assign-reg-name cadr)
+  (define assign-value-exp cddr)
+
         (value-exp
          (assign-value-exp inst)))
     (let ((value-proc

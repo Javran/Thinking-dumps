@@ -59,18 +59,15 @@
 
 ;; TODO: not confident if the current system will be working,
 ;; try to at least make some handlers work.
-(let* ((inst '(assign a (op +) (reg b) (const 10)))
-       (labels '*not-used*)
-       (machine (make-machine
-                 ;; register names
-                 '(a b)
-                 ;; operations (not sure how to represent
-                 'todo
-                 ;; controller text
-                 'todo))
-       (handler (get-handler (car inst))))
-  'ok)
-
+(let ((machine (empty-machine)))
+  (machine-define-registers!
+   machine
+   '(a b c d))
+  (assemble '((assign a (const 1))
+              (assign b (const 2))
+              (assign c (const 3))
+              (assign d (const 4)))
+            machine))
 
 ;; Local variables:
 ;; proc-entry: ""

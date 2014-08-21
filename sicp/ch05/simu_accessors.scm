@@ -8,11 +8,6 @@
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
 
-;; accessors for "assign"
-;; (assign <reg> @<value-exp> ..)
-(define assign-reg-name cadr)
-(define assign-value-exp cddr)
-
 ;; accessors for "test"
 ;; (test @<condition>)
 (define test-condition cdr)
