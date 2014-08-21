@@ -22,6 +22,37 @@
 ;; yielding "thunks" which can be used multiple times
 ;; without too much time consumption.
 
+(define (make-primitive-exp exp machine labels)
+  (cond ((constant-exp? exp)
+         (let ((c (constant-exp-value exp)))
+           (lambda ()
+             c)))
+        ((label-exp? exp)
+         (let ((insts (lookup-label
+                       labels
+                       (label-exp-label exp))))
+           (lambda () insts)))
+        ((register-exp? exp)
+         (let ((r (get-register machine
+                                (register-exp-reg exp))))
+           (lambda () (get-contents r))))
+        (else
+         (error "Unknown expression type: ASSEMBLE"
+                exp))))
+
+(define (register-exp? exp)
+  (tagged-list? exp 'reg))
+(define (register-exp-reg exp)
+  (cadr exp))
+(define (constant-exp? exp)
+  (tagged-list? exp 'const))
+(define (constant-exp-value exp)
+  (cadr exp))
+(define (label-exp? exp)
+  (tagget-list? exp 'label))
+(define (label-exp-label exp)
+  (cadr exp))
+
 ;; handler type:
 ;; (<handler> inst labels machine pc flag stack ops)
 (define (assign-handler inst labels machine pc flag stack ops)
@@ -30,6 +61,8 @@
   (define assign-reg-name cadr)
   (define assign-value-exp cddr)
 
+  (let ((target-reg
+         (machine-find-register machine (assign-reg-name inst)))
         (value-exp
          (assign-value-exp inst)))
     (let ((value-proc
@@ -40,10 +73,12 @@
                (make-primitive-exp
                 (car value-exp) machine labels))))
       (lambda ()
-        ;; execute an operation or fetch register or constants according
-        ;; to the instruction, advance "pc"
-        (set-contents! target (value-proc))
-        (advance-pc pc)))))
+        (register-set! target-reg (value-proc))
+        ;; advance pc
+        (machine-reg-set!
+         machine 'pc
+         (cdr (machine-reg-get machine 'pc))
+         )))))
 (set-handler 'assign assign-handler)
 
 (define (test-handler inst labels machine pc flag stack ops)

@@ -37,9 +37,8 @@
         (cons insn-text
               (make-execution-procedure insn-text machine))))
   (let ((insns (map make-instruction controller-text)))
-    ;; TODO
-    (for-each out insns))
-  )
+    (out (machine-register-table machine))
+  ))
 
 (define (make-execution-procedure insn-text machine)
   ;; TODO: make alists instead of passing these arguments
