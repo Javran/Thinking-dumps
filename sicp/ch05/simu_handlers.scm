@@ -79,7 +79,7 @@
            (if (operation-exp? value-exp)
                'todo
                (make-primitive-exp
-                (car value-exp) m labels))))
+                (car value-exp) m 'todo))))
       (lambda ()
         (register-set! target-reg (value-proc))
         (advance-pc m)))))

@@ -91,7 +91,10 @@
               (assign c (const 3))
               (assign d (const 4))
               labelg)
-            machine))
+            machine)
+  (machine-reset-pc! machine)
+  (machine-execute! machine)
+  (out machine))
 
 ;; Local variables:
 ;; proc-entry: ""
