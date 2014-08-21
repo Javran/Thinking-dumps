@@ -115,6 +115,19 @@
 (define (machine-reg-set! m reg val)
   (register-set! (machine-find-register m reg) val))
 
+(define (machine-reset-pc! m)
+  (machine-reg-set!
+   m 'pc (machine-instruction-sequence m)))
+
+(define (machine-execute! m)
+  (let ((insns (machine-reg-get m 'pc)))
+    (if (null? insns)
+        'done
+        (begin
+          (format #t "next: ~A~%" (caar insns))
+          ((cdr (car insns)))
+          (machine-execute! m)))))
+
 ;; TODO: install-instruction-sequence
 ;;       execute
 
