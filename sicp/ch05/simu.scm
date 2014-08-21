@@ -54,7 +54,7 @@
               (stack (machine-stack machine))
               (ops (machine-operations machine)))
           ;; TODO: rearrange arguments
-          (handler insn-text labels machine pc flag stack ops))
+          (handler insn-text jump-table machine pc flag stack ops))
         (error "unknown instruction:" inst))))
 
 ;; TODO: not confident if the current system will be working,
