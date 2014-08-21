@@ -71,13 +71,9 @@
 (define (make-execution-procedure insn-text machine)
   (let ((handler (get-handler (car insn-text))))
     (if handler
-        (let ((jump-table (machine-jump-table machine))
-              (pc (machine-find-register machine 'pc))
-              (flag (machine-find-register machine 'flag))
-              (stack (machine-stack machine))
-              (ops (machine-operations machine)))
-          ;; TODO: rearrange arguments
-          (handler insn-text jump-table machine pc flag stack ops))
+        ;; we choose to keep arguments simple
+        ;; as it is easier to understand and maintain.
+        (handler insn-text machine)
         (error "unknown instruction:" inst))))
 
 ;; TODO: not confident if the current system will be working,
