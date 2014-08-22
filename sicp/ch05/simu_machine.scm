@@ -128,6 +128,12 @@
           ((cdr (car insns)))
           (machine-execute! m)))))
 
+(define (machine-lookup-label m label)
+  (let ((new-insn-pos (assoc label (machine-jump-table m))))
+    (if new-insn-pos
+        (cadr new-insn-pos)
+        (error "label not found:" label))))
+
 ;; TODO: install-instruction-sequence
 ;;       execute
 
