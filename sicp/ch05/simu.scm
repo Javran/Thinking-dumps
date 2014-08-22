@@ -83,18 +83,14 @@
    machine
    '(a b c d))
   (assemble '(labela
-              labelb
-              labelc
-              (assign a (const 1))
-              (assign b (const 2))
-              labelk
-              (assign c (const 3))
-              (assign d (const 4))
+              (assign a (const 1234))
+              (assign b (reg a))
               labelg)
             machine)
   (machine-reset-pc! machine)
   (machine-execute! machine)
-  (out machine))
+  (out (machine-reg-get machine 'b
+                        )))
 
 ;; Local variables:
 ;; proc-entry: ""

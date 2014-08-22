@@ -47,8 +47,12 @@
            (lambda () c)))
         ((label-exp? exp)
          ;; (label <label>)
-         ;; TODO
-         'todo)
+         ;; be extreme careful here not to
+         ;; query the jump-label from `assemble`
+         ;; which is not ready at that time
+         (lambda ()
+           (machine-lookup-label
+            m (label-exp-label exp))))
         ((register-exp? exp)
          ;; (reg <reg>)
          (let ((r (machine-find-register
@@ -64,6 +68,9 @@
 
 ;; handler type:
 ;; (<handler> insn machine)
+
+;; NOTE: be careful when assigning something to pc,
+;; as "assign" will always advance the pc register
 (define (assign-handler insn m)
   ;; accessors for "assign"
   ;; (assign <reg> @<value-exp> ..)
@@ -136,3 +143,7 @@
 (define (perform-handler inst labels machine pc flag stack ops)
   'todo)
 |#
+
+;; Local variables:
+;; proc-entry: "./simu.scm"
+;; End:
