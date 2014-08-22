@@ -25,7 +25,7 @@
 (define (constant-exp-value exp)
   (cadr exp))
 (define (label-exp? exp)
-  (tagget-list? exp 'label))
+  (tagged-list? exp 'label))
 (define (label-exp-label exp)
   (cadr exp))
 
