@@ -93,19 +93,18 @@
 (set-handler 'assign assign-handler)
 
 #|
-(define (test-handler inst labels machine pc flag stack ops)
+(define (test-handler insn m)
   ;; instruction destruction
-  (let ((condition (test-condition inst)))
+  (let ((condition (test-condition insn)))
     (if (operation-exp? condition)
         (let ((condition-proc
                (make-operation-exp
                 condition machine labels operations)))
           (lambda ()
             ;; execute the "operation", and then set the flag
-            (set-contents! flag (condition-proc))
-            (advance-pc)))
-        ;; original error message is too verbose
-        (error "TEST: bad instruction: "
+            (machine-reg-set! 'flag (condition-proc))
+            (advance-pc m)))
+        (error "bad instruction:"
                inst))))
 (set-handler 'test test-handler)
 
