@@ -29,7 +29,7 @@
 (define (label-exp-label exp)
   (cadr exp))
 
-(define (make-operation-exp exp machine la bles operations)
+(define (make-operation-exp exp machine labels operations)
   (let ((op (lookup-prim (operation-exp-op exp)
                          operations))
         (aprocs
