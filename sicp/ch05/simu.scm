@@ -92,7 +92,7 @@
 
   (assemble '(labela
               (assign a (const 1234))
-              (assign b (reg a))
+              (assign b (op +) (const 9876) (reg a))
               labelg)
             machine)
   (machine-reset-pc! machine)

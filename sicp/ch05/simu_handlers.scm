@@ -22,7 +22,7 @@
 ;; yielding "thunks" which can be used multiple times
 ;; without too much time consumption.
 
-(define (make-primitive-exp exp m labels)
+(define (make-primitive-exp exp m)
   ;; accessors
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
@@ -61,12 +61,12 @@
         (else
          (error "unexpected expression:" exp))))
 
-(define (make-operation-exp exp m labels)
-  (let ((op (lookup-prim (operation-exp-op exp)
-                         operations))
+(define (make-operation-exp exp m)
+  (let ((op (machine-lookup-prim
+             m (operation-exp-op exp)))
         (aprocs
          (map (lambda (e)
-                (make-primitive-exp e machine labels))
+                (make-primitive-exp e m))
               (operation-exp-operands exp))))
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
@@ -94,9 +94,10 @@
     (let ((value-proc
            ;; yields a value when run as a procedure
            (if (operation-exp? value-exp)
-               'todo
+               (make-operation-exp
+                value-exp m)
                (make-primitive-exp
-                (car value-exp) m 'todo))))
+                (car value-exp) m))))
       (lambda ()
         (register-set! target-reg (value-proc))
         (advance-pc m)))))
