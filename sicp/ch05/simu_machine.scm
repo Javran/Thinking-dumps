@@ -134,6 +134,12 @@
         (cadr new-insn-pos)
         (error "label not found:" label))))
 
+(define (machine-lookup-prim m prim)
+  (let ((result (assoc prim (machine-operations m))))
+    (if result
+        (cadr result)
+        (error "primtive not found:" prim))))
+
 ;; TODO: install-instruction-sequence
 ;;       execute
 

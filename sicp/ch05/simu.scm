@@ -82,6 +82,14 @@
   (machine-define-registers!
    machine
    '(a b c d))
+  (machine-set-operations!
+   machine
+   `( (+ ,+)
+      (- ,-)
+      (* ,*)
+      (/ ,/)
+      ))
+
   (assemble '(labela
               (assign a (const 1234))
               (assign b (reg a))
