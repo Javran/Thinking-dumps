@@ -22,16 +22,16 @@
 ;; yielding "thunks" which can be used multiple times
 ;; without too much time consumption.
 
+(define (label-exp? exp)
+  (tagged-list? exp 'label))
+(define (label-exp-label exp)
+  (cadr exp))
+
 (define (make-primitive-exp exp m)
   ;; accessors
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
   (define (constant-exp-value exp)
-    (cadr exp))
-
-  (define (label-exp? exp)
-    (tagged-list? exp 'label))
-  (define (label-exp-label exp)
     (cadr exp))
 
   (define (register-exp? exp)
@@ -115,32 +115,30 @@
             (machine-reg-set! m 'flag (condition-proc))
             (advance-pc m)))
         (error "bad instruction:"
-               inst))))
+               insn))))
 (set-handler 'test test-handler)
 
-#|
-(define (branch-handler inst labels machine pc flag stack ops)
-  ;; instruction destruction
-  (let ((dest (branch-dest inst)))
+(define (branch-handler insn m)
+  (let ((dest (branch-dest insn)))
     ;; must be a label (might extend to "goto"
     ;; but this functionality is not seen in the book)
     (if (label-exp? dest)
-        (let ((insts
-               (lookup-label
-                labels
-                (label-exp-label dest))))
-          (lambda ()
+        (lambda ()
+          (let ((insns
+                 (machine-lookup-label
+                  m (label-exp-label dest))))
             ;; check the flag first and then make the decision
             ;; of either jumping or advancing pc
-            (if (get-contents flag)
-                (set-contents! pc insts)
+            (if (machine-reg-get m 'flag)
+                (machine-reg-set! m 'pc insn)
                 (advance-pc pc))))
         ;; just wondering why we need to print out these
         ;; error info while the error only happens when
         ;; being used internally.
-        (error "BRANCH: bad instruction: " inst))))
+        (error "bad instruction:" insn))))
 (set-handler 'branch branch-handler)
 
+#|
 (define (goto-handler inst labels machine pc flag stack ops)
   'todo)
 

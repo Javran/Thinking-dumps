@@ -92,11 +92,16 @@
       ))
 
   (assemble '((assign a (op +) (const 20) (const 1))
-              (test (op zero?) (const 0)))
+              (test (op zero?) (const 0))
+              (branch (label aa))
+              (assign a (const 10))
+              aa
+              (assign a (op +) (reg a) (reg a)))
+
             machine)
   (machine-reset-pc! machine)
   (machine-execute! machine)
-  (out (machine-reg-get machine 'flag
+  (out (machine-reg-get machine 'a
                         )))
 
 ;; Local variables:
