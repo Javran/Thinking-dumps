@@ -88,16 +88,15 @@
       (- ,-)
       (* ,*)
       (/ ,/)
+      (zero? ,zero?)
       ))
 
-  (assemble '(labela
-              (assign a (const 1234))
-              (assign b (op +) (const 9876) (reg a))
-              labelg)
+  (assemble '((assign a (op +) (const 20) (const 1))
+              (test (op zero?) (const 0)))
             machine)
   (machine-reset-pc! machine)
   (machine-execute! machine)
-  (out (machine-reg-get machine 'b
+  (out (machine-reg-get machine 'flag
                         )))
 
 ;; Local variables:
