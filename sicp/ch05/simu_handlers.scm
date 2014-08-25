@@ -130,8 +130,8 @@
             ;; check the flag first and then make the decision
             ;; of either jumping or advancing pc
             (if (machine-reg-get m 'flag)
-                (machine-reg-set! m 'pc insn)
-                (advance-pc pc))))
+                (machine-reg-set! m 'pc insns)
+                (advance-pc m))))
         ;; just wondering why we need to print out these
         ;; error info while the error only happens when
         ;; being used internally.
