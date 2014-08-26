@@ -104,7 +104,6 @@
 (set-handler 'assign assign-handler)
 
 (define (test-handler insn m)
-
   (let ((condition (test-condition insn)))
     (if (operation-exp? condition)
         (let ((condition-proc

@@ -1,6 +1,6 @@
 ;; input a controller-text, and expected register values,
 ;; raise error if the actual register value is not equal to the expected value
-(define (make-machine-test controller-text result-regs)
+(define (do-machine-test controller-text result-regs)
   ;; since registers are unassigned at the begining,
   ;; to get a full list of registers we only need to take care
   ;; about "assign" instructions
@@ -42,14 +42,78 @@
        machine-reg-get
        testcases))))
 
-(make-machine-test
-  '((assign a (op +) (const 20) (const 1))
-    (test (op zero?) (const 1))
-    (branch (label aa))
-    (assign a (const 10))
-    aa
-    (assign a (op +) (reg a) (reg a)))
-  '((a 20)))
+(define (do-handler-tests)
+  ;; ==== test "assign" instruction ====
+  ;; (const <val>)
+  (do-machine-test
+   '((assign a (const 1))
+     (assign b (const 2))
+     (assign b (const 3)))
+   '((a 1)
+     (b 3)))
+
+  ;; (op <op>) and (reg <reg>)
+  (do-machine-test
+   '((assign a (const 1))
+     (assign b (op +) (const 2) (reg a))
+     (assign c (reg b)))
+   '((a 1)
+     (b 3)
+     (c 3)))
+
+  ;; this testcase is for test purpose only,
+  ;; assigning to pc register is discouraged
+  ;; because it might lead to confusions
+  ;; (label <label>)
+  (do-machine-test
+   '((assign a (const 1))
+     (assign pc (label jmp))
+     (assign a (op +) (reg a) (const 10))
+     jmp
+     ;; the instruction right after the label
+     ;; is skipped since "assign" always advances pc
+     (assign a (op +) (reg a) (const 100))
+     (assign a (op +) (reg a) (const 1000)))
+   '((a 1001)))
+
+  ;; ==== test "test" instruction ====
+  ;; #f
+  (do-machine-test
+   '((test (op zero?) (const 1)))
+   '((flag #f)))
+
+  ;; #t, and with register access
+  (do-machine-test
+   '((assign a (const 0))
+     (test (op zero?) (reg a)))
+   '((flag #t)))
+
+  ;; ==== test "branch" instruction ====
+  ;; jump with #t flag
+  (do-machine-test
+   '((test (op zero?) (const 0))
+     (assign a (const 1))
+     (branch (label label-1))
+     (assign a (op +) (reg a) (const 10))
+     label-1
+     (assign a (op +) (reg a) (const 100)))
+   '((a 101)))
+
+  ;; don't jump with #f flag
+  (do-machine-test
+   '((test (op zero?) (const 1))
+     (assign a (const 1))
+     (branch (label label-1))
+     (assign a (op +) (reg a) (const 10))
+     label-1
+     (assign a (op +) (reg a) (const 100)))
+   '((a 111)))
+
+  'done)
+
+(if *simu-test*
+    (do-handler-tests)
+    'ignored)
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
