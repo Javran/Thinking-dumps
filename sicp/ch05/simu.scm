@@ -86,9 +86,9 @@
                   (eq? 'assign (car insn)))
              (list (cadr insn)))
             (else '())))
-    (delq 'pc
+    (remove-duplicates (delq 'pc
           (delq 'flag
-                (apply append (map extract controller-text)))))
+                (apply append (map extract controller-text))))))
 
   ;; result-regs: (list (list <reg-name> <reg-value>) ...)
   (let ((m (empty-machine))
@@ -96,7 +96,7 @@
     (machine-define-registers!
      m reg-names)
   (machine-set-operations!
-   machine
+   m
    `( (+ ,+)
       (- ,-)
       (* ,*)
@@ -116,33 +116,14 @@
    machine-reg-get
    testcases))))
 
-;; TODO: not confident if the current system will be working,
-;; try to at least make some handlers work.
-(let ((machine (empty-machine)))
-  (machine-define-registers!
-   machine
-   '(a b c d))
-  (machine-set-operations!
-   machine
-   `( (+ ,+)
-      (- ,-)
-      (* ,*)
-      (/ ,/)
-      (zero? ,zero?)
-      ))
-  (assemble '((assign a (op +) (const 20) (const 1))
+(make-machine-test
+  '((assign a (op +) (const 20) (const 1))
               (test (op zero?) (const 1))
               (branch (label aa))
               (assign a (const 10))
               aa
               (assign a (op +) (reg a) (reg a)))
-
-            machine)
-
-  (machine-reset-pc! machine)
-  (machine-execute! machine)
-  (out (machine-reg-get machine 'a
-                        )))
+  '((a 20)))
 
 ;; Local variables:
 ;; proc-entry: ""
