@@ -76,6 +76,46 @@
         (handler insn-text machine)
         (error "unknown instruction:" inst))))
 
+;; input a controller-text, and expected register values,
+;; raise error if the actual register value is not equal to the expected value
+(define (make-machine-test controller-text result-regs)
+  (define (extract-register-names controller-text)
+    (define (extract insn)
+      (cond ((symbol? insn) '())
+            ((and (non-empty? insn)
+                  (eq? 'assign (car insn)))
+             (list (cadr insn)))
+            (else '())))
+    (delq 'pc
+          (delq 'flag
+                (apply append (map extract controller-text)))))
+
+  ;; result-regs: (list (list <reg-name> <reg-value>) ...)
+  (let ((m (empty-machine))
+        (reg-names (extract-register-names controller-text)))
+    (machine-define-registers!
+     m reg-names)
+  (machine-set-operations!
+   machine
+   `( (+ ,+)
+      (- ,-)
+      (* ,*)
+      (/ ,/)
+      (zero? ,zero?)
+      ))
+  (assemble controller-text m)
+  (machine-reset-pc! m)
+  (machine-execute! m)
+
+  (let ((testcases
+         (map
+          (lambda (result-reg-info)
+            (mat m (car result-reg-info) (cadr result-reg-info)))
+          result-regs)))
+  (do-test
+   machine-reg-get
+   testcases))))
+
 ;; TODO: not confident if the current system will be working,
 ;; try to at least make some handlers work.
 (let ((machine (empty-machine)))
