@@ -15,6 +15,10 @@
              (car xs)
              (remove-duplicates (cdr xs))))))
 
+;; xs - ys
+(define (set-diff xs ys)
+  (fold-right delete xs ys))
+
 ;; check if two lists are of the same length
 ;; (should be more efficient than getting their lengths
 ;; and then comparing)
