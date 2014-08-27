@@ -71,6 +71,12 @@
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
 
+;; it might be more efficient
+;; to find the register when assembling
+;; but I guess this is not a big deal
+;; as in our model, "pc" appears before
+;; many other registers and therefore can
+;; be found in a short time
 (define (advance-pc m)
   (machine-reg-set!
    m 'pc
@@ -122,16 +128,17 @@
     ;; must be a label (might extend to "goto"
     ;; but this functionality is not seen in the book)
     (if (label-exp? dest)
-        (lambda ()
-          (let ((insns
-                 (machine-lookup-label
-                  m (label-exp-label dest))))
-            ;; check the flag first and then make the decision
-            ;; of either jumping or advancing pc
-            ;; TODO: the reg lookup can be done earlier
-            (if (machine-reg-get m 'flag)
-                (machine-reg-set! m 'pc insns)
-                (advance-pc m))))
+        (let ((flag-reg (machine-find-register m 'flag))
+              (pc-reg (machine-find-register m 'pc)))
+          (lambda ()
+            (let ((insns
+                   (machine-lookup-label
+                    m (label-exp-label dest))))
+              ;; check the flag first and then make the decision
+              ;; of either jumping or advancing pc
+              (if (register-get flag-reg)
+                  (register-set! pc-reg insns)
+                  (advance-pc m)))))
         ;; just wondering why we need to print out these
         ;; error info while the error only happens when
         ;; being used internally.
