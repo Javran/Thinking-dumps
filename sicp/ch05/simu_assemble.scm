@@ -54,8 +54,6 @@
       (machine-set-instruction-sequence! machine (drop-labels insns))
       (machine-set-jump-table! machine jump-table))))
 
-
-
 (define (make-execution-procedure insn-text machine)
   (let ((handler (get-handler (car insn-text))))
     (if handler

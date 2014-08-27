@@ -128,6 +128,7 @@
                   m (label-exp-label dest))))
             ;; check the flag first and then make the decision
             ;; of either jumping or advancing pc
+            ;; TODO: the reg lookup can be done earlier
             (if (machine-reg-get m 'flag)
                 (machine-reg-set! m 'pc insns)
                 (advance-pc m))))
@@ -137,17 +138,32 @@
         (error "bad instruction:" insn))))
 (set-handler 'branch branch-handler)
 
+(define (goto-handler insn m)
+  (let ((dest (goto-dest insn)))
+    (cond
+     ((label-exp? dest)
+      (let ((insns (lookup-label
+                    labels
+                    (label-exp-label dest))))
+        (lambda ()
+          (set-contents! pc insns))))
+     ((register-exp? dest)
+      (lambda ()
+        (machine-reg-set!
+         m 'pc
+         (machine-reg-get m dest))))
+     (else
+      (error "bad instruction:" insn)))))
+(set-handler 'goto goto-handler)
+
 #|
-(define (goto-handler inst labels machine pc flag stack ops)
+(define (save-handler insn labels machine pc flag stack ops)
   'todo)
 
-(define (save-handler inst labels machine pc flag stack ops)
+(define (restore-handler insn labels machine pc flag stack ops)
   'todo)
 
-(define (restore-handler inst labels machine pc flag stack ops)
-  'todo)
-
-(define (perform-handler inst labels machine pc flag stack ops)
+(define (perform-handler insn labels machine pc flag stack ops)
   'todo)
 |#
 
