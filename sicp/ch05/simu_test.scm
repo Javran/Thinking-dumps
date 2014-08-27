@@ -139,6 +139,21 @@
      (b 1024)
      (pcx (assign pcx (reg pc)))))
 
+  ;; ==== test "save" and "restore" instructions ====
+  (do-machine-test
+   '((assign a (const 1))
+     (assign b (const 2))
+     (assign c (const 3))
+     (save a) ;; [a]
+     (save b) ;; [b,a]
+     (save c) ;; [c,b,a]
+     (restore a)  ;; [b,a], new a = c = 3
+     (restore c)  ;; [a], new c = b = 2
+     (restore b)) ;; [], new b = a = 1
+   '((a 3)
+     (b 1)
+     (c 2)))
+
   'done)
 
 (if *simu-test*

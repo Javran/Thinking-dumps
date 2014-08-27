@@ -60,7 +60,7 @@
         ;; we choose to keep arguments simple
         ;; as it is easier to understand and maintain.
         (handler insn-text machine)
-        (error "unknown instruction:" inst))))
+        (error "unknown instruction:" insn-text))))
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"

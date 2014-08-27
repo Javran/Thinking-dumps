@@ -166,13 +166,28 @@
       (error "bad instruction:" insn)))))
 (set-handler 'goto goto-handler)
 
+(define stack-insn-reg-name cadr)
+
+(define (save-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn)))
+        (stack (machine-stack m)))
+    (lambda ()
+      (stack-push! stack (register-get reg))
+      (advance-pc m))))
+(set-handler 'save save-handler)
+
+(define (restore-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn)))
+        (stack (machine-stack m)))
+    (lambda ()
+      (register-set! reg (stack-top stack))
+      (stack-pop! stack)
+      (advance-pc m))))
+(set-handler 'restore restore-handler)
+
 #|
-(define (save-handler insn labels machine pc flag stack ops)
-  'todo)
-
-(define (restore-handler insn labels machine pc flag stack ops)
-  'todo)
-
 (define (perform-handler insn labels machine pc flag stack ops)
   'todo)
 |#

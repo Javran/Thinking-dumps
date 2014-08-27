@@ -10,7 +10,7 @@
 (define (stack-pop! st)
   (vector-modify! st 0 cdr))
 (define (stack-top st)
-  (car (vector-ref 0 st)))
+  (car (vector-ref st 0)))
 ;; \ ====
 
 ;; / ==== abstract machine operations
@@ -139,9 +139,6 @@
     (if result
         (cadr result)
         (error "primtive not found:" prim))))
-
-;; TODO: install-instruction-sequence
-;;       execute
 
 ;; \ ====
 
