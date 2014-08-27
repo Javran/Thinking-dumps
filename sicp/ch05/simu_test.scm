@@ -30,6 +30,9 @@
         (zero? ,zero?)
         ;; first instruction from a pc-like register
         (first-insn ,caar)
+        ;; "perform test", assign value to register "a"
+        (perf ,(lambda (val)
+                 (machine-reg-set! m 'a val)))
         ))
     (assemble controller-text m)
     (machine-reset-pc! m)
@@ -153,6 +156,13 @@
    '((a 3)
      (b 1)
      (c 2)))
+
+  ;; ==== test "perform" instruction ====
+  ;; trigger a "perform" operation
+  (do-machine-test
+   '((assign a (const 1))
+     (perform (op perf) (const 6174)))
+   '((a 6174)))
 
   'done)
 

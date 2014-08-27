@@ -187,10 +187,17 @@
       (advance-pc m))))
 (set-handler 'restore restore-handler)
 
-#|
-(define (perform-handler insn labels machine pc flag stack ops)
-  'todo)
-|#
+(define (perform-handler insn m)
+  (let ((action (perform-action insn)))
+    (if (operation-exp? action)
+        (let ((action-proc
+               (make-operation-exp
+                action m)))
+          (lambda ()
+            (action-proc)
+            (advance-pc m)))
+        (error "bad instruction:" insn))))
+(set-handler 'perform perform-handler)
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
