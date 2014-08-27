@@ -27,16 +27,16 @@
 (define (label-exp-label exp)
   (cadr exp))
 
+(define (register-exp? exp)
+  (tagged-list? exp 'reg))
+(define (register-exp-reg exp)
+  (cadr exp))
+
 (define (make-primitive-exp exp m)
   ;; accessors
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
   (define (constant-exp-value exp)
-    (cadr exp))
-
-  (define (register-exp? exp)
-    (tagged-list? exp 'reg))
-  (define (register-exp-reg exp)
     (cadr exp))
 
   (cond ((constant-exp? exp)
@@ -149,16 +149,19 @@
   (let ((dest (goto-dest insn)))
     (cond
      ((label-exp? dest)
-      (let ((insns (lookup-label
-                    labels
-                    (label-exp-label dest))))
+      (let ((pc-reg (machine-find-register m 'pc)))
         (lambda ()
-          (set-contents! pc insns))))
+          (let ((insns
+                 (machine-lookup-label
+                  m (label-exp-label dest))))
+            (register-set! pc-reg insns)))))
      ((register-exp? dest)
-      (lambda ()
-        (machine-reg-set!
-         m 'pc
-         (machine-reg-get m dest))))
+      (let ((pc-reg (machine-find-register m 'pc))
+            (dest-reg (machine-find-register
+                       m (register-exp-reg dest))))
+        (lambda ()
+          (register-set!
+           pc-reg (register-get dest-reg)))))
      (else
       (error "bad instruction:" insn)))))
 (set-handler 'goto goto-handler)

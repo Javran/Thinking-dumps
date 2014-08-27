@@ -28,6 +28,8 @@
         (* ,*)
         (/ ,/)
         (zero? ,zero?)
+        ;; first instruction from a pc-like register
+        (first-insn ,caar)
         ))
     (assemble controller-text m)
     (machine-reset-pc! m)
@@ -108,6 +110,34 @@
      label-1
      (assign a (op +) (reg a) (const 100)))
    '((a 111)))
+
+  ;; ==== test "goto" instruction ====
+  ;; go to a label
+  (do-machine-test
+   '((assign a (const 1))
+     (goto (label skip))
+     (assign a (op +) (reg a) (const 10))
+     skip
+     (assign a (op +) (reg a) (const 100))
+     (assign a (op +) (reg a) (const 1000)))
+   '((a 1101)))
+
+  ;; go to a register
+  (do-machine-test
+   '((assign a (const 10))
+     (assign b (const 1))
+     ;; label "pcx" should be here
+     (assign pcx (reg pc))
+     (test (op zero?) (reg a))
+     (branch (label end))
+     (assign a (op -) (reg a) (const 1))
+     (assign b (op +) (reg b) (reg b))
+     (goto (reg pcx))
+     end
+     (assign pcx (op first-insn) (reg pcx)))
+   '((a 0)
+     (b 1024)
+     (pcx (assign pcx (reg pc)))))
 
   'done)
 
