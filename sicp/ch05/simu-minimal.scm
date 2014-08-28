@@ -1,9 +1,11 @@
 ;; this file just serves the purpose of comparison
 ;; with all comments, tests and shortcut functions removed
-;; this implementation takes only 339 lines of code and is more powerful
+;; this implementation takes only 291 lines of code and is more powerful
 ;; (like defining new handlers with ease)
-;; comparing with the legacy one, which is about 346 lines of code
+;; comparing with the legacy one, which is about 316 lines of code
 ;; (comment takes 2 lines)
+;; command line used: `grep -vP '^\s*(;.*)?$' <source-file> | wc -l`
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 (load "./data-directed.scm")
@@ -343,3 +345,4 @@
                        (loop table tl)))))))
       (machine-set-instruction-sequence! machine (drop-labels insns))
       (machine-set-jump-table! machine jump-table))))
+
