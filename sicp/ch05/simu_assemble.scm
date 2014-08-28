@@ -1,3 +1,6 @@
+(load "./simu_machine.scm")
+(load "./simu_assemble_handlers.scm")
+
 (define (assemble controller-text machine)
   ;; expected input: a list of instruction texts (including labels)
   ;; we don't have to do all the things in one pass
@@ -53,16 +56,6 @@
                              tl)))))))
       (machine-set-instruction-sequence! machine (drop-labels insns))
       (machine-set-jump-table! machine jump-table))))
-
-
-
-(define (make-execution-procedure insn-text machine)
-  (let ((handler (get-handler (car insn-text))))
-    (if handler
-        ;; we choose to keep arguments simple
-        ;; as it is easier to understand and maintain.
-        (handler insn-text machine)
-        (error "unknown instruction:" inst))))
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"

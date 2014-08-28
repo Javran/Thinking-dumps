@@ -8,9 +8,6 @@
 (define *simu-test* #t)
 
 (load "./simu_utils.scm")
-(load "./simu_handlers.scm")
-(load "./simu_accessors.scm")
-(load "./simu_machine.scm")
 (load "./simu_assemble.scm")
 (load "./simu_test.scm")
 

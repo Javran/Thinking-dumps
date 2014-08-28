@@ -1,42 +1,23 @@
-(load "./data-directed.scm")
+(load "./simu_assemble_handler_def.scm")
+(load "./simu_controller_syntax.scm")
 
-;; ==== build handler lookup table
-
-(define set-handler #f)
-(define get-handler #f)
-(define init-handler-table! #f)
-
-(let* ((f-alist (global-table-functions))
-       (set1 (cadr (assoc 'set f-alist)))
-       (get1 (cadr (assoc 'get f-alist)))
-       (init1 (cadr (assoc 'init f-alist))))
-  (set! set-handler set1)
-  (set! get-handler get1)
-  (set! init-handler-table! init1))
-
-;; ====
-;; * (set-handler <slot> <handler>) to set a handler
-;; * (get-handler <slot>) to retrieve a handler
+(define (make-execution-procedure insn-text machine)
+  (let ((handler (get-handler (car insn-text))))
+    (if handler
+        ;; we choose to keep arguments simple
+        ;; as it is easier to understand and maintain.
+        (handler insn-text machine)
+        (error "unknown instruction:" insn-text))))
 
 ;; analyze the list of instructions once for all,
 ;; yielding "thunks" which can be used multiple times
 ;; without too much time consumption.
-
-(define (label-exp? exp)
-  (tagged-list? exp 'label))
-(define (label-exp-label exp)
-  (cadr exp))
 
 (define (make-primitive-exp exp m)
   ;; accessors
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
   (define (constant-exp-value exp)
-    (cadr exp))
-
-  (define (register-exp? exp)
-    (tagged-list? exp 'reg))
-  (define (register-exp-reg exp)
     (cadr exp))
 
   (cond ((constant-exp? exp)
@@ -71,11 +52,6 @@
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
 
-(define (advance-pc m)
-  (machine-reg-set!
-   m 'pc
-   (cdr (machine-reg-get m 'pc))))
-
 ;; handler type:
 ;; (<handler> insn machine)
 
@@ -104,6 +80,9 @@
 (set-handler 'assign assign-handler)
 
 (define (test-handler insn m)
+  ;; (test @<condition>)
+  (define test-condition cdr)
+
   (let ((condition (test-condition insn)))
     (if (operation-exp? condition)
         (let ((condition-proc
@@ -118,38 +97,87 @@
 (set-handler 'test test-handler)
 
 (define (branch-handler insn m)
+  ;; (branch <destination>)
+  (define branch-dest cadr)
+
   (let ((dest (branch-dest insn)))
     ;; must be a label (might extend to "goto"
     ;; but this functionality is not seen in the book)
     (if (label-exp? dest)
-        (lambda ()
-          (let ((insns
-                 (machine-lookup-label
-                  m (label-exp-label dest))))
-            ;; check the flag first and then make the decision
-            ;; of either jumping or advancing pc
-            (if (machine-reg-get m 'flag)
-                (machine-reg-set! m 'pc insns)
-                (advance-pc m))))
+        (let ((flag-reg (machine-find-register m 'flag))
+              (pc-reg (machine-find-register m 'pc)))
+          (lambda ()
+            (let ((insns
+                   (machine-lookup-label
+                    m (label-exp-label dest))))
+              ;; check the flag first and then make the decision
+              ;; of either jumping or advancing pc
+              (if (register-get flag-reg)
+                  (register-set! pc-reg insns)
+                  (advance-pc m)))))
         ;; just wondering why we need to print out these
         ;; error info while the error only happens when
         ;; being used internally.
         (error "bad instruction:" insn))))
 (set-handler 'branch branch-handler)
 
-#|
-(define (goto-handler inst labels machine pc flag stack ops)
-  'todo)
+(define (goto-handler insn m)
+  ;; (goto <destionation>)
+  (define goto-dest cadr)
 
-(define (save-handler inst labels machine pc flag stack ops)
-  'todo)
+  (let ((dest (goto-dest insn)))
+    (cond
+     ((label-exp? dest)
+      (let ((pc-reg (machine-find-register m 'pc)))
+        (lambda ()
+          (let ((insns
+                 (machine-lookup-label
+                  m (label-exp-label dest))))
+            (register-set! pc-reg insns)))))
+     ((register-exp? dest)
+      (let ((pc-reg (machine-find-register m 'pc))
+            (dest-reg (machine-find-register
+                       m (register-exp-reg dest))))
+        (lambda ()
+          (register-set!
+           pc-reg (register-get dest-reg)))))
+     (else
+      (error "bad instruction:" insn)))))
+(set-handler 'goto goto-handler)
 
-(define (restore-handler inst labels machine pc flag stack ops)
-  'todo)
+(define (save-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn)))
+        (stack (machine-stack m)))
+    (lambda ()
+      (stack-push! stack (register-get reg))
+      (advance-pc m))))
+(set-handler 'save save-handler)
 
-(define (perform-handler inst labels machine pc flag stack ops)
-  'todo)
-|#
+(define (restore-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn)))
+        (stack (machine-stack m)))
+    (lambda ()
+      (register-set! reg (stack-top stack))
+      (stack-pop! stack)
+      (advance-pc m))))
+(set-handler 'restore restore-handler)
+
+(define (perform-handler insn m)
+  ;; (perform @<inst>)
+  (define (perform-action inst) (cdr inst))
+
+  (let ((action (perform-action insn)))
+    (if (operation-exp? action)
+        (let ((action-proc
+               (make-operation-exp
+                action m)))
+          (lambda ()
+            (action-proc)
+            (advance-pc m)))
+        (error "bad instruction:" insn))))
+(set-handler 'perform perform-handler)
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"

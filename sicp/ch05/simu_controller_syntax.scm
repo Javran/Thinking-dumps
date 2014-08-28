@@ -1,36 +1,10 @@
-(define (list-tagged-with tag)
-  (lambda (l)
-    (and
-      (list? l)
-      (non-empty? l)
-      (eq? (car l) tag))))
-
-(define (tagged-list? exp tag)
-  ((list-tagged-with tag) exp))
-
-;; accessors for "test"
-;; (test @<condition>)
-(define test-condition cdr)
-
-;; accessors for "branch"
-;; (branch <destination>)
-(define branch-dest cadr)
-
-;; accessors for "goto"
-;; (goto <destionation>)
-(define goto-dest cadr)
-
-;; accessors for "perform"
-;; (perform @<inst>)
-(define (perform-action inst) (cdr inst))
-
 ;; operation expressions are of the form:
 ;; ((op <operator>) <operand1> <operand2> ...)
 (define (operation-exp? exp)
   (and (pair? exp) (tagged-list? (car exp) 'op)))
 (define (operation-exp-op operation-exp)
   (cadr (car operation-exp)))
- (define (operation-exp-operands operation-exp)
+(define (operation-exp-operands operation-exp)
   (cdr operation-exp))
 
 (define (test-operation-exp-accessors)
@@ -52,6 +26,19 @@
      (list (mat test1 '(operand1 operand2))
            (mat test2 '(operand1))))
     'ok))
+
+;; (label <label>)
+(define (label-exp? exp)
+  (tagged-list? exp 'label))
+(define label-exp-label cadr)
+
+;; (reg <reg>)
+(define (register-exp? exp)
+  (tagged-list? exp 'reg))
+(define register-exp-reg cadr)
+
+;; (save <reg>) / (restore <reg>)
+(define stack-insn-reg-name cadr)
 
 (if *simu-test*
     (begin

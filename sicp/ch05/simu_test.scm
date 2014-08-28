@@ -1,38 +1,30 @@
+(load "./simu_execute.scm")
+
 ;; input a controller-text, and expected register values,
 ;; raise error if the actual register value is not equal to the expected value
 (define (do-machine-test controller-text result-regs)
   ;; since registers are unassigned at the begining,
   ;; to get a full list of registers we only need to take care
   ;; about "assign" instructions
-  (define (extract-register-names controller-text)
-    (define (extract insn)
-      (cond ((symbol? insn) '())
-            ((and (non-empty? insn)
-                  (eq? 'assign (car insn)))
-             (list (cadr insn)))
-            (else '())))
-    (remove-duplicates
-     (set-diff
-      (apply append (map extract controller-text))
-      '(pc flag))))
 
   ;; result-regs: (list (list <reg-name> <reg-value>) ...)
-  (let ((m (empty-machine))
-        (reg-names (extract-register-names controller-text)))
-    (machine-define-registers!
-     m reg-names)
-    (machine-set-operations!
-     m
-     `( (+ ,+)
-        (- ,-)
-        (* ,*)
-        (/ ,/)
-        (zero? ,zero?)
-        ))
-    (assemble controller-text m)
-    (machine-reset-pc! m)
-    (machine-execute! m)
-
+  (let* ((m (build-and-execute-with
+             controller-text
+             ;; initial register values (optional)
+             '()
+             ;; opreation table
+             (lambda (m)
+               `( (+ ,+)
+                  (- ,-)
+                  (* ,*)
+                  (/ ,/)
+                  (zero? ,zero?)
+                  ;; first instruction from a pc-like register
+                  (first-insn ,caar)
+                  ;; "perform test", assign value to register "a"
+                  (perf ,(lambda (val)
+                           (machine-reg-set! m 'a val)))
+                  )))))
     (let ((testcases
            (map
             (lambda (result-reg-info)
@@ -108,6 +100,63 @@
      label-1
      (assign a (op +) (reg a) (const 100)))
    '((a 111)))
+
+  ;; ==== test "goto" instruction ====
+  ;; go to a label
+  (do-machine-test
+   '((assign a (const 1))
+     (goto (label skip))
+     (assign a (op +) (reg a) (const 10))
+     skip
+     (assign a (op +) (reg a) (const 100))
+     (assign a (op +) (reg a) (const 1000)))
+   '((a 1101)))
+
+  ;; go to a register
+  (do-machine-test
+   '((assign a (const 10))
+     (assign b (const 1))
+     ;; label "pcx" should be here
+     (assign pcx (reg pc))
+     (test (op zero?) (reg a))
+     (branch (label end))
+     (assign a (op -) (reg a) (const 1))
+     (assign b (op +) (reg b) (reg b))
+     (goto (reg pcx))
+     end
+     (assign pcx (op first-insn) (reg pcx)))
+   '((a 0)
+     (b 1024)
+     (pcx (assign pcx (reg pc)))))
+
+  ;; ==== test "save" and "restore" instructions ====
+  (do-machine-test
+   '((assign a (const 1))
+     (assign b (const 2))
+     (assign c (const 3))
+     (save a) ;; [a]
+     (save b) ;; [b,a]
+     (save c) ;; [c,b,a]
+     (restore a)  ;; [b,a], new a = c = 3
+     (restore c)  ;; [a], new c = b = 2
+     (restore b)) ;; [], new b = a = 1
+   '((a 3)
+     (b 1)
+     (c 2)))
+
+  ;; ==== test "perform" instruction ====
+  ;; trigger a "perform" operation
+  (do-machine-test
+   '((assign a (const 1))
+     (perform (op perf) (const 6174)))
+   '((a 6174)))
+
+  ;; === test if "extract-register-names" works on "restore"
+  (do-machine-test
+   '((assign a (const 1))
+     (save a)
+     (restore b))
+   '((a 1) (b 1)))
 
   'done)
 

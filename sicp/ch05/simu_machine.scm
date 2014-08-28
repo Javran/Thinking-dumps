@@ -1,19 +1,8 @@
 (load "./simu_utils.scm")
 (load "./simu_register.scm")
+(load "./simu_stack.scm")
 
-;; / ==== lightweight implementation of a stack
-(define (empty-stack) (vector '()))
-
-(define (stack-push! st e)
-  (vector-modify! st 0 (lambda (stack)
-                         (cons e stack))))
-(define (stack-pop! st)
-  (vector-modify! st 0 cdr))
-(define (stack-top st)
-  (car (vector-ref 0 st)))
-;; \ ====
-
-;; / ==== abstract machine operations
+;; ==== abstract machine operations
 (define (empty-machine)
   (vector
    (empty-stack)                        ; 0: stack
@@ -124,7 +113,6 @@
     (if (null? insns)
         'done
         (begin
-          (format #t "next: ~A~%" (caar insns))
           ((cdr (car insns)))
           (machine-execute! m)))))
 
@@ -140,10 +128,16 @@
         (cadr result)
         (error "primtive not found:" prim))))
 
-;; TODO: install-instruction-sequence
-;;       execute
-
-;; \ ====
+;; it might be more efficient
+;; to find the register when assembling
+;; but I guess this is not a big deal
+;; as in our model, "pc" appears before
+;; many other registers and therefore can
+;; be found in a short time
+(define (advance-pc m)
+  (machine-reg-set!
+   m 'pc
+   (cdr (machine-reg-get m 'pc))))
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
