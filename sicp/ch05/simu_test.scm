@@ -8,27 +8,23 @@
   ;; about "assign" instructions
 
   ;; result-regs: (list (list <reg-name> <reg-value>) ...)
-  (let ((m (empty-machine))
-        (reg-names (extract-register-names controller-text)))
-    (machine-define-registers!
-     m reg-names)
-    (machine-set-operations!
-     m
-     `( (+ ,+)
-        (- ,-)
-        (* ,*)
-        (/ ,/)
-        (zero? ,zero?)
-        ;; first instruction from a pc-like register
-        (first-insn ,caar)
-        ;; "perform test", assign value to register "a"
-        (perf ,(lambda (val)
-                 (machine-reg-set! m 'a val)))
-        ))
-    (assemble controller-text m)
-    (machine-reset-pc! m)
-    (machine-execute! m)
-
+  (let* ((m (build-and-execute-with
+             controller-text
+             ;; initial register values (optional)
+             '()
+             ;; opreation table
+             (lambda (m)
+               `( (+ ,+)
+                  (- ,-)
+                  (* ,*)
+                  (/ ,/)
+                  (zero? ,zero?)
+                  ;; first instruction from a pc-like register
+                  (first-insn ,caar)
+                  ;; "perform test", assign value to register "a"
+                  (perf ,(lambda (val)
+                           (machine-reg-set! m 'a val)))
+                  )))))
     (let ((testcases
            (map
             (lambda (result-reg-info)
