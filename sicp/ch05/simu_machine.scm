@@ -129,6 +129,17 @@
         (cadr result)
         (error "primtive not found:" prim))))
 
+;; it might be more efficient
+;; to find the register when assembling
+;; but I guess this is not a big deal
+;; as in our model, "pc" appears before
+;; many other registers and therefore can
+;; be found in a short time
+(define (advance-pc m)
+  (machine-reg-set!
+   m 'pc
+   (cdr (machine-reg-get m 'pc))))
+
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
 ;; End:

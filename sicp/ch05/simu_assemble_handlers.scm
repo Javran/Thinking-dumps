@@ -1,38 +1,17 @@
-(load "./data-directed.scm")
+(load "./simu_assemble_handler_def.scm")
+(load "./simu_controller_syntax.scm")
 
-;; ==== build handler lookup table
-
-(define set-handler #f)
-(define get-handler #f)
-(define init-handler-table! #f)
-
-(let* ((f-alist (global-table-functions))
-       (set1 (cadr (assoc 'set f-alist)))
-       (get1 (cadr (assoc 'get f-alist)))
-       (init1 (cadr (assoc 'init f-alist))))
-  (set! set-handler set1)
-  (set! get-handler get1)
-  (set! init-handler-table! init1))
-
-(load "./simu_accessors.scm")
-
-;; ====
-;; * (set-handler <slot> <handler>) to set a handler
-;; * (get-handler <slot>) to retrieve a handler
+(define (make-execution-procedure insn-text machine)
+  (let ((handler (get-handler (car insn-text))))
+    (if handler
+        ;; we choose to keep arguments simple
+        ;; as it is easier to understand and maintain.
+        (handler insn-text machine)
+        (error "unknown instruction:" insn-text))))
 
 ;; analyze the list of instructions once for all,
 ;; yielding "thunks" which can be used multiple times
 ;; without too much time consumption.
-
-(define (label-exp? exp)
-  (tagged-list? exp 'label))
-(define (label-exp-label exp)
-  (cadr exp))
-
-(define (register-exp? exp)
-  (tagged-list? exp 'reg))
-(define (register-exp-reg exp)
-  (cadr exp))
 
 (define (make-primitive-exp exp m)
   ;; accessors
@@ -72,17 +51,6 @@
               (operation-exp-operands exp))))
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
-
-;; it might be more efficient
-;; to find the register when assembling
-;; but I guess this is not a big deal
-;; as in our model, "pc" appears before
-;; many other registers and therefore can
-;; be found in a short time
-(define (advance-pc m)
-  (machine-reg-set!
-   m 'pc
-   (cdr (machine-reg-get m 'pc))))
 
 ;; handler type:
 ;; (<handler> insn machine)
@@ -176,8 +144,6 @@
      (else
       (error "bad instruction:" insn)))))
 (set-handler 'goto goto-handler)
-
-(define stack-insn-reg-name cadr)
 
 (define (save-handler insn m)
   (let ((reg (machine-find-register
