@@ -1,20 +1,11 @@
+(load "./simu_execute.scm")
+
 ;; input a controller-text, and expected register values,
 ;; raise error if the actual register value is not equal to the expected value
 (define (do-machine-test controller-text result-regs)
   ;; since registers are unassigned at the begining,
   ;; to get a full list of registers we only need to take care
   ;; about "assign" instructions
-  (define (extract-register-names controller-text)
-    (define (extract insn)
-      (cond ((symbol? insn) '())
-            ((and (non-empty? insn)
-                  (eq? 'assign (car insn)))
-             (list (cadr insn)))
-            (else '())))
-    (remove-duplicates
-     (set-diff
-      (apply append (map extract controller-text))
-      '(pc flag))))
 
   ;; result-regs: (list (list <reg-name> <reg-value>) ...)
   (let ((m (empty-machine))
@@ -163,6 +154,13 @@
    '((assign a (const 1))
      (perform (op perf) (const 6174)))
    '((a 6174)))
+
+  ;; === test if "extract-register-names" works on "restore"
+  (do-machine-test
+   '((assign a (const 1))
+     (save a)
+     (restore b))
+   '((a 1) (b 1)))
 
   'done)
 
