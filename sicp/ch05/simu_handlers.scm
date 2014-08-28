@@ -14,6 +14,8 @@
   (set! get-handler get1)
   (set! init-handler-table! init1))
 
+(load "./simu_accessors.scm")
+
 ;; ====
 ;; * (set-handler <slot> <handler>) to set a handler
 ;; * (get-handler <slot>) to retrieve a handler
@@ -110,6 +112,9 @@
 (set-handler 'assign assign-handler)
 
 (define (test-handler insn m)
+  ;; (test @<condition>)
+  (define test-condition cdr)
+
   (let ((condition (test-condition insn)))
     (if (operation-exp? condition)
         (let ((condition-proc
@@ -124,6 +129,9 @@
 (set-handler 'test test-handler)
 
 (define (branch-handler insn m)
+  ;; (branch <destination>)
+  (define branch-dest cadr)
+
   (let ((dest (branch-dest insn)))
     ;; must be a label (might extend to "goto"
     ;; but this functionality is not seen in the book)
@@ -146,6 +154,9 @@
 (set-handler 'branch branch-handler)
 
 (define (goto-handler insn m)
+  ;; (goto <destionation>)
+  (define goto-dest cadr)
+
   (let ((dest (goto-dest insn)))
     (cond
      ((label-exp? dest)
@@ -188,6 +199,9 @@
 (set-handler 'restore restore-handler)
 
 (define (perform-handler insn m)
+  ;; (perform @<inst>)
+  (define (perform-action inst) (cdr inst))
+
   (let ((action (perform-action insn)))
     (if (operation-exp? action)
         (let ((action-proc

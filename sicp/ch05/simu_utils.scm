@@ -29,3 +29,14 @@
         ((and (pair? xs) (pair? ys))
          (same-length? (cdr xs) (cdr ys)))
         (else #f)))
+
+;; ((list-tagged-with <tag>) '(<tag> ...)) => #t
+(define (list-tagged-with tag)
+  (lambda (l)
+    (and
+      (list? l)
+      (non-empty? l)
+      (eq? (car l) tag))))
+
+(define (tagged-list? exp tag)
+  ((list-tagged-with tag) exp))

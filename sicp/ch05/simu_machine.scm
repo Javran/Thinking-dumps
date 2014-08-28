@@ -1,19 +1,8 @@
 (load "./simu_utils.scm")
 (load "./simu_register.scm")
+(load "./simu_stack.scm")
 
-;; / ==== lightweight implementation of a stack
-(define (empty-stack) (vector '()))
-
-(define (stack-push! st e)
-  (vector-modify! st 0 (lambda (stack)
-                         (cons e stack))))
-(define (stack-pop! st)
-  (vector-modify! st 0 cdr))
-(define (stack-top st)
-  (car (vector-ref st 0)))
-;; \ ====
-
-;; / ==== abstract machine operations
+;; ==== abstract machine operations
 (define (empty-machine)
   (vector
    (empty-stack)                        ; 0: stack
@@ -139,8 +128,6 @@
     (if result
         (cadr result)
         (error "primtive not found:" prim))))
-
-;; \ ====
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
