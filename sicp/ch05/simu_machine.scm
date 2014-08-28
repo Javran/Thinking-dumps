@@ -113,7 +113,6 @@
     (if (null? insns)
         'done
         (begin
-          (format #t "next: ~A~%" (caar insns))
           ((cdr (car insns)))
           (machine-execute! m)))))
 

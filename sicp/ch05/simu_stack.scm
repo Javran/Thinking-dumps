@@ -1,5 +1,3 @@
-(load "./simu_utils.scm")
-
 (define (empty-stack) (vector '()))
 
 (define (stack-push! st e)

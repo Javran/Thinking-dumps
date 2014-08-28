@@ -1,5 +1,3 @@
-(load "./simu_utils.scm")
-
 ;; operation expressions are of the form:
 ;; ((op <operator>) <operand1> <operand2> ...)
 (define (operation-exp? exp)
