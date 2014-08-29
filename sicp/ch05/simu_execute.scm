@@ -56,12 +56,12 @@
 
 (define default-ops-buidler
   (lambda (m)
-    ( (+ ,+)
-      (- ,-)
-      (* ,*)
-      (/ ,/)
-      (zero? ,zero?)
-      )))
+    `( (+ ,+)
+       (- ,-)
+       (* ,*)
+       (/ ,/)
+       (zero? ,zero?)
+       )))
 
 (define (build-and-execute controller-text)
   (build-and-execute-with controller-text '() default-ops-buidler))
