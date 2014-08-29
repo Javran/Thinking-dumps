@@ -5,7 +5,7 @@
 (load "../common/test-utils.scm")
 
 ;; toggle tests
-(define *simu-test* #t)
+(define *simu-test* #f)
 
 (load "./simu_utils.scm")
 (load "./simu_assemble.scm")

@@ -61,7 +61,14 @@
        (* ,*)
        (/ ,/)
        (zero? ,zero?)
+       (> ,>)
+       (>= ,>=)
+       (< ,<)
+       (<= ,<=)
        )))
 
-(define (build-and-execute controller-text)
-  (build-and-execute-with controller-text '() default-ops-buidler))
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   default-ops-buidler))
