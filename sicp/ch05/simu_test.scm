@@ -1,15 +1,17 @@
 (load "./simu_execute.scm")
 
-;; input a controller-text, and expected register values,
+;; input a list of instructions, and expected register values,
 ;; raise error if the actual register value is not equal to the expected value
-(define (do-machine-test controller-text result-regs)
+(define (do-machine-test insns result-regs)
   ;; since registers are unassigned at the begining,
   ;; to get a full list of registers we only need to take care
   ;; about "assign" instructions
 
   ;; result-regs: (list (list <reg-name> <reg-value>) ...)
   (let* ((m (build-and-execute-with
-             controller-text
+             ;; convert instruction list to controller text
+             (cons 'controller
+                   insns)
              ;; initial register values (optional)
              '()
              ;; opreation table
