@@ -12,6 +12,8 @@
 (load "./simu_test.scm")
 
 ;; TODO: run previous controller-text to verify this implementation
+;; TODO: call "controller-text" "instructions" instead,
+;; as they are different
 
 ;; Local variables:
 ;; proc-entry: ""

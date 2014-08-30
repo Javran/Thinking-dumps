@@ -5,24 +5,10 @@
 
 (load "./exercise_5_2_controller.scm")
 
-(load "./legacy-simu.scm")
+(load "./legacy-easy.scm")
 
 (define machine
-  (make-machine
-   '(product counter n result t1 t2)
-   `( (+ ,+)
-      (- ,-)
-      (* ,*)
-      (/ ,/)
-      (zero? ,zero?)
-      (> ,>)
-      (>= ,>=)
-      (< ,<)
-      (<= ,<=)
-      )
-   (cdr factorial-machine)))
-
-(set-register-contents! machine 'n 5)
-(start machine)
+  (make-and-execute
+   factorial-machine
+   '((n 5))))
 (out (get-register-contents machine 'product))
-;; 5 ! = 120
