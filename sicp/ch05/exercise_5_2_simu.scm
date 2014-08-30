@@ -1,3 +1,5 @@
+;; this is the "simu" version of the simulator
+;; in action
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 

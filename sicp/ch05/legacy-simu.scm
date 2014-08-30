@@ -119,7 +119,7 @@
                       message))))
       dispatch)))
 
-(define (stack machine) (machine 'start))
+(define (starto machine) (machine 'start))
 (define (get-register-contents machine register-name)
   (get-contents (get-register machine register-name)))
 (define (set-register-contents! machine register-name value)
