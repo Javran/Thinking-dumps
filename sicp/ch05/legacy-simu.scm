@@ -45,7 +45,7 @@
   (let ((s '()))
     (define (push x)
       (set! s (cons x s)))
-    (define pop
+    (define (pop)
       (if (null? s)
           (error "empty stack: POP")
           (let ((top (car s)))
