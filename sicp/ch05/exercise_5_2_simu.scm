@@ -8,6 +8,6 @@
 (load "./simu.scm")
 
 (let ((m (build-and-execute
-          (cdr factorial-machine)
+          factorial-machine
           '((n 5)))))
   (out (machine-reg-get m 'product)))
