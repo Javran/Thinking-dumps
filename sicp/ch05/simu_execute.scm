@@ -72,6 +72,9 @@
        (>= ,>=)
        (< ,<)
        (<= ,<=)
+       (square ,square)
+       (abs ,abs)
+       (average ,average)
        )))
 
 (define (build-and-execute controller-text reg-bindings)
