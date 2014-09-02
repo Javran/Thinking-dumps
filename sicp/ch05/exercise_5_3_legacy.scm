@@ -19,8 +19,7 @@
 (let ((m (make-and-execute-with
           sqrt-machine-v1
           `((x ,test-const))
-          (apply
-           append
+          (concat
            (list (default-primitive-list)
                  `((good-enough? ,good-enough?)
                    (improve ,improve)))))))

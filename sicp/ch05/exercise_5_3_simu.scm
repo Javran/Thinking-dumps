@@ -20,12 +20,11 @@
           sqrt-machine-v1
           `((x ,test-const))
           (lambda (m)
-            (apply
-             append
+            (concat
              (list (default-ops-buidler m)
                    `((good-enough? ,good-enough?)
                      (improve ,improve))))))))
-      (out (machine-reg-get m 'result)))
+  (out (machine-reg-get m 'result)))
 (newline)
 
 ;; without "good-enough?"
