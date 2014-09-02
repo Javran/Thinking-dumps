@@ -55,13 +55,14 @@
      (string<=? (symbol->string x)
                 (symbol->string y)))))
 
-(define (make-and-execute
+(define (make-and-execute-with
          ;; controller-text is assumed always
          ;; being the following form:
          ;; '(controller <then> <come> <instructions> ...)
          ;; so we can safely drop the first element
          controller-text
-         reg-bindings)
+         reg-bindings
+         primitive-list)
   (let* ((insns (cdr controller-text))
          (reg-names-1 (extract-register-names insns))
          (reg-names-2 (map car reg-bindings))
@@ -70,7 +71,7 @@
                      reg-names-2))
          (m (make-machine
              reg-names
-             (default-primitive-list)
+             primitive-list
              insns)))
     (for-each
      (lambda (pair)
@@ -78,3 +79,13 @@
      reg-bindings)
     (start m)
     m))
+
+;; make and execute the machine
+;; using the default list of primitives
+(define (make-and-execute
+         controller-text
+         reg-bindings)
+  (make-and-execute-with
+   controller-text
+   reg-bindings
+   (default-primitive-list)))

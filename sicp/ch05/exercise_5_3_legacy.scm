@@ -16,10 +16,15 @@
 (define x test-const)
 
 (out "sqrt-machine-v1:")
-(let ((m (make-and-execute
+(let ((m (make-and-execute-with
           sqrt-machine-v1
-          `((x ,test-const)))))
-  (out (machine-reg-get m 'result)))
+          `((x ,test-const))
+          (apply
+           append
+           (list (default-primitive-list)
+                 `((good-enough? ,good-enough?)
+                   (improve ,improve)))))))
+  (out (get-register-contents m 'result)))
 (newline)
 
 ;; without "good-enough?"
