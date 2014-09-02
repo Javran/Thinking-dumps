@@ -28,8 +28,17 @@
 
 ;; without "good-enough?"
 (out "sqrt-machine-v2:")
-'TODO
+(let ((m (make-and-execute-with
+          sqrt-machine-v2
+          `((x ,test-const))
+          (concat
+           (list (default-primitive-list)
+                 `((improve ,improve)))))))
+  (out (get-register-contents m 'result)))
 (newline)
 
 (out "sqrt-machine-v3:")
-'TODO
+(let ((m (make-and-execute
+          sqrt-machine-v3
+          `((x ,test-const)))))
+  (out (get-register-contents m 'result)))

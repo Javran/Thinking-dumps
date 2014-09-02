@@ -27,6 +27,9 @@
      (>= ,>=)
      (< ,<)
      (<= ,<=)
+     (square ,square)
+     (average ,average)
+     (abs ,abs)
      ))
 
 ;; from "simu" modules
