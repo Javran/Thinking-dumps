@@ -72,6 +72,7 @@
        (>= ,>=)
        (< ,<)
        (<= ,<=)
+       (= ,=)
        (square ,square)
        (abs ,abs)
        (average ,average)
