@@ -27,6 +27,7 @@
      (>= ,>=)
      (< ,<)
      (<= ,<=)
+     (= ,=)
      (square ,square)
      (average ,average)
      (abs ,abs)
