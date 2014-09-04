@@ -11,8 +11,6 @@
 (load "./simu_assemble.scm")
 (load "./simu_test.scm")
 
-;; TODO: run previous controller-text to verify this implementation
-
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:
