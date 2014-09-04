@@ -1,8 +1,8 @@
 (load "./simu_machine.scm")
 (load "./simu_assemble_handlers.scm")
 
-(define (assemble controller-text machine)
-  ;; expected input: a list of instruction texts (including labels)
+(define (assemble insns machine)
+  ;; expected input: a list of instructions (including labels)
   ;; we don't have to do all the things in one pass
   ;; as this won't be the bottleneck of the whole program
   ;; we also don't need to perform the continuation passing trick
@@ -39,7 +39,7 @@
   (define (drop-labels insns)
     (filter (compose not symbol?) insns))
 
-  (let ((insns (map make-instruction controller-text)))
+  (let ((insns (map make-instruction insns)))
     (let ((jump-table
            (let loop ((table '())
                       (insns insns))

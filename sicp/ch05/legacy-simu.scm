@@ -45,7 +45,7 @@
   (let ((s '()))
     (define (push x)
       (set! s (cons x s)))
-    (define pop
+    (define (pop)
       (if (null? s)
           (error "empty stack: POP")
           (let ((top (car s)))
@@ -119,7 +119,7 @@
                       message))))
       dispatch)))
 
-(define (stack machine) (machine 'start))
+(define (start machine) (machine 'start))
 (define (get-register-contents machine register-name)
   (get-contents (get-register machine register-name)))
 (define (set-register-contents! machine register-name value)
