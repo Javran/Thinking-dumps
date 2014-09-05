@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+;; NOTE: the following changes have been applied to legacy-easy and simu
+
 (load "./legacy-easy.scm")
 ;; update-insts! will preserve the order of all the labels
 ;; despite there are multiple labels with exactly the same name,
