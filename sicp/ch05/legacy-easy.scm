@@ -93,3 +93,50 @@
    controller-text
    reg-bindings
    (default-primitive-list)))
+
+;; find the first duplicated element
+;; if no duplicate element is found, return #t
+;; otherwise a list will be returned
+;; whose first element is the duplicate one
+;; e.g. (a b c d) => #f
+;;      (a b a d) => (a b a d)
+;;      (a b c d e c) => (c d e c)
+(define (first-dup-element xs)
+  (if (null? xs)
+      #f
+      (if (member (car xs) (cdr xs))
+          xs
+          (first-dup-element (cdr xs)))))
+
+;; scan through the instruction list,
+;; raise an error immediately when multiple labels
+;; with the same name is detected
+(define (scan-duplicate-labels insns label?)
+  (let* ((labels (filter label? insns))
+         (dup-lbl (first-dup-element labels)))
+    (if dup-lbl
+        ;; here we can even report all the labels with
+        ;; the same name, but I don't find it not very useful.
+        (error "multiple labels with the same name:"
+               (car dup-lbl))
+        'ok)))
+
+;; overwrite original implementation
+;; since the definition of "extract-labels" is in top level
+(define (extract-labels text receive)
+  (scan-duplicate-labels text symbol?)
+  (if (null? text)
+      (receive '() '())
+      (extract-labels
+       (cdr text)
+       (lambda (insts labels)
+         (let ((next-inst (car text)))
+           (if (symbol? next-inst)
+               (receive insts
+                   (cons (make-label-entry
+                          next-inst
+                          insts)
+                         labels))
+               (receive (cons (make-instruction next-inst)
+                              insts)
+                   labels)))))))
