@@ -40,3 +40,31 @@
 
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
+
+
+;; find the first duplicated element
+;; if no duplicate element is found, return #t
+;; otherwise a list will be returned
+;; whose first element is the duplicate one
+;; e.g. (a b c d) => #f
+;;      (a b a d) => (a b a d)
+;;      (a b c d e c) => (c d e c)
+(define (first-dup-element xs)
+  (if (null? xs)
+      #f
+      (if (member (car xs) (cdr xs))
+          xs
+          (first-dup-element (cdr xs)))))
+
+(define (test-first-dup-element)
+  (do-test
+   first-dup-element
+   (list
+    (mat '() #f)
+    (mat '(a b c d) #f)
+    (mat '(a b a d) '(a b a d))
+    (mat '(a b c d e c) '(c d e c)))))
+
+(if *simu-test*
+    (test-first-dup-element)
+    'ignored)

@@ -162,8 +162,25 @@
 
   'done)
 
+(define (test-multiple-same-label)
+  (assert-error
+   (lambda ()
+     (let ((m (build-and-execute
+               `(controller
+                 label-a
+                 (assign n (const 1))
+                 label-a
+                 (assign n (const 2))
+                 label-a
+                 (assign n (const 3)))
+               '((n 10)))))
+       (out (machine-reg-get m 'n))))
+   "mutiple labels with the same name will raise an error"))
+
 (if *simu-test*
-    (do-handler-tests)
+    (begin
+      (do-handler-tests)
+      (test-multiple-same-label))
     'ignored)
 
 ;; Local variables:

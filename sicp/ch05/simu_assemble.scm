@@ -13,11 +13,14 @@
   ;; instruction execution procedure is a procedure without arguments.
   ;; it performs the operation described by the instruction text when executed.
   ;; instruction is a pair consisted of instruction text and instruction-exec-proc
+
+  ;; in the first pass, if there are multiple labels with the same name
+  ;; an error will be raised immediately
   ;;
-  ;; in the first pass, we simply turn instruction text into
+  ;; in the second pass, we simply turn instruction text into
   ;; a pair: (<instruction-text> . <instruction-execution-procedure>)
 
-  ;; and in the second pass, we make the label-instruction alist
+  ;; and in the third pass, we make the label-instruction alist
   (define (make-instruction insn-text)
     (if (symbol? insn-text)
         ;; labels are kept as it is when making instructions
@@ -39,6 +42,17 @@
   (define (drop-labels insns)
     (filter (compose not symbol?) insns))
 
+  (define (scan-duplicate-labels insns label?)
+    (let* ((labels (filter label? insns))
+           (dup-lbl (first-dup-element labels)))
+      (if dup-lbl
+          ;; here we can even report all the labels with
+          ;; the same name, but I don't find it not very useful.
+          (error "multiple labels with the same name:"
+                 (car dup-lbl))
+          'ok)))
+
+  (scan-duplicate-labels insns symbol?)
   (let ((insns (map make-instruction insns)))
     (let ((jump-table
            (let loop ((table '())
