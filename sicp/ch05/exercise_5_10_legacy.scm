@@ -45,26 +45,50 @@
       (advance-pc pc))))
 
 (define (make-call inst machine labels operations pc)
-  (let ((target-name
-         ;; target register name
-         (cadr inst))
-        (target
-         (get-register machine target-name))
-        ;; the most annoying fact is that "make-operation-exp"
-        ;; is somehow assuming the syntax of "assign".
-        ;; here instead of writing a new procedure that
-        ;; does almost the same thing exception for the syntex part,
-        ;; we reuse the old one by converting new syntax into it.
-        ;; It doesn't make sense to use old syntax when we are planning
-        ;; to replace it, but I'm not the one to blame.
-        (prim-exp (caddr inst))
-        (arg-exps (cdddr inst))
-        (value-exp `((op ,prim-exp) ,@arg-exps))
-        (value-proc
-         (make-operation-exp
-          value-exp machine labels operations)))
-      (lambda ()
-        (set-contents! target (value-proc))
-        (advance-pc pc))))
+  (let* ((target-name
+          ;; target register name
+          (cadr inst))
+         (target
+          (get-register machine target-name))
+         ;; the most annoying fact is that "make-operation-exp"
+         ;; is somehow assuming the syntax of "assign".
+         ;; here instead of writing a new procedure that
+         ;; does almost the same thing exception for the syntex part,
+         ;; we reuse the old one by converting new syntax into it.
+         ;; It doesn't make sense to use old syntax when we are planning
+         ;; to replace it, but I'm not the one to blame.
+         (prim-exp (caddr inst))
+         (arg-exps (cdddr inst))
+         (value-exp `((op ,prim-exp) ,@arg-exps))
+         (value-proc
+          (make-operation-exp
+           value-exp machine labels operations)))
+    (lambda ()
+      (set-contents! target (value-proc))
+      (advance-pc pc))))
+
+(define (extract-register-names instructions)
+  (define (extract insn)
+    (cond
+     ((or (tagged-list? insn 'copy)
+          (tagged-list? insn 'call)
+          (tagged-list? insn 'restore))
+      (list (cadr insn)))
+     (else '())))
+  (remove-duplicates
+   (set-diff
+    (apply append (map extract instructions))
+    '(pc flag))))
+
+(let ((m (make-and-execute
+          '(controller
+            (copy a (const 10))
+            (copy b (const 20))
+            (call c + (reg a) (reg b) (const 30)))
+          '())))
+  (for-each
+   (lambda (r)
+     (out (get-register-contents m r)))
+   '(a b c)))
 
 (end-script)
