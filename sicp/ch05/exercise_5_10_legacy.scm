@@ -80,11 +80,10 @@
     (apply append (map extract instructions))
     '(pc flag))))
 
+(load "./exercise_5_10_example_controller.scm")
+
 (let ((m (make-and-execute
-          '(controller
-            (copy a (const 10))
-            (copy b (const 20))
-            (call c + (reg a) (reg b) (const 30)))
+          example-controller
           '())))
   (for-each
    (lambda (r)
