@@ -30,9 +30,10 @@
            inst))))
 
 (define (make-copy inst machine labels operations pc)
-  (let* ((target
+  (let* ((target-name
           ;; target register name
           (cadr inst))
+         (target (get-register machine target-name))
          (source
           ;; source: one of label/reg/const
           (caddr inst))
@@ -42,5 +43,28 @@
     (lambda ()
       (set-contents! target (value-proc))
       (advance-pc pc))))
+
+(define (make-call inst machine labels operations pc)
+  (let ((target-name
+         ;; target register name
+         (cadr inst))
+        (target
+         (get-register machine target-name))
+        ;; the most annoying fact is that "make-operation-exp"
+        ;; is somehow assuming the syntax of "assign".
+        ;; here instead of writing a new procedure that
+        ;; does almost the same thing exception for the syntex part,
+        ;; we reuse the old one by converting new syntax into it.
+        ;; It doesn't make sense to use old syntax when we are planning
+        ;; to replace it, but I'm not the one to blame.
+        (prim-exp (caddr inst))
+        (arg-exps (cdddr inst))
+        (value-exp `((op ,prim-exp) ,@arg-exps))
+        (value-proc
+         (make-operation-exp
+          value-exp machine labels operations)))
+      (lambda ()
+        (set-contents! target (value-proc))
+        (advance-pc pc))))
 
 (end-script)
