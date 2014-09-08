@@ -3,6 +3,9 @@
 
 (load "./simu.scm")
 
+;; since we only need to verify that it works,
+;; we use "simu.scm" only
+
 (define fib-machine-controller
   '(controller
     (assign continue (label fib-done))
@@ -57,3 +60,8 @@
     (assign val (reg n))
     (goto (reg continue))
     fib-done))
+
+(let ((m (build-and-execute
+          fib-machine-controller
+          '((n 10)))))
+  (out (machine-reg-get m 'val)))
