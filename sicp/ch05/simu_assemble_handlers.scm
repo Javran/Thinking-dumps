@@ -42,6 +42,7 @@
         (else
          (error "unexpected expression:" exp))))
 
+;; TODO: don't assume anything about "assign"
 (define (make-operation-exp exp m)
   (let ((op (machine-lookup-prim
              m (operation-exp-op exp)))

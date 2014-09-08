@@ -10,13 +10,12 @@
 ;; however when looking up the table, the first binding wins.
 ;; `a` will be 3 when reaching the label `there`
 
-;; TODO: having an extra pass to solve this problem:
+;; we solve this problem by having an extra pass:
 ;;   extracting labels only and test if every label is unique
 ;;   therefore we can scan from the beginning to the end
 ;;   I don't actually care about the performance
 ;;   as we only need to assemble it once, the "simulation" performance
 ;;   should be more important than this.
-;; TODO: apply this duplicate-label protection
 
 ;; this one is quick-and-dirty:
 ;; using the most naive approach below, we will be warned when

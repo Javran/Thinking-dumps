@@ -186,4 +186,3 @@
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
 ;; End:
-
