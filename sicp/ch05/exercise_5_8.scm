@@ -10,14 +10,12 @@
 ;; to the first one is found.
 ;; what we usually expect is receiving a warning when the second duplicated
 ;; label from first instruction to the last one is found.
-;; TODO: verification when working
 ;; TODO: having an extra pass to solve this problem:
 ;;   extracting labels only and test if every label is unique
 ;;   therefore we can scan from the beginning to the end
 ;;   I don't actually care about the performance
 ;;   as we only need to assemble it once, the "simulation" performance
 ;;   should be more important than this.
-;; TODO: apply this duplicate-label protection
 (define (extract-labels text receive)
   (if (null? text)
       (receive '() '())
