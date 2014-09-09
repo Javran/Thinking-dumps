@@ -31,7 +31,10 @@
          (value-exp
           `((op ,prim-exp) ,@arg-exps))
          (value-proc
-          (make-operation-exp value-exp m)))
+          (make-operation-exp
+           (operation-exp-op value-exp)
+           (operation-exp-operands value-exp)
+           m)))
     (lambda ()
       (register-set! target (value-proc))
       (advance-pc m))))

@@ -1,11 +1,11 @@
-(define (make-operation-exp exp m)
+(define (make-operation-exp prim-exp arg-exps m)
   (let ((op (machine-lookup-prim
-             m (operation-exp-op exp)))
+             m prim-exp))
         (aprocs
          (map (lambda (e)
                 (if (tagged-list? e 'label)
                     (error "cannot operate on labels")
                     (make-primitive-exp e m)))
-              (operation-exp-operands exp))))
+              arg-exps)))
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
