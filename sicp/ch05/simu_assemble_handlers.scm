@@ -42,14 +42,13 @@
         (else
          (error "unexpected expression:" exp))))
 
-;; TODO: don't assume anything about "assign"
-(define (make-operation-exp exp m)
+(define (make-operation-exp prim-exp arg-exps m)
   (let ((op (machine-lookup-prim
-             m (operation-exp-op exp)))
+             m prim-exp))
         (aprocs
          (map (lambda (e)
                 (make-primitive-exp e m))
-              (operation-exp-operands exp))))
+              arg-exps)))
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
 
@@ -72,7 +71,9 @@
            ;; yields a value when run as a procedure
            (if (operation-exp? value-exp)
                (make-operation-exp
-                value-exp m)
+                (operation-exp-op value-exp)
+                (operation-exp-operands value-exp)
+                m)
                (make-primitive-exp
                 (car value-exp) m))))
       (lambda ()
@@ -88,7 +89,9 @@
     (if (operation-exp? condition)
         (let ((condition-proc
                (make-operation-exp
-                condition m)))
+                (operation-exp-op condition)
+                (operation-exp-operands condition)
+                m)))
           (lambda ()
             ;; execute the "operation", and then set the flag
             (machine-reg-set! m 'flag (condition-proc))
@@ -173,7 +176,9 @@
     (if (operation-exp? action)
         (let ((action-proc
                (make-operation-exp
-                action m)))
+                (operation-exp-op action)
+                (operation-exp-operands action)
+                m)))
           (lambda ()
             (action-proc)
             (advance-pc m)))
