@@ -30,33 +30,18 @@
                     "register name '~A' expected, but '~A' found"
                     top-reg-name reg-name)))))))
 
-(let ((m (make-and-execute
-          '(controller
-            (assign a (const 1))
-            (assign b (const 2))
-            (save a)
-            (save b)
-            (assign a (const 10))
-            (assign b (const 20))
-            (restore b)
-            (restore a))
-          '())))
+(load "./exercise_5_11_b_test_controllers.scm")
+
+(let ((m (make-and-execute controller-fine '())))
   (out (get-register-contents m 'a))
-  (out (get-register-contents m 'b)))
+  ;; 1
+  (out (get-register-contents m 'b))
+  ;; 2
+  'ok)
 
 (assert-error
  (lambda ()
-   (let ((m (make-and-execute
-          '(controller
-            (assign a (const 1))
-            (assign b (const 2))
-            (save a)
-            (save b)
-            (assign a (const 10))
-            (assign b (const 20))
-            (restore a) ;; this part will raise an error
-            (restore b))
-          '())))
+   (let ((m (make-and-execute controller-fail '())))
   (out (get-register-contents m 'a))
   (out (get-register-contents m 'b))))
  "restoring from a different register causes an error")
