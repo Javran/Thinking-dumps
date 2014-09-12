@@ -105,28 +105,19 @@
       (set-contents! reg (pop-stack-alist stack reg-name))
       (advance-pc pc))))
 
-(define test-controller-success
-  '(controller
-    (assign a (const 10))
-    (assign b (const 20))
-    (save a)
-    (save b)
-    (assign a (const 40))
-    (assign b (const 50))
-    (restore a)
-    (restore b)))
-
-(define test-controller-failure
-  '(controller
-    (assign a (const 1))
-    (save a)
-    (assign a (const 2))
-    (save a)
-    (restore b)
-    (restore b)))
+(load "./exercise_5_11_c_test_controllers.scm")
 
 (let ((m (make-and-execute
-          test-controller-success
+          test-controller-success-1
+          '())))
+  (out (get-register-contents m 'a))
+  ;; 10
+  (out (get-register-contents m 'b))
+  ;; 20
+  'done)
+
+(let ((m (make-and-execute
+          test-controller-success-2
           '())))
   (out (get-register-contents m 'a))
   ;; 10
