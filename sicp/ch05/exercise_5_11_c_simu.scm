@@ -43,7 +43,21 @@
         (error "stack underflow")
         'ok)))
 
+(define (save-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn))))
+    (lambda ()
+      (register-push! reg)
+      (advance-pc m))))
+(set-handler 'save save-handler)
 
+(define (restore-handler insn m)
+  (let ((reg (machine-find-register
+              m (stack-insn-reg-name insn))))
+    (lambda ()
+      (register-pop! reg)
+      (advance-pc m))))
+(set-handler 'restore restore-handler)
 
 (let ((m (build-and-execute
           '(controller
@@ -54,5 +68,32 @@
           '())))
   (out (machine-reg-get m 'a)))
 
+(load "./exercise_5_11_c_test_controllers.scm")
+
+(let ((m (build-and-execute
+          test-controller-success-1
+          '())))
+  (out (machine-reg-get m 'a))
+  ;; 10
+  (out (machine-reg-get m 'b))
+  ;; 20
+  'done)
+
+(let ((m (build-and-execute
+          test-controller-success-2
+          '())))
+  (out (machine-reg-get m 'a))
+  ;; 10
+  (out (machine-reg-get m 'b))
+  ;; 20
+  'done)
+
+(assert-error
+ (lambda ()
+   (let ((m (build-and-execute
+          test-controller-failure
+          '())))
+     (out (machine-reg-get m 'b))))
+ "registers are no longer sharing the same stack")
 
 (end-script)
