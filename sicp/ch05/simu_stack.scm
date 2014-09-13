@@ -7,3 +7,6 @@
   (vector-modify! st 0 cdr))
 (define (stack-top st)
   (car (vector-ref st 0)))
+
+(define (stack-empty? st)
+  (eq? '() (vector-ref st 0)))
