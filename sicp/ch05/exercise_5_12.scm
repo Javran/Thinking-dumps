@@ -39,6 +39,17 @@
    (concat
     (map extract insns))))
 
-(for-each out (entry-point-regs (cdr fib-machine-controller)))
+(define (saved-or-restored-regs insns)
+  (define (extract insn)
+    (if (and (non-empty? insn)
+             (or (eq? (car insn) 'save)
+                 (eq? (car insn) 'restore)))
+        (list (cadr insn))
+        '()))
+  (remove-duplicates
+   (concat
+    (map extract insns))))
+
+(for-each out (saved-or-restored-regs (cdr fib-machine-controller)))
 
 (end-script)
