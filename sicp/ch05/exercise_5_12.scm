@@ -50,6 +50,17 @@
    (concat
     (map extract insns))))
 
-(for-each out (saved-or-restored-regs (cdr fib-machine-controller)))
+(define (assign-sources insns)
+  (define (assign? insn)
+    (and (non-empty? insn)
+         (eq? (car insn) 'assign)))
+  (let* ((assigns (filter assign? insns))
+         (targets (remove-duplicates
+                   (map cadr assigns))))
+    ;; these registers are assigned.
+    ;; TODO: walk through and collect data
+    targets))
+
+(for-each out (assign-sources (cdr fib-machine-controller)))
 
 (end-script)
