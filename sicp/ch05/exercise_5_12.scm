@@ -26,6 +26,19 @@
     (remove-labels insns))
    to-str-compare))
 
-(for-each out (sorted-uniq-instructions fib-machine-controller))
+(define (entry-point-regs insns)
+  (define (extract insn)
+    (if (and (non-empty? insn)
+             ;; (goto (???))
+             (eq? (car insn) 'goto)
+             ;; (goto (reg ???))
+             (eq? (caadr insn) 'reg))
+        (list (cadr (cadr insn)))
+        '()))
+  (remove-duplicates
+   (concat
+    (map extract insns))))
+
+(for-each out (entry-point-regs (cdr fib-machine-controller)))
 
 (end-script)
