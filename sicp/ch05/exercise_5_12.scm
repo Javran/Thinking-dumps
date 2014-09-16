@@ -54,12 +54,34 @@
   (define (assign? insn)
     (and (non-empty? insn)
          (eq? (car insn) 'assign)))
+  ;; add new source into an existing reg-srcs alist
+  (define (add-new-source key new-src alist)
+    (let ((srcs (cdr (assoc key alist))))
+      (cons (cons key (cons new-src srcs))
+            (del-assq key alist))))
   (let* ((assigns (filter assign? insns))
          (targets (remove-duplicates
-                   (map cadr assigns))))
-    ;; these registers are assigned.
-    ;; TODO: walk through and collect data
-    targets))
+                   (map cadr assigns)))
+         (source-alist
+          ;; create a map between key and value (a list of source)
+          (map (lambda (k)
+                 (cons k '()))
+               targets))
+         (source-alist-1
+          ;; go though the interesting instructions
+          ;; accumulate sources into an alist
+          ;; there might be duplicates in the value of alist
+          (let loop ((xs assigns)
+                     (result source-alist))
+            (if (null? xs)
+                result
+                (let* ((x (car xs))
+                       (k (cadr x))
+                       (v (cddr x)))
+                  (loop (cdr xs)
+                        (add-new-source k v result)))))))
+    source-alist-1
+    ))
 
 (for-each out (assign-sources (cdr fib-machine-controller)))
 
