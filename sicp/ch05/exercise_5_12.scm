@@ -79,9 +79,16 @@
                        (k (cadr x))
                        (v (cddr x)))
                   (loop (cdr xs)
-                        (add-new-source k v result)))))))
-    source-alist-1
-    ))
+                        (add-new-source k v result))))))
+         (source-alist-2
+          ;; remove duplicates and sort in the "cdr" part
+          (map (lambda (p)
+                 (cons
+                  (car p)
+                  (sort (remove-duplicates (cdr p))
+                        to-str-compare)))
+               source-alist-1)))
+    source-alist-2))
 
 (for-each out (assign-sources (cdr fib-machine-controller)))
 
