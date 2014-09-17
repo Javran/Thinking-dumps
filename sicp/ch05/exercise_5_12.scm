@@ -109,7 +109,27 @@
         (epr (find 'epr))
         (srr (find 'srr))
         (as  (find 'as )))
-    (out sui epr srr as)))
+    (out "# Data path analysis result")
+
+    (out "* Instructions:")
+    (for-each out sui)
+
+    (out "* Entry Point Holding Registers:")
+    (for-each out epr)
+
+    (out "* Saved or Restored Registers:")
+    (for-each out srr)
+
+    (out "* Register Assigning Sources:")
+    (for-each
+     (lambda (p)
+       (format #t "~A:~%" (car p))
+       (for-each
+        (lambda (x)
+          (format #t "  ~A~%" x))
+        (cdr p)))
+     as)
+    'done))
 
 (pretty-print-data-path-analysis
  (data-path-analyze
