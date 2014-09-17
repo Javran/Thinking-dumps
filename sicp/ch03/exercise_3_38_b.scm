@@ -27,7 +27,7 @@
   ; indices : '(0 1 2 3 4 5)
   (if (null? elements)
     (list nil)
-    (concatmap
+    (concat-map
       ; 1. for each index
       (lambda (index)
         (let ((rest-indices  (delete index indices))
