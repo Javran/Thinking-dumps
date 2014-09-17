@@ -96,6 +96,24 @@
                source-alist-1)))
     source-alist-2))
 
-(for-each out (assign-sources (cdr fib-machine-controller)))
+(define (data-path-analyze insns)
+  `((sui . ,(sorted-uniq-instructions insns))
+    (epr . ,(entry-point-regs insns))
+    (srr . ,(saved-or-restored-regs insns))
+    (as  . ,(assign-sources insns))))
+
+(define (pretty-print-data-path-analysis result)
+  (define (find k)
+    (cdr (assoc k result)))
+  (let ((sui (find 'sui))
+        (epr (find 'epr))
+        (srr (find 'srr))
+        (as  (find 'as )))
+    (out sui epr srr as)))
+
+(pretty-print-data-path-analysis
+ (data-path-analyze
+  (cdr
+   fib-machine-controller)))
 
 (end-script)
