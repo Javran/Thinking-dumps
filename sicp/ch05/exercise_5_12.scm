@@ -26,6 +26,8 @@
     (remove-labels insns))
    to-str-compare))
 
+;; a list (without duplicates) of the registers used
+;; to hold entry points
 (define (entry-point-regs insns)
   (define (extract insn)
     (if (and (non-empty? insn)
@@ -39,6 +41,8 @@
    (concat
     (map extract insns))))
 
+;; a list (without duplicates) of the registeres
+;; that are saved or restored
 (define (saved-or-restored-regs insns)
   (define (extract insn)
     (if (and (non-empty? insn)
@@ -50,6 +54,8 @@
    (concat
     (map extract insns))))
 
+;; for each register, a list (without duplicates)
+;; of the sources from which it is assigned
 (define (assign-sources insns)
   (define (assign? insn)
     (and (non-empty? insn)
