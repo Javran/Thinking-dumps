@@ -224,4 +224,13 @@
       (stream-drop (sub1 n)
                    (stream-cdr xs))))
 
+;; remove duplicate elements
+(define (remove-duplicates xs)
+  (if (null? xs)
+      '()
+      (cons (car xs)
+            (delete
+             (car xs)
+             (remove-duplicates (cdr xs))))))
+
 'done

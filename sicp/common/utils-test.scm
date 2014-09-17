@@ -103,3 +103,14 @@
     stream-list-equal?)
 
   'ok)
+
+;; test "remove-duplicates"
+(do-test
+ remove-duplicates
+ (list
+  (mat '() '())
+  (mat '(1 2 2 3 4) '(1 2 3 4))
+  (mat '(a b c d e) '(a b c d e))
+  (mat '(a (a b) (a b) (c (d)) e) '(a (a b) (c (d)) e))
+  (mat '(a a b c d a b c d a a c c b b) '(a b c d))
+  ))
