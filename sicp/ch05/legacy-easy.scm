@@ -59,7 +59,8 @@
      (string<=? (symbol->string x)
                 (symbol->string y)))))
 
-(define (make-and-execute-with
+;; make but without execution
+(define (make-with
          ;; controller-text is assumed always
          ;; being the following form:
          ;; '(controller <then> <come> <instructions> ...)
@@ -81,6 +82,16 @@
      (lambda (pair)
        (set-register-contents! m (car pair) (cadr pair)))
      reg-bindings)
+    m))
+
+(define (make-and-execute-with
+         controller-text
+         reg-bindings
+         primitive-list)
+  (let ((m (make-with
+            controller-text
+            reg-bindings
+            primitive-list)))
     (start m)
     m))
 
