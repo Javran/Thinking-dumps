@@ -77,11 +77,11 @@
        (update-insts! insts labels machine)
        insts))))
 
-(load "./figure_5_12.scm")
-
 (define (pretty-print-data-path-meta m)
   (pretty-print-data-path-analysis
    (m 'data-path-meta-get)))
+
+(load "./figure_5_12.scm")
 
 (let ((m (make-with
           fib-machine-controller
