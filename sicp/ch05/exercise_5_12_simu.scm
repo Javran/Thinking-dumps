@@ -34,3 +34,25 @@
 (define (machine-set-data-path-meta! m new-meta)
   (machine-intern-set-field! m 'data-path-meta new-meta))
 
+(define (build-with
+         controller-text
+         init-reg-table
+         ops-builder)
+  (let* ((insns (cdr controller-text))
+         (m (empty-machine))
+         (reg-names-1 (extract-register-names insns))
+         (reg-names-2 (map car init-reg-table))
+         (reg-names (merge-register-lists reg-names-1 reg-names-2)))
+    (machine-define-registers! m reg-names)
+    (for-each
+     (lambda (pair)
+       (machine-reg-set! m (car pair) (cadr pair)))
+     init-reg-table)
+    (machine-set-operations! m (ops-builder m))
+    ;; before assembling,
+    ;; we analyze the instructions
+    (machine-set-data-path-meta!
+     m
+     (data-path-analyze insns))
+    (assemble insns m)
+    m))
