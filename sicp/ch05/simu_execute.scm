@@ -32,7 +32,7 @@
 ;; build a machine with insns assembled,
 ;; registers assigned according to the table,
 ;; and primitive operations specified
-(define (build-and-execute-with
+(define (build-with
          ;; the controller text
          controller-text
          ;; an optional register table
@@ -58,6 +58,17 @@
     (assemble insns m)
     ;; start execution
     (machine-reset-pc! m)
+    m))
+
+;; build it and execute it
+(define (build-and-execute-with
+         controller-text
+         init-reg-table
+         ops-builder)
+  (let ((m (build-with
+            controller-text
+            init-reg-table
+            ops-builder)))
     (machine-execute! m)
     m))
 
