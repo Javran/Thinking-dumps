@@ -56,8 +56,6 @@
     (machine-set-operations! m (ops-builder m))
     ;; assemble
     (assemble insns m)
-    ;; start execution
-    (machine-reset-pc! m)
     m))
 
 ;; build it and execute it
@@ -69,6 +67,8 @@
             controller-text
             init-reg-table
             ops-builder)))
+    ;; start execution
+    (machine-reset-pc! m)
     (machine-execute! m)
     m))
 
