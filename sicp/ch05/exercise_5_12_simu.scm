@@ -56,3 +56,17 @@
      (data-path-analyze insns))
     (assemble insns m)
     m))
+
+(define (machine-pretty-print-data-meta m)
+  (pretty-print-data-path-analysis
+   (machine-data-path-meta m)))
+
+(load "./figure_5_12.scm")
+
+(let ((m (build-with
+          fib-machine-controller
+          ;; not necessary since we don't need to execute it
+          ;; but anyway
+          '((n 5))
+          default-ops-buidler)))
+  (machine-pretty-print-data-meta m))
