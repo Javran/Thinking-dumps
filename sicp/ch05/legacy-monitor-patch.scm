@@ -7,7 +7,7 @@
            (list (list 'initialize-stack
                        (lambda () (stack 'initialize)))
                  ;; adding a new primitive
-                 (list 'print-statistics
+                 (list 'print-stack-statistics
                        (lambda () (stack 'print-statistics)))))
           (register-table
            (list (list 'pc pc)
