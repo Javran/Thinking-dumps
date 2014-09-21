@@ -43,7 +43,8 @@
       'max-depth
       (lambda (old-max-depth)
         (let ((cur-depth (stack-meta-get st 'current-depth)))
-          (max cur-depth old-max-depth)))))))
+          (max cur-depth old-max-depth)))
+      meta))))
 
 (define (stack-pop! st)
   (vector-modify! st 0 cdr))
