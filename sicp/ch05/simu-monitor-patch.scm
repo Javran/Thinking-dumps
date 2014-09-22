@@ -43,7 +43,10 @@
         (max cur-depth old-max-depth))))))
 
 (define (stack-pop! st)
-  (vector-modify! st 0 cdr))
+  (vector-modify! st 0 cdr)
+  ;; do statistics
+  (stack-modify-meta!
+   st (modify-assoc 'current-depth sub1)))
 (define (stack-top st)
   (car (vector-ref st 0)))
 
