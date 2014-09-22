@@ -81,6 +81,9 @@
       (set! current-depth 0)
       'done)
     (define (print-statistics)
+      ;; I suggest being consistent about the naming
+      ;; look at these variable names and think about
+      ;; how horrible it is not to be consistent with names
       (format
        #t
        "~%~
