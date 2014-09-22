@@ -6,9 +6,5 @@
 
 (let ((st (empty-stack)))
   (stack-push! st 1)
-  (stack-push! st 2)
-  (stack-push! st 3)
-  (for-each
-   (lambda (k)
-     (out (stack-meta-get st k)))
-   '(number-pushes max-depth current-depth)))
+  (stack-pop! st)
+  (stack-print-statistics st))

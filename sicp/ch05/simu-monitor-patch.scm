@@ -52,3 +52,11 @@
 
 (define (stack-empty? st)
   (eq? '() (vector-ref st 0)))
+
+(define (stack-print-statistics st)
+  (format
+   #t
+   "number-pushes = ~A~%~
+    max-depth     = ~A~%"
+   (stack-meta-get st 'number-pushes)
+   (stack-meta-get st 'max-depth)))
