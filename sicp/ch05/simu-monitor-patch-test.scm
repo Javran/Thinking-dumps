@@ -4,7 +4,12 @@
 (load "./simu.scm")
 (load "./simu-monitor-patch.scm")
 
-(let ((st (empty-stack)))
-  (stack-push! st 1)
-  (stack-pop! st)
-  (stack-print-statistics st))
+(load "./figure_5_12.scm")
+
+(let ((m (build-and-execute
+          `(,@fib-machine-controller
+            ;; adding an instruction to show statistics
+            ;; at the end of the execution
+            (perform (op print-stack-statistics)))
+          '((n 5)))))
+  'done)
