@@ -60,3 +60,28 @@
     max-depth     = ~A~%"
    (stack-meta-get st 'number-pushes)
    (stack-meta-get st 'max-depth)))
+
+(define default-ops-buidler
+  (lambda (m)
+    `( (+ ,+)
+       (- ,-)
+       (* ,*)
+       (/ ,/)
+       (zero? ,zero?)
+       (> ,>)
+       (>= ,>=)
+       (< ,<)
+       (<= ,<=)
+       (= ,=)
+       (square ,square)
+       (abs ,abs)
+       (average ,average)
+       ;; originally there should be an "initialize"
+       ;; procedure to initialize the stack
+       ;; but I'm not seeing
+       ;; any point of using it
+       (print-stack-statistics
+        ,(lambda ()
+           (stack-print-statistics
+            (machine-stack m))))
+       )))
