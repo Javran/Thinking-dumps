@@ -1,9 +1,8 @@
-;; extract register names (except for "pc" and "flag")
+;; extract all register names
 ;; from the list of instructions
 ;; only target registers in "assign" instructions and "restore" instructions
 ;; are taken into account
 ;; but this is sufficient, since no other instructions can modify a register
-;; "pc" and "flag" are always removed from the result
 (define (extract-register-names insns)
   (define (extract insn)
     (cond
@@ -12,22 +11,7 @@
       (list (cadr insn)))
      (else '())))
   (remove-duplicates
-   (set-diff
-    (apply append (map extract insns))
-    '(pc flag))))
-
-;; remove duplicates and 'pc & 'flag registers, sort and
-;; make it ready to use as a regular register name list
-(define (merge-register-lists
-         reg-names-1 reg-names-2)
-  (sort
-   (remove-duplicates
-    (set-diff
-     (apply append (list reg-names-1 reg-names-2))
-     '(pc flag)))
-   (lambda (x y)
-     (string<=? (symbol->string x)
-                (symbol->string y)))))
+   (apply append (map extract insns))))
 
 ;; build a machine with insns assembled,
 ;; registers assigned according to the table,
@@ -50,13 +34,16 @@
          ops-builder)
   (let* ((insns (cdr controller-text))
          (m (empty-machine))
-         (reg-names-1 (extract-register-names insns))
-         (reg-names-2 (map car init-reg-table))
-         (reg-names (merge-register-lists reg-names-1 reg-names-2)))
-    ;; initialize registers
+         (reg-names (extract-register-names insns)))
     (machine-define-registers! m reg-names)
+    ;; 'pc and 'flag might not appear in `reg-names`
+    ;; but it is guaranteed that they will be defined after
+    ;; the call to "machine-define-registers!"
     (for-each
      (lambda (pair)
+       ;; no need to check if the register exists
+       ;; setting values to any undefined regster results
+       ;; in a register not found error
        (machine-reg-set! m (car pair) (cadr pair)))
      init-reg-table)
     ;; primitive operation table setup

@@ -34,15 +34,15 @@
 (define (machine-set-data-path-meta! m new-meta)
   (machine-intern-set-field! m 'data-path-meta new-meta))
 
+
+;; updated: now we don't consider the init-reg-table
 (define (build-with
          controller-text
          init-reg-table
          ops-builder)
   (let* ((insns (cdr controller-text))
          (m (empty-machine))
-         (reg-names-1 (extract-register-names insns))
-         (reg-names-2 (map car init-reg-table))
-         (reg-names (merge-register-lists reg-names-1 reg-names-2)))
+         (reg-names (extract-register-names insns)))
     (machine-define-registers! m reg-names)
     (for-each
      (lambda (pair)

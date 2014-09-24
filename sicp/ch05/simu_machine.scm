@@ -73,6 +73,8 @@
 ;; allows duplicate register names
 ;; and 'pc and 'flag arg allowed to appear in this list
 ;; this procedure will take care of them
+;; NOTE: 'pc and 'flag will always be defined
+;; no matter whether they appear in the `regs-all` list or not
 (define (machine-define-registers! m regs-all)
   ;; since "allocate-register" happens only at the creation of
   ;; a machine, we may just do it in one procedure
