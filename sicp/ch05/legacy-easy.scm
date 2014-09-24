@@ -46,19 +46,6 @@
     (apply append (map extract instructions))
     '(pc flag))))
 
-;; remove duplicates and 'pc & 'flag registers, sort
-;; making it ready to use as a regular register name list
-(define (merge-register-lists
-         reg-names-1 reg-names-2)
-  (sort
-   (remove-duplicates
-    (set-diff
-     (apply append (list reg-names-1 reg-names-2))
-     '(pc flag)))
-   (lambda (x y)
-     (string<=? (symbol->string x)
-                (symbol->string y)))))
-
 ;; make but without execution
 (define (make-with
          ;; controller-text is assumed always
@@ -69,11 +56,7 @@
          reg-bindings
          primitive-list)
   (let* ((insns (cdr controller-text))
-         (reg-names-1 (extract-register-names insns))
-         (reg-names-2 (map car reg-bindings))
-         (reg-names (merge-register-lists
-                     reg-names-1
-                     reg-names-2))
+         (reg-names (extract-register-names insns))
          (m (make-machine
              reg-names
              primitive-list
