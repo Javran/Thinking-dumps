@@ -16,8 +16,8 @@
     (apply append (map extract insns))
     '(pc flag))))
 
-;; remove duplicates and 'pc & 'flag registers, sort
-;; making it ready to use as a regular register name list
+;; remove duplicates and 'pc & 'flag registers, sort and
+;; make it ready to use as a regular register name list
 (define (merge-register-lists
          reg-names-1 reg-names-2)
   (sort

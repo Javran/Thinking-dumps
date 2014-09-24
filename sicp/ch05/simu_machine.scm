@@ -68,29 +68,25 @@
   (machine-intern-set-field! m 'jump-table new-tbl))
 
 ;; indirect accessors:
-;; `regs` is a list of register names
-(define (machine-define-registers! m regs)
+
+;; `regs-all` is a list of register names
+;; allows duplicate register names
+;; and 'pc and 'flag arg allowed to appear in this list
+;; this procedure will take care of them
+(define (machine-define-registers! m regs-all)
   ;; since "allocate-register" happens only at the creation of
   ;; a machine, we may just do it in one procedure
   ;; which we also have the benefit of detecting multiple defined registers
   ;; without too much pains
-
-  ;; detect duplicated registers
-  (let loop ((regs regs))
-    (if (null? regs)
-        'ok
-        (let ((hd (car regs))
-              (tl (cdr regs)))
-          (if (memq hd tl)
-              (error "duplicated register name:"
-                     hd)
-              (loop tl)))))
+  (define regs
+    (remove-duplicates
+     `(pc flag ,@regs-all)))
 
   (machine-set-register-table!
    m
    (map (lambda (name)
           (list name (new-register)))
-        `(pc flag ,@regs))))
+        regs)))
 
 (define (machine-find-register m reg)
   (let ((reg-info (assoc reg (machine-register-table m))))
