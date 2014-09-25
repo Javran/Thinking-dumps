@@ -16,9 +16,10 @@
 ;; build a machine with insns assembled,
 ;; registers assigned according to the table,
 ;; and primitive operations specified
-;; TODO:
-;; actually we should limit the set of registers
+;;
+;; we limit the set of registers
 ;; to only those that has appeared in the instruction list.
+;;
 ;; Previously I want to make it flexible so that I can plug in
 ;; instruction list to the machine as well.
 ;; But why not just making another machine instead of
