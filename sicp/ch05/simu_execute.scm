@@ -57,6 +57,14 @@
     (assemble insns m)
     m))
 
+;; same as ctl-ops->machine
+;; but using default-ops-builder
+(define (ctl->machine
+         controller-text)
+  (ctl-ops->machine
+   controller-text
+   default-ops-buidler))
+
 ;; initialize registers
 (define (machine-init-regs!
          m init-reg-table)
@@ -114,3 +122,5 @@
    controller-text
    reg-bindings
    default-ops-buidler))
+
+;; TODO: looks a little messy, clean up needed
