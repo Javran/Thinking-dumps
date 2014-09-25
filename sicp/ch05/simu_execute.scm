@@ -33,24 +33,8 @@
          ;; when given the machine itself,
          ;; produces a primitive-operation table
          ops-builder)
-  (let* ((insns (cdr controller-text))
-         (m (empty-machine))
-         (reg-names (extract-register-names insns)))
-    (machine-define-registers! m reg-names)
-    ;; 'pc and 'flag might not appear in `reg-names`
-    ;; but it is guaranteed that they will be defined after
-    ;; the call to "machine-define-registers!"
-    (for-each
-     (lambda (pair)
-       ;; no need to check if the register exists
-       ;; setting values to any undefined regster results
-       ;; in a register not found error
-       (machine-reg-set! m (car pair) (cadr pair)))
-     init-reg-table)
-    ;; primitive operation table setup
-    (machine-set-operations! m (ops-builder m))
-    ;; assemble
-    (assemble insns m)
+  (let ((m (ctl-ops->machine controller-text ops-builder)))
+    (machine-init-regs! m init-reg-table)
     m))
 
 ;; make a machine from controller text
@@ -74,13 +58,16 @@
     m))
 
 ;; initialize registers
-(define (machine-init-regs
+(define (machine-init-regs!
          m init-reg-table)
+  ;; we can only initialize those whose value is not given
+  ;; in the table, but set operations might cost more
+
   ;; clean up all values
   (for-each
-   (lambda (pair)
-     (machine-reg-set! m (car pair) '*unassigned*))
-   (map car machine-register-table))
+   (lambda (reg-name)
+     (machine-reg-set! m reg-name '*unassigned*))
+   (map car (machine-register-table m)))
 
   ;; set values
   (for-each
