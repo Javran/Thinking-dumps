@@ -53,6 +53,44 @@
     (assemble insns m)
     m))
 
+;; make a machine from controller text
+;; and operation list builder
+;; with all registers uninitialized
+(define (ctl-ops->machine
+         controller-text
+         ops-builder)
+  (let* ((insns (cdr controller-text))
+         (m (empty-machine))
+         (reg-names (extract-register-names insns)))
+    (machine-define-registers! m reg-names)
+    ;; 'pc and 'flag might not appear in `reg-names`
+    ;; but it is guaranteed that they will be defined after
+    ;; the call to "machine-define-registers!"
+
+    ;; primitive operation table setup
+    (machine-set-operations! m (ops-builder m))
+    ;; assemble
+    (assemble insns m)
+    m))
+
+;; initialize registers
+(define (machine-init-regs
+         m init-reg-table)
+  ;; clean up all values
+  (for-each
+   (lambda (pair)
+     (machine-reg-set! m (car pair) '*unassigned*))
+   (map car machine-register-table))
+
+  ;; set values
+  (for-each
+   (lambda (pair)
+     ;; no need to check if the register exists
+     ;; setting values to any undefined regster results
+     ;; in a register not found error
+     (machine-reg-set! m (car pair) (cadr pair)))
+   init-reg-table))
+
 ;; build it and execute it
 (define (build-and-execute-with
          controller-text
