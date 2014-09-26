@@ -46,6 +46,29 @@
     (apply append (map extract instructions))
     '(pc flag))))
 
+(define (ctl-ops->machine
+         controller-text
+         primitive-list)
+  (let* ((insns (cdr controller-text))
+         (reg-names (extract-register-names insns))
+         (m (make-machine
+             reg-names
+             primitive-list
+             insns)))
+    m))
+
+(define (ctl->machine
+         controller-text)
+  (ctl-ops->machine
+   controller-text
+   default-primitive-list))
+
+(define (initialize-registers! m reg-bindings)
+  (for-each
+   (lambda (pair)
+     (set-register-contents! m (car pair) (cadr pair)))
+   reg-bindings))
+
 ;; make but without execution
 (define (make-with
          ;; controller-text is assumed always
@@ -55,16 +78,10 @@
          controller-text
          reg-bindings
          primitive-list)
-  (let* ((insns (cdr controller-text))
-         (reg-names (extract-register-names insns))
-         (m (make-machine
-             reg-names
-             primitive-list
-             insns)))
-    (for-each
-     (lambda (pair)
-       (set-register-contents! m (car pair) (cadr pair)))
-     reg-bindings)
+  (let* ((m (ctl-ops->machine
+             controller-text
+             primitive-list)))
+    (initialize-registers! m reg-bindings)
     m))
 
 (define (make-and-execute-with
