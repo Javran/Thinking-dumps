@@ -46,6 +46,8 @@
     (apply append (map extract instructions))
     '(pc flag))))
 
+;; use `initialize-registers!` to [re-] initialize register values
+;; and then `start` to [re-] start machine execution
 (define (ctl-ops->machine
          controller-text
          primitive-list)

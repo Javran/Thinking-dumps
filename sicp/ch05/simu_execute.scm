@@ -32,6 +32,8 @@
 ;; make a machine from controller text
 ;; and operation list builder
 ;; with all registers uninitialized
+;; use `machine-init-regs! to [re-] initialize register values
+;; and then `machine-fresh-start!` to [re-] start machine execution
 (define (ctl-ops->machine
          controller-text
          ops-builder)
