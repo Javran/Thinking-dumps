@@ -137,6 +137,32 @@
    m 'pc
    (cdr (machine-reg-get m 'pc))))
 
+;; initialize registers
+(define (machine-init-regs!
+         m init-reg-table)
+  ;; we can only initialize those whose value is not given
+  ;; in the table, but set operations might cost more
+
+  ;; clean up all values
+  (for-each
+   (lambda (reg-name)
+     (machine-reg-set! m reg-name '*unassigned*))
+   (map car (machine-register-table m)))
+
+  ;; set values
+  (for-each
+   (lambda (pair)
+     ;; no need to check if the register exists
+     ;; setting values to any undefined regster results
+     ;; in a register not found error
+     (machine-reg-set! m (car pair) (cadr pair)))
+   init-reg-table))
+
+;; initialize 'pc register and start machine execution
+(define (machine-fresh-start! m)
+  (machine-reset-pc! m)
+  (machine-execute! m))
+
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
 ;; End:

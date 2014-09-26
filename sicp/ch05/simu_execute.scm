@@ -1,3 +1,18 @@
+;; procedures:
+;; * build without initialize registers
+;;   (machine-init-regs! and machine-fresh-start!
+;;    need to be called manually, these procdures are usually
+;;    used when it is necessary to restart the machine with different
+;;    register value settings)
+;;   * ctl-ops->machine
+;;   * ctl->machine
+;;
+;; * build with an optional register inital value table
+;;   (does everything)
+;;   * build-with
+;;   * build-and-execute-with
+;;   * build-and-execute
+
 ;; extract all register names
 ;; from the list of instructions
 ;; only target registers in "assign" instructions and "restore" instructions
@@ -13,29 +28,6 @@
   (remove-duplicates
    (apply append (map extract insns))))
 
-;; build a machine with insns assembled,
-;; registers assigned according to the table,
-;; and primitive operations specified
-;;
-;; we limit the set of registers
-;; to only those that has appeared in the instruction list.
-;;
-;; Previously I want to make it flexible so that I can plug in
-;; instruction list to the machine as well.
-;; But why not just making another machine instead of
-;; reusing the old one if the instruction list get completely changed?
-(define (build-with
-         ;; the controller text
-         controller-text
-         ;; an optional register table
-         ;; (does not need to be a table containing all registers)
-         init-reg-table
-         ;; when given the machine itself,
-         ;; produces a primitive-operation table
-         ops-builder)
-  (let ((m (ctl-ops->machine controller-text ops-builder)))
-    (machine-init-regs! m init-reg-table)
-    m))
 
 ;; make a machine from controller text
 ;; and operation list builder
@@ -65,26 +57,29 @@
    controller-text
    default-ops-buidler))
 
-;; initialize registers
-(define (machine-init-regs!
-         m init-reg-table)
-  ;; we can only initialize those whose value is not given
-  ;; in the table, but set operations might cost more
-
-  ;; clean up all values
-  (for-each
-   (lambda (reg-name)
-     (machine-reg-set! m reg-name '*unassigned*))
-   (map car (machine-register-table m)))
-
-  ;; set values
-  (for-each
-   (lambda (pair)
-     ;; no need to check if the register exists
-     ;; setting values to any undefined regster results
-     ;; in a register not found error
-     (machine-reg-set! m (car pair) (cadr pair)))
-   init-reg-table))
+;; build a machine with insns assembled,
+;; registers assigned according to the table,
+;; and primitive operations specified
+;;
+;; we limit the set of registers
+;; to only those that has appeared in the instruction list.
+;;
+;; Previously I want to make it flexible so that I can plug in
+;; instruction list to the machine as well.
+;; But why not just making another machine instead of
+;; reusing the old one if the instruction list get completely changed?
+(define (build-with
+         ;; the controller text
+         controller-text
+         ;; an optional register table
+         ;; (does not need to be a table containing all registers)
+         init-reg-table
+         ;; when given the machine itself,
+         ;; produces a primitive-operation table
+         ops-builder)
+  (let ((m (ctl-ops->machine controller-text ops-builder)))
+    (machine-init-regs! m init-reg-table)
+    m))
 
 ;; build it and execute it
 (define (build-and-execute-with
@@ -96,9 +91,14 @@
             init-reg-table
             ops-builder)))
     ;; start execution
-    (machine-reset-pc! m)
-    (machine-execute! m)
+    (machine-fresh-start! m)
     m))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   default-ops-buidler))
 
 (define default-ops-buidler
   (lambda (m)
@@ -116,11 +116,3 @@
        (abs ,abs)
        (average ,average)
        )))
-
-(define (build-and-execute controller-text reg-bindings)
-  (build-and-execute-with
-   controller-text
-   reg-bindings
-   default-ops-buidler))
-
-;; TODO: looks a little messy, clean up needed
