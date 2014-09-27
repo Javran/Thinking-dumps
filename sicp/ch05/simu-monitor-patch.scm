@@ -61,6 +61,11 @@
    (stack-meta-get st 'number-pushes)
    (stack-meta-get st 'max-depth)))
 
+(define (stack-get-statistics st)
+  (map (lambda (key)
+         (cons key (stack-meta-get st key)))
+       '(number-pushes max-depth)))
+
 (define default-ops-buidler
   (lambda (m)
     `( (+ ,+)
