@@ -31,3 +31,7 @@ have some weird problems because registers are not properly
 initialized after the first loop. One need to be extremely careful
 not to leave any thing uninitialized from last execution or
 otherwise a potential error will cause bugs.
+
+Another problem might lie in `initialize-stack` operation,
+as it might potentially destroy many states stored in
+the stack making the machine into a confusing state.
