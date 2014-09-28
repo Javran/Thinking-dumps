@@ -12,11 +12,17 @@
 (let ((m (ctl->machine
           fac-machine-controller)))
   (let loop ((n 2))
-    (if (< n 10)
+    (if (<= n 10)
         (begin
           (machine-init-regs! m `((n ,n)))
           (machine-fresh-start! m)
-          (out (stack-get-statistics (machine-stack m)))
+          (let ((stat (stack-get-statistics (machine-stack m))))
+            (format
+             #t
+             "n = ~A, number-pushes = ~A, max-depth = ~A~%"
+             n
+             (cdr (assoc 'number-pushes stat))
+             (cdr (assoc 'max-depth stat))))
           (loop (add1 n)))
         'done)))
 
