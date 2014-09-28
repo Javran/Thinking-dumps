@@ -26,6 +26,33 @@
           (loop (add1 n)))
         'done)))
 
+;; Using approach 2
+(define controller-text
+  `(controller
+    (assign maxn (const 10))
+    ex-5-14-start
+    ;; if n > maxn then end else keep going
+    (test (op >) (reg n) (reg maxn))
+    (branch (label ex-5-14-end))
+    (perform (op printn))
+    (perform (op initialize-stack))
+    ,@(cdr fac-machine-controller)
+    (perform (op print-stack-statistics))
+    ;; n = n + 1
+    (assign n (op +) (reg n) (const 1))
+    (goto (label ex-5-14-start))
+    ex-5-14-end))
+
+(build-and-execute-with
+ controller-text
+ '((n 2))
+ (lambda (m)
+   `((printn ,(lambda ()
+                (format
+                 #t "n = ~A~%"
+                 (machine-reg-get m 'n))))
+     ,@(default-ops-buidler m))))
+
 (end-script)
 
 ;; Local variables:
