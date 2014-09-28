@@ -108,3 +108,8 @@
            (stack-initialize!
             (machine-stack m))))
        )))
+
+(define (machine-fresh-start! m)
+  (stack-initialize! (machine-stack m))
+  (machine-reset-pc! m)
+  (machine-execute! m))
