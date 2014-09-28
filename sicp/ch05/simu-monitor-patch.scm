@@ -24,6 +24,20 @@
 (define (stack-meta-get st key)
   (cadr (assoc key (vector-ref st 1))))
 
+(define (stack-initialize! st)
+  ;; replacing a existing vector might
+  ;; invalidate some references stored
+  ;; somewhere else.
+  ;; but changing the vector content is
+  ;; relatively safe.
+  ;; so here we just need to copy things
+  ;; from a newly created empty stack
+  (let ((e (empty-stack)))
+    ;; stack itself
+    (vector-set! st 0 (vector-ref e 0))
+    ;; statistics
+    (vector-set! st 1 (vector-ref e 1))))
+
 (define (stack-push! st e)
   (vector-modify!
    st 0
@@ -88,5 +102,9 @@
        (print-stack-statistics
         ,(lambda ()
            (stack-print-statistics
+            (machine-stack m))))
+       (initialize-stack
+        ,(lambda ()
+           (stack-initialize!
             (machine-stack m))))
        )))
