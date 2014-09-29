@@ -65,3 +65,22 @@
 
 (define (reset-insn-counter m)
   (m 'reset-insn-counter))
+
+(define (default-primitive-list)
+  `( (+ ,+)
+     (- ,-)
+     (* ,*)
+     (/ ,/)
+     (zero? ,zero?)
+     (> ,>)
+     (>= ,>=)
+     (< ,<)
+     (<= ,<=)
+     (= ,=)
+     (square ,square)
+     (average ,average)
+     (abs ,abs)
+     ;; ???
+     ;; TODO: still need the machine itself known
+     ;; to this primitive list...
+     ))
