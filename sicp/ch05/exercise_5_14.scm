@@ -53,6 +53,8 @@
                  (machine-reg-get m 'n))))
      ,@(default-ops-buidler m))))
 
+;; see "./exercise_5_14.md" for results
+
 (end-script)
 
 ;; Local variables:

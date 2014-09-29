@@ -35,3 +35,16 @@ otherwise a potential error will cause bugs.
 Another problem might lie in `initialize-stack` operation,
 as it might potentially destroy many states stored in
 the stack making the machine into a confusing state.
+
+# Result
+
+| n | number-pushes | max-depth
+| --- | --- | --- |
+| 2 | 2 | 2 |
+| 3 | 4 | 4 |
+| 4 | 6 | 6 |
+| n | 2n-2 | 2n-2 |
+
+From the result we know that
+the total number of pish operations and
+the maximum stack depth are both `2n-2`.
