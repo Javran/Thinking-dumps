@@ -6,12 +6,11 @@
 
 (load "./figure_5_12.scm")
 
-;; TODO: provide some operations
-;; to make it possible for the controller-text
-;; to interact with the counter
-
 (let ((m (make-and-execute
-          fib-machine-controller
+          `(controller
+            ,@(cdr fib-machine-controller)
+            (perform (op print-insn-counter))
+            )
           '((n 5)))))
   ;; print out number of instructions executed
   (out (get-instruction-counter m)))
