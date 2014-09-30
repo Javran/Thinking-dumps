@@ -10,9 +10,12 @@
           `(controller
             ,@(cdr fib-machine-controller)
             (perform (op print-insn-counter))
+            ;; counter + 1
+            (perform (op reset-insn-counter))
+            ;; = 1
+            (perform (op print-insn-counter))
             )
           '((n 5)))))
-  ;; print out number of instructions executed
   (out (get-instruction-counter m)))
 
 (end-script)
