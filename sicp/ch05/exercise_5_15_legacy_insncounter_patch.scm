@@ -5,8 +5,18 @@
         (the-instruction-sequence '())
         (instruction-counter 0))
     (let ((the-ops
-           (list (list 'initialize-stack
-                       (lambda () (stack 'initialize)))))
+           (list
+            ;; seems we have to modify the primitive list here
+            (list 'print-insn-counter
+                  (lambda ()
+                    (format #t "# instruction executed: ~A~%"
+                            instruction-counter)))
+            (list 'reset-insn-counter
+                  (lambda ()
+                    (set! instruction-counter 0)))
+            (list 'initialize-stack
+                  (lambda ()
+                    (stack 'initialize)))))
           (register-table
            (list (list 'pc pc)
                  (list 'flag flag))))
@@ -65,22 +75,3 @@
 
 (define (reset-insn-counter m)
   (m 'reset-insn-counter))
-
-(define (default-primitive-list)
-  `( (+ ,+)
-     (- ,-)
-     (* ,*)
-     (/ ,/)
-     (zero? ,zero?)
-     (> ,>)
-     (>= ,>=)
-     (< ,<)
-     (<= ,<=)
-     (= ,=)
-     (square ,square)
-     (average ,average)
-     (abs ,abs)
-     ;; ???
-     ;; TODO: still need the machine itself known
-     ;; to this primitive list...
-     ))
