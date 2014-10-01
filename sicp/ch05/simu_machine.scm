@@ -175,13 +175,18 @@
   (machine-execute! m))
 
 (define (machine-extra-get m key)
-  'todo)
+  (cadr (assoc key (machine-extra-slot m))))
 
 (define (machine-extra-set! m key value)
-  'todo)
+  (let* ((alist (machine-extra-slot m))
+         (new-alist (cons (list key value)
+                          (del-assoc key alist))))
+    (machine-set-extra-slot! m new-alist)))
 
 (define (machine-extra-modify! m key proc)
-  'todo)
+  (machine-extra-set!
+   m key
+   (proc (machine-extra-get m key))))
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
