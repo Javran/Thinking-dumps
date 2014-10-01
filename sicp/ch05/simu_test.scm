@@ -177,10 +177,26 @@
        (out (machine-reg-get m 'n))))
    "mutiple labels with the same name will raise an error"))
 
+(define (test-extra-slot)
+  (let ((m (empty-machine)))
+    (machine-extra-set! m 'a 10)
+    (machine-extra-set! m 'b 20)
+    (assert (= 20 (machine-extra-get m 'b)))
+    (assert (= 10 (machine-extra-get m 'a)))
+
+    (machine-extra-set! m 'a 'good)
+    (assert (eq? 'good (machine-extra-get m 'a)))
+
+    (machine-extra-modify! m 'b add1)
+    (assert (= 21 (machine-extra-get m 'b)))
+
+    'done))
+
 (if *simu-test*
     (begin
       (do-handler-tests)
-      (test-multiple-same-label))
+      (test-multiple-same-label)
+      (test-extra-slot))
     'ignored)
 
 ;; Local variables:
