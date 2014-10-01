@@ -10,6 +10,9 @@
    '()                                  ; 2: register-table
    '()                                  ; 3: operations
    '()                                  ; 4: jump-table
+   ;; extra-slot stores information that
+   ;; can be accessed and updated by the machine
+   '()                                  ; 5: extra-slot
    ))
 
 ;; internal use only, return machine field reference numbers
@@ -20,8 +23,10 @@
     ((register-table)       2)
     ((operations)           3)
     ((jump-table)           4)
+    ((extra-slot)           5)
     (else (error "MACHINE: unknown internal ref: "
                  symbol))))
+
 (define (machine-intern-field m sym)
   (vector-ref
    m
@@ -55,6 +60,10 @@
   (vector-ref
    m
    (machine-intern-ref 'jump-table)))
+(define (machine-extra-slot m)
+  (vector-ref
+   m
+   (machine-intern-ref 'extra-slot)))
 
 (define (machine-set-stack! m new-stack)
   (machine-intern-set-field! m 'stack new-stack))
@@ -66,6 +75,8 @@
   (machine-intern-set-field! m 'operations new-ops))
 (define (machine-set-jump-table! m new-tbl)
   (machine-intern-set-field! m 'jump-table new-tbl))
+(define (machine-set-extra-slot! m new-info)
+  (machine-intern-set-field! m 'extra-slot new-info))
 
 ;; indirect accessors:
 
@@ -162,6 +173,15 @@
 (define (machine-fresh-start! m)
   (machine-reset-pc! m)
   (machine-execute! m))
+
+(define (machine-extra-get m key)
+  'todo)
+
+(define (machine-extra-set! m key value)
+  'todo)
+
+(define (machine-extra-modify! m key proc)
+  'todo)
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
