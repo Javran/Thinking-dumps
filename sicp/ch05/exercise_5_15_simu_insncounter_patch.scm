@@ -29,11 +29,11 @@
   (let ((old-builder default-ops-builder))
     (lambda (m)
       `((print-insn-counter
-         (lambda ()
+         ,(lambda ()
            (format
             #t "# instruction executed: ~A~%"
             (machine-instruction-counter m))))
         (reset-insn-counter
-         (lambda ()
+         ,(lambda ()
            (machine-reset-instruction-counter! m)))
         ,@(old-builder m)))))
