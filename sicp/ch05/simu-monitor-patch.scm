@@ -80,7 +80,7 @@
          (cons key (stack-meta-get st key)))
        '(number-pushes max-depth)))
 
-(define default-ops-buidler
+(define default-ops-builder
   (lambda (m)
     `( (+ ,+)
        (- ,-)

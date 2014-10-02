@@ -21,7 +21,7 @@
           `((x ,test-const))
           (lambda (m)
             (concat
-             (list (default-ops-buidler m)
+             (list (default-ops-builder m)
                    `((good-enough? ,good-enough?)
                      (improve ,improve))))))))
   (out (machine-reg-get m 'result)))

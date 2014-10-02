@@ -51,7 +51,7 @@
                 (format
                  #t "n = ~A~%"
                  (machine-reg-get m 'n))))
-     ,@(default-ops-buidler m))))
+     ,@(default-ops-builder m))))
 
 ;; see "./exercise_5_14.md" for results
 
