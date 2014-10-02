@@ -15,18 +15,33 @@
 
 ;; extract all register names
 ;; from the list of instructions
-;; only target registers in "assign" instructions and "restore" instructions
-;; are taken into account
-;; but this is sufficient, since no other instructions can modify a register
+;; all registers mentioned in the controller need to be taken into account
+;; since now the register list fully depends on the controller text
+;; if some registers are not present, we might have troube initializing
+;; their values.
 (define (extract-register-names insns)
   (define (extract insn)
-    (cond
-     ((or (tagged-list? insn 'assign)
-          (tagged-list? insn 'restore))
-      (list (cadr insn)))
-     (else '())))
+    (if (symbol? insn)
+        '()
+        (let ((names1
+               ;; special targets that does not have an "reg"
+               ;; explicitly
+               (cond
+                ((or (tagged-list? insn 'assign)
+                     (tagged-list? insn 'save)
+                     (tagged-list? insn 'restore))
+                 (list (cadr insn)))
+                (else '())))
+              (names2
+               ;; registers indicated by "reg"
+               (map cadr
+                    (filter (lambda (e)
+                              (and (list? e)
+                                   (eq? 'reg (car e))))
+                            insn))))
+          (append names1 names2))))
   (remove-duplicates
-   (apply append (map extract insns))))
+   (concat-map extract insns)))
 
 
 ;; make a machine from controller text

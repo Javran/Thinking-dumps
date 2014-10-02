@@ -1,5 +1,9 @@
 (define sqrt-machine-v1
   '(controller
+    ;; the following line is necessary
+    ;; in order to make "x" appear in the controller text
+    (assign x (reg x))
+
     (assign guess (const 1.0))
     test-good
     (test (op good-enough?) (reg guess))

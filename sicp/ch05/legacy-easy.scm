@@ -36,14 +36,28 @@
 ;; from "simu" modules
 (define (extract-register-names instructions)
   (define (extract insn)
-    (cond
-     ((or (tagged-list? insn 'assign)
-          (tagged-list? insn 'restore))
-      (list (cadr insn)))
-     (else '())))
+    (if (symbol? insn)
+        '()
+        (let ((names1
+               ;; special targets that does not have an "reg"
+               ;; explicitly
+               (cond
+                ((or (tagged-list? insn 'assign)
+                     (tagged-list? insn 'save)
+                     (tagged-list? insn 'restore))
+                 (list (cadr insn)))
+                (else '())))
+              (names2
+               ;; registers indicated by "reg"
+               (map cadr
+                    (filter (lambda (e)
+                              (and (list? e)
+                                   (eq? 'reg (car e))))
+                            insn))))
+          (append names1 names2))))
   (remove-duplicates
    (set-diff
-    (apply append (map extract instructions))
+    (concat-map extract instructions)
     '(pc flag))))
 
 ;; use `initialize-registers!` to [re-] initialize register values

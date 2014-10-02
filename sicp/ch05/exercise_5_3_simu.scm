@@ -35,7 +35,7 @@
           (lambda (m)
             (apply
              append
-             (list (default-ops-buidler m)
+             (list (default-ops-builder m)
                    `((improve ,improve))))))))
       (out (machine-reg-get m 'result)))
 (newline)
