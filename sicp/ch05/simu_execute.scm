@@ -57,7 +57,7 @@
          controller-text)
   (ctl-ops->machine
    controller-text
-   default-ops-buidler))
+   default-ops-builder))
 
 ;; build a machine with insns assembled,
 ;; registers assigned according to the table,
@@ -100,9 +100,9 @@
   (build-and-execute-with
    controller-text
    reg-bindings
-   default-ops-buidler))
+   default-ops-builder))
 
-(define default-ops-buidler
+(define default-ops-builder
   (lambda (m)
     `( (+ ,+)
        (- ,-)
