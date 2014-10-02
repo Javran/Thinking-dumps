@@ -33,5 +33,5 @@
 * `const` (this is not an instruction, just some kind of data)
 
     * `(const <data>)`
-        * I think there's no limit no what kind of data it can store:
+        * I think there's no limit on what kind of data it can store:
           string, symbol, list or even quoted s-exp.
