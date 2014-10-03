@@ -1,10 +1,3 @@
-(define (machine-fresh-start! m)
-  ;; right before bringing up the machine,
-  ;; make "instruction-counter" field available
-  (machine-extra-set! m 'instruction-counter 0)
-  (machine-reset-pc! m)
-  (machine-execute! m))
-
 (define (machine-execute! m)
   (let ((insns (machine-reg-get m 'pc)))
     (if (null? insns)
@@ -14,11 +7,11 @@
           ;; after an instruction is execute,
           ;; we bump the counter
           (machine-extra-modify!
-           m 'instruction-counter add1)
+           m 'instruction-counter add1 0)
           (machine-execute! m)))))
 
 (define (machine-instruction-counter m)
-  (machine-extra-get m 'instruction-counter))
+  (machine-extra-get m 'instruction-counter 0))
 
 (define (machine-reset-instruction-counter! m)
   (machine-extra-set! m 'instruction-counter 0))
