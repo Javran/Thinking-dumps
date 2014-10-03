@@ -174,18 +174,27 @@
   (machine-reset-pc! m)
   (machine-execute! m))
 
+;; retrieve extra data from the machine
+;; if the specified key does not match with
+;; any given extra data, a default value is returned
 (define (machine-extra-get m key default)
   (let ((result (assoc key (machine-extra-slot m))))
     (if result
         (cadr result)
         default)))
 
+;; store extra data with a key on the machine
 (define (machine-extra-set! m key value)
   (let* ((alist (machine-extra-slot m))
          (new-alist (cons (list key value)
                           (del-assoc key alist))))
     (machine-set-extra-slot! m new-alist)))
 
+;; modify the stored extra data indicated by a key
+;; if the old value cannot be found, default will
+;; be used as if it was the old value
+;; i.e. "proc" will take "default" as an *INPUT*
+;; if no old value is found
 (define (machine-extra-modify! m key proc default)
   (machine-extra-set!
    m key
