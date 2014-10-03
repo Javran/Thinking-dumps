@@ -174,8 +174,11 @@
   (machine-reset-pc! m)
   (machine-execute! m))
 
-(define (machine-extra-get m key)
-  (cadr (assoc key (machine-extra-slot m))))
+(define (machine-extra-get m key default)
+  (let ((result (assoc key (machine-extra-slot m))))
+    (if result
+        (cadr result)
+        default)))
 
 (define (machine-extra-set! m key value)
   (let* ((alist (machine-extra-slot m))
@@ -183,10 +186,10 @@
                           (del-assoc key alist))))
     (machine-set-extra-slot! m new-alist)))
 
-(define (machine-extra-modify! m key proc)
+(define (machine-extra-modify! m key proc default)
   (machine-extra-set!
    m key
-   (proc (machine-extra-get m key))))
+   (proc (machine-extra-get m key default))))
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
