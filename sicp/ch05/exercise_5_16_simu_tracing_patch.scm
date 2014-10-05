@@ -19,3 +19,14 @@
               'skipped)
           ((cdr (car insns)))
           (machine-execute! m)))))
+
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      `((trace-on
+         ,(lambda ()
+            (machine-trace-on! m)))
+        (trace-off
+         ,(lambda ()
+            (machine-trace-off! m)))
+        ,@(old-builder m)))))

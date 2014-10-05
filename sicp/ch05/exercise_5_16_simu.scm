@@ -17,10 +17,10 @@
     (branch (label p-done))
     (test (op odd?) (reg n))
     (branch (label p-trace-on))
-    ;; (perform (op trace-off))
+    (perform (op trace-off))
     (goto (label p-loop-next))
     p-trace-on
-    ;; (perform (op trace-on))
+    (perform (op trace-on))
     p-loop-next
     (assign n (op -) (reg n) (const 1))
     (goto (label p-begin))
