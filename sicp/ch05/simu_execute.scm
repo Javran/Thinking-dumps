@@ -132,4 +132,6 @@
        (square ,square)
        (abs ,abs)
        (average ,average)
+       (odd? ,odd?)
+       (even? ,even?)
        )))

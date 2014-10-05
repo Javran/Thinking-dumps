@@ -31,6 +31,8 @@
      (square ,square)
      (average ,average)
      (abs ,abs)
+     (odd? ,odd?)
+     (even? ,even?)
      ))
 
 ;; from "simu" modules
