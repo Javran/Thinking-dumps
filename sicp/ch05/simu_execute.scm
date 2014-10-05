@@ -134,4 +134,5 @@
        (average ,average)
        (odd? ,odd?)
        (even? ,even?)
+       (print ,out)
        )))

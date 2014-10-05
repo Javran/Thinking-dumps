@@ -33,6 +33,7 @@
      (abs ,abs)
      (odd? ,odd?)
      (even? ,even?)
+     (print ,out)
      ))
 
 ;; from "simu" modules
