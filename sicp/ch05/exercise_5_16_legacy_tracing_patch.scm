@@ -39,6 +39,9 @@
           (if (null? insts)
               'done
               (begin
+                (if trace
+                    (out (car (car insts)))
+                    'ignored)
                 ((instruction-execution-proc (car insts)))
                 (execute)))))
       (define (dispatch message)
