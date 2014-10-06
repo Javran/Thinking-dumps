@@ -5,6 +5,11 @@ by the text of the instruction and a procedure
 that actually performs the operation,
 extend the representation to include the label right before it
 
+    * change the structure of instruction representation and
+    make sure it still works
+    * add new extra fields while keeping the other information intact
+    (might change the old representation to a list)
+
 * The label is optional and must be the one right before it.
 Think carefully about what will happen if there are more than
 two labels right before an instruction (in this case I think the
