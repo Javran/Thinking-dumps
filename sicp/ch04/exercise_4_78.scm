@@ -62,6 +62,7 @@
 (out (qe-all '(pat (?a . ?b))))
 (out (qe-all '(pat (?a ?b))))
 
+;; TODO:
 ;; I believe solving these questions would help somehow,
 ;; but now I don't have a clear idea about how to implement this
 ;; Maybe I'll skip these questions and move to chapter 5.
