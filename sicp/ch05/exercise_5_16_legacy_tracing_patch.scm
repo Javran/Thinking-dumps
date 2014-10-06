@@ -6,13 +6,17 @@
         ;; tracing flag as a variable
         (trace #f))
     (let ((the-ops
-           (list (list 'initialize-stack
-                       (lambda () (stack 'initialize)))
-                 ;; two primitives for tracing flag control
-                 (list 'trace-on
-                       (lambda () (set! trace #t)))
-                 (list 'trace-off
-                       (lambda () (set! trace #f)))))
+           (list
+            (list 'initialize-stack
+                  (lambda ()
+                    (stack 'initialize)))
+            ;; two primitives for tracing flag control
+            (list 'trace-on
+                  (lambda ()
+                    (set! trace #t)))
+            (list 'trace-off
+                  (lambda ()
+                    (set! trace #f)))))
           (register-table
            (list (list 'pc pc)
                  (list 'flag flag))))
