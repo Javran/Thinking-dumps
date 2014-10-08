@@ -43,3 +43,6 @@
                              tl)))))))
       (machine-set-instruction-sequence! machine (drop-labels insns))
       (machine-set-jump-table! machine jump-table))))
+
+(define assembled-insn-proc cadr)
+(define assembled-insn-prev-label caddr)
