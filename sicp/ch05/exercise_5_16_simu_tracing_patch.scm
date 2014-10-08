@@ -17,7 +17,7 @@
           (if (machine-trace? m)
               (out (assembled-insn-text (car insns)))
               'skipped)
-          ((cdr (car insns)))
+          ((assembled-insn-proc (car insns)))
           (machine-execute! m)))))
 
 (define default-ops-builder
