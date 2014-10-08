@@ -6,9 +6,12 @@
 
 (load "./figure_5_12.scm")
 
-(let ((m (build-and-execute
+(let ((m (build-with
           fib-machine-controller
-          '((n 10)))))
+          '((n 10))
+          default-ops-builder)))
+  (machine-trace-on! m)
+  (machine-fresh-start! m)
   (out (machine-reg-get m 'val)))
 
 (end-script)

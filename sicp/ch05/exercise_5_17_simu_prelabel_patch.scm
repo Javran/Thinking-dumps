@@ -1,3 +1,5 @@
+(load "./exercise_5_16_simu_tracing_patch.scm")
+
 (define (assemble insns machine)
   (define (make-instruction insn-text prev-text)
     (if (symbol? insn-text)
@@ -46,3 +48,24 @@
 
 (define assembled-insn-proc cadr)
 (define assembled-insn-prev-label caddr)
+
+;; redo ex 5.16 patch here to apply new changes
+(define (machine-execute! m)
+  (let ((insns (machine-reg-get m 'pc)))
+    (if (null? insns)
+        'done
+        (let* ((insn (car insns))
+               (proc (assembled-insn-proc insn))
+               (text (assembled-insn-text insn))
+               (lbl  (assembled-insn-prev-label insn)))
+          ;; print tracing message before
+          ;; the instruction gets executed
+          (if (machine-trace? m)
+              (begin
+                (if lbl
+                    (format #t "into label: ~A~%" lbl)
+                    'skipped)
+                (out text))
+              'skipped)
+          (proc)
+          (machine-execute! m)))))
