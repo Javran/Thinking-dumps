@@ -40,7 +40,7 @@
               'done
               (begin
                 (if trace
-                    (out (car (car insts)))
+                    (out (instruction-text (car insts)))
                     'ignored)
                 ((instruction-execution-proc (car insts)))
                 (execute)))))
