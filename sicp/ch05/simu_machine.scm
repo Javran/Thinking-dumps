@@ -117,12 +117,15 @@
   (machine-reg-set!
    m 'pc (machine-instruction-sequence m)))
 
+(define assembled-insn-text car)
+(define assembled-insn-proc cdr)
+
 (define (machine-execute! m)
   (let ((insns (machine-reg-get m 'pc)))
     (if (null? insns)
         'done
         (begin
-          ((cdr (car insns)))
+          ((assembled-insn-proc (car insns)))
           (machine-execute! m)))))
 
 (define (machine-lookup-label m label)

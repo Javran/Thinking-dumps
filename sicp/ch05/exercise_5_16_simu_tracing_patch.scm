@@ -15,7 +15,7 @@
           ;; print tracing message before
           ;; the instruction gets executed
           (if (machine-trace? m)
-              (out (car (car insns)))
+              (out (assembled-insn-text (car insns)))
               'skipped)
           ((cdr (car insns)))
           (machine-execute! m)))))
