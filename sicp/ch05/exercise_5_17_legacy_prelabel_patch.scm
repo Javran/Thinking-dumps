@@ -1,3 +1,5 @@
+(load "./exercise_5_16_legacy_tracing_patch.scm")
+
 (define (extract-labels text)
   (if (null? text)
       (cons '() '())
