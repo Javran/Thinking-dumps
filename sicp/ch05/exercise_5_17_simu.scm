@@ -6,6 +6,8 @@
 
 (load "./figure_5_12.scm")
 
+;; TODO: show that it does not interfere with instruction counting
+
 (let ((m (build-with
           fib-machine-controller
           '((n 10))
