@@ -1,3 +1,4 @@
+(load "./exercise_5_15_simu_insncounter_patch.scm")
 (load "./exercise_5_16_simu_tracing_patch.scm")
 
 (define (assemble insns machine)
@@ -68,4 +69,7 @@
                 (out text))
               'skipped)
           (proc)
+          ;; redo insncounter patch here
+          (machine-extra-modify!
+           m 'instruction-counter add1 0)
           (machine-execute! m)))))
