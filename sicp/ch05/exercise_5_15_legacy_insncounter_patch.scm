@@ -40,6 +40,7 @@
               'done
               (begin
                 ((instruction-execution-proc (car insts)))
+                ;; bump counter
                 (set! instruction-counter
                       (add1 instruction-counter))
                 (execute)))))
