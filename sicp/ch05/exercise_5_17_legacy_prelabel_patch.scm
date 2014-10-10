@@ -1,3 +1,4 @@
+(load "./exercise_5_15_legacy_insncounter_patch.scm")
 (load "./exercise_5_16_legacy_tracing_patch.scm")
 
 (define (make-instruction text prev-inst)
@@ -45,6 +46,7 @@
         (flag (make-register 'flag))
         (stack (make-stack))
         (the-instruction-sequence '())
+        (instruction-counter 0)
         (trace #f))
     (let ((the-ops
            (list
@@ -56,7 +58,16 @@
                     (set! trace #t)))
             (list 'trace-off
                   (lambda ()
-                    (set! trace #f)))))
+                    (set! trace #f)))
+            ;; seems we have to modify the primitive list here
+            (list 'print-insn-counter
+                  (lambda ()
+                    (format #t "# instruction executed: ~A~%"
+                            instruction-counter)))
+            (list 'reset-insn-counter
+                  (lambda ()
+                    (set! instruction-counter 0)))
+            ))
           (register-table
            (list (list 'pc pc)
                  (list 'flag flag))))
@@ -91,9 +102,14 @@
                       (out text))
                     'ignored)
                 (proc)
+                ;; bump counter
+                (set! instruction-counter
+                      (add1 instruction-counter))
                 (execute)))))
       (define (dispatch message)
         (cond ((eq? message 'start)
+               ;; initialize instruction counter
+               (set! instruction-counter 0)
                (set-contents! pc the-instruction-sequence)
                (execute))
               ((eq? message 'install-instruction-sequence)
@@ -113,6 +129,10 @@
                (set! trace #t))
               ((eq? message 'trace-off)
                (set! trace #f))
+              ;; new messages: get and reset counter
+              ((eq? message 'get-insn-counter) instruction-counter)
+              ((eq? message 'reset-insn-counter)
+               (set! instruction-counter 0))
               (else
                (error "Unknown request: MACHINE"
                       message))))
