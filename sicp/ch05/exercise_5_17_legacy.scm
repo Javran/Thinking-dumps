@@ -6,14 +6,21 @@
 
 (load "./figure_5_12.scm")
 
-;; TODO: show that it does not interfere with instruction counting
-
 (let ((m (make-with
-          fib-machine-controller
+          `(controller
+            ,@(cdr fib-machine-controller)
+            (perform (op print-insn-counter))
+            ;; counter + 1 (should be exactly the same as ex 5.16: 166)
+            (perform (op reset-insn-counter))
+            ;; = 1
+            (perform (op print-insn-counter))
+            )
           '((n 5))
           (default-primitive-list))))
   (trace-on! m)
-  (start m))
+  (start m)
+  (out (get-instruction-counter m))
+  (out (get-register-contents m 'val)))
 
 (end-script)
 
