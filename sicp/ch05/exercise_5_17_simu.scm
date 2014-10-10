@@ -10,7 +10,7 @@
           `(controller
             ,@(cdr fib-machine-controller)
             (perform (op print-insn-counter))
-            ;; counter + 1 (should be exactly the same as ex 5.16: 166)
+            ;; counter + 1 (should be exactly the same as ex 5.15: 166)
             (perform (op reset-insn-counter))
             ;; = 1
             (perform (op print-insn-counter))
