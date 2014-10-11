@@ -27,3 +27,10 @@
         (error "unknown request: REGISTER"
                message))))
     dispatch))
+
+(define (register-trace-on! reg)
+  ((reg 'set-trace!) #t))
+(define (register-trace-off! reg)
+  ((reg 'set-trace!) #f))
+(define (register-tracing? reg)
+  (reg 'trace?))
