@@ -42,17 +42,7 @@
         (the-instruction-sequence '()))
     (let ((the-ops
            (list (list 'initialize-stack
-                       (lambda () (stack 'initialize)))
-                 ;; reg trace on/off as primitives
-                 (list 'trace-reg-on
-                       (lambda (name)
-                         (register-trace-on!
-                          (lookup-register name))))
-                 (list 'trace-reg-off
-                       (lambda (name)
-                         (register-trace-off!
-                          (lookup-register name))))
-                 ))
+                       (lambda () (stack 'initialize)))))
           (register-table
            (list (list 'pc pc)
                  (list 'flag flag))))
@@ -70,6 +60,22 @@
               (cadr val)
               (error "Unknown register:"
                      name))))
+      ;; reg trace on/off as primitives
+      ;; we choose to add these two primitives after
+      ;; "lookup-register" is defined
+      ;; so that these two primitives can work properly
+      (set!
+       the-ops
+       `(,@the-ops
+         (trace-reg-on
+          ,(lambda (name)
+             (register-trace-on!
+              (lookup-register name))))
+         (trace-reg-off
+          ,(lambda (name)
+             (register-trace-off!
+              (lookup-register name))))))
+
       (define (execute)
         (let ((insts (get-contents pc)))
           (if (null? insts)
