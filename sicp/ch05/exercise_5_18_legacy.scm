@@ -6,6 +6,9 @@
 
 (load "./exercise_5_18_test_controller.scm")
 
+;; the legacy patch uses the approach described
+;; in the exercise to implement register value tracing
+
 (let ((m (make-and-execute
           test-controller
           '())))
