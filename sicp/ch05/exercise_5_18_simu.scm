@@ -16,6 +16,10 @@
 ;; representation. But for the purpose of debugging,
 ;; I think there won't be much difference between these two approaches.
 
+;; TODO:
+;; A big problem is that the internal implementation doesn't
+;; use "machine-reg-set!" to modify the register value
+;; so this approach looks a little awkward.
 (let ((m (build-and-execute
           test-controller
           '())))
