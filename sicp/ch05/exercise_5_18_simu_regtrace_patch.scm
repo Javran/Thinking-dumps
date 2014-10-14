@@ -20,6 +20,6 @@
    '()))
 
 (define (machine-register-tracing? m reg)
-  (assoc
+  (member
    reg
    (machine-extra-get m 'tracing-regs '())))

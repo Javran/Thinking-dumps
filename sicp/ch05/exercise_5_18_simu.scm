@@ -16,6 +16,15 @@
 ;; representation. But for the purpose of debugging,
 ;; I think there won't be much difference between these two approaches.
 
+(let ((m (empty-machine)))
+  (machine-register-set-trace! m 'a #t)
+  (machine-register-set-trace! m 'b #t)
+  (out (machine-register-tracing? m 'a)
+       (machine-register-tracing? m 'b))
+  (machine-register-set-trace! m 'a #f)
+  (out (machine-register-tracing? m 'a)
+       (machine-register-tracing? m 'b)))
+
 (end-script)
 
 ;; Local variables:
