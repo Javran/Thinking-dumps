@@ -23,3 +23,14 @@
   (member
    reg
    (machine-extra-get m 'tracing-regs '())))
+
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      `((trace-reg-on
+         ,(lambda (name)
+            (machine-register-set-trace! m name #t)))
+        (trace-reg-off
+         ,(lambda (name)
+            (machine-register-set-trace! m name #f)))
+        ,@(old-builder m)))))
