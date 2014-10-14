@@ -34,3 +34,16 @@
          ,(lambda (name)
             (machine-register-set-trace! m name #f)))
         ,@(old-builder m)))))
+
+(define (machine-reg-set! m reg val)
+  (let ((reg-obj (machine-find-register m reg)))
+    (if (machine-register-tracing? m reg)
+        (let ((old-value (register-get reg-obj)))
+              (format #t "reg: ~A~%~
+                            old-val: ~A~%~
+                            new-val: ~A~%"
+                      reg
+                      old-value
+                      val))
+        'skipped)
+    (register-set! reg-obj val)))
