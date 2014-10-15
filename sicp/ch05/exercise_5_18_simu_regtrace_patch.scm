@@ -1,5 +1,6 @@
 (define (new-register)
   ;; adding a new field for register-setter callback
+  ;; setting this field to "#f" means the callback is not set
   (vector '*unassigned* #f))
 
 ;; callback procedure:
@@ -13,6 +14,7 @@
 (define (register-set! reg val)
   (let ((old-val (register-get reg))
         (callback (register-setter-callback reg)))
+    ;; run callback right before the actual change applies
     (if callback
         (callback reg old-val val)
         'skipped)
