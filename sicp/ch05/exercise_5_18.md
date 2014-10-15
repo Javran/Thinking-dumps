@@ -9,8 +9,20 @@ The exercise is suggesting modifying
 So for the legacy simulator I'm going to follow
 what this exercise has suggested.
 
-And for the `simu.scm`, I will try to take
-this second approach.
+And for the `simu.scm`, I tried to take
+this second approach. But this didn't work well.
+The problem is the assumption that to modify the value
+of a register one has to use the exposed setter is wrong.
+For internal implmentation, there is no reason to use that exposed
+setter when we can directly operate on the register object itself.
+And another reason is that my register implmentation does not store
+the name of the register, because I can't see the reason of
+keeping this information in legacy implementation and
+storing the name of the register means some potential bugs
+about synchorizing the register-value binding table and the
+register object itself. To summarize, keeping separated metadata
+about the register might be a bad idea, I'll go with
+the approach suggested by the exercise.
 
 Keep in mind that I still prefer the approach
 suggested by the exercise. Because the first approach
