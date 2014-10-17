@@ -29,6 +29,15 @@
     `((,lbl (,offset ,@offsets))
       ,@(del-assoc lbl tbl))))
 
+;; del breakpoint from bp-table
+(define (breakpoint-table-del lbl offset tbl)
+  (let ((result (assoc lbl tbl)))
+    (if result
+        `((,lbl ,(delete offset (cadr result)))
+          ,@(del-assoc lbl tbl))
+        ;; label not found, nothing to be done
+        tbl)))
+
 ;; based on ex 5.17 patch
 (define (machine-execute! m)
   (let ((insns (machine-reg-get m 'pc)))
