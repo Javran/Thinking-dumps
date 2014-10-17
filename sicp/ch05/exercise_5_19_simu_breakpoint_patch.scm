@@ -19,6 +19,16 @@
 (define (machine-reset-after-label-counter! m)
   (machine-extra-set! m 'after-label-counter 0))
 
+;; add breakpoint to bp-table
+(define (breakpoint-table-add lbl offset tbl)
+  (let ((offsets
+         (let ((pair (assoc lbl tbl)))
+           (if pair
+               (cadr pair)
+               '()))))
+    `((,lbl (,offset ,@offsets))
+      ,@(del-assoc lbl tbl))))
+
 ;; based on ex 5.17 patch
 (define (machine-execute! m)
   (let ((insns (machine-reg-get m 'pc)))

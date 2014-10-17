@@ -6,19 +6,12 @@
 
 (load "./figure_5_12.scm")
 
-(let ((m (build-with
-          `(controller
-            ,@(cdr fib-machine-controller)
-            (perform (op print-insn-counter))
-            ;; counter + 1 (should be exactly the same as ex 5.15: 166)
-            (perform (op reset-insn-counter))
-            ;; = 1
-            (perform (op print-insn-counter))
-            )
-          '((n 5))
-          default-ops-builder)))
-  (machine-trace-on! m)
-  (machine-fresh-start! m))
+(let* ((k1 '())
+       (k2 (breakpoint-table-add 'lbla 10 k1))
+       (k3 (breakpoint-table-add 'lbla 2 k2))
+       (k4 (breakpoint-table-add 'lblb 4 k3))
+       (k5 (breakpoint-table-add 'lbla 1 k4)))
+  (out k1 k2 k3 k4 k5))
 
 (end-script)
 
