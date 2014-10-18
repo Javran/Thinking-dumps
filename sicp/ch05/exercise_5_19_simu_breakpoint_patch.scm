@@ -38,6 +38,11 @@
         ;; label not found, nothing to be done
         tbl)))
 
+;; test if a label with an offset is registered in the table
+(define (breakpoint-table-check? lbl offset tbl)
+  (let ((result (assoc lbl tbl)))
+    (and result (member offset (cadr result)))))
+
 (define (machine-set-breakpoint! m lbl n)
   (machine-extra-modify!
    m
@@ -53,6 +58,16 @@
    (lambda (tbl)
      (breakpoint-table-del lbl n tbl))
    '()))
+
+;; check if there is a breakpoint in this place?
+;; NOTE: we could have cached the breakpoint table
+;; associated with a label when we hit that label
+;; it might be helpful to improve the performance
+;; but here we won't do it for simplicity
+(define (machine-breakpoint? m lbl n)
+  (breakpoint-table-check?
+   lbl n
+   (machine-extra-get m 'breakpoint-table '())))
 
 (define (machine-cancel-all-breakpoints! m)
   (machine-extra-set! m 'breakpoint-table '()))
