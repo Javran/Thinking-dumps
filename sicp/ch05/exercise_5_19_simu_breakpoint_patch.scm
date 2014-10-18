@@ -99,13 +99,6 @@
                (proc (assembled-insn-proc insn))
                (text (assembled-insn-text insn))
                (lbl  (assembled-insn-prev-label insn)))
-          (if (machine-trace? m)
-              (begin
-                (if lbl
-                    (format #t "into label: ~A~%" lbl)
-                    'skipped)
-                (out text))
-              'skipped)
           ;; once the label is updated,
           ;; we reset the after-label counter
           (if lbl
@@ -113,10 +106,33 @@
                 (machine-set-current-label! m lbl)
                 (machine-reset-after-label-counter! m))
               'skipped)
-          (proc)
-          (machine-extra-modify!
-           m 'instruction-counter add1 0)
-          ;; whenever an instruction is executed,
-          ;; we increase the after-label counter
-          (machine-inc-after-label-counter! m)
-          (machine-execute! m)))))
+
+          ;; NOTE: the instruction text is shown *BEFORE*
+          ;; the instruction gets executed
+          (if (machine-trace? m)
+              (begin
+                (if lbl
+                    (format #t "into label: ~A~%" lbl)
+                    'skipped)
+                (out text))
+              'skipped)
+          (if (and
+               (machine-breakpoint?
+                m
+                lbl
+                (machine-after-label-counter m))
+               (not (machine-resuming-flag? m)))
+              ;; need to break the execution here
+              (out "breakpoint reached")
+              ;; else keep going
+              (begin
+                (if (machine-resuming-flag? m)
+                    (machine-set-resumming-flag! m #f)
+                    'skipped)
+                (proc)
+                (machine-extra-modify!
+                 m 'instruction-counter add1 0)
+                ;; whenever an instruction is executed,
+                ;; we increase the after-label counter
+                (machine-inc-after-label-counter! m)
+                (machine-execute! m)))))))
