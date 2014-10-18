@@ -73,7 +73,7 @@
 (define (machine-resuming-flag? m)
   (machine-extra-get m 'resuming-flag #f))
 (define (machine-set-resumming-flag! m flag)
-  (machine-extra-set m 'resuming-flag flag))
+  (machine-extra-set! m 'resuming-flag flag))
 
 ;; corresponding to "cancel-all-breakpoints" feature
 ;; requested by the exercise
@@ -119,11 +119,16 @@
           (if (and
                (machine-breakpoint?
                 m
-                lbl
-                (machine-after-label-counter m))
+                (machine-current-label m)
+                ;; NOTE that the counter bumps
+                ;; after the instruction gets executed
+                ;; therefore to break on a specified line,
+                ;; we need to plus one to the current
+                ;; after-label counter
+                (add1 (machine-after-label-counter m)))
                (not (machine-resuming-flag? m)))
               ;; need to break the execution here
-              (out "breakpoint reached")
+              (out "<breakpoint reached>")
               ;; else keep going
               (begin
                 (if (machine-resuming-flag? m)
@@ -136,3 +141,9 @@
                 ;; we increase the after-label counter
                 (machine-inc-after-label-counter! m)
                 (machine-execute! m)))))))
+
+(define (machine-fresh-start! m)
+  ;; clear resuming flag if any
+  (machine-set-resumming-flag! m #f)
+  (machine-reset-pc! m)
+  (machine-execute! m))
