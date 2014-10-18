@@ -38,6 +38,25 @@
         ;; label not found, nothing to be done
         tbl)))
 
+(define (machine-set-breakpoint! m lbl n)
+  (machine-extra-modify!
+   m
+   'breakpoint-table
+   (lambda (tbl)
+     (breakpoint-table-add lbl n tbl))
+   '()))
+
+(define (machine-cancel-breakpoint! m lbl n)
+  (machine-extra-modify!
+   m
+   'breakpoint-table
+   (lambda (tbl)
+     (breakpoint-table-del lbl n tbl))
+   '()))
+
+(define (machine-cancel-all-breakpoints! m)
+  (machine-extra-set! m 'breakpoint-table '()))
+
 ;; based on ex 5.17 patch
 (define (machine-execute! m)
   (let ((insns (machine-reg-get m 'pc)))
