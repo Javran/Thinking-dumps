@@ -6,17 +6,39 @@
 
 (load "./figure_5_12.scm")
 
-(let* ((k1 '())
-       (k2 (breakpoint-table-add 'lbla 10 k1))
-       (k3 (breakpoint-table-add 'lbla 2 k2))
-       (k4 (breakpoint-table-add 'lblb 4 k3))
-       (k5 (breakpoint-table-add 'lbla 1 k4))
-       (k6 (breakpoint-table-del 'lbla 2 k5))
-       (k7 (breakpoint-table-del 'lbla 3 k6))
-       (k8 (breakpoint-table-del 'lblb 4 k7)))
-  (out k1 k2 k3 k4 k5)
-  (out "----")
-  (out k6 k7 k8))
+(let ((m (empty-machine)))
+  (machine-set-breakpoint! m 'lbla 10)
+  (machine-set-breakpoint! m 'lbla 2)
+  (machine-set-breakpoint! m 'lblb 4)
+  (machine-set-breakpoint! m 'lbla 1)
+  (machine-set-breakpoint! m 'lbla 1)
+
+  (out
+   (machine-breakpoint? m 'lbla 10)     ; #t
+   (machine-breakpoint? m 'lblb 2)      ; #f
+   (machine-breakpoint? m 'lbla 2)      ; #t
+   )
+
+  (machine-cancel-breakpoint! m 'lbla 2)
+  (machine-cancel-breakpoint! m 'lbla 3)
+  (machine-cancel-breakpoint! m 'lblb 4)
+
+  (out
+   (machine-breakpoint? m 'lbla 10)     ; #t
+   (machine-breakpoint? m 'lblb 2)      ; #f
+   (machine-breakpoint? m 'lbla 2)      ; #f
+   )
+
+  (machine-cancel-all-breakpoints! m)
+
+  (out
+   (machine-breakpoint? m 'lbla 10)     ; #f
+   (machine-breakpoint? m 'lblb 2)      ; #f
+   (machine-breakpoint? m 'lbla 2)      ; #f
+   )
+
+  'done)
+
 
 (end-script)
 
