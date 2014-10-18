@@ -174,6 +174,9 @@
 
 ;; initialize 'pc register and start machine execution
 (define (machine-fresh-start! m)
+  ;; clean up extra slot which might be used by patches
+  (machine-set-extra-slot! m '())
+  ;; reset other internal states
   (machine-reset-pc! m)
   (machine-execute! m))
 
