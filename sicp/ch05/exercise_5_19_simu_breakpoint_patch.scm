@@ -147,3 +147,7 @@
   (machine-set-resumming-flag! m #f)
   (machine-reset-pc! m)
   (machine-execute! m))
+
+(define (machine-proceed! m)
+  (machine-set-resumming-flag! m #t)
+  (machine-execute! m))

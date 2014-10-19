@@ -16,7 +16,14 @@
   ;; and the expected behavior is the machine stopped at the breakpoint
   ;; while the next instruction text gets printed
   (machine-set-breakpoint! m 'fib-loop 2)
-  (machine-fresh-start! m))
+  (machine-fresh-start! m)
+  ;; go until hiting the next breakpoint
+  (machine-proceed! m)
+  ;; cancel all breakpoints
+  (machine-cancel-all-breakpoints! m)
+  (machine-proceed! m)
+  (out (machine-reg-get m 'val))
+  'done)
 
 (end-script)
 
