@@ -21,6 +21,7 @@
   (machine-proceed! m)
   ;; cancel all breakpoints
   (machine-cancel-all-breakpoints! m)
+  ;; this time no breakpoint.
   (machine-proceed! m)
   (out (machine-reg-get m 'val))
   'done)
