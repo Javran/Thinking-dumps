@@ -5,6 +5,10 @@
 ;; * maintain breakpoint table (might share impl with simu)
 ;; * maintain resuming flag
 
+;; TODO:
+;; actually there is no difference between "skipped" and "ignored"
+;; let's just settle this down and stick to one of them
+;; to avoid confusion
 
 ;; based on ex 5.17 patch
 (define (make-new-machine)
