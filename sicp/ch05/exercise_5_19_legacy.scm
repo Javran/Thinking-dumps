@@ -6,6 +6,15 @@
 
 (load "./figure_5_12.scm")
 
+(let ((m (make-with
+          fib-machine-controller
+          '((n 5))
+          (default-primitive-list))))
+  (trace-on! m)
+  (start m)
+  (out (get-instruction-counter m))
+  (out (get-register-contents m 'val)))
+
 (end-script)
 
 ;; Local variables:
