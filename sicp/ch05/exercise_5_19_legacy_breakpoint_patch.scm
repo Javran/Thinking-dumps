@@ -17,6 +17,7 @@
         (stack (make-stack))
         (the-instruction-sequence '())
         (instruction-counter 0)
+        ;; maintain "after-label-counter"
         (after-label-counter 0)
         (trace #f)
         ;; maintain "current-label"
@@ -73,12 +74,19 @@
                       (out text))
                     'ignored)
                 (if lbl
-                    (set! current-label lbl)
+                    (begin
+                      (set! current-label lbl)
+                      (set! after-label-counter 0))
                     'skipped)
-                (format #t "current label:~A~%" current-label)
+                (format #t "current label:~A~%~
+                            after-label-counter:~A~%"
+                            current-label
+                            after-label-counter)
                 (proc)
                 (set! instruction-counter
                       (add1 instruction-counter))
+                (set! after-label-counter
+                      (add1 after-label-counter))
                 (execute)))))
       (define (dispatch message)
         (cond ((eq? message 'start)
