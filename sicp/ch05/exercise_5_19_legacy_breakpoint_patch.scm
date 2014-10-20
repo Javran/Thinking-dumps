@@ -17,6 +17,7 @@
         (stack (make-stack))
         (the-instruction-sequence '())
         (instruction-counter 0)
+        (after-label-counter 0)
         (trace #f)
         ;; maintain "current-label"
         (current-label #f))
@@ -82,6 +83,8 @@
       (define (dispatch message)
         (cond ((eq? message 'start)
                (set! instruction-counter 0)
+               (set! after-label-counter 0)
+               (set! current-label #f)
                (set-contents! pc the-instruction-sequence)
                (execute))
               ((eq? message 'install-instruction-sequence)
