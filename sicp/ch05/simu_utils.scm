@@ -67,4 +67,4 @@
 
 (if *simu-test*
     (test-first-dup-element)
-    'ignored)
+    'skipped)

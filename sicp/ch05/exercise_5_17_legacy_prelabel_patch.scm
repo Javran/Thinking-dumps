@@ -98,9 +98,9 @@
                     (begin
                       (if lbl
                           (format #t "into label: ~A~%" lbl)
-                          'ignored)
+                          'skipped)
                       (out text))
-                    'ignored)
+                    'skipped)
                 (proc)
                 ;; bump counter
                 (set! instruction-counter

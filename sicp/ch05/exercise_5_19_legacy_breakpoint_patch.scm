@@ -1,13 +1,8 @@
 (load "./exercise_5_17_legacy_prelabel_patch.scm")
+(load "./exercise_5_19_breakpoint_table.scm")
 
 ;; TODO list:
-;; * maintain breakpoint table (might share impl with simu)
 ;; * maintain resuming flag
-
-;; TODO:
-;; actually there is no difference between "skipped" and "ignored"
-;; let's just settle this down and stick to one of them
-;; to avoid confusion
 
 ;; based on ex 5.17 patch
 (define (make-new-machine)
@@ -69,9 +64,9 @@
                     (begin
                       (if lbl
                           (format #t "into label: ~A~%" lbl)
-                          'ignored)
+                          'skipped)
                       (out text))
-                    'ignored)
+                    'skipped)
                 (if lbl
                     (begin
                       (set! current-label lbl)
