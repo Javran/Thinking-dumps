@@ -53,7 +53,7 @@ Link: [Software Foundations](http://www.cis.upenn.edu/~bcpierce/sf/current/index
 
 Directory: [software-foundations](/software-foundations)
 
-### Programming F\#
+### Programming F-Sharp
 
 Author: Chris Smith
 
