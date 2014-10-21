@@ -15,7 +15,9 @@
         (after-label-counter 0)
         (trace #f)
         ;; maintain "current-label"
-        (current-label #f))
+        (current-label #f)
+        ;; a table containing all breakpoints
+        (breakpoint-table '()))
     (let ((the-ops
            (list
             (list 'initialize-stack
@@ -60,6 +62,13 @@
                      (proc (instruction-execution-proc inst))
                      (text (instruction-text inst))
                      (lbl  (instruction-previous-label inst)))
+                ;; update label if possible
+                (if lbl
+                    (begin
+                      (set! current-label lbl)
+                      (set! after-label-counter 0))
+                    'skipped)
+                ;; print out trace messages
                 (if trace
                     (begin
                       (if lbl
@@ -67,21 +76,37 @@
                           'skipped)
                       (out text))
                     'skipped)
-                (if lbl
+                (if (breakpoint-table-check?
+                     current-label
+                     (add1 after-label-counter)
+                     breakpoint-table)
+                    ;; need to break the execution here
+                    (out "<breakpoint reached>")
+                    ;; else keep going
                     (begin
-                      (set! current-label lbl)
-                      (set! after-label-counter 0))
-                    'skipped)
-                (format #t "current label:~A~%~
-                            after-label-counter:~A~%"
-                            current-label
-                            after-label-counter)
-                (proc)
-                (set! instruction-counter
-                      (add1 instruction-counter))
-                (set! after-label-counter
-                      (add1 after-label-counter))
-                (execute)))))
+                      (proc)
+                      (set! instruction-counter
+                            (add1 instruction-counter))
+                      (set! after-label-counter
+                            (add1 after-label-counter))
+                      (execute)))))))
+      ;; procedures requried by the exercise
+      (define (set-breakpoint lbl n)
+        (set! breakpoint-table
+              (breakpoint-table-add
+               lbl
+               n
+               breakpoint-table)))
+      (define (proceed-machine)
+        'todo)
+      (define (cancel-breakpoint lbl n)
+        (set! breakpoint-table
+              (breakpoint-table-del
+               lbl
+               n
+               breakpoint-table)))
+      (define (cancel-all-breakpoints)
+        (set! breakpoint-table '()))
       (define (dispatch message)
         (cond ((eq? message 'start)
                (set! instruction-counter 0)
@@ -109,10 +134,28 @@
               ((eq? message 'get-insn-counter) instruction-counter)
               ((eq? message 'reset-insn-counter)
                (set! instruction-counter 0))
+              ;; expose procedures
+              ((eq? message 'set-breakpoint)
+               set-breakpoint)
+              ((eq? message 'proceed-machine)
+               proceed-machine)
+              ((eq? message 'cancel-breakpoint)
+               cancel-breakpoint)
+              ((eq? message 'cancel-all-breakpoints)
+               cancel-all-breakpoints)
               (else
                (error "Unknown request: MACHINE"
                       message))))
       dispatch)))
+
+(define (set-breakpoint m lbl n)
+  ((m 'set-breakpoint) lbl n))
+(define (proceed-machine m)
+  ((m 'proceed-machine)))
+(define (cancel-breakpoint m lbl n)
+  ((m 'cancel-breakpoint) lbl n))
+(define (cancel-all-breakpoints m)
+  ((m 'cancel-all-breakpoints)))
 
 ;; Local variables:
 ;; proc-entry: "./exercise_5_19_legacy.scm"

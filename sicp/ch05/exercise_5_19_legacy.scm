@@ -8,12 +8,12 @@
 
 (let ((m (make-with
           fib-machine-controller
-          '((n 5))
+          '((n 2))
           (default-primitive-list))))
   (trace-on! m)
-  (start m)
-  (out (get-instruction-counter m))
-  (out (get-register-contents m 'val)))
+  ;; will reach breakpoint at "(branch (label immediate-answer))"
+  (set-breakpoint m 'fib-loop 2)
+  (start m))
 
 (end-script)
 
