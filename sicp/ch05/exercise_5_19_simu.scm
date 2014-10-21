@@ -8,7 +8,7 @@
 
 (let ((m (build-with
           fib-machine-controller
-          '((n 10))
+          '((n 2))
           default-ops-builder)))
   (machine-trace-on! m)
   ;; the breakpoint is set on the 2nd instruction

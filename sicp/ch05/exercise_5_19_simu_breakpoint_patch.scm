@@ -1,4 +1,5 @@
 (load "./exercise_5_17_simu_prelabel_patch.scm")
+(load "./exercise_5_19_breakpoint_table.scm")
 
 ;; the current label is the latest label
 ;; found in an instruction
@@ -18,30 +19,6 @@
   (machine-extra-modify! m 'after-label-counter add1 0))
 (define (machine-reset-after-label-counter! m)
   (machine-extra-set! m 'after-label-counter 0))
-
-;; add breakpoint to bp-table
-(define (breakpoint-table-add lbl offset tbl)
-  (let ((offsets
-         (let ((pair (assoc lbl tbl)))
-           (if pair
-               (cadr pair)
-               '()))))
-    `((,lbl (,offset ,@offsets))
-      ,@(del-assoc lbl tbl))))
-
-;; del breakpoint from bp-table
-(define (breakpoint-table-del lbl offset tbl)
-  (let ((result (assoc lbl tbl)))
-    (if result
-        `((,lbl ,(delete offset (cadr result)))
-          ,@(del-assoc lbl tbl))
-        ;; label not found, nothing to be done
-        tbl)))
-
-;; test if a label with an offset is registered in the table
-(define (breakpoint-table-check? lbl offset tbl)
-  (let ((result (assoc lbl tbl)))
-    (and result (member offset (cadr result)))))
 
 ;; corresponding to "set-breakpoint" feature
 ;; requested by the exercise

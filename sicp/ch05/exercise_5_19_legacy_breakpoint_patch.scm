@@ -1,7 +1,6 @@
 (load "./exercise_5_17_legacy_prelabel_patch.scm")
 
 ;; TODO list:
-;; * maintain after label counter
 ;; * maintain breakpoint table (might share impl with simu)
 ;; * maintain resuming flag
 
