@@ -41,7 +41,7 @@
               (begin
                 (if trace
                     (out (instruction-text (car insts)))
-                    'ignored)
+                    'skipped)
                 ((instruction-execution-proc (car insts)))
                 (execute)))))
       (define (dispatch message)

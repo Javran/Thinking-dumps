@@ -1,53 +1,25 @@
-(load "./exercise_5_15_legacy_insncounter_patch.scm")
-(load "./exercise_5_16_legacy_tracing_patch.scm")
+(load "./exercise_5_17_legacy_prelabel_patch.scm")
+(load "./exercise_5_19_breakpoint_table.scm")
 
-(define (make-instruction text prev-inst)
-  (let ((prev-label (if (symbol? prev-inst)
-                        prev-inst
-                        #f)))
-    (list text '() prev-label)))
-(define instruction-text car)
-(define instruction-execution-proc cadr)
-;; mutability makes it smell
-(define (set-instruction-execution-proc! inst proc)
-  (set-cdr! inst
-            (list proc
-                  (instruction-previous-label inst))))
+;; TODO list:
+;; * maintain resuming flag
 
-(define instruction-previous-label caddr)
-
-(define (extract-labels text prev-inst)
-  (if (null? text)
-      (cons '() '())
-      (let ((result (extract-labels (cdr text) (car text))))
-        (let ((insts (car result))
-              (labels (cdr result)))
-          (let ((next-inst (car text)))
-            (if (symbol? next-inst)
-                (cons insts
-                      (cons (make-label-entry next-inst insts)
-                            labels))
-                (cons (cons (make-instruction
-                             next-inst prev-inst) insts)
-                      labels)))))))
-
-(define (assemble controller-text machine)
-  ;; an extra argument indicates the instruction
-  ;; right before the current one processing
-  (let ((result (extract-labels controller-text #f)))
-    (let ((insts (car result))
-          (labels (cdr result)))
-      (update-insts! insts labels machine)
-      insts)))
-
-;; re-patch based on ex 5.16 patch
+;; based on ex 5.17 patch
 (define (make-new-machine)
   (let ((pc (make-register 'pc))
         (flag (make-register 'flag))
         (stack (make-stack))
         (the-instruction-sequence '())
         (instruction-counter 0)
-        (trace #f))
+        ;; maintain "after-label-counter"
+        (after-label-counter 0)
+        ;; maintain "resuming-flag"
+        (resuming-flag #f)
+        (trace #f)
+        ;; maintain "current-label"
+        (current-label #f)
+        ;; a table containing all breakpoints
+        (breakpoint-table '()))
     (let ((the-ops
            (list
             (list 'initialize-stack
@@ -59,7 +31,6 @@
             (list 'trace-off
                   (lambda ()
                     (set! trace #f)))
-            ;; seems we have to modify the primitive list here
             (list 'print-insn-counter
                   (lambda ()
                     (format #t "# instruction executed: ~A~%"
@@ -86,7 +57,6 @@
               (error "Unknown register:"
                      name))))
       (define (execute)
-        ;; re-patch this part so it can print out previous labels
         (let ((insts (get-contents pc)))
           (if (null? insts)
               'done
@@ -94,6 +64,13 @@
                      (proc (instruction-execution-proc inst))
                      (text (instruction-text inst))
                      (lbl  (instruction-previous-label inst)))
+                ;; update label if possible
+                (if lbl
+                    (begin
+                      (set! current-label lbl)
+                      (set! after-label-counter 0))
+                    'skipped)
+                ;; print out trace messages
                 (if trace
                     (begin
                       (if lbl
@@ -101,15 +78,50 @@
                           'skipped)
                       (out text))
                     'skipped)
-                (proc)
-                ;; bump counter
-                (set! instruction-counter
-                      (add1 instruction-counter))
-                (execute)))))
+                (if (and
+                     (breakpoint-table-check?
+                      current-label
+                      (add1 after-label-counter)
+                      breakpoint-table)
+                     (not resuming-flag))
+                    ;; need to break the execution here
+                    (out "<breakpoint reached>")
+                    ;; else keep going
+                    (begin
+                      (if resuming-flag
+                          (set! resuming-flag #f)
+                          'skipped)
+                      (proc)
+                      (set! instruction-counter
+                            (add1 instruction-counter))
+                      (set! after-label-counter
+                            (add1 after-label-counter))
+                      (execute)))))))
+      ;; procedures requried by the exercise
+      (define (set-breakpoint lbl n)
+        (set! breakpoint-table
+              (breakpoint-table-add
+               lbl
+               n
+               breakpoint-table)))
+      (define (proceed-machine)
+        (set! resuming-flag #t)
+        (execute))
+      (define (cancel-breakpoint lbl n)
+        (set! breakpoint-table
+              (breakpoint-table-del
+               lbl
+               n
+               breakpoint-table)))
+      (define (cancel-all-breakpoints)
+        (set! breakpoint-table '()))
       (define (dispatch message)
         (cond ((eq? message 'start)
-               ;; initialize instruction counter
+               ;; initialize counters & flags
                (set! instruction-counter 0)
+               (set! after-label-counter 0)
+               (set! current-label #f)
+               (set! resuming-flag #f)
                (set-contents! pc the-instruction-sequence)
                (execute))
               ((eq? message 'install-instruction-sequence)
@@ -129,15 +141,32 @@
                (set! trace #t))
               ((eq? message 'trace-off)
                (set! trace #f))
-              ;; new messages: get and reset counter
               ((eq? message 'get-insn-counter) instruction-counter)
               ((eq? message 'reset-insn-counter)
                (set! instruction-counter 0))
+              ;; expose procedures
+              ((eq? message 'set-breakpoint)
+               set-breakpoint)
+              ((eq? message 'proceed-machine)
+               proceed-machine)
+              ((eq? message 'cancel-breakpoint)
+               cancel-breakpoint)
+              ((eq? message 'cancel-all-breakpoints)
+               cancel-all-breakpoints)
               (else
                (error "Unknown request: MACHINE"
                       message))))
       dispatch)))
 
+(define (set-breakpoint m lbl n)
+  ((m 'set-breakpoint) lbl n))
+(define (proceed-machine m)
+  ((m 'proceed-machine)))
+(define (cancel-breakpoint m lbl n)
+  ((m 'cancel-breakpoint) lbl n))
+(define (cancel-all-breakpoints m)
+  ((m 'cancel-all-breakpoints)))
+
 ;; Local variables:
-;; proc-entry: "./exercise_5_17_legacy.scm"
+;; proc-entry: "./exercise_5_19_legacy.scm"
 ;; End:
