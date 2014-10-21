@@ -13,6 +13,8 @@
         (instruction-counter 0)
         ;; maintain "after-label-counter"
         (after-label-counter 0)
+        ;; maintain "resuming-flag"
+        (resuming-flag #f)
         (trace #f)
         ;; maintain "current-label"
         (current-label #f)
@@ -76,14 +78,19 @@
                           'skipped)
                       (out text))
                     'skipped)
-                (if (breakpoint-table-check?
-                     current-label
-                     (add1 after-label-counter)
-                     breakpoint-table)
+                (if (and
+                     (breakpoint-table-check?
+                      current-label
+                      (add1 after-label-counter)
+                      breakpoint-table)
+                     (not resuming-flag))
                     ;; need to break the execution here
                     (out "<breakpoint reached>")
                     ;; else keep going
                     (begin
+                      (if resuming-flag
+                          (set! resuming-flag #f)
+                          'skipped)
                       (proc)
                       (set! instruction-counter
                             (add1 instruction-counter))
@@ -98,7 +105,8 @@
                n
                breakpoint-table)))
       (define (proceed-machine)
-        'todo)
+        (set! resuming-flag #t)
+        (execute))
       (define (cancel-breakpoint lbl n)
         (set! breakpoint-table
               (breakpoint-table-del
@@ -109,9 +117,11 @@
         (set! breakpoint-table '()))
       (define (dispatch message)
         (cond ((eq? message 'start)
+               ;; initialize counters & flags
                (set! instruction-counter 0)
                (set! after-label-counter 0)
                (set! current-label #f)
+               (set! resuming-flag #f)
                (set-contents! pc the-instruction-sequence)
                (execute))
               ((eq? message 'install-instruction-sequence)

@@ -13,7 +13,14 @@
   (trace-on! m)
   ;; will reach breakpoint at "(branch (label immediate-answer))"
   (set-breakpoint m 'fib-loop 2)
-  (start m))
+  (start m)
+  ;; proceed first time, will stop at the same point in future
+  (proceed-machine m)
+  (cancel-all-breakpoints m)
+  ;; run until it terminates
+  (proceed-machine m)
+  (out (get-register-contents m 'val))
+  'done)
 
 (end-script)
 
