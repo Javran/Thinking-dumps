@@ -105,3 +105,27 @@ we put together `(1 . (2 . ()))` and `(3 . (4 . ()))`:
 `1` | `p5` | `p2`
 
 And this is exactly the table represented in figure 5.14.
+
+### Tag data
+
+We add some tag to the data so that the system can
+have an idea about how these data should be used.
+Previously in Chapter 2, we just tag the data by making pairs.
+But here, we extend the notion of pointer to make it typed.
+One way to achieve this might be allocating some extra space in addition to
+one that the data really needs, and some bits might be put in this extra space
+to indicate what kind of data is this. Just as previously when we were
+representing a list structure, we use `n` `p` `e` as prefixes
+so that we don't get confused when seeing the number following that tag.
+
+### `eq?` and symbols
+
+Refering to the book, `(eq? <x> <y>)` returns a true value only
+if `<x>` and `<y>` have the same pointer. And since we know that for symbols
+they are only equal if their string representations are equal,
+the allocator must guarantee that whenever two symbols with the same
+string repsentation are created, they are pointing to the same location.
+This is usually achieved by keeping the string representation - assigned pointer
+relation somewhere. This table is called **obarray**.
+And **interning** symbols refers to the process of
+replacing strings by unique pointers.
