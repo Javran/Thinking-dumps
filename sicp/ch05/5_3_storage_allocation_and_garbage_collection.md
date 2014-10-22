@@ -1,3 +1,5 @@
+# Storage Allocation and Garbage Collection
+
 Two considerations about implementing list structure:
 
 * Representation
@@ -15,3 +17,15 @@ Two considerations about implementing list structure:
         * When a data object is no longer needed,
         its memory address is reclaimed for future data objects
         * Keep the illusion of an infinite memory
+
+## Memory as Vectors
+
+Vectors can be read from or write to, and the access location
+is independent of the index (i.e. support efficient random access).
+Computer memories can be mimicked by vectors.
+
+Vector has the following two primitive procedures to support
+reading and writing.
+
+* `(vector-ref <vector> <n>)` returns the n-th element
+* `(vector-set! <vector> <n> <value>)` sets the n-th element to `<value>`
