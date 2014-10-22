@@ -29,3 +29,79 @@ reading and writing.
 
 * `(vector-ref <vector> <n>)` returns the n-th element
 * `(vector-set! <vector> <n> <value>)` sets the n-th element to `<value>`
+
+## Representing Lisp data
+
+### A Possible Representation for List Structure
+
+The book proposed a way of representing list if the memory can be divided
+into two vectors: `the-cars` and `the-cdrs`.
+
+An example:
+
+    ((1 2) 3 4)
+
+Equivalent form:
+
+    ((1 . (2 . ())) . (3 . (4 . ())))
+
+Since `(<x> . <y>)` is just `(cons <x> <y>)`, each dot will take
+one memory location. So as expected, 5 memory locations are used.
+(There are two vectors, and we are assuming these two vectors are
+of the same size, a memory location can point to two actual locations
+by using memory location combining with `car` or `cdr`. The memory location
+tells us which pair we are looking for, and `car` and `cdr` tell us
+which part of that very pair we are looking for.)
+
+Now we make some notations: `n<num>` is used for numbers,
+`p<location>` is used for locations, `e0` is used to represent
+empty lists.
+
+Now let's consider every pair for inside to outside.
+And here the location number assignments agree with one shown in
+figure 5.14.
+
+Consider pair `(2 . ())`, the first part will be stored as `n2`
+and the second part `e0`. We store it in location `7`:
+
+`Location` | `the-car` | `the-cdr`
+--- | --- | ---
+`7` | `n2` | `e0`
+
+Then similarly for pair `(4 . ())`
+
+`Location` | `the-car` | `the-cdr`
+--- | --- | ---
+`7` | `n2` | `e0`
+`4` | `n4` | `e0`
+
+Now for pair `(1 . (2 . ()))`, we want second part of this pair
+point to the location of that `(2 . ())` pair, which is `7`, therefore:
+
+`Location` | `the-car` | `the-cdr`
+--- | --- | ---
+`7` | `n2` | `e0`
+`4` | `n4` | `e0`
+`5` | `n1` | `p7`
+
+Similarly for pair `(3 . (4 . ()))`:
+
+`Location` | `the-car` | `the-cdr`
+--- | --- | ---
+`7` | `n2` | `e0`
+`4` | `n4` | `e0`
+`5` | `n1` | `p7`
+`2` | `n3` | `p4`
+
+Finally, to represent the whole list,
+we put together `(1 . (2 . ()))` and `(3 . (4 . ()))`:
+
+`Location` | `the-car` | `the-cdr`
+--- | --- | ---
+`7` | `n2` | `e0`
+`4` | `n4` | `e0`
+`5` | `n1` | `p7`
+`2` | `n3` | `p4`
+`1` | `p5` | `p2`
+
+And this is exactly the table represented in figure 5.14.
