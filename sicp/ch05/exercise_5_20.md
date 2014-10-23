@@ -32,3 +32,7 @@ Final values:
 * `free = p4`
 * `x = p1`
 * `y = p3`
+
+Box-and-pointer:
+
+![](./exercise_5_20.png)
