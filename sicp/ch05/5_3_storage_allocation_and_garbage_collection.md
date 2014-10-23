@@ -129,3 +129,24 @@ This is usually achieved by keeping the string representation - assigned pointer
 relation somewhere. This table is called **obarray**.
 And **interning** symbols refers to the process of
 replacing strings by unique pointers.
+
+### Implementing the primitive list operations
+
+See book for the actual implementation.
+
+This implementation assumes the availability of:
+
+* `vector-ref`
+* `vector-set`
+* `the-cars`
+* `the-cdrs`
+* `free` (a pointer that always points to a free space)
+
+### Implementing stacks
+
+Stacks are just lists.
+For efficient stack implementation,
+one usually uses separated vector
+to represent a stack,
+and pushing and popping are simply
+incrementing or decrementing a stack pointer.
