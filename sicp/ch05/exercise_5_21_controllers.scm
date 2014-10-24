@@ -17,16 +17,16 @@
     (assign tree (op car) (reg tree))
     (goto (label count-loop))
     after-car-tree
-    (restore continue)
     (restore tree)
+    (restore continue)
     (save continue)
     (assign continue (label after-cdr-tree))
     (assign tree (op cdr) (reg tree))
     (save result)
     (goto (label count-loop))
     after-cdr-tree
-    (restore continue)
     (restore tmp)
+    (restore continue)
     (assign result (op +) (reg result) (reg tmp))
     (goto (reg continue))
 
