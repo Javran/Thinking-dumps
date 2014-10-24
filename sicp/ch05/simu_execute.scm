@@ -135,4 +135,5 @@
        (odd? ,odd?)
        (even? ,even?)
        (print ,out)
+       (not ,not)
        )))
