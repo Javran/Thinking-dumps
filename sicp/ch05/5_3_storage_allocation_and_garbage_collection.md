@@ -150,3 +150,17 @@ one usually uses separated vector
 to represent a stack,
 and pushing and popping are simply
 incrementing or decrementing a stack pointer.
+
+### Some Comments
+
+Many details about the implementation is still missing here.
+We have discussed about how these primitive operations
+can be implemented using procedures in the host language.
+(e.g. `vector-set!` and `vector-ref`), but how we are going to
+represent the types? For example, if a number is stored in the
+`the-cars` vector, how can we distinguish a number
+from a "memory address"?
+A specification for type fields are missing, so for the few
+exercises in future, we just simply introduce list primitives
+from host language into this machine, pretending that we
+have implemented them correctly.
