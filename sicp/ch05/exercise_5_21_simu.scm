@@ -13,15 +13,25 @@
         (else (+ (count-leaves (car tree))
                  (count-leaves (cdr tree))))))
 
-(out (count-leaves '(1 2 3 (4 5 . 6) 7 ((8)))))
+(define (count-leaves-machine tree)
+  ;; evaluate the function by running the machine
+  (let ((m (build-and-execute
+            count-leaves-controller
+            `((tree ,tree)))))
+    (machine-reg-get m 'result)))
 
-(let ((m (build-with
-          count-leaves-controller
-          '((tree  (1 2 3 (4 5 . 6) 7 ((8)))))
-          default-ops-builder)))
-  (machine-trace-on! m)
-  (machine-fresh-start! m)
-  (out (machine-reg-get m 'result)))
+(for-each
+ (lambda (t)
+   ;; count-leaves and count-leaves-machine
+   ;; should have the same output given the same input
+   (assert (= (count-leaves t)
+              (count-leaves-machine t))))
+ (list
+  '()
+  'a
+  '(1 2 3 (4 5 . 6) 7 ((8 a b d)))))
+
+(out "tests done")
 
 (end-script)
 
