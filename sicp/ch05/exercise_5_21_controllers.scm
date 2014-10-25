@@ -1,4 +1,4 @@
-(define count-leaves-controller
+(define count-leaves-r-controller
   ;; input reg: tree
   ;; output reg: result
   '(controller
@@ -52,7 +52,7 @@
     (goto (reg continue))
     count-done))
 
-(define count-leaves-iter-controller
+(define count-leaves-i-controller
   ;; input reg: tree
   ;; output reg: result
   '(controller

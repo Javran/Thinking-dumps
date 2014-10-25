@@ -5,32 +5,36 @@
 (load "./simu_listprim_patch.scm")
 
 (load "./exercise_5_21_controllers.scm")
+(load "./exercise_5_21_common.scm")
 
-(define (count-leaves tree)
-  (cond ((null? tree) 0)
-        ((not (pair? tree)) 1)
-        (else (+ (count-leaves (car tree))
-                 (count-leaves (cdr tree))))))
-
-(define (count-leaves-machine tree)
+(define (count-leaves-r-machine tree)
   ;; evaluate the function by running the machine
   (let ((m (build-and-execute
-            count-leaves-controller
+            count-leaves-r-controller
             `((tree ,tree)))))
     (machine-reg-get m 'result)))
 
-(for-each
- (lambda (t)
-   ;; count-leaves and count-leaves-machine
-   ;; should have the same output given the same input
-   (assert (= (count-leaves t)
-              (count-leaves-machine t))))
- (list
-  '()
-  'a
-  '(1 2 3 (4 5 . 6) 7 ((8 a b d)))))
+(define (count-leaves-i-machine tree)
+  ;; evaluate the function by running the machine
+  (let ((m (build-and-execute
+            count-leaves-i-controller
+            `((tree ,tree)))))
+    (machine-reg-get m 'result)))
 
-(out "tests done")
+;; two different approaches should have the same result
+(test-machine
+ count-leaves-r
+ count-leaves-i)
+
+;; scheme impl vs. machine (recursive version)
+(test-machine
+ count-leaves-r
+ count-leaves-r-machine)
+
+;; scheme impl vs. machine (iterative version)
+(test-machine
+ count-leaves-i
+ count-leaves-i-machine)
 
 (end-script)
 
