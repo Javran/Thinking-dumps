@@ -72,8 +72,9 @@
     (save continue) ; stack: [continue ..]
     (assign continue (label after-car-tree))
     (save tree) ; stack: [tree continue ..]
-    (assign tree (car tree))
+    (assign tree (op car) (reg tree))
     (goto (label count-loop))
+    after-car-tree
     ;; prepare for calling (count-iter (cdr tree) <reg result>)
     (restore tree) ; stack: [continue ..]
     (assign tree (op cdr) (reg tree))
