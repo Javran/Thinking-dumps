@@ -1,4 +1,6 @@
 (define count-leaves-controller
+  ;; input reg: tree
+  ;; output reg: result
   '(controller
     ;; whenever we jump back
     ;; using "continue",
@@ -47,5 +49,49 @@
     empty-tree
     (assign result (const 0))
     ;; check: result = 0 is correct
+    (goto (reg continue))
+    count-done))
+
+(define count-leaves-iter-controller
+  ;; input reg: tree
+  ;; output reg: result
+  '(controller
+    (assign n (const 0))
+    ;; now go into count-iter
+    (assign continue (label count-done))
+    count-loop
+    ;; an empty tree
+    (test (op null?) (reg tree))
+    (branch (label empty-tree))
+    ;; not a pair, consider it as a leaf
+    (assign tmp-1 (op pair?) (reg tree))
+    (test (op not) (reg tmp-1))
+    (branch (label leaf))
+    ;; else
+    ;; prepare for calling (count-iter (car tree) n)
+    (save continue) ; stack: [continue ..]
+    (assign continue (label after-car-tree))
+    (save tree) ; stack: [tree continue ..]
+    (assign tree (car tree))
+    (goto (label count-loop))
+    ;; prepare for calling (count-iter (cdr tree) <reg result>)
+    (restore tree) ; stack: [continue ..]
+    (assign tree (op cdr) (reg tree))
+    (assign n (reg result))
+    (assign continue (label after-cdr-tree))
+    (goto (label count-loop))
+    after-cdr-tree
+    (restore continue) ; stack: <balanced>
+    ;; check: result is correct
+    (goto (reg continue))
+
+    leaf
+    (assign result (op +) (reg n) (const 1))
+    ;; check: result = n+1
+    (goto (reg continue))
+
+    empty-tree
+    (assign result (reg n))
+    ;; check: result = n
     (goto (reg continue))
     count-done))
