@@ -1,3 +1,4 @@
+;; TODO: more comments
 (define my-append-controller
   ;; input reg: x y
   ;; output reg: result
