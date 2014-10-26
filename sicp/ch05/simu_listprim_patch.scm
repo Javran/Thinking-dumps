@@ -7,6 +7,8 @@
     (lambda (m)
       `((car ,car)
         (cdr ,cdr)
+        (set-car! ,set-car!)
+        (set-cdr! ,set-cdr!)
         (cons ,cons)
         (null? ,null?)
         (pair? ,pair?)
