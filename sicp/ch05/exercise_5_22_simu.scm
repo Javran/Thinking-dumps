@@ -7,9 +7,8 @@
 (load "./exercise_5_22_controllers.scm")
 
 (let ((m (build-and-execute
-          my-append-controller
-          '((x (1 2 3))
-            (y (4 5 6))))))
+          my-last-pair-controller
+          '((x (1))))))
   (out (machine-reg-get m 'result)))
 
 (end-script)
