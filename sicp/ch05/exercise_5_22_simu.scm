@@ -6,10 +6,29 @@
 
 (load "./exercise_5_22_controllers.scm")
 
-(let ((m (build-and-execute
-          my-last-pair-controller
-          '((x (1))))))
-  (out (machine-reg-get m 'result)))
+(load "./exercise_5_22_common.scm")
+
+(define (my-append-machine x y)
+  (let ((m (build-and-execute
+            my-append-controller
+            `((x ,x)
+              (y ,y)))))
+    (machine-reg-get m 'result)))
+
+(define (my-append!-machine x y)
+  (let ((m (build-and-execute
+            my-append!-controller
+            `((x ,x)
+              (y ,y)))))
+    (machine-reg-get m 'result)))
+
+(test-my-append-machine
+ my-append
+ my-append-machine)
+
+(test-my-append!-machine
+ my-append!
+ my-append!-machine)
 
 (end-script)
 
