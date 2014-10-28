@@ -55,7 +55,6 @@
                       '(1 2 3 4 5 6)))
       (assert (equal? (my-append! y z)
                       '(4 5 6 7 8 9)))
-      (out x)
       (assert (equal? x
                       '(1 2 3 4 5 6 7 8 9)))))
   (append-twice-test my-append!)
