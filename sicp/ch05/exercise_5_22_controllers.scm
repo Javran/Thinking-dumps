@@ -57,3 +57,30 @@
     (goto (reg continue))
 
     last-pair-done))
+
+(define my-append!-controller
+  ;; input reg: x y
+  ;; output reg: result
+  `(controller
+    (goto (label my-append!-start))
+    ;; inject code from my-last-pair-controller
+    ;; protect the environment by using the stack
+    my-last-pair
+    (save continue) ; stack: [continue ..]
+    (save tmp-1) ; stack: [tmp-1 continue ..]
+    ,@(cdr my-last-pair-controller)
+    (restore tmp-1) ; stack: [continue ..]
+    (restore continue) ; stack: <balanced>
+    (goto (reg continue))
+
+    my-append!-start
+    (assign continue (label after-my-last-pair))
+    ;; register "x" is prepared, call the function
+    (save x) ; stack: [x ..]
+    (goto (label my-last-pair))
+    after-my-last-pair
+    (restore x) ; stack: <balanced>
+    (perform (op set-cdr!) (reg result) (reg y))
+    (assign result (reg x))
+    my-append!-done))
+
