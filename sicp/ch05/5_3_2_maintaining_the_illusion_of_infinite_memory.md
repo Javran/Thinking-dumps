@@ -25,3 +25,11 @@ TODO
 
 I think there are still many details missing,
 maybe I want to have a concrete example and see it in action.
+
+TODO
+
+It seems like we have to go back and re-examine the list primitives.
+
+Need a template framework, we will replace instructions by recognizing them,
+extracting register names and replace one instruction at a time by a list of instruction which
+implements it.
