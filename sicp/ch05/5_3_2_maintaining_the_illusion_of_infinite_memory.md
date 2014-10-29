@@ -33,3 +33,7 @@ It seems like we have to go back and re-examine the list primitives.
 Need a template framework, we will replace instructions by recognizing them,
 extracting register names and replace one instruction at a time by a list of instruction which
 implements it.
+
+Also it seems like there's no distinction between numbers and pointers if we just look at
+the memory. I guess here we distinguish them by their usages. Let's implement it and see
+if my observation is correct.
