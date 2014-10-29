@@ -5,28 +5,43 @@
              0)
             #\$)))
 
-(define (template-match temp data env)
-  (cond ((template-variable? temp)
-         (let ((result (assoc temp env)))
+(define (pattern-match pattern data env)
+  (cond ((template-variable? pattern)
+         (let ((result (assoc pattern env)))
            (if result
-               (template-match (cadr result) data env)
-               (cons (list temp data) env))))
-        ((and (pair? temp)
+               (pattern-match (cadr result) data env)
+               (cons (list pattern data) env))))
+        ((and (pair? pattern)
               (pair? data))
-         (let ((env1 (template-match (car temp)
-                                     (car data)
-                                     env)))
+         (let ((env1 (pattern-match
+                      (car pattern)
+                      (car data)
+                      env)))
            (and env1
-                (template-match (cdr temp)
-                               (cdr data)
-                               env1))))
-        ((equal? temp data)
+                (pattern-match
+                 (cdr pattern)
+                 (cdr data)
+                 env1))))
+        ((equal? pattern data)
          env)
         (else #f)))
 
+(define (template-apply temp env)
+  (cond ((template-variable? temp)
+         (let ((result (assoc temp env)))
+           (if result
+               (cadr result)
+               (error "unbound variable:"
+                      temp))))
+        ((pair? temp)
+         (cons (template-apply (car temp) env)
+               (template-apply (cdr temp) env)))
+        (else temp)))
+
 (display
- (template-match
-  '($a $b ($a $c) $d)
-  '(1 2 (1 (a c d)) good)
-  '()))
+ (template-apply
+  '($a $c ($a $b))
+  '(($a 100)
+    ($b 200))))
+
 (newline)
