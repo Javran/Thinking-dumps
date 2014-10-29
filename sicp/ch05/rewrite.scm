@@ -53,3 +53,22 @@
          (cons (template-apply (car temp) env)
                (template-apply (cdr temp) env)))
         (else temp)))
+
+;; try to rewrite data using rules
+;; a rule is of the following form:
+;; (list <pattern> <template>)
+;; return the modified data or #f if
+;; none of these rules apply.
+;; this procedure will only try to use the first rule
+;; that applies.
+(define (try-rewrite-once rules data)
+  (fold-left
+   (lambda (modified rule)
+     (or modified
+         (let* ((pat (car rule))
+                (temp (cadr rule))
+                (env (pattern-match pat data '())))
+           (and env
+                (template-apply temp env)))))
+   #f
+   rules))
