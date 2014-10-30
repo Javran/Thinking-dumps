@@ -12,8 +12,18 @@
       ;;
       ((assign $reg1 (op vector-ref) (reg the-cdrs) (reg $reg2))
        ))
-     ;; TODO: what if I want to do something like:
-     ;; (set-car! x 1) ???
+     ;; TODO:
+     ;; instead of capturing (reg $regX)
+     ;; we could try to capture $srcX,
+     ;; by doing this we also make it possible
+     ;; to translate things like
+     ;; (cons <constant1> <constant2>)
+     ;; but we will lose the power of telling if an integer
+     ;; stands for a pair (i.e. memory address) or an number
+     ;; for now I don't know if it is beneficial
+     ;; to do this change,
+     ;; but as we have more exercises available,
+     ;; the intention of doing so will be more clear.
      (;; rewrite `set-car!`
       (perform (op set-car!) (reg $reg1) (reg $reg2))
       ;;
