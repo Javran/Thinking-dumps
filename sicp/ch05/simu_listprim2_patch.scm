@@ -43,3 +43,9 @@
        (assign free (op +) (reg free) (const 1))
        ))
      ))
+
+;; TODO:
+;; we need some serious rework to get this to work
+;; first of all we need every value tied with a label
+;; indicating its type, making `null?` `pair?` `symbol?` `number?` possible.
+;; so here we should limit what kind of data can be used with `(const <data>)`
