@@ -43,7 +43,6 @@
   (remove-duplicates
    (concat-map extract insns)))
 
-
 ;; make a machine from controller text
 ;; and operation list builder
 ;; with all registers uninitialized
