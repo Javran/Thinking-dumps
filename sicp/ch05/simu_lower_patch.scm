@@ -51,3 +51,20 @@
 ;; present in a machine
 (define machine-reserved-registers
   '(pc flag the-cars the-cdrs))
+
+;; make a machine pointer
+;; that represents a "memory location"
+(define (machine-pointer n)
+  (cons 'ptr n))
+
+;; check if the data is a machine pointer
+(define (machine-pointer? data)
+  (and (pair? data)
+       (eq? (car data) 'ptr)
+       (integer? (cdr data))))
+
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      `(;; TODO: vector-ref and vector-set!
+        ,@(old-builder m)))))
