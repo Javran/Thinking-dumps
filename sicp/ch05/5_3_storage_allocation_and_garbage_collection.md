@@ -64,13 +64,13 @@ figure 5.14.
 Consider pair `(2 . ())`, the first part will be stored as `n2`
 and the second part `e0`. We store it in location `7`:
 
-`Location` | `the-car` | `the-cdr`
+`Location` | `the-cars` | `the-cdrs`
 --- | --- | ---
 `7` | `n2` | `e0`
 
 Then similarly for pair `(4 . ())`
 
-`Location` | `the-car` | `the-cdr`
+`Location` | `the-cars` | `the-cdrs`
 --- | --- | ---
 `7` | `n2` | `e0`
 `4` | `n4` | `e0`
@@ -78,7 +78,7 @@ Then similarly for pair `(4 . ())`
 Now for pair `(1 . (2 . ()))`, we want second part of this pair
 point to the location of that `(2 . ())` pair, which is `7`, therefore:
 
-`Location` | `the-car` | `the-cdr`
+`Location` | `the-cars` | `the-cdrs`
 --- | --- | ---
 `7` | `n2` | `e0`
 `4` | `n4` | `e0`
@@ -86,7 +86,7 @@ point to the location of that `(2 . ())` pair, which is `7`, therefore:
 
 Similarly for pair `(3 . (4 . ()))`:
 
-`Location` | `the-car` | `the-cdr`
+`Location` | `the-cars` | `the-cdrs`
 --- | --- | ---
 `7` | `n2` | `e0`
 `4` | `n4` | `e0`
@@ -96,7 +96,7 @@ Similarly for pair `(3 . (4 . ()))`:
 Finally, to represent the whole list,
 we put together `(1 . (2 . ()))` and `(3 . (4 . ()))`:
 
-`Location` | `the-car` | `the-cdr`
+`Location` | `the-cars` | `the-cdrs`
 --- | --- | ---
 `7` | `n2` | `e0`
 `4` | `n4` | `e0`
