@@ -41,3 +41,13 @@
            (lambda () (register-get r))))
         (else
          (error "unexpected expression:" exp))))
+
+(define (machine-define-registers! m regs-all)
+  (define regs
+    (remove-duplicates
+     `(,@machine-reserved-registers ,@regs-all)))
+
+;; a list of registers that must be
+;; present in a machine
+(define machine-reserved-registers
+  '(pc flag the-cars the-cdrs))
