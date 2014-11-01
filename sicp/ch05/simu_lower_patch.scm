@@ -64,6 +64,19 @@
        (integer? (cdr data))))
 
 (define default-ops-builder
+  ;; all primitives will be applied directly
+  ;; using the value stored either in registers
+  ;; or in a constant expression.
+  ;; since almost everything except for pairs
+  ;; are allowed in this new representation,
+  ;; all of the existing primitives works here
+  ;; but for things like `vector-ref` and `vector-set!`
+  ;; we need something special,
+  ;; `the-cars` and `the-cdrs` are two very special registers
+  ;; since they are storing vectors rather than regular data
+  ;; and these two primitives deal with machine-pointers,
+  ;; which we need to extract the actual "addresses"
+  ;; (i.e. the integers stored) from then.
   (let ((old-builder default-ops-builder))
     (lambda (m)
       `(;; TODO: vector-ref and vector-set!
