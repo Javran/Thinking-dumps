@@ -63,6 +63,11 @@
        (eq? (car data) 'ptr)
        (integer? (cdr data))))
 
+(define (machine-pointer-get data)
+  (assert (machine-pointer? data)
+          "can only extract data from pointers")
+  (cdr data))
+
 (define default-ops-builder
   ;; all primitives will be applied directly
   ;; using the value stored either in registers
@@ -79,5 +84,10 @@
   ;; (i.e. the integers stored) from then.
   (let ((old-builder default-ops-builder))
     (lambda (m)
-      `(;; TODO: vector-ref and vector-set!
+      `((vector-ref
+         ,(lambda (vec ptr)
+            (vector-ref vec (machine-pointer-get ptr))))
+        (vector-set!
+         ,(lambda (vec ptr val)
+            (vector-set! vec (machine-pointer-get ptr) val)))
         ,@(old-builder m)))))
