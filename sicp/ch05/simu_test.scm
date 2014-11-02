@@ -16,17 +16,14 @@
              '()
              ;; opreation table
              (lambda (m)
-               `( (+ ,+)
-                  (- ,-)
-                  (* ,*)
-                  (/ ,/)
-                  (zero? ,zero?)
-                  ;; first instruction from a pc-like register
-                  (first-insn ,caar)
-                  ;; "perform test", assign value to register "a"
-                  (perf ,(lambda (val)
-                           (machine-reg-set! m 'a val)))
-                  )))))
+               `(;; using all known default operations
+                 ,@(default-ops-builder m)
+                 ;; first instruction from a pc-like register
+                 (first-insn ,caar)
+                 ;; "perform test", assign value to register "a"
+                 (perf ,(lambda (val)
+                          (machine-reg-set! m 'a val)))
+                 )))))
     (let ((testcases
            (map
             (lambda (result-reg-info)
