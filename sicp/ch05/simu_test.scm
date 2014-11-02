@@ -178,14 +178,18 @@
   (let ((m (empty-machine)))
     (machine-extra-set! m 'a 10)
     (machine-extra-set! m 'b 20)
-    (assert (= 20 (machine-extra-get m 'b)))
-    (assert (= 10 (machine-extra-get m 'a)))
+    (assert (= 20 (machine-extra-get m 'b 1)))
+    (assert (= 10 (machine-extra-get m 'a 1)))
 
     (machine-extra-set! m 'a 'good)
-    (assert (eq? 'good (machine-extra-get m 'a)))
+    (assert (eq? 'good (machine-extra-get m 'a 1)))
 
-    (machine-extra-modify! m 'b add1)
-    (assert (= 21 (machine-extra-get m 'b)))
+    (machine-extra-modify! m 'b add1 1)
+    (assert (= 21 (machine-extra-get m 'b 1)))
+
+    (assert (= 10 (machine-extra-get m 'no-such-a-var 10)))
+    (machine-extra-modify! m 'xxxx add1 10)
+    (assert (= 11 (machine-extra-get m 'xxxx #f)))
 
     'done))
 
