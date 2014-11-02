@@ -94,6 +94,8 @@
         (vector-set!
          ,(lambda (vec ptr val)
             (vector-set! vec (machine-pointer-get ptr) val)))
+        ;; convert an integer into a pointer
+        (to-pointer ,machine-pointer)
         ,@(old-builder m)))))
 
 
