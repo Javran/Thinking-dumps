@@ -7,8 +7,6 @@
 ;; and on the stack, pairs will be represented in memory
 ;; and as "pointers".
 
-(load "./simu.scm")
-
 (define (make-primitive-exp exp m)
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
@@ -46,6 +44,12 @@
   (define regs
     (remove-duplicates
      `(,@machine-reserved-registers ,@regs-all)))
+
+  (machine-set-register-table!
+   m
+   (map (lambda (name)
+          (list name (new-register)))
+        regs)))
 
 ;; a list of registers that must be
 ;; present in a machine
@@ -91,3 +95,13 @@
          ,(lambda (vec ptr val)
             (vector-set! vec (machine-pointer-get ptr) val)))
         ,@(old-builder m)))))
+
+
+(define machine-memory-size 65536)
+
+(define (machine-fresh-start! m)
+  ;; initialize two pieces of memories
+  (machine-reg-set! m 'the-cars (make-vector machine-memory-size))
+  (machine-reg-set! m 'the-cdrs (make-vector machine-memory-size))
+  (machine-reset-pc! m)
+  (machine-execute! m))
