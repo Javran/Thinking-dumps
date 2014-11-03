@@ -14,19 +14,6 @@
       ;;
       ((assign $reg1 (op vector-ref) (reg the-cdrs) (reg $reg2))
        ))
-     ;; TODO:
-     ;; instead of capturing (reg $regX)
-     ;; we could try to capture $srcX,
-     ;; by doing this we also make it possible
-     ;; to translate things like
-     ;; (cons <constant1> <constant2>)
-     ;; but we will lose the power of telling if an integer
-     ;; stands for a pair (i.e. memory address) or an number
-     ;; for now I don't know if it is beneficial
-     ;; to do this change,
-     ;; but as we have more exercises available,
-     ;; the intention of doing so will be more clear.
-
      (;; rewrite `set-car!`
       (perform (op set-car!) (reg $reg1) $value)
       ;; instead of capturing `(reg $reg2)`, we capture the whole value
@@ -48,8 +35,12 @@
        ))
      ))
 
-;; TODO:
-;; we need some serious rework to get this to work
-;; first of all we need every value tied with a label
-;; indicating its type, making `null?` `pair?` `symbol?` `number?` possible.
-;; so here we should limit what kind of data can be used with `(const <data>)`
+(define (rewrite-instructions rules insns)
+  (let loop ((new-insns '())
+             (curr-insns insns))
+    (if (null? curr-insns)
+        new-insns
+        (let ((result (try-rewrite-once rules (car curr-insns))))
+          (loop (append new-insns
+                        (or result (list (car curr-insns))))
+                (cdr curr-insns))))))
