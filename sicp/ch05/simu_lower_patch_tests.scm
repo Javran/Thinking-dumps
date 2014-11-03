@@ -5,11 +5,15 @@
 (load "./simu_lower_patch.scm")
 
 (do-machine-test
- '((assign ptr (op to-pointer) (const 20))
-   (perform (op vector-set!) (reg the-cars) (reg ptr) (const 1001))
-   (assign a (op vector-ref) (reg the-cars) (reg ptr))
+ '((assign ptr-1 (op to-pointer) (const 20))
+   (assign ptr-2 (op ptr-inc) (reg ptr-1))
+   (perform (op vector-set!) (reg the-cars) (reg ptr-1) (const 1001))
+   (perform (op vector-set!) (reg the-cdrs) (reg ptr-2) (const 2002))
+   (assign b (op vector-ref) (reg the-cdrs) (reg ptr-2))
+   (assign a (op vector-ref) (reg the-cars) (reg ptr-1))
    )
- '((a 1001)))
+ '((a 1001)
+   (b 2002)))
 
 (end-script)
 

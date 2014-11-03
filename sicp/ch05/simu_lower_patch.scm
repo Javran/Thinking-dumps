@@ -72,6 +72,11 @@
           "can only extract data from pointers")
   (cdr data))
 
+(define (machine-pointer-inc data)
+  (machine-pointer
+   (add1
+    (machine-pointer-get data))))
+
 (define default-ops-builder
   ;; all primitives will be applied directly
   ;; using the value stored either in registers
@@ -96,8 +101,9 @@
             (vector-set! vec (machine-pointer-get ptr) val)))
         ;; convert an integer into a pointer
         (to-pointer ,machine-pointer)
+        ;; increase a pointer
+        (ptr-inc ,machine-pointer-inc)
         ,@(old-builder m)))))
-
 
 (define machine-memory-size 65536)
 
