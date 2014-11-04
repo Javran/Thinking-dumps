@@ -35,6 +35,24 @@
        ))
      ))
 
+(define stack-manip-rules
+  `( (;; rewrite "save"
+      (save $reg)
+      ;;
+      ((assign the-stack (op cons) (reg $reg) (reg the-stack))
+       ))
+     (;; rewrite "restore"
+      (restore $reg)
+      ;;
+      ((assign $reg (op car) (reg the-stack))
+       (assign the-stack (op cdr) (reg the-stack))))
+     (;; rewrite stack initialization
+      (perform (op initialize-stack))
+      ;;
+      ((assign the-stack (const ()))
+       ))
+     ))
+
 (define (rewrite-instructions rules insns)
   (let loop ((new-insns '())
              (curr-insns insns))
