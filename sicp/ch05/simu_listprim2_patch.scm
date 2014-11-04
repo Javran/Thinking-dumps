@@ -60,6 +60,16 @@
        ))
      ))
 
+;; TODO: we need a function here to expand the list of instructions
+;; as long as there is at least one applicable rule
+;; and also we need to make sure that we don't write rules that expands
+;; infinitely.
+;; we need this function because the stack manipulations are still using
+;; list primitives like "car" "cdr" and "cons", and the reason we have this
+;; rewrite system is that we are trying to avoid doing these tasks manually.
+;; it will be great if we can just write down the most intuitive code
+;; and leave all the boring tasks to computer.
+
 (define (rewrite-instructions rules insns)
   (let loop ((new-insns '())
              (curr-insns insns))
