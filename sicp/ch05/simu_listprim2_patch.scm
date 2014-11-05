@@ -79,3 +79,20 @@
           (loop (append new-insns
                         (or result (list (car curr-insns))))
                 (cdr curr-insns))))))
+
+(define (rewrite-instructions* rules insns)
+  (define (rewrite-instructions-intern rules insns)
+    (let loop ((new-insns '())
+               (curr-insns insns)
+               (at-least-once #f))
+      (if (null? curr-insns)
+          (cons at-least-once new-insns)
+          (let ((result (try-rewrite-once rules (car curr-insns))))
+            (loop (append new-insns
+                          (or result (list (car curr-insns))))
+                  (cdr curr-insns)
+                  (or at-least-once result))))))
+  (let ((result (rewrite-instructions-intern rules insns)))
+    (if (car result)
+        (rewrite-instructions* rules insns)
+        (cdr result))))
