@@ -94,5 +94,5 @@
                   (or at-least-once result))))))
   (let ((result (rewrite-instructions-intern rules insns)))
     (if (car result)
-        (rewrite-instructions* rules insns)
+        (rewrite-instructions* rules (cdr result))
         (cdr result))))
