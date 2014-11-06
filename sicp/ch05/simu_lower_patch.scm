@@ -103,6 +103,15 @@
         (to-pointer ,machine-pointer)
         ;; increase a pointer
         (ptr-inc ,machine-pointer-inc)
+        ;; to test if the data under machine representation
+        ;; is a pair is to test if the data is actually a machine-pointer
+        (pair? ,machine-pointer?)
+        ;; some predicates can be lift costless.
+        (null? ,null?)
+        (number? ,number?)
+        (symbol? ,symbol?)
+        (char? ,char?)
+        (string?, string?)
         ,@(old-builder m)))))
 
 (define machine-memory-size 65536)
