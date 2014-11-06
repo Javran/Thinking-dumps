@@ -54,7 +54,7 @@
 ;; a list of registers that must be
 ;; present in a machine
 (define machine-reserved-registers
-  '(pc flag the-cars the-cdrs))
+  '(pc flag the-cars the-cdrs the-stack))
 
 ;; make a machine pointer
 ;; that represents a "memory location"
@@ -111,5 +111,6 @@
   ;; initialize two pieces of memories
   (machine-reg-set! m 'the-cars (make-vector machine-memory-size))
   (machine-reg-set! m 'the-cdrs (make-vector machine-memory-size))
+  (machine-reg-set! m 'the-stack '())
   (machine-reset-pc! m)
   (machine-execute! m))
