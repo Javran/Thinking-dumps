@@ -123,3 +123,7 @@
   (machine-reg-set! m 'the-stack '())
   (machine-reset-pc! m)
   (machine-execute! m))
+
+;; TODO: looks confusing to have
+;; patch functions written in multiple files
+;; I'd better merge them into one
