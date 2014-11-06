@@ -11,6 +11,9 @@
 ;; TODO: need to construct input data (trees)
 ;; in such a manner as well..
 
+;; TODO: I think it is possible that we
+;; turn a tree under scheme into an instruction list that builds it ...
+
 (for-each out
           (rewrite-instructions* (append list-primitives-rules
                                          stack-manip-rules)
