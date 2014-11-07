@@ -19,6 +19,24 @@
                                          stack-manip-rules)
                                  (cdr count-leaves-r-controller)))
 
+(define (tree->instruction-list data)
+  (if (pair? data)
+      (let ((il-car (tree->instruction-list (car data)))
+            (il-cdr (tree->instruction-list (cdr data))))
+        (append il-car
+                '((save result))
+                il-cdr
+                '((save result)
+                  (restore cdr-v)
+                  (restore car-v)
+                  (assign result (op cons) (reg car-v)
+                          (reg cdr-v)))))
+      `( (assign result (const ,data)) )))
+
+(out "====")
+(for-each
+ out
+ (tree->instruction-list '(1 2 (3 4 . 5))))
 
 
 (end-script)
