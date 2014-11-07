@@ -118,6 +118,7 @@
 
 (define (machine-fresh-start! m)
   ;; initialize two pieces of memories
+  (machine-reg-set! m 'free (machine-pointer 0))
   (machine-reg-set! m 'the-cars (make-vector machine-memory-size))
   (machine-reg-set! m 'the-cdrs (make-vector machine-memory-size))
   (machine-reg-set! m 'the-stack '())
