@@ -8,17 +8,6 @@
 
 (load "./exercise_5_21_controllers.scm")
 
-;; TODO: need to construct input data (trees)
-;; in such a manner as well..
-
-;; TODO: I think it is possible that we
-;; turn a tree under scheme into an instruction list that builds it ...
-
-(for-each out
-          (rewrite-instructions* (append list-primitives-rules
-                                         stack-manip-rules)
-                                 (cdr count-leaves-r-controller)))
-
 (define (tree->instruction-list data)
   (if (pair? data)
       (let ((il-car (tree->instruction-list (car data)))
@@ -33,11 +22,27 @@
                           (reg cdr-v)))))
       `( (assign result (const ,data)) )))
 
-(out "====")
+(define test-instruction-list
+  `( ,@(tree->instruction-list '(1 2 (4 5) (a b . c) d e))
+     (assign tree (reg result))
+     ,@(cdr count-leaves-r-controller)))
+
+(define test-controller
+  `(controller
+    ,@(rewrite-instructions* (append list-primitives-rules
+                                     stack-manip-rules)
+                             test-instruction-list)))
+
+(out "==== begin listing ====")
 (for-each
  out
- (tree->instruction-list '(1 2 (3 4 . 5))))
+ test-controller)
+(out "==== end listing ====")
 
+(let ((m (build-and-execute
+          test-controller
+          '())))
+  (out (machine-reg-get m 'result)))
 
 (end-script)
 
