@@ -44,6 +44,9 @@
           '())))
   (out (machine-reg-get m 'result)))
 
+;; TODO: maybe we can remove some handlers like (save ???) and (restore ???)
+;; to show that we are indeed replacing them with lower level stuff.
+
 (end-script)
 
 ;; Local variables:
