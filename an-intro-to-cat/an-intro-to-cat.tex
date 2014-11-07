@@ -228,4 +228,57 @@ is the corresponding pair of identity functions viewed as an arrow.
 Therefore, using the arrow composition described above
 gives a category.
 
+% 1.3.5
+
+\subsubsection{}
+
+\begin{proof}
+The defined composition is associative.
+
+Consider \cat{RelA}-arrows $F$, $G$ and $H$:
+
+\begin{diagram}
+A & \rTo^F & B & \rTo^G & C & \rTo^H & D
+\end{diagram}
+
+For $a \in A, d \in D$, consider the composition $d(H \fcomp (G \fcomp F))a$:
+
+\begin{align*}
+                & d(H \fcomp (G \fcomp F))a \\
+\Leftrightarrow & (\exists c \in C)[dHc(G \fcomp F)a] \\
+\Leftrightarrow & (\exists c \in C, \exists b \in B)[dHcGbFa] \\
+\Leftrightarrow & (\exists b \in B)[d(H \fcomp G)bFa] \\
+\Leftrightarrow & d((H \fcomp G) \fcomp F)a
+\end{align*}
+
+Therefore the composition is associate and it does form a category.
+\end{proof}
+
+\begin{proof}
+For each pair of composible \cat{Set}-arrows $f : A \rTo B$, $g : B \rTo C$:
+
+\[
+\forall a \in A, b \in B, b\Gamma(f)a \Leftrightarrow b = f(a)
+\]
+\[
+\forall b \in B, c \in C, c\Gamma(g)b \Leftrightarrow c = g(b)
+\]
+
+Therefore, $\forall a \in A, c \in C$:
+
+\begin{align*}
+                &  c(\Gamma(g) \fcomp \Gamma(f))a \\
+\Leftrightarrow & (\exists b \in B)[c\Gamma(g)b\Gamma(f)a] \\
+\Leftrightarrow & (\exists b \in B)[c\Gamma(g)b \wedge b\Gamma(f)a] \\
+\Leftrightarrow & (\exists b \in B)[c = g(b) \wedge b = f(a)] \\
+\Leftrightarrow & c = g(f(a)) \\
+\Leftrightarrow & c = (g \fcomp f)a \\
+\Leftrightarrow & c\Gamma(g \fcomp f)a
+\end{align*}
+
+Therefore $\Gamma(g \fcomp f) = \Gamma(g) \fcomp \Gamma(f)$
+
+\end{proof}
+
+
 \end{document}
