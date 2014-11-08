@@ -49,3 +49,28 @@
       ((assign the-stack (const ()))
        ))
      ))
+
+;; given data in scheme representation,
+;; we construct a list of instructions that
+;; generates the corresponding data in that machine.
+;; registers affected: free, car-v, cdr-v, result
+;; output register: result
+(define (tree->instruction-list data)
+  (if (pair? data)
+      (let ((il-car (tree->instruction-list (car data)))
+            (il-cdr (tree->instruction-list (cdr data))))
+        (append
+         ;; build "car" part
+         il-car
+         '((save result))               ; stack: [car]
+         ;; build "cdr" part
+         il-cdr
+         '((save result)           ; stack: [cdr car]
+           (restore cdr-v)         ; stack: [car]
+           (restore car-v)         ; stack: <balanced>
+           ;; (cons <car-v> <cdr->) --> result
+           (assign result (op cons) (reg car-v)
+                   (reg cdr-v)))))
+      ;; assume this is one of the primitive type
+      ;; if data isn't a pair of something
+      `( (assign result (const ,data)) )))

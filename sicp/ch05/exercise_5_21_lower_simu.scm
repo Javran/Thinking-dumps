@@ -6,20 +6,6 @@
 
 (load "./exercise_5_21_controllers.scm")
 
-(define (tree->instruction-list data)
-  (if (pair? data)
-      (let ((il-car (tree->instruction-list (car data)))
-            (il-cdr (tree->instruction-list (cdr data))))
-        (append il-car
-                '((save result))
-                il-cdr
-                '((save result)
-                  (restore cdr-v)
-                  (restore car-v)
-                  (assign result (op cons) (reg car-v)
-                          (reg cdr-v)))))
-      `( (assign result (const ,data)) )))
-
 (define test-instruction-list
   `( ,@(tree->instruction-list '(1 2 (4 5) (a b . c) d e))
      (assign tree (reg result))
