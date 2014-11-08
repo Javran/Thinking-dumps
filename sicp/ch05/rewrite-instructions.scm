@@ -1,5 +1,12 @@
 (load "./rewrite.scm")
 
+;; usually we rewrite an instruction
+;; into a sequence of instructions that does
+;; some lower level operations
+;; so here a single rule consists of a pattern matching
+;; on an instruction and rewriting rule to rewrite it into
+;; *a list* of instructions.
+
 ;; rules are just lists,
 ;; to merge rules we simply combine them together
 (define merge-rules append)

@@ -45,11 +45,12 @@
         (else
          (error "unexpected expression:" exp))))
 
+;; when defining registers, a list of reserved register
+;; names are also defined.
 (define (machine-define-registers! m regs-all)
   (define regs
     (remove-duplicates
      `(,@machine-reserved-registers ,@regs-all)))
-
   (machine-set-register-table!
    m
    (map (lambda (name)
@@ -77,6 +78,7 @@
           "can only extract data from pointers")
   (cdr data))
 
+;; next "memory location"
 (define (machine-pointer-inc data)
   (machine-pointer
    (add1
@@ -129,17 +131,6 @@
   (machine-reg-set! m 'the-stack '())
   (machine-reset-pc! m)
   (machine-execute! m))
-
-;; TODO: looks confusing to have
-;; patch functions written in multiple files
-;; I'd better merge them into one
-
-;; usually we rewrite an instruction
-;; into a sequence of instructions that does
-;; some lower level operations
-;; so here a single rule consists of a pattern matching
-;; on an instruction and rewriting rule to rewrite it into
-;; *a list* of instructions.
 
 (load "./list-stack-rewrites.scm")
 (load "./rewrite-instructions.scm")

@@ -2,8 +2,6 @@
 (load "../common/test-utils.scm")
 
 (load "./simu.scm")
-(load "./simu_lower_patch.scm")
-(load "./rewrite.scm")
 (load "./simu_listprim2_patch.scm")
 
 (define simple-instructions
@@ -46,7 +44,9 @@
       (from-eeee))))
 
 (assert (equal?
-         (rewrite-instructions* fake-rules fake-instruction-list)
+         (rewrite-instructions*
+          fake-rules
+          fake-instruction-list)
          '(;; ==== aaa expands to
            from-aaa
            ddd
