@@ -5,7 +5,8 @@
   ;; expected input: a list of instructions (including labels)
   ;; we don't have to do all the things in one pass
   ;; as this won't be the bottleneck of the whole program
-  ;; we also don't need to perform the continuation passing trick
+  ;; we also don't have to perform the continuation passing trick
+  ;; for the same reason
   ;;
   ;; to be clear with terms:
   ;; instruction text is what the instruction looks like in controller text
