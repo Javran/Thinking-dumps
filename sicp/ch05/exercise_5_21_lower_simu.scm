@@ -3,7 +3,6 @@
 
 (load "./simu.scm")
 (load "./simu_lower_patch.scm")
-(load "./rewrite.scm")
 (load "./simu_listprim2_patch.scm")
 
 (load "./exercise_5_21_controllers.scm")
@@ -32,12 +31,6 @@
     ,@(rewrite-instructions* (append list-primitives-rules
                                      stack-manip-rules)
                              test-instruction-list)))
-
-(out "==== begin listing ====")
-(for-each
- out
- test-controller)
-(out "==== end listing ====")
 
 (let ((m (build-and-execute
           test-controller
