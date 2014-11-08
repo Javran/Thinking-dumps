@@ -50,6 +50,11 @@
        ))
      ))
 
+(define all-rules
+  (merge-rules
+   list-primitives-rules
+   stack-manip-rules))
+
 ;; given data in scheme representation,
 ;; we construct a list of instructions that
 ;; generates the corresponding data in that machine.

@@ -3,6 +3,9 @@
 ;; I guess this will eventually replace the ad hoc
 ;; implementation of "listprim"
 
+(load "./rewrite-instructions.scm")
+(load "./list-stack-rewrites.scm")
+
 ;; in the original simu.scm,
 ;; we can store anything we like in a register
 ;; and don't pay much attention when it comes to
@@ -131,6 +134,28 @@
   (machine-reg-set! m 'the-stack '())
   (machine-reset-pc! m)
   (machine-execute! m))
+
+;; we modify "ctl-ops->machine" to apply rewriting rules
+;; automatically.
+;; this decision is make because:
+;; * this is the effectively the very procedure that
+;;   builds the whole machine up
+;; * less likely to be modified by other patches
+;; * has fewer lines of code than
+;;   putting the whole "assemble" procedure here.
+(define (ctl-ops->machine
+         controller-text
+         ops-builder)
+  (let* ((origin-insns (cdr controller-text))
+         (insns (rewrite-instructions*
+                 all-rules
+                 origin-insns))
+         (m (empty-machine))
+         (reg-names (extract-register-names insns)))
+    (machine-define-registers! m reg-names)
+    (machine-set-operations! m (ops-builder m))
+    (assemble insns m)
+    m))
 
 (load "./list-stack-rewrites.scm")
 (load "./rewrite-instructions.scm")
