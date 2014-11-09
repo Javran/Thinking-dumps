@@ -1,5 +1,5 @@
 ;; the real implementation
-;; of list primitives
+;; of list and stack primitives
 ;; I guess this will eventually replace the ad hoc
 ;; implementation of "listprim"
 

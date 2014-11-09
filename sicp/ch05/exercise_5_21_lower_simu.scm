@@ -2,7 +2,7 @@
 (load "../common/test-utils.scm")
 
 (load "./simu.scm")
-(load "./simu_listprim2_patch.scm")
+(load "./simu_lower_patch.scm")
 
 (load "./exercise_5_21_controllers.scm")
 (load "./exercise_5_21_common.scm")
