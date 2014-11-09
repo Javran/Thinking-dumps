@@ -2,7 +2,7 @@
 (load "../common/test-utils.scm")
 
 (load "./legacy-easy.scm")
-(load "./legacy_listprim_patch.scm")
+(load "./legacy_lower_fast_patch.scm")
 
 (load "./exercise_5_22_controllers.scm")
 
