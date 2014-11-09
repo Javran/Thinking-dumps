@@ -157,5 +157,10 @@
     (assemble insns m)
     m))
 
+;; remove "save" and "restore" handlers
+;; since they are now implemented by other instructions
+(set-handler 'save #f)
+(set-handler 'restore #f)
+
 (load "./list-stack-rewrites.scm")
 (load "./rewrite-instructions.scm")
