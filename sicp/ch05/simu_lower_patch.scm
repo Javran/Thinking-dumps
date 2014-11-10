@@ -1,7 +1,8 @@
+;; see notes in "5_3_2_maintaining_the_illusion_of_infinite_memory.md"
+;; for related discussions
+
 ;; the real implementation
 ;; of list and stack primitives
-;; I guess this will eventually replace the ad hoc
-;; implementation of "listprim"
 
 (load "./rewrite-instructions.scm")
 (load "./list-stack-rewrites.scm")

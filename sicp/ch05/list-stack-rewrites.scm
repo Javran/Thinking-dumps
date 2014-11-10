@@ -1,3 +1,6 @@
+;; see notes in "5_3_2_maintaining_the_illusion_of_infinite_memory.md"
+;; for related discussions
+
 ;; rewrite rules for list primitives and stacks
 
 (define list-primitives-rules

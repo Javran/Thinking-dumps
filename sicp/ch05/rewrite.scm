@@ -1,3 +1,9 @@
+;; a template system that recognizes patterns in data and replaces
+;; them using redefined rules (templates)
+
+;; see notes in "5_3_2_maintaining_the_illusion_of_infinite_memory.md"
+;; for related discussions
+
 ;; a template variable is a symbol
 ;; that begins with "$"
 (define (template-variable? sym)
