@@ -84,6 +84,6 @@ found in the book. For example, the rule of replacing `set-car!`:
     So in `list-stack-rewrites.scm` I've refined some of these patterns to make it
     more general.
 
-TODO
+TODO: make it work with the legacy one?
 
 # Implementation of a stop-and-copy garbage collector
