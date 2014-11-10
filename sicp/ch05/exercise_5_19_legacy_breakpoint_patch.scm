@@ -1,9 +1,6 @@
 (load "./exercise_5_17_legacy_prelabel_patch.scm")
 (load "./exercise_5_19_breakpoint_table.scm")
 
-;; TODO list:
-;; * maintain resuming flag
-
 ;; based on ex 5.17 patch
 (define (make-new-machine)
   (let ((pc (make-register 'pc))
