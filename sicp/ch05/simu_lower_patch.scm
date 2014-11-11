@@ -19,7 +19,7 @@
 (define (make-primitive-exp exp m)
   (define (constant-exp? exp)
     (tagged-list? exp 'const))
-  (define (valid-constant data)
+  (define (valid-constant? data)
     ;; now data can only be one of:
     ;; symbol, number, boolean, string, char or null
     (or (symbol? data)
@@ -30,7 +30,7 @@
         (null? data)))
   (define (constant-exp-value exp)
     (let ((data (cadr exp)))
-      (if (valid-constant data)
+      (if (valid-constant? data)
           data
           (error "cannot use" data
                  "as a constant"))))
