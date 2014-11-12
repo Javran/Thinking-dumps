@@ -58,6 +58,46 @@
 
 (define memory-size 65536)
 
+(define (pointer n)
+  (cons 'ptr n))
+
+;; check if the data is a machine pointer
+(define (pointer? data)
+  (and (pair? data)
+       (eq? (car data) 'ptr)
+       (integer? (cdr data))))
+
+(define (pointer-get data)
+  (assert (pointer? data)
+          "can only extract data from pointers")
+  (cdr data))
+
+;; next "memory location"
+(define (pointer-inc data)
+  (pointer
+   (add1
+    (pointer-get data))))
+
+(define default-primitive-list
+  (let ((old-primitive-list default-primitive-list))
+    (lambda ()
+      `((vector-ref
+         ,(lambda (vec ptr)
+            (vector-ref vec (pointer-get ptr))))
+        (vector-set!
+         ,(lambda (vec ptr val)
+            (vector-set! vec (pointer-get ptr) val)))
+
+        (to-pointer ,pointer)
+        (ptr-inc ,pointer-inc)
+        (pair? ,pointer?)
+        (null? ,null?)
+        (number? ,number?)
+        (symbol? ,symbol?)
+        (char? ,char?)
+        (string? ,string?)
+        ,@(old-primitive-list)))))
+
 (define (make-new-machine)
   (let ((pc (make-register 'pc))
         (flag (make-register 'flag))
@@ -94,8 +134,9 @@
         (cond ((eq? message 'start)
                ;; initialize some reserved registers here
                ;; when the machine starts
-
-               ;; TODO initialize free
+               (set-contents!
+                (lookup-register 'free)
+                (pointer 0))
                (set-contents!
                 (lookup-register 'the-cars)
                 (make-vector memory-size))
@@ -123,3 +164,37 @@
                (error "Unknown request: MACHINE"
                       message))))
       dispatch)))
+
+(define (ctl-ops->machine
+         controller-text
+         primitive-list)
+  (let* ((origin-insns (cdr controller-text))
+         (insns (rewrite-instructions*
+                 all-rules
+                 origin-insns))
+         (reg-names (extract-register-names insns))
+         (m (make-machine
+             reg-names
+             primitive-list
+             insns)))
+    m))
+
+;; remove "save" and "restore" because they are no longer needed
+(define make-save #f)
+(define make-restore #f)
+
+(define (make-execution-procedure
+         inst labels machine pc flag stack ops)
+  (cond ((eq? (car inst) 'assign)
+         (make-assign inst machine labels ops pc))
+        ((eq? (car inst) 'test)
+         (make-test inst machine labels ops flag pc))
+        ((eq? (car inst) 'branch)
+         (make-branch inst machine labels flag pc))
+        ((eq? (car inst) 'goto)
+         (make-goto inst machine labels pc))
+        ((eq? (car inst) 'perform)
+         (make-perform inst machine labels ops pc))
+        (else
+         (error "Unknown instruction type: ASSEMBLE"
+                inst))))
