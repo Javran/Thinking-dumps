@@ -357,4 +357,40 @@ Because $(\le)$ is antisymmetric, we conclude that
 
 \end{proof}
 
+
+% 1.3.7
+\subsubsection{}
+
+\begin{proof}
+Suppose we have two \cat{Pos}-arrows $f_1 \dashv g_1$
+and $f_2 \dashv g_2$:
+
+\begin{diagram}
+A & \rPto^{f_1 \dashv g_1} & B & \rPto^{f_2 \dashv g_2} & C
+\end{diagram}
+
+And two arrows can be composed:
+
+\begin{diagram}
+A & \rPto^{(f_2 \circ f_1) \dashv (g_1 \circ g_2)} & C
+\end{diagram}
+
+Since $(f_1,g_1)$ and $(f_2,g_2)$ are both $\cat{Pos}^{pp}$-arrows,
+we have $g_1 \circ f_1 = id_A$ and $g_2 \circ f_2 = id_B$.
+
+For the composed arrow $(f_2 \circ f_1, g_1 \circ g_2)$:
+
+\begin{align*}
+  & g \circ f \\
+= & g_1 \circ g_2 \circ f_2 \circ f_1 \\
+= & g_1 \circ id_B \circ f_1 \\
+= & g_1 \circ f_1 \\
+= & id_A
+\end{align*}
+
+Therefore  $(f_2 \circ f_1, g_1 \circ g_2)$ is also a  $\cat{Pos}^{pp}$-arrow,
+projection pairs are closed under composition.
+
+\end{proof}
+
 \end{document}
