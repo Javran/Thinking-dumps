@@ -84,6 +84,13 @@ found in the book. For example, the rule of replacing `set-car!`:
     So in `list-stack-rewrites.scm` I've refined some of these patterns to make it
     more general.
 
+* Note that rewriting the original instruction list
+might make tracing difficult,
+because we needs to keep track of the correspondence
+between original instruction list and the new one.
+This is doable by bookkeeping the relationship when apply rewriting rules,
+but I think this might be complicated and I'm not going to try that.
+
 TODO: make it work with the legacy one?
 
 # Implementation of a stop-and-copy garbage collector
