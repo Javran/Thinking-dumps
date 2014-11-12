@@ -91,6 +91,4 @@ between original instruction list and the new one.
 This is doable by bookkeeping the relationship when apply rewriting rules,
 but I think this might be complicated and I'm not going to try that.
 
-TODO: make it work with the legacy one?
-
 # Implementation of a stop-and-copy garbage collector
