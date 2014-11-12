@@ -281,4 +281,80 @@ Therefore $\Gamma(g \fcomp f) = \Gamma(g) \fcomp \Gamma(f)$
 \end{proof}
 
 
+% 1.3.6
+\subsubsection{}
+
+\textbf{(1)}
+
+\begin{proof}
+To show that $f \dashv g$, we need to show that
+\[
+\forall a \in S, b \in T, f(a) \le b \Leftrightarrow a \le g(b)
+\]
+
+First we prove that $\forall a \in S, b \in T, f(a) \le b \Rightarrow a \le g(b)$.
+
+From hypothesis we know that $f(a) \le b$ and since $g$ is a monotonic function,
+we have $(g \circ f)(a) \le g(b)$.
+
+Because $id_S \le g \circ f$, we know that $a \le (g \circ f)(a)$. Since $S$ is a poset,
+$(\le)$ is transitive, we conclude that $a \le g(b)$.
+
+Then we prove that $forall a \in S, b \in T, a \le g(b) \Rightarrow f(a) \le b$.
+
+From hypothesis we have $a \le g(b)$, therefore $f(a) \le (f \circ g)(b)$
+because $f$ is a monotonic function.
+And we also know that $(f \circ g)(b) \le b$.
+
+We therefore conclude that $f(a) \le b$ because of the transitivity of $(\le)$.
+
+\end{proof}
+
+\textbf{(2)}
+
+\begin{proof}
+From $id_S \le g \circ f$, we apply monotonic function $f$ on both side of this inequation:
+
+\[
+\forall a \in S, f(a) \le (f \circ g \circ f)(a)
+\]
+
+Since we know that
+
+\[
+\forall b \in T, (f \circ g)(b) \le b
+\]
+
+For a particular case $b = f(a) \in T$, we have:
+
+\[
+\forall a \in S, (f \circ g \circ f)(a) \le f(a)
+\]
+
+Because $(\le)$ is antisymmetric, we conclude that
+
+\[
+\forall a \in S, f(a) = (f \circ g \circ f)(a)
+\]
+
+Similarly, from $f \circ g \le id_T$, apply monotonic function $g$ on both side of this inequation:
+
+\[
+\forall b \in T, (g \circ f \circ g)(b) \le g(b)
+\]
+
+In addition, for a particular $a = g(b) \in S$, we have:
+
+\[
+\forall b \in T, g(b) \le (g \circ f \circ g)(b)
+\]
+
+Because $(\le)$ is antisymmetric, we conclude that
+
+\[
+\forall b \in T, g(b) = (g \circ f \circ g)(b)
+\]
+
+\end{proof}
+
 \end{document}
