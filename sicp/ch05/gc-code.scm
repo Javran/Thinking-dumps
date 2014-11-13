@@ -12,6 +12,8 @@
 
     gc-loop
     (test (op =) (reg scan) (reg free))
+    ;; scan == free means we have copied everything necessary
+    ;; time to swap memories
     (branch (label gc-flip))
     (assign old (op vector-ref) (reg new-cars) (reg scan))
     (assign relocate-continue (label update-car))
@@ -69,10 +71,13 @@
     (assign new (op vector-ref) (reg the-cdrs) (reg old))
     (goto (reg relocate-continue))
 
+    ;; gc-flip swaps the working memories and the free memories
     gc-flip
+    ;; the-cdrs <-> new-cdrs
     (assign temp (reg the-cdrs))
     (assign the-cdrs (reg new-cdrs))
     (assign new-cdrs (reg temp))
+    ;; the-cars <-> new-cars
     (assign temp (reg the-cars))
     (assign the-cars (reg new-cars))
     (assign new-cars (reg temp))
