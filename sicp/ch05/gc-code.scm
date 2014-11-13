@@ -2,6 +2,7 @@
   '(begin-garbage-collection
     (assign free (const 0))
     (assign scan (const 0))
+    ;; TODO: not sure about what exactly are "root" "new" and "old"
     (assign old (reg root))
     (assign relocate-continue (label reassign-root))
     (goto (label relocate-old-result-in-new))
