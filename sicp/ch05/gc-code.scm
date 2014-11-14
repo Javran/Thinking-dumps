@@ -8,6 +8,13 @@
 
 (define gc-code
   '(begin-garbage-collection
+    ;; free: free memory in new location
+    ;; scan: everything before scan pointer should have been fully updated
+    ;;       (everything between where the scan pointer points to
+    ;;        and where the free pointer points to (minus one)
+    ;;        is a shallow copy of the old data)
+    ;; old : points to the old "accessible object list"?
+    ;; new : points to the new "accessible object list"?
     (assign free (const 0))
     (assign scan (const 0))
     ;; TODO: not sure about what exactly are "root" "new" and "old"
@@ -45,14 +52,20 @@
     (assign scan (op +) (reg scan) (const 1))
     (goto (label gc-loop))
 
+    ;; subroutine input: old register to root
     relocate-old-result-in-new
     (test (op pointer-to-pair?) (reg old))
     (branch (label pair))
+    ;; if "old" does not contain a pair,
+    ;; there's no ref in data, just copy it to the new one
     (assign new (reg old))
     (goto (reg relocate-continue))
 
     pair
+    ;; oldcr <- car of old
     (assign oldcr (op vector-ref) (reg the-cars) (reg old))
+    ;; for an already-moved structure, car is a broken-heart flag
+    ;; and cdr is the new location (for this pair)
     (test (op broken-heart?) (reg oldcr))
     (branch (label already-moved))
     (assign new (reg free)) ; new location for pair
