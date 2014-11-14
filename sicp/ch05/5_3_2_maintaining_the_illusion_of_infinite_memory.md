@@ -92,3 +92,14 @@ This is doable by bookkeeping the relationship when apply rewriting rules,
 but I think this might be complicated and I'm not going to try that.
 
 # Implementation of a stop-and-copy garbage collector
+
+The explanation in book isn't very clear about what's going on,
+but I find the implementation can be explained in another way to make it clear.
+
+Basically, `scan` and `free` are pointing to the new memories,
+and everything before `scan` are deep copies of its corresponding data in
+the original memory, and everything from where the `scan` points to
+to where the `free-1` points to are shallow copies. And pointers in
+this region are still pointing to the original memory locations.
+
+TODO: more detailed explanation
