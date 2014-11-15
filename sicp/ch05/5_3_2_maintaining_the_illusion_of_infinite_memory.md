@@ -130,7 +130,7 @@ By doing so, we will create more shallow copies. We repeat the process of dealin
 shallow copies and dealing with deep copies
 until all shallow copies are turned into deep copies.
 
-The algoritm begins by dealing with `root`: if `root` is a non-pair data,
+The algorithm begins by dealing with `root`: if `root` is a non-pair data,
 all accessible data should have been copied so the algorithm terminates here.
 
 Otherwise if `root` is a pair, this pair are shallow-copied into the new memories,
@@ -139,7 +139,19 @@ and `free` memories will increase accordingly.
 Now that the region between `scan` and `free` is no longer empty,
 and `scan` is pointing to the location where the first shallow copy is available.
 We proceed by turning the data under `scan` into a deep copy and make `scan` point to
-the next shallow by adding one to it.
+the next shallow copy by adding one to it.
 
+To turn a shallow copy into a deep one, one need to access the old memories
+and copy the pair indicated by this shallow copy into the new memory.
+Once this is done, the data in old memories can be safely discarded.
+We turn the original data in old memories into a `broken-heart` flag
+by setting a constant `broken-heart` in its `car` part, and the new location
+in new memories in its `cdr` part. When another shallow copy wants to copy the
+same pair, the algorithm will find out that the data has been copied and
+find the location in `cdr`.
 
-TODO: more detailed explanation
+Now that we will have some new shallow copies, and `scan` won't be able to
+catch up with `free` unless all shallow copies have turned into deep copies.
+Just repeat the process and the algorithm will eventually terminate at some point.
+
+TODO: maybe we still need to explain `new` and `old`
