@@ -100,7 +100,7 @@ and hope this can be helpful for those that happens to find this article.
 
 The most important registers in code are `free`, `scan`:
 
-* Unless we are creating pairs, `free` always points to the next unused memory location.
+* unless we are creating pairs, `free` always points to the next unused memory location.
 * `scan` points to the location where we are about to "update" the data under pointer.
 
 These two registers together define 3 consecutive regions in the new memories:
@@ -111,5 +111,10 @@ is the region that our garbage collecting algorithm has fully processed (a deep 
 the old memories (a shallow copy). This means if old data contains pointers,
 these pointers are still pointing to somewhere in the old memory address.
 * all addresses after `free - 1` contains no data and has nothing to do with the algorithm.
+
+For [shallow copy](http://en.wikipedia.org/wiki/Object_copy#Shallow_copy)
+and [deep copy](http://en.wikipedia.org/wiki/Object_copy#Deep_copy),
+you can find more explanation on wikipedia. Here you can replace "object" with "pair"
+so it makes more sense.
 
 TODO: more detailed explanation
