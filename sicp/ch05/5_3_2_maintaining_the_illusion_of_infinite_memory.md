@@ -93,13 +93,23 @@ but I think this might be complicated and I'm not going to try that.
 
 # Implementation of a stop-and-copy garbage collector
 
-The explanation in book isn't very clear about what's going on,
-but I find the implementation can be explained in another way to make it clear.
+For me I think the explanation for garbage collecting code
+in book isn't very clear about how it really works.
+Here I'll try to provide an alternative explanation for myself
+and hope this can be helpful for those that happens to find this article.
 
-Basically, `scan` and `free` are pointing to the new memories,
-and everything before `scan` are deep copies of its corresponding data in
-the original memory, and everything from where the `scan` points to
-to where the `free-1` points to are shallow copies. And pointers in
-this region are still pointing to the original memory locations.
+The most important registers in code are `free`, `scan`:
+
+* Unless we are creating pairs, `free` always points to the next unused memory location.
+* `scan` points to the location where we are about to "update" the data under pointer.
+
+These two registers together define 3 consecutive regions in the new memories:
+
+* the region between the first valid address of the new memory and `scan - 1`
+is the region that our garbage collecting algorithm has fully processed (a deep copy).
+* the region between `scan` and `free - 1` is the region that data is simply copied from
+the old memories (a shallow copy). This means if old data contains pointers,
+these pointers are still pointing to somewhere in the old memory address.
+* all addresses after `free - 1` contains no data and has nothing to do with the algorithm.
 
 TODO: more detailed explanation
