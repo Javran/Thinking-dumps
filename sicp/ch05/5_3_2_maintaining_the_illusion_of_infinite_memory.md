@@ -7,7 +7,7 @@ new pairs, we can preserve the illusion of infinite memory.
 
 To tell if a pair is no longer needed, we check if the location in question
 can be accesssed by a sequence of `car` and `cdr` from any of the current
-accessible registers. If the location isn't accessable at all, then
+accessible registers. If the location isn't accessible at all, then
 we can reclaim its space because it won't effect the future of the computation.
 
 One garbage collection method: *stop-and-copy*.
@@ -116,5 +116,30 @@ For [shallow copy](http://en.wikipedia.org/wiki/Object_copy#Shallow_copy)
 and [deep copy](http://en.wikipedia.org/wiki/Object_copy#Deep_copy),
 you can find more explanation on wikipedia. Here you can replace "object" with "pair"
 so it makes more sense.
+
+The algorithm assumes a register `root` that can eventually access every reachable data
+by using a sequence of `car`s and `cdr`s. Therefore we ensure that all accessible
+data are copied from the old memories by having a deep copy of `root`.
+Note here the structure of `root` doesn't matter as long as it can point to all accessible
+data directly or indirectly. For simplicity we will make it a list, but it should also
+work it you choose to make it look like a tree or something else.
+
+The high level idea here is that we will first create shallow copy for the object that
+`root` points to, then we turn the shallow copy into a deep one.
+By doing so, we will create more shallow copies. We repeat the process of dealing with
+shallow copies and dealing with deep copies
+until all shallow copies are turned into deep copies.
+
+The algoritm begins by dealing with `root`: if `root` is a non-pair data,
+all accessible data should have been copied so the algorithm terminates here.
+
+Otherwise if `root` is a pair, this pair are shallow-copied into the new memories,
+and `free` memories will increase accordingly.
+
+Now that the region between `scan` and `free` is no longer empty,
+and `scan` is pointing to the location where the first shallow copy is available.
+We proceed by turning the data under `scan` into a deep copy and make `scan` point to
+the next shallow by adding one to it.
+
 
 TODO: more detailed explanation
