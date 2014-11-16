@@ -1,3 +1,9 @@
+;; TODO: adapt the code according to our implementation
+;; TODO: design a special flag that distinguishes machine symbols
+;; from scheme symbols so that a machine "broken-heart" symbol will never be
+;; mistakenly understood as a real "broken-heard" flag by garbage collection
+;; algorithm
+
 (define gc-code
   '(begin-garbage-collection
     ;; free: points to the first free memory address
