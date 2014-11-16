@@ -3,6 +3,10 @@
 ;; from scheme symbols so that a machine "broken-heart" symbol will never be
 ;; mistakenly understood as a real "broken-heard" flag by garbage collection
 ;; algorithm
+;; TODO: initialize "root" register before gc starts
+;; TODO: update registers according to "root" register
+;; after the gc is done
+;; TODO: try to do gc when a "cons" is about to use up the space
 
 (define gc-code
   '(begin-garbage-collection
