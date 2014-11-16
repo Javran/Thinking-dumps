@@ -154,4 +154,15 @@ Now that we will have some new shallow copies, and `scan` won't be able to
 catch up with `free` unless all shallow copies have turned into deep copies.
 Just repeat the process and the algorithm will eventually terminate at some point.
 
-TODO: maybe we still need to explain `new` and `old`
+There are two registers `new` and `old` which are mainly used by `relocate-old-result-in-new`
+and `gc-loop`.
+`old` is the input register,
+which is either a non-pair value or a pointer pointing to somewhere in the old memories.
+and `new` is the output register,
+which is either a non-pair value or a pointer pointing to somewhere in the new memories.
+
+Calling subroutine `relocate-old-result-in-new`
+results in copying data in `old` into `new`. And data pointed by `new` should be a deep copy.
+
+Subroutine `gc-loop` handles the `scan` register, it traverses every `car` and `cdr` of every
+memory location and turn data into its deep copy.
