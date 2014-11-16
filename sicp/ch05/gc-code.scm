@@ -1,19 +1,16 @@
 (define gc-code
   '(begin-garbage-collection
-    ;; free: free memory in new location
-    ;; scan: everything before scan pointer should have been fully updated
-    ;;       (everything between where the scan pointer points to
-    ;;        and where the free pointer points to (minus one)
-    ;;        is a shallow copy of the old data)
-    ;; old : points to the old "accessible object list"?
-    ;; new : points to the new "accessible object list"?
+    ;; free: points to the first free memory address
     (assign free (const 0))
+    ;; scan: used by gc-loop, points to the first shallow copy
     (assign scan (const 0))
-    ;; TODO: not sure about what exactly are "root" "new" and "old"
+    ;; prepare to copy the first pair
     (assign old (reg root))
     (assign relocate-continue (label reassign-root))
     (goto (label relocate-old-result-in-new))
 
+    ;; after the first pair is shallow-copied,
+    ;; we update root and get started
     reassign-root
     (assign root (reg new))
     (goto (label gc-loop))
@@ -21,8 +18,11 @@
     gc-loop
     (test (op =) (reg scan) (reg free))
     ;; scan == free means we have copied everything necessary
-    ;; time to swap memories
+    ;; and it's time for swaping memories
     (branch (label gc-flip))
+    ;; otherwise we still have some jobs to do.
+
+    ;; relocate old pointers in `car` part
     (assign old (op vector-ref) (reg new-cars) (reg scan))
     (assign relocate-continue (label update-car))
     (goto (label relocate-old-result-in-new))
@@ -32,6 +32,7 @@
              (reg new-cars)
              (reg scan)
              (reg new))
+    ;; relocate old pointers in `cdr` part
     (assign old (op vector-ref) (reg new-cdrs) (reg scan))
     (assign relocate-continue (label update-cdr))
     (goto (label relocate-old-result-in-new))
@@ -41,10 +42,12 @@
              (reg new-cdrs)
              (reg scan)
              (reg new))
+    ;; scan next one
     (assign scan (op +) (reg scan) (const 1))
     (goto (label gc-loop))
 
-    ;; subroutine input: old register to root
+    ;; this subroutine relocates the data pointed by `old` register
+    ;; resulting in the corresponsing deep copy pointed by `new` register
     relocate-old-result-in-new
     (test (op pointer-to-pair?) (reg old))
     (branch (label pair))
@@ -54,15 +57,18 @@
     (goto (reg relocate-continue))
 
     pair
-    ;; oldcr <- car of old
+    ;; test if we have found a broken-heart flag
     (assign oldcr (op vector-ref) (reg the-cars) (reg old))
     ;; for an already-moved structure, car is a broken-heart flag
-    ;; and cdr is the new location (for this pair)
+    ;; and cdr is the new location (of this pair)
     (test (op broken-heart?) (reg oldcr))
     (branch (label already-moved))
+    ;; if no broken-heart flag is found,
+    ;; we need to relocate the old data.
     (assign new (reg free)) ; new location for pair
     ;; update free pointer
     (assign free (op +) (reg free) (const 1))
+    ;; copy the whole pair
     (perform (op vector-set!)
              (reg new-cars)
              (reg new)
