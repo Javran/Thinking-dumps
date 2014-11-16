@@ -166,3 +166,12 @@ results in copying data in `old` into `new`. And data pointed by `new` should be
 
 Subroutine `gc-loop` handles the `scan` register, it traverses every `car` and `cdr` of every
 memory location and turn data into its deep copy.
+
+And one thing is important: you need to pre-allocate some memory addresses to ensure that every
+not-gc-implementation-related register has its place to store its value.
+And also we should have a pointer that can directly or indirectly points to all these
+pre-allocated memory addresses. This pointer becomes `root` in the gc algorithm.
+
+Right before the garbage collecting starts, we need to dump values from all the registers to
+this list. And after garbage collection is done, we need to recover register values
+accordingly since old pointers are no longer valid.

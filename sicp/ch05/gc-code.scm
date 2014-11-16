@@ -1,11 +1,3 @@
-;; TODO:
-;; there are serious questions need to be answered:
-;; * if you are running out of memory,
-;;   where can you make the list that contains all the accessible
-;;   at the first place? (where is this "pre-allocated list"?)
-;; * will this list also be moved to the new memory?
-;; * "root" points to a list or a tree? WHAT EXACTLY is this structure?
-
 (define gc-code
   '(begin-garbage-collection
     ;; free: free memory in new location
