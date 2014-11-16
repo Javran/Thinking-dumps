@@ -7,9 +7,9 @@
 (define gc-code
   '(begin-garbage-collection
     ;; free: points to the first free memory address
-    (assign free (const 0))
+    (assign free (op to-pointer) (const 0))
     ;; scan: used by gc-loop, points to the first shallow copy
-    (assign scan (const 0))
+    (assign scan (op to-pointer) (const 0))
     ;; prepare to copy the first pair
     (assign old (reg root))
     (assign relocate-continue (label reassign-root))
@@ -22,6 +22,7 @@
     (goto (label gc-loop))
 
     gc-loop
+    ;; TODO: implement ptr-=
     (test (op =) (reg scan) (reg free))
     ;; scan == free means we have copied everything necessary
     ;; and it's time for swaping memories
@@ -49,7 +50,7 @@
              (reg scan)
              (reg new))
     ;; scan next one
-    (assign scan (op +) (reg scan) (const 1))
+    (assign scan (op ptr-inc) (reg scan))
     (goto (label gc-loop))
 
     ;; this subroutine relocates the data pointed by `old` register
@@ -73,7 +74,7 @@
     ;; we need to relocate the old data.
     (assign new (reg free)) ; new location for pair
     ;; update free pointer
-    (assign free (op +) (reg free) (const 1))
+    (assign free (op ptr-inc) (reg free))
     ;; copy the whole pair
     (perform (op vector-set!)
              (reg new-cars)
