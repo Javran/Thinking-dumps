@@ -43,6 +43,15 @@
     ,@(save-regs-intern regs)))
 
 (define (restore-registers-from-root regs)
-  'todo)
+  (define (restore-regs-intern regs)
+    (if (null? regs)
+        '()
+        `( (assign ,(car regs) (op car) (reg result))
+           (assign result (op cdr) (reg result))
+           ,@(restore-regs-intern (cdr regs))
+           )))
+  `(restore-registers-from-root
+    (assign result (reg root))
+    ,@(restore-regs-intern regs)))
 
-(for-each out (save-registers-to-root '(a b c)))
+(for-each out (restore-registers-from-root '(a b c)))
