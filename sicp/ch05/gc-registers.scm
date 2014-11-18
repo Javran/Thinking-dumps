@@ -16,6 +16,10 @@
       '()
       (cons v (replicate (sub1 n) v))))
 
+;; generate an instruction list that allocates
+;; a list for storing all registers that are not
+;; related to the garbage collecting algorithm.
+;; this generated list should be executed when the machine starts
 ;; reg-count: the length of the list that
 ;; we are going to pre-allocate
 (define (root-preallocator reg-count)
@@ -26,4 +30,19 @@
        (replicate reg-count 0))
     (assign root (reg result))))
 
-(for-each out (root-preallocator 3))
+(define (save-registers-to-root regs)
+  (define (save-regs-intern regs)
+    (if (null? regs)
+        '()
+        `( (perform (op set-car!) (reg result) (reg ,(car regs)))
+           (assign result (op cdr) (reg result))
+           ,@(save-regs-intern (cdr regs))
+           )))
+  `(save-registers-to-root
+    (assign result (reg root))
+    ,@(save-regs-intern regs)))
+
+(define (restore-registers-from-root regs)
+  'todo)
+
+(for-each out (save-registers-to-root '(a b c)))
