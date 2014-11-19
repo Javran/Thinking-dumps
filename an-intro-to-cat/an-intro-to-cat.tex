@@ -9,6 +9,9 @@
 \usepackage{indentfirst}
 
 \usepackage{diagrams}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \title{My Exercise Answers to \\
 Introduction to Category Theory}
@@ -392,5 +395,93 @@ Therefore  $(f_2 \circ f_1, g_1 \circ g_2)$ is also a  $\cat{Pos}^{pp}$-arrow,
 projection pairs are closed under composition.
 
 \end{proof}
+
+% 1.3.8
+
+\subsubsection{}
+
+We first prove a lemma: if $f : \mathbb{R} \rTo \mathbb{Z}$, is a monotonic function,
+and $\forall z \in \mathbb{Z}, f(z) = z$, then $f$ can only be one of the following functions:
+
+\begin{itemize}
+\item $f(x) = \floor{x}$
+\item $f(x) = \ceil{x}$
+\end{itemize}
+
+\begin{proof}
+For any given $r \in \mathbb{R}, r \notin \mathbb{Z}$, there exists a $z \in \mathbb{Z}$ such that
+$z \le r \le z+1$. Since $f$ is a monotone, we know that $f(z) = z \le f(r) \le f(z+1) = z+1$.
+
+Because $\forall r \in \mathbb{R}, f(r) \in \mathbb{Z}$, we know
+$\forall r \in \mathbb{R}, f(r) \in \{\floor{r}, \ceil{r}\}$
+
+Suppose $\exists r \in \mathbb{R}, f(r) = \floor{r}$, then $\forall r_1 \in \mathbb{R}$,
+if $r_1 \le r$, then we must have $f(r_1) \le f(r) = \floor{r}$. This conclusion implies that
+if $\exists r \in \mathbb{R}, f(r) = \floor{r}$, then $\forall r \in \mathbb{R}, f(r) = \floor{r}$
+
+Similarly, we have the conclusion that if $\exists r \in \mathbb{R}, f(r) = \ceil{r}$, then $\forall r \in \mathbb{R}, f(r) = \ceil{r}$
+
+Therefore either $\forall r \in \mathbb{R}, f(r) = \floor{r}$ holds, or $\forall r \in \mathbb{R}, f(r) = \ceil{r}$ holds.
+
+\end{proof}
+
+\textbf{(a)} Consider $\iota \dashv \rho$, $\forall z \in \mathbb{Z}, r \in \mathbb{R}$, we have:
+
+\[
+\iota(z)=z \le r \Leftrightarrow z \le \rho(r)
+\]
+
+Notice that when $r \in \mathbb{Z}$, we have $\rho(r) = r$. We can apply the previous lemma
+and conclude that $\rho$ is either the floor function, or the ceiling function. But the property that
+$\iota(z) \le r \Leftrightarrow z \le \rho(r)$ only holds when $\rho$ is the floor function.
+
+Therefore we conclude that $\forall r \in \mathbb{R}, f(r) = \floor{r}$.
+
+Similarly, consider $\lambda \dashv \iota$, $\forall z \in \mathbb{Z}, r \in \mathbb{R}$, we have:
+
+\[
+\lambda(r) \le z \Leftrightarrow r \le \iota(z) = z
+\]
+
+Since when $r \in \mathbb{Z},\lambda(r) = r$. Apply the previous lemma, we conclude that $\lambda$ is either the floor function, or the ceiling function. But the property that
+$\lambda(r) \le z \Leftrightarrow r \le \iota(z)$ only holds when $\lambda$ is the ceiling function.
+
+Therefore we have proved the uniqueness of $\rho$ and $\lambda$, such that
+
+\begin{diagram}
+\mathbb{Z} & \rPto^{\iota \dashv \rho} & \mathbb{R} & \rPto^{\lambda \dashv \iota} & \mathbb{Z}
+\end{diagram}
+
+\textbf{(b)} $(\lambda \dashv \iota) \fcomp (\iota \dashv \rho) = (\lambda \fcomp \iota \dashv \rho \fcomp \iota)$
+
+The arrow composition result is $f \dashv g$, in which $f = \lambda \fcomp \iota, g = \rho \fcomp \iota$.
+
+\begin{align*}
+g \fcomp f & = \rho \fcomp \iota \fcomp \lambda \fcomp \iota \\
+           & = \rho \fcomp \lambda \\
+           & = \lambda
+\end{align*}
+
+Since $\forall z \in \mathbb{Z}, \lambda(z) = \ceil{z} = z$, we can conclude that $g \fcomp f = id_\mathbb{Z}$.
+
+Also that:
+
+\begin{align*}
+f \fcomp g & = \lambda \fcomp \iota \fcomp \rho \fcomp \iota \\
+	       & = \lambda \fcomp \rho \\
+	       & = \rho
+\end{align*}
+
+Notice that $\forall r \in \mathbb{R}, \rho(\rho(r)) = \rho(\floor{r}) = \rho(r)$,
+we conclude the other composition $f \fcomp g = \rho$ is idempotent.
+
+\textbf{(c)} For $\iota \dashv \rho$, $\rho \fcomp \iota = \rho$.
+Since $\forall z \in \mathbb{Z}, \rho(z) = z$, we can conclude $\rho \fcomp \iota = \rho = id_\mathbb{Z}$.
+
+Thus $\iota \dashv \rho$ is a $\cat{Pos}^{pp}$-arrow.
+
+However, for $\lambda \dashv \iota$, $\iota \fcomp \lambda = \lambda$. $\exists r \in \mathbb{R}, \lambda(r) \neq r$.
+
+Therefore $\lambda \dashv \iota$ is not a $\cat{Pos}^{pp}$-arrow.
 
 \end{document}
