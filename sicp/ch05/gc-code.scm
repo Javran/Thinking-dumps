@@ -7,6 +7,13 @@
 ;; TODO: update registers according to "root" register
 ;; after the gc is done
 ;; TODO: try to do gc when a "cons" is about to use up the space
+;; TODO: we might need to generate some code everytime after
+;; we increase "free", as we need to test if it exceeds the limit
+;; and start doing garbage collection immediately
+;; and also before jumping to the garbage collection subroutine,
+;; we need to record the current location so that we can jump back
+;; when garbage collection is done, I guess this can be done
+;; by generating unique symbols before we start to assemble the code
 
 (define gc-code
   '(begin-garbage-collection
