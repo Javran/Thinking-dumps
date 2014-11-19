@@ -82,6 +82,15 @@
           "can only extract data from pointers")
   (cdr data))
 
+;; machine pointer equality
+;; enforcing proper pointers being passed to it
+(define (machine-pointer=? p1 p2)
+  (assert (machine-pointer? p1)
+          "expecting a pointer")
+  (assert (machine-pointer? p2)
+          "expecting a pointer")
+  (equal? p1 p2))
+
 ;; next "memory location"
 (define (machine-pointer-inc data)
   (machine-pointer
@@ -117,6 +126,7 @@
         ;; to test if the data under machine representation
         ;; is a pair is to test if the data is actually a machine-pointer
         (pair? ,machine-pointer?)
+        (ptr=? ,machine-pointer=?)
         ;; some predicates can be lift costless.
         (null? ,null?)
         (number? ,number?)

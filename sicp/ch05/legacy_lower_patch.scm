@@ -78,6 +78,15 @@
    (add1
     (pointer-get data))))
 
+;; pointer equality
+;; enforcing proper pointers being passed to it
+(define (pointer=? p1 p2)
+  (assert (pointer? p1)
+          "expecting a pointer")
+  (assert (pointer? p2)
+          "expecting a pointer")
+  (equal? p1 p2))
+
 (define default-primitive-list
   (let ((old-primitive-list default-primitive-list))
     (lambda ()
@@ -87,10 +96,10 @@
         (vector-set!
          ,(lambda (vec ptr val)
             (vector-set! vec (pointer-get ptr) val)))
-
         (to-pointer ,pointer)
         (ptr-inc ,pointer-inc)
         (pair? ,pointer?)
+        (ptr=? ,pointer=?)
         (null? ,null?)
         (number? ,number?)
         (symbol? ,symbol?)
