@@ -43,6 +43,14 @@
   (remove-duplicates
    (concat-map extract insns)))
 
+;; patches should modify this function
+;; to implement instruction list transformations
+;; e.g. rewriting some instructions to use a lower level implementation;
+;; inserting some special implementations like garbage collection into
+;; the instruction list, etc.
+(define machine-do-insn-list-preprocess
+  identity)
+
 ;; make a machine from controller text
 ;; and operation list builder
 ;; with all registers uninitialized
@@ -51,7 +59,8 @@
 (define (ctl-ops->machine
          controller-text
          ops-builder)
-  (let* ((insns (cdr controller-text))
+  (let* ((origin-insns (cdr controller-text))
+         (insns (machine-do-insn-list-preprocess origin-insns))
          (m (empty-machine))
          (reg-names (extract-register-names insns)))
     (machine-define-registers! m reg-names)

@@ -146,27 +146,8 @@
   (machine-reset-pc! m)
   (machine-execute! m))
 
-;; we modify "ctl-ops->machine" to apply rewriting rules
-;; automatically.
-;; this decision is make because:
-;; * this is the effectively the very procedure that
-;;   builds the whole machine up
-;; * less likely to be modified by other patches
-;; * has fewer lines of code than
-;;   putting the whole "assemble" procedure here.
-(define (ctl-ops->machine
-         controller-text
-         ops-builder)
-  (let* ((origin-insns (cdr controller-text))
-         (insns (rewrite-instructions*
-                 all-rules
-                 origin-insns))
-         (m (empty-machine))
-         (reg-names (extract-register-names insns)))
-    (machine-define-registers! m reg-names)
-    (machine-set-operations! m (ops-builder m))
-    (assemble insns m)
-    m))
+(define (machine-do-insn-list-preprocess insns)
+  (rewrite-instructions* all-rules insns))
 
 ;; remove "save" and "restore" handlers
 ;; since they are now implemented by other instructions
