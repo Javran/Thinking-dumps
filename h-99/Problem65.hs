@@ -4,6 +4,8 @@ import BinaryTree
 import Control.Arrow
 import qualified Data.Foldable as FD
 
+type Coord = (Int,Int)
+
 tree65 :: Tree Char
 tree65 = Branch 'n'
                 (Branch 'k'
@@ -20,14 +22,8 @@ tree65 = Branch 'n'
                         Empty)
 
 layout :: Tree Char -> Tree (Char,(Int,Int))
-layout t = normalize (layout' t (2 ^ depth t))
+layout t = normalizeTreeCoord (layout' t (2 ^ depth t))
     where
-      -- | make sure the leftmost col coord is always "1"
-      normalize Empty = Empty
-      -- | leftMostCol-(leftMostCol-1) = 1
-      normalize t1 = fmap (second (first (subtract (leftMostCol - 1)))) t1
-          where
-            leftMostCol = FD.minimum (fmap (snd >>> fst) t1)
       layout' Empty _ = Empty
       layout' (Branch v l r) dist =
           Branch (v,(centerCol,1))
@@ -38,6 +34,14 @@ layout t = normalize (layout' t (2 ^ depth t))
             centerCol = dist
             layoutL = layout' l half
             layoutR = layout' r half
+
+-- | make sure the leftmost col coord is always "1"
+normalizeTreeCoord :: Tree (a,Coord) -> Tree (a,Coord)
+normalizeTreeCoord Empty = Empty
+-- | leftMostCol-(leftMostCol-1) = 1
+normalizeTreeCoord t1 = fmap (second (first (subtract (leftMostCol - 1)))) t1
+  where
+    leftMostCol = FD.minimum (fmap (snd >>> fst) t1)
 
 main :: IO ()
 main = print . layout $ tree65
