@@ -88,6 +88,18 @@
     (assign continue (label prog-after-gen-list))
     (goto (label gen-list))
     prog-after-gen-list
+    ;; double it 4 times
+    (assign b (const 4))
+    prog-begin-double
+    (test (op =) (reg b) (const 0))
+    (branch (label prog-double-done))
+    ;; if the counter "b" has not yet reached "0"
+    (assign b (op -) (reg b) (const 1))
+    (assign a (reg result))
+    (assign continue (label prog-begin-double))
+    (goto (label double-list))
+
+    prog-double-done
     (assign a (reg result))
     (assign continue (label prog-end))
     (goto (label sum-of-list))
