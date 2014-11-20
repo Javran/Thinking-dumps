@@ -17,7 +17,7 @@ instance Foldable Tree where
 -- | tree depth is defined as
 --   the length of the longest path from root to any leaves
 depth :: Tree a -> Int
-depth Empty = 0
+depth Empty = -1 -- an empty tree doesn't have nodes, we define it as -1
 depth (Branch _ l r) = succ $ (max `on` depth) l r
 
 singleton, leaf :: a -> Tree a
