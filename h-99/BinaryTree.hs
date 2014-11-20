@@ -2,6 +2,7 @@ module BinaryTree where
 
 import Data.Monoid
 import Data.Foldable
+import Data.Function
 
 data Tree a
     = Empty
@@ -12,6 +13,12 @@ data Tree a
 instance Foldable Tree where
     foldMap _ Empty = mempty
     foldMap f (Branch v l r) = f v <> foldMap f l <> foldMap f r
+
+-- | tree depth is defined as
+--   the length of the longest path from root to any leaves
+depth :: Tree a -> Int
+depth Empty = 0
+depth (Branch _ l r) = succ $ (max `on` depth) l r
 
 singleton, leaf :: a -> Tree a
 singleton v = Branch v Empty Empty
