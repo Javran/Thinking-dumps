@@ -90,14 +90,18 @@
     prog-after-gen-list
     ;; double it 4 times
     (assign b (const 4))
-    prog-begin-double
+    prog-double-loop
     (test (op =) (reg b) (const 0))
     (branch (label prog-double-done))
     ;; if the counter "b" has not yet reached "0"
     (assign b (op -) (reg b) (const 1))
+    (save b) ; stack: [b ..]
     (assign a (reg result))
-    (assign continue (label prog-begin-double))
+    (assign continue (label prog-after-double))
     (goto (label double-list))
+    prog-after-double
+    (restore b) ; stack: <balanced>
+    (goto (label prog-double-loop))
 
     prog-double-done
     (assign a (reg result))
