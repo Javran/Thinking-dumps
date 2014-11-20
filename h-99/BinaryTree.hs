@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 module BinaryTree where
 
 import Data.Monoid
@@ -7,7 +8,7 @@ import Data.Function
 data Tree a
     = Empty
     | Branch a (Tree a) (Tree a)
-      deriving (Show, Eq)
+      deriving (Show, Eq, Functor)
 
 -- | preorder traversal for trees
 instance Foldable Tree where
