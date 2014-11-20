@@ -1,9 +1,17 @@
 module BinaryTree where
 
+import Data.Monoid
+import Data.Foldable
+
 data Tree a
     = Empty
     | Branch a (Tree a) (Tree a)
       deriving (Show, Eq)
+
+-- | preorder traversal for trees
+instance Foldable Tree where
+    foldMap _ Empty = mempty
+    foldMap f (Branch v l r) = f v <> foldMap f l <> foldMap f r
 
 singleton, leaf :: a -> Tree a
 singleton v = Branch v Empty Empty
