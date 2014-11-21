@@ -22,7 +22,7 @@ layout = normalizeTreeCoord . layout'
             -- they don't overlap
             properDist = head
                        . dropWhile (hasOverlap layoutL layoutR)
-                       $ iterate (+2) 2
+                       $ [2,4..]
             half = properDist `div` 2
             layoutL = layout' l
             layoutR = layout' r
