@@ -34,24 +34,24 @@
   (define (save-regs-intern regs)
     (if (null? regs)
         '()
-        `( (perform (op set-car!) (reg result) (reg ,(car regs)))
-           (assign result (op cdr) (reg result))
+        `( (perform (op set-car!) (reg gc-temp) (reg ,(car regs)))
+           (assign gc-temp (op cdr) (reg gc-temp))
            ,@(save-regs-intern (cdr regs))
            )))
-  `(save-registers-to-root
-    (assign result (reg root))
+  `(gc-save-registers-to-root
+    (assign gc-temp (reg root))
     ,@(save-regs-intern regs)))
 
 (define (restore-registers-from-root regs)
   (define (restore-regs-intern regs)
     (if (null? regs)
         '()
-        `( (assign ,(car regs) (op car) (reg result))
-           (assign result (op cdr) (reg result))
+        `( (assign ,(car regs) (op car) (reg gc-temp))
+           (assign gc-temp (op cdr) (reg gc-temp))
            ,@(restore-regs-intern (cdr regs))
            )))
-  `(restore-registers-from-root
-    (assign result (reg root))
+  `(gc-restore-registers-from-root
+    (assign gc-temp (reg root))
     ,@(restore-regs-intern regs)))
 
 ;; attach some extra code after every time free pointer gets increased.
