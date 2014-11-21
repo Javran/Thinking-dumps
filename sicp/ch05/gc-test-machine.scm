@@ -88,7 +88,7 @@
     prog-entry
     ;; generate [1..100]
     (assign a (const 1))
-    (assign b (const 100))
+    (assign b (const 128))
     (assign continue (label prog-after-gen-list))
     (goto (label gen-list))
     prog-after-gen-list
@@ -120,8 +120,11 @@
 (load "./simu.scm")
 (load "./simu_gc_patch.scm")
 
+;; TODO: mutate pairs to test broken-heart flag
+;; TODO: list size was ~100 but took up ~200 mem space??
 (let ((m (build-and-execute
           test-machine
           '())))
   ;; sum . map (* 2^8) $ [1..100] = 1292800
+  ;; TODO: [1..128] looks more interesting
   (out (machine-reg-get m 'result)))
