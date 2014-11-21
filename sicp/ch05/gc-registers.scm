@@ -57,7 +57,7 @@
 ;; attach some extra code after every time free pointer gets increased.
 ;; TODO: better to be an internal function
 ;; use "gc-resume-point" to resume back to the next instruction
-;; a subroutine "maybe-start-gc" check if we are running out of space
+;; a subroutine "gc-maybe-start" check if we are running out of space
 ;; and determine if we need to perform gc right now,
 ;; then that subroutine needs to jump back using the label
 ;; stored in "gc-resume-point"
@@ -67,16 +67,8 @@
         (let ((jump-back-label (gensym)))
           `((assign free (op ptr-inc) (reg free))
             (assign gc-resume-point (label ,jump-back-label))
-            (goto maybe-start-gc)
+            (goto (label gc-maybe-start))
             ,jump-back-label
             ))
         (list insn)))
   (concat-map expand-insn insns))
-
-(for-each
- out
- (add-monitors
- '((assign whatever (const 10))
-   wwwwww
-   (assign free (op ptr-inc) (reg free))
-   (test (op null?) (reg a)))))
