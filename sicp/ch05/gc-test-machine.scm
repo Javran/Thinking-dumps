@@ -6,11 +6,15 @@
 
 ;; some settings:
 ;; * define memory to have only 256 cells.
+;; * TODO: turns out 256 cells are insufficient
+;;         I ended up with 512 cells, gc collected for few turns
+;;         and it worked fine
 ;; * generate a list [1..100]
 ;; * apply "map (* 2)" to it 4 times (this will create many garbages
 ;;   and hopefully trigger the garbage collection)
 ;; * take sum of it and print out the result
 ;; * sum . map (* 2) . map (* 2) . map (* 2) . map (* 2) $ [1..100] = 80800
+;; * TODO: now we are calling "map (* 2)" 8 times to see gc in action!
 
 (define test-machine
   `(controller
@@ -88,8 +92,8 @@
     (assign continue (label prog-after-gen-list))
     (goto (label gen-list))
     prog-after-gen-list
-    ;; double it 4 times
-    (assign b (const 4))
+    ;; double it 8 times
+    (assign b (const 8))
     prog-double-loop
     (test (op =) (reg b) (const 0))
     (branch (label prog-double-done))
@@ -119,6 +123,4 @@
 (let ((m (build-and-execute
           test-machine
           '())))
-  (out (machine-reg-get m 'result)
-       "free:"
-       (machine-reg-get m 'free)))
+  (out (machine-reg-get m 'result)))

@@ -10,6 +10,35 @@
      gc-flag
      ,@(extract-register-names gc-code))))
 
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      `((broken-heart? ,(lambda (sym)
+                          (eq? sym machine-gc-broken-heart)))
+        (debug-gc-start ,(lambda ()
+                           (out "GC triggered")))
+        (debug-gc-end ,(lambda ()
+                         (format
+                          #t
+                          "GC done (~A/~A live cells)~%"
+                          (machine-pointer-get
+                           (machine-reg-get m 'free))
+                          machine-memory-size)))
+        ,@(old-builder m)))))
+
+(define machine-memory-size 512)
+
+(define (machine-fresh-start! m)
+  ;; initialize two pieces of memories
+  (machine-reg-set! m 'free (machine-pointer 0))
+  (machine-reg-set! m 'the-cars (make-vector machine-memory-size))
+  (machine-reg-set! m 'the-cdrs (make-vector machine-memory-size))
+  (machine-reg-set! m 'new-cars (make-vector machine-memory-size))
+  (machine-reg-set! m 'new-cdrs (make-vector machine-memory-size))
+  (machine-reg-set! m 'the-stack '())
+  (machine-reset-pc! m)
+  (machine-execute! m))
+
 ;; TODO: think about how to deal with "continue" register,
 ;; which stores non-regular values?
 
@@ -60,10 +89,13 @@
       (branch (label gc-needed))
       (goto (label gc-all-done))
       gc-needed
+      (perform (op debug-gc-start))
       ;; TODO: for now gc is never triggered
       ;; TODO: just save and restore to see if it works
       ,@save-registers-insns
+      ,@gc-code
       ,@restore-registers-insns
+      (perform (op debug-gc-end))
       gc-all-done
       (assign flag (reg gc-flag))
       (goto (reg gc-resume-point))

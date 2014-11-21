@@ -15,12 +15,14 @@
 ;; when garbage collection is done, I guess this can be done
 ;; by generating unique symbols before we start to assemble the code
 
+(define machine-gc-broken-heart
+  (gensym))
 
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
 ;; all registers are prefixed with a "gc-" to avoid name confliction with
 ;; the program
 (define gc-code
-  '(begin-garbage-collection
+  `(begin-garbage-collection
     ;; free: points to the first free memory address
     (assign free (op to-pointer) (const 0))
     ;; scan: used by gc-loop, points to the first shallow copy
@@ -32,13 +34,12 @@
 
     ;; after the first pair is shallow-copied,
     ;; we update root and get started
-    reassign-root
+    gc-reassign-root
     (assign root (reg gc-new))
     (goto (label gc-loop))
 
     gc-loop
-    ;; TODO: implement ptr-=
-    (test (op =) (reg gc-scan) (reg free))
+    (test (op ptr=?) (reg gc-scan) (reg free))
     ;; scan == free means we have copied everything necessary
     ;; and it's time for swaping memories
     (branch (label gc-flip))
@@ -71,7 +72,8 @@
     ;; this subroutine relocates the data pointed by `old` register
     ;; resulting in the corresponsing deep copy pointed by `new` register
     gc-relocate-old-result-in-new
-    (test (op pointer-to-pair?) (reg gc-old))
+    ;; TODO: "continue" data will not be recognized as pairs, so that's fine
+    (test (op pair?) (reg gc-old))
     (branch (label gc-pair))
     ;; if "old" does not contain a pair,
     ;; there's no ref in data, just copy it to the new one
@@ -87,7 +89,7 @@
     (branch (label gc-already-moved))
     ;; if no broken-heart flag is found,
     ;; we need to relocate the old data.
-    (assign gc-new (reg free)) ; new location for pair
+    (assign gc-new (reg free))          ; new location for pair
     ;; update free pointer
     (assign free (op ptr-inc) (reg free))
     ;; copy the whole pair
@@ -104,7 +106,7 @@
     (perform (op vector-set!)
              (reg the-cars)
              (reg gc-old)
-             (const broken-heart))
+             (const ,machine-gc-broken-heart))
     (perform
      (op vector-set!) (reg the-cdrs) (reg gc-old) (reg gc-new))
     (goto (reg gc-relocate-continue))
@@ -125,3 +127,7 @@
     (assign new-cars (reg gc-temp))
 
     ))
+
+;; Local variables:
+;; proc-entry: "./gc-test-machine.scm"
+;; End:
