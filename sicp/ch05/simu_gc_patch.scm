@@ -26,14 +26,36 @@
           (remove-duplicates
            (set-diff (cons 'flag (extract-register-names expanded-insns))
                      machine-reserved-gc-registers)))
-
+         ;; we assume preallocating space for register traversal
+         ;; will never used up the space
+         ;; and this assumption is almost safe as long as we have
+         ;; enough space for all user registers
+         (root-preallocate-insns
+          (rewrite-instructions*
+           all-rules
+           (root-preallocator (length user-registers))))
+         ;; instructions to save registers to root
+         ;; TODO: should we expand instructions in these
+         ;; instruction generating functions?
+         (save-registers-insns
+          (rewrite-instructions*
+           all-rules
+           (save-registers-to-root user-registers)))
+         ;; instructions to restore registers from root
+         (restore-registers-insns
+          (rewrite-instructions*
+           all-rules
+           (restore-registers-from-root user-registers)))
          )
-    (out user-registers)
     `(;; initialization code here
+      ,@root-preallocate-insns
       (goto (label ,prog-entry-label))
       ;; subroutines here
       gc-maybe-start
       ;; TODO: for now gc is never triggered
+      ;; TODO: just save and restore to see if it works
+      ,@save-registers-insns
+      ,@restore-registers-insns
       (goto (reg gc-resume-point))
       ;; program entry
       ,prog-entry-label
