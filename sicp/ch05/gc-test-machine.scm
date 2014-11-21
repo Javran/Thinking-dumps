@@ -114,7 +114,7 @@
 (load "../common/test-utils.scm")
 
 (load "./simu.scm")
-(load "./simu_lower_patch.scm")
+(load "./simu_gc_patch.scm")
 
 (let ((m (build-and-execute
           test-machine
