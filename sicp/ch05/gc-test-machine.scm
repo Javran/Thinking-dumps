@@ -123,4 +123,5 @@
 (let ((m (build-and-execute
           test-machine
           '())))
+  ;; sum . map (* 2^8) $ [1..100] = 1292800
   (out (machine-reg-get m 'result)))
