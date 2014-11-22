@@ -18,16 +18,15 @@
 (define machine-gc-broken-heart
   (gensym))
 
-;; TODO: to-pointer -> to-ptr
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
 ;; all registers are prefixed with a "gc-" to avoid name confliction with
 ;; the program
 (define gc-code
   `(begin-garbage-collection
     ;; free: points to the first free memory address
-    (assign free (op to-pointer) (const 0))
+    (assign free (op to-ptr) (const 0))
     ;; scan: used by gc-loop, points to the first shallow copy
-    (assign gc-scan (op to-pointer) (const 0))
+    (assign gc-scan (op to-ptr) (const 0))
     ;; prepare to copy the first pair
     (assign gc-old (reg root))
     (assign gc-relocate-continue (label gc-reassign-root))

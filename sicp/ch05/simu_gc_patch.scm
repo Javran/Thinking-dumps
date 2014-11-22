@@ -93,7 +93,7 @@
       ;; free space, and if free = memory size, that means
       ;; we have used up all the free spaces and needs to
       ;; perform garbage collection immediately
-      (assign gc-temp (op to-pointer) (const ,machine-memory-size))
+      (assign gc-temp (op to-ptr) (const ,machine-memory-size))
       (test (op ptr=?) (reg free) (reg gc-temp))
       (branch (label gc-needed))
       (goto (label gc-all-done))
