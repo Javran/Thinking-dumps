@@ -10,12 +10,9 @@
 ;;   list will be generated with each element multipled by 2
 ;;   this will hopefully use up more than 512 cells and trigger
 ;;   garbage collection.
-;; * generate a list [1..100]
-;; * apply "map (* 2)" to it 4 times (this will create many garbages
-;;   and hopefully trigger the garbage collection)
+;; * generate a list [1..128]
+;; * apply "map (* 2)" to it 8 times
 ;; * take sum of it and print out the result
-;; * sum . map (* 2) . map (* 2) . map (* 2) . map (* 2) $ [1..100] = 80800
-;; * TODO: now we are calling "map (* 2)" 8 times to see gc in action!
 
 ;; originally we use list [1..100] as input and 256 as memory size, and "double-list"
 ;; is only performed 4 times. But using 256 cells turns out to be insufficient
@@ -99,7 +96,7 @@
     (goto (reg continue))
 
     prog-entry
-    ;; generate [1..100]
+    ;; generate [1..128]
     (assign a (const 1))
     (assign b (const 128))
     (assign continue (label prog-after-gen-list))
@@ -134,10 +131,8 @@
 (load "./simu_gc_patch.scm")
 
 ;; TODO: mutate pairs to test broken-heart flag
-;; TODO: list size was ~100 but took up ~200 mem space??
 (let ((m (build-and-execute
           test-machine
           '())))
-  ;; sum . map (* 2^8) $ [1..100] = 1292800
-  ;; TODO: [1..128] looks more interesting
+  ;; sum . map (* 2^8) $ [1..128] = 2113536
   (out (machine-reg-get m 'result)))

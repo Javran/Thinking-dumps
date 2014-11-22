@@ -1,7 +1,6 @@
 ;; TODO: initialize "root" register before gc starts
 ;; TODO: update registers according to "root" register
 ;; after the gc is done
-;; TODO: try to do gc when a "cons" is about to use up the space
 ;; TODO: we might need to generate some code everytime after
 ;; we increase "free", as we need to test if it exceeds the limit
 ;; and start doing garbage collection immediately
@@ -72,7 +71,15 @@
     ;; this subroutine relocates the data pointed by `old` register
     ;; resulting in the corresponsing deep copy pointed by `new` register
     gc-relocate-old-result-in-new
-    ;; TODO: "continue" data will not be recognized as pairs, so that's fine
+    ;; note that when we are storing a label to the register
+    ;; the actual code is stored there instead,
+    ;; in practice we might just store a line number instead.
+    ;; because obviously one cell is far from enough to store that much data
+    ;; also note that the actual code is not something we can represent directly
+    ;; using the machine instructions, but here we are just making a special case
+    ;; for pairs and treating all the other values primitives,
+    ;; so it's fine for registers like "continue" to store data onto the memory
+    ;; since our GC is dealing with it properly
     (test (op pair?) (reg gc-old))
     (branch (label gc-pair))
     ;; if "old" does not contain a pair,

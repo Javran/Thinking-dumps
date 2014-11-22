@@ -31,6 +31,8 @@
 (define (machine-fresh-start! m)
   ;; initialize two pieces of memories
   (machine-reg-set! m 'free (machine-pointer 0))
+  ;; we now needs 4 registers to store memories of the same size
+  ;; so that we can flip them alternatively.
   (machine-reg-set! m 'the-cars (make-vector machine-memory-size))
   (machine-reg-set! m 'the-cdrs (make-vector machine-memory-size))
   (machine-reg-set! m 'new-cars (make-vector machine-memory-size))
@@ -38,9 +40,6 @@
   (machine-reg-set! m 'the-stack '())
   (machine-reset-pc! m)
   (machine-execute! m))
-
-;; TODO: think about how to deal with "continue" register,
-;; which stores non-regular values?
 
 ;; TODO: forbid access to gc-related registers in user instruction list
 (define (machine-do-insn-list-preprocess insns)
@@ -51,7 +50,9 @@
          ;; note that "extract-register-names" removes pc and flag registers
          ;; for pc register, we don't need to store it,
          ;; but we need to keep flag register
-         ;; as gc routine might use it. (TODO: now gc-flag keeps it)
+         ;; as gc routine might use it.
+         ;; therefore a new register is introduced (namely "gc-flag"),
+         ;; which keeps the original "flag" register
          (user-registers
           (remove-duplicates
            (set-diff (extract-register-names expanded-insns)
