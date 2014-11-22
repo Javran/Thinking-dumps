@@ -78,23 +78,34 @@
            (restore-registers-from-root user-registers)))
          )
     `(;; initialization code here
+      ;; preallocate spaces for storing registers
+      ;; during the gc phase.
+      ;; we assume the preallocation will never use up
+      ;; memory space, thus no code inserted in this part
+      ;; to check if `free` register is out of range
       ,@root-preallocate-insns
       (goto (label ,prog-entry-label))
-      ;; subroutines here
+      ;; all subroutines
       gc-maybe-start
       (assign gc-flag (reg flag))
-      ;; if free = memory size, we need gc
+      ;; everytime this subroutine is triggered,
+      ;; "free" register is suppose to point to the next
+      ;; free space, and if free = memory size, that means
+      ;; we have used up all the free spaces and needs to
+      ;; perform garbage collection immediately
       (assign gc-temp (op to-pointer) (const ,machine-memory-size))
       (test (op ptr=?) (reg free) (reg gc-temp))
       (branch (label gc-needed))
       (goto (label gc-all-done))
       gc-needed
+      ;; the following instruction does nothing but
+      ;; print out a message indicating GC is happening
       (perform (op debug-gc-start))
-      ;; TODO: for now gc is never triggered
-      ;; TODO: just save and restore to see if it works
       ,@save-registers-insns
       ,@gc-code
       ,@restore-registers-insns
+      ;; the following instruction does nothing but
+      ;; print out the result after GC is done
       (perform (op debug-gc-end))
       gc-all-done
       (assign flag (reg gc-flag))

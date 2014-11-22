@@ -1,8 +1,3 @@
-;; TODO: adapt the code according to our implementation
-;; TODO: design a special flag that distinguishes machine symbols
-;; from scheme symbols so that a machine "broken-heart" symbol will never be
-;; mistakenly understood as a real "broken-heard" flag by garbage collection
-;; algorithm
 ;; TODO: initialize "root" register before gc starts
 ;; TODO: update registers according to "root" register
 ;; after the gc is done
@@ -15,9 +10,15 @@
 ;; when garbage collection is done, I guess this can be done
 ;; by generating unique symbols before we start to assemble the code
 
+;; we use "gensym" to generate the broken-heart symbol
+;; before we execute the machine.
+;; Therefore the broken heart symbol is guaranteed to be unique
+;; We ensure the uniqueness of this symbol so the garbage collecting
+;; algorithm will not think a symbol constant happens to be a broken heart flag
 (define machine-gc-broken-heart
   (gensym))
 
+;; TODO: to-pointer -> to-ptr
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
 ;; all registers are prefixed with a "gc-" to avoid name confliction with
 ;; the program
