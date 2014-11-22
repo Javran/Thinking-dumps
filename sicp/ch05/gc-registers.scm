@@ -10,12 +10,6 @@
 (load "./rewrite-instructions.scm")
 (load "./list-stack-rewrites.scm")
 
-;; duplicate value v to form a list of n elements
-(define (replicate n v)
-  (if (<= n 0)
-      '()
-      (cons v (replicate (sub1 n) v))))
-
 ;; generate an instruction list that allocates
 ;; a list for storing all registers that are not
 ;; related to the garbage collecting algorithm.

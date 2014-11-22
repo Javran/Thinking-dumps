@@ -233,4 +233,10 @@
              (car xs)
              (remove-duplicates (cdr xs))))))
 
+;; duplicate value v to form a list of n elements
+(define (replicate n v)
+  (if (<= n 0)
+      '()
+      (cons v (replicate (sub1 n) v))))
+
 'done
