@@ -1,13 +1,3 @@
-;; TODO: initialize "root" register before gc starts
-;; TODO: update registers according to "root" register
-;; after the gc is done
-;; TODO: we might need to generate some code everytime after
-;; we increase "free", as we need to test if it exceeds the limit
-;; and start doing garbage collection immediately
-;; and also before jumping to the garbage collection subroutine,
-;; we need to record the current location so that we can jump back
-;; when garbage collection is done, I guess this can be done
-;; by generating unique symbols before we start to assemble the code
 
 ;; we use "gensym" to generate the broken-heart symbol
 ;; before we execute the machine.

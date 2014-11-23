@@ -41,10 +41,10 @@
   (machine-reset-pc! m)
   (machine-execute! m))
 
-;; TODO: forbid access to gc-related registers in user instruction list
+;; user should avoid using any register whose name is prefixed with "gc-"
 (define (machine-do-insn-list-preprocess insns)
   (let* ((expanded-insns
-          (add-monitors
+          (gen-insn-add-monitors
            (rewrite-instructions* all-rules insns)))
          (prog-entry-label (gensym))
          ;; note that "extract-register-names" removes pc and flag registers
@@ -64,19 +64,17 @@
          (root-preallocate-insns
           (rewrite-instructions*
            all-rules
-           (root-preallocator (length user-registers))))
+           (gen-insn-root-preallocator (length user-registers))))
          ;; instructions to save registers to root
-         ;; TODO: should we expand instructions in these
-         ;; instruction generating functions?
          (save-registers-insns
           (rewrite-instructions*
            all-rules
-           (save-registers-to-root user-registers)))
+           (gen-insn-save-registers-to-root user-registers)))
          ;; instructions to restore registers from root
          (restore-registers-insns
           (rewrite-instructions*
            all-rules
-           (restore-registers-from-root user-registers)))
+           (gen-insn-restore-registers-from-root user-registers)))
          )
     `(;; initialization code here
       ;; preallocate spaces for storing registers
