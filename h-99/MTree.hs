@@ -17,3 +17,6 @@ tree5 = Node 'a' [Node 'f' [Node 'g' []]
                  ,Node 'c' []
                  , Node 'b' [Node 'd' [], Node 'e' []]
                  ]
+
+printTree :: Show a => Tree a -> IO ()
+printTree = putStrLn . drawTree . fmap show

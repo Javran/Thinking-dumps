@@ -16,9 +16,6 @@ stringToTree s = case parse parseTree "" s of
     parseTree = Node <$> satisfy (/='^')
                      <*> (many parseTree <* char '^')
 
-printTree :: Show a => Tree a -> IO ()
-printTree = putStrLn . drawTree . fmap show
-
 main :: IO ()
 main = do
     let example = "afg^^c^bd^e^^^"
