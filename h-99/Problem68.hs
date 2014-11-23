@@ -1,7 +1,7 @@
 module Problem68 where
 
 import BinaryTree
-import Problem67A (stringToTree)
+import Problem67A (stringToTree,tree67)
 import qualified Data.Foldable as FD
 import Data.Function
 import Data.List
@@ -25,7 +25,7 @@ preInTree seqP seqI
 
 main :: IO ()
 main = do
-    let t = stringToTree "a(b(d,e),c(,f(g,)))"
+    let t = tree67
         po = treeToPreorder t
         io = treeToInorder t
     -- (a) preorder and inorder
