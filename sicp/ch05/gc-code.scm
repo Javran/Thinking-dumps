@@ -1,10 +1,13 @@
+;; stop-and-copy garbage collector
+;; some instructions are adapted to work with our machine
+;; implementation
 
 ;; we use "gensym" to generate the broken-heart symbol
 ;; before we execute the machine.
 ;; Therefore the broken heart symbol is guaranteed to be unique
 ;; We ensure the uniqueness of this symbol so the garbage collecting
 ;; algorithm will not think a symbol constant happens to be a broken heart flag
-(define machine-gc-broken-heart
+(define gc-broken-heart
   (gensym))
 
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
@@ -103,7 +106,7 @@
     (perform (op vector-set!)
              (reg the-cars)
              (reg gc-old)
-             (const ,machine-gc-broken-heart))
+             (const ,gc-broken-heart))
     (perform
      (op vector-set!) (reg the-cdrs) (reg gc-old) (reg gc-new))
     (goto (reg gc-relocate-continue))
@@ -122,9 +125,4 @@
     (assign gc-temp (reg the-cars))
     (assign the-cars (reg new-cars))
     (assign new-cars (reg gc-temp))
-
     ))
-
-;; Local variables:
-;; proc-entry: "./gc-test-machine.scm"
-;; End:
