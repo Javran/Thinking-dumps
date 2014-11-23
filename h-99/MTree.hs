@@ -1,4 +1,7 @@
-module MTree where
+module MTree
+  ( module MTree
+  , module Data.Tree
+  ) where
 
 -- MTree for MultiWayTree
 
