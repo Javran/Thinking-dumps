@@ -26,6 +26,7 @@
 ;; memory size should be greater or equal to 308, 3 times the original list size,
 ;; which agrees with our guess (original list+ new list + stack))
 
+;; TODO: mutate pairs to test broken-heart flag
 (define test-machine
   `(controller
     (goto (label prog-entry))
@@ -123,16 +124,3 @@
     (goto (label sum-of-list))
     prog-end
     ))
-
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
-(load "./simu.scm")
-(load "./simu_gc_patch.scm")
-
-;; TODO: mutate pairs to test broken-heart flag
-(let ((m (build-and-execute
-          test-machine
-          '())))
-  ;; sum . map (* 2^8) $ [1..128] = 2113536
-  (out (machine-reg-get m 'result)))
