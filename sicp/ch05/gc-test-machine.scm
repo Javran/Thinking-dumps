@@ -1,21 +1,32 @@
-;; TODO: to test the functionality
+;; to test the functionality
 ;; of garbage collection, we use a program
 ;; that would take up enough space to trigger
 ;; the garbage collection routine and see
 ;; if the result is still correct or not.
 
 ;; some settings:
-;; * define memory to have only 256 cells.
-;; * TODO: turns out 256 cells are insufficient
-;;         I ended up with 512 cells, gc collected for few turns
-;;         and it worked fine
-;; * generate a list [1..100]
-;; * apply "map (* 2)" to it 4 times (this will create many garbages
-;;   and hopefully trigger the garbage collection)
+;; * each memory has only 512 cells, but in the program
+;;   we traverse the list multiple times, each time a new
+;;   list will be generated with each element multipled by 2
+;;   this will hopefully use up more than 512 cells and trigger
+;;   garbage collection.
+;; * generate a list [1..128]
+;; * apply "map (* 2)" to it 8 times
 ;; * take sum of it and print out the result
-;; * sum . map (* 2) . map (* 2) . map (* 2) . map (* 2) $ [1..100] = 80800
-;; * TODO: now we are calling "map (* 2)" 8 times to see gc in action!
 
+;; originally we use list [1..100] as input and 256 as memory size, and "double-list"
+;; is only performed 4 times. But using 256 cells turns out to be insufficient
+;; and garbage collection founds out that all the cells were alive. Therefore
+;; we double the memory size and everything works fine.
+;; I guess the number peak for living cells comes when
+;; we are duplicating the list - both the original one and the new one
+;; needs to be kept, plus that we are storing stack onto the memory as well.
+;; and this might explain why 256 cells is still insufficient when dealing with
+;; a list of size 100 (actually by trial and error, we found out that
+;; memory size should be greater or equal to 308, 3 times the original list size,
+;; which agrees with our guess (original list+ new list + stack))
+
+;; TODO: mutate pairs to test broken-heart flag
 (define test-machine
   `(controller
     (goto (label prog-entry))
@@ -86,7 +97,7 @@
     (goto (reg continue))
 
     prog-entry
-    ;; generate [1..100]
+    ;; generate [1..128]
     (assign a (const 1))
     (assign b (const 128))
     (assign continue (label prog-after-gen-list))
@@ -113,18 +124,3 @@
     (goto (label sum-of-list))
     prog-end
     ))
-
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
-(load "./simu.scm")
-(load "./simu_gc_patch.scm")
-
-;; TODO: mutate pairs to test broken-heart flag
-;; TODO: list size was ~100 but took up ~200 mem space??
-(let ((m (build-and-execute
-          test-machine
-          '())))
-  ;; sum . map (* 2^8) $ [1..100] = 1292800
-  ;; TODO: [1..128] looks more interesting
-  (out (machine-reg-get m 'result)))

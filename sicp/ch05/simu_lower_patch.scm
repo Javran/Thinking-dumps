@@ -120,7 +120,7 @@
          ,(lambda (vec ptr val)
             (vector-set! vec (machine-pointer-get ptr) val)))
         ;; convert an integer into a pointer
-        (to-pointer ,machine-pointer)
+        (to-ptr ,machine-pointer)
         ;; increase a pointer
         (ptr-inc ,machine-pointer-inc)
         ;; to test if the data under machine representation

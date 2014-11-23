@@ -96,7 +96,7 @@
         (vector-set!
          ,(lambda (vec ptr val)
             (vector-set! vec (pointer-get ptr) val)))
-        (to-pointer ,pointer)
+        (to-ptr ,pointer)
         (ptr-inc ,pointer-inc)
         (pair? ,pointer?)
         (ptr=? ,pointer=?)

@@ -1,21 +1,13 @@
-;; TODO: adapt the code according to our implementation
-;; TODO: design a special flag that distinguishes machine symbols
-;; from scheme symbols so that a machine "broken-heart" symbol will never be
-;; mistakenly understood as a real "broken-heard" flag by garbage collection
-;; algorithm
-;; TODO: initialize "root" register before gc starts
-;; TODO: update registers according to "root" register
-;; after the gc is done
-;; TODO: try to do gc when a "cons" is about to use up the space
-;; TODO: we might need to generate some code everytime after
-;; we increase "free", as we need to test if it exceeds the limit
-;; and start doing garbage collection immediately
-;; and also before jumping to the garbage collection subroutine,
-;; we need to record the current location so that we can jump back
-;; when garbage collection is done, I guess this can be done
-;; by generating unique symbols before we start to assemble the code
+;; stop-and-copy garbage collector
+;; some instructions are adapted to work with our machine
+;; implementation
 
-(define machine-gc-broken-heart
+;; we use "gensym" to generate the broken-heart symbol
+;; before we execute the machine.
+;; Therefore the broken heart symbol is guaranteed to be unique
+;; We ensure the uniqueness of this symbol so the garbage collecting
+;; algorithm will not think a symbol constant happens to be a broken heart flag
+(define gc-broken-heart
   (gensym))
 
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
@@ -24,9 +16,9 @@
 (define gc-code
   `(begin-garbage-collection
     ;; free: points to the first free memory address
-    (assign free (op to-pointer) (const 0))
+    (assign free (op to-ptr) (const 0))
     ;; scan: used by gc-loop, points to the first shallow copy
-    (assign gc-scan (op to-pointer) (const 0))
+    (assign gc-scan (op to-ptr) (const 0))
     ;; prepare to copy the first pair
     (assign gc-old (reg root))
     (assign gc-relocate-continue (label gc-reassign-root))
@@ -72,7 +64,15 @@
     ;; this subroutine relocates the data pointed by `old` register
     ;; resulting in the corresponsing deep copy pointed by `new` register
     gc-relocate-old-result-in-new
-    ;; TODO: "continue" data will not be recognized as pairs, so that's fine
+    ;; note that when we are storing a label to the register
+    ;; the actual code is stored there instead,
+    ;; in practice we might just store a line number instead.
+    ;; because obviously one cell is far from enough to store that much data
+    ;; also note that the actual code is not something we can represent directly
+    ;; using the machine instructions, but here we are just making a special case
+    ;; for pairs and treating all the other values primitives,
+    ;; so it's fine for registers like "continue" to store data onto the memory
+    ;; since our GC is dealing with it properly
     (test (op pair?) (reg gc-old))
     (branch (label gc-pair))
     ;; if "old" does not contain a pair,
@@ -106,7 +106,7 @@
     (perform (op vector-set!)
              (reg the-cars)
              (reg gc-old)
-             (const ,machine-gc-broken-heart))
+             (const ,gc-broken-heart))
     (perform
      (op vector-set!) (reg the-cdrs) (reg gc-old) (reg gc-new))
     (goto (reg gc-relocate-continue))
@@ -125,9 +125,4 @@
     (assign gc-temp (reg the-cars))
     (assign the-cars (reg new-cars))
     (assign new-cars (reg gc-temp))
-
     ))
-
-;; Local variables:
-;; proc-entry: "./gc-test-machine.scm"
-;; End:
