@@ -6,6 +6,24 @@
   ;; generate instruction lists to take care of
   ;; all registers that are not related to the garbage collector
 
+  ;; registers that shouldn't be stored by "root" register
+  ;; thanks to the original ill design of the machine
+  ;; "extract-register-names" might or might not include "flag" and "pc"
+  ;; therefore we need to include them manually
+  ;; two registers are special: pc and flag
+  ;; for pc register, we don't need to store it,
+  ;; but we need to keep flag register
+  ;; as gc routine might use it.
+  ;; therefore a new register is introduced (namely "gc-flag"),
+  ;; which keeps the original "flag" register
+  (define reserved-gc-registers
+    (remove-duplicates
+     `(pc
+       flag
+       gc-resume-point
+       gc-flag
+       ,@(extract-register-names gc-code))))
+
   ;; generate an instruction list that pre-allocates
   ;; a list for storing all registers that are not
   ;; related to the garbage collecting algorithm.
@@ -85,16 +103,10 @@
           (gen-insn-check-free-space
            (rewrite-instructions* all-rules insns)))
          (prog-entry-label (gensym))
-         ;; note that "extract-register-names" removes pc and flag registers
-         ;; for pc register, we don't need to store it,
-         ;; but we need to keep flag register
-         ;; as gc routine might use it.
-         ;; therefore a new register is introduced (namely "gc-flag"),
-         ;; which keeps the original "flag" register
          (user-registers
           (remove-duplicates
            (set-diff (extract-register-names expanded-insns)
-                     machine-reserved-gc-registers)))
+                     reserved-gc-registers)))
          ;; we assume preallocating space for register traversal
          ;; will never used up the space
          ;; and this assumption is almost safe as long as we have

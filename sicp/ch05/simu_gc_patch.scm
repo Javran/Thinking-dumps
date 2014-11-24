@@ -2,13 +2,6 @@
 (load "./gc-code.scm")
 (load "./gc-transform.scm")
 
-;; registers that shouldn't be stored by "root" register
-(define machine-reserved-gc-registers
-  (remove-duplicates
-   `(gc-resume-point
-     gc-flag
-     ,@(extract-register-names gc-code))))
-
 (define default-ops-builder
   (let ((old-builder default-ops-builder))
     (lambda (m)
