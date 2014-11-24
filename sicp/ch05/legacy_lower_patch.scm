@@ -113,6 +113,7 @@
         (stack (make-stack))
         (the-instruction-sequence '()))
     (let ((the-ops
+           ;; TODO: this primitive is of no use at all
            (list (list 'initialize-stack
                        (lambda () (stack 'initialize)))))
           (register-table
