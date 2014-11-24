@@ -126,6 +126,7 @@
            all-rules
            (gen-insn-restore-registers-from-root user-registers)))
          )
+    (out "regs" user-registers)
     `(
       ;; initialization code here
       ;; preallocate spaces for storing registers

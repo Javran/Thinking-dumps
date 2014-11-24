@@ -10,6 +10,6 @@
           test-machine
           '())))
   ;; sum . map (* 2^8) $ [1..128] = 2113536
-  (out (get-register m 'result)))
+  (out (get-register-contents m 'result)))
 
 (end-script)

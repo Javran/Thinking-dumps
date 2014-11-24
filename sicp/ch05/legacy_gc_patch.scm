@@ -11,12 +11,14 @@
                            (out "GC triggered")))
         ,@(old-primitive-list)))))
 
+;; "the-stack" should be stored somewhere
+;; in the memory, therefore we no longer want to
+;; keep it reserved
 (define reserved-registers
   '(pc
     flag
     the-cars the-cdrs
-    new-cars new-cdrs
-    the-stack))
+    new-cars new-cdrs))
 
 (define (make-new-machine)
   (let ((pc (make-register 'pc))
@@ -52,7 +54,8 @@
                            #t
                            "GC done (~A/~A live cells)~%"
                            (pointer-get
-                            (lookup-register 'free))
+                            (get-contents
+                             (lookup-register 'free)))
                            memory-size)))
                   the-ops))
       (define (execute)
@@ -61,7 +64,6 @@
               'done
               (begin
                 ((instruction-execution-proc (car insts)))
-                ;; (out (instruction-text (car insts)))
                 (execute)))))
       (define (dispatch message)
         (cond ((eq? message 'start)
