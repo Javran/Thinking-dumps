@@ -64,12 +64,18 @@
     (concat-map extract instructions)
     '(pc flag))))
 
+;; patches that want to transform the instruction
+;; list before assembling can rewrite this procedure
+(define tranform-instructions
+  identity)
+
 ;; use `initialize-registers!` to [re-] initialize register values
 ;; and then `start` to [re-] start machine execution
 (define (ctl-ops->machine
          controller-text
          primitive-list)
-  (let* ((insns (cdr controller-text))
+  (let* ((origin-insns (cdr controller-text))
+         (insns (tranform-instructions origin-insns))
          (reg-names (extract-register-names insns))
          (m (make-machine
              reg-names

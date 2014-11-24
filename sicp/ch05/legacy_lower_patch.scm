@@ -174,19 +174,8 @@
                       message))))
       dispatch)))
 
-(define (ctl-ops->machine
-         controller-text
-         primitive-list)
-  (let* ((origin-insns (cdr controller-text))
-         (insns (rewrite-instructions*
-                 all-rules
-                 origin-insns))
-         (reg-names (extract-register-names insns))
-         (m (make-machine
-             reg-names
-             primitive-list
-             insns)))
-    m))
+(define (tranform-instructions insns)
+  (rewrite-instructions* all-rules insns))
 
 ;; remove "save" and "restore" because they are no longer needed
 (define make-save #f)
