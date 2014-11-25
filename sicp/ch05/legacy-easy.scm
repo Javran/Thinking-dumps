@@ -47,11 +47,7 @@
      (not ,not)
      ))
 
-;; TODO: fix this
-;; NOTE: note that "extract-register-names" from
-;; "simu.scm" and "legacy-easy.scm" are actually two different functions:
-;; one found in "legacy-easy.scm" will try to remove "pc" and "flag" from
-;; the resulting list while one found in "simu.scm" does not.
+;; copied from simu.scm
 (define (extract-register-names instructions)
   (define (extract insn)
     (if (symbol? insn)

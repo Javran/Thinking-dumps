@@ -19,11 +19,6 @@
 ;; since now the register list fully depends on the controller text
 ;; if some registers are not present, we might have troube initializing
 ;; their values.
-;; TODO: fix this
-;; NOTE: note that "extract-register-names" from
-;; "simu.scm" and "legacy-easy.scm" are actually two different functions:
-;; one found in "legacy-easy.scm" will try to remove "pc" and "flag" from
-;; the resulting list while one found in "simu.scm" does not.
 (define (extract-register-names insns)
   (define (extract insn)
     (if (symbol? insn)

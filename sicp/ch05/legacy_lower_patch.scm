@@ -25,36 +25,28 @@
   ;; it isn't a very good idea to make them special in the original design
   ;; because that design makes it complicated
   ;; when you want to reserve more registers
-  '(pc flag the-cars the-cdrs the-stack))
+  '(the-cars the-cdrs the-stack))
 
-(define (extract-register-names instructions)
-  (define (extract insn)
-    (if (symbol? insn)
-        '()
-        (let ((names1
-               (cond
-                ((or (tagged-list? insn 'assign)
-                     (tagged-list? insn 'save)
-                     (tagged-list? insn 'restore))
-                 (list (cadr insn)))
-                (else '())))
-              (names2
-               (map cadr
-                    (filter (lambda (e)
-                              (and (list? e)
-                                   (eq? 'reg (car e))))
-                            insn))))
-          (append names1 names2))))
-  (remove-duplicates
-   (set-diff
-    ;; make sure reserved registers exist
-    (append
-     (concat-map extract instructions)
-     reserved-registers)
-    ;; and delete "pc" and "flag"
-    ;; because they are way more special
-    ;; thanks to the original design
-    '(pc flag))))
+(define (make-machine register-names
+                      ops
+                      controller-text)
+  (let ((machine (make-new-machine)))
+    (for-each
+     (lambda (register-name)
+       ((machine 'allocate-register) register-name))
+     ;; remvoe "pc" and "flag" when
+     ;; we are creeating the machine,
+     ;; because these two registers have been created beforehand
+     (remove-duplicates
+      (append
+       ;; registers required by this lower expansion
+       (set-diff (append register-names reserved-registers)
+                 '(pc flag))
+       reserved-registers)))
+    ((machine 'install-operations) ops)
+    ((machine 'install-instruction-sequence)
+     (assemble controller-text machine))
+    machine))
 
 (define memory-size 65536)
 
