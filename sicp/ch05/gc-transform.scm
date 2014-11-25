@@ -7,9 +7,6 @@
   ;; all registers that are not related to the garbage collector
 
   ;; registers that shouldn't be stored by "root" register
-  ;; thanks to the original ill design of the machine
-  ;; "extract-register-names" might or might not include "flag" and "pc"
-  ;; therefore we need to include them manually
   ;; two registers are special: pc and flag
   ;; for pc register, we don't need to store it,
   ;; but we need to keep flag register

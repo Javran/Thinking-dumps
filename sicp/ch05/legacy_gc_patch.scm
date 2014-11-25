@@ -15,8 +15,7 @@
 ;; in the memory, therefore we no longer want to
 ;; keep it reserved
 (define reserved-registers
-  '(pc
-    flag
+  '(pc flag
     the-cars the-cdrs
     new-cars new-cdrs))
 

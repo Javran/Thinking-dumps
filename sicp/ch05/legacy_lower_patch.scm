@@ -20,12 +20,9 @@
         (error "cannot use" data
                "as a constant"))))
 
+;; registers that should always be presented
 (define reserved-registers
-  ;; "pc" and "flag" registers are not that special
-  ;; it isn't a very good idea to make them special in the original design
-  ;; because that design makes it complicated
-  ;; when you want to reserve more registers
-  '(the-cars the-cdrs the-stack))
+  '(pc flag the-cars the-cdrs the-stack))
 
 (define (make-machine register-names
                       ops
@@ -41,8 +38,7 @@
       (append
        ;; registers required by this lower expansion
        (set-diff (append register-names reserved-registers)
-                 '(pc flag))
-       reserved-registers)))
+                 '(pc flag)))))
     ((machine 'install-operations) ops)
     ((machine 'install-instruction-sequence)
      (assemble controller-text machine))
