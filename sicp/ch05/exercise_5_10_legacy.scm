@@ -76,9 +76,7 @@
       (list (cadr insn)))
      (else '())))
   (remove-duplicates
-   (set-diff
-    (apply append (map extract instructions))
-    '(pc flag))))
+   (concat-map extract instructions)))
 
 (load "./exercise_5_10_example_controller.scm")
 
