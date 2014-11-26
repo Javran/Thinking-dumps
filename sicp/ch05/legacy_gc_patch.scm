@@ -1,5 +1,4 @@
 (load "./legacy_lower_patch.scm")
-(load "./gc-code.scm")
 (load "./gc-transform.scm")
 
 (define default-primitive-list

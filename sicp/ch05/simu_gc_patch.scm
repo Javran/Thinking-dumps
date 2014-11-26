@@ -1,12 +1,19 @@
 (load "./simu_lower_patch.scm")
-(load "./gc-code.scm")
 (load "./gc-transform.scm")
+
+;; we use "gensym" to generate the broken-heart symbol
+;; before we execute the machine.
+;; Therefore the broken heart symbol is guaranteed to be unique
+;; We ensure the uniqueness of this symbol so the garbage collecting
+;; algorithm will not think a symbol constant happens to be a broken heart flag
+(define machine-gc-broken-heart
+  (gensym))
 
 (define default-ops-builder
   (let ((old-builder default-ops-builder))
     (lambda (m)
       `((broken-heart? ,(lambda (sym)
-                          (eq? sym gc-broken-heart)))
+                          (eq? sym machine-gc-broken-heart)))
         (debug-gc-start ,(lambda ()
                            (out "GC triggered")))
         (debug-gc-end ,(lambda ()
@@ -36,4 +43,6 @@
 
 ;; user should avoid using any register whose name is prefixed with "gc-"
 (define machine-do-insn-list-preprocess
-  gc-transform-program)
+  (gc-transform-program-with
+   machine-gc-broken-heart
+   machine-memory-size))
