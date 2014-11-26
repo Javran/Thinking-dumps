@@ -35,7 +35,6 @@
        ))
      ))
 
-;; TODO: "initialize-stack" should be removed from primitive list
 (define stack-manip-rules
   `( (;; rewrite "save"
       (save $reg)

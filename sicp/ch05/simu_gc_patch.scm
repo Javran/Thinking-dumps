@@ -16,7 +16,8 @@
                           (machine-pointer-get
                            (machine-reg-get m 'free))
                           machine-memory-size)))
-        ,@(old-builder m)))))
+        ,@(del-assoc 'initialize-stack
+                     (old-builder m))))))
 
 (define machine-memory-size 512)
 

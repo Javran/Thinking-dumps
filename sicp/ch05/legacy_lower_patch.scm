@@ -101,9 +101,10 @@
         (stack (make-stack))
         (the-instruction-sequence '()))
     (let ((the-ops
-           ;; TODO: this primitive is of no use at all
-           (list (list 'initialize-stack
-                       (lambda () (stack 'initialize)))))
+           ;; the primitive "initialize-stack"
+           ;; has been replaced with a lower level rewrite,
+           ;; no need to keep it.
+           '())
           (register-table
            (list (list 'pc pc)
                  (list 'flag flag))))
