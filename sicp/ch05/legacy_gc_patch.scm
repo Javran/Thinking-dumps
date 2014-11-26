@@ -1,6 +1,10 @@
 (load "./legacy_lower_patch.scm")
 (load "./gc-transform.scm")
 
+;; see "machine-gc-broken-heart" in simu.scm
+(define gc-broken-heart
+  (gensym))
+
 (define default-primitive-list
   (let ((old-primitive-list default-primitive-list))
     (lambda ()
@@ -105,12 +109,11 @@
       dispatch)))
 
 (define memory-size 512)
-;; TODO: quick and dirty
-(define machine-memory-size
-  memory-size)
 
 (define tranform-instructions
-  gc-transform-program)
+  (gc-transform-program-with
+   gc-broken-heart
+   memory-size))
 
 ;; Local variables:
 ;; proc-entry: "./legacy_gc_patch_tests.scm"
