@@ -191,6 +191,30 @@ is important but not mentioned in the book:
     However, some important registers like `root`, `the-cars`, `the-cdrs`, `new-cars`, `new-cdrs`
     and `free` are still being kept as it is.
 
+    Also keep in mind that `pc` and `flag` registers are somehow special:
+    we nornally do not use `pc` register (actually we should never use it
+    directly unless there are very good reasons). And it always indicates
+    the next instruction to be executed and thus controls the execution of the whole program,
+    and garbage collecting is also one part of the program.
+    Although no experiment has been performed to test this yet,
+    I still think that saving and recovering this register would
+    lead to weird behaviors, and therefore we choose not to do so.
+
+    As for `flag` register, it usually gets modified after a `test` instruction
+    gets executed. Since the garbage collecting algorithm also needs to make
+    decisions, it is likely to mutate `flag` as well. Therefore we deal with
+    `flag` registers with care: we jump to the decision-making subroutine
+    right after `free` pointer is increased, and store `flag` to `gc-flag`
+    immediately. And for the rest of the decision-making and garbage collecting
+    process, this register is kept intact. (We can't use the stack because
+    at the time of decision-making process, we might have run out of memory
+    to do so. And just before jumping back to resume the computation,
+    `gc-flag` gets copied to `flag` to ensure `flag` survives.
+    Note that `flag` might be a pointer that points to old memory locations,
+    and this pointer would be invalidate by the garbage collection algorithm.
+    But under the safe assumption that the value of `flag` should never be used
+    in a pointer-like manner, we choose not to update it.
+
 * How to make the decision of performing garbage collection
 
     Observe that the only thing that increases the `free` is the instruction:
