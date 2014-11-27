@@ -175,3 +175,33 @@ pre-allocated memory addresses. This pointer becomes `root` in the gc algorithm.
 Right before the garbage collecting starts, we need to dump values from all the registers to
 this list. And after garbage collection is done, we need to recover register values
 accordingly since old pointers are no longer valid.
+
+Now I have implemented the garbage collector, here are few things that I think
+is important but not mentioned in the book:
+
+* How to save and recover normal registers
+
+    There are two kinds of registers: one is related to the garbage collecting algorithm
+    and the other kind of registers don't have the concept of garbage collection in mind.
+    All gc-related registers are not required to be stored somewhere else, as they serve
+    the mere purpose of doing the garbage collecting job and should never be used for other
+    purposes. And also when we are writing the machine code, we won't touch these registers
+    at all. In my garbage collecting algorithm, I try to avoid the confusion between garbage
+    collecting related register and normal registers by prefixing the former ones with "gc-".
+    However, some important registers like `root`, `the-cars`, `the-cdrs`, `new-cars`, `new-cdrs`
+    and `free` are still being kept as it is.
+
+* How to make the decision of performing garbage collection
+
+    Observe that the only thing that increases the `free` is the instruction:
+
+        (assign free (op ptr-inc) (reg free)))
+
+    So we can insert some instructions after every occurrence of this instruction.
+    And this should result in checking the current value of `free` against memory size,
+    and perform garbage collection or do nothing, and eventually resume the computation
+    after making the decision and doing the right operation.
+
+* How to jump to the decision-making subroutine and jump back
+
+* Generate instructions for `root` reallocation and register saving and restoring
