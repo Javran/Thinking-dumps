@@ -265,3 +265,9 @@ is important but not mentioned in the book:
     garbage collecting algorithm.
 
 * Out of memory when doing garbage collection
+
+    When you are encountering some "out of memory" error (i.e. the underlying vector
+    receives an out-of-range index), it's possible that all the current cells are alive
+    and garbage collecting algorithm cannot make any progress.
+    In this case, we can increase the memory size a little bit since this is just a virtual
+    machine.
