@@ -93,6 +93,12 @@
         (symbol? ,symbol?)
         (char? ,char?)
         (string? ,string?)
+        (debug-print ,(lambda args
+                        (for-each
+                         (lambda (x)
+                           (display x) (display " "))
+                         args)
+                        (newline)))
         ,@(old-primitive-list)))))
 
 (define (make-new-machine)
