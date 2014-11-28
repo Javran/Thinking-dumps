@@ -175,3 +175,99 @@ pre-allocated memory addresses. This pointer becomes `root` in the gc algorithm.
 Right before the garbage collecting starts, we need to dump values from all the registers to
 this list. And after garbage collection is done, we need to recover register values
 accordingly since old pointers are no longer valid.
+
+Now I have implemented the garbage collector, here are few things that I think
+is important but not mentioned in the book:
+
+* How to save and recover normal registers
+
+    There are two kinds of registers: one is related to the garbage collecting algorithm
+    and the other kind of registers don't have the concept of garbage collection in mind.
+    All gc-related registers are not required to be stored somewhere else, as they serve
+    the mere purpose of doing the garbage collecting job and should never be used for other
+    purposes. And also when we are writing the machine code, we won't touch these registers
+    at all. In my garbage collecting algorithm, I try to avoid the confusion between garbage
+    collecting related register and normal registers by prefixing the former ones with "gc-".
+    However, some important registers like `root`, `the-cars`, `the-cdrs`, `new-cars`, `new-cdrs`
+    and `free` are still being kept as it is.
+
+    Also keep in mind that `pc` and `flag` registers are somehow special:
+    we nornally do not use `pc` register (actually we should never use it
+    directly unless there are very good reasons). And it always indicates
+    the next instruction to be executed and thus controls the execution of the whole program,
+    and garbage collecting is also one part of the program.
+    Although no experiment has been performed to test this yet,
+    I still think that saving and recovering this register would
+    lead to weird behaviors, and therefore we choose not to do so.
+
+    As for `flag` register, it usually gets modified after a `test` instruction
+    gets executed. Since the garbage collecting algorithm also needs to make
+    decisions, it is likely to mutate `flag` as well. Therefore we deal with
+    `flag` registers with care: we jump to the decision-making subroutine
+    right after `free` pointer is increased, and store `flag` to `gc-flag`
+    immediately. And for the rest of the decision-making and garbage collecting
+    process, this register is kept intact. (We can't use the stack because
+    at the time of decision-making process, we might have run out of memory
+    to do so. And just before jumping back to resume the computation,
+    `gc-flag` gets copied to `flag` to ensure `flag` survives.
+    Note that `flag` might be a pointer that points to old memory locations,
+    and this pointer would be invalidate by the garbage collection algorithm.
+    But under the safe assumption that the value of `flag` should never be used
+    in a pointer-like manner, we choose not to update it.
+
+* How to make the decision of performing garbage collection
+
+    Observe that the only thing that increases the `free` is the instruction:
+
+        (assign free (op ptr-inc) (reg free)))
+
+    So we can insert some instructions after every occurrence of this instruction.
+    And this should result in checking the current value of `free` against memory size,
+    and perform garbage collection or do nothing, and eventually resume the computation
+    after making the decision and doing the right operation.
+
+* How to jump to the decision-making subroutine and jump back
+
+    Before we jump to the decision-making subroutine, we keep the resuming point
+    by assigning every resuming point with an unique label and keep the label somewhere.
+    When we are ready to jump back, we jump to the label that we have kept before.
+    To generate unique symbols, we can use `gensym`:
+
+        (define gensym generate-uninterned-symbol)
+
+    Calling `(gensym)` will generate an unique symbol so there will never be
+    name conflict caused by these temporary labels.
+
+* Generate instructions for `root` reallocation and register saving and restoring
+
+    I think the simplest `root` construction is just a list.
+    Keep in mind that when we are doing carbage collection, we might not have
+    enough memory to construct `root`, therefore we have to do it beforehand.
+    This is done right after the machine starts executing. We first scan through the program,
+    grab all the registers, count the total number of it, and create a list of the same length
+    by generating some list-gerneating code. And the list can be initialized with any value
+    as we will eventually overwrite them right before we starts garbage collecting.
+    Note that here we just assmue there's always sufficient memory space to store this list,
+    therefore we don't have to deal with `free` increment in this part.
+
+    Register saving and restoring come pretty much naturally: we just traverse the list,
+    and read from or write to it accordingly. One important thing is that you need to
+    keep the register list in same order when you are generating the code.
+    Or otherwise you might assign values to the wrong register.
+    One improvement might be to use some extra data in "root" to ensure the correspondence,
+    but we are just fine with the current approach. Just keep it simple.
+
+* The broken-heart symbol
+
+    I slightly dislike the idea that the `broken-heart` symbol is made special.
+    A better way might be to generate a symbol (e.g. using `gensym`) for broke-heart flag
+    as this prevents user from creating a value that might be mistakenly understood by the
+    garbage collecting algorithm.
+
+* Out of memory when doing garbage collection
+
+    When you are encountering some "out of memory" error (i.e. the underlying vector
+    receives an out-of-range index), it's possible that all the current cells are alive
+    and garbage collecting algorithm cannot make any progress.
+    In this case, we can increase the memory size a little bit since this is just a virtual
+    machine.

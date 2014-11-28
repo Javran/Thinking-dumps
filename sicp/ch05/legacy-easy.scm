@@ -4,16 +4,26 @@
 
 (load "./legacy-simu.scm")
 
-(define (remove-duplicates xs)
-  (if (null? xs)
-      '()
-      (cons (car xs)
-            (delete
-             (car xs)
-             (remove-duplicates (cdr xs))))))
-
 (define (set-diff xs ys)
   (fold-right delete xs ys))
+
+(define (make-machine register-names
+                      ops
+                      controller-text)
+  (let ((machine (make-new-machine)))
+    (for-each
+     (lambda (register-name)
+       ((machine 'allocate-register) register-name))
+     ;; remvoe "pc" and "flag" when
+     ;; we are creeating the machine,
+     ;; because these two registers have been created beforehand
+     (remove-duplicates
+      (set-diff register-names
+                '(pc flag))))
+    ((machine 'install-operations) ops)
+    ((machine 'install-instruction-sequence)
+     (assemble controller-text machine))
+    machine))
 
 ;; make it a procedure, so one change to an instance
 ;; of it won't cause too many problems
@@ -37,7 +47,7 @@
      (not ,not)
      ))
 
-;; from "simu" modules
+;; copied from simu.scm
 (define (extract-register-names instructions)
   (define (extract insn)
     (if (symbol? insn)
@@ -60,16 +70,20 @@
                             insn))))
           (append names1 names2))))
   (remove-duplicates
-   (set-diff
-    (concat-map extract instructions)
-    '(pc flag))))
+    (concat-map extract instructions)))
+
+;; patches that want to transform the instruction
+;; list before assembling can rewrite this procedure
+(define tranform-instructions
+  identity)
 
 ;; use `initialize-registers!` to [re-] initialize register values
 ;; and then `start` to [re-] start machine execution
 (define (ctl-ops->machine
          controller-text
          primitive-list)
-  (let* ((insns (cdr controller-text))
+  (let* ((origin-insns (cdr controller-text))
+         (insns (tranform-instructions origin-insns))
          (reg-names (extract-register-names insns))
          (m (make-machine
              reg-names

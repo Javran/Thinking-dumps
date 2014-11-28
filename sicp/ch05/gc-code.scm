@@ -2,18 +2,11 @@
 ;; some instructions are adapted to work with our machine
 ;; implementation
 
-;; we use "gensym" to generate the broken-heart symbol
-;; before we execute the machine.
-;; Therefore the broken heart symbol is guaranteed to be unique
-;; We ensure the uniqueness of this symbol so the garbage collecting
-;; algorithm will not think a symbol constant happens to be a broken heart flag
-(define gc-broken-heart
-  (gensym))
-
 ;; except for "free", "root", "new-cars", "the-cars", "new-cdrs" and "the-cdrs",
 ;; all registers are prefixed with a "gc-" to avoid name confliction with
 ;; the program
-(define gc-code
+(define (gen-gc-code
+         broken-heart-symbol)
   `(begin-garbage-collection
     ;; free: points to the first free memory address
     (assign free (op to-ptr) (const 0))
@@ -106,12 +99,18 @@
     (perform (op vector-set!)
              (reg the-cars)
              (reg gc-old)
-             (const ,gc-broken-heart))
+             (const ,broken-heart-symbol))
     (perform
      (op vector-set!) (reg the-cdrs) (reg gc-old) (reg gc-new))
     (goto (reg gc-relocate-continue))
 
     gc-already-moved
+    ;; the operation "debug-print" is optional,
+    ;; it just provides some evidence that we can reach this
+    ;; case, and if the program can run without error and
+    ;; the following debug message gets printed,
+    ;; this part should be covered by the program
+    (perform (op debug-print) (const "broken-heart flag found"))
     (assign gc-new (op vector-ref) (reg the-cdrs) (reg gc-old))
     (goto (reg gc-relocate-continue))
 

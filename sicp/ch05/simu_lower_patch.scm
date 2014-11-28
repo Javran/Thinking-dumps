@@ -132,7 +132,14 @@
         (number? ,number?)
         (symbol? ,symbol?)
         (char? ,char?)
-        (string?, string?)
+        (string? ,string?)
+        ;; "debug-print" prints operands separated by spaces
+        (debug-print ,(lambda args
+                        (for-each
+                         (lambda (x)
+                           (display x) (display " "))
+                         args)
+                        (newline)))
         ,@(old-builder m)))))
 
 (define machine-memory-size 65536)
