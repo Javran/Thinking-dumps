@@ -38,8 +38,12 @@ treeToString (Branch v l r) = printf "%s(%s,%s)"
                                      (treeToString l)
                                      (treeToString r)
 
+tree67 :: Tree Char
+tree67 = stringToTree "a(b(d,e),c(,f(g,)))"
+
 main :: IO ()
 main = do
+    print tree67
     print (treeToString (stringToTree "x(y,a(,b))"))
     let t1 = cbtFromList ['a'..'z']
         t2 = stringToTree . treeToString $ t1
