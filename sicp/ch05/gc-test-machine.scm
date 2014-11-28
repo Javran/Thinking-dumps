@@ -26,7 +26,16 @@
 ;; memory size should be greater or equal to 308, 3 times the original list size,
 ;; which agrees with our guess (original list+ new list + stack))
 
-;; TODO: mutate pairs to test broken-heart flag
+;; as for our program, the case of two different pointers pointing
+;; to the same location is rare, since we are applying some functional programming
+;; styles which makes almost no mutation.
+;; but we can still verify that the case when a broken-heart flag is found and dealt with
+;; properly by employing a debug-print primitive.
+;; this debug-print primitive just prints some debuging info in runtime.
+;; we can print some messages when a broken-heart flag is found.
+;; if we can found the message printed to the screen after the program's execution,
+;; and if the program is correct, we can at least confident that it works for some cases.
+
 (define test-machine
   `(controller
     (goto (label prog-entry))

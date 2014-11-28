@@ -105,6 +105,12 @@
     (goto (reg gc-relocate-continue))
 
     gc-already-moved
+    ;; the operation "debug-print" is optional,
+    ;; it just provides some evidence that we can reach this
+    ;; case, and if the program can run without error and
+    ;; the following debug message gets printed,
+    ;; this part should be covered by the program
+    (perform (op debug-print) (const "broken-heart flag found"))
     (assign gc-new (op vector-ref) (reg the-cdrs) (reg gc-old))
     (goto (reg gc-relocate-continue))
 
