@@ -240,4 +240,28 @@ is important but not mentioned in the book:
 
 * Generate instructions for `root` reallocation and register saving and restoring
 
+    I think the simplest `root` construction is just a list.
+    Keep in mind that when we are doing carbage collection, we might not have
+    enough memory to construct `root`, therefore we have to do it beforehand.
+    This is done right after the machine starts executing. We first scan through the program,
+    grab all the registers, count the total number of it, and create a list of the same length
+    by generating some list-gerneating code. And the list can be initialized with any value
+    as we will eventually overwrite them right before we starts garbage collecting.
+    Note that here we just assmue there's always sufficient memory space to store this list,
+    therefore we don't have to deal with `free` increment in this part.
+
+    Register saving and restoring come pretty much naturally: we just traverse the list,
+    and read from or write to it accordingly. One important thing is that you need to
+    keep the register list in same order when you are generating the code.
+    Or otherwise you might assign values to the wrong register.
+    One improvement might be to use some extra data in "root" to ensure the correspondence,
+    but we are just fine with the current approach. Just keep it simple.
+
 * The broken-heart symbol
+
+    I slightly dislike the idea that the `broken-heart` symbol is made special.
+    A better way might be to generate a symbol (e.g. using `gensym`) for broke-heart flag
+    as this prevents user from creating a value that might be mistakenly understood by the
+    garbage collecting algorithm.
+
+* Out of memory when doing garbage collection
