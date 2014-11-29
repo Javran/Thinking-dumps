@@ -61,6 +61,7 @@
     (save unev) ; stack: [unev env continue ..]
     (assign exp (op operator) (reg exp))
     (assign continue (label ev-appl-did-operator))
+    ;; exp -> val
     (goto (label eval-dispatch))
 
     ;; back
@@ -71,27 +72,39 @@
     (assign argl (op empty-arglist))
     ;; evaluated procedure
     (assign proc (reg val))
-    ;; call without operands, do application
+    ;; procedure called without operands, do application
     (test (op no-operands?) (reg unev))
     (branch (label apply-dispatch))
+    ;; otherwise we need to evaluate them all
     (save proc) ; stack: [proc continue ..]
     ev-appl-operand-loop
     (save argl) ; stack: [argl proc continue ..]
     (assign exp (op first-operand) (reg unev))
     (test (op last-operand?) (reg unev))
     (branch (label ev-appl-last-arg))
+    ;; this is not the last arg
     (save env) ; stack: [env argl proc continue ..]
     (save unev) ; stack: [unev env argl proc continue ..]
     (assign continue (label ev-appl-accumulate-arg))
     (goto (label eval-dispatch))
     ;; back
     ev-appl-accumulate-arg
+    ;; first operand turned into val,
+    ;; add it to argl
     (restore unev) ; stack: [env argl proc continue ..]
     (restore env) ; stack: [argl proc continue ..]
+    (restore argl) ; stack: [proc continue ..]
+    ;; TODO: note that if we insert "val" in front of "argl"
+    ;; then "argl" is storing arguments in the reversed order,
+    ;; what is "adjoin-arg" is not mentioned in the book
+    ;; but I guess it needs to at least keep the order of "argl"
+    ;; and the order of "unev" consistent.
     (assign argl (op adjoin-arg) (reg val) (reg argl))
+    ;; drop the first operand
     (assign unev (op rest-operands) (reg unev))
     (goto (label ev-appl-operand-loop))
 
+    ;; we only go to here when there's only one unevaluated expression left
     ev-appl-last-arg
     (assign continue (label ev-appl-accum-last-arg))
     (goto (label eval-dispatch))
@@ -101,4 +114,6 @@
     (restore proc) ; stack: [continue ..]
     (goto (label apply-dispatch))
     ;; TODO: stack not balanced here?
+    ;; note that when calling "apply-dispatch",
+    ;; a "continue" is always on the stack.. but why?
     ))
