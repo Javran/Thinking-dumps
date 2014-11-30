@@ -116,4 +116,30 @@
     ;; TODO: stack not balanced here?
     ;; note that when calling "apply-dispatch",
     ;; a "continue" is always on the stack.. but why?
+    ;; ---looks like apply-dispatch simply assume that
+    ;; there's always one "continue" on the top of the stack
     ))
+
+(define procedure-application
+  '(apply-dispatch
+    (test (op primitve-procedure?) (reg proc))
+    (branch (label primitive-apply))
+    (test (op compound-procedure?) (reg proc))
+    (branch (label compound-apply))
+    (goto (label unknown-procedure-type))
+
+    primitive-apply
+    (assign val (op apply-primitive-procedure)
+                (reg proc)
+                (reg argl))
+    ;; stack: <balanced>
+    (restore continue)
+    (goto (reg continue))
+
+    compound-apply
+    (assign unev (op procedure-parameters) (reg proc))
+    (assign env (op procedure-environment) (reg proc))
+    (assign env (op extend-environment)
+                (reg unev) (reg argl) (reg env))
+    (assign unev (op procedure-body) (reg proc))
+    (goto (label ev-sequence))))
