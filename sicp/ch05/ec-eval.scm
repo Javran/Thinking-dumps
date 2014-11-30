@@ -143,3 +143,28 @@
                 (reg unev) (reg argl) (reg env))
     (assign unev (op procedure-body) (reg proc))
     (goto (label ev-sequence))))
+
+(define seq-eval
+  '(ev-begin
+    ;; TODO: what's begin-actions?
+    (assign unev (op begin-actions) (reg exp))
+    (save continue)                     ; stack: [continue ..]
+    (goto (label ev-sequence))
+    ev-sequence
+    (assign exp (op first-exp) (reg unev))
+    (test (op last-exp?) (reg unev))
+    (branch (label ev-sequence-last-exp))
+    ;; seems like every time we call a "eval-dispatch" subroutine
+    ;; the preparation phase looks similiar
+    (save unev)                        ; stack: [unev continue ..]
+    (save env)                         ; stack: [env unev continue ..]
+    (assign continue (label ev-sequence-continue))
+    (goto (label eval-dispatch))
+    eq-sequence-continue
+    (restore env)                       ; stack: [unev continue ..]
+    (restore unev)                      ; stack: [continue ..]
+    (assign unev (op rest-exps) (reg unev))
+    (goto (label ev-sequence))
+    ev-sequence-last-exp
+    (restore continue)                  ; stack: <balanced>
+    (goto (label eval-dispatch))))
