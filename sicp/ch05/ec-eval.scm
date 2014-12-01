@@ -1,8 +1,13 @@
 ;; for now I'm not sure what to do
 ;; guess if we copy the code here,
 ;; this will soon become useful
-(define core-dispatch
-  '(eval-dispatch
+
+;; TODO: need to extract a list of operations from the instruction list
+
+(define evaluator-insns
+  '(
+    ;;; ==== eval-dispatch
+    eval-dispatch
     (test (op self-evaluating?) (reg exp))
     (branch (label ev-self-eval))
 
@@ -30,31 +35,34 @@
     (test (op application?) (reg exp))
     (branch (label ev-application))
 
-    (goto (label unknown-expression-type))))
+    (goto (label unknown-expression-type))
 
-(define simple-expressions
-  '(ev-self-eval
+    ;;; ==== ev-self-eval
+    ev-self-eval
     (assign val (reg exp))
     (goto (reg continue))
 
+    ;;; ==== ev-variable
     ev-variable
     (assign
      val (op lookup-variable-value) (reg exp) (reg env))
     (goto (reg continue))
 
+    ;;; ==== ev-quoted
     ev-quoted
     (assign val (op text-of-quotation) (reg exp))
     (goto (reg continue))
 
+    ;;; ==== ev-lambda
     ev-lambda
     (assign unev (op lambda-parameters) (reg exp))
     (assign exp (op lambda-body) (reg exp))
     (assign val (op make-procedure)
                 (reg unev) (reg exp) (reg env))
-    (goto (reg continue))))
+    (goto (reg continue))
 
-(define proc-application
-  '(ev-application
+    ;;; ==== ev-application
+    ev-application
     (save continue) ; stack: [continue ..]
     (save env) ; stack: [env continue ..]
     (assign unev (op operands) (reg exp))
@@ -118,10 +126,9 @@
     ;; a "continue" is always on the stack.. but why?
     ;; ---looks like apply-dispatch simply assume that
     ;; there's always one "continue" on the top of the stack
-    ))
 
-(define procedure-application
-  '(apply-dispatch
+    ;;; ==== apply-dispatch
+    apply-dispatch
     (test (op primitve-procedure?) (reg proc))
     (branch (label primitive-apply))
     (test (op compound-procedure?) (reg proc))
@@ -142,10 +149,11 @@
     (assign env (op extend-environment)
                 (reg unev) (reg argl) (reg env))
     (assign unev (op procedure-body) (reg proc))
-    (goto (label ev-sequence))))
+    (goto (label ev-sequence))
 
-(define seq-eval
-  '(ev-begin
+
+    ;;; ==== ev-begin
+    ev-begin
     ;; TODO: what's begin-actions?
     (assign unev (op begin-actions) (reg exp))
     (save continue)                     ; stack: [continue ..]
@@ -167,4 +175,9 @@
     (goto (label ev-sequence))
     ev-sequence-last-exp
     (restore continue)                  ; stack: <balanced>
-    (goto (label eval-dispatch))))
+    ;; transfer directly to eval-dispatch without saving
+    ;; any information on the stack
+    (goto (label eval-dispatch))
+
+
+    ))
