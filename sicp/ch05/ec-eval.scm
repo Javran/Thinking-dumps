@@ -179,5 +179,27 @@
     ;; any information on the stack
     (goto (label eval-dispatch))
 
+    ;;; ==== ev-if
+    ;;; input: exp env continue
+    ;;; output: val
+    (save exp) ; stack: [exp ..]
+    (save env) ; stack: [env exp ..]
+    (save continue) ; stack: [continue env exp ..]
+    (assign continue (label ev-if-decide))
+    (assign exp (op if-predicate) (reg exp))
+    (goto (label eval-dispatch)) ; evaluate the predicate
+    ev-if-decide
+    (restore continue) ; stack: [env exp ..]
+    (restore env) ; stack: [exp ..]
+    (restore exp) ; stack: <balanced>
+    ;; dispatch according to the result
+    (test (op true?) (reg val))
+    (branch (label ev-if-consequent))
+    ev-if-alternative
+    (assign exp (op if-alternative) (reg exp))
+    (goto (label eval-dispatch))
+    ev-if-consequent
+    (assign exp (op if-consequent) (reg exp))
+    (goto (label eval-dispatch))
 
     ))
