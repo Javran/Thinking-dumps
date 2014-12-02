@@ -222,4 +222,43 @@
     ev-if-consequent
     (assign exp (op if-consequent) (reg exp))
     (goto (label eval-dispatch))
+
+    ;; ==== ev-assignment
+    ;; input: exp env
+    ;; output: val=ok, env modified
+    ev-assignment
+    (assign unev (op assignment-variable) (reg exp))
+    (save unev) ; stack: [unev ..]
+    (assign exp (op assignment-value) (reg exp))
+    (save env) ; stack: [env unev ..]
+    (save continue) ; stack: [continue env unev ..]
+    (assign continue (label ev-assignment-1))
+    ;; evaluate the assignment value
+    (goto (label eval-dispatch))
+    ev-assignment-1
+    (restore continue) ; stack: [env unev ..]
+    (restore env) ; stack: [unev ..]
+    (restore unev) ; stack: <balanced>
+    (perform
+     (op set-variable-value!) (reg unev) (reg val) (reg env))
+    (assign val (const ok))
+    (goto (reg continue))
+
+    ;; ==== ev-definition
+    ;; input: exp env
+    ;; output: val=ok, env modified
+    (assign unev (op definition-variable) (reg exp))
+    (save unev) ; stack: [unev ..]
+    (assign exp (op definition-value) (reg exp))
+    (save env) ; stack: [env unev ..]
+    (save continue) ; stack: [continue env unev ..]
+    (assign continue (label ev-definition-1))
+    ev-definition-1
+    (restore continue) ; stack: [env unev ..]
+    (restore env) ; stack: [unev ..]
+    (restore unev) ; stack: <balanced>
+    (perform
+     (op define-variable!) (reg unev) (reg val) (reg env))
+    (assign val (const ok))
+    (goto (reg continue))
     ))
