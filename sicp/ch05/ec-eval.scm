@@ -1,3 +1,6 @@
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
 ;; for now I'm not sure what to do
 ;; guess if we copy the code here,
 ;; this will soon become useful
@@ -262,3 +265,27 @@
     (assign val (const ok))
     (goto (reg continue))
     ))
+
+
+;; extract required operations from a list of instructions
+(define (extract-operations insns)
+  (define (insn->operation insn)
+    (if (pair? insn)
+        (let ((head (car insn)))
+          (cond ((and (eq? head 'assign)
+                      (eq? (car (caddr insn)) 'op))
+                 ;; (assign _ (op _))
+                 (list (list (cadr (caddr insn))
+                             (- (length insn) 3))))
+                ((or (eq? head 'test)
+                     (eq? head 'perform))
+                 (list (list (cadr (cadr insn))
+                             (- (length insn) 2))))
+                (else
+                 '())))
+        '()))
+  (remove-duplicates
+   (concat-map insn->operation
+               insns)))
+
+(for-each out (extract-operations evaluator-insns))
