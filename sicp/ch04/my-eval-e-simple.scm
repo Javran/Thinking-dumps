@@ -1,7 +1,7 @@
 ; simple data types, like number, string, etc.
 
 ; recognize simple expressions
-;   that evaluates to itself
+;   that evaluates to themselves
 (define (self-evaluating? exp)
   (or (number? exp)
       (string? exp)
