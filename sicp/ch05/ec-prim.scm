@@ -23,6 +23,7 @@
 ;; quoted expression
 (define quoted?
   (list-tagged-with 'quote))
+(define text-of-quotation cadr)
 
 (define (assignment? exp)
   (tagged-list? exp 'set!))
@@ -66,19 +67,32 @@
 (define (false? d)
   (if d #f #t))
 
-;; (begin? 1)
-;; (application? 1)
+(define (begin? exp)
+  (tagged-list? exp 'begin))
+(define begin-actions cdr)
+(define (last-exp? seq)
+  ; `seq` must not be empty
+  (null? (cdr seq)))
+(define first-exp car)
+(define rest-exps cdr)
+
+(define (application? exp)
+  (and (list? exp)
+       (non-empty? exp)))
+(define operator car)
+(define operands cdr)
+
+(define no-operands? null?)
+(define first-operand car)
+(define rest-operands cdr)
+
+(define (last-operand? ops)
+  (null? (cdr ops)))
+
 ;; (lookup-variable-value 2)
-;; (text-of-quotation 1)
 ;; (make-procedure 3)
-;; (operands 1)
-;; (operator 1)
 ;; (empty-arglist 0)
-;; (no-operands? 1)
-;; (first-operand 1)
-;; (last-operand? 1)
 ;; (adjoin-arg 2)
-;; (rest-operands 1)
 ;; (primitve-procedure? 1)
 ;; (compound-procedure? 1)
 ;; (apply-primitive-procedure 2)
@@ -86,9 +100,5 @@
 ;; (procedure-environment 1)
 ;; (extend-environment 3)
 ;; (procedure-body 1)
-;; (begin-actions 1)
-;; (first-exp 1)
-;; (last-exp? 1)
-;; (rest-exps 1)
 ;; (set-variable-value! 3)
 ;; (define-variable! 3)
