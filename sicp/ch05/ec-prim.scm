@@ -89,7 +89,8 @@
 (define (last-operand? ops)
   (null? (cdr ops)))
 
-;; (lookup-variable-value 2)
+(load "./ec-env.scm")
+
 ;; (make-procedure 3)
 ;; (empty-arglist 0)
 ;; (adjoin-arg 2)
@@ -98,7 +99,4 @@
 ;; (apply-primitive-procedure 2)
 ;; (procedure-parameters 1)
 ;; (procedure-environment 1)
-;; (extend-environment 3)
 ;; (procedure-body 1)
-;; (set-variable-value! 3)
-;; (define-variable! 3)
