@@ -7,6 +7,8 @@
       (list? l)
       (non-empty? l)
       (eq? (car l) tag))))
+(define (tagged-list? exp tag)
+  ((list-tagged-with tag) exp))
 
 ;; check if an expression is self-evaluating
 ;; i.e. (eval env exp) == exp
@@ -91,12 +93,25 @@
 
 (load "./ec-env.scm")
 
-;; (make-procedure 3)
-;; (empty-arglist 0)
-;; (adjoin-arg 2)
-;; (primitve-procedure? 1)
-;; (compound-procedure? 1)
-;; (apply-primitive-procedure 2)
-;; (procedure-parameters 1)
-;; (procedure-environment 1)
-;; (procedure-body 1)
+(define (empty-arglist) '())
+(define (adjoin-arg arg arglist)
+  (append arglist (list arg)))
+
+(define (make-procedure parameters body env)
+  (list 'procedure parameters body env))
+(define compound-procedure?
+  (list-tagged-with 'procedure))
+(define procedure-parameters  cadr)
+(define procedure-body        caddr)
+(define procedure-environment cadddr)
+
+(define primitive-procedure?
+  (list-tagged-with 'primitive))
+(define primitive-implementation cadr)
+;; lift a primitive procedure into
+;; the implemented language
+(define (lift-primitive prim)
+  (list 'primitive prim))
+
+(define (apply-primitive-procedure proc args)
+  (apply (primitive-implementation proc) args))

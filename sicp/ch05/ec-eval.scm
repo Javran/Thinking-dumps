@@ -151,7 +151,7 @@
     ;; expecting a "continue" on the top of the stack
     ;; output: val
     apply-dispatch
-    (test (op primitve-procedure?) (reg proc))
+    (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-apply))
     (test (op compound-procedure?) (reg proc))
     (branch (label compound-apply))
