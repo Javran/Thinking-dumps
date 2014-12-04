@@ -17,9 +17,20 @@
   (let ((old-builder default-ops-builder))
     (lambda (m)
       (let* ((old-ops (old-builder m))
-             (new-prim-symbols (set-diff ec-required-operations
-                                         (map car old-ops))))
-        `(,@(map to-prim-entry new-prim-symbols)
+             (new-prim-symbols
+              ;; only add those that don't show up
+              ;; in the old primitive list ...
+              (set-diff ec-required-operations
+                        (map car old-ops))))
+        `(
+          ;; we are trying to be lazy here by:
+          ;; * extract the list of required operation names direcly
+          ;;   from the code of the evaluator
+          ;; * operation names are symbols, and as we have implemented
+          ;;   them somewhere in our toplevel user environment
+          ;;   we can evaluate them directly to convert each operation symbol
+          ;;   to its corresponding primitive entry
+          ,@(map to-prim-entry new-prim-symbols)
           ,@(old-builder m))))))
 
 (out
