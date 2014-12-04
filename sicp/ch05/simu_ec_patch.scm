@@ -33,6 +33,10 @@
           ,@(map to-prim-entry new-prim-symbols)
           ,@(old-builder m))))))
 
+;; TODO: guess we can now abstract out the machine part
+;; making the whole process a scheme procedure
+;; and write some unit tests
+
 (out
  (default-ops-builder (empty-machine)))
 
