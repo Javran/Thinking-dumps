@@ -265,6 +265,7 @@
     ))
 
 ;; extract required operations from a list of instructions
+;; operations are represented as (<operation-name> <arity>)
 (define (extract-operations insns)
   (define (insn->operation insn)
     (if (pair? insn)
@@ -287,4 +288,6 @@
    (concat-map insn->operation
                insns)))
 
-(for-each out (extract-operations evaluator-insns))
+(define ec-required-operations
+  ;; as we don't need the arity here
+  (map car (extract-operations evaluator-insns)))

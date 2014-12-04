@@ -13,11 +13,13 @@
 ;; check if an expression is self-evaluating
 ;; i.e. (eval env exp) == exp
 (define (self-evaluating? exp)
+  ;; TODO: not sure if '() is self-evaluating
+  ;; in mit-scheme "'()" and "()" have no difference
+  ;; but in guile "()" is considered a syntax error
   (or (number? exp)
       (string? exp)
       (char? exp)
-      (boolean? exp)
-      (null? exp)))
+      (boolean? exp)))
 
 ;; if an given expression is a variable
 (define variable? symbol?)
