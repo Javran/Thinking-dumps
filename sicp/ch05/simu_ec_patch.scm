@@ -47,7 +47,6 @@
 ;; (TODO) "to-eval-prim-entry" lifts primitives so that it's visible
 ;; from the implemented language.
 
-
 (define (to-eval-prim-entry sym)
   `(,sym ,(lift-primitive (eval sym user-initial-environment))))
 
@@ -74,9 +73,24 @@
       (map cadr proc-list)
       the-empty-environment))))
 
-(out
- (default-ops-builder (empty-machine)))
+(define (machine-eval exp env)
+  (let* ((entry-label (gensym))
+         (exit-label (gensym))
+         (eval-label (gensym))
+         (m (build-and-execute
+             `(controller
+               (goto (label ,entry-label))
+               ,eval-label
+               ,@evaluator-insns
+               ,entry-label
+               (assign continue (label ,exit-label))
+               (goto (label ,eval-label))
+               ,exit-label)
+             `((exp ,exp)
+               (env ,env)))))
+    (machine-reg-get m 'val)))
 
-(out (init-env))
+(out
+ (machine-eval '(+ 1 2 3) (init-env)))
 
 (end-script)
