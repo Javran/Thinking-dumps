@@ -204,6 +204,7 @@
     ;; ==== ev-if
     ;; input: exp env
     ;; output: val
+    ev-if
     (save exp)                          ; stack: [exp ..]
     (save env)                          ; stack: [env exp ..]
     (save continue)                     ; stack: [continue env exp ..]
@@ -248,6 +249,7 @@
     ;; ==== ev-definition
     ;; input: exp env
     ;; output: val=ok, env modified
+    ev-definition
     (assign unev (op definition-variable) (reg exp))
     (save unev)                         ; stack: [unev ..]
     (assign exp (op definition-value) (reg exp))
