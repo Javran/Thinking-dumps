@@ -47,53 +47,32 @@
 ;; (TODO) "to-eval-prim-entry" lifts primitives so that it's visible
 ;; from the implemented language.
 
-;; TODO: need some primitives to build up the default environment
-;; maybe we can copy from ch04
 
-(define (lift-primitive-pair sym)
+(define (to-eval-prim-entry sym)
   `(,sym ,(lift-primitive (eval sym user-initial-environment))))
 
 ;; initialize an environment that contains basic stuff
 (define (init-env)
   (let ((proc-list
-          (list
-            (lift-primitive-pair '+)
-            (lift-primitive-pair '-)
-            (lift-primitive-pair '*)
-            (lift-primitive-pair '/)
-            (lift-primitive-pair '=)
-            (lift-primitive-pair '>)
-            (lift-primitive-pair '>=)
-            (lift-primitive-pair '<)
-            (lift-primitive-pair '<=)
-            (lift-primitive-pair 'zero?)
-            (lift-primitive-pair 'eq?)
-            (lift-primitive-pair 'eqv?)
-            (lift-primitive-pair 'car)
-            (lift-primitive-pair 'cdr)
-            (lift-primitive-pair 'cons)
-            (lift-primitive-pair 'null?)
-            (lift-primitive-pair 'list)
-            (lift-primitive-pair 'even?)
-            (lift-primitive-pair 'odd?)
-            (lift-primitive-pair 'not)
-            (lift-primitive-pair 'remainder)
-            (lift-primitive-pair 'quotient)
-            (lift-primitive-pair 'sqrt)
-            (lift-primitive-pair 'integer?)
-            (lift-primitive-pair 'member)
-            (lift-primitive-pair 'memq)
-            (lift-primitive-pair 'delete)
-            (lift-primitive-pair 'abs)
-            (lift-primitive-pair 'append)
-            )))
+         (map to-eval-prim-entry
+              '(
+                + - * /
+                = > >= < <=
+                zero? eq? eqv?
+                car cdr cons null?
+                list even? odd?
+                not remainder quotient
+                sqrt integer?
+                member memq delete
+                abs append
+                ))))
     (extend-environment
-      '(true false)
-      '(#t   #f)
-      (extend-environment
-        (map car proc-list)
-        (map cadr proc-list)
-        the-empty-environment))))
+     '(true false)
+     '(#t   #f)
+     (extend-environment
+      (map car proc-list)
+      (map cadr proc-list)
+      the-empty-environment))))
 
 (out
  (default-ops-builder (empty-machine)))
