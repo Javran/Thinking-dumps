@@ -1,6 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+;; most of the procedures
+;; in this machine can be found
+;; in chapter 4
+;; here they are treated as machine primitives
 (define evaluator-insns
   '(
     ;; ==== eval-dispatch
@@ -113,10 +117,10 @@
     (restore unev)                ; stack: [env argl proc continue ..]
     (restore env)                 ; stack: [argl proc continue ..]
     (restore argl)                ; stack: [proc continue ..]
-    ;; TODO: note that if we insert "val" in front of "argl"
+    ;; note that if we insert "val" in front of "argl"
     ;; then "argl" is storing arguments in the reversed order,
-    ;; what is "adjoin-arg" is not mentioned in the book
-    ;; but I guess it needs to at least keep the order of "argl"
+    ;; what is "adjoin-arg" is mentioned in the footnote
+    ;; as expected the implementation should keep the order of "argl"
     ;; and the order of "unev" consistent.
     (assign argl (op adjoin-arg) (reg val) (reg argl))
     ;; drop the first operand
@@ -172,7 +176,6 @@
     ;; input: exp env
     ;; output: val
     ev-begin
-    ;; TODO: what's begin-actions?
     (assign unev (op begin-actions) (reg exp))
     (save continue)                     ; stack: [continue ..]
     (goto (label ev-sequence))

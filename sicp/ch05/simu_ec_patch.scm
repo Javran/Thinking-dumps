@@ -33,10 +33,6 @@
           ,@(map to-machine-prim-entry new-prim-symbols)
           ,@(old-builder m))))))
 
-;; TODO: guess we can now abstract out the machine part
-;; making the whole process a scheme procedure
-;; and write some unit tests
-
 ;; note that we have 2 kinds of primitives:
 ;; one kind of the primitives are for the machine,
 ;; which implement the functionality of an evaluator
@@ -44,7 +40,7 @@
 ;; which provides the functionality so that we can do something useful
 ;; in the implemented language.
 ;; "to-machine-prim-entry" lifts primitives to the machine
-;; (TODO) "to-eval-prim-entry" lifts primitives so that it's visible
+;; "to-eval-prim-entry" lifts primitives so that it's visible
 ;; from the implemented language.
 
 (define (to-eval-prim-entry sym)
@@ -73,6 +69,7 @@
       (map cadr proc-list)
       the-empty-environment))))
 
+;; use the machine to evlauate a lisp expression
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
          (exit-label (gensym))
