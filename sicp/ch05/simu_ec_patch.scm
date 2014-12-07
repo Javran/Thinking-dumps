@@ -87,13 +87,18 @@
                (env ,env)))))
     (machine-reg-get m 'val)))
 
-(define (test-eval exp)
+;; for optional arguments, see:
+;; http://web.mit.edu/scheme_v9.0.1/doc/mit-scheme-ref/Lambda-Expressions.html
+(define (test-eval exp #!optional verbose)
+  ;; verbose = true by default
   (let ((machine-result
          (machine-eval exp (init-env)))
         (lisp-result
          (eval exp (make-top-level-environment))))
     (if (equal? machine-result lisp-result)
-        'ok
+        (if (or (default-object? verbose) verbose)
+            (display ".")
+            'done)
         (error "eval results are inconsistent:"
                "expecting" lisp-result
                "while getting" machine-result))))
@@ -101,5 +106,7 @@
 (test-eval '(+ 1 2 3))
 (test-eval '(((lambda (x)
                 (lambda (y) (* x y))) 20) 30))
+
+
 
 (end-script)
