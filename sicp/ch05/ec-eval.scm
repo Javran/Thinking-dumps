@@ -1,10 +1,6 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-;; TODO: for now I'm not sure what to do
-;; guess if we copy the code here,
-;; this will soon become useful
-
 (define evaluator-insns
   '(
     ;; ==== eval-dispatch
