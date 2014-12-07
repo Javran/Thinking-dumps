@@ -90,7 +90,19 @@
                (env ,env)))))
     (machine-reg-get m 'val)))
 
-(out
- (machine-eval '(+ 1 2 3) (init-env)))
+(define (test-eval exp)
+  (let ((machine-result
+         (machine-eval exp (init-env)))
+        (lisp-result
+         (eval exp (make-top-level-environment))))
+    (if (equal? machine-result lisp-result)
+        'ok
+        (error "eval results are inconsistent:"
+               "expecting" lisp-result
+               "while getting" machine-result))))
+
+(test-eval '(+ 1 2 3))
+(test-eval '(((lambda (x)
+                (lambda (y) (* x y))) 20) 30))
 
 (end-script)
