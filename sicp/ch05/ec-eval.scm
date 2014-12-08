@@ -41,6 +41,7 @@
     (test (op application?) (reg exp))
     (branch (label ev-application))
 
+    ;; TODO: unknown-exp not definined?
     (goto (label unknown-expression-type))
     ;; ==== ev-self-eval
     ;; input: exp
@@ -189,7 +190,7 @@
     (save env)                         ; stack: [env unev continue ..]
     (assign continue (label ev-sequence-continue))
     (goto (label eval-dispatch))
-    eq-sequence-continue
+    ev-sequence-continue
     (restore env)                       ; stack: [unev continue ..]
     (restore unev)                      ; stack: [continue ..]
     (assign unev (op rest-exps) (reg unev))
