@@ -1,6 +1,8 @@
 ;; TODO: as always, if we can make this work with simu.scm
 ;; the same should be true for the legacy one
 
+;; TODO: cleanup
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 (load "./simu.scm")
@@ -87,6 +89,8 @@
                (env ,env)))))
     (machine-reg-get m 'val)))
 
+;; evaluate the expression using both the machine evaluator
+;; and the real scheme evaluator under the default environment settings
 ;; for optional arguments, see:
 ;; http://web.mit.edu/scheme_v9.0.1/doc/mit-scheme-ref/Lambda-Expressions.html
 (define (test-eval exp #!optional verbose)
@@ -103,10 +107,6 @@
                "expecting" lisp-result
                "while getting" machine-result))))
 
-(test-eval '(+ 1 2 3))
-(test-eval '(((lambda (x)
-                (lambda (y) (* x y))) 20) 30))
-
 (define test-exps
   `(
     ;; test self-evaluating
@@ -117,11 +117,49 @@
     #\a
     #t
     ;; test variable
+    (begin
+      (define x +)
+      (x 1 2 3))
+    (begin
+      (define x 10)
+      (define y 20)
+      (- x y))
     ;; test quoted
+    '(a b c)
+    'a
+    '"wow"
+    '(a (b c) (d e))
     ;; test assignment
+    (begin
+      (define y 10)
+      (set! y 20)
+      (set! y (+ y y))
+      y)
     ;; test definition
+    (begin
+      ;; tested already
+      (define a 'a)
+      a)
     ;; test if
+    (begin
+      (define x 1)
+      (if #t
+          (set! x 10)
+          (set! x 20))
+      x)
+    (begin
+      (define y 1)
+      (if #f
+          (set! y 10)
+          (set! y 20))
+      y)
     ;; test lambda
+    (begin
+      (define f
+        (lambda (x)
+          (lambda (y)
+            (+ x x y))))
+      ((f 10) 20))
     ;; test begin
     (begin
       1)
@@ -130,14 +168,19 @@
       (+ 20 30))
     (begin
       (define x 10)
+      (define y 20)
+      (+ x x y))
+    (begin
+      (define x 10)
+      (set! x 20)
       x)
-    #;(begin
-    (define x 10)
-    (define y 20)
-    (+ x y))
     ;; test application
+    (begin
+      (define f
+        (lambda (a b c d)
+          (* (+ a b) (- c d))))
+      (f 10 20 30 40))
     ))
 (for-each test-eval test-exps)
-
 
 (end-script)
