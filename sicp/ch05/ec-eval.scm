@@ -256,6 +256,7 @@
     (save env)                         ; stack: [env unev ..]
     (save continue)                    ; stack: [continue env unev ..]
     (assign continue (label ev-definition-1))
+    (goto (label eval-dispatch))
     ev-definition-1
     (restore continue)                  ; stack: [env unev ..]
     (restore env)                       ; stack: [unev ..]

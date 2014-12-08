@@ -47,9 +47,8 @@
     ; first form
     (caddr exp)
     ; second form, need desugar
-    (make-lambda
-      (cdadr exp)   ; formal parameters
-      (cddr exp)))) ; body
+    ;; TODO: not supported yet
+    (error "not supported yet")))
 
 (define (lambda? exp)
   (tagged-list? exp 'lambda))

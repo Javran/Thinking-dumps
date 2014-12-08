@@ -107,6 +107,37 @@
 (test-eval '(((lambda (x)
                 (lambda (y) (* x y))) 20) 30))
 
+(define test-exps
+  `(
+    ;; test self-evaluating
+    10
+    1.3
+    "wow"
+    #\space
+    #\a
+    #t
+    ;; test variable
+    ;; test quoted
+    ;; test assignment
+    ;; test definition
+    ;; test if
+    ;; test lambda
+    ;; test begin
+    (begin
+      1)
+    (begin
+      (+ 10 20)
+      (+ 20 30))
+    (begin
+      (define x 10)
+      x)
+    #;(begin
+    (define x 10)
+    (define y 20)
+    (+ x y))
+    ;; test application
+    ))
+(for-each test-eval test-exps)
 
 
 (end-script)
