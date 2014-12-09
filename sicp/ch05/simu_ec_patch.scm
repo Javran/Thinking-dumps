@@ -63,6 +63,8 @@
                (env ,env)))))
     (machine-reg-get m 'val)))
 
-(for-each (test-evaluator machine-eval) test-exps)
+(if *simu-test*
+    (for-each (test-evaluator machine-eval) test-exps)
+    'skipped)
 
 (end-script)

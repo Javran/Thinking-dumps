@@ -198,7 +198,7 @@
       (do-handler-tests)
       (test-multiple-same-label)
       (test-extra-slot))
-    'ignored)
+    'skipped)
 
 ;; Local variables:
 ;; proc-entry: "./simu.scm"
