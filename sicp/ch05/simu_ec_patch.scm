@@ -1,12 +1,4 @@
-;; TODO: as always, if we can make this work with simu.scm
-;; the same should be true for the legacy one
-
 ;; TODO: cleanup
-
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-(load "./simu.scm")
-
 (load "./ec-eval.scm")
 
 ;; evaluate a symbol under the current toplevel
@@ -63,8 +55,3 @@
                (env ,env)))))
     (machine-reg-get m 'val)))
 
-(if *simu-test*
-    (for-each (test-evaluator machine-eval) test-exps)
-    'skipped)
-
-(end-script)

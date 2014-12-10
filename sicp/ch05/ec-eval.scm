@@ -1,6 +1,5 @@
 (load "./ec-prim.scm")
 (load "./ec-init-env.scm")
-(load "./ec-tests.scm")
 
 ;; most of the procedures
 ;; in this machine can be found

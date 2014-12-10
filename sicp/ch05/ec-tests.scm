@@ -1,3 +1,5 @@
+;;; optional module for ec that provides some test facilities
+
 ;; evaluate the expression using both the machine evaluator
 ;; and the real scheme evaluator under the default environment settings
 ;; for optional arguments, see:
