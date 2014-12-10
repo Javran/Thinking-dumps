@@ -13,9 +13,11 @@
 ;; check if an expression is self-evaluating
 ;; i.e. (eval env exp) == exp
 (define (self-evaluating? exp)
-  ;; TODO: not sure if '() is self-evaluating
+  ;; "()" shouldn't be self-evaluating:
   ;; in mit-scheme "'()" and "()" have no difference
   ;; but in guile "()" is considered a syntax error
+  ;; however, "(quote ())" which is semantically the same as "'()"
+  ;; seems to be the preferred way to represent the empty list
   (or (number? exp)
       (string? exp)
       (char? exp)

@@ -37,6 +37,7 @@
       (define y 20)
       (- x y))
     ;; test quoted
+    (quote ())
     '(a b c)
     'a
     '"wow"

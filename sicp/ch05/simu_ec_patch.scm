@@ -1,6 +1,4 @@
-;; TODO: cleanup
 (load "./ec-eval.scm")
-
 
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry
