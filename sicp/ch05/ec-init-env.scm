@@ -29,9 +29,3 @@
       (map car proc-list)
       (map cadr proc-list)
       the-empty-environment))))
-
-;; TODO: still it's important to point out
-;; the difference between machine primitives
-;; and primitives in the implemented languages
-;; as I've run into this confusion several times
-;; maybe we need to settle this down once for all
