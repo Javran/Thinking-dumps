@@ -32,6 +32,9 @@
 ;; * scheme itself
 ;;   + the machine is simulated by scheme codes
 
+;; TODO: a label checker util for the controller that
+;; informs the user if there's any undefined label
+
 ;; most of the procedures
 ;; in this machine can be found
 ;; in chapter 4

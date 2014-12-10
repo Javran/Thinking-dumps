@@ -46,10 +46,13 @@
     (caadr exp)))
 (define (definition-value exp)
   (if (symbol? (cadr exp))
-    ; first form
+    ;; first form
     (caddr exp)
-    ; second form, need desugar
-    ;; TODO: not supported yet
+    ;; second form, need desugar
+    ;; TODO:
+    ;; dropping the support of this form
+    ;; as it will soon be implemented
+    ;; in the upcoming exercise
     (error "not supported yet")))
 
 (define (lambda? exp)
