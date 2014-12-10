@@ -1,6 +1,37 @@
 (load "./ec-prim.scm")
 (load "./ec-init-env.scm")
 
+;; here are some discussions about primitives,
+;; as they appears in the code multiple times but many of them
+;; are of different meanings.
+;; skip the following comments if you have no confusion
+;; on primitive operations
+;;
+;; Here we have multiple layers of abstraction
+;; and thus multiple layers of primitives:
+;; * the implemented language
+;;   + is a simplified scheme
+;;   + interprets & executes by the controller
+;;   + "lift-primitive" procedure in "ec-prim.scm"
+;;     converts a scheme procedure to one that can be directly used
+;;     by the implemented language (e.g. +, -, *, ...)
+;;   + "to-eval-prim-entry" uses "lift-primitve".
+;;     it makes an entry recording that primitive rather than
+;;     just lifting the procedure
+;; * the controller
+;;   + implemented / simulated by scheme codes
+;;   + should work with any proper machine simulators
+;;     (simu.scm or legacy-easy.scm)
+;;   + "to-machine-prim-entry" procedure converts from scheme procedures
+;;     to those that can be used directly by the machine
+;;   + the lifted procedures usually serve to extract some parts
+;;     from an expression or manipulate the environment for the implemented
+;;     language. as you can see these functions are in general related
+;;     to the detail of the implementation and are usually not visible
+;;     for the implemented language
+;; * scheme itself
+;;   + the machine is simulated by scheme codes
+
 ;; most of the procedures
 ;; in this machine can be found
 ;; in chapter 4

@@ -1,6 +1,7 @@
 ;; TODO: cleanup
 (load "./ec-eval.scm")
 
+
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry
 (define (to-machine-prim-entry sym)
@@ -26,17 +27,6 @@
           ,@(map to-machine-prim-entry new-prim-symbols)
           ,@(old-builder m))))))
 
-;; TODO: comment out of sync
-;; note that we have 2 kinds of primitives:
-;; one kind of the primitives are for the machine,
-;; which implement the functionality of an evaluator
-;; and another kind of the primitives for the implemented language,
-;; which provides the functionality so that we can do something useful
-;; in the implemented language.
-;; "to-machine-prim-entry" lifts primitives to the machine
-;; "to-eval-prim-entry" lifts primitives so that it's visible
-;; from the implemented language.
-
 ;; use the machine to evlauate a lisp expression
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
@@ -54,4 +44,3 @@
              `((exp ,exp)
                (env ,env)))))
     (machine-reg-get m 'val)))
-
