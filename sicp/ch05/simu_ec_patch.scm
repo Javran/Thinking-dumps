@@ -42,3 +42,26 @@
              `((exp ,exp)
                (env ,env)))))
     (machine-reg-get m 'val)))
+
+(define (check-labels insns)
+  (let ((labels (filter symbol? insns)))
+    (assert (= (length labels)
+               (length (remove-duplicates labels)))
+            "labels are supposed to be unique")
+    (define (extract-used-labels insn)
+      (cond ((and (pair? insn)
+                  (or (eq? (car insn) 'branch)
+                      (eq? (car insn) 'goto))
+                  (eq? (car (cadr insn)) 'label))
+             (list (cadr (cadr insn))))
+            (else '())))
+    (let ((used-labels
+           (remove-duplicates
+            (concat-map extract-used-labels insns))))
+      (for-each
+       (lambda (l)
+         (if (memq l labels)
+             'ok
+             (warn (format #f "label ~A not defined" l))))
+       used-labels)
+      'ok)))

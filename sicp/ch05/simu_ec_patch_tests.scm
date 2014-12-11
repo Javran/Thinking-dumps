@@ -7,4 +7,6 @@
 
 (for-each (test-evaluator machine-eval) test-exps)
 
+(out (check-labels evaluator-insns))
+
 (end-script)
