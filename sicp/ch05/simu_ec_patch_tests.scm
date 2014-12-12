@@ -6,7 +6,11 @@
 (load "./ec-tests.scm")
 
 (for-each (test-evaluator machine-eval) test-exps)
+(newline)
 
-(out (check-labels evaluator-insns))
+(out
+ (if (check-labels evaluator-insns)
+     "no problem with the label checker"
+     "some missing labels found"))
 
 (end-script)

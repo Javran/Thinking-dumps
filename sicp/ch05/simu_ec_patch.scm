@@ -23,6 +23,8 @@
           ;;   we can evaluate them directly to convert each operation symbol
           ;;   to its corresponding primitive entry
           ,@(map to-machine-prim-entry new-prim-symbols)
+          (error ,(lambda args
+                    (apply error args)))
           ,@(old-builder m))))))
 
 ;; use the machine to evlauate a lisp expression

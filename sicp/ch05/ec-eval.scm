@@ -292,6 +292,28 @@
     (assign val (const ok))
     (goto (reg continue))
 
+    ;; for completeness, there are still 2 labels missing
+    ;; in the original implementation of the book:
+    ;; "unknown-expression-type"
+    ;; "unknown-procedure-type"
+    ;; so we fill in some possible implementation,
+    ;; the behavior for both of which is to
+    ;; raise an error with related information.
+    ;; ==== unknown-expression-type
+    ;; input: exp
+    ;; no output, the program should terminate with an error
+    unknown-expression-type
+    (perform (op error)
+             (const "unknown expression type")
+             (reg exp))
+
+    ;; ==== unknown-procedure-type
+    ;; input: proc
+    ;; no output, the program should terminate with an error
+    unknown-procedure-type
+    (perform (op error)
+             (const "unknown procedure type")
+             (reg proc))
     ))
 
 ;; extract required operations from a list of instructions
