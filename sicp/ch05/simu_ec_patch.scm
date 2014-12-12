@@ -25,7 +25,7 @@
           ,@(map to-machine-prim-entry new-prim-symbols)
           (error ,(lambda args
                     (apply error args)))
-          ,@(old-builder m))))))
+          ,@old-ops)))))
 
 ;; use the machine to evlauate a lisp expression
 (define (machine-eval exp env)
