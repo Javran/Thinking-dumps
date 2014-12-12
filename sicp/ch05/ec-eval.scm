@@ -32,9 +32,6 @@
 ;; * scheme itself
 ;;   + the machine is simulated by scheme codes
 
-;; TODO: a label checker util for the controller that
-;; informs the user if there's any undefined label
-
 ;; most of the procedures
 ;; in this machine can be found
 ;; in chapter 4
@@ -75,7 +72,6 @@
     (test (op application?) (reg exp))
     (branch (label ev-application))
 
-    ;; TODO: unknown-exp not definined?
     (goto (label unknown-expression-type))
     ;; ==== ev-self-eval
     ;; input: exp
@@ -171,13 +167,9 @@
     (assign argl (op adjoin-arg) (reg val) (reg argl))
     (restore proc)                      ; stack: [continue ..]
     (goto (label apply-dispatch))
-    ;; TODO: stack not balanced here?
-    ;; note that when calling "apply-dispatch",
-    ;; a "continue" is always on the stack.. but why?
-    ;; ---looks like apply-dispatch simply assume that
-    ;; there's always one "continue" on the top of the stack
-    ;; --- I guess this is for the same reason as "eval-dispatch"
-    ;; being explicit on the idea that we are doing tail-recursion
+    ;; note that the calls to "apply-dispatch" are usually tail-recursive,
+    ;; this suggests that we can leave the stack unbalanced with an extra "continue"
+    ;; value. and this is how we do tail-recursion in this case
 
     ;; ==== apply-dispatch
     ;; input: proc argl
@@ -299,6 +291,7 @@
      (op define-variable!) (reg unev) (reg val) (reg env))
     (assign val (const ok))
     (goto (reg continue))
+
     ))
 
 ;; extract required operations from a list of instructions
