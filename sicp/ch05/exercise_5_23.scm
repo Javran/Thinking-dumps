@@ -7,6 +7,8 @@
 ;; from now on, we just use "simu.scm" as the machine
 ;; simulator, as using the legacy one won't make too much difference.
 
+(load "./exercise_5_23_trans.scm")
+
 ;; a list of functions that does transformation:
 ;; * cond->if
 ;;   converts an cond-exprssion to a nested if-expression
@@ -18,6 +20,17 @@
 ;    converts a let-expression into an application of lambda-expression
 
 ;; TODO: implementation
+
+(out
+ (cond->if
+  `(cond ((= a 1)
+          (this)
+          (that)
+          'done)
+         ((= a 2) #t)
+         (20 => (lambda (x)
+                  (* 2 x)))
+         (else 'good))))
 
 (end-script)
 
