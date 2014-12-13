@@ -9,7 +9,7 @@
           (environment-lookup
             user-initial-environment sym))))
 
-; initialize an environment that contains basic stuffs
+; initialize an environment that contains basic stuff
 (define (init-env)
   (let ((proc-list
           (list
