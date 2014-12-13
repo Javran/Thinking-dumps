@@ -3,13 +3,17 @@
 ;; do a code base search would find them
 
 (define (make-if predicate consequent alternative)
-  (list 'if predicate consequent alternative))
+  `(if ,predicate
+       ,consequent
+       ,alternative))
 
 (define (make-begin exp-seq)
-  (cons 'begin exp-seq))
+  `(begin
+     ,@exp-seq))
 
 (define (make-lambda parameters body)
-  (cons 'lambda (cons parameters body)))
+  `(lambda ,parameters
+     ,@body))
 
 (define (last-exp? seq)
   (null? (cdr seq)))
