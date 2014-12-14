@@ -76,9 +76,8 @@
     (define vars (map car  let-binding-pairs))
     (define exps (map cadr let-binding-pairs))
 
-    (cons
-     (make-lambda vars let-body)
-     exps))
+    `(,(make-lambda vars let-body)
+      ,@exps))
 
   (define (named-let->combination exp)
     (define proc-name (cadr exp))

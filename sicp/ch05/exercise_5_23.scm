@@ -28,6 +28,13 @@
 
 (pretty-print
  (let->combination
+  `(let ((a 1)
+         (b 2))
+     (+ a b b))))
+(newline)
+
+(pretty-print
+ (let->combination
   `(let loop ((i 1))
      (if (> i 5)
          'done
