@@ -22,15 +22,18 @@
 ;; TODO: implementation
 
 (pretty-print
- (cond->if
-  `(cond ((= a 1)
-          (this)
-          (that)
-          'done)
-         ((= a 2) #t)
-         (20 => (lambda (x)
-                  (* 2 x)))
-         (else 'good))))
+ (let->combination
+  `(let ((a 1)
+         (b 2))
+     (+ a b))))
+(newline)
+
+(pretty-print
+ (let->combination
+  `(let loop ((i 1))
+     (if (> i 5)
+         'done
+         (loop (+ i 1))))))
 
 (end-script)
 
