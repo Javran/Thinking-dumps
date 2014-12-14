@@ -19,8 +19,6 @@
 ;; * let->lambda-app
 ;    converts a let-expression into an application of lambda-expression
 
-;; TODO: implementation
-
 (pretty-print
  (let->combination
   `(let ((a 1)
