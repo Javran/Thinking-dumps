@@ -20,7 +20,6 @@
 ;; * let->combination
 ;;    converts a let-expression into an application of lambda-expression
 
-
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:
