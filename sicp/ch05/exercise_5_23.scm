@@ -39,6 +39,24 @@
             (#t (set! x (+ x 5)))
             (else (set! x (+ x 100))))
       x)
+    ;; test let
+    ;; - normal let-expression
+    (let ((x 1)
+          (y 2))
+      (let ((x 10))
+        ;; shadowing
+        (+ x y)))
+    (let ((x 1))
+      (set! x 10)
+      (set! x (+ x 200))
+      x)
+    ;; - name let
+    ;; TODO: required "define" form expansion
+    (let loop ((i 0)
+               (acc 0))
+      (if (> i 10)
+          acc
+          (loop (+ i 1) (+ acc i))))
     ))
 
 (for-each (test-evaluator machine-eval)
