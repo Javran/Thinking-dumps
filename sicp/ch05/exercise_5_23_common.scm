@@ -34,8 +34,6 @@
     (test (op begin?) (reg exp))
     (branch (label ev-begin))
 
-    (test (op application?) (reg exp))
-    (branch (label ev-application))
 
     ;; subroutine entries here, with proper conditions
     (test (op cond?) (reg exp))
@@ -43,6 +41,11 @@
 
     (test (op let?) (reg exp))
     (branch (label ev-let))
+
+    ;; IMPORTANT: function application is the last resort
+    ;; and should be the last case to be considered
+    (test (op application?) (reg exp))
+    (branch (label ev-application))
 
     (goto (label unknown-expression-type))
 
@@ -226,6 +229,7 @@
     ;; ev-let:
     ;; input: exp env
     ;; output: val
+    ev-let
     (assign exp (op let->combination) (reg exp))
     (goto (label eval-dispatch))
 
@@ -239,3 +243,7 @@
              (const "unknown procedure type")
              (reg proc))
     ))
+
+;; Local variables:
+;; proc-entry: "./exercise_5_23.scm"
+;; End:

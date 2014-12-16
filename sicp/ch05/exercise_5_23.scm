@@ -21,18 +21,19 @@
 ;;    converts a let-expression into an application of lambda-expression
 
 (define test-exps
-  `(;; test cond
+  `(
+    ;; test cond
     ;; - normal expressions
     (cond (else 10))
-    #;(cond ((= 1 1) 10)
+    (cond ((= 1 1) 10)
           ((= 2 1) 20))
-    #;(cond ((= 2 1) 10)
+    (cond ((= 2 1) 10)
           ((= 1 1) 20))
-    #;(cond (#f 30)
+    (cond (#f 30)
           (else 40))
     ;; - test side effects
-    #;(begin
-      (define x #f)
+    (begin
+      (define x 0)
       (cond (#f (set! x 10)
                 20)
             (#t (set! x (+ x 5)))
