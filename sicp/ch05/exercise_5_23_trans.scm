@@ -96,3 +96,7 @@
   (if (named-let? exp)
       (named-let->combination exp)
       (normal-let->combination exp)))
+
+;; Local variables:
+;; proc-entry: "./exercise_5_23.scm"
+;; End:

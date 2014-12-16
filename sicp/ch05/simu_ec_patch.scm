@@ -1,7 +1,10 @@
 (load "./ec-eval.scm")
+(load "./ec-tests.scm")
 
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry
+;; note that the symbol must be defined before we call this function
+;; or otherwise we would fail to evaluate the symbol and cause an error
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))
 
