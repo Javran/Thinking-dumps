@@ -97,6 +97,19 @@
       (named-let->combination exp)
       (normal-let->combination exp)))
 
+;; normalize a "define" form:
+;; nothing will be changed if the expression is of the form:
+;; (define <symbol> <value>)
+;; if the expression is defining a function,
+;; it will be rewritten into the form above.
+(define (normalize-define exp)
+  (if (symbol? (cadr exp))
+      ;; it's normal form already
+      exp
+      `(define ,(caadr exp)
+         ,(make-lambda (cdadr exp)
+                       (cddr exp)))))
+
 ;; Local variables:
 ;; proc-entry: "./exercise_5_23.scm"
 ;; End:

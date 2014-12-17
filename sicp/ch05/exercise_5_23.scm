@@ -51,7 +51,6 @@
       (set! x (+ x 200))
       x)
     ;; - name let
-    ;; TODO: required "define" form expansion
     (let loop ((i 0)
                (acc 0))
       (if (> i 10)

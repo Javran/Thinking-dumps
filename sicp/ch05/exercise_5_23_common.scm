@@ -3,6 +3,7 @@
     (lambda (m)
       `(,(to-machine-prim-entry 'cond->if)
         ,(to-machine-prim-entry 'let->combination)
+        ,(to-machine-prim-entry 'normalize-define)
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
         ,@(old-builder m)))))
@@ -199,6 +200,8 @@
     (goto (reg continue))
 
     ev-definition
+    ;; before we get started, "normalize" define form
+    (assign exp (op normalize-define) (reg exp))
     (assign unev (op definition-variable) (reg exp))
     (save unev)
     (assign exp (op definition-value) (reg exp))
