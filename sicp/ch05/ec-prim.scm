@@ -48,12 +48,11 @@
   (if (symbol? (cadr exp))
     ;; first form
     (caddr exp)
-    ;; second form, need desugar
-    ;; TODO:
-    ;; dropping the support of this form
-    ;; as it will soon be implemented
-    ;; in the upcoming exercise
-    (error "not supported yet")))
+    ;; second form, not supported here
+    ;; however, exercise 5.23 provides a desugarizer
+    ;; that transforms this second form into the first form
+    ;; see "normalize-define" in "./exercise_5_23_trans.scm"
+    (error "not supported")))
 
 (define (lambda? exp)
   (tagged-list? exp 'lambda))
