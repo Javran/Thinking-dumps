@@ -86,12 +86,11 @@
     (define vars (map car  let-binding-pairs))
     (define exps (map cadr let-binding-pairs))
     (normal-let->combination
-     ;; TODO: quasiquote?
-     (list 'let '()
-           (cons 'define
-                 (cons (cons proc-name vars)
-                       let-body))
-           (cons proc-name exps))))
+     `(let ()
+        (define (,proc-name ,@vars)
+          ,@let-body)
+        (,proc-name ,@exps))
+     ))
 
   (if (named-let? exp)
       (named-let->combination exp)

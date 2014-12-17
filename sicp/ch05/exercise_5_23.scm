@@ -53,6 +53,8 @@
     ;; - name let
     (let loop ((i 0)
                (acc 0))
+      10
+      20 ;; test sequence
       (if (> i 10)
           acc
           (loop (+ i 1) (+ acc i))))
