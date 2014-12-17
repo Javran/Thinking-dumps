@@ -39,6 +39,15 @@
             (#t (set! x (+ x 5)))
             (else (set! x (+ x 100))))
       x)
+    ;; re-test define
+    ;; and this time both forms will be tested
+    (begin
+      (define x 10)
+      x)
+    (begin
+      (define (f x y)
+        (+ x x y))
+      (f 10 200))
     ;; test let
     ;; - normal let-expression
     (let ((x 1)
