@@ -221,6 +221,14 @@
     ;; input: exp env
     ;; output: val
     ev-cond
+    ;; TODO:
+    ;; I think the biggest issue here
+    ;; is not about how to implement it
+    ;; but which register should I use and how to use it
+    ;; and also I don't get it why we must jump to ev-sequence.
+    ;; isn't ev-sequence one part of ev-begin subroutine?
+    ;; what are the assumptions that ev-sequence made?
+    ;; nothing but confusion here.
 
     ;; TODO
 
