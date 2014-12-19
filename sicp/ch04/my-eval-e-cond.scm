@@ -16,7 +16,6 @@
 (define cond-predicate car)
 (define cond-actions cdr)
 
-
 (define (clause-arrow? clause)
   (eq? (cadr clause) '=>))
 

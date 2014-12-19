@@ -236,7 +236,42 @@
     ;; what are the assumptions that ev-sequence made?
     ;; nothing but confusion here.
 
+    ;; store the list of condition clauses in "exp"
+    (assign exp (op cond-clauses) (reg exp))
+
+    (test (op null?) (reg exp))
+    (branch (label ev-cond-empty-clause))
+
+    ;; TODO: after the impl is done
+    ;; we change primitives to more readable functions
+    (save exp) ;; stack: [exp ..]
+    (assign exp (op car) (reg exp))
+    (save exp) ;; stack: [first-clause exp ..]
+    ;; TODO: need to check if this is a symbol: else
+    (assign exp (op car) (reg-exp))
+    (save continue) ;; stack: [continue first-clause exp ..]
+    (assign continue (label ev-cond-eval-cond-continue))
+    (save env) ;; stack: [env continue first-clause exp ..]
+    (goto (label eval-dispatch))
+    ev-cond-eval-cond-continue
+    (restore env) ;; stack: [continue first-clause exp ..]
+    (restore continue) ;; stack: [first-clause exp ..]
+    (test (op true?) (reg val))
+    (branch (label ev-cond-sub-eval))
+
+
+    ;; if there's no clause inside "cond"
+    ;; we return #f
+    ev-cond-empty-clause
+    (assign val (const #f))
+    (goto (reg continue))
+
+    ;; the condition is evaluated to true
+    ;; now we evaluate the following sequence ...
+    ev-cond-sub-eval
     ;; TODO
+
+    (perform (op error) (const "TODO"))
 
     ev-let
     (assign exp (op let->combination) (reg exp))
