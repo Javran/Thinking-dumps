@@ -141,7 +141,13 @@
     ev-begin
     (assign unev (op begin-actions) (reg exp))
     (save continue)
+    ;; just wondering: is the following line necessary?
+    ;; I don't think so.
+    ;; maybe the only point here is that ev-begin
+    ;; is tail-recursive and the author want to make this explicit
     (goto (label ev-sequence))
+    ;; what I hate about ev-sequence
+    ;; is that it mutates "exp", the caller might still need to use it!
     ev-sequence
     (assign exp (op first-exp) (reg unev))
     (test (op last-exp?) (reg unev))
