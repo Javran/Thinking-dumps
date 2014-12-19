@@ -36,6 +36,18 @@
 ;; in this machine can be found
 ;; in chapter 4
 ;; here they are treated as machine primitives
+;; NOTE: we need some convention when writing subroutines
+;; without which it's hard to know how to call a subroutine
+;; and what's the potentially side effect the callee can have
+;; I guess the conventions are:
+;; * the subroutine should specify the input register
+;;   and the value of these registers might be changed after
+;;   calling this subroutine
+;; * the "val" register are always used to store the result
+;; * each subroutine shouldn't assume registers other than
+;;   its inputs being intact when calling other subroutines
+;; * each subroutine has the responsibility of recovering
+;;   non-input registers after use.
 (define evaluator-insns
   '(
     ;; ==== eval-dispatch
