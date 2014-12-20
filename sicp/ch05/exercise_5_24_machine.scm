@@ -7,6 +7,15 @@
         ,(to-machine-prim-entry 'normalize-define)
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
+
+        ,(to-machine-prim-entry 'cond-clauses)
+        ,(to-machine-prim-entry 'first-clause)
+        ,(to-machine-prim-entry 'clause-cond)
+        ,(to-machine-prim-entry 'clause-actions)
+        ,(to-machine-prim-entry 'single-clause?)
+        ,(to-machine-prim-entry 'null?)
+        ,(to-machine-prim-entry 'eq?)
+
         ,@(old-builder m)))))
 
 ;; based on exercise 5.23
@@ -272,5 +281,5 @@
     ))
 
 ;; Local variables:
-;; proc-entry: "./exercise_5_23.scm"
+;; proc-entry: "./exercise_5_24.scm"
 ;; End:
