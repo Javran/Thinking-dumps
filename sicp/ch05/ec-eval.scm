@@ -39,15 +39,11 @@
 ;; NOTE: we need some convention when writing subroutines
 ;; without which it's hard to know how to call a subroutine
 ;; and what's the potentially side effect the callee can have
+;; TODO: verify if the following convension is valid in this eval-program
 ;; I guess the conventions are:
-;; * the subroutine should specify the input register
-;;   and the value of these registers might be changed after
-;;   calling this subroutine
 ;; * the "val" register are always used to store the result
-;; * each subroutine shouldn't assume registers other than
-;;   its inputs being intact when calling other subroutines
-;; * each subroutine has the responsibility of recovering
-;;   non-input registers after use.
+;; * the "val" and the balance of the stack should be the only assumptions
+
 (define evaluator-insns
   '(
     ;; ==== eval-dispatch
