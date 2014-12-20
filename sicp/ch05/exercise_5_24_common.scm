@@ -1,4 +1,6 @@
+(load "./exercise_5_23_common.scm")
 ;; effectively undefining "cond->if"
+
 (define cond->if #f)
 
 (define cond-clauses cdr)
