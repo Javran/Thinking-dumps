@@ -227,65 +227,34 @@
     ;; input: exp env
     ;; output: val
     ev-cond
-    ;; TODO:
-    ;; I think the biggest issue here
-    ;; is not about how to implement it
-    ;; but which register should I use and how to use it
-    ;; and also I don't get it why we must jump to ev-sequence.
-    ;; isn't ev-sequence one part of ev-begin subroutine?
-    ;; what are the assumptions that ev-sequence made?
-    ;; nothing but confusion here.
+    ;; use "argl" as the list of cond-clauses
+    (assign argl (op cond-clauses) (reg exp))
 
-    ;; store the list of condition clauses in "exp"
-    (assign exp (op cond-clauses) (reg exp))
+    (test (op null?) (reg argl))
+    (branch (label ev-cond-no-more-clause))
 
-    ;; if the clause list is empty,
-    ;; we return #f
-    (test (op null?) (reg exp))
-    (branch (label ev-cond-empty-clause))
+    ;; put first clause to "unev"
+    (assign unev (op first-clause) (reg argl))
 
-    ;; now we have a non-empty list of clauses to work with ...
-
-    ;; save the list of causes on the stack
-    (save exp) ;; stack: [exp ..]
     ;; extract condition
-    (assign exp (op first-clause) (reg exp))
-
-    (save exp) ;; stack: [first-clause exp ..]
-    ;; TODO: need to check if this is a symbol: else
-
-    (test (op else-clause?) (reg exp))
+    (assign exp (op clause-cond) (reg unev))
+    (test (op eq?) (reg exp) (const else))
     (branch (label ev-cond-else-clause))
 
-    (assign exp (op car) (reg-exp))
+    (perform (op error) (const "TODO"))
 
-    (save continue) ;; stack: [continue first-clause exp ..]
-    (assign continue (label ev-cond-eval-cond-continue))
-    (save env) ;; stack: [env continue first-clause exp ..]
-    (goto (label eval-dispatch))
-    ev-cond-eval-cond-continue
-    (restore env) ;; stack: [continue first-clause exp ..]
-    (restore continue) ;; stack: [first-clause exp ..]
-    (test (op true?) (reg val))
-    (branch (label ev-cond-sub-eval))
-
-
-    ;; if there's no clause inside "cond"
-    ;; we return #f
-    ev-cond-empty-clause
+    ev-cond-no-more-clause
     (assign val (const #f))
     (goto (reg continue))
 
-    ;; the condition is evaluated to true
-    ;; now we evaluate the following sequence ...
-    ev-cond-sub-eval
-    ;; TODO
-
-    ;; "(else <a seq of exp>)"
     ev-cond-else-clause
-
-
-    (perform (op error) (const "TODO"))
+    (test (op single-clause?) (reg argl))
+    (branch (label ev-cond-valid-else-clause))
+    (perform (op error) (const "else clause isn't the last clause"))
+    ev-cond-valid-else-clause
+    (assign unev (op clause-actions) (reg unev))
+    (save continue)
+    (goto (label ev-sequence))
 
     ev-let
     (assign exp (op let->combination) (reg exp))
