@@ -239,16 +239,26 @@
     ;; store the list of condition clauses in "exp"
     (assign exp (op cond-clauses) (reg exp))
 
+    ;; if the clause list is empty,
+    ;; we return #f
     (test (op null?) (reg exp))
     (branch (label ev-cond-empty-clause))
 
-    ;; TODO: after the impl is done
-    ;; we change primitives to more readable functions
+    ;; now we have a non-empty list of clauses to work with ...
+
+    ;; save the list of causes on the stack
     (save exp) ;; stack: [exp ..]
-    (assign exp (op car) (reg exp))
+    ;; extract condition
+    (assign exp (op first-clause) (reg exp))
+
     (save exp) ;; stack: [first-clause exp ..]
     ;; TODO: need to check if this is a symbol: else
+
+    (test (op else-clause?) (reg exp))
+    (branch (label ev-cond-else-clause))
+
     (assign exp (op car) (reg-exp))
+
     (save continue) ;; stack: [continue first-clause exp ..]
     (assign continue (label ev-cond-eval-cond-continue))
     (save env) ;; stack: [env continue first-clause exp ..]
@@ -270,6 +280,10 @@
     ;; now we evaluate the following sequence ...
     ev-cond-sub-eval
     ;; TODO
+
+    ;; "(else <a seq of exp>)"
+    ev-cond-else-clause
+
 
     (perform (op error) (const "TODO"))
 
