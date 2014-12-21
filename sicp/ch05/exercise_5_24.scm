@@ -15,7 +15,15 @@
 ;; handling. this would save my life a lot.
 
 ;; let's just test those valid expressions
-
+(define test-exps
+  `(
+    (cond (else (define x 10)
+                (+ x x 1)))
+    (cond (else 20))
+    (cond (else (define x 10)
+                (define y (+ x 10))
+                (+ x y y)))
+    ))
 
 (for-each (test-evaluator machine-eval) test-exps)
 (newline)
