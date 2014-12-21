@@ -25,6 +25,9 @@
                 (+ x y y)))
     (cond (#t 10)
           (else 20))
+    ;; looks like a bug here..
+    (cond (#f 10)
+          (#t 20))
     ))
 
 (for-each (test-evaluator machine-eval) test-exps)
