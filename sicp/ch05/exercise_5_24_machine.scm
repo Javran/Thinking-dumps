@@ -10,6 +10,7 @@
 
         ,(to-machine-prim-entry 'cond-clauses)
         ,(to-machine-prim-entry 'first-clause)
+        ,(to-machine-prim-entry 'rest-clauses)
         ,(to-machine-prim-entry 'clause-cond)
         ,(to-machine-prim-entry 'clause-actions)
         ,(to-machine-prim-entry 'single-clause?)
@@ -239,6 +240,7 @@
     ;; use "argl" as the list of cond-clauses
     (assign argl (op cond-clauses) (reg exp))
 
+    ev-cond-clause-test-loop
     (test (op null?) (reg argl))
     (branch (label ev-cond-no-more-clause))
 
@@ -265,6 +267,8 @@
     (test (op true?) (reg val))
     (goto (label ev-cond-exec-action))
     ;; otherwise we need to evaluate the next clause ..
+    (assign argl (op rest-clauses) (reg argl))
+    (goto (label ev-cond-clause-test-loop))
     (perform (op error) (const "TODO"))
 
     ev-cond-no-more-clause
