@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses,TupleSections,FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses, TupleSections, FlexibleInstances #-}
 module Problem80 where
 
 import Data.List hiding (concatMap, concat)
@@ -6,7 +6,6 @@ import Data.Either
 import Data.Foldable
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
-import Control.Arrow
 import Data.Monoid
 import Data.Function
 
@@ -70,25 +69,28 @@ graphFormToAdjForm (GraphForm vs es) = AdjForm (M.fromListWith S.union allPairs)
     edgeToPair e
         | (a,b) <- terminals e = [(a, S.singleton e),(b, S.singleton e)]
 
-adjFormToGraphForm :: (Eq e, Ord v, Ord e, VertexEdge v e) => AdjForm v e -> GraphForm v e
+adjFormToGraphForm :: (Ord v, Ord e, VertexEdge v e) => AdjForm v e -> GraphForm v e
 adjFormToGraphForm (AdjForm as) = GraphForm vs es
   where
     vs = M.keysSet as
     es = mconcat . M.elems $ as
 
-{-
-fndFormToGraphForm :: (Ord v, VertexEdge v e) => FndForm v e -> GraphForm v e
-fndFormToGraphForm (FndForm fs) = GraphForm vs es
-  where
-    vs = S.fromList . lefts $ fs
-    es = rights fs
 
-graphFormToFndForm :: GraphForm v e -> FndForm v e
-graphFormToFndForm (GraphForm vs es) = FndForm (vs' ++ es')
+fndFormToGraphForm :: (Ord v, Ord e, VertexEdge v e) => FndForm v e -> GraphForm v e
+fndFormToGraphForm (FndForm fs) = GraphForm vs (S.fromList es)
   where
-    vs' = map Left . S.toList $ vs
-    es' = map Right es
--}
+    es = rights fs
+    vs1 = lefts fs
+    vs2 = concatMap (pairToList . terminals ) es
+    vs = S.fromList $ vs1 ++ vs2
+
+graphFormToFndForm :: (Ord v, VertexEdge v e) => GraphForm v e -> FndForm v e
+graphFormToFndForm (GraphForm vs es) = FndForm (map Left vs' ++ map Right es')
+  where
+    -- vertices that appear at least once in the list of edges
+    evs = S.fromList . concatMap (pairToList . terminals) $ es
+    vs' = S.toList $ evs `S.difference` vs
+    es' = S.toList es
 
 example :: GraphForm Char (Edge Char)
 example = GraphForm vs es
@@ -103,6 +105,7 @@ example = GraphForm vs es
 
 main :: IO ()
 main = do
+    -- TODO: use quickcheck for some simple property-checking?
     print example
     -- TODO: missing some vertices
     print (graphFormToAdjForm example)
