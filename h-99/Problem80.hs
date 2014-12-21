@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, TupleSections, FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses, TupleSections, FlexibleInstances, ConstraintKinds #-}
 module Problem80 where
 
 import Data.List hiding (concatMap, concat)
@@ -27,6 +27,8 @@ data GraphForm v e = GraphForm
 data AdjForm v e = AdjForm (M.Map v (S.Set e)) deriving Show
 
 data FndForm v e = FndForm [Either v e] deriving Show
+
+type OrdVE v e = (Ord v, Ord e, VertexEdge v e)
 
 -- "Edge" does not allow more than one edge between any pair of vertices
 -- also it's undirected
@@ -59,7 +61,7 @@ instance Eq v => VertexEdge v (Edge v) where
 pairToList :: (a,a) -> [a]
 pairToList ~(x,y) = [x,y]
 
-graphFormToAdjForm :: (Ord v, Ord e, VertexEdge v e) => GraphForm v e -> AdjForm v e
+graphFormToAdjForm :: OrdVE v e => GraphForm v e -> AdjForm v e
 graphFormToAdjForm (GraphForm vs es) = AdjForm (M.fromListWith S.union allPairs)
   where
     allPairs = emptyPairs ++ vertEdgePairs
