@@ -257,10 +257,6 @@
     (goto (reg continue))
 
     ev-cond-else-clause
-    (test (op single-clause?) (reg argl))
-    (branch (label ev-cond-valid-else-clause))
-    (perform (op error) (const "else clause isn't the last clause"))
-    ev-cond-valid-else-clause
     (assign unev (op clause-actions) (reg unev))
     (save continue)
     (goto (label ev-sequence))
