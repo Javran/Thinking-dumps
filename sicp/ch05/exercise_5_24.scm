@@ -23,6 +23,8 @@
     (cond (else (define x 10)
                 (define y (+ x 10))
                 (+ x y y)))
+    (cond (#t 10)
+          (else 20))
     ))
 
 (for-each (test-evaluator machine-eval) test-exps)
