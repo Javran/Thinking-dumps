@@ -269,7 +269,6 @@
     ;; otherwise we need to evaluate the next clause ..
     (assign argl (op rest-clauses) (reg argl))
     (goto (label ev-cond-clause-test-loop))
-    (perform (op error) (const "TODO"))
 
     ev-cond-no-more-clause
     (assign val (const #f))

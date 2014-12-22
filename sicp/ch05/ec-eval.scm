@@ -39,10 +39,12 @@
 ;; NOTE: we need some convention when writing subroutines
 ;; without which it's hard to know how to call a subroutine
 ;; and what's the potentially side effect the callee can have
-;; TODO: verify if the following convension is valid in this eval-program
 ;; I guess the conventions are:
 ;; * the "val" register are always used to store the result
-;; * the "val" and the balance of the stack should be the only assumptions
+;; * whenever subroutines are called, the callee shouldn't assume
+;;   all the related registers are unchanged.
+;;   the callee has the responsibility of keeping register values
+;;   most of the time these values are kept on the stack
 
 (define evaluator-insns
   '(
