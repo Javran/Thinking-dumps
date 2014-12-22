@@ -48,6 +48,11 @@
       (cond ((= 1 2) (set! y (+ y 10)))
             ((= 1 1) (set! y (+ y 100))))
       y)
+    (begin
+      (define (f x y z)
+        (+ x y z))
+      (cond ((= (f 1 2 3) 5) 1)
+            ((= (f 1 2 3) 6) 2)))
     ))
 
 (for-each (test-evaluator machine-eval) test-exps)
