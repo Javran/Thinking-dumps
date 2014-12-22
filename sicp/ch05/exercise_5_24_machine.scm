@@ -265,7 +265,7 @@
     (restore argl) ;; stack: [continue ..]
     (restore continue) ;; stack: <balanced>
     (test (op true?) (reg val))
-    (goto (label ev-cond-exec-action))
+    (branch (label ev-cond-exec-action))
     ;; otherwise we need to evaluate the next clause ..
     (assign argl (op rest-clauses) (reg argl))
     (goto (label ev-cond-clause-test-loop))
