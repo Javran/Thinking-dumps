@@ -253,17 +253,17 @@
     (branch (label ev-cond-exec-action))
     ;; elsewise the condition part is just a normal expression
     ;; let's evaluate it
-    (save continue) ;; stack: [continue ..]
-    (save argl) ;; stack: [argl continue ..]
-    (save unev) ;; stack: [unev argl continue ..]
-    (save env) ;; stack: [env unev argl continue ..]
+    (save continue)               ; stack: [continue ..]
+    (save argl)                   ; stack: [argl continue ..]
+    (save unev)                   ; stack: [unev argl continue ..]
+    (save env)                    ; stack: [env unev argl continue ..]
     (assign continue (label ev-cond-evaluated))
     (goto (label eval-dispatch))
     ev-cond-evaluated
-    (restore env) ;; stack: [unev argl continue ..]
-    (restore unev) ;; stack: [argl continue ..]
-    (restore argl) ;; stack: [continue ..]
-    (restore continue) ;; stack: <balanced>
+    (restore env)                     ; stack: [unev argl continue ..]
+    (restore unev)                    ; stack: [argl continue ..]
+    (restore argl)                    ; stack: [continue ..]
+    (restore continue)                ; stack: <balanced>
     (test (op true?) (reg val))
     (branch (label ev-cond-exec-action))
     ;; otherwise we need to evaluate the next clause ..
