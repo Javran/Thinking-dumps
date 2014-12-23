@@ -8,16 +8,19 @@
 ;; is how an expression gets evaluated: before function application,
 ;; applicative-order evaluation evaluates all the arguments
 ;; while normal-order evaluation only evaluates a value as needed
-;; there are two kinds of situations:
+;; there are three kinds of situations:
 ;; * a primitive function needs that value, in which case
 ;;   the evaluation is forced because the primitives have no
 ;;   knowledge about expressions
 ;; * a condition depends on that value, in which case
 ;;   we need the exact value not the unevaluated expression in order to
 ;;   proceed
+;; * a delayed value is a function and we need that function in order to
+;;   proceed
 
 ;; * guess we first need to implement thunk?
-
+;; * few parts are needed to be modified:
+;;   + function application (need to force the operator)
 
 (end-script)
 
