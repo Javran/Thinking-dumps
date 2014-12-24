@@ -64,7 +64,7 @@
         ((evaluated-thunk? obj) (thunk-value obj))
         (else obj)))
 
-;; let's redo the test here
+;; let's redo all the tests here
 (newline) (newline)
 (define delayed-val
   (delay-it

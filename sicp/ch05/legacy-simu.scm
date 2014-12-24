@@ -2,9 +2,8 @@
 (define (list-tagged-with tag)
   (lambda (l)
     (and
-      (list? l)
-      (non-empty? l)
-      (eq? (car l) tag))))
+     (pair? l)
+     (eq? (car l) tag))))
 
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
