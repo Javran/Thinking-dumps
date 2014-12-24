@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./exercise_5_25_common.scm")
+
 ;; there are actually two kinds of normal-order evaluations:
 ;; * call-by-name (no memorization)
 ;; * call-by-need (memorization, lazy evaluation)

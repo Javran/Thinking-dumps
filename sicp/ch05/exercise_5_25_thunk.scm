@@ -26,4 +26,3 @@
   (set-car! obj 'evaluated-thunk?)
   (set-car! (cdr obj) value)
   (set-cdr! (cdr obj) '()))
-
