@@ -66,7 +66,7 @@
     (save unev)
     (assign exp (op operator) (reg exp))
     (assign continue (label ev-appl-did-operator))
-    (goto (label eval-dispatch))
+    (goto (label actual-value))
 
     ev-appl-did-operator
     (restore unev)
@@ -222,4 +222,19 @@
     (perform (op error)
              (const "unknown procedure type")
              (reg proc))
+
+    ;; actual-value exp env
+    actual-value
+    (save continue) ;; stack: [continue ..]
+    (assign continue (label actual-value-after-eval))
+    (goto (label eval-dispatch))
+    actual-value-after-eval
+    (test (op thunk?) (reg val))
+    (branch (label actual-value-force))
+    (restore continue) ;; stack: <balanced>
+    (goto (reg continue))
+    actual-value-force
+    ;; TODO
+    (perform (op error) (const "TODO"))
+
     ))
