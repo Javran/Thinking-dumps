@@ -59,6 +59,8 @@
            (set-cdr! (cdr obj)
                      ;; I think this is just
                      ;; an optimization for gc
+                     ;; as this part won't be accessed
+                     ;; once we know this is an evaluated thunk
                      '())
            result))
         ((evaluated-thunk? obj) (thunk-value obj))
