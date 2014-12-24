@@ -94,8 +94,17 @@
 (define (const x)
   (lambda (y) x))
 
-; use `pair?` to judge if a list contains any element is not straighforward
-; so here I made an alias to make the code more friendly to readers
+;; I don't like the idea of testing if a object is a non-empty list
+;; by using "pair?" function directly, as its name is not suggestive
+;; about what it is doing.
+;; so instead we use "non-empty?", which does exactly the same thing
+;; but with a more suggestive name.
+;; note that "pair?" still has its own usage:
+;; it can make sure some of the "following operations" don't go wrong
+;; for example, "(car obj)" might raise an error if the object is not a pair
+;; but we can use "(pair? obj)" to test if the object is a pair or not.
+;; in other words, if "(pair? obj)" returns true, it is guaranteed that
+;; "(car obj)" and "(cdr obj)" won't raise any error.
 (define non-empty? pair?)
 
 (define nil '())
