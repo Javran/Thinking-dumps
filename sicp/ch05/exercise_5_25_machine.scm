@@ -227,10 +227,16 @@
     actual-value
     (save continue) ;; stack: [continue ..]
     (assign continue (label actual-value-after-eval))
+    ;; try to evaluate the expression, which might end up with either
+    ;; a real value
+    ;; or a thunk
     (goto (label eval-dispatch))
     actual-value-after-eval
+    ;; if this is a thunk, we evaluate it, with might again
+    ;; end up with eitehr a real value or a thunk
     (test (op thunk?) (reg val))
     (branch (label actual-value-force))
+    ;; TODO: deal with evaluated thunk
     (restore continue) ;; stack: <balanced>
     (goto (reg continue))
     actual-value-force
