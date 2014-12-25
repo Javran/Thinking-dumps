@@ -234,7 +234,13 @@
     (restore continue) ;; stack: <balanced>
     (goto (reg continue))
     actual-value-force
-    ;; TODO
-    (perform (op error) (const "TODO"))
+    (assign exp (op thunk-exp) (reg val))
+    (assign env (op thunk-env) (reg env))
+    (save continue) ;; stack: [continue ..]
+    (assign continue (label actual-value-force-after-eval))
+    (goto (label eval-dispatch))
+    actual-value-force-after-eval
+    (restore continue) ;; stack: <balanced>
+    (goto actual-value-after-eval)
 
     ))
