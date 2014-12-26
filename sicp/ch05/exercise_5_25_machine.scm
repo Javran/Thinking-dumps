@@ -226,27 +226,38 @@
     ;; actual-value exp env
     actual-value
     (save continue) ;; stack: [continue ..]
-    (assign continue (label actual-value-after-eval))
+    (assign continue (label actual-value-after1))
     ;; try to evaluate the expression, which might end up with either
-    ;; a real value
-    ;; or a thunk
+    ;; a real value or a thunk
     (goto (label eval-dispatch))
+    actual-value-after1
+    (restore continue) ;; stack: <balanced>
+    ;; if this is a thunk, we evaluate it, which might again
+    ;; end up with eitehr a real value or another thunk
     actual-value-after-eval
-    ;; if this is a thunk, we evaluate it, with might again
-    ;; end up with eitehr a real value or a thunk
     (test (op thunk?) (reg val))
-    (branch (label actual-value-force))
-    ;; TODO: deal with evaluated thunk
-    (restore continue) ;; stack: <balanced>
+    (branch (label actual-value-thunk))
+    (test (op evaluated-thunk?) (reg val))
+    (branch (label actual-value-evaluated-thunk))
+    ;; otherwise we just need to return it
     (goto (reg continue))
-    actual-value-force
-    (assign exp (op thunk-exp) (reg val))
-    (assign env (op thunk-env) (reg env))
-    (save continue) ;; stack: [continue ..]
-    (assign continue (label actual-value-force-after-eval))
-    (goto (label eval-dispatch))
-    actual-value-force-after-eval
-    (restore continue) ;; stack: <balanced>
-    (goto actual-value-after-eval)
 
+    (goto (reg continue))
+    actual-value-thunk
+    (assign exp (op thunk-exp) (reg val))
+    (assign env (op thunk-env) (reg val))
+    (save val) ;; [val ..]
+    (save continue) ;; stack: [continue val ..]
+    (assign continue (label actual-value-thunk-after))
+    (goto (label eval-dispatch))
+    actual-value-thunk-after
+    (restore continue) ;; stack: [val ..]
+    (restore exp) ;; move thunk object to exp register
+    ;; stack: <balanced>
+    (perform (op thunk-set-value!)
+             (reg exp) (reg val))
+    (goto actual-value-after-eval)
+    actual-value-evaluated-thunk
+    (assign val (op thunk-value) (reg val))
+    (goto (reg continue))
     ))

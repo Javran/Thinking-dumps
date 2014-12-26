@@ -1,5 +1,9 @@
 ;; modified from "../ch04/4_2_2_representing_thunks.scm"
 
+
+;; TODO: unque symbols for thunks and evaluated thunks
+;; to prevent implemented language from using it accidentally
+
 (define (delay-it exp env)
   `(thunk ,exp ,env))
 
