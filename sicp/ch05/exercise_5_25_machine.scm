@@ -95,6 +95,35 @@
     (restore continue)
     (goto (reg continue))
 
+    list-of-arg-values
+    ;; argl -> val
+    (test (op no-operands?) (reg argl))
+    (branch (label list-of-arg-values-no-operand))
+
+    ;; evaluate first argument
+    (save continue) ;; stack: [continue ..]
+    (save argl) ;; stack: [argl continue ..]
+    (save env) ;; stack: [env argl continue ..]
+    (assign exp (op first-operand) (reg argl))
+
+    (assign continue (label list-of-arg-values-first-evaluated))
+    (goto (label actual-value))
+    list-of-arg-values-first-evaluated
+    (restore env) ;; stack: [argl continue ..]
+    (restore argl) ;; stack: [continue ..]
+    (save val) ;; stack: [val continue ..]
+    (assign continue (label list-of-arg-values-rest-done))
+    (goto (label list-of-arg-values))
+    list-of-arg-values-rest-done
+    ;; val -> exp
+    (restore exp) ;; stack: [continue ..]
+    (assign val (op cons) (reg exp) (reg val))
+    (goto (reg continue))
+
+    list-of-arg-values-no-operand
+    (assign val (const ()))
+    (goto (reg continue))
+
     compound-apply
     ;; (assign unev (op procedure-parameters) (reg proc))
     ;; (assign env (op procedure-environment) (reg proc))
