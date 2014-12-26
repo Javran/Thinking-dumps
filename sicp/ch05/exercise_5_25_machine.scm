@@ -60,46 +60,20 @@
 
     ;; ev-application: change to lazy evaluation
     ev-application
-    (save continue)
-    (save env)
+    (save continue) ;; stack: [continue ..]
+    (save env) ;; stack: [env continue ..]
     (assign unev (op operands) (reg exp))
-    (save unev)
+    (save unev) ;; stack: [unev env continue ..]
     (assign exp (op operator) (reg exp))
     (assign continue (label ev-appl-did-operator))
     (goto (label actual-value))
 
     ev-appl-did-operator
-    (restore unev)
-    (restore env)
-    (assign argl (op empty-arglist))
+    (restore unev) ;; stack: [env continue ..]
+    (restore env) ;; stack: [continue ..]
     (assign proc (reg val))
-    (test (op no-operands?) (reg unev))
-    (branch (label apply-dispatch))
-    (save proc)
-    ev-appl-operand-loop
-    (save argl)
-    (assign exp (op first-operand) (reg unev))
-    (test (op last-operand?) (reg unev))
-    (branch (label ev-appl-last-arg))
-    (save env)
-    (save unev)
-    (assign continue (label ev-appl-accumulate-arg))
-    (goto (label eval-dispatch))
-    ev-appl-accumulate-arg
-    (restore unev)
-    (restore env)
-    (restore argl)
-    (assign argl (op adjoin-arg) (reg val) (reg argl))
-    (assign unev (op rest-operands) (reg unev))
-    (goto (label ev-appl-operand-loop))
-
-    ev-appl-last-arg
-    (assign continue (label ev-appl-accum-last-arg))
-    (goto (label eval-dispatch))
-    ev-appl-accum-last-arg
-    (restore argl)
-    (assign argl (op adjoin-arg) (reg val) (reg argl))
-    (restore proc)
+    (assign argl (reg unev))
+    ;; no longer need to evaluate them for lazy eval
     (goto (label apply-dispatch))
 
     apply-dispatch
@@ -110,21 +84,26 @@
     (goto (label unknown-procedure-type))
 
     primitive-apply
+    ;; stack: [continue ..]
+    (assign continue (label primitive-apply-after-list-args))
+    (goto (label list-of-arg-values))
+    primitive-apply-after-list-args
     (assign val
             (op apply-primitive-procedure)
             (reg proc)
-            (reg argl))
+            (reg val))
     (restore continue)
     (goto (reg continue))
 
     compound-apply
-    (assign unev (op procedure-parameters) (reg proc))
-    (assign env (op procedure-environment) (reg proc))
-    (assign env
-            (op extend-environment)
-            (reg unev) (reg argl) (reg env))
-    (assign unev (op procedure-body) (reg proc))
-    (goto (label ev-sequence))
+    ;; (assign unev (op procedure-parameters) (reg proc))
+    ;; (assign env (op procedure-environment) (reg proc))
+    ;; (assign env
+    ;;        (op extend-environment)
+    ;;        (reg unev) (reg argl) (reg env))
+    ;; (assign unev (op procedure-body) (reg proc))
+    ;; (goto (label ev-sequence))
+    (perform (op error) (const "TODO"))
 
     ev-begin
     (assign unev (op begin-actions) (reg exp))
