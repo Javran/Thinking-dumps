@@ -80,17 +80,17 @@
 
     ;; ev-application: change to lazy evaluation
     ev-application
-    (save continue) ;; stack: [continue ..]
-    (save env) ;; stack: [env continue ..]
+    (save continue)                     ; stack: [continue ..]
+    (save env)                          ; stack: [env continue ..]
     (assign unev (op operands) (reg exp))
-    (save unev) ;; stack: [unev env continue ..]
+    (save unev)                        ; stack: [unev env continue ..]
     (assign exp (op operator) (reg exp))
     (assign continue (label ev-appl-did-operator))
     (goto (label actual-value))
 
     ev-appl-did-operator
-    (restore unev) ;; stack: [env continue ..]
-    (restore env) ;; stack: [continue ..]
+    (restore unev)                      ; stack: [env continue ..]
+    (restore env)                       ; stack: [continue ..]
     (assign proc (reg val))
     (assign argl (reg unev))
     ;; no longer need to evaluate them for lazy eval
@@ -104,7 +104,7 @@
     (goto (label unknown-procedure-type))
 
     primitive-apply
-    ;; stack: [continue ..]
+                                        ; stack: [continue ..]
     (assign continue (label primitive-apply-after-list-args))
     (goto (label list-of-arg-values))
     primitive-apply-after-list-args
@@ -121,25 +121,25 @@
     (branch (label list-of-arg-values-no-operand))
 
     ;; evaluate first argument
-    (save continue) ;; stack: [continue ..]
-    (save env) ;; stack: [env continue ..]
+    (save continue)                     ; stack: [continue ..]
+    (save env)                          ; stack: [env continue ..]
     (assign exp (op first-operand) (reg argl))
     (assign argl (op rest-operands) (reg argl))
-    (save argl) ;; stack: [argl env continue ..]
+    (save argl)                        ; stack: [argl env continue ..]
 
     (assign continue (label list-of-arg-values-first-evaluated))
     (goto (label actual-value))
     list-of-arg-values-first-evaluated
-    (restore argl) ;; stack: [env continue ..]
-    (restore env) ;; stack: [continue ..]
-    (save val) ;; stack: [val continue ..]
+    (restore argl)                      ; stack: [env continue ..]
+    (restore env)                       ; stack: [continue ..]
+    (save val)                          ; stack: [val continue ..]
     (assign continue (label list-of-arg-values-rest-done))
     (goto (label list-of-arg-values))
     list-of-arg-values-rest-done
     ;; val -> exp
-    (restore exp) ;; stack: [continue ..]
+    (restore exp)                       ; stack: [continue ..]
     (assign val (op cons) (reg exp) (reg val))
-    (restore continue)
+    (restore continue)                  ; stack: <balanced>
     (goto (reg continue))
 
     list-of-arg-values-no-operand
@@ -255,13 +255,13 @@
 
     ;; actual-value exp env
     actual-value
-    (save continue) ;; stack: [continue ..]
+    (save continue)                     ; stack: [continue ..]
     (assign continue (label actual-value-after1))
     ;; try to evaluate the expression, which might end up with either
     ;; a real value or a thunk
     (goto (label eval-dispatch))
     actual-value-after1
-    (restore continue) ;; stack: <balanced>
+    (restore continue)                  ; stack: <balanced>
     ;; if this is a thunk, we evaluate it, which might again
     ;; end up with eitehr a real value or another thunk
     actual-value-after-eval
@@ -276,14 +276,14 @@
     actual-value-thunk
     (assign exp (op thunk-exp) (reg val))
     (assign env (op thunk-env) (reg val))
-    (save val) ;; [val ..]
-    (save continue) ;; stack: [continue val ..]
+    (save val)                          ; stack: [val ..]
+    (save continue)                     ; stack: [continue val ..]
     (assign continue (label actual-value-thunk-after))
     (goto (label eval-dispatch))
     actual-value-thunk-after
-    (restore continue) ;; stack: [val ..]
-    (restore exp) ;; move thunk object to exp register
-    ;; stack: <balanced>
+    (restore continue)            ; stack: [val ..]
+    (restore exp)                 ;; move thunk object to exp register
+                                        ; stack: <balanced>
     (perform (op thunk-set-value!)
              (reg exp) (reg val))
     (goto (label actual-value-after-eval))
