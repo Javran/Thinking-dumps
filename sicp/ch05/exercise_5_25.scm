@@ -9,10 +9,11 @@
 
 (out
  (machine-eval
-  'true
+  '(test-no-arg-prim)
   (extend-environment
    '(test-no-arg-prim)
-   (list (lambda () (out "no argument primitive test")))
+   (list (lift-primitive
+          (lambda () (out "no argument primitive test"))))
    (init-env))))
 
 ;; there are actually two kinds of normal-order evaluations:

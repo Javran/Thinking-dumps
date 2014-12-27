@@ -15,7 +15,7 @@
 ;;   + "lift-primitive" procedure in "ec-prim.scm"
 ;;     converts a scheme procedure to one that can be directly used
 ;;     by the implemented language (e.g. +, -, *, ...)
-;;   + "to-eval-prim-entry" uses "lift-primitve".
+;;   + "to-eval-prim-entry" uses "lift-primitive".
 ;;     it makes an entry recording that primitive rather than
 ;;     just lifting the procedure
 ;; * the controller
