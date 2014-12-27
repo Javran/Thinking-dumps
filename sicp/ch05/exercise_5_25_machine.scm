@@ -139,6 +139,7 @@
     ;; val -> exp
     (restore exp) ;; stack: [continue ..]
     (assign val (op cons) (reg exp) (reg val))
+    (restore continue)
     (goto (reg continue))
 
     list-of-arg-values-no-operand

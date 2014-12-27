@@ -9,7 +9,7 @@
 
 (out
  (machine-eval
-  '(+ 1 2 3 4)
+  '(- 10 20)
   (init-env)))
 
 ;; there are actually two kinds of normal-order evaluations:
