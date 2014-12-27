@@ -1,7 +1,19 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./simu.scm")
+(load "./simu_ec_patch.scm")
+
 (load "./exercise_5_25_common.scm")
+(load "./exercise_5_25_machine.scm")
+
+(out
+ (machine-eval
+  'true
+  (extend-environment
+   '(test-no-arg-prim)
+   (list (lambda () (out "no argument primitive test")))
+   (init-env))))
 
 ;; there are actually two kinds of normal-order evaluations:
 ;; * call-by-name (no memorization)

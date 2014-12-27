@@ -1,4 +1,24 @@
 ;; based on exercise 5.23
+(load "./exercise_5_25_thunk.scm")
+
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      `(,(to-machine-prim-entry 'cons)
+        ,(to-machine-prim-entry 'cond->if)
+        ,(to-machine-prim-entry 'let->combination)
+        ,(to-machine-prim-entry 'normalize-define)
+        ,(to-machine-prim-entry 'delay-it)
+        ,(to-machine-prim-entry 'thunk?)
+        ,(to-machine-prim-entry 'thunk-exp)
+        ,(to-machine-prim-entry 'thunk-env)
+        ,(to-machine-prim-entry 'evaluated-thunk?)
+        ,(to-machine-prim-entry 'thunk-value)
+        ,(to-machine-prim-entry 'thunk-set-value!)
+        (cond? ,(list-tagged-with 'cond))
+        (let? ,(list-tagged-with 'let))
+        ,@(old-builder m)))))
+
 (define evaluator-insns
   '(
     eval-dispatch
@@ -264,8 +284,12 @@
     ;; stack: <balanced>
     (perform (op thunk-set-value!)
              (reg exp) (reg val))
-    (goto actual-value-after-eval)
+    (goto (label actual-value-after-eval))
     actual-value-evaluated-thunk
     (assign val (op thunk-value) (reg val))
     (goto (reg continue))
     ))
+
+;; Local variables:
+;; proc-entry: "./exercise_5_25.scm"
+;; End:
