@@ -4,17 +4,10 @@
 (define default-ops-builder
   (let ((old-builder default-ops-builder))
     (lambda (m)
-      `(,(to-machine-prim-entry 'cons)
-        ,(to-machine-prim-entry 'cond->if)
-        ,(to-machine-prim-entry 'let->combination)
-        ,(to-machine-prim-entry 'normalize-define)
-        ,(to-machine-prim-entry 'delay-it)
-        ,(to-machine-prim-entry 'thunk?)
-        ,(to-machine-prim-entry 'thunk-exp)
-        ,(to-machine-prim-entry 'thunk-env)
-        ,(to-machine-prim-entry 'evaluated-thunk?)
-        ,(to-machine-prim-entry 'thunk-value)
-        ,(to-machine-prim-entry 'thunk-set-value!)
+      `(,@(map to-machine-prim-entry
+               '(cons cond->if let->combination normalize-define
+                 delay-it thunk? thunk-exp thunk-env
+                 evaluated-thunk? thunk-value thunk-set-value!))
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
         ,@(old-builder m)))))
