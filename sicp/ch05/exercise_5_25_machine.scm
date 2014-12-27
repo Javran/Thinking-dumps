@@ -122,15 +122,16 @@
 
     ;; evaluate first argument
     (save continue) ;; stack: [continue ..]
-    (save argl) ;; stack: [argl continue ..]
-    (save env) ;; stack: [env argl continue ..]
+    (save env) ;; stack: [env continue ..]
     (assign exp (op first-operand) (reg argl))
+    (assign argl (op rest-operands) (reg argl))
+    (save argl) ;; stack: [argl env continue ..]
 
     (assign continue (label list-of-arg-values-first-evaluated))
     (goto (label actual-value))
     list-of-arg-values-first-evaluated
-    (restore env) ;; stack: [argl continue ..]
-    (restore argl) ;; stack: [continue ..]
+    (restore argl) ;; stack: [env continue ..]
+    (restore env) ;; stack: [continue ..]
     (save val) ;; stack: [val continue ..]
     (assign continue (label list-of-arg-values-rest-done))
     (goto (label list-of-arg-values))

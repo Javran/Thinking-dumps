@@ -9,12 +9,8 @@
 
 (out
  (machine-eval
-  '(test-no-arg-prim)
-  (extend-environment
-   '(test-no-arg-prim)
-   (list (lift-primitive
-          (lambda () (out "no argument primitive test"))))
-   (init-env))))
+  '(+ 1 2 3 4)
+  (init-env)))
 
 ;; there are actually two kinds of normal-order evaluations:
 ;; * call-by-name (no memorization)
