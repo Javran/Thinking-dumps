@@ -10,10 +10,13 @@
                  evaluated-thunk? thunk-value thunk-set-value!))
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
+        ;; pass register value to arbitrary scheme procedure
+        (debug ,(lambda (proc . args)
+                  (apply proc args)))
         ,@(old-builder m)))))
 
 (define evaluator-insns
-  '(
+  `(
     eval-dispatch
     (test (op self-evaluating?) (reg exp))
     (branch (label ev-self-eval))
@@ -90,6 +93,7 @@
     (goto (label apply-dispatch))
 
     apply-dispatch
+    ;; ???
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-apply))
     (test (op compound-procedure?) (reg proc))
@@ -167,9 +171,9 @@
     (assign argl (op rest-operands) (reg argl))
     (save argl)                        ; stack: [argl env continue ..]
 
-    (assign continue (label list-of-delayed-args-first-evaluated))
-    (goto (label actual-value))
-    list-of-delayed-args-first-evaluated
+    ;; TODO: remove not-necessary stack ops
+    (assign val (op delay-it) (reg exp) (reg env))
+
     (restore argl)                      ; stack: [env continue ..]
     (restore env)                       ; stack: [continue ..]
     (save val)                          ; stack: [val continue ..]

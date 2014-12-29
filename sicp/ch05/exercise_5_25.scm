@@ -9,7 +9,9 @@
 
 (out
  (machine-eval
-  '(+ (- 10 1 2 3) (* 4 5))
+  '((begin
+      (define (f x y z) (+ x 10))
+      (f 20 30 40)))
   (init-env)))
 
 ;; there are actually two kinds of normal-order evaluations:
