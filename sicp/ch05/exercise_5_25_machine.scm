@@ -149,6 +149,37 @@
     ;; (goto (label ev-sequence))
     (perform (op error) (const "TODO"))
 
+    list-of-delayed-args
+    ;; argl -> val
+    (test (op no-operands?) (reg argl))
+    (branch (label list-of-delayed-args-no-operand))
+
+    ;; evaluate first argument
+    (save continue)                     ; stack: [continue ..]
+    (save env)                          ; stack: [env continue ..]
+    (assign exp (op first-operand) (reg argl))
+    (assign argl (op rest-operands) (reg argl))
+    (save argl)                        ; stack: [argl env continue ..]
+
+    (assign continue (label list-of-delayed-args-first-evaluated))
+    (goto (label actual-value))
+    list-of-delayed-args-first-evaluated
+    (restore argl)                      ; stack: [env continue ..]
+    (restore env)                       ; stack: [continue ..]
+    (save val)                          ; stack: [val continue ..]
+    (assign continue (label list-of-delayed-args-rest-done))
+    (goto (label list-of-delayed-args))
+    list-of-delayed-args-rest-done
+    ;; val -> exp
+    (restore exp)                       ; stack: [continue ..]
+    (assign val (op cons) (reg exp) (reg val))
+    (restore continue)                  ; stack: <balanced>
+    (goto (reg continue))
+
+    list-of-delayed-args-no-operand
+    (assign val (const ()))
+    (goto (reg continue))
+
     ev-begin
     (assign unev (op begin-actions) (reg exp))
     (save continue)
