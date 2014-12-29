@@ -140,13 +140,19 @@
     (goto (reg continue))
 
     compound-apply
-    ;; (assign unev (op procedure-parameters) (reg proc))
-    ;; (assign env (op procedure-environment) (reg proc))
-    ;; (assign env
-    ;;        (op extend-environment)
-    ;;        (reg unev) (reg argl) (reg env))
-    ;; (assign unev (op procedure-body) (reg proc))
-    ;; (goto (label ev-sequence))
+                                        ; stack: [continue ..]
+    (assign continue (label compound-apply-after-delayed-args))
+    (goto (label list-of-delayed-args))
+    compound-apply-after-delayed-args
+    (assign argl (reg val))
+    (assign unev (op procedure-parameters) (reg proc))
+    (assign env (op procedure-environment) (reg proc))
+    (assign env
+            (op extend-environment)
+            (reg unev) (reg argl) (reg env))
+    (assign unev (op procedure-body) (reg proc))
+    (goto (label ev-sequence))
+    ;; TODO
     (perform (op error) (const "TODO"))
 
     list-of-delayed-args
