@@ -9,9 +9,14 @@
 
 (out
  (machine-eval
-  '((begin
-      (define (f x y z) (+ x 10))
-      (f 20 30 40)))
+  '(begin
+     (define (f x)
+       (lambda (y)
+         (lambda (z)
+           (* (- x y)
+              (+ 20 z)))))
+     ;; (100 - 70) * (20 + 5) = 30 * 25 = 750
+     (((f 100) 70) 5))
   (init-env)))
 
 ;; there are actually two kinds of normal-order evaluations:

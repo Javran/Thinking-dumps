@@ -11,6 +11,7 @@
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
         ;; pass register value to arbitrary scheme procedure
+        ;; TODO: really convenient, should be merged into simu.scm
         (debug ,(lambda (proc . args)
                   (apply proc args)))
         ,@(old-builder m)))))
@@ -93,7 +94,6 @@
     (goto (label apply-dispatch))
 
     apply-dispatch
-    ;; ???
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-apply))
     (test (op compound-procedure?) (reg proc))
@@ -102,9 +102,12 @@
 
     primitive-apply
                                         ; stack: [continue ..]
+    ;; a call to actual-value might override "proc", be careful here
+    (save proc)
     (assign continue (label primitive-apply-after-list-args))
     (goto (label list-of-arg-values))
     primitive-apply-after-list-args
+    (restore proc)
     (assign val
             (op apply-primitive-procedure)
             (reg proc)
@@ -148,6 +151,8 @@
     (assign continue (label compound-apply-after-delayed-args))
     (goto (label list-of-delayed-args))
     compound-apply-after-delayed-args
+    ;; don't need to save "proc" as "delay-it" just stores
+    ;; the context but will not evaluate it
     (assign argl (reg val))
     (assign unev (op procedure-parameters) (reg proc))
     (assign env (op procedure-environment) (reg proc))
@@ -194,6 +199,7 @@
     (assign unev (op begin-actions) (reg exp))
     (save continue)
     (goto (label ev-sequence))
+
     ev-sequence
     (assign exp (op first-exp) (reg unev))
     (test (op last-exp?) (reg unev))
@@ -210,7 +216,6 @@
     (goto (label ev-sequence))
     ev-sequence-last-exp
     (restore continue)
-
     (goto (label eval-dispatch))
 
     ev-if
