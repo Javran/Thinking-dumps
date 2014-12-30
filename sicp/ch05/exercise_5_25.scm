@@ -14,17 +14,48 @@
 ;; test codes using our interpreter and observe
 ;; the outputs.
 
-(out
- (machine-eval
-  '(begin
-     (define (f x)
-       (lambda (y)
-         (lambda (z)
-           (* (- x y)
-              (+ 20 z)))))
-     ;; (100 - 70) * (20 + 5) = 30 * 25 = 750
-     (((f 100) 70) 5))
-  (init-env)))
+(do-test
+ (lambda (exp)
+   (machine-eval exp (init-env)))
+ (list
+  (mat `(begin
+          (define (f x)
+            (lambda (y)
+              (lambda (z)
+                (* (- x y)
+                   (+ 20 z)))))
+          ;; (100 - 70) * (20 + 5) = 30 * 25 = 750
+          (((f 100) 70) 5))
+       750)
+  (mat `(begin
+          (define a 10)
+          (define (f x) 20)
+          ;; the value of the argument
+          ;; is never evaluated here
+          ;; so "a" is always 10
+          (f (begin
+               (set! a 20)
+               100))
+          a)
+       10)
+  (mat `(begin
+          (define a 0)
+          (define (f x y z)
+            ;; the value of "z" and "x" gets forced
+            ;; but not "y"
+            (+ z x))
+          (f (begin
+               (set! a (+ (* a 10) 1))
+               1)
+             (begin
+               (set! a (+ (* a 10) 2))
+               2)
+             (begin
+               (set! a (+ (* a 10) 3))
+               3))
+          a)
+       31)
+  ))
 
 ;; there are actually two kinds of normal-order evaluations:
 ;; * call-by-name (no memorization)
