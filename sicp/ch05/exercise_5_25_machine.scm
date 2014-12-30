@@ -161,8 +161,6 @@
             (reg unev) (reg argl) (reg env))
     (assign unev (op procedure-body) (reg proc))
     (goto (label ev-sequence))
-    ;; TODO
-    (perform (op error) (const "TODO"))
 
     list-of-delayed-args
     ;; argl -> val
@@ -171,16 +169,11 @@
 
     ;; evaluate first argument
     (save continue)                     ; stack: [continue ..]
-    (save env)                          ; stack: [env continue ..]
     (assign exp (op first-operand) (reg argl))
     (assign argl (op rest-operands) (reg argl))
-    (save argl)                        ; stack: [argl env continue ..]
 
-    ;; TODO: remove not-necessary stack ops
     (assign val (op delay-it) (reg exp) (reg env))
 
-    (restore argl)                      ; stack: [env continue ..]
-    (restore env)                       ; stack: [continue ..]
     (save val)                          ; stack: [val continue ..]
     (assign continue (label list-of-delayed-args-rest-done))
     (goto (label list-of-delayed-args))
