@@ -46,7 +46,7 @@ data GraphForm v e = GraphForm
       keep enough information to recover the edge if the edge has
       extra data.
 -}
-data AdjForm v e = AdjForm (M.Map v (S.Set e)) deriving Show
+data AdjForm v e = AdjForm (M.Map v (S.Set e)) deriving (Show,Eq)
 
 {-
     human-friendly form
@@ -55,7 +55,7 @@ data AdjForm v e = AdjForm (M.Map v (S.Set e)) deriving Show
     - duplicate elements are allowed (but will be compared and eliminated
       when converting
 -}
-data FndForm v e = FndForm [Either v e] deriving Show
+data FndForm v e = FndForm [Either v e] deriving (Show,Eq)
 
 -- | "OrdVE v e" defines the relation between vertex type "v"
 -- and edge type "e". and they are both required to be a instance of Ord
