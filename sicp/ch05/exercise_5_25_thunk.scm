@@ -1,20 +1,21 @@
 ;; modified from "../ch04/4_2_2_representing_thunks.scm"
 
-
-;; TODO: unque symbols for thunks and evaluated thunks
-;; to prevent implemented language from using it accidentally
+;; generate unique thunk flag so that
+;; the implemented language won't be able to resemble one
+(define thunk-sym (gensym))
+(define evaluated-thunk-sym (gensym))
 
 (define (delay-it exp env)
-  `(thunk ,exp ,env))
+  `(,thunk-sym ,exp ,env))
 
 (define thunk?
-  (list-tagged-with 'thunk))
+  (list-tagged-with thunk-sym))
 
 (define thunk-exp cadr)
 (define thunk-env caddr)
 
 (define evaluated-thunk?
-  (list-tagged-with 'evaluated-thunk?))
+  (list-tagged-with evaluated-thunk-sym))
 
 (define thunk-value cadr)
 
@@ -27,6 +28,6 @@
 (define (thunk-set-value! obj value)
   (assert (thunk? obj)
           "the object is not an unevaluated thunk")
-  (set-car! obj 'evaluated-thunk?)
+  (set-car! obj evaluated-thunk-sym)
   (set-car! (cdr obj) value)
   (set-cdr! (cdr obj) '()))
