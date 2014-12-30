@@ -41,8 +41,8 @@ instance Arbitrary (FndForm Vertex (Edge Vertex)) where
         es <- resize edgeSize $ listOf ( Edge <$> elements vs <*> elements vs)
         return $ FndForm (map Left vs ++ map Right es)
 
-prop_Trivial :: FndForm Vertex (Edge Vertex) -> Bool
-prop_Trivial x = x == x
+prop_Convert :: GraphForm Vertex (Edge Vertex) -> Bool
+prop_Convert g = g == (adjFormToGraphForm . graphFormToAdjForm) g
 
 main :: IO ()
-main = verboseCheck prop_Trivial
+main = quickCheck prop_Convert
