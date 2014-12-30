@@ -14,24 +14,55 @@ import Prelude hiding
     , concatMap
     )
 
--- assume that edges are unique in a graph
--- and this is true if edges are represented by two vertices
--- together with some more information
+{-
+    for a graph we can safely assume that every edge is unique,
+    and that every vertex is uniquely distinguished by its name.
+    note that these assumption do allow multiple edges between two vertices:
+    edges can have extra data to make them different despite that whose
+    terminals might be exactly the same.
+-}
+
+{-
+    graph-term form
+
+    - all vertices must be present
+    - all edges must be present
+-}
 data GraphForm v e = GraphForm
     { gfVertices :: S.Set v
     , gfEdges    :: S.Set e
     } deriving Show
 
--- instead of storing vertices for each nodes, we simply store
--- the edge itself, as it might contain more information
+{-
+    adjacency-list form
+
+    - a map from vertices to its neighboring vertices
+    - here we modify the presentation a little bit:
+      instead of storing neighboring vertices, we store
+      neighboring edges.
+    - the original adjacency-list form can be recovered easily
+    - edges can store more information than vertices
+      and actually the origin adjacency-list form fails to
+      keep enough information to recover the edge if the edge has
+      extra data.
+-}
 data AdjForm v e = AdjForm (M.Map v (S.Set e)) deriving Show
 
+{-
+    human-friendly form
+
+    - a list of either vertices (Left) or edges (Right)
+    - duplicate elements are allowed (but will be compared and eliminated
+      when converting
+-}
 data FndForm v e = FndForm [Either v e] deriving Show
 
+-- | "OrdVE v e" defines the relation between vertex type "v"
+-- and edge type "e". and they are both required to be a instance of Ord
 type OrdVE v e = (Ord v, Ord e, VertexEdge v e)
 
--- "Edge" does not allow more than one edge between any pair of vertices
--- also it's undirected
+-- | "Edge" does not allow more than one edge between any pair of vertices
+--   also it's undirected
 data Edge v = Edge v v deriving Show
 
 instance Eq v => Eq (Edge v) where
@@ -44,8 +75,8 @@ instance Ord v => Ord (Edge v) where
               | a <= b = (a,b)
               | otherwise = (b,a)
 
--- the relation between vertex and edge
--- minimal implementation: terminals
+-- | the relation between vertex and edge
+--   minimal implementation: terminals
 class Eq v => VertexEdge v e where
     -- edges have two terminals
     terminals :: e -> (v,v)
@@ -71,14 +102,14 @@ graphFormToAdjForm (GraphForm vs es) = AdjForm (M.fromListWith S.union allPairs)
     edgeToPair e
         | (a,b) <- terminals e = [(a, S.singleton e),(b, S.singleton e)]
 
-adjFormToGraphForm :: (Ord v, Ord e, VertexEdge v e) => AdjForm v e -> GraphForm v e
+adjFormToGraphForm :: OrdVE v e => AdjForm v e -> GraphForm v e
 adjFormToGraphForm (AdjForm as) = GraphForm vs es
   where
     vs = M.keysSet as
     es = mconcat . M.elems $ as
 
 
-fndFormToGraphForm :: (Ord v, Ord e, VertexEdge v e) => FndForm v e -> GraphForm v e
+fndFormToGraphForm :: OrdVE v e => FndForm v e -> GraphForm v e
 fndFormToGraphForm (FndForm fs) = GraphForm vs (S.fromList es)
   where
     es = rights fs
@@ -86,7 +117,7 @@ fndFormToGraphForm (FndForm fs) = GraphForm vs (S.fromList es)
     vs2 = concatMap (pairToList . terminals ) es
     vs = S.fromList $ vs1 ++ vs2
 
-graphFormToFndForm :: (Ord v, VertexEdge v e) => GraphForm v e -> FndForm v e
+graphFormToFndForm :: OrdVE v e => GraphForm v e -> FndForm v e
 graphFormToFndForm (GraphForm vs es) = FndForm (map Left vs' ++ map Right es')
   where
     -- vertices that appear at least once in the list of edges
