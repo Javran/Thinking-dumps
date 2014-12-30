@@ -33,7 +33,15 @@ instance Arbitrary (AdjForm Vertex (Edge Vertex)) where
         pairs <- mapM genEdges vs
         return . AdjForm . M.fromList $ pairs
 
-prop_Trivial :: GraphForm Vertex (Edge Vertex) -> Bool
+instance Arbitrary (FndForm Vertex (Edge Vertex)) where
+    arbitrary = do
+        vs <- listOf1 genVertex
+        let n = length vs
+        edgeSize <- choose (0,n*n)
+        es <- resize edgeSize $ listOf ( Edge <$> elements vs <*> elements vs)
+        return $ FndForm (map Left vs ++ map Right es)
+
+prop_Trivial :: FndForm Vertex (Edge Vertex) -> Bool
 prop_Trivial x = x == x
 
 main :: IO ()
