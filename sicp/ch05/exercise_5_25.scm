@@ -7,6 +7,13 @@
 (load "./exercise_5_25_common.scm")
 (load "./exercise_5_25_machine.scm")
 
+;; here we need a lazy evaluator to verify
+;; that things would happen in a different
+;; order than applicative-order evaluation
+;; the default one isn't lazy. so we just run
+;; test codes using our interpreter and observe
+;; the outputs.
+
 (out
  (machine-eval
   '(begin
