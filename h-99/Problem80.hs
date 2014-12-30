@@ -31,7 +31,7 @@ import Prelude hiding
 data GraphForm v e = GraphForm
     { gfVertices :: S.Set v
     , gfEdges    :: S.Set e
-    } deriving Show
+    } deriving (Show,Eq)
 
 {-
     adjacency-list form
