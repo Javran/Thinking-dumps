@@ -144,4 +144,13 @@
        (even? ,even?)
        (print ,out)
        (not ,not)
+       ;; "debug" allows us to run arbitrary procedure
+       ;; taking either register values or constants as arguments
+       ;; example:
+       ;; * (perform (op debug) (const ,(lambda (x) (+ x 10))) (reg a))
+       ;; * (assign a (op debug) (const ,(lambda (x y) (+ x y)))
+       ;;                        (reg x) (reg y))
+       ;; be sure to use quasiquotes if you want this to work
+       (debug ,(lambda (proc . args)
+                 (apply proc args)))
        )))

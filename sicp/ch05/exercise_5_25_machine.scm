@@ -10,10 +10,6 @@
                  evaluated-thunk? thunk-value thunk-set-value!))
         (cond? ,(list-tagged-with 'cond))
         (let? ,(list-tagged-with 'let))
-        ;; pass register value to arbitrary scheme procedure
-        ;; TODO: really convenient, should be merged into simu.scm
-        (debug ,(lambda (proc . args)
-                  (apply proc args)))
         ,@(old-builder m)))))
 
 (define evaluator-insns
