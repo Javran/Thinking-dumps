@@ -14,6 +14,8 @@ import Prelude hiding
     , concatMap
     )
 
+
+
 {-
     for a graph we can safely assume that every edge is unique,
     and that every vertex is uniquely distinguished by its name.
@@ -122,7 +124,7 @@ graphFormToFndForm (GraphForm vs es) = FndForm (map Left vs' ++ map Right es')
   where
     -- vertices that appear at least once in the list of edges
     evs = S.fromList . concatMap (pairToList . terminals) $ es
-    vs' = S.toList $ evs `S.difference` vs
+    vs' = S.toList $ evs `S.union` vs
     es' = S.toList es
 
 example :: GraphForm Char (Edge Char)
@@ -138,8 +140,4 @@ example = GraphForm vs es
 
 main :: IO ()
 main = do
-    -- TODO: use quickcheck for some simple property-checking?
-    print example
-    -- TODO: missing some vertices
-    print (graphFormToAdjForm example)
-    print (adjFormToGraphForm . graphFormToAdjForm $ example)
+    print "TODO"
