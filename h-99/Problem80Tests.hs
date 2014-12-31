@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleInstances, TupleSections #-}
+{-# LANGUAGE FlexibleInstances, TupleSections, TemplateHaskell #-}
+
 import Test.QuickCheck
 import Control.Applicative
 import Data.List
@@ -6,7 +7,6 @@ import Control.Monad
 import Control.Arrow
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
-import Data.Function
 
 import Problem80 hiding (main)
 
@@ -44,7 +44,6 @@ shuffled xs = do
     (y,ys) <- takeOneM xs
     (y:) <$> shuffled ys
 
-
 randomDuplicates :: Int -> a -> Gen [a]
 randomDuplicates n x = flip replicate x <$> choose (1,n)
 
@@ -66,8 +65,7 @@ instance Arbitrary (FndForm Vertex (Edge Vertex)) where
         (vs,es) <- genRawGraph
         let ves = map Left vs ++ map Right es
         vesDup <- concat <$> mapM (randomDuplicates 5) ves
-        vesDup' <- shuffled vesDup
-        return $ FndForm vesDup'
+        return $ FndForm vesDup
 
 prop_GraphFormToAdjForm :: GraphForm Vertex (Edge Vertex) -> Property
 prop_GraphFormToAdjForm g = g === (adjFormToGraphForm . graphFormToAdjForm) g
@@ -75,8 +73,14 @@ prop_GraphFormToAdjForm g = g === (adjFormToGraphForm . graphFormToAdjForm) g
 prop_AdjFormToGraphForm :: AdjForm Vertex (Edge Vertex) -> Property
 prop_AdjFormToGraphForm g = g === (graphFormToAdjForm . adjFormToGraphForm) g
 
-main :: IO ()
-main = do
-    quickCheck prop_GraphFormToAdjForm
-    quickCheck prop_AdjFormToGraphForm
+prop_GraphFormToFndForm :: GraphForm Vertex (Edge Vertex) -> Property
+prop_GraphFormToFndForm g = g === (fndFormToGraphForm . graphFormToFndForm) g
 
+prop_FndFormToGraphForm :: FndForm Vertex (Edge Vertex) -> Property
+prop_FndFormToGraphForm g = fndFormToGraphForm g === ( fndFormToGraphForm
+                                                     . graphFormToFndForm
+                                                     . fndFormToGraphForm) g
+
+return []
+main :: IO Bool
+main = $quickCheckAll
