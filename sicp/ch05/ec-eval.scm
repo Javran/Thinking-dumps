@@ -303,17 +303,22 @@
     (goto (reg continue))
 
     ;; modified from 5.4.4 Running the Evaluator
+    ;; in order to keep definitions between calls,
+    ;; we only initialize "env" when initializing
+    read-eval-print-loop-init
+    (assign env (op init-env))
+
     read-eval-print-loop
     (perform (op initialize-stack))
     (perform
-     (op prompt-for-input) (const "ec-eval> "))
+     (op prompt-for-input) (const "ec-repl> "))
     (assign exp (op read))
-    (assign env (op init-env))
+    ;; (assign env (op init-env))
     (assign continue (label print-result))
     (goto (label eval-dispatch))
 
     print-result
-    (perform (op user-print) (reg val))
+    (perform (op print) (reg val))
     (goto (label read-eval-print-loop))
 
     unknown-expression-type
@@ -326,8 +331,9 @@
     (goto (label signal-error))
 
     signal-error
-    (perform (op user-print) (reg val))
-    (goto (label read-eval-print-loop))
+    (perform (op print) (const "error signaled:"))
+    (perform (op print) (reg val))
+    (goto (label read-eval-print-loop-init))
     ))
 
 ;; extract required operations from a list of instructions

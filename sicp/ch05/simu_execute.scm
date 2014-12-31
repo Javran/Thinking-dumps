@@ -144,13 +144,12 @@
        (even? ,even?)
        (print ,out)
        (not ,not)
-       ;; I'm not providing "initialize-stack" on purpose,
-       ;; because this primitive doesn't seem to be useful at all:
-       ;; * the stack should be ready whenever the machine get started
-       ;; * usually when you want to reinitialize the stack, there is something
-       ;;   bad happening (e.g. losing track of the stack, an exception raised)
-       ;;   and recovering from these kinds of situations won't be better than
-       ;;   just simply performing a fresh restart.
+
+       ;; I guesss I still need to provide "initialize-stack".
+       ;; this primitive is often used when re-initializing the machine
+       ;; is more expensive
+       (initialize-stack
+        ,(lambda () (machine-set-stack! m (empty-stack))))
 
        ;; "debug" allows us to run arbitrary procedure
        ;; taking either register values or constants as arguments

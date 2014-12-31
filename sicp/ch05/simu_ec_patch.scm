@@ -47,3 +47,10 @@
              `((exp ,exp)
                (env ,env)))))
     (machine-reg-get m 'val)))
+
+(define (ec-repl)
+  (build-and-execute
+   `(controller
+     (goto (label read-eval-print-loop-init))
+     ,@evaluator-insns)
+   '()))
