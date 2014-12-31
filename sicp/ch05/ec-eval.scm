@@ -302,28 +302,32 @@
     (assign val (const ok))
     (goto (reg continue))
 
-    ;; for completeness, there are still 2 labels missing
-    ;; in the original implementation of the book:
-    ;; "unknown-expression-type"
-    ;; "unknown-procedure-type"
-    ;; so we fill in some possible implementation,
-    ;; the behavior for both of which is to
-    ;; raise an error with related information.
-    ;; ==== unknown-expression-type
-    ;; input: exp
-    ;; no output, the program should terminate with an error
-    unknown-expression-type
-    (perform (op error)
-             (const "unknown expression type")
-             (reg exp))
+    ;; modified from 5.4.4 Running the Evaluator
+    read-eval-print-loop
+    (perform (op initialize-stack))
+    (perform
+     (op prompt-for-input) (const "ec-eval> "))
+    (assign exp (op read))
+    (assign env (op init-env))
+    (assign continue (label print-result))
+    (goto (label eval-dispatch))
 
-    ;; ==== unknown-procedure-type
-    ;; input: proc
-    ;; no output, the program should terminate with an error
+    print-result
+    (perform (op user-print) (reg val))
+    (goto (label read-eval-print-loop))
+
+    unknown-expression-type
+    (assign val (const unknown-expression-type-error))
+    (goto (label signal-error))
+
     unknown-procedure-type
-    (perform (op error)
-             (const "unknown procedure type")
-             (reg proc))
+    (restore continue)
+    (assign val (const unknown-procedure-type-error))
+    (goto (label signal-error))
+
+    signal-error
+    (perform (op user-print) (reg val))
+    (goto (label read-eval-print-loop))
     ))
 
 ;; extract required operations from a list of instructions
