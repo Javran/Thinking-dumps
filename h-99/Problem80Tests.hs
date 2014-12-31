@@ -2,6 +2,8 @@
 import Test.QuickCheck
 import Control.Applicative
 import Data.List
+import Control.Monad
+import Control.Arrow
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
@@ -15,6 +17,26 @@ genVertex = Vertex <$> elements ( ['a'..'z']
                                ++ ['0'..'9']
                                 )
 
+subsetOf :: [a] -> Gen [a]
+subsetOf = foldM go [] . reverse
+    where
+      go acc i = do
+          b <- arbitrary
+          return (if b then i:acc else acc)
+
+takeOne :: [a] -> [(a,[a])]
+takeOne [] = []
+takeOne (x:xs) = (x,xs) : map (second (x:)) (takeOne xs)
+
+takeOneM :: [a] -> Gen (a,[a])
+takeOneM = elements . takeOne
+
+shuffled :: [a] -> Gen [a]
+shuffled [] = return []
+shuffled xs = do
+    (y,ys) <- takeOneM xs
+    (y:) <$> shuffled ys
+
 instance Arbitrary (GraphForm Vertex (Edge Vertex)) where
     arbitrary = do
         vs <- nub <$> listOf1 genVertex
@@ -26,12 +48,11 @@ instance Arbitrary (GraphForm Vertex (Edge Vertex)) where
 instance Arbitrary (AdjForm Vertex (Edge Vertex)) where
     arbitrary = do
         vs <- nub <$> listOf1 genVertex
-        let genEdges :: Vertex -> Gen (Vertex, S.Set (Edge Vertex))
-            genEdges v1 = do
-                v2s <- listOf (elements vs)
-                return (v1, S.fromList (map (Edge v1) v2s))
-        pairs <- mapM genEdges vs
-        return . AdjForm . M.fromList $ pairs
+        let n = length vs
+        edgeSize <- choose (0,n*n)
+        let adjMaps :: M.Map Vertex (S.Set (Edge Vertex))
+            adjMaps = undefined
+        return . AdjForm $ adjMaps
 
 instance Arbitrary (FndForm Vertex (Edge Vertex)) where
     arbitrary = do
@@ -41,8 +62,12 @@ instance Arbitrary (FndForm Vertex (Edge Vertex)) where
         es <- resize edgeSize $ listOf ( Edge <$> elements vs <*> elements vs)
         return $ FndForm (map Left vs ++ map Right es)
 
-prop_Convert :: GraphForm Vertex (Edge Vertex) -> Bool
-prop_Convert g = g == (adjFormToGraphForm . graphFormToAdjForm) g
+prop_GraphFormToAdjForm :: GraphForm Vertex (Edge Vertex) -> Property
+prop_GraphFormToAdjForm g = g === (adjFormToGraphForm . graphFormToAdjForm) g
+
+prop_AdjFormToGraphForm :: AdjForm Vertex (Edge Vertex) -> Property
+prop_AdjFormToGraphForm g = g === (graphFormToAdjForm . adjFormToGraphForm) g
 
 main :: IO ()
-main = quickCheck prop_Convert
+main = sample $ shuffled ([]  :: [Int])
+
