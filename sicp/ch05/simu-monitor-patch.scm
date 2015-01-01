@@ -81,33 +81,23 @@
        '(number-pushes max-depth)))
 
 (define default-ops-builder
-  (lambda (m)
-    `( (+ ,+)
-       (- ,-)
-       (* ,*)
-       (/ ,/)
-       (zero? ,zero?)
-       (> ,>)
-       (>= ,>=)
-       (< ,<)
-       (<= ,<=)
-       (= ,=)
-       (square ,square)
-       (abs ,abs)
-       (average ,average)
-       ;; originally there should be an "initialize"
-       ;; procedure to initialize the stack
-       ;; but I'm not seeing
-       ;; any point of using it
-       (print-stack-statistics
-        ,(lambda ()
-           (stack-print-statistics
-            (machine-stack m))))
-       (initialize-stack
-        ,(lambda ()
-           (stack-initialize!
-            (machine-stack m))))
-       )))
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      (let* ((old-ops (old-builder m)))
+        `(
+          (print-stack-statistics
+           ,(lambda ()
+              (stack-print-statistics
+               (machine-stack m))))
+          (initialize-stack
+           ,(lambda ()
+              (stack-initialize!
+               (machine-stack m))))
+          ;; we usually use "assoc" to lookup primitives
+          ;; which means if "initialize-stack" or something
+          ;; exists in the old operations,
+          ;; they will be shadowed.
+          ,@old-ops)))))
 
 (define (machine-fresh-start! m)
   (stack-initialize! (machine-stack m))
