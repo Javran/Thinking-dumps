@@ -1,24 +1,29 @@
-{-# LANGUAGE MultiParamTypeClasses, TupleSections, FlexibleInstances, ConstraintKinds, FlexibleContexts #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
 module Problem81 where
 
 import Control.Monad
+import Data.Foldable
 import Data.Maybe
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
-import Data.Foldable
 
 import Graph
 import Problem80
 
-toFndForm :: [a] -> [(a,a)] -> FndForm a (Edge a)
-toFndForm vs es = FndForm $ map Left vs
-                         ++ map (Right . uncurry Edge) es
+data Arc a = Arc a a deriving (Show,Ord,Eq)
 
-findPaths :: Ord a => a -> a -> GraphForm a (Edge a) -> [ [a] ]
+instance Eq v => VertexEdge v (Arc v) where
+    terminals (Arc a b) = (a,b)
+
+toFndForm :: [a] -> [(a,a)] -> FndForm a (Arc a)
+toFndForm vs es = FndForm $ map Left vs
+                         ++ map (Right . uncurry Arc) es
+
+findPaths :: Ord a => a -> a -> GraphForm a (Arc a) -> [ [a] ]
 findPaths from to g = findPaths' [from] S.empty
     where
       (AdjForm gph) = graphFormToAdjForm g
-      nextVertices v = foldMap (pairToList . terminals) . fromJust $ M.lookup v gph
+      nextVertices v = foldMap ((:[]) . snd . terminals) . fromJust $ M.lookup v gph
       findPaths' candidates visited = do
           next <- candidates
           guard $ next `S.notMember` visited
@@ -32,5 +37,7 @@ paths :: Ord a => a -> a -> [(a,a)] -> [ [a] ]
 paths from to g = findPaths from to ( fndFormToGraphForm
                                     . toFndForm [] $ g)
 
--- undirected graph
-main = print (paths 1 4 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)])
+main :: IO ()
+main = do
+    print (paths (1::Int) 4 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)])
+    print (paths (2::Int) 6 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)])
