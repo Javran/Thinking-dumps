@@ -109,6 +109,12 @@
          ,(make-lambda (cdadr exp)
                        (cddr exp)))))
 
+(define cond?
+  (list-tagged-with 'cond))
+
+(define let?
+  (list-tagged-with 'let))
+
 ;; Local variables:
 ;; proc-entry: "./exercise_5_23.scm"
 ;; End:
