@@ -14,8 +14,6 @@ import Prelude hiding
     , concatMap
     )
 
-
-
 {-
     for a graph we can safely assume that every edge is unique,
     and that every vertex is uniquely distinguished by its name.
@@ -131,13 +129,16 @@ example :: GraphForm Char (Edge Char)
 example = GraphForm vs es
   where
     vs = S.fromList "ghbcfkd"
-    es = S.fromList (map (uncurry Edge) [ ('g','h')
-                            , ('b','c')
-                            , ('b','f')
-                            , ('f','c')
-                            , ('f','k')
-                            ])
+    es = S.fromList (map (uncurry Edge)
+                         [ ('g','h')
+                         , ('b','c')
+                         , ('b','f')
+                         , ('f','c')
+                         , ('f','k')
+                         ])
 
 main :: IO ()
 main = do
-    print "TODO"
+    print example
+    print (graphFormToAdjForm example)
+    print (graphFormToFndForm example)

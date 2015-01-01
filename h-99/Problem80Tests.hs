@@ -10,14 +10,17 @@ import qualified Data.Set as S
 
 import Problem80 hiding (main)
 
+-- | vertex are just chars
 newtype Vertex = Vertex Char deriving (Eq,Show,Ord)
 
+-- | generates a random vertex
 genVertex :: Gen Vertex
 genVertex = Vertex <$> elements ( ['a'..'z']
                                ++ ['A'..'Z']
                                ++ ['0'..'9']
                                 )
 
+-- | generates a subset of the given list
 subsetOf :: [a] -> Gen [a]
 subsetOf = foldM go [] . reverse
     where
@@ -25,25 +28,15 @@ subsetOf = foldM go [] . reverse
           b <- arbitrary
           return (if b then i:acc else acc)
 
+-- | generates all information requried for a graph
+--   including a list of unique vertices and a list all the edges
 genRawGraph :: Gen ([Vertex], [Edge Vertex])
 genRawGraph = do
     vs <- nub <$> listOf genVertex
     es <- subsetOf [Edge v1 v2 | v1 <- vs, v2 <- vs]
     return (vs,es)
 
-takeOne :: [a] -> [(a,[a])]
-takeOne [] = []
-takeOne (x:xs) = (x,xs) : map (second (x:)) (takeOne xs)
-
-takeOneM :: [a] -> Gen (a,[a])
-takeOneM = elements . takeOne
-
-shuffled :: [a] -> Gen [a]
-shuffled [] = return []
-shuffled xs = do
-    (y,ys) <- takeOneM xs
-    (y:) <$> shuffled ys
-
+-- | duplicates a value one to n times
 randomDuplicates :: Int -> a -> Gen [a]
 randomDuplicates n x = flip replicate x <$> choose (1,n)
 
@@ -68,18 +61,26 @@ instance Arbitrary (FndForm Vertex (Edge Vertex)) where
         return $ FndForm vesDup
 
 prop_GraphFormToAdjForm :: GraphForm Vertex (Edge Vertex) -> Property
-prop_GraphFormToAdjForm g = g === (adjFormToGraphForm . graphFormToAdjForm) g
+prop_GraphFormToAdjForm = (===) <$> id
+                                <*> adjFormToGraphForm
+                                  . graphFormToAdjForm
+
 
 prop_AdjFormToGraphForm :: AdjForm Vertex (Edge Vertex) -> Property
-prop_AdjFormToGraphForm g = g === (graphFormToAdjForm . adjFormToGraphForm) g
+prop_AdjFormToGraphForm = (===) <$> id
+                                <*> graphFormToAdjForm
+                                  . adjFormToGraphForm
 
 prop_GraphFormToFndForm :: GraphForm Vertex (Edge Vertex) -> Property
-prop_GraphFormToFndForm g = g === (fndFormToGraphForm . graphFormToFndForm) g
+prop_GraphFormToFndForm = (===) <$> id
+                                <*> fndFormToGraphForm
+                                  . graphFormToFndForm
 
 prop_FndFormToGraphForm :: FndForm Vertex (Edge Vertex) -> Property
-prop_FndFormToGraphForm g = fndFormToGraphForm g === ( fndFormToGraphForm
-                                                     . graphFormToFndForm
-                                                     . fndFormToGraphForm) g
+prop_FndFormToGraphForm = (===) <$> fndFormToGraphForm
+                                <*> fndFormToGraphForm
+                                  . graphFormToFndForm
+                                  . fndFormToGraphForm
 
 return []
 main :: IO Bool
