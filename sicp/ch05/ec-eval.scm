@@ -319,6 +319,7 @@
 
     print-result
     (perform (op print) (reg val))
+    (perform (op print-stack-statistics))
     (goto (label read-eval-print-loop))
 
     unknown-expression-type
