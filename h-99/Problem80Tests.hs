@@ -4,7 +4,7 @@ import Test.QuickCheck
 import Control.Applicative
 
 import Graph
-import Problem80 hiding (main)
+import Problem80
 
 prop_GraphFormToAdjForm :: GraphForm Char (Edge Char) -> Property
 prop_GraphFormToAdjForm = (===) <$> id

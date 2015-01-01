@@ -1,5 +1,11 @@
 {-# LANGUAGE MultiParamTypeClasses, TupleSections, FlexibleInstances, ConstraintKinds #-}
-module Problem80 where
+module Problem80
+  ( pairToList
+  , graphFormToAdjForm
+  , adjFormToGraphForm
+  , fndFormToGraphForm
+  , graphFormToFndForm
+  ) where
 
 import Data.List hiding (concatMap, concat)
 import Data.Either
@@ -51,6 +57,7 @@ graphFormToFndForm (GraphForm vs es) = FndForm (map Left vs' ++ map Right es')
     evs = S.fromList . concatMap (pairToList . terminals) $ es
     vs' = S.toList $ evs `S.union` vs
     es' = S.toList es
+
 
 example :: GraphForm Char (Edge Char)
 example = GraphForm vs es
