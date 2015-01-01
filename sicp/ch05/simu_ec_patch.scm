@@ -1,6 +1,8 @@
 (load "./ec-eval.scm")
 (load "./ec-tests.scm")
 
+(load "./simu-monitor-patch.scm")
+
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry
 ;; note that the symbol must be defined before we call this function
