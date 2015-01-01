@@ -1,7 +1,10 @@
-(load "./ec-eval.scm")
+;; merging changes from ex 5.23 for better syntax support
+
+(load "./ec-eval_v2.scm")
 (load "./ec-tests.scm")
 
 (load "./simu-monitor-patch.scm")
+(load "./exercise_5_23_common.scm")
 
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry

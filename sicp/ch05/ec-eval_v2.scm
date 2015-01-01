@@ -79,6 +79,12 @@
     (test (op begin?) (reg exp))
     (branch (label ev-begin))
 
+    (test (op cond?) (reg exp))
+    (branch (label ev-cond))
+
+    (test (op let?) (reg exp))
+    (branch (label ev-let))
+
     (test (op application?) (reg exp))
     (branch (label ev-application))
 
@@ -286,6 +292,7 @@
     ;; input: exp env
     ;; output: val=ok, env modified
     ev-definition
+    (assign exp (op normalize-define) (reg exp))
     (assign unev (op definition-variable) (reg exp))
     (save unev)                         ; stack: [unev ..]
     (assign exp (op definition-value) (reg exp))
@@ -301,6 +308,24 @@
      (op define-variable!) (reg unev) (reg val) (reg env))
     (assign val (const ok))
     (goto (reg continue))
+
+    ;; ==== ev-cond:
+    ;; input: exp env
+    ;; output: val
+    ev-cond
+    (assign exp (op cond->if) (reg exp))
+    ;; it would be slightly more efficient to goto
+    ;; ev-if directly, but by jumping to eval-dispatch,
+    ;; we can actually transform cond-expression to anything
+    ;; supported properly
+    (goto (label eval-dispatch))
+
+    ;; ==== ev-let:
+    ;; input: exp env
+    ;; output: val
+    ev-let
+    (assign exp (op let->combination) (reg exp))
+    (goto (label eval-dispatch))
 
     ;; modified from 5.4.4 Running the Evaluator
     ;; in order to keep definitions between calls,

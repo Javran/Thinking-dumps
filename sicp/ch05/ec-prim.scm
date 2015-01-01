@@ -120,3 +120,5 @@
 
 (define (apply-primitive-procedure proc args)
   (apply (primitive-implementation proc) args))
+
+(define prompt-for-input display)
