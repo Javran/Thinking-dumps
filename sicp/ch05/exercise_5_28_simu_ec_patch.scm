@@ -8,6 +8,8 @@
 (load "./simu-monitor-patch.scm")
 (load "./exercise_5_23_common.scm")
 
+(define no-more-exps? null?)
+
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))
 
