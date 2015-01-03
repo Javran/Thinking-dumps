@@ -16,5 +16,5 @@ Here are some results from running the recursive factorial machine:
 
 \  | Maximum depth | Number of pushes
 ---|---|---
-Recursive factorial | `f(x) = x*5+3` | `f(x) = x*32-16`
-Iterative factorial | `f(x) = 10` | `f(x) = x*35+29`
+Recursive factorial | `f(x) = 5*x+3` | `f(x) = 32*x-16`
+Iterative factorial | `f(x) = 10` | `f(x) = 35*x+29`
