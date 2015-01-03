@@ -23,7 +23,12 @@ findPaths :: Ord a => a -> a -> GraphForm a (Arc a) -> [ [a] ]
 findPaths from to g = findPaths' [from] S.empty
     where
       (AdjForm gph) = graphFormToAdjForm g
-      nextVertices v = foldMap ((:[]) . snd . terminals) . fromJust $ M.lookup v gph
+      -- be extreme careful here that the adjacent form gets *all the edges*
+      -- related to a certain vertex in its map,
+      -- in order to extract vertices that it points to (excluding those
+      -- that points to it) we need "extraceDstFrom" function
+      extractDstFrom vFrom (v1,v2) = [ v2 | v1 == vFrom ]
+      nextVertices v = foldMap (extractDstFrom v . terminals) . fromJust $ M.lookup v gph
       findPaths' candidates visited = do
           next <- candidates
           guard $ next `S.notMember` visited
