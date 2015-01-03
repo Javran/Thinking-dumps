@@ -1,4 +1,4 @@
-# Results from running the recursive factorial machine
+# The recursive factorial machine
 
     ec-repl> (factorial 4)
     24
@@ -13,7 +13,7 @@
     number-pushes = 1143
     max-depth     = 104
 
-# Results from running the iteractive factorial machine
+# The iteractive factorial machine
 
     ec-repl> (factorial 4)
     24
@@ -28,3 +28,9 @@
     number-pushes = 1004
     max-depth     = 243
 
+# Summary
+
+\  | Maximum depth | Number of pushes
+---|---|---
+Recursive factorial | `f(x) = 3*x+14` | `f(x) = 37*x+33`
+Iterative factorial | `f(x) = 8*x+3` | `f(x) = 34*x-16`
