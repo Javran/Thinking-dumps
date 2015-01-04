@@ -47,4 +47,17 @@ b. Give a formula for the total number of pushes.
     * `b = 1`
     * `k = 40`
 
-    Therefore: `S(n) = S(n-1)+S(n-2)+40` for `n >= 2`
+    Therefore:
+
+    * `S(2) = 72`
+    * `S(3) = 128`
+    * `S(n) = S(n-1)+S(n-2)+40` for `n >= 4`
+
+    Since `S(n) = a*Fib(n+1)+b`, we know that:
+
+    * `S(n-1) = a*Fib(n) + b`
+    * `S(n) = a*Fib(n+1) + b`
+    * `S(n+1) = a*Fib(n+2) + b`
+    * `S(n+1) = S(n) + S(n-1) + 40 = a*Fib(n+2) + b`
+
+    Therefore `b = -40`, `a = 56`, `S(n) = 56*Fib(n+1) - 40` for `n >= 2`.
