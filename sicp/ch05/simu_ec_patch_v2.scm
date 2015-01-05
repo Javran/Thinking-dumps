@@ -17,6 +17,14 @@
 ;; as we have failed to reuse some obvious duplicate codes.
 ;; the difference is only in the instruction list
 ;; and we should take advantage of it.
+;;
+;; a potential plan:
+;; * add support for "updating existing primitive operations"
+;; * when the instruction list gets updated, we rerun a certain
+;;   procedure to update the default operation builder
+;; * we can make "ec-required-operations" a procedure
+;;   to delay its calculation - which might be out of sync
+;;   when we change the code
 (define default-ops-builder
   (let ((old-builder default-ops-builder))
     (lambda (m)
