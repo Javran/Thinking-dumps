@@ -13,6 +13,10 @@
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))
 
+;; TODO: the method we used isn't satisfactory
+;; as we have failed to reuse some obvious duplicate codes.
+;; the difference is only in the instruction list
+;; and we should take advantage of it.
 (define default-ops-builder
   (let ((old-builder default-ops-builder))
     (lambda (m)
