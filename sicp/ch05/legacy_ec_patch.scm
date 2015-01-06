@@ -12,7 +12,7 @@
       (let* ((old-ops (old-primitive-list))
              (new-prim-symbols
               (set-diff
-               ec-required-operations
+               (ec-get-required-operations)
                (map car old-ops))))
         `(
           ,@(map to-machine-prim-entry new-prim-symbols)
