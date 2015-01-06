@@ -1,4 +1,5 @@
 ;; copied and modified base on simu_ec_patch.scm
+(load "./legacy-monitor-patch.scm")
 (load "./ec-eval.scm")
 
 ;; evaluate a symbol under the current toplevel
@@ -13,7 +14,9 @@
              (new-prim-symbols
               (set-diff
                (ec-get-required-operations)
-               (map car old-ops))))
+               `(initialize-stack
+                 print-stack-statistics
+                 ,@(map car old-ops)))))
         `(
           ,@(map to-machine-prim-entry new-prim-symbols)
           (error ,(lambda args
