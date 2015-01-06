@@ -361,8 +361,6 @@
    (concat-map insn->operation
                insns)))
 
-;; TODO: the following change will break all code depending on it
-
 ;; get a list of all required operations
 (define (ec-get-required-operations)
   ;; as we don't need the arity here
