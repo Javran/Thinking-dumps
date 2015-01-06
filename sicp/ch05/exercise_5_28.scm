@@ -2,7 +2,12 @@
 (load "../common/test-utils.scm")
 
 (load "./simu.scm")
-(load "./exercise_5_28_simu_ec_patch.scm")
+(load "./simu_ec_patch.scm")
+
+(load "./exercise_5_23_common.scm")
+(load "./exercise_5_28_common.scm")
+
+(load "./exercise_5_28_ec-eval.scm")
 
 (ec-repl)
 

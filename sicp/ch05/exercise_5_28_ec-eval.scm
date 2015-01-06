@@ -1,6 +1,3 @@
-(load "./ec-prim.scm")
-(load "./ec-init-env.scm")
-
 (define evaluator-insns
   '(
     eval-dispatch
@@ -252,25 +249,3 @@
     (perform (op print) (reg val))
     (goto (label read-eval-print-loop-init))
     ))
-
-(define (extract-operations insns)
-  (define (insn->operation insn)
-    (if (pair? insn)
-        (let ((head (car insn)))
-          (cond ((and (eq? head 'assign)
-                      (eq? (car (caddr insn)) 'op))
-                 (list (list (cadr (caddr insn))
-                             (- (length insn) 3))))
-                ((or (eq? head 'test)
-                     (eq? head 'perform))
-                 (list (list (cadr (cadr insn))
-                             (- (length insn) 2))))
-                (else
-                 '())))
-        '()))
-  (remove-duplicates
-   (concat-map insn->operation
-               insns)))
-
-(define ec-required-operations
-  (map car (extract-operations evaluator-insns)))
