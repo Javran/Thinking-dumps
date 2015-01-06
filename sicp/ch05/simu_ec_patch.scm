@@ -17,7 +17,7 @@
              (new-prim-symbols
               ;; only add those that don't show up
               ;; in the old primitive list ...
-              (set-diff ec-required-operations
+              (set-diff (ec-get-required-operations)
                         (map car old-ops))))
         `(
           ;; we are trying to be lazy here by:
