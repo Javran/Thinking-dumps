@@ -7,9 +7,7 @@
 ;; from now on, we just use "simu.scm" as the machine
 ;; simulator, as using the legacy one won't make too much difference.
 
-;; as the following module has already been merged with simu_ec_patch,
-;; we don't necessarily need to load it here.
-;; (load "./exercise_5_23_common.scm")
+(load "./exercise_5_23_common.scm")
 (load "./exercise_5_23_machine.scm")
 
 ;; a list of functions that does transformation:

@@ -9,8 +9,6 @@
 
 (ec-repl)
 
-(end-script)
-
 ;; Local variables:
 ;; proc-entry: ""
 ;; End:
