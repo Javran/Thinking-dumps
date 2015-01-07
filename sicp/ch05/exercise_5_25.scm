@@ -4,7 +4,6 @@
 (load "./simu.scm")
 (load "./simu_ec_patch.scm")
 
-(load "./exercise_5_25_common.scm")
 (load "./exercise_5_25_machine.scm")
 
 ;; here we need a lazy evaluator to verify

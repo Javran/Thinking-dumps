@@ -5,7 +5,7 @@
 (load "./simu_ec_patch.scm")
 (load "./exercise_5_23_common.scm")
 
-(load "./exercise_5_30_ec-eval.scm")
+(load "./exercise_5_30_machine.scm")
 
 (ec-repl)
 

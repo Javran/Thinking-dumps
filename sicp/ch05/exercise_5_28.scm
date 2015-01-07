@@ -7,7 +7,7 @@
 (load "./exercise_5_23_common.scm")
 (load "./exercise_5_28_common.scm")
 
-(load "./exercise_5_28_ec-eval.scm")
+(load "./exercise_5_28_machine.scm")
 
 (ec-repl)
 
