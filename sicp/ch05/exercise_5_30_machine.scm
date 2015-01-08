@@ -1,4 +1,5 @@
 ;; based on "./ec-eval_v2.scm"
+
 (define evaluator-insns
   '(
     eval-dispatch
@@ -36,6 +37,7 @@
     (branch (label ev-application))
 
     (goto (label unknown-expression-type))
+
     ev-self-eval
     (assign val (reg exp))
     (goto (reg continue))
@@ -233,16 +235,22 @@
     (goto (label read-eval-print-loop))
 
     unknown-expression-type
-    (assign val (const unknown-expression-type-error))
+    (assign val (op make-error)
+            (const unknown-expression-type-error)
+            (reg exp))
     (goto (label signal-error))
 
     unknown-procedure-type
-    (restore continue)
-    (assign val (const unknown-procedure-type-error))
+    ;; I don't think we need to take care about the stack
+    ;; because the stack gets cleared whenever an error is signalled
+    ;; (restore continue)
+    (assign val (op make-error) (const unknown-procedure-type-error)
+            (reg proc))
     (goto (label signal-error))
 
     signal-error
-    (perform (op print) (const "error signaled:"))
+    (perform (op print) (const "error signalled:"))
+    (assign val (op error-info) (reg val))
     (perform (op print) (reg val))
     (goto (label read-eval-print-loop-init))
     ))
