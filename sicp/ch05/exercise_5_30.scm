@@ -15,6 +15,14 @@
 ;; In addition, the errors suggested by the exercise are
 ;; also limited to runtime errors.
 
+;; Actually "a." and "b." are corresponding to
+;; machine primitive errors and implemented language primitive errors
+;; respectively.
+;; for machine primitive errors one can use "make-error"
+;; for implemented language errors some beforehand checks can be done
+;; (or we can even "cheat" by letting "apply-primitive-procedure" capture
+;; errors and wrap it properly)
+
 (ec-repl)
 
 ;; Local variables:
