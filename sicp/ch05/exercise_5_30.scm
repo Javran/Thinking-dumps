@@ -23,7 +23,17 @@
 ;; (or we can even "cheat" by letting "apply-primitive-procedure" capture
 ;; errors and wrap it properly)
 
+;; Also I won't deal with errors like "accessor applied on a wrong value",
+;; this is just boring and makes the code verbose.
+
 (ec-repl)
+
+;; TODO: a list of machine primitives to be patched (part a)
+;; * lookup-variable-value
+;; * set-variable-value!
+
+;; TODO: do part b in a "cheating" way:
+;; * apply-primitive-procedure
 
 ;; Local variables:
 ;; proc-entry: ""

@@ -8,4 +8,3 @@
   `(,error-symbol ,@args))
 
 (define error-info cdr)
-
