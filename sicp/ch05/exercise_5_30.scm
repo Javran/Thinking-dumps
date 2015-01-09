@@ -26,6 +26,9 @@
 ;; Also I won't deal with errors like "accessor applied on a wrong value",
 ;; this is just boring and makes the code verbose.
 
+;; TODO: some tests?
+(load "./exercise_5_30_cheat.scm")
+
 (ec-repl)
 
 ;; TODO: do part b in a "cheating" way:
