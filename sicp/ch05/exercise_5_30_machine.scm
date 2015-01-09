@@ -45,6 +45,8 @@
     ev-variable
     (assign
      val (op lookup-variable-value) (reg exp) (reg env))
+    (test (op error?) (reg val))
+    (branch (label signal-error))
     (goto (reg continue))
 
     ev-quoted
@@ -186,8 +188,10 @@
     (restore continue)                  ; stack: [env unev ..]
     (restore env)                       ; stack: [unev ..]
     (restore unev)                      ; stack: <balanced>
-    (perform
+    (assign val
      (op set-variable-value!) (reg unev) (reg val) (reg env))
+    (test (op error?) (reg val))
+    (branch (label signal-error))
     (assign val (const ok))
     (goto (reg continue))
 
