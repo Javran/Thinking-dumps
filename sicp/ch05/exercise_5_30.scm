@@ -5,7 +5,7 @@
 (load "./simu_ec_patch.scm")
 (load "./exercise_5_23_common.scm")
 
-(load "./exercise_5_30_error.scm")
+(load "./exercise_5_30_common.scm")
 (load "./exercise_5_30_machine.scm")
 
 ;; for simplicity, we just assume there is no syntax error.
@@ -27,10 +27,6 @@
 ;; this is just boring and makes the code verbose.
 
 (ec-repl)
-
-;; TODO: a list of machine primitives to be patched (part a)
-;; * lookup-variable-value
-;; * set-variable-value!
 
 ;; TODO: do part b in a "cheating" way:
 ;; * apply-primitive-procedure
