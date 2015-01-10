@@ -120,6 +120,8 @@
             (op apply-primitive-procedure)
             (reg proc)
             (reg argl))
+    (test (op error?) (reg val))
+    (branch (label signal-error))
     (restore continue)                  ; stack: <balanced>
     (goto (reg continue))
 
