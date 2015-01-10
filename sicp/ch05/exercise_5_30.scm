@@ -26,13 +26,12 @@
 ;; Also I won't deal with errors like "accessor applied on a wrong value",
 ;; this is just boring and makes the code verbose.
 
-;; TODO: some tests?
+;; I think just having a guarded environment to capture is sufficient.
+;; The cheating way is acutally neat.
+;; Don't let it become a major project when it doesn't have to.
 (load "./exercise_5_30_cheat.scm")
 
 (ec-repl)
-
-;; TODO: do part b in a "cheating" way:
-;; * apply-primitive-procedure
 
 ;; Local variables:
 ;; proc-entry: ""
