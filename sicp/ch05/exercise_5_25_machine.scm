@@ -1,17 +1,6 @@
 ;; based on exercise 5.23
 (load "./exercise_5_25_thunk.scm")
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `(,@(map to-machine-prim-entry
-               '(cons cond->if let->combination normalize-define
-                 delay-it thunk? thunk-exp thunk-env
-                 evaluated-thunk? thunk-value thunk-set-value!))
-        (cond? ,(list-tagged-with 'cond))
-        (let? ,(list-tagged-with 'let))
-        ,@(old-builder m)))))
-
 (define evaluator-insns
   `(
     eval-dispatch

@@ -1,4 +1,5 @@
 ;; copied and modified base on simu_ec_patch.scm
+(load "./legacy-monitor-patch.scm")
 (load "./ec-eval.scm")
 
 ;; evaluate a symbol under the current toplevel
@@ -12,8 +13,15 @@
       (let* ((old-ops (old-primitive-list))
              (new-prim-symbols
               (set-diff
-               ec-required-operations
-               (map car old-ops))))
+               (ec-get-required-operations)
+               ;; two primitives are special:
+               ;; initialize-stack and print-stack-statistics
+               ;; this out-of-date and awful design makes
+               ;; too many special cases and this is exactly
+               ;; the reason why I try not to use this anymore
+               `(initialize-stack
+                 print-stack-statistics
+                 ,@(map car old-ops)))))
         `(
           ,@(map to-machine-prim-entry new-prim-symbols)
           (error ,(lambda args
