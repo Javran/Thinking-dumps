@@ -32,3 +32,16 @@
    (else
     (error "Unknown expression type: COMPILE" exp))))
 
+;; the instruction sequence is also keeping some extra
+;; information to avoid doing redundant analyzing work
+;; need: the set of registers must be initialized before
+;;   execution
+;; modifies: the set of registers whose value are modified
+;;   by the instruction sequence
+;; statements: the instruction sequence
+(define (make-instruction-sequence
+         needs modifies statements)
+  (list needs modifies statements))
+
+(define (empty-instruction-sequence)
+  (make-instruction-sequence '() '() '()))
