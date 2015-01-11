@@ -1,3 +1,13 @@
+If you have no confusion about what the exercise is asking, skip
+this paragraph.
+Note that the exercise is asking if we need to save and restore certain
+registers around doing some other evaluations.
+For example, we still need to save and restore the `env` register
+around the evaluation of a function application,
+but here we only care about the necessity of saving and restoring them
+so that the evaluation of one subexpresssion doesn't have potential
+effects on the next subexpresssion to be evaluated.
+
 In the following table, the meaning of last 3 columns are:
 
 * `env`: the necessity of saving and restoring `env` register
@@ -9,10 +19,10 @@ In the following table, the meaning of last 3 columns are:
 
 Expression | `env` | `argl` | `proc`
 --- | --- | --- | ----
-`(f 'x 'y)`     | superfluous | superfluous
-`((f) 'x 'y)`   | superfluous | superfluous
-`(f (g 'x) y)`  | superfluous | necessary
-`(f (g 'x) 'y)` | superfluous | necessary
+`(f 'x 'y)`     | superfluous | superfluous | superfluous
+`((f) 'x 'y)`   | superfluous | superfluous | superfluous
+`(f (g 'x) y)`  | superfluous | necessary   | necessary
+`(f (g 'x) 'y)` | superfluous | necessary   | necessary
 
 The basic rule is that if the register does not change when
 evaluating a certain expression, then it is not necessary to
@@ -44,3 +54,7 @@ to keep it on stack, one just need to examine if its operands have
 some function applications. So for the last two expressions,
 saving and restoring `argl` register is necessary while
 it is not necessary for the first two expressions to save and restore them.
+
+* Likewise, it is necessary to save and restore `proc` around
+evaluating operand sequence only when the operands would potentially
+change it. This only happens in the last two expressions.
