@@ -46,6 +46,12 @@
 (define (empty-instruction-sequence)
   (make-instruction-sequence '() '() '()))
 
+;; a sequence of instructions will be finalized by
+;; some instrcutions taking care of the linkage
+;; possible linkages:
+;; - return: jump back using "continue" register
+;; - next: do nothing, just continue execution
+;; - <otherwise>: jump to a label specified by "linkage" argument
 (define (compile-linkage linkage)
   (cond ((eq? linkage 'return)
          (make-instruction-sequence
