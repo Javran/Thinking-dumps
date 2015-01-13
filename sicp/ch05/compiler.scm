@@ -46,12 +46,6 @@
 (define (empty-instruction-sequence)
   (make-instruction-sequence '() '() '()))
 
-;; a sequence of instructions will be finalized by
-;; some instrcutions taking care of the linkage
-;; possible linkages:
-;; - return: jump back using "continue" register
-;; - next: do nothing, just continue execution
-;; - <otherwise>: jump to a label specified by "linkage" argument
 (define (compile-linkage linkage)
   (cond ((eq? linkage 'return)
          (make-instruction-sequence
@@ -62,10 +56,43 @@
         (else
          (make-instruction-sequence
           '() '()
-          '((goto (label ,linkage)))))))
+          ;; note: backquote here.
+          `((goto (label ,linkage)))))))
 
+;; a sequence of instructions will be finalized by
+;; some instrcutions taking care of the linkage
+;; possible linkages:
+;; - return: jump back using "continue" register
+;; - next: do nothing, just continue execution
+;; - <otherwise>: jump to a label specified by "linkage" argument
 (define (end-with-linkage linkage instruction-sequence)
   (preserving
    '(continue)
    instruction-sequence
    (compile-linkage linkage)))
+
+;; simple expressions
+(define (compile-self-evaluating exp target linkage)
+  (end-with-linkage
+   linkage
+   (make-instruction-sequence
+    '() (list target)
+    `((assign ,target (const ,exp))))))
+
+(define (compile-quoted exp target linkage)
+  (end-with-linkage
+   linkage
+   (make-instruction-sequence
+    '() (list target)
+    `((assign ,target (const ,(text-of-quotation exp)))))))
+
+(define (compile-variable exp target linkage)
+  (end-with-linkage
+   linkage
+   (make-instruction-sequence
+    '(env) ;; requires "env" register
+    (list target)
+    `((assign ,target
+              (op lookup-variable-value)
+              (const ,exp)
+              (reg env))))))
