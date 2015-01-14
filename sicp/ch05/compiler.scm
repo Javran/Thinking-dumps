@@ -141,6 +141,8 @@
     (symbol->string name)
     (number->string (new-label-number)))))
 
+;; TODO: not very sure about these newly introduced
+;; operations
 (define (compile-if exp target linkage)
   (let ((t-branch (make-label 'true-branch))
         (f-branch (make-label 'false-branch))
@@ -168,3 +170,12 @@
            (append-instruction-sequences t-branch c-code)
            (append-instruction-sequences f-branch a-code))
           after-if))))))
+
+(define (compile-sequence seq target linkage)
+  (if (last-exp? seq)
+      ;; avoiding redundant preservings
+      (compile (first-exp seq) target linkage)
+      (preserving
+       '(env continue)
+       (compile (first-exp seq) target 'next)
+       (compile-sequence (rest-exps seq) target linkage))))
