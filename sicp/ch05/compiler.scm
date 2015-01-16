@@ -302,3 +302,35 @@
                      (reg proc)
                      (reg argl)))))))
         after-call))))
+
+(define (compile-proc-appl target linkage)
+  (cond ((and (eq? target 'val) (not (eq? linkage 'return)))
+         (make-instruction-sequence
+          '(proc) all-regs
+          `((assign continue (label ,linkage))
+            (assign val (op compiled-procedure-entry)
+                        (reg proc))
+            (goto (reg val)))))
+        ((and (not (eq? target 'val))
+              (not (eq? linkage 'return)))
+         (let ((proc-return (make-label 'proc-return)))
+           (make-instruction-sequence
+            '(proc) all-regs
+            `((assign continue (label ,proc-return))
+              (assign val (op compiled-procedure-entry)
+                      (reg proc))
+              (goto (reg val))
+              ,proc-return
+              (assign ,target (reg val))
+              (goto (label ,linkage))))))
+        ((and (eq? target 'val) (eq? linkage 'return))
+         (make-instruction-sequence
+          '(proc continue)
+          all-regs
+          `((assign val (op compiled-procedure-entry)
+                        (reg proc))
+            (goto (reg val)))))
+        ((and (not (eq? target 'val))
+              (eq? linkage 'return))
+         (error "return linkage, target not val: COMPILE"
+                target))))
