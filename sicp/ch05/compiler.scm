@@ -334,3 +334,46 @@
               (eq? linkage 'return))
          (error "return linkage, target not val: COMPILE"
                 target))))
+
+;; accessors for the instruction-sequence structure
+;; a label (symbol) is considered
+;; a degenerate case of an instruction sequence
+(define (registers-needed s)
+  (if (symbol? s)
+      '()
+      (car s)))
+(define (registers-modified s)
+  (if (symbol? s)
+      '()
+      (cadr s)))
+(define (statements s)
+  (if (symbol? s)
+      (list s)
+      (caddr s)))
+
+;; whether a given sequence needs or modifies
+;; a given register
+(define (needs-register? seq reg)
+  (memq reg (registers-needed seq)))
+(define (modifies-register? seq reg)
+  (memq reg (registers-modified seq)))
+
+(define (append-instruction-sequences . seqs)
+  (define (append-2-sequences seq1 seq2)
+    (make-instruction-sequence
+     (list-union
+      (registers-needed seq1)
+      (list-difference (registers-needed seq2)
+                       (registers-modified seq1)))
+     (list-union (registers-modified seq1)
+                 (registers-modified seq2))
+     (append (statements seq1)
+             (statements seq2))))
+  ;; TODO: this is a fold
+  (define (append-seq-list seqs)
+    (if (null? seqs)
+        (empty-instruction-sequence)
+        (append-2-sequences
+         (car seqs)
+         (append-seq-list (cdr seqs)))))
+  (append-seq-list seqs))
