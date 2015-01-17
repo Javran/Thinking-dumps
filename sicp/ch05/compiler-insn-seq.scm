@@ -43,13 +43,17 @@
      (append (statements seq1)
              (statements seq2))))
   ;; TODO: this is a fold
-  (define (append-seq-list seqs)
+  #;(define (append-seq-list seqs)
     (if (null? seqs)
         (empty-instruction-sequence)
         (append-2-sequences
          (car seqs)
          (append-seq-list (cdr seqs)))))
-  (append-seq-list seqs))
+  #;(append-seq-list seqs)
+  (fold-right
+   append-2-sequences
+   (empty-instruction-sequence)
+   seqs))
 
 ;; changed to use "member" because "memq" doesn't work
 ;; for more general cases
