@@ -1,8 +1,9 @@
 ;; functions about instruction sequences
 
+;; note that a symbol (label) is considered a degenerated case
+;; of an instruction sequence
+
 ;; accessors for the instruction-sequence structure
-;; a label (symbol) is considered
-;; a degenerate case of an instruction sequence
 (define (registers-needed s)
   (if (symbol? s)
       '()
@@ -23,15 +24,22 @@
 (define (modifies-register? seq reg)
   (memq reg (registers-modified seq)))
 
+;; appending arbitrary number of instruction sequences together
 (define (append-instruction-sequences . seqs)
   (define (append-2-sequences seq1 seq2)
     (make-instruction-sequence
+     ;; registers needed is the set of registers needed by seq1
+     ;; and the sef of registers needed by seq2 without those
+     ;; that get initialized by seq1
      (list-union
       (registers-needed seq1)
       (list-difference (registers-needed seq2)
                        (registers-modified seq1)))
+     ;; registers modified is the set of registers
+     ;; modified by either of them
      (list-union (registers-modified seq1)
                  (registers-modified seq2))
+     ;; statements are appended together
      (append (statements seq1)
              (statements seq2))))
   ;; TODO: this is a fold
