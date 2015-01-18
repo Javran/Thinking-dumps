@@ -3,6 +3,6 @@
 
 (load "./set.scm")
 
-(out (set-intersection '(1 2 3 4 5) '(3 6 5 1 2)))
+(out (set-difference '(1 2 3 4 5 20) '(3 6 5 4 9 1 2)))
 
 (end-script)
