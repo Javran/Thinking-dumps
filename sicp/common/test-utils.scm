@@ -23,7 +23,7 @@
   ; testcases:
   ;   a list of testcase,
   ;     a testcase is constructed by (cons <args> <expected>)
-  ;     where <args> is either a list of arguments or 
+  ;     where <args> is either a list of arguments or
   ;     a non-list object(for unary procedures)
   ;     and <expected> is the expected result
   ;   e.g.: a valid testcase to test `+` might be:
@@ -33,7 +33,7 @@
   ;   accepts two arguments that one comes from the result of `proc`
   ;   and another from <expected>, should return #t when a testcase is passed
   ; on-correct:
-  ;   when a testcase passed, on-correct will be called 
+  ;   when a testcase passed, on-correct will be called
   ;   with the corresponding testcase
   ; on-wrong:
   ;   when a testcase failed, on-wrong will be called
@@ -81,13 +81,14 @@
         (on-wrong (on-wrong-default quiet)))
     (do-test-ex proc testcases correct? on-correct on-wrong)))
 
+;; "cmp" will be called like: "(cmp <actual> <expect>)"
 (define (do-test proc testcases . cmp)
   (do-test-quiet-or-not proc testcases cmp #f))
 
 (define (do-test-q proc testcases . cmp)
   (do-test-quiet-or-not proc testcases cmp #t))
 
-; short for `make a testcase`
+;; short for `make a testcase`
 (define (mat . args)
   (let ((len (length args)))
     (cons (list-head args (- len 1))
