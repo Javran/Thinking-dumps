@@ -1,14 +1,6 @@
-;; changed to use "member" because "memq" doesn't work
-;; for more general cases
-(define (list-union s1 s2)
-  (cond ((null? s1) s2)
-        ((member (car s1) s2) (list-union (cdr s1) s2))
-        (else
-         (cons (car s1) (list-union (cdr s1) s2)))))
+(load "./set.scm")
 
-(define (list-difference s1 s2)
-  (cond ((null? s1) '())
-        ((member (car s1) s2) (list-difference (cdr s1) s2))
-        (else
-         (cons (car s1)
-               (list-difference (cdr s1) s2)))))
+;; set represented by lists are just sets, not lists
+
+(define list-union set-union)
+(define list-difference set-difference)
