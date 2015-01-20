@@ -56,8 +56,6 @@
    (empty-instruction-sequence)
    seqs))
 
-
-
 (define (preserving regs seq1 seq2)
   (if (null? regs)
       (append-instruction-sequences seq1 seq2)
@@ -95,3 +93,18 @@
 
 ;; TODO: break functions into modules,
 ;; need to figure out them in the reversed way
+
+(define (compiler-insn-seq-tests)
+  (begin
+    (define insn-seq
+      (make-instruction-sequence
+       '(a b c)
+       '(c d)
+       '((assign c (op +) (reg a) (reg b) (reg c))
+         (assign d (op +) (reg a) (reg b)))))
+
+    (out insn-seq)
+
+
+
+    ))

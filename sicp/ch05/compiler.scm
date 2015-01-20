@@ -1,6 +1,3 @@
-(load "../common/utils.scm")
-(load "../common/test-utils.scm")
-
 (load "./compiler-insn-seq.scm")
 ;; TODO:
 ;; yet again I don't know what I'm doing,
