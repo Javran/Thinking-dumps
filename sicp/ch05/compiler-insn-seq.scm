@@ -96,15 +96,57 @@
 
 (define (compiler-insn-seq-tests)
   (begin
-    (define insn-seq
+    (define insn-seq-1
       (make-instruction-sequence
        '(a b c)
        '(c d)
-       '((assign c (op +) (reg a) (reg b) (reg c))
-         (assign d (op +) (reg a) (reg b)))))
+       ;; the instruction sequence does not matter
+       ;; as we only care about its ordering here
+       '(seq-1-1 seq-1-2 seq-1-3)))
+    (define insn-seq-2
+      (make-instruction-sequence
+       '(c d)
+       '(a d)
+       '(seq-2-1 seq-2-2 seq-2-3)))
+    (define insn-seq-3
+      (make-instruction-sequence
+       '()
+       '(a b c)
+       '(seq-3-1 seq-3-2 seq-3-3)))
 
-    (out insn-seq)
+    (do-test
+     ;; to capture input, we need to change this function..
+     append-instruction-sequences
+     (list
+      (mat (empty-instruction-sequence)
+           (list '() '()))
+      (mat (empty-instruction-sequence) insn-seq-1
+           (list '(a b c) '(c d)))
+      (mat insn-seq-1 insn-seq-2 insn-seq-3
+           (list
+            ;; [a,b,c] + ([c,d]-[c,d]) + ([] - [a,d]) = [a,b,c]
+            '(a b c)
+            ;; [c,d] + [a,d] + [a,b,c] = [a,b,c,d]
+            '(a b c d)))
+      (mat insn-seq-3 insn-seq-1 insn-seq-2
+           (list
+            ;; [] + ([a,b,c]-[a,b,c]) + ([c,d]-[c,d]) = []
+            '()
+            ;; [a,b,c] + [c,d] + [a,d] = [a,b,c,d]
+            '(a b c d))))
+     (lambda (actual expect)
+       (format #t "~A -- ~A ~%" actual expect)
+       #t))
 
 
+
+    (out
+     (append-instruction-sequences insn-seq-1 insn-seq-2 insn-seq-3))
+    (out
+     (append-instruction-sequences insn-seq-3 insn-seq-1 insn-seq-2))
 
     ))
+
+;; Local variables:
+;; proc-entry: "./compiler-tests.scm"
+;; End:
