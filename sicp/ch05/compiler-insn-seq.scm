@@ -43,36 +43,36 @@
      ;; statements are appended together
      (append (statements seq1)
              (statements seq2))))
-  ;; TODO: this is a fold
-  #;(define (append-seq-list seqs)
-    (if (null? seqs)
-        (empty-instruction-sequence)
-        (append-2-sequences
-         (car seqs)
-         (append-seq-list (cdr seqs)))))
-  #;(append-seq-list seqs)
   (fold-right
    append-2-sequences
    (empty-instruction-sequence)
    seqs))
 
+;; merge two instruction sequences preserving
+;; some registers specified by "regs"
 (define (preserving regs seq1 seq2)
   (if (null? regs)
       (append-instruction-sequences seq1 seq2)
       (let ((first-reg (car regs)))
         (if (and (needs-register? seq2 first-reg)
                  (modifies-register? seq1 first-reg))
+            ;; apply protection only if a register is needed
+            ;; by seq2 but modified by seq1
             (preserving
              (cdr regs)
              (make-instruction-sequence
+              ;; register pulled in by "(save <reg>)"
               (list-union (list first-reg)
                           (registers-needed seq1))
+              ;; register whose modification is cancelled by
+              ;; "(save <reg>)" and "(restore <reg>)"
               (list-difference (registers-modified seq1)
                                (list first-reg))
               (append `((save ,first-reg))
                       (statements seq1)
                       `((restore ,first-reg))))
              seq2)
+            ;; else
             (preserving (cdr regs) seq1 seq2)))))
 
 (define (tack-on-instruction-sequence seq body-seq)
