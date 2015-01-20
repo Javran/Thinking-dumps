@@ -116,7 +116,12 @@
 
     (do-test
      ;; to capture input, we need to change this function..
-     append-instruction-sequences
+     (lambda seqs
+       (let ((result (apply append-instruction-sequences seqs))
+             (expect-seq (apply append (map statements seqs))))
+         ;; the resulting sequence should be equal
+         (assert (equal? (statements result) expect-seq))
+         result))
      (list
       (mat (empty-instruction-sequence)
            (list '() '()))
@@ -135,16 +140,12 @@
             ;; [a,b,c] + [c,d] + [a,d] = [a,b,c,d]
             '(a b c d))))
      (lambda (actual expect)
-       (format #t "~A -- ~A ~%" actual expect)
-       #t))
-
-
-
-    (out
-     (append-instruction-sequences insn-seq-1 insn-seq-2 insn-seq-3))
-    (out
-     (append-instruction-sequences insn-seq-3 insn-seq-1 insn-seq-2))
-
+       (let ((expect-needed (car expect))
+             (expect-modified (cadr expect))
+             (actual-needed (registers-needed actual))
+             (actual-modified (registers-modified actual)))
+         (and (set-equal? expect-needed actual-needed)
+              (set-equal? expect-modified actual-modified)))))
     ))
 
 ;; Local variables:
