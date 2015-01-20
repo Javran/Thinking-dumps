@@ -1,6 +1,29 @@
 (load "./compiler-list.scm")
 ;; functions about instruction sequences
 
+;; the instruction sequence is also keeping some extra
+;; information to avoid doing redundant analyzing work
+;; need: the set of registers must be initialized before
+;;   execution
+;; modifies: the set of registers whose value are modified
+;;   by the instruction sequence
+;; statements: the instruction sequence
+(define (make-instruction-sequence
+         needs modifies statements)
+  (list needs modifies statements))
+
+(define (empty-instruction-sequence)
+  (make-instruction-sequence '() '() '()))
+
+;; instruction sequences' equality
+(define (instruction-sequence-eq? seq1 seq2)
+  (and (set-equal? (registers-needed seq1)
+                   (registers-needed seq2))
+       (set-equal? (registers-modified seq1)
+                   (registers-modified seq2))
+       (equal? (statements seq1)
+               (statements seq2))))
+
 ;; note that a symbol (label) is considered a degenerated case
 ;; of an instruction sequence
 
@@ -114,6 +137,7 @@
        '(a b c)
        '(seq-3-1 seq-3-2 seq-3-3)))
 
+    ;; test "append-instruction-sequences"
     (do-test
      ;; to capture input, we need to change this function..
      (lambda seqs
@@ -146,6 +170,9 @@
              (actual-modified (registers-modified actual)))
          (and (set-equal? expect-needed actual-needed)
               (set-equal? expect-modified actual-modified)))))
+
+    ;; test "preserving"
+
     ))
 
 ;; Local variables:
