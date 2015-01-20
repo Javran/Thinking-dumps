@@ -139,40 +139,34 @@
 
     ;; test "append-instruction-sequences"
     (do-test
-     ;; to capture input, we need to change this function..
-     (lambda seqs
-       (let ((result (apply append-instruction-sequences seqs))
-             (expect-seq (apply append (map statements seqs))))
-         ;; the resulting sequence should be equal
-         (assert (equal? (statements result) expect-seq))
-         result))
+     append-instruction-sequences
      (list
       (mat (empty-instruction-sequence)
-           (list '() '()))
+           (empty-instruction-sequence))
       (mat (empty-instruction-sequence) insn-seq-1
-           (list '(a b c) '(c d)))
+           insn-seq-1)
       (mat insn-seq-1 insn-seq-2 insn-seq-3
-           (list
+           (make-instruction-sequence
             ;; [a,b,c] + ([c,d]-[c,d]) + ([] - [a,d]) = [a,b,c]
             '(a b c)
             ;; [c,d] + [a,d] + [a,b,c] = [a,b,c,d]
-            '(a b c d)))
+            '(a b c d)
+            '(seq-1-1 seq-1-2 seq-1-3
+              seq-2-1 seq-2-2 seq-2-3
+              seq-3-1 seq-3-2 seq-3-3)))
       (mat insn-seq-3 insn-seq-1 insn-seq-2
-           (list
+           (make-instruction-sequence
             ;; [] + ([a,b,c]-[a,b,c]) + ([c,d]-[c,d]) = []
             '()
             ;; [a,b,c] + [c,d] + [a,d] = [a,b,c,d]
-            '(a b c d))))
-     (lambda (actual expect)
-       (let ((expect-needed (car expect))
-             (expect-modified (cadr expect))
-             (actual-needed (registers-needed actual))
-             (actual-modified (registers-modified actual)))
-         (and (set-equal? expect-needed actual-needed)
-              (set-equal? expect-modified actual-modified)))))
+            '(a b c d)
+            '(seq-3-1 seq-3-2 seq-3-3
+              seq-1-1 seq-1-2 seq-1-3
+              seq-2-1 seq-2-2 seq-2-3))))
+     instruction-sequence-eq?)
 
     ;; test "preserving"
-
+    ;; TODO
     ))
 
 ;; Local variables:
