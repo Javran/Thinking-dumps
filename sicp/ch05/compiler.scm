@@ -3,6 +3,9 @@
 ;; yet again I don't know what I'm doing,
 ;; but this will eventually turn out to be useful...
 
+;; TODO: break functions into modules,
+;; need to figure out them in the reversed way
+
 ;; exp: the expression to be compiled.
 ;; target: the target register to hold resulting value.
 ;; linkage: how should we proceed after the expression

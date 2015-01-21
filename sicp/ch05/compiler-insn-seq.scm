@@ -1,13 +1,19 @@
 (load "./compiler-list.scm")
-;; functions about instruction sequences
+
+;; functions related to instruction sequences
 
 ;; the instruction sequence is also keeping some extra
 ;; information to avoid doing redundant analyzing work
-;; need: the set of registers must be initialized before
-;;   execution
-;; modifies: the set of registers whose value are modified
-;;   by the instruction sequence
-;; statements: the instruction sequence
+;;
+;; - need: the set of registers must be initialized before
+;;     execution
+;; - modifies: the set of registers whose value are modified
+;;     by the instruction sequence
+;; - statements: the instruction sequence
+;;
+;; note that a symbol (label) is considered a degenerated case
+;; of an instruction sequence
+
 (define (make-instruction-sequence
          needs modifies statements)
   (list needs modifies statements))
@@ -23,9 +29,6 @@
                    (registers-modified seq2))
        (equal? (statements seq1)
                (statements seq2))))
-
-;; note that a symbol (label) is considered a degenerated case
-;; of an instruction sequence
 
 ;; accessors for the instruction-sequence structure
 (define (registers-needed s)
@@ -113,9 +116,6 @@
                (registers-modified seq2))
    (append (statements seq1)
            (statements seq2))))
-
-;; TODO: break functions into modules,
-;; need to figure out them in the reversed way
 
 (define (compiler-insn-seq-tests)
   (begin
