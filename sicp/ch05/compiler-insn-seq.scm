@@ -166,6 +166,53 @@
      instruction-sequence-eq?)
 
     ;; test "preserving"
+    (do-test
+     preserving
+     (list
+      (mat '(a b c d) (empty-instruction-sequence) insn-seq-1
+           insn-seq-1)
+      (mat '(a b c d) insn-seq-3 (empty-instruction-sequence)
+           insn-seq-3)
+      ;; no need to preserve "a"
+      (mat '(a) insn-seq-1 insn-seq-2
+           (append-instruction-sequences insn-seq-1 insn-seq-2))
+      (mat '(c) insn-seq-1 insn-seq-2
+           (make-instruction-sequence
+            '(a b c)
+            '(a d)
+            '(;; "c" should be preserved
+              (save c)
+              seq-1-1 seq-1-2 seq-1-3
+              (restore c)
+              seq-2-1 seq-2-2 seq-2-3)))
+      (mat '(d c) insn-seq-1 insn-seq-2
+           (make-instruction-sequence
+            ;; "(save d)" wil pull in "d"'s requirement
+            '(a b c d)
+            ;; "d" modified by seq2
+            '(a d)
+            '(;; both "c" and "d" should be preserved
+              ;; but actually the order does not matter,
+              ;; could be (save d) (save c) ... (restore c) (restore d)
+              (save c)
+              (save d)
+              seq-1-1 seq-1-2 seq-1-3
+              (restore d)
+              (restore c)
+              seq-2-1 seq-2-2 seq-2-3)))
+      (mat '(a b c) insn-seq-1 insn-seq-3
+           ;; nothing need to be preserved
+           (append-instruction-sequences insn-seq-1 insn-seq-3))
+      (mat '(a b c d) insn-seq-3 insn-seq-2
+           (make-instruction-sequence
+            '(c d)
+            '(a b d)
+            '((save c)
+              seq-3-1 seq-3-2 seq-3-3
+              (restore c)
+              seq-2-1 seq-2-2 seq-2-3))))
+     instruction-sequence-eq?)
+
     ;; TODO
     ))
 
