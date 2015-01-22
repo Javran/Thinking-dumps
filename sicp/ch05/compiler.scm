@@ -40,19 +40,6 @@
    (else
     (error "Unknown expression type: COMPILE" exp))))
 
-(define (compile-linkage linkage)
-  (cond ((eq? linkage 'return)
-         (make-instruction-sequence
-          '(continue) '()
-          '((goto (reg continue)))))
-        ((eq? linkage 'next)
-         (empty-instruction-sequence))
-        (else
-         (make-instruction-sequence
-          '() '()
-          ;; note: backquote here.
-          `((goto (label ,linkage)))))))
-
 ;; a sequence of instructions will be finalized by
 ;; some instrcutions taking care of the linkage
 ;; possible linkages:
@@ -60,6 +47,18 @@
 ;; - next: do nothing, just continue execution
 ;; - <otherwise>: jump to a label specified by "linkage" argument
 (define (end-with-linkage linkage instruction-sequence)
+  (define (compile-linkage linkage)
+    (cond ((eq? linkage 'return)
+           (make-instruction-sequence
+            '(continue) '()
+            '((goto (reg continue)))))
+          ((eq? linkage 'next)
+           (empty-instruction-sequence))
+          (else
+           (make-instruction-sequence
+            '() '()
+            ;; note: backquote here.
+            `((goto (label ,linkage)))))))
   (preserving
    '(continue)
    instruction-sequence
