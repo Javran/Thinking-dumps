@@ -1,5 +1,7 @@
-(load "./compiler-insn-seq.scm")
 (load "./compiler-label.scm")
+(load "./compiler-insn-seq.scm")
+
+(load "./compiler-no-branch.scm")
 
 ;; TODO:
 ;; yet again I don't know what I'm doing,
@@ -63,67 +65,7 @@
    instruction-sequence
    (compile-linkage linkage)))
 
-;; simple expressions
-(define (compile-self-evaluating exp target linkage)
-  (end-with-linkage
-   linkage
-   (make-instruction-sequence
-    '() (list target)
-    `((assign ,target (const ,exp))))))
-
-(define (compile-quoted exp target linkage)
-  (end-with-linkage
-   linkage
-   (make-instruction-sequence
-    '() (list target)
-    `((assign ,target (const ,(text-of-quotation exp)))))))
-
-(define (compile-variable exp target linkage)
-  (end-with-linkage
-   linkage
-   (make-instruction-sequence
-    '(env) ;; requires "env" register
-    (list target)
-    `((assign ,target
-              (op lookup-variable-value)
-              (const ,exp)
-              (reg env))))))
-
-;; assignments and definitions
-(define (compile-assignment exp target linkage)
-  (let ((var (assignment-variable exp))
-        (get-value-code
-         (compile (assignment-value exp) 'val 'next)))
-    (end-with-linkage
-     (preserving
-      '(env)
-      get-value-code
-      (make-instruction-sequence
-       '(env val) (list target)
-       `((perform (op set-variable-value!)
-                  (const ,var)
-                  (reg val)
-                  (reg env))
-         (assign ,target (const ok))))))))
-
-(define (compile-definition exp target linkage)
-  (let ((var (definition-variable exp))
-        (get-value-code
-         (compile (definition-value exp) 'val 'next)))
-    (end-with-linkage
-     (preserving
-      '(env)
-      get-value-code
-      (make-instruction-sequence
-       '(env val) (list target)
-       '((perform (op define-variable!)
-                  (const ,var)
-                  (reg val)
-                  (reg env))
-         (assign ,target (const ok))))))))
-
 ;; conditionals
-
 
 ;; TODO: not very sure about these newly introduced
 ;; operations
@@ -154,15 +96,6 @@
            (append-instruction-sequences t-branch c-code)
            (append-instruction-sequences f-branch a-code))
           after-if))))))
-
-(define (compile-sequence seq target linkage)
-  (if (last-exp? seq)
-      ;; avoiding redundant preservings
-      (compile (first-exp seq) target linkage)
-      (preserving
-       '(env continue)
-       (compile (first-exp seq) target 'next)
-       (compile-sequence (rest-exps seq) target linkage))))
 
 (define (compile-lambda exp target linkage)
   (let ((proc-entry (make-label 'entry))
