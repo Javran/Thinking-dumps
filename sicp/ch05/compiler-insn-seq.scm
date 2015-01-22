@@ -101,6 +101,9 @@
             ;; else
             (preserving (cdr regs) seq1 seq2)))))
 
+
+;; attach a non-inline instruction sequence (maybe a procedure body)
+;; to another one
 (define (tack-on-instruction-sequence seq body-seq)
   (make-instruction-sequence
    (registers-needed seq)
@@ -108,6 +111,8 @@
    (append (statements seq)
            (statements body-seq))))
 
+;; merge instruction sequences together,
+;; two branches will never be executed sequentially
 (define (parallel-instruction-sequences seq1 seq2)
   (make-instruction-sequence
    (list-union (registers-needed seq1)
@@ -213,7 +218,6 @@
               seq-2-1 seq-2-2 seq-2-3))))
      instruction-sequence-eq?)
 
-    ;; TODO
     ))
 
 ;; Local variables:
