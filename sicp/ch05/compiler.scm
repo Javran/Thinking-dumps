@@ -1,4 +1,6 @@
 (load "./compiler-insn-seq.scm")
+(load "./compiler-label.scm")
+
 ;; TODO:
 ;; yet again I don't know what I'm doing,
 ;; but this will eventually turn out to be useful...
@@ -121,15 +123,7 @@
          (assign ,target (const ok))))))))
 
 ;; conditionals
-(define label-counter 0)
-(define (new-label-number)
-  (set! label-counter (+ 1 label-counter))
-  label-counter)
-(define (make-label name)
-  (string->symbol
-   (string-append
-    (symbol->string name)
-    (number->string (new-label-number)))))
+
 
 ;; TODO: not very sure about these newly introduced
 ;; operations
