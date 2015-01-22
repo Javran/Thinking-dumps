@@ -82,7 +82,9 @@
       ;; avoiding redundant preservings
       (compile (first-exp seq) target linkage)
       (preserving
-       ;; TODO: not sure why we need to keep "continue" here...
+       ;; when we end an instruction sequence with linkage,
+       ;; it might use "continue" register to jump back
+       ;; in which case we need to preserve "continue" register
        '(env continue)
        (compile (first-exp seq) target 'next)
        (compile-sequence (rest-exps seq) target linkage))))
