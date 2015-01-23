@@ -5,15 +5,29 @@
         (after-lambda (make-label 'after-lambda)))
     (let ((lambda-linkage
            (if (eq? linkage 'next)
+               ;; the body potentially contains branches
+               ;; in which case we need a "after-lambda"
+               ;; to jump to the correct exit point
                after-lambda
                linkage)))
       (append-instruction-sequences
-       ;; TODO: I don't know this one.
        (tack-on-instruction-sequence
+        ;; the compiled body has nothing to do with
+        ;; procedure-creation code, but we tack the compiled
+        ;; procedure body right after the procedure creation code
+        ;; and proper jump is used to make things correct
         (end-with-linkage
          lambda-linkage
          (make-instruction-sequence
+          ;; needs to store the current environment
+          ;; and assigns the compiled procedure to target register
           '(env) (list target)
+          ;; a compiled procedure
+          ;; consists of:
+          ;; - the label to the procedure entry
+          ;; - the environment in which it was created
+          ;; - at runtime, the arguments are passed through
+          ;;   "argl" register
           `((assign ,target
                     (op make-compiled-procedure)
                     (label ,proc-entry)
@@ -21,6 +35,7 @@
         (compile-lambda-body exp proc-entry))
        after-lambda))))
 
+;; constructor & accessors of compiled procedure structure
 (define (make-compiled-procedure entry env)
   (list 'compiled-procedure entry env))
 (define (compiled-procedure? proc)
