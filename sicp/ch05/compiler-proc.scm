@@ -59,6 +59,8 @@
         (assign env
                 (op compiled-procedure-env)
                 (reg proc))
+        ;; extend the embedded environment
+        ;; to include argument bindings
         (assign env
                 (op extend-environment)
                 (const ,formals)
@@ -72,14 +74,21 @@
 ;; for properly initializing "argl" register
 ;; to fully evaluation arguments
 (define (compile-application exp target linkage)
-  ;; inline "construct-arglist" because
+  ;; inlining "construct-arglist" because
   ;; I haven't seen any usage other than one in
   ;; "compile-application"
   ;; takes a list of compiled operand-codes
   ;; and initialize "argl" properly
   (define (construct-arglist operand-codes)
+    ;; compiling the argument list is a little bit tricky
+    ;; because instead of "wasting an instruction by initializing
+    ;; 'argl' to the empty list", the book wastes a few pages
+    ;; explaining the compilcation incurred by using this weird order of
+    ;; argument evaluation. And I wasted few lines here complaining about it.
     (let ((operand-codes (reverse operand-codes)))
       (if (null? operand-codes)
+          ;; no more operands are required, simply
+          ;; assigning "argl" an empty list to continue
           (make-instruction-sequence
            '() '(argl)
            '((assign argl (const ()))))
@@ -90,12 +99,16 @@
                    '(val) '(argl)
                    '((assign argl (op list) (reg val)))))))
             (if (null? (cdr operand-codes))
+                ;; this is the last argument
                 code-to-get-last-arg
+                ;; this is not the last argument
                 (preserving
+                 ;; TODO: why "continue" is not preserved here?
                  '(env)
                  code-to-get-last-arg
                  (code-to-get-rest-args
                   (cdr operand-codes))))))))
+  ;; ====
   (let ((proc-code (compile (operator exp) 'proc 'next))
         (operand-codes
          (map
