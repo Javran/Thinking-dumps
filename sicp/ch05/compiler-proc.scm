@@ -86,6 +86,8 @@
     ;; explaining the compilcation incurred by using this weird order of
     ;; argument evaluation. And I wasted few lines here complaining about it.
     (let ((operand-codes (reverse operand-codes)))
+      ;; NOTE: from now on (inside this s-exp)
+      ;; the "operand-codes" is reverded.
       (if (null? operand-codes)
           ;; no more operands are required, simply
           ;; assigning "argl" an empty list to continue
@@ -104,10 +106,35 @@
                 ;; this is not the last argument
                 (preserving
                  ;; TODO: why "continue" is not preserved here?
+                 ;;   try to include some linkage
+                 ;;   in subexpressions and see if it still works
+                 ;; a potential answer:
+                 ;;   all final linkages of subexpressions are just "next"s
+                 ;;   no need for keeping "continue" anyway.
                  '(env)
                  code-to-get-last-arg
+                 ;; merge in rest of the argument evaluations
                  (code-to-get-rest-args
                   (cdr operand-codes))))))))
+  ;; inlining this procedure because there's no good reason
+  ;; to leave it outside. Since "operand-codes" passed to it
+  ;; is always reversed, reading the code without context
+  ;; doesn't make any sense.
+  (define (code-to-get-rest-args operand-codes)
+    (let ((code-for-next-arg
+           (preserving
+            '(argl)
+            (car operand-codes)
+            (make-instruction-sequence
+             '(val argl) '(argl)
+             '((assign argl
+                       (op cons) (reg val) (reg argl)))))))
+      (if (null? (cdr operand-codes))
+          code-for-next-arg
+          (preserving
+           '(env)
+           code-for-next-arg
+           (code-to-get-rest-args (cdr operand-codes))))))
   ;; ====
   (let ((proc-code (compile (operator exp) 'proc 'next))
         (operand-codes
@@ -125,22 +152,6 @@
       (construct-arglist operand-codes)
       ;; ???
       (compile-procedure-call target linkage)))))
-
-(define (code-to-get-rest-args operand-codes)
-  (let ((code-for-next-arg
-         (preserving
-          '(argl)
-          (car operand-codes)
-          (make-instruction-sequence
-           '(val argl) '(argl)
-           '((assign argl
-                     (op cons) (reg val) (reg argl)))))))
-    (if (null? (cdr operand-codes))
-        code-for-next-arg
-        (preserving
-         '(env)
-         code-for-next-arg
-         (code-to-get-rest-args (cdr operand-codes))))))
 
 (define (compile-procedure-call target linkage)
   (let ((primitive-branch (make-label 'primitive-branch))
