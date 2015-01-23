@@ -150,9 +150,11 @@
       '(proc continue)
       ;; evaluate operands
       (construct-arglist operand-codes)
-      ;; ???
+      ;; dispatch to either a primitive procedure or composite one
       (compile-procedure-call target linkage)))))
 
+;; apply arguments in "argl" to a procdure in "proc"
+;; dispatches accordingly to the value of "proc"
 (define (compile-procedure-call target linkage)
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
@@ -163,9 +165,11 @@
        (make-instruction-sequence
         '(proc) '()
         `((test (op primitive-procedure?) (reg proc))
+          ;; goto primitive branch
           (branch (label ,primitive-branch))))
        (parallel-instruction-sequences
         (append-instruction-sequences
+         ;; otherwise the procedure must be a compiled one
          compiled-branch
          (compile-proc-appl target compiled-linkage))
         (append-instruction-sequences
