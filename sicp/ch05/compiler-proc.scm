@@ -43,10 +43,16 @@
 (define (compiled-procedure-entry c-proc) (cadr c-proc))
 (define (compiled-procedure-env c-proc) (caddr c-proc))
 
+;; compile the body of a lambda expression
+;; assuming "argl" register is well initialized
 (define (compile-lambda-body exp proc-entry)
   (let ((formals (lambda-parameters exp)))
     (append-instruction-sequences
+     ;; the initial part of the compiled code
      (make-instruction-sequence
+      ;; TODO: not sure why "env" is required here
+      ;; as in the code it is overwritten immediately
+      ;; by a register assignment - maybe it's safe to remove it
       '(env proc argl)
       '(env)
       `(,proc-entry
@@ -58,9 +64,38 @@
                 (const ,formals)
                 (reg argl)
                 (reg env))))
+     ;; compile the body of a lambda expression
      (compile-sequence (lambda-body exp) 'val 'return))))
 
+;; compile function application
+;; in an applicative order evaluation, this part is responsible
+;; for properly initializing "argl" register
+;; to fully evaluation arguments
 (define (compile-application exp target linkage)
+  ;; inline "construct-arglist" because
+  ;; I haven't seen any usage other than one in
+  ;; "compile-application"
+  ;; takes a list of compiled operand-codes
+  ;; and initialize "argl" properly
+  (define (construct-arglist operand-codes)
+    (let ((operand-codes (reverse operand-codes)))
+      (if (null? operand-codes)
+          (make-instruction-sequence
+           '() '(argl)
+           '((assign argl (const ()))))
+          (let ((code-to-get-last-arg
+                 (append-instruction-sequences
+                  (car operand-codes)
+                  (make-instruction-sequence
+                   '(val) '(argl)
+                   '((assign argl (op list) (reg val)))))))
+            (if (null? (cdr operand-codes))
+                code-to-get-last-arg
+                (preserving
+                 '(env)
+                 code-to-get-last-arg
+                 (code-to-get-rest-args
+                  (cdr operand-codes))))))))
   (let ((proc-code (compile (operator exp) 'proc 'next))
         (operand-codes
          (map
@@ -69,31 +104,14 @@
           (operands exp))))
     (preserving
      '(env continue)
+     ;; evaluate operator
      proc-code
      (preserving
       '(proc continue)
+      ;; evaluate operands
       (construct-arglist operand-codes)
+      ;; ???
       (compile-procedure-call target linkage)))))
-
-(define (construct-arglist operand-codes)
-  (let ((operand-codes (reverse operand-codes)))
-        (if (null? operand-codes)
-            (make-instruction-sequence
-             '() '(argl)
-             '((assign argl (const ()))))
-            (let ((code-to-get-last-arg
-                   (append-instruction-sequences
-                    (car operand-codes)
-                    (make-instruction-sequence
-                     '(val) '(argl)
-                     '((assign argl (op list) (reg val)))))))
-              (if (null? (cdr operand-codes))
-                  code-to-get-last-arg
-                  (preserving
-                   '(env)
-                   code-to-get-last-arg
-                   (code-to-get-rest-args
-                    (cdr operand-codes))))))))
 
 (define (code-to-get-rest-args operand-codes)
   (let ((code-for-next-arg
