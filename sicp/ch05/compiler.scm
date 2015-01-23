@@ -45,6 +45,7 @@
 ;; - return: jump back using "continue" register
 ;; - next: do nothing, just continue execution
 ;; - <otherwise>: jump to a label specified by "linkage" argument
+;; NOTE: cannot use "next" and "continue" as labels
 (define (end-with-linkage linkage instruction-sequence)
   (define (compile-linkage linkage)
     (cond ((eq? linkage 'return)
