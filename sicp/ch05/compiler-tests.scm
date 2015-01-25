@@ -5,7 +5,12 @@
 (load "./compiler.scm")
 
 (compiler-insn-seq-tests)
+(newline)
 
-(for-each out (statements (compile '(+ 1 2 3) 'val 'next)))
-
+(for-each out (statements
+               (compile '((define (factorial n)
+                            (if (= n 1)
+                                1
+                                (* (factorial (- n 1)) n))))
+                        'val 'next)))
 (end-script)
