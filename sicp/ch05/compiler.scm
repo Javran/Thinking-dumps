@@ -9,6 +9,9 @@
 ;; yet again I don't know what I'm doing,
 ;; but this will eventually turn out to be useful...
 
+(define all-regs
+  '(env proc val argl continue))
+
 ;; exp: the expression to be compiled.
 ;; target: the target register to hold resulting value.
 ;; linkage: how should we proceed after the expression
