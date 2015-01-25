@@ -4,10 +4,7 @@
 (load "./compiler-no-branch.scm")
 (load "./compiler-if.scm")
 (load "./compiler-proc.scm")
-
-;; TODO:
-;; yet again I don't know what I'm doing,
-;; but this will eventually turn out to be useful...
+(load "./compiler-prim.scm")
 
 (define all-regs
   '(env proc val argl continue))
