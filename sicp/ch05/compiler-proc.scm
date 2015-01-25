@@ -156,6 +156,39 @@
 ;; apply arguments in "argl" to a procdure in "proc"
 ;; dispatches accordingly to the value of "proc"
 (define (compile-procedure-call target linkage)
+  ;; function application for compiled procedures
+  (define (compile-proc-appl target linkage)
+    (cond ((and (eq? target 'val) (not (eq? linkage 'return)))
+           (make-instruction-sequence
+            '(proc) all-regs
+            `((assign continue (label ,linkage))
+              (assign val (op compiled-procedure-entry)
+                      (reg proc))
+              (goto (reg val)))))
+          ((and (not (eq? target 'val))
+                (not (eq? linkage 'return)))
+           (let ((proc-return (make-label 'proc-return)))
+             (make-instruction-sequence
+              '(proc) all-regs
+              `((assign continue (label ,proc-return))
+                (assign val (op compiled-procedure-entry)
+                        (reg proc))
+                (goto (reg val))
+                ,proc-return
+                (assign ,target (reg val))
+                (goto (label ,linkage))))))
+          ((and (eq? target 'val) (eq? linkage 'return))
+           (make-instruction-sequence
+            '(proc continue)
+            all-regs
+            `((assign val (op compiled-procedure-entry)
+                      (reg proc))
+              (goto (reg val)))))
+          ((and (not (eq? target 'val))
+                (eq? linkage 'return))
+           (error "return linkage, target not val: COMPILE"
+                  target))))
+  ;; ====
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
         (after-call (make-label 'after-call)))
@@ -182,36 +215,4 @@
                      (op apply-primitive-procedure)
                      (reg proc)
                      (reg argl)))))))
-        after-call))))
-
-(define (compile-proc-appl target linkage)
-  (cond ((and (eq? target 'val) (not (eq? linkage 'return)))
-         (make-instruction-sequence
-          '(proc) all-regs
-          `((assign continue (label ,linkage))
-            (assign val (op compiled-procedure-entry)
-                        (reg proc))
-            (goto (reg val)))))
-        ((and (not (eq? target 'val))
-              (not (eq? linkage 'return)))
-         (let ((proc-return (make-label 'proc-return)))
-           (make-instruction-sequence
-            '(proc) all-regs
-            `((assign continue (label ,proc-return))
-              (assign val (op compiled-procedure-entry)
-                      (reg proc))
-              (goto (reg val))
-              ,proc-return
-              (assign ,target (reg val))
-              (goto (label ,linkage))))))
-        ((and (eq? target 'val) (eq? linkage 'return))
-         (make-instruction-sequence
-          '(proc continue)
-          all-regs
-          `((assign val (op compiled-procedure-entry)
-                        (reg proc))
-            (goto (reg val)))))
-        ((and (not (eq? target 'val))
-              (eq? linkage 'return))
-         (error "return linkage, target not val: COMPILE"
-                target))))
+       after-call))))
