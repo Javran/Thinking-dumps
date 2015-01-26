@@ -101,6 +101,13 @@
 
 ;; extract required operations from a list of instructions
 ;; operations are represented as (<operation-name> <arity>)
+;; NOTE: this procedure assumes the operations can only appear
+;; in one of the following forms:
+;; - (assign <operation> ...)
+;; - (test (op <operation>) ...)
+;; - (perform (op <operation>) ...)
+;; if you have modified the syntax,
+;; this function might not work properly.
 (define (extract-operations insns)
   (define (insn->operation insn)
     (if (pair? insn)
