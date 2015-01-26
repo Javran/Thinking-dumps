@@ -23,8 +23,11 @@
     (compile-variable exp target linkage))
    ((assignment? exp)
     (compile-assignment exp target linkage))
+   ;; desugar before compiling
    ((definition? exp)
-    (compile-definition exp target linkage))
+    (compile-definition
+     (normalize-define exp)
+     target linkage))
    ((if? exp)
     (compile-if exp target linkage))
    ((lambda? exp)
@@ -34,6 +37,9 @@
      (begin-actions exp) target linkage))
    ((cond? exp)
     (compile (cond->if exp) target linkage))
+   ;; adding let-form
+   ((let? exp)
+    (compile (let->combination exp) target linkage))
    ((application? exp)
     (compile-application exp target linkage))
    (else
