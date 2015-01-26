@@ -7,10 +7,13 @@
 (compiler-insn-seq-tests)
 (newline)
 
-(print-instruction-sequence
- (compile '((define (factorial n)
-              (if (= n 1)
-                  1
-                  (* (factorial (- n 1)) n))))
+(compile-and-run
+ (compile '(begin
+             (define (factorial n)
+               (if (= n 1)
+                   1
+                   (* (factorial (- n 1)) n)))
+             (factorial 5))
           'val 'next))
+
 (end-script)
