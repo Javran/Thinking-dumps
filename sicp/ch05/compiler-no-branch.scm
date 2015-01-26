@@ -42,6 +42,7 @@
         (get-value-code
          (compile (assignment-value exp) 'val 'next)))
     (end-with-linkage
+     linkage
      (preserving
       '(env)
       ;; insert code that evaluates the value
@@ -64,6 +65,7 @@
         (get-value-code
          (compile (definition-value exp) 'val 'next)))
     (end-with-linkage
+     linkage
      (preserving
       '(env)
       get-value-code
