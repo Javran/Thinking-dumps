@@ -40,7 +40,6 @@
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
 
-
 ;; find the first duplicated element
 ;; if no duplicate element is found, return #t
 ;; otherwise a list will be returned
@@ -99,6 +98,30 @@
         (fold-left (lambda (a b)
                      (and a b))
                    #t results)))))
+
+;; extract required operations from a list of instructions
+;; operations are represented as (<operation-name> <arity>)
+(define (extract-operations insns)
+  (define (insn->operation insn)
+    (if (pair? insn)
+        (let ((head (car insn)))
+          (cond ((and (eq? head 'assign)
+                      (eq? (car (caddr insn)) 'op))
+                 ;; (assign _ (op _) ..)
+                 (list (list (cadr (caddr insn))
+                             (- (length insn) 3))))
+                ((or (eq? head 'test)
+                     (eq? head 'perform))
+                 ;; (test (op _) ..)
+                 ;; (perform (op _) ..)
+                 (list (list (cadr (cadr insn))
+                             (- (length insn) 2))))
+                (else
+                 '())))
+        '()))
+  (remove-duplicates
+   (concat-map insn->operation
+               insns)))
 
 (define (test-first-dup-element)
   (do-test
