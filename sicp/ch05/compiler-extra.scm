@@ -21,9 +21,20 @@
         (out "Labels are checked.")
         ;; not actually reachable
         (out "Error regarding labels occurred."))
+    (define ops
+      (map car (extract-operations insn-seq)))
+    (out "Required operations:")
+    (for-each
+     (lambda (x)
+       (format #t "* ~A~%" x))
+     ops)
     ;; TODO
-    ;; - collect all needed operations
     ;; - lift from scheme if necessary
     ;; - execute the code
     ;; - get result
     ))
+
+;; Local variables:
+;; proc-entry: "./compiler-tests.scm"
+;; End:
+
