@@ -17,6 +17,10 @@
 ;; lift them beforehands,
 ;; instead of lifting them on the fly
 
+;; from "simu_ec_patch.scm"
+(define (to-machine-prim-entry sym)
+  `(,sym ,(eval sym user-initial-environment)))
+
 ;; compile the expression
 ;; and run it on the machine
 (define (compile-and-run exp)
@@ -41,17 +45,13 @@
       (let* ((old-ops (default-ops-builder m))
              (missing-opnames (set-difference
                                 req-ops
-                                (map car old-ops))))
-        (out "Missing operations:")
-        (for-each
-         (lambda (x)
-           (format #t "* ~A~%" x))
-         missing-opnames)
-        old-ops))
+                                (map car old-ops)))
+             ;; lift missing operations from scheme env
+             (new-ops (map to-machine-prim-entry missing-opnames)))
+        (append new-ops old-ops)))
     (ops-builder (empty-machine))
 
     ;; TODO
-    ;; - lift from scheme if necessary
     ;; - execute the code
     ;; - get result
     ))
@@ -59,4 +59,3 @@
 ;; Local variables:
 ;; proc-entry: "./compiler-tests.scm"
 ;; End:
-
