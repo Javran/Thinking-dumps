@@ -22,9 +22,14 @@
 (define (compile-and-run exp)
   (let* ((compiled (compile exp 'val 'next))
          (insn-seq (statements compiled)))
+    ;; check register requirement
+    (let ((needed (registers-needed compiled)))
+      (assert (or (null? needed)
+                  (equal? needed '(env)))
+              "the only required register (if any) should be 'env'"))
     ;; verify labels
     (if (check-labels insn-seq)
-        (out "Labels are checked.")
+        'ok
         ;; not actually reachable
         (out "Error regarding labels occurred."))
 
