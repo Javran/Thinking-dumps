@@ -17,6 +17,11 @@
 ;; lift them beforehands,
 ;; instead of lifting them on the fly
 
+;; TODO: checkings should be done only once,
+;; since it's compiled it doesn't make sense
+;; running checkings on a static data multiple times
+;; isolate this part of functionalities
+
 ;; from "simu_ec_patch.scm"
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))
