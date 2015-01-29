@@ -1,5 +1,6 @@
 ;; some extra functionalities for the compiler
 (load "./simu.scm")
+(load "./ec-init-env.scm")
 
 (define (print-instruction-sequence insn-seq)
   (format #t "Registers needed: ~A~%~
@@ -54,12 +55,12 @@
              ;; lift missing operations from scheme env
              (new-ops (map to-machine-prim-entry missing-opnames)))
         (append new-ops old-ops)))
-    (ops-builder (empty-machine))
-
-    ;; TODO
-    ;; - execute the code
-    ;; - get result
-    ))
+    (let ((m (build-and-execute-with
+              `(controller
+                ,@insn-seq)
+              `((env ,(init-env)))
+              ops-builder)))
+      (machine-reg-get m 'val))))
 
 ;; Local variables:
 ;; proc-entry: "./compiler-tests.scm"
