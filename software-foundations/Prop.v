@@ -621,8 +621,23 @@ Qed.
 Inductive pal {X:Type} : list X -> Prop :=
   | pal_nil : pal []
   | pal_single : forall x:X, pal [x]
-  | pal_lr : forall (x:X) (sub : list X), pal sub -> pal (x :: sub ++ [x]).
-(** [] *)
+  | pal_lr : forall (x:X) (sub : list X), pal sub -> pal (x :: snoc sub x).
+
+Theorem pal_concat_id_rev : forall {X : Type} (l : list X),
+  pal (l ++ rev l).
+Proof.
+  intros X l. induction l.
+  Case "l = nil". simpl. apply pal_nil.
+  Case "l = x:l'". simpl. rewrite <- snoc_with_append. apply pal_lr.
+  apply IHl.
+Qed.
+
+Theorem pal_id_is_rev : forall {X : Type} (l : list X),
+  pal l -> l = rev l.
+Proof.
+  intros X l H. induction H. reflexivity. reflexivity.
+  simpl. rewrite rev_snoc. simpl. rewrite <- IHpal. reflexivity.
+Qed.
 
 (** **** Exercise: 5 stars, optional (palindrome_converse) *)
 (** Using your definition of [pal] from the previous exercise, prove
