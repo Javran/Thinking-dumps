@@ -672,14 +672,42 @@ Definition list_init {X : Type} (l : list X) : option (list X) :=
   | Some l' => Some (rev l')
   end.
 
+Lemma palindrome_rev_hd_lt : forall {X : Type} (l : list X),
+  l = rev l -> list_head l = list_last l.
+Proof.
+  intros X l Hri. induction l. reflexivity.
+  simpl. unfold list_last. rewrite Hri. rewrite rev_involutive. reflexivity.
+Qed.
+
+Lemma pal_aux :
+  forall (X:Type) (l : list X) (x : X),
+    (l = rev l -> pal l) -> l = rev l -> pal (x :: snoc l x).
+Proof.
+  intros X l x Hrev HInd. apply pal_lr. apply Hrev. apply HInd.
+Qed.
+
+Inductive tril (X : Type) : Type :=
+  | tril_nil : tril X
+  | tril_single : X -> tril X
+  | tril_sub : X -> tril X -> X -> tril X.
+
+Fixpoint tril_to_list (X : Type) (l : list X) : tril X :=
+  match l with
+    | [] => tril_nil X
+    | (h::[]) => tril_single X h
+    | (h::t) => match list_last t with
+                  | None => tril_nil X
+                  | Some y => match list_init t with
+                                | None => tril_nil X
+                                | Some sub => tril_sub X h (tril_to_list X sub) y
+                              end
+                end
+  end.
+
 Theorem palindrome_converse : forall (X : Type) (l : list X),
   l = rev l -> pal l.
 Proof.
-  intros X l eq1. induction l as [|h t].
-  Case "l = nil". apply pal_nil.
-  Case "l = h :: t". destruct t as [|th tt].
-    SCase "t = nil". apply pal_single.
-    SCase "t = th :: tt". simpl in eq1. inversion eq1.
+  intros X l eq1. induction l.
 Abort.
 (** [] *)
 
