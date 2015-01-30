@@ -4,16 +4,17 @@
 ;; compiler tests
 (load "./compiler.scm")
 
+;; borrow tests from ec-tests
+(load "./ec-tests.scm")
+
 (compiler-insn-seq-tests)
 (newline)
 
-(out
- (compile-and-run
-  '(begin
-     (define (factorial n)
-       (if (= n 1)
-           1
-           (* (factorial (- n 1)) n)))
-     (factorial 5))))
+(for-each
+ (test-evaluator
+  (lambda (exp env)
+    ;; TODO: fill in env?
+    (compile-and-run exp)))
+ test-exps)
 
 (end-script)
