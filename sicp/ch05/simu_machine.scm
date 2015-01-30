@@ -101,17 +101,34 @@
           (list name (new-register)))
         regs)))
 
+;; will raise an error when the register is not found
 (define (machine-find-register m reg)
-  (let ((reg-info (assoc reg (machine-register-table m))))
+  (let ((reg-info (machine-lookup-register m reg)))
     (if reg-info
         (cadr reg-info)
         (error "register not defined:" reg))))
+
+;; lookup the register, returns #f if the register is not found
+;; otherwise the register binding structure is returned
+(define (machine-lookup-register m reg)
+  (assoc reg (machine-register-table m)))
 
 (define (machine-reg-get m reg)
   (register-get (machine-find-register m reg)))
 
 (define (machine-reg-set! m reg val)
-  (register-set! (machine-find-register m reg) val))
+  (let ((reg-infol (machine-lookup-register m reg)))
+    (if reg-infol
+        (register-set! (cadr reg-infol) val)
+        ;; if the register is not found, we create one.
+        (let ((new-reg-info (list reg (new-register))))
+          (machine-set-register-table!
+           m
+           ;; here it is safe to assume that
+           ;; this "reg" is a fresh name
+           ;; or otherwise we should not be in this branch
+           (cons new-reg-info (machine-register-table m)))
+          (register-set! (cadr new-reg-info) val)))))
 
 (define (machine-reset-pc! m)
   (machine-reg-set!
