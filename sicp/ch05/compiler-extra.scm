@@ -29,7 +29,7 @@
 
 ;; compile the expression
 ;; and run it on the machine
-(define (compile-and-run exp)
+(define (compile-and-run-with-env exp env)
   (let* ((compiled (compile exp 'val 'next))
          (insn-seq (statements compiled)))
     ;; check register requirement
@@ -58,9 +58,12 @@
     (let ((m (build-and-execute-with
               `(controller
                 ,@insn-seq)
-              `((env ,(init-env)))
+              `((env ,env))
               ops-builder)))
       (machine-reg-get m 'val))))
+
+(define (compile-and-run exp)
+  (compile-and-run-with-env exp (init-env)))
 
 ;; Local variables:
 ;; proc-entry: "./compiler-tests.scm"

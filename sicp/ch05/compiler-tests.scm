@@ -12,9 +12,7 @@
 
 (for-each
  (test-evaluator
-  (lambda (exp env)
-    ;; TODO: fill in env?
-    (compile-and-run exp)))
+  compile-and-run-with-env)
  test-exps)
 
 (end-script)
