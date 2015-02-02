@@ -73,6 +73,8 @@
           (lambda (y)
             (+ x x y))))
       ((f 10) 20))
+    ;; test currying
+    (((lambda (x) (lambda (y) (- x y))) 10) 20)
     ;; test begin
     (begin
       1)
