@@ -108,12 +108,10 @@
                 code-to-get-last-arg
                 ;; this is not the last argument
                 (preserving
-                 ;; TODO: why "continue" is not preserved here?
-                 ;;   try to include some linkage
-                 ;;   in subexpressions and see if it still works
-                 ;; a potential answer:
-                 ;;   all final linkages of subexpressions are just "next"s
-                 ;;   no need for keeping "continue" anyway.
+                 ;; all final linkages of subexpressions are just "next"s
+                 ;; no need for keeping "continue" anyway.
+                 ;; this can be tested by evaluating some function application
+                 ;; whose operands are again function applications.
                  '(env)
                  code-to-get-last-arg
                  ;; merge in rest of the argument evaluations
