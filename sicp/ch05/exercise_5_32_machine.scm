@@ -61,13 +61,23 @@
     (goto (reg continue))
 
     ev-application
+    ;; change the order of pushing registers
+    ;; so that we can make our decision later
     (save continue)
     (assign unev (op operands) (reg exp))
     (save unev)
     (assign exp (op operator) (reg exp))
+    ;; if the expression is a symbol,
+    ;; then we can safely state that register "env"
+    ;; won't be changed after the evaluation of the operator
     (test (op symbol?) (reg exp))
     (branch (label ev-apply-no-env-saving))
+    ;; if the expression is more complex than a symbol
+    ;; then we need to save the environment
     (save env)
+    ;; since now the stack structure depends on
+    ;; the expression of the operator,
+    ;; the resuming point has to be changed
     (assign continue (label ev-appl-did-operator))
     (goto (label eval-dispatch))
 
@@ -77,6 +87,9 @@
 
     ev-appl-did-operator
     (restore env)
+    ;; if the expression of the operator is just a symbol
+    ;; then we directly resume to here skipping
+    ;; the step of restoring the "env" register
     ev-appl-did-operator-no-env
     (restore unev)
 
