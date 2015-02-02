@@ -5,7 +5,7 @@
 (load "./simu_ec_patch.scm")
 
 (load "./exercise_5_23_common.scm")
-(load "./exercise_5_31_machine.scm")
+(load "./exercise_5_32_machine.scm")
 
 (for-each (test-evaluator machine-eval)
           test-exps)
