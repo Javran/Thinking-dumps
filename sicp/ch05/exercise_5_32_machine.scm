@@ -1,6 +1,5 @@
 ;; based on "./ec-eval_v2.scm"
 
-
 (define evaluator-insns
   '(
     eval-dispatch
@@ -63,16 +62,24 @@
 
     ev-application
     (save continue)
-    (save env)
     (assign unev (op operands) (reg exp))
     (save unev)
     (assign exp (op operator) (reg exp))
+    (test (op symbol?) (reg exp))
+    (branch (label ev-apply-no-env-saving))
+    (save env)
     (assign continue (label ev-appl-did-operator))
     (goto (label eval-dispatch))
 
+    ev-apply-no-env-saving
+    (assign continue (label ev-appl-did-operator-no-env))
+    (goto (label eval-dispatch))
+
     ev-appl-did-operator
-    (restore unev)
     (restore env)
+    ev-appl-did-operator-no-env
+    (restore unev)
+
     (assign argl (op empty-arglist))
     (assign proc (reg val))
     (test (op no-operands?) (reg unev))
@@ -249,3 +256,7 @@
     (perform (op print) (reg val))
     (goto (label read-eval-print-loop-init))
     ))
+
+;; Local variables:
+;; proc-entry: "./exercise_5_32.scm"
+;; End:
