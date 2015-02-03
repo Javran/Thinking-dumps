@@ -694,14 +694,17 @@ Inductive tril (X : Type) : Type :=
 Fixpoint tril_to_list (X : Type) (l : list X) : tril X :=
   match l with
     | [] => tril_nil X
-    | (h::[]) => tril_single X h
-    | (h::t) => match list_last t with
+    | (h::t) =>
+      match t with
+        | [] => tril_single X h
+        | t2 => match list_init t2 with
                   | None => tril_nil X
-                  | Some y => match list_init t with
-                                | None => tril_nil X
-                                | Some sub => tril_sub X h (tril_to_list X sub) y
-                              end
+                  | Some sub => match list_last t2 with
+                                 | None => tril_nil
+                                 | Some y => tril_sub X (tril_to_list X sub) y
+                                end
                 end
+      end
   end.
 
 Theorem palindrome_converse : forall (X : Type) (l : list X),
