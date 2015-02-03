@@ -2,6 +2,8 @@
 (load "./simu.scm")
 (load "./ec-init-env.scm")
 
+(load "./simu_compiler_patch.scm")
+
 (define (print-instruction-sequence insn-seq)
   (format #t "Registers needed: ~A~%~
               Registers modified: ~A~%~
@@ -23,9 +25,7 @@
 ;; running checkings on a static data multiple times
 ;; isolate this part of functionalities
 
-;; from "simu_ec_patch.scm"
-(define (to-machine-prim-entry sym)
-  `(,sym ,(eval sym user-initial-environment)))
+;; TODO: decouple compiler with the machine
 
 ;; compile the expression
 ;; and run it on the machine
@@ -43,23 +43,10 @@
         ;; not actually reachable
         (out "Error regarding labels occurred."))
 
-    ;; extract required operations
-    (define req-ops
-      (map car (extract-operations insn-seq)))
-    ;; create operation table builder
-    (define (ops-builder m)
-      (let* ((old-ops (default-ops-builder m))
-             (missing-opnames (set-difference
-                                req-ops
-                                (map car old-ops)))
-             ;; lift missing operations from scheme env
-             (new-ops (map to-machine-prim-entry missing-opnames)))
-        (append new-ops old-ops)))
-    (let ((m (build-and-execute-with
+    (let ((m (build-and-execute
               `(controller
                 ,@insn-seq)
-              `((env ,env))
-              ops-builder)))
+              `((env ,env)))))
       (machine-reg-get m 'val))))
 
 (define (compile-and-run exp)
