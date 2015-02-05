@@ -39,4 +39,4 @@
 ;; is s1 a subset of s2?
 (define (set-subset<=? s1 s2)
   (set-empty?
-   (set-difference s2 s1)))
+   (set-difference s1 s2)))
