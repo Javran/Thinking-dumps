@@ -1,5 +1,8 @@
 ;; some extra functionalities for verifying the compiled code
 
+;; just borrowing some utililties not the implementation though.
+(load "./simu_utils.scm")
+
 ;; by searching "(op <something>)" from compiler's source code
 ;; we are able to extract all possible primitives that
 ;; our compiled code might use.
@@ -36,8 +39,8 @@
 
     ;; * operations should only be taken from
     ;;   a list of allowed operations
-    (let ((operations (map car (extract-register-names insn-seq))))
-      (assert (set-subset<=? operations
+    (let ((operations (map car (extract-operations insn-seq))))
+      (assert (set-subset<=? (remove-duplicates operations)
                              primitive-operations)
               "unknown operation found"))
 
