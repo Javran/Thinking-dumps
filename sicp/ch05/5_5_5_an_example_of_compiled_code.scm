@@ -29,9 +29,19 @@
     (assign val (op make-compiled-procedure) (label entry2) (reg env))
     (goto (label after-lambda1))
     ;; 3. the entry for the compiled lambda-exprssion
+    ;; this is the part compiled from:
+    ;;   (lambda (n)
+    ;;     (if (= n 1)
+    ;;       1
+    ;;       (* (factorial (- n 1)) n)))
+    ;;
     entry2
+    ;; pop out embeded environment from the procedure structure
     (assign env (op compiled-procedure-env) (reg proc))
+    ;; extend the environment with argument bindings
     (assign env (op extend-environment) (const (n)) (reg argl) (reg env))
+    ;; preserving "continue" "env"
+    ;; (= n 1)
     (save continue)
     (save env)
     (assign proc (op lookup-variable-value) (const =) (reg env))
@@ -50,11 +60,15 @@
     after-call15
     (restore env)
     (restore continue)
+    ;; (= n 1) stored in "val"
+    ;; 4. the if-expression
     (test (op false?) (reg val))
     (branch (label false-branch4))
+    ;; 1
     true-branch5
     (assign val (const 1))
     (goto (reg continue))
+    ;; (* (factorial (- n 1)) n )
     false-branch4
     (assign proc (op lookup-variable-value) (const *) (reg env))
     (save continue)
@@ -62,11 +76,14 @@
     (assign val (op lookup-variable-value) (const n) (reg env))
     (assign argl (op list) (reg val))
     (save argl)
+    ;; (factorial (- n 1))
     (assign proc (op lookup-variable-value) (const factorial) (reg env))
     (save proc)
+    ;; (- n 1)
     (assign proc (op lookup-variable-value) (const -) (reg env))
     (assign val (const 1))
     (assign argl (op list) (reg val))
+    ;; n
     (assign val (op lookup-variable-value) (const n) (reg env))
     (assign argl (op cons) (reg val) (reg argl))
     (test (op primitive-procedure?) (reg proc))
@@ -80,6 +97,7 @@
     after-call6
     (assign argl (op list) (reg val))
     (restore proc)
+    ;; factorial
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch11))
     compiled-branch10
@@ -93,6 +111,7 @@
     (assign argl (op cons) (reg val) (reg argl))
     (restore proc)
     (restore continue)
+    ;; "*"
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch14))
     compiled-branch13
@@ -103,10 +122,10 @@
     (goto (reg continue))
     after-call12
     after-if3
-    after-lambda1
     ;; 2. after the evaluation of the body
     ;;   the symbol is bound to the corresponding value
     ;;   and the return value is set to "ok"
+    after-lambda1
     (perform (op define-variable!) (const factorial) (reg val) (reg env))
     (assign val (const ok))))
 
