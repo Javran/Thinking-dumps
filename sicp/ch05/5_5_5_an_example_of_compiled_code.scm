@@ -73,6 +73,7 @@
     (assign proc (op lookup-variable-value) (const *) (reg env))
     (save continue)
     (save proc)
+    ;; n (second argument to "*")
     (assign val (op lookup-variable-value) (const n) (reg env))
     (assign argl (op list) (reg val))
     (save argl)
@@ -81,6 +82,7 @@
     (save proc)
     ;; (- n 1)
     (assign proc (op lookup-variable-value) (const -) (reg env))
+    ;; 1
     (assign val (const 1))
     (assign argl (op list) (reg val))
     ;; n
