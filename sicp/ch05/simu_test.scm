@@ -195,6 +195,7 @@
 
 (if *simu-test*
     (begin
+      (test-first-dup-element)
       (do-handler-tests)
       (test-multiple-same-label)
       (test-extra-slot))

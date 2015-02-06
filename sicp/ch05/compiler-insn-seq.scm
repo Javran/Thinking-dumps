@@ -122,6 +122,18 @@
    (append (statements seq1)
            (statements seq2))))
 
+;; pretty print an instrcution sequence structure
+(define (print-instruction-sequence insn-seq)
+  (format #t "Registers needed: ~A~%~
+              Registers modified: ~A~%~
+              ;;;; Instruction listing:~%"
+          (registers-needed insn-seq)
+          (registers-modified insn-seq))
+  (for-each (lambda (insn)
+              (format #t "  ~A~%" insn))
+            (statements insn-seq))
+  (out ";;;; End of listing"))
+
 (define (compiler-insn-seq-tests)
   (begin
     (define insn-seq-1
@@ -217,7 +229,7 @@
               (restore c)
               seq-2-1 seq-2-2 seq-2-3))))
      instruction-sequence-eq?)
-
+    ;; end of tests
     ))
 
 ;; Local variables:

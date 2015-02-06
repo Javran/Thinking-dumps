@@ -71,7 +71,7 @@
       get-value-code
       (make-instruction-sequence
        '(env val) (list target)
-       '((perform (op define-variable!)
+       `((perform (op define-variable!)
                   (const ,var)
                   (reg val)
                   (reg env))

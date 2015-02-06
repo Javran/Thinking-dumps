@@ -5,8 +5,7 @@
 (load "./compiler-if.scm")
 (load "./compiler-proc.scm")
 (load "./compiler-prim.scm")
-
-(load "./compiler-extra.scm")
+(load "./compiler-verify.scm")
 
 (define all-regs
   '(env proc val argl continue))

@@ -138,7 +138,3 @@
     (mat '(a b c d) #f)
     (mat '(a b a d) '(a b a d))
     (mat '(a b c d e c) '(c d e c)))))
-
-(if *simu-test*
-    (test-first-dup-element)
-    'skipped)

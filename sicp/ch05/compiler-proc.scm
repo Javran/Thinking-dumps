@@ -50,10 +50,13 @@
     (append-instruction-sequences
      ;; the initial part of the compiled code
      (make-instruction-sequence
-      ;; TODO: not sure why "env" is required here
-      ;; as in the code it is overwritten immediately
-      ;; by a register assignment - maybe it's safe to remove it
-      '(env proc argl)
+      ;; in the original code, "env" is one of the required register
+      ;; as we can see in the instruction sequence it gets overwritten
+      ;; immediately by a register assignment, so I guess
+      ;; it's safe to drop this "env" from the required set of registers
+      ;; (without preserving "env", we can still pass basic tests
+      ;; I guess it's safe now)
+      '(proc argl)
       '(env)
       `(,proc-entry
         (assign env
@@ -105,12 +108,10 @@
                 code-to-get-last-arg
                 ;; this is not the last argument
                 (preserving
-                 ;; TODO: why "continue" is not preserved here?
-                 ;;   try to include some linkage
-                 ;;   in subexpressions and see if it still works
-                 ;; a potential answer:
-                 ;;   all final linkages of subexpressions are just "next"s
-                 ;;   no need for keeping "continue" anyway.
+                 ;; all final linkages of subexpressions are just "next"s
+                 ;; no need for keeping "continue" anyway.
+                 ;; this can be tested by evaluating some function application
+                 ;; whose operands are again function applications.
                  '(env)
                  code-to-get-last-arg
                  ;; merge in rest of the argument evaluations

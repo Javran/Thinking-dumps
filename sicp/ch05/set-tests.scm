@@ -79,4 +79,17 @@
        (mat '(a) '() '()))
  set-equal?)
 
+;; set-subset<=?
+(do-test
+ set-subset<=?
+ (list (mat '() '(a b) #t)
+       (mat '(a) '() #f)
+       (mat '() '() #t)
+       (mat '(a b) '(c a b) #t)
+       (mat '(c a)' (a b) #f))
+ ;; boolean comparison
+ (lambda (a b)
+   (or (and a b)
+       (and (not a) (not b)))))
+
 (end-script)
