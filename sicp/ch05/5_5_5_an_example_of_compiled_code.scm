@@ -42,8 +42,8 @@
     (assign env (op extend-environment) (const (n)) (reg argl) (reg env))
     ;; preserving "continue" "env"
     ;; (= n 1)
-    (save continue)
-    (save env)
+    (save continue)                     ; stack: [continue ...]
+    (save env)                          ; stack: [env continue ...]
     (assign proc (op lookup-variable-value) (const =) (reg env))
     (assign val (const 1))
     (assign argl (op list) (reg val))
@@ -58,8 +58,8 @@
     primitive-branch17
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
     after-call15
-    (restore env)
-    (restore continue)
+    (restore env)                       ; stack: [continue ...]
+    (restore continue)                  ; stack: <balanced>
     ;; (= n 1) stored in "val"
     ;; 4. the if-expression
     (test (op false?) (reg val))
@@ -71,15 +71,15 @@
     ;; (* (factorial (- n 1)) n )
     false-branch4
     (assign proc (op lookup-variable-value) (const *) (reg env))
-    (save continue)
-    (save proc)
+    (save continue)                     ; stack: [continue ...]
+    (save proc)                         ; stack: [proc continue ...]
     ;; n (second argument to "*")
     (assign val (op lookup-variable-value) (const n) (reg env))
     (assign argl (op list) (reg val))
-    (save argl)
+    (save argl)                      ; stack: [argl proc continue ...]
     ;; (factorial (- n 1))
     (assign proc (op lookup-variable-value) (const factorial) (reg env))
-    (save proc)
+    (save proc)                 ; stack: [proc argl proc continue ...]
     ;; (- n 1)
     (assign proc (op lookup-variable-value) (const -) (reg env))
     ;; 1
@@ -98,7 +98,7 @@
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
     after-call6
     (assign argl (op list) (reg val))
-    (restore proc)
+    (restore proc)                   ; stack: [argl proc continue ...]
     ;; factorial
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch11))
@@ -109,10 +109,10 @@
     primitive-branch11
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
     after-call9
-    (restore argl)
+    (restore argl)                      ; stack: [proc continue ...]
     (assign argl (op cons) (reg val) (reg argl))
-    (restore proc)
-    (restore continue)
+    (restore proc)                      ; stack: [continue ...]
+    (restore continue)                  ; stack: <balanced>
     ;; "*"
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch14))
