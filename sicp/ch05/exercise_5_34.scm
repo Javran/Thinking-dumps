@@ -4,7 +4,6 @@
 
 (load "./compiler.scm")
 
-;; generating factorial-alt
 (for-each
  out
  (statements
