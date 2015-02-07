@@ -109,6 +109,8 @@
     (restore proc)                      ; stack: [continue ...]
     (restore continue)                  ; stack: <balanced>
     ;; recursive call to "iter"
+    ;; note that the stack is balanced at this point
+    ;; which means the recursive call does not put extra data on the stack
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch19))
     compiled-branch18
@@ -143,3 +145,22 @@
     after-lambda1
     (perform (op define-variable!) (const factorial) (reg val) (reg env))
     (assign val (const ok))))
+
+;; the difference:
+;; * in the original "factorial", the last call is "*"
+;;   therefore registers like "env" "argl" might need to be kept
+;;   in case they gets mutated during the evaluation of subexpressions.
+;;   moreover, "continue" need to be kept on stack when evaluating subexpressions
+;;   so that we can resume to the outer suspended computation
+;;
+;; * when it comes to the iterative version of "factorial" like the one
+;;   found in this exercise, we don't actually need to keep these registers
+;;   because there is no follow-up computation when the evaluation of the
+;;   subexpression is done
+;;
+;; you can found the annotated code of both version from
+;; "./5_5_5_an_example_of_compiled_code.scm" and this file, respectively.
+;; the observation is that: you can see when doing recursive calls,
+;; the recursive "factorial" always keep a "continue" register value on the stack
+;; while the iterative "factorial" does not keep anything on the stack (before
+;; calling it) at all.
