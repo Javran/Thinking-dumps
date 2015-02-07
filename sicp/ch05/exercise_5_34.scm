@@ -32,10 +32,12 @@
     (assign env (op extend-environment) (const (n)) (reg argl) (reg env))
     (assign val (op make-compiled-procedure) (label entry7) (reg env))
     (goto (label after-lambda6))
-    entry7
     ;; >>>> definition body of "iter"
+    entry7
+    ;; prepare arguments
     (assign env (op compiled-procedure-env) (reg proc))
     (assign env (op extend-environment) (const (product counter)) (reg argl) (reg env))
+    ;; (> counter n)
     (save continue)
     (save env)
     (assign proc (op lookup-variable-value) (const >) (reg env))
@@ -43,6 +45,7 @@
     (assign argl (op list) (reg val))
     (assign val (op lookup-variable-value) (const counter) (reg env))
     (assign argl (op cons) (reg val) (reg argl))
+    ;; call to ">"
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch22))
     compiled-branch21
@@ -54,13 +57,17 @@
     after-call20
     (restore env)
     (restore continue)
+    ;; returned
     (test (op false?) (reg val))
     (branch (label false-branch9))
+    ;; product
     true-branch10
     (assign val (op lookup-variable-value) (const product) (reg env))
     (goto (reg continue))
+    ;; (iter (* counter product) (+ counter 1))
     false-branch9
     (assign proc (op lookup-variable-value) (const iter) (reg env))
+    ;; (+ counter 1)
     (save continue)
     (save proc)
     (save env)
@@ -77,9 +84,11 @@
     (goto (reg val))
     primitive-branch16
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
+    ;; result of "(+ counter 1)" to argl
     after-call14
     (assign argl (op list) (reg val))
     (restore env)
+    ;; (* counter product)
     (save argl)
     (assign proc (op lookup-variable-value) (const *) (reg env))
     (assign val (op lookup-variable-value) (const product) (reg env))
@@ -99,6 +108,7 @@
     (assign argl (op cons) (reg val) (reg argl))
     (restore proc)
     (restore continue)
+    ;; recursive call to "iter"
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch19))
     compiled-branch18
