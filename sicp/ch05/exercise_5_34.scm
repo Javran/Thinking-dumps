@@ -38,8 +38,8 @@
     (assign env (op compiled-procedure-env) (reg proc))
     (assign env (op extend-environment) (const (product counter)) (reg argl) (reg env))
     ;; (> counter n)
-    (save continue)
-    (save env)
+    (save continue)                     ; stack: [continue ...]
+    (save env)                          ; stack: [env continue ...]
     (assign proc (op lookup-variable-value) (const >) (reg env))
     (assign val (op lookup-variable-value) (const n) (reg env))
     (assign argl (op list) (reg val))
@@ -55,8 +55,8 @@
     primitive-branch22
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
     after-call20
-    (restore env)
-    (restore continue)
+    (restore env)                       ; stack: [continue ...]
+    (restore continue)                  ; stack: <balanced>
     ;; returned
     (test (op false?) (reg val))
     (branch (label false-branch9))
@@ -68,9 +68,9 @@
     false-branch9
     (assign proc (op lookup-variable-value) (const iter) (reg env))
     ;; (+ counter 1)
-    (save continue)
-    (save proc)
-    (save env)
+    (save continue)                   ; stack: [continue ...]
+    (save proc)                       ; stack: [proc continue ...]
+    (save env)                        ; stack: [env proc continue ...]
     (assign proc (op lookup-variable-value) (const +) (reg env))
     (assign val (const 1))
     (assign argl (op list) (reg val))
@@ -87,9 +87,9 @@
     ;; result of "(+ counter 1)" to argl
     after-call14
     (assign argl (op list) (reg val))
-    (restore env)
+    (restore env)                    ; stack: [proc continue ...]
     ;; (* counter product)
-    (save argl)
+    (save argl)                      ; stack: [argl proc continue ...]
     (assign proc (op lookup-variable-value) (const *) (reg env))
     (assign val (op lookup-variable-value) (const product) (reg env))
     (assign argl (op list) (reg val))
@@ -104,10 +104,10 @@
     primitive-branch13
     (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
     after-call11
-    (restore argl)
+    (restore argl)                      ; stack: [proc continue ...]
     (assign argl (op cons) (reg val) (reg argl))
-    (restore proc)
-    (restore continue)
+    (restore proc)                      ; stack: [continue ...]
+    (restore continue)                  ; stack: <balanced>
     ;; recursive call to "iter"
     (test (op primitive-procedure?) (reg proc))
     (branch (label primitive-branch19))
