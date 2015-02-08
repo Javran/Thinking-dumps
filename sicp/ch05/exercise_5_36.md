@@ -10,7 +10,7 @@ for operands of a combination?
 
 * Modify the compiler so that it produces some other order of evaluation.
 
-    TODO: see code
+    See examples in `./exercise_5_36.scm`.
 
 * How does changing the order of operand evaluation
 affect the efficiency of the code that constructs

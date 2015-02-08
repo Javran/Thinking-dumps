@@ -1,5 +1,7 @@
 ;; compiler patch for ex 5.36
 
+;; TODO: clean up
+
 (define primitive-operations
   '(false?
     lookup-variable-value
