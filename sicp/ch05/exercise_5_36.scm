@@ -30,6 +30,14 @@
 (out (compile-and-run test-code))
 
 (load "./exercise_5_36_compiler.scm")
+;; rerun tests
+(load "./ec-tests.scm")
+(load "./exercise_5_23_tests.scm")
+(for-each
+ (test-evaluator
+  compile-and-run-with-env)
+ test-exps)
+(newline)
 
 ;; after applying the patch, the compiler evaluates argument list
 ;; from left to right, should produce 132 this time
