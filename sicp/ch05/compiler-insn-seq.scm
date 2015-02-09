@@ -101,7 +101,6 @@
             ;; else
             (preserving (cdr regs) seq1 seq2)))))
 
-
 ;; attach a non-inline instruction sequence (maybe a procedure body)
 ;; to another one
 (define (tack-on-instruction-sequence seq body-seq)
