@@ -15,9 +15,14 @@
           (if (or (default-object? verbose) verbose)
               (display ".")
               'done)
-          (error "eval results are inconsistent:"
-                 "expecting" lisp-result
-                 "while getting" machine-result)))))
+          (begin
+            (format #t "eval results are inconsistent:~%~
+                        expecting: ~A~%~
+                        while getting: ~A~%"
+                    lisp-result
+                    machine-result)
+            (out "expression:" exp)
+            (error 'test-failure))))))
 
 (define test-exps
   `(
