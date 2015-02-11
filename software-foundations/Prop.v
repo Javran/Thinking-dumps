@@ -824,8 +824,28 @@ Abort.
     - [R 1 [1,2,1,0]]
     - [R 6 [3,2,1,0]]
 *)
+Inductive R : nat -> list nat -> Prop :=
+  | c1 : R 0 []
+  | c2 : forall n l, R n l -> R (S n) (n :: l)
+  | c3 : forall n l, R (S n) l -> R n l.
 
+Theorem r_provable1: R 2 [1;0].
+Proof. apply c2,c2,c1. Qed.
+
+Theorem r_provable2: R 1 [1;2;1;0].
+Proof. apply c3,c2,c3,c3,c2,r_provable1. Qed.
+
+(* the third one is not provable. since whenever "n" increases,
+   the list gets longer, therefore "n" is less or equal to the list length.
+ *)
+Theorem r_n_le_len:
+  forall n l,
+    R n l -> n <= length l.
+Proof.
+  intros. induction H. reflexivity.
+  simpl. apply Le.le_n_S. apply IHR.
+  apply Le.le_Sn_le. apply IHR.
+Qed.
 (** [] *)
-
 
 (* $Date: 2013-07-01 18:48:47 -0400 (Mon, 01 Jul 2013) $ *)
