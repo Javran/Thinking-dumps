@@ -686,6 +686,7 @@ Proof.
   intros X l x Hrev HInd. apply pal_lr. apply Hrev. apply HInd.
 Qed.
 
+(*
 Inductive tril (X : Type) : Type :=
   | tril_nil : tril X
   | tril_single : X -> tril X
@@ -706,6 +707,7 @@ Fixpoint tril_to_list (X : Type) (l : list X) : tril X :=
                 end
       end
   end.
+ *)
 
 Theorem palindrome_converse : forall (X : Type) (l : list X),
   l = rev l -> pal l.
@@ -744,11 +746,71 @@ Abort.
       is, if [l1] is a subsequence of [l2] and [l2] is a subsequence
       of [l3], then [l1] is a subsequence of [l3].  Hint: choose your
       induction carefully!
-*)
+ *)
+Inductive subseq : list nat -> list nat -> Prop :=
+  subseq_nil_any : forall ys, subseq nil ys
+| subseq_h1_h2 : forall xs ys a, subseq xs ys -> subseq (a::xs) (a::ys)
+| subseq_h1_any : forall xs ys a, subseq xs ys -> subseq xs (a::ys).
 
-(* FILL IN HERE *)
+Theorem subseq_reflexive :
+  forall xs,
+    subseq xs xs.
+Proof.
+  intros xs. induction xs.
+  Case "nil nil". apply subseq_nil_any.
+  Case "h1 h2". apply subseq_h1_h2. apply IHxs.
+Qed.
+
+(*
+Lemma cons_list_app_rev:
+  forall (X : Type) (a : X) (xs : list X),
+    a :: (rev xs) = [a] ++ (rev xs).
+Proof.
+  intros. induction xs.
+  reflexivity. simpl. rewrite <- rev_cons. reflexivity.
+Qed.
+
+Lemma cons_list_app:
+  forall (X : Type) (a : X) (xs : list X),
+    a :: xs = [a] ++ xs.
+Proof.
+  intros. assert (xs = (rev (rev xs))). rewrite rev_involutive. reflexivity.
+  rewrite H. apply cons_list_app_rev.
+Qed.
+
+Lemma cons_app:
+  forall (X : Type) (a : X) (xs ys : list X),
+    (a :: xs) ++ ys = a :: xs ++ ys.
+Proof.
+  intros. apply cons_list_app.
+Qed.
+
+Theorem subseq_append_one :
+  forall l1 l2 a,
+    subseq l1 l2 -> subseq l1 (l2 ++ [a]).
+Proof.
+  intros. induction H. apply subseq_nil_any.
+  rewrite cons_app. apply subseq_h1_h2. apply IHsubseq.
+  apply subseq_h1_any. apply IHsubseq.
+Qed.*)
+
+Theorem subseq_append:
+  forall l1 l2 l3,
+    subseq l1 l2 -> subseq l1 (l2 ++ l3).
+Proof.
+  intros l1 l2 l3 H1. induction H1.
+  Case "nil any". apply subseq_nil_any.
+  Case "h1 h2". apply subseq_h1_h2. apply IHsubseq.
+  Case "h1 any". apply subseq_h1_any. apply IHsubseq.
+Qed.
 (** [] *)
 
+Theorem subseq_transitive:
+  forall l1 l2 l3,
+    subseq l1 l2 -> subseq l2 l3 -> subseq l1 l3.
+Proof.
+  intros l1 l2 l3.
+Abort.
 
 (** **** Exercise: 2 stars, optional (R_provability) *)
 (** Suppose we give Coq the following definition:
