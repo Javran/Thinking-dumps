@@ -621,8 +621,23 @@ Qed.
 Inductive pal {X:Type} : list X -> Prop :=
   | pal_nil : pal []
   | pal_single : forall x:X, pal [x]
-  | pal_lr : forall (x:X) (sub : list X), pal sub -> pal (x :: sub ++ [x]).
-(** [] *)
+  | pal_lr : forall (x:X) (sub : list X), pal sub -> pal (x :: snoc sub x).
+
+Theorem pal_concat_id_rev : forall {X : Type} (l : list X),
+  pal (l ++ rev l).
+Proof.
+  intros X l. induction l.
+  Case "l = nil". simpl. apply pal_nil.
+  Case "l = x:l'". simpl. rewrite <- snoc_with_append. apply pal_lr.
+  apply IHl.
+Qed.
+
+Theorem pal_id_is_rev : forall {X : Type} (l : list X),
+  pal l -> l = rev l.
+Proof.
+  intros X l H. induction H. reflexivity. reflexivity.
+  simpl. rewrite rev_snoc. simpl. rewrite <- IHpal. reflexivity.
+Qed.
 
 (** **** Exercise: 5 stars, optional (palindrome_converse) *)
 (** Using your definition of [pal] from the previous exercise, prove
@@ -657,14 +672,47 @@ Definition list_init {X : Type} (l : list X) : option (list X) :=
   | Some l' => Some (rev l')
   end.
 
+Lemma palindrome_rev_hd_lt : forall {X : Type} (l : list X),
+  l = rev l -> list_head l = list_last l.
+Proof.
+  intros X l Hri. induction l. reflexivity.
+  simpl. unfold list_last. rewrite Hri. rewrite rev_involutive. reflexivity.
+Qed.
+
+Lemma pal_aux :
+  forall (X:Type) (l : list X) (x : X),
+    (l = rev l -> pal l) -> l = rev l -> pal (x :: snoc l x).
+Proof.
+  intros X l x Hrev HInd. apply pal_lr. apply Hrev. apply HInd.
+Qed.
+
+(*
+Inductive tril (X : Type) : Type :=
+  | tril_nil : tril X
+  | tril_single : X -> tril X
+  | tril_sub : X -> tril X -> X -> tril X.
+
+Fixpoint tril_to_list (X : Type) (l : list X) : tril X :=
+  match l with
+    | [] => tril_nil X
+    | (h::t) =>
+      match t with
+        | [] => tril_single X h
+        | t2 => match list_init t2 with
+                  | None => tril_nil X
+                  | Some sub => match list_last t2 with
+                                 | None => tril_nil
+                                 | Some y => tril_sub X (tril_to_list X sub) y
+                                end
+                end
+      end
+  end.
+ *)
+
 Theorem palindrome_converse : forall (X : Type) (l : list X),
   l = rev l -> pal l.
 Proof.
-  intros X l eq1. induction l as [|h t].
-  Case "l = nil". apply pal_nil.
-  Case "l = h :: t". destruct t as [|th tt].
-    SCase "t = nil". apply pal_single.
-    SCase "t = th :: tt". simpl in eq1. inversion eq1.
+  intros X l eq1. induction l.
 Abort.
 (** [] *)
 
@@ -698,11 +746,71 @@ Abort.
       is, if [l1] is a subsequence of [l2] and [l2] is a subsequence
       of [l3], then [l1] is a subsequence of [l3].  Hint: choose your
       induction carefully!
-*)
+ *)
+Inductive subseq : list nat -> list nat -> Prop :=
+  subseq_nil_any : forall ys, subseq nil ys
+| subseq_h1_h2 : forall xs ys a, subseq xs ys -> subseq (a::xs) (a::ys)
+| subseq_h1_any : forall xs ys a, subseq xs ys -> subseq xs (a::ys).
 
-(* FILL IN HERE *)
+Theorem subseq_reflexive :
+  forall xs,
+    subseq xs xs.
+Proof.
+  intros xs. induction xs.
+  Case "nil nil". apply subseq_nil_any.
+  Case "h1 h2". apply subseq_h1_h2. apply IHxs.
+Qed.
+
+(*
+Lemma cons_list_app_rev:
+  forall (X : Type) (a : X) (xs : list X),
+    a :: (rev xs) = [a] ++ (rev xs).
+Proof.
+  intros. induction xs.
+  reflexivity. simpl. rewrite <- rev_cons. reflexivity.
+Qed.
+
+Lemma cons_list_app:
+  forall (X : Type) (a : X) (xs : list X),
+    a :: xs = [a] ++ xs.
+Proof.
+  intros. assert (xs = (rev (rev xs))). rewrite rev_involutive. reflexivity.
+  rewrite H. apply cons_list_app_rev.
+Qed.
+
+Lemma cons_app:
+  forall (X : Type) (a : X) (xs ys : list X),
+    (a :: xs) ++ ys = a :: xs ++ ys.
+Proof.
+  intros. apply cons_list_app.
+Qed.
+
+Theorem subseq_append_one :
+  forall l1 l2 a,
+    subseq l1 l2 -> subseq l1 (l2 ++ [a]).
+Proof.
+  intros. induction H. apply subseq_nil_any.
+  rewrite cons_app. apply subseq_h1_h2. apply IHsubseq.
+  apply subseq_h1_any. apply IHsubseq.
+Qed.*)
+
+Theorem subseq_append:
+  forall l1 l2 l3,
+    subseq l1 l2 -> subseq l1 (l2 ++ l3).
+Proof.
+  intros l1 l2 l3 H1. induction H1.
+  Case "nil any". apply subseq_nil_any.
+  Case "h1 h2". apply subseq_h1_h2. apply IHsubseq.
+  Case "h1 any". apply subseq_h1_any. apply IHsubseq.
+Qed.
 (** [] *)
 
+Theorem subseq_transitive:
+  forall l1 l2 l3,
+    subseq l1 l2 -> subseq l2 l3 -> subseq l1 l3.
+Proof.
+  intros l1 l2 l3.
+Abort.
 
 (** **** Exercise: 2 stars, optional (R_provability) *)
 (** Suppose we give Coq the following definition:
@@ -716,8 +824,28 @@ Abort.
     - [R 1 [1,2,1,0]]
     - [R 6 [3,2,1,0]]
 *)
+Inductive R : nat -> list nat -> Prop :=
+  | c1 : R 0 []
+  | c2 : forall n l, R n l -> R (S n) (n :: l)
+  | c3 : forall n l, R (S n) l -> R n l.
 
+Theorem r_provable1: R 2 [1;0].
+Proof. apply c2,c2,c1. Qed.
+
+Theorem r_provable2: R 1 [1;2;1;0].
+Proof. apply c3,c2,c3,c3,c2,r_provable1. Qed.
+
+(* the third one is not provable. since whenever "n" increases,
+   the list gets longer, therefore "n" is less or equal to the list length.
+ *)
+Theorem r_n_le_len:
+  forall n l,
+    R n l -> n <= length l.
+Proof.
+  intros. induction H. reflexivity.
+  simpl. apply Le.le_n_S. apply IHR.
+  apply Le.le_Sn_le. apply IHR.
+Qed.
 (** [] *)
-
 
 (* $Date: 2013-07-01 18:48:47 -0400 (Mon, 01 Jul 2013) $ *)
