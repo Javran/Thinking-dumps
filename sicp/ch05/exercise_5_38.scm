@@ -3,6 +3,9 @@
 
 (load "./compiler.scm")
 
+(define all-regs
+  '(env proc val argl continue arg1 arg2))
+
 ;; spread-arguments takes a list of operands
 ;; and assign each of them into the corresponding
 ;; target registers, note that in order
@@ -41,9 +44,10 @@
           ((= arg-list-len 1) (car compiled-operands))
           ((= arg-list-len 2)
            (preserving
-            '(arg1)
-            (car compiled-operands)
-            (cadr compiled-operands))))))
+            ;; note that the operands should be evaluated from right to left
+            '(arg2)
+            (cadr compiled-operands)
+            (car compiled-operands))))))
 
 (print-instruction-sequence
  (spread-arguments '((+ 10 20) (* 30 40))))
