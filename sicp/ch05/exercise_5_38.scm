@@ -1,6 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "./compiler.scm")
+
 ;; spread-arguments takes a list of operands
 ;; and assign each of them into the corresponding
 ;; target registers, note that in order
@@ -14,26 +16,37 @@
 ;; * the length of the operand list must be less or equal to 2
 ;; * this function assumes the existence of register "arg1" and "arg2"
 ;;   which the target machine should provide
-(define (spread-arguments operands)
+(define (spread-arguments operand-exps)
   ;; TODO: if we use "val" as "argument register",
   ;; can we handle "open-code" primitives that
   ;; takes 3 arguments?
-  (assert (<= (length operands) 2)
-          "the length of the operand list must not exceed 2")
-  ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
-  ;; will yield problematic instruction lists. previously I recall there's
-  ;; somewhere in the compiler that assume the target register being
-  ;; either "val" or "proc".
+  (let ((arg-list-len (length operand-exps))
+        (compiled-operands
+           (map (lambda (operand-exp target)
+                  (compile operand-exp target 'next))
+                operand-exps
+                '(arg1 arg2))))
+    (assert (<= arg-list-len 2)
+            "the length of the operand list must not exceed 2")
+    ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
+    ;; will yield problematic instruction lists. previously I recall there's
+    ;; somewhere in the compiler that assume the target register being
+    ;; either "val" or "proc".
 
-  ;; for now, let's just go back to the exercise and think about "open-code"
-  ;; primitives for the second time: an "(assign arg1 (reg val))" instruction
-  ;; right after the evaluation will be fine, but it makes code more verbose
-  ;; which violates what "open-code" primitive is doing.
-  (let ((compiled-operands (map (lambda (operand-exp target)
-                                  (compile operand-exp target 'next))
-                                operands
-                                '(arg1 arg2))))
-    'todo))
+    ;; for now, let's just go back to the exercise and think about "open-code"
+    ;; primitives for the second time: an "(assign arg1 (reg val))" instruction
+    ;; right after the evaluation will be fine, but it makes code more verbose
+    ;; which violates what "open-code" primitive is doing.
+    (cond ((= arg-list-len 0) (empty-instruction-sequence))
+          ((= arg-list-len 1) (car compiled-operands))
+          ((= arg-list-len 2)
+           (preserving
+            '(arg1)
+            (car compiled-operands)
+            (cadr compiled-operands))))))
+
+(print-instruction-sequence
+ (spread-arguments '((+ 10 20) (* 30 40))))
 
 (end-script)
 
