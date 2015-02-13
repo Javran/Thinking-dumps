@@ -29,8 +29,6 @@
                   (compile operand-exp target 'next))
                 operand-exps
                 '(arg1 arg2))))
-    (assert (<= arg-list-len 2)
-            "the length of the operand list must not exceed 2")
     ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
     ;; will yield problematic instruction lists. previously I recall there's
     ;; somewhere in the compiler that assume the target register being
@@ -47,7 +45,33 @@
             ;; note that the operands should be evaluated from right to left
             '(arg2)
             (cadr compiled-operands)
-            (car compiled-operands))))))
+            (car compiled-operands)))
+          (else
+           (error "the length of the operand list must not exceed 2")))))
+
+(define (generate-open-code-compiler-for-binary bin-op)
+  (lambda (rator rands target linkage)
+    (end-with-linkage
+     linkage
+     (append-instruction-sequences
+      (spread-arguments rands)
+      (make-instruction-sequence
+       '(arg1 arg2)
+       (list target)
+       `( (assign ,target (op ,bin-op) (reg arg1) (reg arg2)) ))))))
+
+(define (generate-open-code-predicate-for-binary bin-op)
+  (lambda (exp)
+    (and ((list-tagged-with bin-op) exp)
+         (= (length exp) 3))))
+
+(define compile-open-code-bin-op-=
+  (generate-open-code-compiler-for-binary '=))
+
+(define open-code-bin-op-=?
+  (generate-open-code-predicate-for-binary '=))
+
+
 
 (print-instruction-sequence
  (spread-arguments '((+ 10 20) (* 30 40))))
