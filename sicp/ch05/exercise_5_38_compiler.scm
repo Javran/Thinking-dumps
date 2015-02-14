@@ -1,25 +1,12 @@
 (load "./exercise_5_38_open-code.scm")
 
-(define primitive-operations
-  '(false?
-    lookup-variable-value
-    set-variable-value!
-    define-variable!
-    make-compiled-procedure
-    compiled-procedure-env
-    extend-environment
-    list
-    cons
-    compiled-procedure-entry
-    primitive-procedure?
-    apply-primitive-procedure
-    =
-    *
-    -
-    +))
+(set! primitive-operations
+      (set-union primitive-operations
+                 '(= * - +)))
 
-(define all-regs
-  '(env proc val argl continue arg1 arg2))
+(set! all-regs
+      (set-union all-regs
+                 '(arg1 arg2)))
 
 (define (compile exp target linkage)
   (cond
