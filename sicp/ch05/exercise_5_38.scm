@@ -65,11 +65,26 @@
     (and ((list-tagged-with bin-op) exp)
          (= (length exp) 3))))
 
+;; it might be convenient to use the message dispatching framework
+;; but as we only have 4 cases to take care, I don't think
+;; it matters that much
 (define compile-open-code-bin-op-=
   (generate-open-code-compiler-for-binary '=))
+(define compile-open-code-bin-op-*
+  (generate-open-code-compiler-for-binary '*))
+(define compile-open-code-bin-op--
+  (generate-open-code-compiler-for-binary '-))
+(define compile-open-code-bin-op-+
+  (generate-open-code-compiler-for-binary '+))
 
 (define open-code-bin-op-=?
   (generate-open-code-predicate-for-binary '=))
+(define open-code-bin-op-*?
+  (generate-open-code-predicate-for-binary '*))
+(define open-code-bin-op--?
+  (generate-open-code-predicate-for-binary '-))
+(define open-code-bin-op-+?
+  (generate-open-code-predicate-for-binary '+))
 
 (define (compile exp target linkage)
   (cond
@@ -81,7 +96,6 @@
     (compile-variable exp target linkage))
    ((assignment? exp)
     (compile-assignment exp target linkage))
-   ;; desugar before compiling
    ((definition? exp)
     (compile-definition
      (normalize-define exp)
@@ -95,20 +109,25 @@
      (begin-actions exp) target linkage))
    ((cond? exp)
     (compile (cond->if exp) target linkage))
-   ;; adding let-form
    ((let? exp)
     (compile (let->combination exp) target linkage))
    ((application? exp)
     (cond
      ((open-code-bin-op-=? exp)
       (compile-open-code-bin-op-= exp target linkage))
+     ((open-code-bin-op-*? exp)
+      (compile-open-code-bin-op-* exp target linkage))
+     ((open-code-bin-op--? exp)
+      (compile-open-code-bin-op-- exp target linkage))
+     ((open-code-bin-op-+? exp)
+      (compile-open-code-bin-op-+ exp target linkage))
      (else
       (compile-application exp target linkage))))
    (else
     (error "Unknown expression type: COMPILE" exp))))
 
 (print-instruction-sequence
- (compile '(= (= x y) 2) 'val 'next))
+ (compile '(+ (* x (- y z)) (* (+ 1 2) (* 2 3))) 'val 'next))
 
 (end-script)
 
