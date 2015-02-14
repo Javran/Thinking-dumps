@@ -100,6 +100,8 @@
         (lambda (a b c d)
           (* (+ a b) (- c d))))
       (f 10 20 30 40))
+    ((lambda () 1))
+    ((lambda (x) x) 10)
     ;; test complex function application
     ((lambda (x y z)
        (+ x (* y z) z))
@@ -107,5 +109,3 @@
      (* 2 20)
      ((lambda (t) (* t t)) 100))
     ))
-
-

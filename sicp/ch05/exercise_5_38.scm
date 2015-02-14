@@ -39,15 +39,14 @@
 (define (spread-arguments operand-exps)
   (let ((arg-list-len (length operand-exps)))
     (assert (<= arg-list-len 2))
-    ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
-    ;; will yield problematic instruction lists. previously I recall there's
-    ;; somewhere in the compiler that assume the target register being
-    ;; either "val" or "proc".
-
     ;; TODO: arg-list < 2 is not yet covered
     (map (lambda (operand-exp target)
            (compile operand-exp target 'next))
          operand-exps
+         ;; it's valid to use "arg1" or "arg2" as target register
+         ;; the only thing that the compile has assumed on register usage
+         ;; is that with linkage="return",
+         ;; the target register must be in "val"
          '(arg1 arg2))))
 
 ;; open code compiler generator for binary functions
