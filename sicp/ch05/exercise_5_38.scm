@@ -23,12 +23,8 @@
   ;; TODO: if we use "val" as "argument register",
   ;; can we handle "open-code" primitives that
   ;; takes 3 arguments?
-  (let ((arg-list-len (length operand-exps))
-        (compiled-operands
-           (map (lambda (operand-exp target)
-                  (compile operand-exp target 'next))
-                operand-exps
-                '(val val))))
+  (let ((arg-list-len (length operand-exps)))
+    (assert (<= arg-list-len 2))
     ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
     ;; will yield problematic instruction lists. previously I recall there's
     ;; somewhere in the compiler that assume the target register being
@@ -39,52 +35,30 @@
     ;; right after the evaluation will be fine, but it makes code more verbose
     ;; which violates what "open-code" primitive is doing.
     ;; TODO: arg-list < 2 is not yet covered
-    (cond ((= arg-list-len 0) (empty-instruction-sequence))
-          ((= arg-list-len 1) (car compiled-operands))
-          ((= arg-list-len 2)
-           ;; (out ">>> first insnseq")
-           ;; (print-instruction-sequence (cadr compiled-operands))
-           ;; (out ">>> second insnseq")
-           ;; (print-instruction-sequence (car  compiled-operands))
-           ;; (out "<<<")
-           ;; TODO: not working. this "spread-arguments" is a design failure
-           ;; because it has no way to aware of interactions between
-           ;; argument evaluations, for example the previous expression
-           ;; might modify a register and the second one can overwrite
-           ;; it whlie preseving" does nothing.
-           ;; just as suggested by http://community.schemewiki.org/?sicp-ex-5.38
-           ;; this function should return a list instead of a single instruction seq
-
-           ;; I prefer crash over wrong code
-           (error "not working")
-           (preserving
-            ;; note that the operands should be evaluated from right to left
-            '(arg2)
-            (append-instruction-sequences
-             (cadr compiled-operands)
-             (make-instruction-sequence
-              '(val) '(arg2)
-              '( (assign arg2 (reg val)) )))
-            (append-instruction-sequences
-             (car compiled-operands)
-             (make-instruction-sequence
-              '(val) '(arg1)
-              '( (assign arg1 (reg val)) )))))
-          (else
-           (error "the length of the operand list must not exceed 2")))))
+    (map (lambda (operand-exp target)
+           (compile operand-exp target 'next))
+         operand-exps
+         '(arg1 arg2))))
 
 (define (generate-open-code-compiler-for-binary bin-op)
   (lambda (exp target linkage)
-    (let ((rator (car exp))
-          (rands (cdr exp)))
+    (let* ((rator (car exp))
+           (rands (cdr exp))
+           (compiled-rands (spread-arguments rands)))
+      ;; since the generator is only for binary functions
+      (assert (= (length rands) 2))
       (end-with-linkage
        linkage
        (append-instruction-sequences
-        (spread-arguments rands)
-        (make-instruction-sequence
-         '(arg1 arg2)
-         (list target)
-         `( (assign ,target (op ,bin-op) (reg arg1) (reg arg2)) )))))))
+        ;; the second arg first
+        (cadr compiled-rands)
+        (preserving
+         '(arg2)
+         (car compiled-rands)
+         (make-instruction-sequence
+          '(arg1 arg2)
+          (list target)
+          `( (assign ,target (op ,bin-op) (reg arg1) (reg arg2)) ))))))))
 
 (define (generate-open-code-predicate-for-binary bin-op)
   (lambda (exp)
