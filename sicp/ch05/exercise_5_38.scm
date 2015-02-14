@@ -2,27 +2,41 @@
 (load "../common/test-utils.scm")
 
 (load "./compiler.scm")
+(load "./simu.scm")
+(load "./simu_compiler_patch.scm")
 
 (define all-regs
   '(env proc val argl continue arg1 arg2))
 
+;; by searching "(op <something>)" from compiler's source code
+;; we are able to extract all possible primitives that
+;; our compiled code might use.
+(define primitive-operations
+  '(false?
+    lookup-variable-value
+    set-variable-value!
+    define-variable!
+    make-compiled-procedure
+    compiled-procedure-env
+    extend-environment
+    list
+    cons
+    compiled-procedure-entry
+    primitive-procedure?
+    apply-primitive-procedure
+    =
+    *
+    -
+    +))
+
 ;; spread-arguments takes a list of operands
 ;; and assign each of them into the corresponding
-;; target registers, note that in order
-;; to keep the order of operands' evaluation consistent
-;; the operands are evaluated from right to left
-;; e.g.
-;;  (spread-arguments (list <exp1> <exp2>))
-;; first evaluates "exp2", assigning the value to
-;; "arg1" register, and then "exp1" is evaluated
-;; and its value is assigned to "arg2"
+;; target registers. a list of compiled instruction sequences
+;; is returned. you need to append them together and do register preserving.
 ;; * the length of the operand list must be less or equal to 2
 ;; * this function assumes the existence of register "arg1" and "arg2"
 ;;   which the target machine should provide
 (define (spread-arguments operand-exps)
-  ;; TODO: if we use "val" as "argument register",
-  ;; can we handle "open-code" primitives that
-  ;; takes 3 arguments?
   (let ((arg-list-len (length operand-exps)))
     (assert (<= arg-list-len 2))
     ;; TODO: I'm not sure if targeting registers other than "val" or "proc"
@@ -30,16 +44,23 @@
     ;; somewhere in the compiler that assume the target register being
     ;; either "val" or "proc".
 
-    ;; for now, let's just go back to the exercise and think about "open-code"
-    ;; primitives for the second time: an "(assign arg1 (reg val))" instruction
-    ;; right after the evaluation will be fine, but it makes code more verbose
-    ;; which violates what "open-code" primitive is doing.
     ;; TODO: arg-list < 2 is not yet covered
     (map (lambda (operand-exp target)
            (compile operand-exp target 'next))
          operand-exps
          '(arg1 arg2))))
 
+;; open code compiler generator for binary functions
+;; takes a binary operation symbol, and generates a compiler
+;; procedure that does open-code compiling for that symbol
+;; note that in order to keep the order of
+;; operands' evaluation consistent,
+;; the operands are evaluated from right to left
+;; e.g. to compile arguments for the expression:
+;;   (= <exp1> <exp2>)
+;; first evaluates "exp2", assigning the value to
+;; "arg1" register, and then "exp1" is evaluated
+;; and its value is assigned to "arg2"
 (define (generate-open-code-compiler-for-binary bin-op)
   (lambda (exp target linkage)
     (let* ((rator (car exp))
@@ -126,8 +147,13 @@
    (else
     (error "Unknown expression type: COMPILE" exp))))
 
-(print-instruction-sequence
- (compile '(+ (* x (- y z)) (* (+ 1 2) (* 2 3))) 'val 'next))
+(load "./ec-tests.scm")
+(load "./exercise_5_23_tests.scm")
+(for-each
+ (test-evaluator
+  compile-and-run-with-env)
+ test-exps)
+(newline)
 
 (end-script)
 
