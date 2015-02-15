@@ -5,6 +5,8 @@
 (load "./simu.scm")
 (load "./simu_compiler_patch.scm")
 
+(define *ex-5.38-test* #t)
+
 (define factorial-code
   `(define (factorial n)
      (if (= n 1)
@@ -19,11 +21,14 @@
 ;; run tests on the modified compiler
 (load "./ec-tests.scm")
 (load "./exercise_5_23_tests.scm")
-(for-each
- (test-evaluator
-  compile-and-run-with-env)
- test-exps)
-(newline)
+(if *ex-5.38-test*
+    (begin
+      (for-each
+       (test-evaluator
+        compile-and-run-with-env)
+       test-exps)
+      (newline))
+    'skipped)
 
 ;; compile again using new compiler
 (define compiled-after
@@ -34,6 +39,8 @@
 (newline)
 (out ";; ==== with open-code primitives:")
 (print-instruction-sequence compiled-after)
+
+(load "./exercise_5_38_transform.scm")
 
 ;; TODO: "+" and "*" can accept arbitrary numbers
 ;; of operands because (number,+) and (number,*) are commutative monoids
