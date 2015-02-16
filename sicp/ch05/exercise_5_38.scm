@@ -5,6 +5,10 @@
 (load "./simu.scm")
 (load "./simu_compiler_patch.scm")
 
+;; warning: in this patch, the user will lose the ability
+;; re-defining procedures which are recognized as open-code
+;; primitives (as which has been indicated in the book's footnote)
+
 ;; for testing program, use "./exercise_5_38_tests.scm"
 (define *ex-5.38-tests* #f)
 
