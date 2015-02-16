@@ -40,8 +40,6 @@
 (out ";; ==== with open-code primitives:")
 (print-instruction-sequence compiled-after)
 
-(load "./exercise_5_38_transform.scm")
-
 ;; TODO: "+" and "*" can accept arbitrary numbers
 ;; of operands because (number,+) and (number,*) are commutative monoids
 ;; it doesn't matter how they gets combined together.

@@ -7,6 +7,8 @@
      exp-zero
      operands)))
 
+;; a table of transformable function calls
+;; whose elements are "(list <op-symbol> <exp-zero>)"s
 (define transformable-table
   `((+ 0)
     (* 1)))
