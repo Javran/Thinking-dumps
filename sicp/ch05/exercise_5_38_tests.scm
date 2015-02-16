@@ -5,7 +5,7 @@
 (load "./simu.scm")
 (load "./simu_compiler_patch.scm")
 
-(define *ex-5.38-test* #t)
+(define *ex-5.38-tests* #t)
 
 (load "./exercise_5_38_compiler.scm")
 

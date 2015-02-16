@@ -2,13 +2,13 @@
 ;; and assign each of them into the corresponding
 ;; target registers. a list of compiled instruction sequences
 ;; is returned. you need to append them together and do register preserving.
-;; * the length of the operand list must be less or equal to 2
+;; * the length of the operand list must be equal to 2
 ;; * this function assumes the existence of register "arg1" and "arg2"
 ;;   which the target machine should provide
 (define (spread-arguments operand-exps)
   (let ((arg-list-len (length operand-exps)))
-    (assert (<= arg-list-len 2))
-    ;; TODO: arg-list < 2 is not yet covered
+    (assert (= arg-list-len 2)
+            "'spread-arguments' can only deal with two operands")
     (map (lambda (operand-exp target)
            (compile operand-exp target 'next))
          operand-exps

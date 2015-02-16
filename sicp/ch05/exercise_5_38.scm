@@ -5,7 +5,7 @@
 (load "./simu.scm")
 (load "./simu_compiler_patch.scm")
 
-(define *ex-5.38-test* #f)
+(define *ex-5.38-tests* #f)
 
 (define factorial-code
   `(define (factorial n)
@@ -27,26 +27,6 @@
 (newline)
 (out ";; ==== with open-code primitives:")
 (print-instruction-sequence compiled-after)
-
-;; TODO: "+" and "*" can accept arbitrary numbers
-;; of operands because (number,+) and (number,*) are commutative monoids
-;; it doesn't matter how they gets combined together.
-;; rather than taking care of register handlings, here is my plan:
-;; * enforce "spread-arguments" to deal with two-argument cases only
-;; * do syntactic transformation before compilation
-;;   e.g.
-;;   (+ 1)         => 1
-;;   (+ 1 2)       => (+ 1 2)
-;;   (+ 1 2 3)     => (+ 1 (+ 2 3))
-;;   (+ 1 2 3 4)   => (+ 1 (+ 2 (+ 3 4)))
-;;   ...
-;; * however, the side effects incurred by evaluating arguments
-;;   is not guaranteed to happen in a certain order, since
-;;   different compilers can make different decisions about
-;;   the argument evaluation order. here, in order to keep
-;;   consistent with the original implementation,
-;;   we choose to "fold" from right to left
-;;   therefore arguements will still be evaluated from right to left
 
 (end-script)
 

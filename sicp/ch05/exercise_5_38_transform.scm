@@ -1,3 +1,23 @@
+;; "+" and "*" can accept arbitrary numbers
+;; of operands because (number,+) and (number,*) are commutative monoids
+;; it doesn't matter how they gets combined together.
+;; rather than taking care of register handlings, there is a simple way:
+;; * enforce "spread-arguments" to deal with two-argument cases only
+;; * do syntactic transformation before compilation (i.e. "transform-right")
+;;   e.g.
+;;   (+ 1)         => 1
+;;   (+ 1 2)       => (+ 1 2)
+;;   (+ 1 2 3)     => (+ 1 (+ 2 3))
+;;   (+ 1 2 3 4)   => (+ 1 (+ 2 (+ 3 4)))
+;;   ...
+;; * however, the side effects incurred by evaluating arguments
+;;   is not guaranteed to happen in a certain order, since
+;;   different compilers can make different decisions about
+;;   the argument evaluation order. here, in order to keep
+;;   consistent with the original implementation,
+;;   we choose to "fold" from right to left
+;;   therefore arguements will still be evaluated from right to left
+
 (define (transform-right exp exp-zero)
   (let ((operator (car exp))
         (operands (cdr exp)))
@@ -13,7 +33,7 @@
   `((+ 0)
     (* 1)))
 
-(if *ex-5.38-test*
+(if *ex-5.38-tests*
     ;; tests and also examples
     (do-test
      transform-right
