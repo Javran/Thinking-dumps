@@ -5,6 +5,7 @@
 (load "./simu.scm")
 (load "./simu_compiler_patch.scm")
 
+;; for testing program, use "./exercise_5_38_tests.scm"
 (define *ex-5.38-tests* #f)
 
 (define factorial-code

@@ -13,6 +13,22 @@
 (load "./ec-tests.scm")
 (load "./exercise_5_23_tests.scm")
 
+;; needs few more to test open-code primitives
+(define test-exps-ex-5-38
+  `(;; complex & mixed
+    (+ (* 1 2 3) (+ 1 (- 20 19 19) (- 18 20) 3 (* 4 5))
+       (+ 6 (+ 1 2 4) 8))
+    ;; simple
+    (+)
+    (*)
+    (+ 1)
+    (* 10)
+    ;; mixed
+    (= (+ 1 2 3) (* 1 2 3))
+    ))
+(set! test-exps
+      (append test-exps test-exps-ex-5-38))
+
 (for-each
  (test-evaluator
   compile-and-run-with-env)
