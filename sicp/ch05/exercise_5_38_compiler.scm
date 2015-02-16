@@ -70,5 +70,5 @@
     (error "Unknown expression type: COMPILE" exp))))
 
 ;; Local variables:
-;; proc-entry: "./exercise_5_38.scm"
+;; proc-entry: "./exercise_5_38_tests.scm"
 ;; End:
