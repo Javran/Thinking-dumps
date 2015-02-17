@@ -1,7 +1,7 @@
 ;; some extra functionalities for verifying the compiled code
 
 ;; just borrowing some utililties not the implementation though.
-(load "./simu_utils.scm")
+(load "simu_utils.scm")
 
 ;; by searching "(op <something>)" from compiler's source code
 ;; we are able to extract all possible primitives that

@@ -1,11 +1,11 @@
-(load "./compiler-label.scm")
-(load "./compiler-insn-seq.scm")
+(load "compiler-label.scm")
+(load "compiler-insn-seq.scm")
 
-(load "./compiler-no-branch.scm")
-(load "./compiler-if.scm")
-(load "./compiler-proc.scm")
-(load "./compiler-prim.scm")
-(load "./compiler-verify.scm")
+(load "compiler-no-branch.scm")
+(load "compiler-if.scm")
+(load "compiler-proc.scm")
+(load "compiler-prim.scm")
+(load "compiler-verify.scm")
 
 (define all-regs
   '(env proc val argl continue))

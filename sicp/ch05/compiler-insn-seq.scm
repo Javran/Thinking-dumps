@@ -1,4 +1,4 @@
-(load "./compiler-list.scm")
+(load "compiler-list.scm")
 
 ;; functions related to instruction sequences
 

@@ -96,7 +96,7 @@
 (define (last-operand? ops)
   (null? (cdr ops)))
 
-(load "./ec-env.scm")
+(load "ec-env.scm")
 
 (define (empty-arglist) '())
 (define (adjoin-arg arg arglist)

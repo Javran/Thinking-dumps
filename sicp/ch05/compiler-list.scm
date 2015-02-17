@@ -1,4 +1,4 @@
-(load "./set.scm")
+(load "set.scm")
 
 ;; set represented by lists are just sets, not lists
 
