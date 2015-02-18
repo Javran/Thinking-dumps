@@ -34,6 +34,10 @@
 (list-set! test-list 3 'c)
 (assert (equal? test-list '(b d a c)))
 
+(out test-env)
+(lexical-address-set! '(1 . 2) test-env "test")
+(out test-env)
+
 (end-script)
 
 ;; Local variables:

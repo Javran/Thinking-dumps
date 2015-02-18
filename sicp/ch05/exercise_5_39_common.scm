@@ -21,5 +21,7 @@
         (else (list-set! (cdr ls) (sub1 k) value))))
 
 (define (lexical-address-set! lx-addr env new-val)
-  ;; TODO
-  (error 'todo))
+  (let* ((layer-i (car lx-addr))
+         (pos-i   (cdr lx-addr))
+         (layer   (list-ref env layer-i)))
+    (list-set! (cdr layer) pos-i new-val)))
