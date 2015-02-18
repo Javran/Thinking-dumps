@@ -27,6 +27,13 @@
   (mat '(2 . 3) test-env 4)
   ))
 
+(define test-list '(1 2 3 4))
+(list-set! test-list 1 'd)
+(list-set! test-list 2 'a)
+(list-set! test-list 0 'b)
+(list-set! test-list 3 'c)
+(assert (equal? test-list '(b d a c)))
+
 (end-script)
 
 ;; Local variables:

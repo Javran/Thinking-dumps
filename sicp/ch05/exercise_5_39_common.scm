@@ -11,3 +11,15 @@
     (assert (not (eq? result '*unassigned*))
             "the value of the variable is not yet assigned")
     result))
+
+(define (list-set! ls k value)
+  (cond ((< k 0) 'ok)
+        ((null? ls) 'ok)
+        ;; from now on, the list contains
+        ;; at least one element.
+        ((= k 0) (set-car! ls value))
+        (else (list-set! (cdr ls) (sub1 k) value))))
+
+(define (lexical-address-set! lx-addr env new-val)
+  ;; TODO
+  (error 'todo))
