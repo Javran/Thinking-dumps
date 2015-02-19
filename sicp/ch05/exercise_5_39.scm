@@ -5,6 +5,13 @@
 
 (load "exercise_5_39_common.scm")
 
+;; this exercise is supposed to provide functionalities
+;; for manipulating environments with lexical addresses
+;; and "exercise_5_39_common.scm" should export everything necessary
+
+;; in this file we will just perform some tests
+;; which also serves as examples.
+
 (define test-env
   (extend-environment
    '(a b c d)
@@ -14,7 +21,7 @@
     '(z y x)
     (extend-environment
      '(e f g h)
-     '(1 2 3 4)
+     '(*unassigned* 2 3 4)
      the-empty-environment))))
 
 (do-test
@@ -26,6 +33,11 @@
   (mat '(1 . 2) test-env 'x)
   (mat '(2 . 3) test-env 4)
   ))
+
+(assert-error
+ (lambda ()
+   (lexical-address-lookup '(2 . 0) test-env))
+ "should raise error when values are not assigned properly")
 
 ;; tests for list-set!
 (define test-list '(1 2 3 4))
