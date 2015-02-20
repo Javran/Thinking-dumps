@@ -27,6 +27,9 @@
 ;; (symbol, ctframe) -> ctframe
 (define add-binding-to-ctframe cons)
 
+;; TODO: for now I have no idea how to deal with "define" bindings.
+;; we have to come back later.
+
 (end-script)
 
 ;; Local variables:
