@@ -9,6 +9,11 @@
 (define (empty-ctenv)
   '())
 
+(define empty-ctenv? null?)
+
+(define first-ctframe car)
+(define enclosing-ctenv cdr)
+
 (define (extend-ctenv vars ctenv)
   (cons (make-ctframe vars) ctenv))
 
@@ -18,6 +23,9 @@
 
 ;; keep the variable name list as it is
 (define make-ctframe identity)
+
+;; (symbol, ctframe) -> ctframe
+(define add-binding-to-ctframe cons)
 
 (end-script)
 
