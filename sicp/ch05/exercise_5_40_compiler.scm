@@ -131,7 +131,6 @@
        (compile (first-exp seq) target 'next ctenv)
        (compile-sequence (rest-exps seq) target linkage ctenv))))
 
-;; TODO: procedures
 (define (compile-lambda exp target linkage ctenv)
   (let ((proc-entry (make-label 'entry))
         (after-lambda (make-label 'after-lambda)))
@@ -162,12 +161,19 @@
         (assign env
                 (op compiled-procedure-env)
                 (reg proc))
+        ;; this is the only place that
+        ;; the environment gets extended
         (assign env
                 (op extend-environment)
                 (const ,formals)
                 (reg argl)
                 (reg env))))
-     (compile-sequence (lambda-body exp) 'val 'return ctenv))))
+     (compile-sequence
+      (lambda-body exp)
+      'val
+      'return
+      ;; extend compile-time environment as well
+      (extend-ctenv formals ctenv)))))
 
 (define (compile-application exp target linkage ctenv)
   (define (construct-arglist operand-codes)
