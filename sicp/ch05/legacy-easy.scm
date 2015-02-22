@@ -2,7 +2,7 @@
 ;; as I'll try to make less lines of code necessary to run
 ;; and test a machine model
 
-(load "./legacy-simu.scm")
+(load "legacy-simu.scm")
 
 (define (set-diff xs ys)
   (fold-right delete xs ys))

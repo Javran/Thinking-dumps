@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
+(load "simu.scm")
 
 (define (save-handler insn m)
   (let* ((reg-name (stack-insn-reg-name insn))
@@ -32,7 +32,7 @@
                     top-reg-name reg-name)))))))
 (set-handler 'restore restore-handler)
 
-(load "./exercise_5_11_b_test_controllers.scm")
+(load "exercise_5_11_b_test_controllers.scm")
 
 (let ((m (build-and-execute controller-fine '())))
   (out (machine-reg-get m 'a))

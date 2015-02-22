@@ -1,10 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./exercise_5_15_simu_insncounter_patch.scm")
+(load "simu.scm")
+(load "exercise_5_15_simu_insncounter_patch.scm")
 
-(load "./figure_5_12.scm")
+(load "figure_5_12.scm")
 
 (let ((m (build-and-execute
           `(controller

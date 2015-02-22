@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
+(load "simu.scm")
 
 (define (new-register)
   ;; the register stores the stack
@@ -68,7 +68,7 @@
           '())))
   (out (machine-reg-get m 'a)))
 
-(load "./exercise_5_11_c_test_controllers.scm")
+(load "exercise_5_11_c_test_controllers.scm")
 
 (let ((m (build-and-execute
           test-controller-success-1

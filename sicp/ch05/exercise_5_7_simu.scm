@@ -1,1 +1,1 @@
-(load "./exercise_5_4_simu.scm")
+(load "exercise_5_4_simu.scm")

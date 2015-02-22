@@ -3,9 +3,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./exercise_5_3_controller.scm")
+(load "exercise_5_3_controller.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 (define (good-enough? guess)
   (< (abs (- (square guess) x)) 0.001))

@@ -1,10 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./simu-monitor-patch.scm")
+(load "simu.scm")
+(load "simu-monitor-patch.scm")
 
-(load "./figure_5_12.scm")
+(load "figure_5_12.scm")
 
 (let ((m (build-and-execute
           `(,@fib-machine-controller

@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./exercise_5_5_common.scm")
+(load "exercise_5_5_common.scm")
 
-(load "./exercise_5_3_controller.scm")
+(load "exercise_5_3_controller.scm")
 
 ;; fix x = 144
 (define test-const 144)

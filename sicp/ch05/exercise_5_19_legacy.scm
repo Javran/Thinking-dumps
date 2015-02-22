@@ -1,10 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
-(load "./exercise_5_19_legacy_breakpoint_patch.scm")
+(load "legacy-easy.scm")
+(load "exercise_5_19_legacy_breakpoint_patch.scm")
 
-(load "./figure_5_12.scm")
+(load "figure_5_12.scm")
 
 (let ((m (make-with
           fib-machine-controller

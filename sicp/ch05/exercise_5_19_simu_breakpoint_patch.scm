@@ -1,5 +1,5 @@
-(load "./exercise_5_17_simu_prelabel_patch.scm")
-(load "./exercise_5_19_breakpoint_table.scm")
+(load "exercise_5_17_simu_prelabel_patch.scm")
+(load "exercise_5_19_breakpoint_table.scm")
 
 ;; the current label is the latest label
 ;; found in an instruction

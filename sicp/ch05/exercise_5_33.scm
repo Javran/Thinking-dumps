@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./compiler.scm")
+(load "compiler.scm")
 
 ;; generating factorial-alt
 (for-each

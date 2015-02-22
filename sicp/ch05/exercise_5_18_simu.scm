@@ -1,10 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./exercise_5_18_simu_regtrace_patch.scm")
+(load "simu.scm")
+(load "exercise_5_18_simu_regtrace_patch.scm")
 
-(load "./exercise_5_18_test_controller.scm")
+(load "exercise_5_18_test_controller.scm")
 
 ;; I was trying to take the second approach described in
 ;; "exercise_5_18.md", but that approach turns out to be

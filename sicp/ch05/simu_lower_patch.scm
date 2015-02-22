@@ -4,8 +4,8 @@
 ;; the real implementation
 ;; of list and stack primitives
 
-(load "./rewrite-instructions.scm")
-(load "./list-stack-rewrites.scm")
+(load "rewrite-instructions.scm")
+(load "list-stack-rewrites.scm")
 
 ;; in the original simu.scm,
 ;; we can store anything we like in a register

@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
+(load "simu.scm")
 
-(load "./exercise_5_12_analyze.scm")
+(load "exercise_5_12_analyze.scm")
 
 (define (empty-machine)
   (vector
@@ -61,7 +61,7 @@
   (pretty-print-data-path-analysis
    (machine-data-path-meta m)))
 
-(load "./figure_5_12.scm")
+(load "figure_5_12.scm")
 
 (let ((m (build-with
           fib-machine-controller

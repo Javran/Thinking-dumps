@@ -1,5 +1,5 @@
-(load "./exercise_5_17_legacy_prelabel_patch.scm")
-(load "./exercise_5_19_breakpoint_table.scm")
+(load "exercise_5_17_legacy_prelabel_patch.scm")
+(load "exercise_5_19_breakpoint_table.scm")
 
 ;; based on ex 5.17 patch
 (define (make-new-machine)

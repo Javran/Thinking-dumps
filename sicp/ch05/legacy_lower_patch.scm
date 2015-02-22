@@ -1,8 +1,8 @@
 ;; see notes in "5_3_2_maintaining_the_illusion_of_infinite_memory.md"
 ;; for related discussions
 
-(load "./rewrite-instructions.scm")
-(load "./list-stack-rewrites.scm")
+(load "rewrite-instructions.scm")
+(load "list-stack-rewrites.scm")
 
 (define (constant-exp-value exp)
   (define (valid-constant? data)

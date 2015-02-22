@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
-(load "./legacy_ec_patch.scm")
-(load "./ec-tests.scm")
+(load "legacy-easy.scm")
+(load "legacy_ec_patch.scm")
+(load "ec-tests.scm")
 
 (for-each (test-evaluator machine-eval) test-exps)
 (newline)

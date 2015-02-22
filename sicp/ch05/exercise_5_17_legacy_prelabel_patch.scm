@@ -1,5 +1,5 @@
-(load "./exercise_5_15_legacy_insncounter_patch.scm")
-(load "./exercise_5_16_legacy_tracing_patch.scm")
+(load "exercise_5_15_legacy_insncounter_patch.scm")
+(load "exercise_5_16_legacy_tracing_patch.scm")
 
 (define (make-instruction text prev-inst)
   (let ((prev-label (if (symbol? prev-inst)

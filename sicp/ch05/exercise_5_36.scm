@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./compiler.scm")
-(load "./simu.scm")
-(load "./simu_compiler_patch.scm")
+(load "compiler.scm")
+(load "simu.scm")
+(load "simu_compiler_patch.scm")
 
 (define test-code
   ;; if arguments are evaluated from left to right:
@@ -29,10 +29,10 @@
 ;; should produce 202
 (out (compile-and-run test-code))
 
-(load "./exercise_5_36_compiler.scm")
+(load "exercise_5_36_compiler.scm")
 ;; rerun tests
-(load "./ec-tests.scm")
-(load "./exercise_5_23_tests.scm")
+(load "ec-tests.scm")
+(load "exercise_5_23_tests.scm")
 (for-each
  (test-evaluator
   compile-and-run-with-env)

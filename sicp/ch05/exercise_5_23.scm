@@ -1,15 +1,15 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./simu_ec_patch.scm")
+(load "simu.scm")
+(load "simu_ec_patch.scm")
 
 ;; from now on, we just use "simu.scm" as the machine
 ;; simulator, as using the legacy one won't make too much difference.
 
-(load "./exercise_5_23_common.scm")
-(load "./exercise_5_23_machine.scm")
-(load "./exercise_5_23_tests.scm")
+(load "exercise_5_23_common.scm")
+(load "exercise_5_23_machine.scm")
+(load "exercise_5_23_tests.scm")
 
 ;; a list of functions that does transformation:
 ;; * cond->if

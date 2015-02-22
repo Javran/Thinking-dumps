@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./rewrite.scm")
+(load "rewrite.scm")
 
 (define (bag-equal? xs ys)
   (define (bag-subset? xs ys)

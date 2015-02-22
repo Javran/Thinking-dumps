@@ -8,7 +8,7 @@
 
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
-(load "./data-directed.scm")
+(load "data-directed.scm")
 
 (define (vector-modify! vec k proc)
   (vector-set! vec k (proc (vector-ref vec k))))

@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 ;; to care about the stack, we only need to
 ;; modify the part that manipulates the stack,
@@ -30,7 +30,7 @@
                     "register name '~A' expected, but '~A' found"
                     top-reg-name reg-name)))))))
 
-(load "./exercise_5_11_b_test_controllers.scm")
+(load "exercise_5_11_b_test_controllers.scm")
 
 (let ((m (make-and-execute controller-fine '())))
   (out (get-register-contents m 'a))

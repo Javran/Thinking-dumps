@@ -4,10 +4,10 @@
 ;; Using approach 1
 ;; (see exercise_5_14.md for explanation)
 
-(load "./simu.scm")
-(load "./simu-monitor-patch.scm")
+(load "simu.scm")
+(load "simu-monitor-patch.scm")
 
-(load "./figure_5_11.scm")
+(load "figure_5_11.scm")
 
 (let ((m (ctl->machine
           fac-machine-controller)))

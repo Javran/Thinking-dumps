@@ -1,7 +1,7 @@
 ;; this module transforms the program instruction list
 ;; into one that has builtin GC functionality
 
-(load "./gc-code.scm")
+(load "gc-code.scm")
 
 ;; generate an instruction list transformer
 ;; that transforms original program

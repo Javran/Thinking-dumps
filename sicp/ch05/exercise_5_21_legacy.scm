@@ -1,11 +1,11 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
-(load "./legacy_lower_fast_patch.scm")
+(load "legacy-easy.scm")
+(load "legacy_lower_fast_patch.scm")
 
-(load "./exercise_5_21_controllers.scm")
-(load "./exercise_5_21_common.scm")
+(load "exercise_5_21_controllers.scm")
+(load "exercise_5_21_common.scm")
 
 (define (count-leaves-r-machine tree)
   ;; evaluate the function by running the machine

@@ -1,4 +1,4 @@
-(load "./rewrite.scm")
+(load "rewrite.scm")
 
 ;; see notes in "5_3_2_maintaining_the_illusion_of_infinite_memory.md"
 ;; for related discussions

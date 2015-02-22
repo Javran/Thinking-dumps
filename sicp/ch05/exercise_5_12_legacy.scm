@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
-(load "./exercise_5_12_analyze.scm")
+(load "exercise_5_12_analyze.scm")
 
 (define (make-new-machine)
   (let ((pc (make-register 'pc))
@@ -81,7 +81,7 @@
   (pretty-print-data-path-analysis
    (m 'data-path-meta-get)))
 
-(load "./figure_5_12.scm")
+(load "figure_5_12.scm")
 
 (let ((m (make-with
           fib-machine-controller

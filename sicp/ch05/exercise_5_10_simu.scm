@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
+(load "simu.scm")
 
 (set-handler
  'assign
@@ -51,7 +51,7 @@
   (remove-duplicates
    (concat-map extract instructions)))
 
-(load "./exercise_5_10_example_controller.scm")
+(load "exercise_5_10_example_controller.scm")
 
 (let ((m (build-and-execute
           example-controller

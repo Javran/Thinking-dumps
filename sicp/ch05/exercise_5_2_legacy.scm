@@ -3,9 +3,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./exercise_5_2_controller.scm")
+(load "exercise_5_2_controller.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 (define machine
   (make-and-execute

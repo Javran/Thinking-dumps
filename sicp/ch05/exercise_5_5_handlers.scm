@@ -1,4 +1,4 @@
-(load "./data-directed.scm")
+(load "data-directed.scm")
 
 (define set-handler #f)
 (define get-handler #f)

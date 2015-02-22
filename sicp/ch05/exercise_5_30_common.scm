@@ -1,4 +1,4 @@
-(load "./exercise_5_30_error.scm")
+(load "exercise_5_30_error.scm")
 
 (define (lookup-variable-value var env)
   ;; traverse through environments

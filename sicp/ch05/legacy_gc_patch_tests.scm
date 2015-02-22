@@ -1,10 +1,10 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
-(load "./legacy_gc_patch.scm")
+(load "legacy-easy.scm")
+(load "legacy_gc_patch.scm")
 
-(load "./gc-test-machine.scm")
+(load "gc-test-machine.scm")
 
 (let ((m (make-and-execute
           test-machine

@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
+(load "simu.scm")
 
 ;; since we only need to verify that it works,
 ;; we use "simu.scm" only

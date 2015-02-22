@@ -3,7 +3,7 @@
 
 ;; NOTE: the following changes have been applied to legacy-easy and simu
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 ;; update-insts! will preserve the order of all the labels
 ;; despite there are multiple labels with exactly the same name,
 ;; there are all kept in the original implementation.
@@ -60,8 +60,8 @@
      (out (get-register-contents m 'n))))
  "mutiple labels with the same name will raise an error")
 
-(load "./legacy-easy.scm")
-(load "./exercise_5_8_common.scm")
+(load "legacy-easy.scm")
+(load "exercise_5_8_common.scm")
 
 ;; some tests
 (do-test

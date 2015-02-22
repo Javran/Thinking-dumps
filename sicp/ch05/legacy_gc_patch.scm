@@ -1,5 +1,5 @@
-(load "./legacy_lower_patch.scm")
-(load "./gc-transform.scm")
+(load "legacy_lower_patch.scm")
+(load "gc-transform.scm")
 
 ;; see "machine-gc-broken-heart" in simu.scm
 (define gc-broken-heart

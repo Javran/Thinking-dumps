@@ -2,16 +2,16 @@
 (load "../common/test-utils.scm")
 
 ;; compiler tests
-(load "./compiler.scm")
+(load "compiler.scm")
 
-(load "./simu.scm")
-(load "./simu_compiler_patch.scm")
+(load "simu.scm")
+(load "simu_compiler_patch.scm")
 
 ;; borrow test framework from ec-tests
-(load "./ec-tests.scm")
+(load "ec-tests.scm")
 ;; borrow testcases from ex 5.23
 ;; for testing basic expresssion & derived expressions
-(load "./exercise_5_23_tests.scm")
+(load "exercise_5_23_tests.scm")
 
 (for-each
  (test-evaluator

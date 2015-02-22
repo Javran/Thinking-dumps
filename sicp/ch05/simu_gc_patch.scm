@@ -1,5 +1,5 @@
-(load "./simu_lower_patch.scm")
-(load "./gc-transform.scm")
+(load "simu_lower_patch.scm")
+(load "gc-transform.scm")
 
 ;; we use "gensym" to generate the broken-heart symbol
 ;; before we execute the machine.

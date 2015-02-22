@@ -1,5 +1,5 @@
-(load "./exercise_5_15_simu_insncounter_patch.scm")
-(load "./exercise_5_16_simu_tracing_patch.scm")
+(load "exercise_5_15_simu_insncounter_patch.scm")
+(load "exercise_5_16_simu_tracing_patch.scm")
 
 (define (assemble insns machine)
   (define (make-instruction insn-text prev-text)

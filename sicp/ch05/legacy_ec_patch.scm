@@ -1,6 +1,6 @@
 ;; copied and modified base on simu_ec_patch.scm
-(load "./legacy-monitor-patch.scm")
-(load "./ec-eval.scm")
+(load "legacy-monitor-patch.scm")
+(load "ec-eval.scm")
 
 ;; evaluate a symbol under the current toplevel
 ;; environment, and make it an primitive entry

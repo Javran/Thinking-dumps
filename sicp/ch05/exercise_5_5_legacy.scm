@@ -1,12 +1,12 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./exercise_5_5_controller.scm")
+(load "exercise_5_5_controller.scm")
 
 ;; we only show if the simulator works,
 ;; the contents of the stack is not shown
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 (let ((m
        (make-and-execute

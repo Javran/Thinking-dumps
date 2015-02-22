@@ -1,5 +1,5 @@
-(load "./ec-prim.scm")
-(load "./ec-init-env.scm")
+(load "ec-prim.scm")
+(load "ec-init-env.scm")
 
 ;; here are some discussions about primitives,
 ;; as they appears in the code multiple times but many of them

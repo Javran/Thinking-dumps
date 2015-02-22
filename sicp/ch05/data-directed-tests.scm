@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./data-directed.scm")
+(load "data-directed.scm")
 
 ;; how to use "data-directed.scm":
 ;; copy the code from line "begin template" to

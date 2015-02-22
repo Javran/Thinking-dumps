@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 ;; I will make the stack a lazy assoc-list
 ;; because the design of legacy simulator
@@ -105,7 +105,7 @@
       (set-contents! reg (pop-stack-alist stack reg-name))
       (advance-pc pc))))
 
-(load "./exercise_5_11_c_test_controllers.scm")
+(load "exercise_5_11_c_test_controllers.scm")
 
 (let ((m (make-and-execute
           test-controller-success-1

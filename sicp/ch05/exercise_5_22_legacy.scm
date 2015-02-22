@@ -1,12 +1,12 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
-(load "./legacy_lower_fast_patch.scm")
+(load "legacy-easy.scm")
+(load "legacy_lower_fast_patch.scm")
 
-(load "./exercise_5_22_controllers.scm")
+(load "exercise_5_22_controllers.scm")
 
-(load "./exercise_5_22_common.scm")
+(load "exercise_5_22_common.scm")
 
 (define (my-append-machine x y)
   (let ((m (make-and-execute

@@ -1,12 +1,12 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./simu_lower_fast_patch.scm")
+(load "simu.scm")
+(load "simu_lower_fast_patch.scm")
 
-(load "./exercise_5_22_controllers.scm")
+(load "exercise_5_22_controllers.scm")
 
-(load "./exercise_5_22_common.scm")
+(load "exercise_5_22_common.scm")
 
 (define (my-append-machine x y)
   (let ((m (build-and-execute

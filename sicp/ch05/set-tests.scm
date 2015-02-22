@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./set.scm")
+(load "set.scm")
 
 ;; checks if two things are equal
 ;; in terms of their boolean values

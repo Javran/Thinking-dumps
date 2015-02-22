@@ -1,8 +1,8 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./simu.scm")
-(load "./simu_lower_patch.scm")
+(load "simu.scm")
+(load "simu_lower_patch.scm")
 
 (define simple-instructions
   '((assign a (op cons) (const 2) (const ()))

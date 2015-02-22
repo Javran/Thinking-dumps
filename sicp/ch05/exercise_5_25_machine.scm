@@ -1,5 +1,5 @@
 ;; based on exercise 5.23
-(load "./exercise_5_25_thunk.scm")
+(load "exercise_5_25_thunk.scm")
 
 (define evaluator-insns
   `(

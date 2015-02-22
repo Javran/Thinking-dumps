@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./legacy-easy.scm")
+(load "legacy-easy.scm")
 
 (define (make-execution-procedure
          inst labels machine pc flag stack ops)
@@ -78,7 +78,7 @@
   (remove-duplicates
    (concat-map extract instructions)))
 
-(load "./exercise_5_10_example_controller.scm")
+(load "exercise_5_10_example_controller.scm")
 
 (let ((m (make-and-execute
           example-controller
