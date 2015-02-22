@@ -1,3 +1,4 @@
+(load "exercise_5_40_ctenv.scm")
 ;; TODO: well, I know it looks stupid, but don't worry about it for now
 ;; TODO: some exp compilers might not require ctenv at all
 ;; therefore we can simplify a little bit
