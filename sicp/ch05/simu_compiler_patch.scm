@@ -1,4 +1,4 @@
-(load "./ec-init-env.scm")
+(load "ec-init-env.scm")
 
 ;; from "simu_ec_patch.scm"
 (define (to-machine-prim-entry sym)

@@ -1,9 +1,9 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./compiler.scm")
-(load "./simu.scm")
-(load "./simu_compiler_patch.scm")
+(load "compiler.scm")
+(load "simu.scm")
+(load "simu_compiler_patch.scm")
 
 ;; warning: in this patch, the user will lose the ability
 ;; re-defining procedures which are recognized as open-code
@@ -21,7 +21,7 @@
 (define compiled-before
   (compile-and-check factorial-code))
 
-(load "./exercise_5_38_compiler.scm")
+(load "exercise_5_38_compiler.scm")
 
 ;; compile again using new compiler
 (define compiled-after

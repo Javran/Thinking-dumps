@@ -1,6 +1,6 @@
-(load "./simu_utils.scm")
-(load "./simu_register.scm")
-(load "./simu_stack.scm")
+(load "simu_utils.scm")
+(load "simu_register.scm")
+(load "simu_stack.scm")
 
 ;; ==== abstract machine operations
 (define (empty-machine)

@@ -1,4 +1,4 @@
-(load "./simu_execute.scm")
+(load "simu_execute.scm")
 
 ;; input a list of instructions, and expected register values,
 ;; raise error if the actual register value is not equal to the expected value

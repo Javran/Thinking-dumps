@@ -7,11 +7,11 @@
 ;; toggle tests
 (define *simu-test* #f)
 
-(load "./simu_utils.scm")
-(load "./simu_assemble.scm")
-(load "./simu_execute.scm")
+(load "simu_utils.scm")
+(load "simu_assemble.scm")
+(load "simu_execute.scm")
 
-(load "./simu_test.scm")
+(load "simu_test.scm")
 
 ;; Local variables:
 ;; proc-entry: ""

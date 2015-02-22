@@ -1,5 +1,5 @@
-(load "./exercise_5_38_open-code.scm")
-(load "./exercise_5_38_transform.scm")
+(load "exercise_5_38_open-code.scm")
+(load "exercise_5_38_transform.scm")
 
 (set! primitive-operations
       (set-union primitive-operations

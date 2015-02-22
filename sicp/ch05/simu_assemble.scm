@@ -1,5 +1,5 @@
-(load "./simu_machine.scm")
-(load "./simu_assemble_handlers.scm")
+(load "simu_machine.scm")
+(load "simu_assemble_handlers.scm")
 
 (define (assemble insns machine)
   ;; expected input: a list of instructions (including labels)

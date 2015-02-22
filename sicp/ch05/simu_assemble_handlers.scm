@@ -1,5 +1,5 @@
-(load "./simu_assemble_handler_def.scm")
-(load "./simu_controller_syntax.scm")
+(load "simu_assemble_handler_def.scm")
+(load "simu_controller_syntax.scm")
 
 (define (make-execution-procedure insn-text machine)
   (let ((handler (get-handler (car insn-text))))

@@ -1,6 +1,6 @@
 ;; provide handler operations
 ;; to support assemble-handlers
-(load "./data-directed.scm")
+(load "data-directed.scm")
 
 ;; * (set-handler <slot> <handler>) to set a handler
 ;; * (get-handler <slot>) to retrieve a handler
