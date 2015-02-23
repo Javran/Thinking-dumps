@@ -27,16 +27,16 @@
 (do-test
  lexical-address-lookup
  (list
-  (mat '(0 . 0) test-env 'a)
-  (mat '(0 . 3) test-env 'd)
-  (mat '(1 . 1) test-env 'y)
-  (mat '(1 . 2) test-env 'x)
-  (mat '(2 . 3) test-env 4)
+  (mat '(0 0) test-env 'a)
+  (mat '(0 3) test-env 'd)
+  (mat '(1 1) test-env 'y)
+  (mat '(1 2) test-env 'x)
+  (mat '(2 3) test-env 4)
   ))
 
 (assert-error
  (lambda ()
-   (lexical-address-lookup '(2 . 0) test-env))
+   (lexical-address-lookup '(2 0) test-env))
  "should raise error when values are not assigned properly")
 
 ;; tests for list-set!
@@ -48,19 +48,19 @@
 (assert (equal? test-list '(b d a c)))
 
 ;; tests for lexical-address-set!
-(lexical-address-set! '(1 . 2) test-env 'e12)
-(lexical-address-set! '(2 . 1) test-env 'e21)
-(lexical-address-set! '(0 . 2) test-env 'e02)
+(lexical-address-set! '(1 2) test-env 'e12)
+(lexical-address-set! '(2 1) test-env 'e21)
+(lexical-address-set! '(0 2) test-env 'e02)
 
 ;; redo variable lookup
 (do-test
  lexical-address-lookup
  (list
-  (mat '(0 . 2) test-env 'e02)
-  (mat '(1 . 2) test-env 'e12)
-  (mat '(2 . 1) test-env 'e21)
-  (mat '(1 . 0) test-env 'z)
-  (mat '(2 . 3) test-env 4)))
+  (mat '(0 2) test-env 'e02)
+  (mat '(1 2) test-env 'e12)
+  (mat '(2 1) test-env 'e21)
+  (mat '(1 0) test-env 'z)
+  (mat '(2 3) test-env 4)))
 
 (end-script)
 
