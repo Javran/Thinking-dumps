@@ -22,6 +22,7 @@
     primitive-procedure?
     apply-primitive-procedure
     lexical-address-lookup
+    lexical-address-set!
     ))
 
 (define (compile-variable exp target linkage ctenv)
@@ -53,19 +54,33 @@
 (define (compile-assignment exp target linkage ctenv)
   (let ((var (assignment-variable exp))
         (get-value-code
-         (compile (assignment-value exp) 'val 'next ctenv)))
-    (end-with-linkage
-     linkage
-     (preserving
-      '(env)
-      get-value-code
-      (make-instruction-sequence
-       '(env val) (list target)
-       `((perform (op set-variable-value!)
-                  (const ,var)
-                  (reg val)
-                  (reg env))
-         (assign ,target (const ok))))))))
+         (compile (assignment-value exp) 'val 'next ctenv))
+        (ct-result (find-variable exp ctenv)))
+    (if (equal? ct-result 'not-found)
+        (end-with-linkage
+         linkage
+         (preserving
+          '(env)
+          get-value-code
+          (make-instruction-sequence
+           '(env val) (list target)
+           `((perform (op set-variable-value!)
+                      (const ,var)
+                      (reg val)
+                      (reg env))
+             (assign ,target (const ok))))))
+        (end-with-linkage
+         linkage
+         (preserving
+          '(env)
+          get-value-code
+          (make-instruction-sequence
+           '(env val) (list target)
+           `((perform (op lexical-address-set!)
+                      (const ,ct-result)
+                      (reg env)
+                      (reg val))
+             (assign ,target (const ok)))))))))
 
 (end-script)
 
