@@ -80,12 +80,7 @@
 
 ;; TODO: tmp fix, will remove later
 ;; needs one more arg to compile
-(define (compile-and-check exp)
-  (let ((compiled (compile exp 'val 'next (empty-ctenv) )))
-    (assert (check-instruction-sequence compiled)
-            ;; the error message is not actually reachable
-            "instruction sequence check failed.")
-    compiled))
+
 
 (for-each
  (test-evaluator

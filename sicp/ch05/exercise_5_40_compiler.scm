@@ -5,6 +5,14 @@
 ;; (but we might start to worry about the consistency of
 ;; arguments later ...)
 
+(define (compile-and-check exp)
+  ;; we need to pass an extra compile-time environment now
+  (let ((compiled (compile exp 'val 'next (empty-ctenv) )))
+    (assert (check-instruction-sequence compiled)
+            ;; the error message is not actually reachable
+            "instruction sequence check failed.")
+    compiled))
+
 (define (compile exp target linkage ctenv)
   (cond
    ((self-evaluating? exp)
