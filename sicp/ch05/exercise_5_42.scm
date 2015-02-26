@@ -25,8 +25,19 @@
 ;; out-of-sync. A potential fix would be to make "add-binding-to-frame"
 ;; insert in the back of the frame.
 
-;; TODO: see if it is applicable to apply "get-global-environment"
+;; However, if we allow only the top-level definitions,
+;; our lexical addressing strategy will still work.
+;; The important point here is that: if the program is correct,
+;; but the compile time environment fails to find the variable
+;; this can only mean that the variable is a top-level definition,
+;; so we can just try to lookup it in the global environment
+;; instead of traversing all layers of frames to go to there.
 
+;; NOTE: in this version of the compiler,
+;; non-top level definitions are not allowed.
+;; i.e. you are not allowed to use "define" forms
+;; inside "begin"/"lambda" or even the body of "define"
+;; see the comments above for details
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 
