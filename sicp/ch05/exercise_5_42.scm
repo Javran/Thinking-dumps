@@ -7,6 +7,33 @@
 
 (load "exercise_5_42_compiler.scm")
 
+;; it's tricky to implement this operation
+;; as it depends on the machine - each machine
+;; has its own instance of global-environment
+;; we work around it by pretending "get-global-environment"
+;; to be a primitive operation (to make it work with the compile-and-check)
+;; but binding the operation handler to do the real job
+(define get-global-environment
+  "this variable should never be used")
+
+(set! primitive-operations
+      (set-union primitive-operations
+                 '(get-global-environment)))
+
+(define default-ops-builder
+  (let ((old-builder default-ops-builder))
+    (lambda (m)
+      (let* ((old-ops (old-builder m)))
+        `((get-global-environment
+           ,(lambda (m)
+              (machine-extra-get m 'global-env 'error)))
+          ;; the inner "get-global-environment"
+          ;; should be shadowed now
+          ,@old-ops)))))
+
+;; TODO: would be better to use build-and-execute-with
+;; instead of hacking the default operation handler...
+
 ;; NOTE: for the idea of lexical addressing
 ;; to be applicable here, we assume there is no "non-top-level"
 ;; definitions
