@@ -47,7 +47,12 @@
 ;; in front of the existing bindings of that frame,
 ;; which makes the runtime environment and compile-time environment
 ;; out-of-sync. A potential fix would be to make "add-binding-to-frame"
-;; insert in the back of the frame.
+;; insert in the back of the frame (but if you want to insert new bindings
+;; in the back of the frame, you need to lookup variables from right-to-left
+;; to make variable-shadowing work correctly).
+
+;; TODO: (optional) maybe I'll try to do this backward-inserting implementation
+;; and see if it works
 
 ;; However, if we allow only the top-level definitions,
 ;; our lexical addressing strategy will still work.
