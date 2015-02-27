@@ -1,28 +1,32 @@
 (load "ec-init-env.scm")
 
+;; TODO: the following modification might break existing codes
+;; test before removing this note.
+
 ;; from "simu_ec_patch.scm"
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      (let* ((old-ops (old-builder m)))
-        `(
-          ,@(map to-machine-prim-entry primitive-operations)
-          (error ,(lambda args
-                    (apply error args)))
-          ,@old-ops)))))
+;; instead of using the offered default-ops-builder,
+;; let's create our own, just for running compiled code.
+(define machine-ops-builder
+  (lambda (m)
+    `(
+      ,@(map to-machine-prim-entry primitive-operations)
+      (error ,(lambda args
+                (apply error args)))
+      ,@(default-ops-builder m))))
 
 ;; compile the expression
 ;; and run it on the machine
 (define (compile-and-run-with-env exp env)
   (let* ((compiled (compile-and-check exp))
          (insn-seq (statements compiled)))
-    (let ((m (build-and-execute
+    (let ((m (build-and-execute-with
               `(controller
                 ,@insn-seq)
-              `((env ,env)))))
+              `((env ,env))
+              machine-ops-builder)))
       (machine-reg-get m 'val))))
 
 (define (compile-and-run exp)
