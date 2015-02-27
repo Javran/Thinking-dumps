@@ -1,8 +1,5 @@
 (load "ec-init-env.scm")
 
-;; TODO: the following modification might break existing codes
-;; test before removing this note.
-
 ;; from "simu_ec_patch.scm"
 (define (to-machine-prim-entry sym)
   `(,sym ,(eval sym user-initial-environment)))

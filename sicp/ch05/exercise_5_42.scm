@@ -31,9 +31,6 @@
           ;; should be shadowed now
           ,@old-ops)))))
 
-;; TODO: would be better to use build-and-execute-with
-;; instead of hacking the default operation handler...
-
 ;; NOTE: for the idea of lexical addressing
 ;; to be applicable here, we assume there is no "non-top-level"
 ;; definitions
