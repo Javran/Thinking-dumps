@@ -125,6 +125,11 @@
    reg-bindings
    default-ops-builder))
 
+;; NOTE: consider using it with functions like "build-and-execute-with"
+;; instead of overwriting it and just runing the "build-and-execute"
+;; I know I've done it wrongly for a long time.
+;; TODO: there should only be one universal "default-ops-builder"
+;; fix this in all ch05 exercises!
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)
