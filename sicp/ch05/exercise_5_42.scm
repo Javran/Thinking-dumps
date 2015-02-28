@@ -21,7 +21,6 @@
         ,@(map to-machine-prim-entry liftable-prims)
         (get-global-environment
          ,(lambda ()
-            ;; TODO: install value before starting the machine
             (machine-extra-get m 'global-env 'error)))
         (error ,(lambda args
                   (apply error args)))
@@ -35,6 +34,8 @@
                 ,@insn-seq)
               `((env ,env))
               machine-ops-builder)))
+      ;; "env" is also recorded to the machine
+      ;; so that we can retrieve that information from runtime
       (machine-extra-set! m 'global-env env)
       (machine-fresh-start! m)
       (machine-reg-get m 'val))))
@@ -78,6 +79,9 @@
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 
+;; TODO: there are testcases that has definition inside a "begin" form
+;; which is not guaranteed to work. we need to instead make those "begin"
+;; form top-level expressions
 (for-each
  (test-evaluator
   compile-and-run-with-env)
