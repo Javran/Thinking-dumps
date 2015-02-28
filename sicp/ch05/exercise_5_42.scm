@@ -13,11 +13,12 @@
                  '(get-global-environment)))
 
 (define machine-ops-builder
-  (let ((liftable-prims (set-delete 'get-global-environment
-                                    primitive-operations)))
+  (let ((liftable-prims
+         (set-delete 'get-global-environment
+                     primitive-operations)))
     (lambda (m)
       `(
-        ,@(map to-machine-prim-entry primitive-operations)
+        ,@(map to-machine-prim-entry liftable-prims)
         (get-global-environment
          ,(lambda ()
             ;; TODO: install value before starting the machine
@@ -25,6 +26,18 @@
         (error ,(lambda args
                   (apply error args)))
         ,@(default-ops-builder m)))))
+
+(define (compile-and-run-with-env exp env)
+  (let* ((compiled (compile-and-check exp))
+         (insn-seq (statements compiled)))
+    (let ((m (build-with
+              `(controller
+                ,@insn-seq)
+              `((env ,env))
+              machine-ops-builder)))
+      (machine-extra-set! m 'global-env env)
+      (machine-fresh-start! m)
+      (machine-reg-get m 'val))))
 
 ;; NOTE: for the idea of lexical addressing
 ;; to be applicable here, we assume there is no "non-top-level"
