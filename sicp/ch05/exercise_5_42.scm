@@ -7,29 +7,24 @@
 
 (load "exercise_5_42_compiler.scm")
 
-;; it's tricky to implement this operation
-;; as it depends on the machine - each machine
-;; has its own instance of global-environment
-;; we work around it by pretending "get-global-environment"
-;; to be a primitive operation (to make it work with the compile-and-check)
-;; but binding the operation handler to do the real job
-(define get-global-environment
-  "this variable should never be used")
-
+;; let verifier know that we are adding one operation
 (set! primitive-operations
       (set-union primitive-operations
                  '(get-global-environment)))
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
+(define machine-ops-builder
+  (let ((liftable-prims (set-delete 'get-global-environment
+                                    primitive-operations)))
     (lambda (m)
-      (let* ((old-ops (old-builder m)))
-        `((get-global-environment
-           ,(lambda (m)
-              (machine-extra-get m 'global-env 'error)))
-          ;; the inner "get-global-environment"
-          ;; should be shadowed now
-          ,@old-ops)))))
+      `(
+        ,@(map to-machine-prim-entry primitive-operations)
+        (get-global-environment
+         ,(lambda ()
+            ;; TODO: install value before starting the machine
+            (machine-extra-get m 'global-env 'error)))
+        (error ,(lambda args
+                  (apply error args)))
+        ,@(default-ops-builder m)))))
 
 ;; NOTE: for the idea of lexical addressing
 ;; to be applicable here, we assume there is no "non-top-level"
