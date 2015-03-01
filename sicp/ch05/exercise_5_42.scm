@@ -79,9 +79,20 @@
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 
-;; TODO: there are testcases that has definition inside a "begin" form
-;; which is not guaranteed to work. we need to instead make those "begin"
-;; form top-level expressions
+;; NOTE: it turns out that "begin" form does not create new layer of frame,
+;; try the followiing s-exp out:
+;;
+;; > (define x 10)
+;; > (begin (define x 1))
+;; > x
+;; 1
+;;
+;; in most implementations the final expression
+;; produces 1 rather than 10.
+;; therefore we can say that evaluating top-level "begin"-forms are just like
+;; evaluating its subexpressions in top-level form.
+;; the invariant that if we cannot find a variable in compile-time environment
+;; it must be in the top-level runtime environment.
 (for-each
  (test-evaluator
   compile-and-run-with-env)
