@@ -12,6 +12,9 @@
       (set-union primitive-operations
                  '(get-global-environment)))
 
+;; overwriting default "machine-operation-builder"
+;; because we need to deal with "get-global-environment"
+;; differently
 (define machine-ops-builder
   (let ((liftable-prims
          (set-delete 'get-global-environment
@@ -75,7 +78,10 @@
 ;; non-top level definitions are not allowed.
 ;; i.e. you are not allowed to use "define" forms
 ;; inside "begin"/"lambda" or even the body of "define"
-;; see the comments above for details
+;; see the comments above for details.
+;; however, since "begin" form turns out not to create
+;; a new layer of frame, definitions inside a top-level
+;; "begin" form are also okay.
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 
@@ -93,10 +99,21 @@
 ;; evaluating its subexpressions in top-level form.
 ;; the invariant that if we cannot find a variable in compile-time environment
 ;; it must be in the top-level runtime environment.
+
 (for-each
  (test-evaluator
   compile-and-run-with-env)
- test-exps)
+ (delete
+  ;; name-let is not supported
+  ;; because the transformation uses a inner "define"-form
+  `(let loop ((i 0)
+              (acc 0))
+     10
+     20 ;; test sequence
+     (if (> i 10)
+         acc
+         (loop (+ i 1) (+ acc i))))
+  test-exps))
 
 (end-script)
 
