@@ -115,6 +115,18 @@
                   (reg env))
          (assign ,target (const ok))))))))
 
+;; for lexical addressing to be applicable,
+;; we need to put one new restriction to the language:
+;; "define" can only be used in non-frame creating forms
+;; for example, top-level "define" are allowed,
+;; and "define" inside a top-level "begin"-form is also allowed,
+;; but it is invalid to define variables inside a lambda-expression
+;; or in the definition body of a function, this is because
+;; these definitions are created inside a frame other than
+;; top-level frame, which can mess up lexical addressing
+;; and violate the guaranteed that "if we can't find a variable
+;; in compile-time environment, it must belong to the global environment"
+;; (see exercise 5.42 for details)
 (define (compile-definition exp target linkage ctenv)
   (let ((var (definition-variable exp))
         (get-value-code
