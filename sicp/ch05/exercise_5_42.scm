@@ -7,42 +7,6 @@
 
 (load "exercise_5_42_compiler.scm")
 
-;; let verifier know that we are adding one operation
-(set! primitive-operations
-      (set-union primitive-operations
-                 '(get-global-environment)))
-
-;; overwriting default "machine-operation-builder"
-;; because we need to deal with "get-global-environment"
-;; differently
-(define machine-ops-builder
-  (let ((liftable-prims
-         (set-delete 'get-global-environment
-                     primitive-operations)))
-    (lambda (m)
-      `(
-        ,@(map to-machine-prim-entry liftable-prims)
-        (get-global-environment
-         ,(lambda ()
-            (machine-extra-get m 'global-env 'error)))
-        (error ,(lambda args
-                  (apply error args)))
-        ,@(default-ops-builder m)))))
-
-(define (compile-and-run-with-env exp env)
-  (let* ((compiled (compile-and-check exp))
-         (insn-seq (statements compiled)))
-    (let ((m (build-with
-              `(controller
-                ,@insn-seq)
-              `((env ,env))
-              machine-ops-builder)))
-      ;; "env" is also recorded to the machine
-      ;; so that we can retrieve that information from runtime
-      (machine-extra-set! m 'global-env env)
-      (machine-fresh-start! m)
-      (machine-reg-get m 'val))))
-
 ;; NOTE: for the idea of lexical addressing
 ;; to be applicable here, we assume there is no "non-top-level"
 ;; definitions

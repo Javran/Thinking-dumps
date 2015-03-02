@@ -2,10 +2,52 @@
 (load "exercise_5_40_compiler.scm")
 (load "exercise_5_41_common.scm")
 
+;; new primitives
 (set! primitive-operations
       (set-union primitive-operations
                  '(lexical-address-lookup
-                   lexical-address-set!)))
+                   lexical-address-set!
+                   get-global-environment)))
+
+;; overwriting default "machine-operation-builder"
+;; because we need to deal with "get-global-environment"
+;; differently
+(define machine-ops-builder
+  (let ((liftable-prims
+         ;; "liftable operations"
+         ;; are those that can be lifted from the
+         ;; implementing language into the machine
+         ;; operation
+         (set-delete 'get-global-environment
+                     primitive-operations)))
+    (lambda (m)
+      `(
+        ;; lift "liftable" primitives
+        ,@(map to-machine-prim-entry liftable-prims)
+        ;; for this operation, we need to access an extra
+        ;; field from the machine itself.
+        ;; (we can also do this by keeping a register
+        ;; which the compiler can never written to)
+        (get-global-environment
+         ,(lambda ()
+            (machine-extra-get m 'global-env 'error)))
+        (error ,(lambda args
+                  (apply error args)))
+        ,@(default-ops-builder m)))))
+
+(define (compile-and-run-with-env exp env)
+  (let* ((compiled (compile-and-check exp))
+         (insn-seq (statements compiled)))
+    (let ((m (build-with
+              `(controller
+                ,@insn-seq)
+              `((env ,env))
+              machine-ops-builder)))
+      ;; "env" is also recorded to the machine
+      ;; so that we can retrieve that information at runtime
+      (machine-extra-set! m 'global-env env)
+      (machine-fresh-start! m)
+      (machine-reg-get m 'val))))
 
 (define (compile-variable exp target linkage ctenv)
   ;; it's guaranteed that "exp" is a variable
@@ -63,5 +105,5 @@
              (assign ,target (const ok)))))))))
 
 ;; Local variables:
-;; proc-entry: "./exercise_5_42.scm"
+;; proc-entry: "exercise_5_42.scm"
 ;; End:
