@@ -6,16 +6,13 @@
 (load "simu_compiler_patch.scm")
 
 (load "exercise_5_40_compiler.scm")
-;; TODO: for now I have no idea how to deal with "define" bindings.
-;; we have to come back later.
 
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 
-;; TODO: for now the test cases here are not doing much
-;; except making sure things don't break
-;; let's see if we want to change it when we come back...
-
+;; testcases here are for merely sanity checks.
+;; TODO: for now "ctenv" are just passed around and
+;; we really want to see if it works for "compile-lambda-body"
 (for-each
  (test-evaluator
   compile-and-run-with-env)
