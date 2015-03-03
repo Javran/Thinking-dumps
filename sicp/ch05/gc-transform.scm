@@ -6,7 +6,7 @@
 ;; generate an instruction list transformer
 ;; that transforms original program
 ;; into a lower level one equiped with automatic garbage collection
-;; arguments: "broken-heart-symbol" should be an unique symbol
+;; arguments: "broken-heart-symbol" should be a unique symbol
 ;; that used internally by garbage collecting algorithm
 ;; "mem-size" is the least memory size among 4 memories
 ;; (note that usually these 4 memories have the same size)

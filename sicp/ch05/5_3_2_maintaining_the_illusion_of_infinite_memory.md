@@ -229,13 +229,13 @@ is important but not mentioned in the book:
 * How to jump to the decision-making subroutine and jump back
 
     Before we jump to the decision-making subroutine, we keep the resuming point
-    by assigning every resuming point with an unique label and keep the label somewhere.
+    by assigning every resuming point with a unique label and keep the label somewhere.
     When we are ready to jump back, we jump to the label that we have kept before.
     To generate unique symbols, we can use `gensym`:
 
         (define gensym generate-uninterned-symbol)
 
-    Calling `(gensym)` will generate an unique symbol so there will never be
+    Calling `(gensym)` will generate a unique symbol so there will never be
     name conflict caused by these temporary labels.
 
 * Generate instructions for `root` reallocation and register saving and restoring

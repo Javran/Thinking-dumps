@@ -12,7 +12,7 @@
 
 ;; symbol -> symbol
 ;; make a label (symbol) unique by appending
-;; to it an unique number
+;; to it a unique number
 (define (make-label name)
   (string->symbol
    (string-append
