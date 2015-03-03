@@ -1,9 +1,11 @@
 (load "exercise_5_40_ctenv.scm")
-;; TODO: well, I know it looks stupid, but don't worry about it for now
-;; TODO: some exp compilers might not require ctenv at all
-;; therefore we can simplify a little bit
-;; (but we might start to worry about the consistency of
-;; arguments later ...)
+;; It looks stupid to repeat all the work here,
+;; but I decide to keep it as it is.
+;; This is because most of the sub-compilers will involve "ctenv" and
+;; removing some of them makes the interface looks inconsistent.
+;; A better way of dealing with this will be saving all the arguments
+;; in a structured data and sub-compilers can use "field accessors" to
+;; retrieve data they needed. But I consider that to be an overkill.
 
 (define (compile-and-check exp)
   ;; we need to pass an extra compile-time environment now
