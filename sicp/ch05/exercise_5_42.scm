@@ -79,6 +79,8 @@
          (loop (+ i 1) (+ acc i))))
   test-exps))
 
+;; TODO: try nested-lambda as the exercise suggests
+
 (end-script)
 
 ;; Local variables:
