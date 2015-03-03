@@ -130,6 +130,10 @@
 ;; I know I've done it wrongly for a long time.
 ;; TODO: there should only be one universal "default-ops-builder"
 ;; fix this in all ch05 exercises!
+;; TODO: checklist:
+;; * exercises: 15,16,17,18,19,23,24,42
+;; * patches
+;; * corresponding problem in legacy module
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)
