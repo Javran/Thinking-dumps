@@ -1,3 +1,5 @@
+(load "set.scm")
+
 ;; procedures:
 ;; * build without initialize registers
 ;;   (machine-init-regs! and machine-fresh-start!
@@ -130,6 +132,22 @@
    controller-text
    reg-bindings
    default-ops-builder))
+
+;; create an operation list builder
+;; which does not need to retrieve data from machine
+;; instances
+(define pure-builder
+  const)
+
+;; union two builders together
+;; the union is done at the creation of the actual operation list
+;; note that for simplicity shadowed operations are not removed
+(define (ops-builder-union
+         builder1
+         builder2)
+  (lambda (m)
+    (append (builder1 m)
+            (builder2 m))))
 
 ;; NOTE: consider using it with functions like "build-and-execute-with"
 ;; instead of overwriting it and just runing the "build-and-execute"
