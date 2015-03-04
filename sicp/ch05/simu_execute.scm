@@ -159,7 +159,7 @@
 ;; * patches
 ;; * corresponding problem in legacy module
 (define default-ops-builder
-  (lambda (m)
+  (pure-builder
     `( (+ ,+)
        (- ,-)
        (* ,*)
