@@ -159,7 +159,7 @@
 ;; * patches
 ;; * corresponding problem in legacy module
 (define default-ops-builder
-  (pure-builder
+  (lambda (m)
     `( (+ ,+)
        (- ,-)
        (* ,*)
@@ -182,7 +182,8 @@
        ;; this primitive is often used when re-initializing the machine
        ;; is more expensive
        (initialize-stack
-        ,(lambda () (machine-set-stack! m (empty-stack))))
+        ,(lambda ()
+           (machine-set-stack! m (empty-stack))))
 
        ;; "debug" allows us to run arbitrary procedure
        ;; taking either register values or constants as arguments
