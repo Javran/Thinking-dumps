@@ -16,17 +16,21 @@
 (define (machine-reset-instruction-counter! m)
   (machine-extra-set! m 'instruction-counter 0))
 
-(define default-ops-builder
-  ;; should be safe if the expression
-  ;; in "define" form gets evaluates immediately
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `((print-insn-counter
-         ,(lambda ()
+(define ex-5-15-ops-builder
+  (ops-builder-union
+   (lambda (m)
+     `((print-insn-counter
+        ,(lambda ()
            (format
             #t "# instruction executed: ~A~%"
             (machine-instruction-counter m))))
-        (reset-insn-counter
-         ,(lambda ()
-           (machine-reset-instruction-counter! m)))
-        ,@(old-builder m)))))
+       (reset-insn-counter
+        ,(lambda ()
+           (machine-reset-instruction-counter! m)))))
+   default-ops-builder))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   ex-5-15-ops-builder))
