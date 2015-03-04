@@ -155,7 +155,7 @@
 ;; TODO: there should only be one universal "default-ops-builder"
 ;; fix this in all ch05 exercises!
 ;; TODO: checklist:
-;; * exercises: 15,16,17,18,19,23,24,42
+;; * exercises: 16,17,18,19,23,24,42
 ;; * patches
 ;; * corresponding problem in legacy module
 (define default-ops-builder
