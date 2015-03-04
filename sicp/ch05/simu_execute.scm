@@ -139,15 +139,15 @@
 (define pure-builder
   const)
 
-;; union two builders together
+;; union builders together, leftmost matching entity is always preferred
 ;; the union is done at the creation of the actual operation list
 ;; note that for simplicity shadowed operations are not removed
-(define (ops-builder-union
-         builder1
-         builder2)
+(define (ops-builder-union . builders)
   (lambda (m)
-    (append (builder1 m)
-            (builder2 m))))
+    (apply append
+           (map (lambda (x)
+                  (x m))
+                builders))))
 
 ;; NOTE: consider using it with functions like "build-and-execute-with"
 ;; instead of overwriting it and just runing the "build-and-execute"

@@ -16,21 +16,22 @@
 (define (machine-reset-instruction-counter! m)
   (machine-extra-set! m 'instruction-counter 0))
 
-(define ex-5-15-ops-builder
-  (ops-builder-union
-   (lambda (m)
-     `((print-insn-counter
-        ,(lambda ()
-           (format
-            #t "# instruction executed: ~A~%"
-            (machine-instruction-counter m))))
-       (reset-insn-counter
-        ,(lambda ()
-           (machine-reset-instruction-counter! m)))))
-   default-ops-builder))
+;; considering the issue of modulality, we make the decision that
+;; ops-builder should not accumulate
+(define (ex-5-15-ops-builder-extra m)
+  `((print-insn-counter
+     ,(lambda ()
+        (format
+         #t "# instruction executed: ~A~%"
+         (machine-instruction-counter m))))
+    (reset-insn-counter
+     ,(lambda ()
+        (machine-reset-instruction-counter! m)))))
 
 (define (build-and-execute controller-text reg-bindings)
   (build-and-execute-with
    controller-text
    reg-bindings
-   ex-5-15-ops-builder))
+   (ops-builder-union
+    ex-5-15-ops-builder-extra
+    default-ops-builder)))
