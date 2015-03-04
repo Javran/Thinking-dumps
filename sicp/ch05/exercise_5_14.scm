@@ -9,8 +9,9 @@
 
 (load "figure_5_11.scm")
 
-(let ((m (ctl->machine
-          fac-machine-controller)))
+(let ((m (ctl-ops->machine
+          fac-machine-controller
+          default-ops-builder)))
   (let loop ((n 2))
     (if (<= n 10)
         (begin

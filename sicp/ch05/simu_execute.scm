@@ -5,7 +5,6 @@
 ;;    used when it is necessary to restart the machine with different
 ;;    register value settings)
 ;;   * ctl-ops->machine
-;;   * ctl->machine
 ;;
 ;; * build with an optional register inital value table
 ;;   (does everything)
@@ -74,13 +73,20 @@
     (assemble insns m)
     m))
 
-;; same as ctl-ops->machine
-;; but using default-ops-builder
-(define (ctl->machine
-         controller-text)
-  (ctl-ops->machine
-   controller-text
-   default-ops-builder))
+;; There was a function called "ctl->machine"
+;; which is the same as "ctl-ops->machine"
+;; with "ops-builder" set to "default-ops-builder"
+;; I removed it because it has rare usage.
+;; More importantly, we want to make sure the usage of "default-ops-builder"
+;; being limited in this module, or otherwise people like
+;; me would start to think it's more convenient to overwrite "default-ops-builder"
+;; rather than rewriting multiple functions to do their job.
+;; The design should be:
+;; * provide ONLY ONE interface that uses default value
+;;   and leave other functions as flexible as possible.
+;; * the default value / config should be
+;;   used for users to bootstrap their customization,
+;;   rather than being rewritten.
 
 ;; build a machine with insns assembled,
 ;; registers assigned according to the table,

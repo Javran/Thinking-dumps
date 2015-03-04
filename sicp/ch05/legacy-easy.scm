@@ -91,12 +91,6 @@
              insns)))
     m))
 
-(define (ctl->machine
-         controller-text)
-  (ctl-ops->machine
-   controller-text
-   default-primitive-list))
-
 (define (initialize-registers! m reg-bindings)
   (for-each
    (lambda (pair)
