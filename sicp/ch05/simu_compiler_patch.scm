@@ -7,12 +7,13 @@
 ;; instead of using the offered default-ops-builder,
 ;; let's create our own, just for running compiled code.
 (define machine-ops-builder
-  (lambda (m)
-    `(
-      ,@(map to-machine-prim-entry primitive-operations)
-      (error ,(lambda args
-                (apply error args)))
-      ,@(default-ops-builder m))))
+  (ops-builder-union
+   (lambda (m)
+     `(
+       ,@(map to-machine-prim-entry primitive-operations)
+       (error ,(lambda args
+                 (apply error args)))))
+   default-ops-builder))
 
 ;; compile the expression
 ;; and run it on the machine

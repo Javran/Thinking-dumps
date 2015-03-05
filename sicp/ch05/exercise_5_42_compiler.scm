@@ -20,20 +20,21 @@
          ;; operation
          (set-delete 'get-global-environment
                      primitive-operations)))
-    (lambda (m)
-      `(
-        ;; lift "liftable" primitives
-        ,@(map to-machine-prim-entry liftable-prims)
-        ;; for this operation, we need to access an extra
-        ;; field from the machine itself.
-        ;; (we can also do this by keeping a register
-        ;; which the compiler can never written to)
-        (get-global-environment
-         ,(lambda ()
-            (machine-extra-get m 'global-env 'error)))
-        (error ,(lambda args
-                  (apply error args)))
-        ,@(default-ops-builder m)))))
+    (ops-builder-union
+     (lambda (m)
+       `(
+         ;; lift "liftable" primitives
+         ,@(map to-machine-prim-entry liftable-prims)
+         ;; for this operation, we need to access an extra
+         ;; field from the machine itself.
+         ;; (we can also do this by keeping a register
+         ;; which the compiler can never written to)
+         (get-global-environment
+          ,(lambda ()
+             (machine-extra-get m 'global-env 'error)))
+         (error ,(lambda args
+                   (apply error args)))))
+     default-ops-builder)))
 
 (define (compile-and-run-with-env exp env)
   (let* ((compiled (compile-and-check exp))
