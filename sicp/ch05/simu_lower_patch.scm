@@ -97,7 +97,7 @@
    (add1
     (machine-pointer-get data))))
 
-(define default-ops-builder
+(define (lower-ops-builder-extra m)
   ;; all primitives will be applied directly
   ;; using the value stored either in registers
   ;; or in a constant expression.
@@ -110,37 +110,42 @@
   ;; since they are storing vectors rather than regular data
   ;; and these two primitives deal with machine-pointers,
   ;; which we need to extract the actual "addresses"
-  ;; (i.e. the integers stored) from then.
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `((vector-ref
-         ,(lambda (vec ptr)
-            (vector-ref vec (machine-pointer-get ptr))))
-        (vector-set!
-         ,(lambda (vec ptr val)
-            (vector-set! vec (machine-pointer-get ptr) val)))
-        ;; convert an integer into a pointer
-        (to-ptr ,machine-pointer)
-        ;; increase a pointer
-        (ptr-inc ,machine-pointer-inc)
-        ;; to test if the data under machine representation
-        ;; is a pair is to test if the data is actually a machine-pointer
-        (pair? ,machine-pointer?)
-        (ptr=? ,machine-pointer=?)
-        ;; some predicates can be lift costless.
-        (null? ,null?)
-        (number? ,number?)
-        (symbol? ,symbol?)
-        (char? ,char?)
-        (string? ,string?)
-        ;; "debug-print" prints operands separated by spaces
-        (debug-print ,(lambda args
-                        (for-each
-                         (lambda (x)
-                           (display x) (display " "))
-                         args)
-                        (newline)))
-        ,@(old-builder m)))))
+  ;; (i.e. the integers stored) from.
+  `((vector-ref
+     ,(lambda (vec ptr)
+        (vector-ref vec (machine-pointer-get ptr))))
+    (vector-set!
+     ,(lambda (vec ptr val)
+        (vector-set! vec (machine-pointer-get ptr) val)))
+    ;; convert an integer into a pointer
+    (to-ptr ,machine-pointer)
+    ;; increase a pointer
+    (ptr-inc ,machine-pointer-inc)
+    ;; to test if the data under machine representation
+    ;; is a pair is to test if the data is actually a machine-pointer
+    (pair? ,machine-pointer?)
+    (ptr=? ,machine-pointer=?)
+    ;; some predicates can be lift costless.
+    (null? ,null?)
+    (number? ,number?)
+    (symbol? ,symbol?)
+    (char? ,char?)
+    (string? ,string?)
+    ;; "debug-print" prints operands separated by spaces
+    (debug-print ,(lambda args
+                    (for-each
+                     (lambda (x)
+                       (display x) (display " "))
+                     args)
+                    (newline)))))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   (ops-builder-union
+    lower-ops-builder-extra
+    default-ops-builder)))
 
 (define machine-memory-size 65536)
 
