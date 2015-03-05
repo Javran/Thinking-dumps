@@ -9,22 +9,27 @@
 (define machine-gc-broken-heart
   (gensym))
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `((broken-heart? ,(lambda (sym)
-                          (eq? sym machine-gc-broken-heart)))
-        (debug-gc-start ,(lambda ()
-                           (out "GC triggered")))
-        (debug-gc-end ,(lambda ()
-                         (format
-                          #t
-                          "GC done (~A/~A live cells)~%"
-                          (machine-pointer-get
-                           (machine-reg-get m 'free))
-                          machine-memory-size)))
-        ,@(del-assoc 'initialize-stack
-                     (old-builder m))))))
+(define (gc-ops-builder-extra m)
+  `((broken-heart? ,(lambda (sym)
+                      (eq? sym machine-gc-broken-heart)))
+    (debug-gc-start ,(lambda ()
+                       (out "GC triggered")))
+    (debug-gc-end ,(lambda ()
+                     (format
+                      #t
+                      "GC done (~A/~A live cells)~%"
+                      (machine-pointer-get
+                       (machine-reg-get m 'free))
+                      machine-memory-size)))))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   (ops-builder-union
+    gc-ops-builder-extra
+    lower-ops-builder-extra
+    default-ops-builder)))
 
 (define machine-memory-size 512)
 
