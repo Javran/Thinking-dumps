@@ -11,9 +11,12 @@
 ;; too more complicated than expected. So I go back to
 ;; the suggested approach instead.
 
-(let ((m (build-and-execute
+(let ((m (build-and-execute-with
           test-controller
-          '())))
+          '()
+          (ops-builder-union
+           ex-5-18-ops-builder-extra
+           default-ops-builder))))
   (out "done"))
 
 (end-script)

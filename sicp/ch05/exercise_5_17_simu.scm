@@ -16,7 +16,10 @@
             (perform (op print-insn-counter))
             )
           '((n 5))
-          default-ops-builder)))
+          (ops-builder-union
+           ex-5-15-ops-builder-extra
+           ex-5-16-ops-builder-extra
+           default-ops-builder))))
   (machine-trace-on! m)
   (machine-fresh-start! m)
   (out (machine-instruction-counter m))

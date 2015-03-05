@@ -9,7 +9,10 @@
 (let ((m (build-with
           fib-machine-controller
           '((n 2))
-          default-ops-builder)))
+          (ops-builder-union
+           ex-5-15-ops-builder-extra
+           ex-5-16-ops-builder-extra
+           default-ops-builder))))
   (machine-trace-on! m)
   ;; the breakpoint is set on the 2nd instruction
   ;; after "fib-loop" label, which is "(branch (label immediate-answer))"

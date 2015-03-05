@@ -35,15 +35,10 @@
          callback
          #f))))
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `((trace-reg-on
-         ,(lambda (name)
-            (machine-register-set-trace! m name #t)))
-        (trace-reg-off
-         ,(lambda (name)
-            (machine-register-set-trace! m name #f)))
-        ,@(old-builder m)))))
-
-
+(define (ex-5-18-ops-builder-extra m)
+  `((trace-reg-on
+     ,(lambda (name)
+        (machine-register-set-trace! m name #t)))
+    (trace-reg-off
+     ,(lambda (name)
+        (machine-register-set-trace! m name #f)))))
