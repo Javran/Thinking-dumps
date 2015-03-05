@@ -156,7 +156,7 @@
 ;; fix this in all ch05 exercises!
 ;; TODO: checklist:
 ;; * exercises: 23,24,42
-;; * patches: compiler,ec,gc,lower,lower_fast
+;; * patches: compiler,ec,gc
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)
