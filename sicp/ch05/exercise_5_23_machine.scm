@@ -1,14 +1,22 @@
 ;; modifications on the machine
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      `(,(to-machine-prim-entry 'cond->if)
-        ,(to-machine-prim-entry 'let->combination)
-        ,(to-machine-prim-entry 'normalize-define)
-        (cond? ,(list-tagged-with 'cond))
-        (let? ,(list-tagged-with 'let))
-        ,@(old-builder m)))))
+(define (ex-5-23-ops-builder-extra m)
+  `(,(to-machine-prim-entry 'cond->if)
+    ,(to-machine-prim-entry 'let->combination)
+    ,(to-machine-prim-entry 'normalize-define)
+    (cond? ,(list-tagged-with 'cond))
+    (let? ,(list-tagged-with 'let))))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   (ops-builder-union
+    ex-5-23-ops-builder-extra
+    (ec-ops-builder-modifier
+     (ops-builder-union
+      monitor-patch-ops-builder-extra
+      default-ops-builder)))))
 
 (define evaluator-insns
   '(

@@ -1,23 +1,30 @@
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      ;; preserving the modifications we have for
-      ;; "let" and "define"
-      `(,(to-machine-prim-entry 'let->combination)
-        ,(to-machine-prim-entry 'normalize-define)
-        (cond? ,(list-tagged-with 'cond))
-        (let? ,(list-tagged-with 'let))
+(define (ex-5-24-ops-builder-extra m)
+  ;; preserving the modifications we have for
+  ;; "let" and "define"
+  `(,(to-machine-prim-entry 'let->combination)
+    ,(to-machine-prim-entry 'normalize-define)
+    (cond? ,(list-tagged-with 'cond))
+    (let? ,(list-tagged-with 'let))
 
-        ,(to-machine-prim-entry 'cond-clauses)
-        ,(to-machine-prim-entry 'first-clause)
-        ,(to-machine-prim-entry 'rest-clauses)
-        ,(to-machine-prim-entry 'clause-cond)
-        ,(to-machine-prim-entry 'clause-actions)
-        ,(to-machine-prim-entry 'single-clause?)
-        ,(to-machine-prim-entry 'null?)
-        ,(to-machine-prim-entry 'eq?)
+    ,(to-machine-prim-entry 'cond-clauses)
+    ,(to-machine-prim-entry 'first-clause)
+    ,(to-machine-prim-entry 'rest-clauses)
+    ,(to-machine-prim-entry 'clause-cond)
+    ,(to-machine-prim-entry 'clause-actions)
+    ,(to-machine-prim-entry 'single-clause?)
+    ,(to-machine-prim-entry 'null?)
+    ,(to-machine-prim-entry 'eq?)))
 
-        ,@(old-builder m)))))
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   (ops-builder-union
+    ex-5-24-ops-builder-extra
+    (ec-ops-builder-modifier
+     (ops-builder-union
+      monitor-patch-ops-builder-extra
+      default-ops-builder)))))
 
 ;; based on exercise 5.23
 (define evaluator-insns

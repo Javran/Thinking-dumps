@@ -155,8 +155,8 @@
 ;; TODO: there should only be one universal "default-ops-builder"
 ;; fix this in all ch05 exercises!
 ;; TODO: checklist:
-;; * exercises: 23,24,42
-;; * patches: compiler,ec
+;; * exercises: 42
+;; * patches: compiler
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)
