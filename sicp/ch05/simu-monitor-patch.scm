@@ -80,24 +80,24 @@
          (cons key (stack-meta-get st key)))
        '(number-pushes max-depth)))
 
-(define default-ops-builder
-  (let ((old-builder default-ops-builder))
-    (lambda (m)
-      (let* ((old-ops (old-builder m)))
-        `(
-          (print-stack-statistics
-           ,(lambda ()
-              (stack-print-statistics
-               (machine-stack m))))
-          (initialize-stack
-           ,(lambda ()
-              (stack-initialize!
-               (machine-stack m))))
-          ;; we usually use "assoc" to lookup primitives
-          ;; which means if "initialize-stack" or something
-          ;; exists in the old operations,
-          ;; they will be shadowed.
-          ,@old-ops)))))
+(define (monitor-patch-ops-builder-extra m)
+  `((print-stack-statistics
+     ,(lambda ()
+        (stack-print-statistics
+         (machine-stack m))))
+    (initialize-stack
+     ,(lambda ()
+        (stack-initialize!
+         (machine-stack m))))))
+
+(define (build-and-execute controller-text reg-bindings)
+  (build-and-execute-with
+   controller-text
+   reg-bindings
+   (ops-builder-union
+    ;; shadowing the default "initialize-stack"
+    monitor-patch-ops-builder-extra
+    default-ops-builder)))
 
 (define (machine-fresh-start! m)
   (stack-initialize! (machine-stack m))

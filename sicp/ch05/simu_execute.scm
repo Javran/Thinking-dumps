@@ -155,9 +155,8 @@
 ;; TODO: there should only be one universal "default-ops-builder"
 ;; fix this in all ch05 exercises!
 ;; TODO: checklist:
-;; * exercises: 19,23,24,42
-;; * patches
-;; * corresponding problem in legacy module
+;; * exercises: 23,24,42
+;; * patches: compiler,ec,gc,lower,lower_fast
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)

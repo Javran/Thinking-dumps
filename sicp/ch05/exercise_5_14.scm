@@ -47,12 +47,14 @@
 (build-and-execute-with
  controller-text
  '((n 2))
- (lambda (m)
-   `((printn ,(lambda ()
-                (format
-                 #t "n = ~A~%"
-                 (machine-reg-get m 'n))))
-     ,@(default-ops-builder m))))
+ (ops-builder-union
+  (lambda (m)
+    `((printn ,(lambda ()
+                 (format
+                  #t "n = ~A~%"
+                  (machine-reg-get m 'n))))))
+  monitor-patch-ops-builder-extra
+  default-ops-builder))
 
 ;; see "./exercise_5_14.md" for results
 
