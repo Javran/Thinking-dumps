@@ -151,12 +151,8 @@
 
 ;; NOTE: consider using it with functions like "build-and-execute-with"
 ;; instead of overwriting it and just runing the "build-and-execute"
-;; I know I've done it wrongly for a long time.
-;; TODO: there should only be one universal "default-ops-builder"
-;; fix this in all ch05 exercises!
-;; TODO: checklist:
-;; * exercises: 42
-;; * patches: compiler
+;; Previously I made it wrong by rewriting it every time, so I really worry about
+;; what's inside "default-ops-builder" since I just keep "set! cons"-ing to it.
 (define default-ops-builder
   (lambda (m)
     `( (+ ,+)
