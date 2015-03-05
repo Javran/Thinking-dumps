@@ -9,7 +9,9 @@
 (let ((m (build-with
           test-tracing-controller
           '((n 5))
-          default-ops-builder)))
+          (ops-builder-union
+           ex-5-16-ops-builder-extra
+           default-ops-builder))))
   (machine-trace-on! m)
   (machine-fresh-start! m))
 
