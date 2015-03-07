@@ -80,6 +80,12 @@
   test-exps))
 
 ;; TODO: try nested-lambda as the exercise suggests
+(define nest-exp-example
+  `(let ((x 3) (y 4))
+     (lambda (a b c d e)
+       (let ((y (* a b x))
+             (z (+ c d x)))
+         (* x y z)))))
 
 (end-script)
 
