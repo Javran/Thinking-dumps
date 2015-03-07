@@ -81,11 +81,12 @@
 
 ;; TODO: try nested-lambda as the exercise suggests
 (define nest-exp-example
-  `(let ((x 3) (y 4))
-     (lambda (a b c d e)
-       (let ((y (* a b x))
-             (z (+ c d x)))
-         (* x y z)))))
+  `((let ((x 3) (y 4))
+      (lambda (a b c d e)
+        (let ((y (* a b x))
+              (z (+ c d x)))
+          (* x y z))))
+    10 20 30 40 50))
 
 (end-script)
 
