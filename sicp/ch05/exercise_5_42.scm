@@ -79,14 +79,21 @@
          (loop (+ i 1) (+ acc i))))
   test-exps))
 
-;; TODO: try nested-lambda as the exercise suggests
 (define nest-exp-example
   `((let ((x 3) (y 4))
       (lambda (a b c d e)
-        (let ((y (* a b x))
-              (z (+ c d x)))
+        ;; a=10, b=20, c=30, d=40, e=50
+        (let ((y
+               ;; y = 10*20*3 = 600
+               (* a b x))
+              (z
+               ;; z = 30+40+3 = 73
+               (+ c d x)))
+          ;; x*y*z = 3*600*73 = 131400
           (* x y z))))
     10 20 30 40 50))
+
+(assert (= 131400 (compile-and-run nest-exp-example)))
 
 (end-script)
 
