@@ -35,6 +35,7 @@
   (lambda (l)
     (and
      (pair? l)
+     (list? l)
      (eq? (car l) tag))))
 
 (define (tagged-list? exp tag)
