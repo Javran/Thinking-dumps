@@ -27,9 +27,6 @@
 ;; in the back of the frame, you need to lookup variables from right-to-left
 ;; to make variable-shadowing work correctly).
 
-;; TODO: (optional) maybe I'll try to do this backward-inserting implementation
-;; and see if it works
-
 ;; However, if we allow only the top-level definitions,
 ;; our lexical addressing strategy will still work.
 ;; The important point here is that: if the program is correct,
