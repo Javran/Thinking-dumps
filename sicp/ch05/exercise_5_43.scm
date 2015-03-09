@@ -28,6 +28,30 @@
 ;; in the procedure body
 ;; TODO: I think we can do something recursive
 ;; to go into deeper internal definitions
+
+;; to make an almost-correct local definition
+;; eliminator, we basically need an sexp to sexp
+;; transformer for each form of s-exp:
+;; * self-evaluating?
+;; * quoted?
+;; * variable?
+;; * assignment?
+;; * definition?
+;; * if?
+;; * lambda?
+;; * begin?
+;; * cond?
+;; * let? (derived form)
+;; * application?
+;; we shouldn't assume the derived form is expanded,
+;; as the transformation might introduce s-expressions in derived
+;; form which would require expansion.
+
+;; I think it's a good idea to make explicit the idea that
+;; the abstract syntax tree is a functor.
+(define (map-sexp f exp)
+  'todo)
+
 (define (scan-out-defines p-body)
   ;; p-body is a sequence of expression
   (define internal-definition

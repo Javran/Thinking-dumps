@@ -25,7 +25,7 @@
       `(set! ,(definition-variable exp)
              ,(definition-value    exp))
       exp))
-  `(let 
+  `(let
      ; generate var-unassigned pairs
      ,(map (lambda (var)
              `(,var '*unassigned*))
