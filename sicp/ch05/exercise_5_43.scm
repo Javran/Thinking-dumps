@@ -48,6 +48,11 @@
 ;; as the transformation might introduce s-expressions in derived
 ;; form which would require expansion.
 
+;; TODO: scan-and-transform approach needs 2 traversals
+;; but I think only one is necessary
+;; before we try to do this traversal-fusion,
+;; let's first have a correct implementation
+
 (define (transform-sexp exp)
   ;; invariant:
   ;; * the inner-expressions are always transformed before
@@ -87,6 +92,13 @@
     ;; here we need to:
     ;; * scan exposed definitions
     ;; * eliminate them
+    ;; we can do things in one traversal:
+    ;; * scan definition, if something like "(define ...)"
+    ;;   is found, change it to "(set! ...)" and put the variable
+    ;;   somewhere
+    ;;   this function will have type: SExp -> (Set Var, SExp)
+    ;; * after this is done, wrap the subexpression with a "let"
+    ;;   to include local variables
     (error 'todo))
    ((begin? exp)
     ;; (begin <exp> ...)
