@@ -180,7 +180,7 @@
             (cdr scan-result))
            (transformed-body2
             `(let ,(map (lambda (var)
-                          `(var '*unassigned*))
+                          `(,var '*unassigned*))
                         local-defs)
                ,(transform-sexp transformed-body))))
       `(lambda ,(lambda-parameters exp)
@@ -203,6 +203,24 @@
    (else
     (error "invalid s-expression: "
            exp))))
+
+(pretty-print
+ (transform-sexp
+  `(lambda (x)
+     (begin
+       (define y 1)
+       (define z 2)
+       (if (= x 0)
+           (begin
+             (define a 10)
+             (+ x a))
+           (begin
+             (define b 320)
+             ;; TODO: local function definition results
+             ;; in infinite loop...
+             ;;(define (f x y)
+             ;;  (+ x y))
+             (f (* x 3 b) 20)))))))
 
 (define (scan-out-defines p-body)
   ;; p-body is a sequence of expression
