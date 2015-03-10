@@ -56,6 +56,15 @@
 
 ;; SExp -> (Set Var, SExp)
 (define (scan-definitions-and-transform exp)
+  (define (scan-and-transform-exps exps)
+    (let* ((scan-results
+            (map scan-definitions-and-transform exps))
+           (result-sets
+            (map car scan-results))
+           (transformed-exps
+            (map cdr scan-results)))
+      (cons (fold-right set-union '() result-sets)
+            transformed-exps)))
   (cond
    ((or (self-evaluating? exp)
         (quoted? exp)
@@ -85,24 +94,24 @@
     ;; since the accessor assigns a value
     ;; when there is no alternative expression
     ;; the assumed syntax here is safe
-    (let ((scan-resultp (scan-definitions-and-transform
-                         (if-predicate exp)))
-          (scan-resultc (scan-definitions-and-transform
-                         (if-consequent exp)))
-          (scan-resulta (scan-definitions-and-transform
-                         (if-alternative exp))))
-      (cons (set-union (car scan-resultp)
-                       (set-union (car scan-resultc)
-                                  (car scan-resulta)))
-            `(if ,(cdr scan-resultp)
-                 ,(cdr scan-resultc)
-                 ,(cdr scan-resulta)))))
+    (let ((scan-result
+           ;; (cdr exp) => (<pred> <cons> <alt>)
+           (scan-and-transform-exps (cdr exp))))
+      (cons (car scan-result)
+            `(if ,@(cdr scan-result)))))
    ((lambda? exp)
-    (error 'todo))
+    ;; this is the tricky part: lambda is the definition boundary
+    ;; we will perform the transformation inside, but passing
+    ;; the empty set of defintions out.
+    ;; this loop can be terminated
+    ;; because this lambda-expression will be structurally smaller
+    (cons '()
+          (transform-sexp exp)))
    ((begin? exp)
-    `(begin ,@(map
-               transform-sexp
-               (begin-actions exp))))
+    (let ((scan-result
+           (scan-and-transform-exps (begin-actions exp))))
+      (cons (car scan-result)
+            `(begin ,@(cdr scan-result)))))
    ((cond? exp)
     ;; desugar it
     (scan-definitions-and-transform (cond->if exp)))
@@ -110,7 +119,7 @@
     ;; desugar it
     (scan-definitions-and-transform (let->combination exp)))
    ((application? exp)
-    (error 'todo))
+    (scan-and-transform-exps exp))
    (else
     (error "invalid s-expression: "
            exp))))
