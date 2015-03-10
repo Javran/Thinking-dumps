@@ -54,9 +54,7 @@
 ;; before we try to do this traversal-fusion,
 ;; let's first have a correct implementation
 
-;; SExp -> (Set Var, SExp)
-(define (scan-definitions-and-transform exp)
-  (define (scan-and-transform-exps exps)
+(define (scan-and-transform-exps exps)
     (let* ((scan-results
             (map scan-definitions-and-transform exps))
            (result-sets
@@ -65,6 +63,9 @@
             (map cdr scan-results)))
       (cons (fold-right set-union '() result-sets)
             transformed-exps)))
+
+;; SExp -> (Set Var, SExp)
+(define (scan-definitions-and-transform exp)
   (cond
    ((or (self-evaluating? exp)
         (quoted? exp)
@@ -126,6 +127,7 @@
 
 
 (define (transform-sexp exp)
+  (out "transform: " exp)
   ;; invariant:
   ;; * the inner-expressions are always transformed before
   ;;   its outer-expression
@@ -172,8 +174,7 @@
     ;; * after this is done, wrap the subexpression with a "let"
     ;;   to include local variables
     (let* ((scan-result
-            (scan-definitions-and-transform
-             `(begin ,@(lambda-body exp))))
+            (scan-and-transform-exps (lambda-body exp)))
            (local-defs
             (car scan-result))
            (transformed-body
@@ -182,7 +183,7 @@
             `(let ,(map (lambda (var)
                           `(,var '*unassigned*))
                         local-defs)
-               ,(transform-sexp transformed-body))))
+               ,@(map transform-sexp transformed-body))))
       `(lambda ,(lambda-parameters exp)
          ,transformed-body2)))
    ((begin? exp)
@@ -204,6 +205,7 @@
     (error "invalid s-expression: "
            exp))))
 
+;; TODO: need some unit tests to figure it out..
 (pretty-print
  (transform-sexp
   `(lambda (x)
@@ -218,8 +220,8 @@
              (define b 320)
              ;; TODO: local function definition results
              ;; in infinite loop...
-             ;;(define (f x y)
-             ;;  (+ x y))
+             (define (f x y)
+               (+ x y))
              (f (* x 3 b) 20)))))))
 
 (define (scan-out-defines p-body)
