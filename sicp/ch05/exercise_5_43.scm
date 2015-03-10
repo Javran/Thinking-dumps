@@ -171,7 +171,20 @@
     ;;   this function will have type: SExp -> (Set Var, SExp)
     ;; * after this is done, wrap the subexpression with a "let"
     ;;   to include local variables
-    (error 'todo))
+    (let* ((scan-result
+            (scan-definitions-and-transform
+             `(begin ,@(lambda-body exp))))
+           (local-defs
+            (car scan-result))
+           (transformed-body
+            (cdr scan-result))
+           (transformed-body2
+            `(let ,(map (lambda (var)
+                          `(var '*unassigned*))
+                        local-defs)
+               ,(transform-sexp transformed-body))))
+      `(lambda ,(lambda-parameters exp)
+         ,transformed-body2)))
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map
