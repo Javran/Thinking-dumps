@@ -4,6 +4,7 @@
 (load "simu_utils.scm")
 (load "ec-prim.scm")
 (load "exercise_5_23_common.scm")
+(load "set.scm")
 
 #|
 ;; what happens when we have the following expression:
@@ -52,6 +53,68 @@
 ;; but I think only one is necessary
 ;; before we try to do this traversal-fusion,
 ;; let's first have a correct implementation
+
+;; SExp -> (Set Var, SExp)
+(define (scan-definitions-and-transform exp)
+  (cond
+   ((or (self-evaluating? exp)
+        (quoted? exp)
+        (variable? exp))
+    ;; no new definition, keep original expression
+    (cons '() exp))
+   ((assignment? exp)
+    ;; (set! <var> <exp>)
+    (let ((scan-result (scan-definitions-and-transform
+                        (assignment-value exp))))
+      ;; pass inner definitions, create transformed expression
+      (cons (car scan-result)
+            `(set! ,(assignment-variable exp)
+                   ,(cdr scan-result)))))
+   ((definition? exp)
+    (let ((exp (normalize-define exp)))
+      ;; one local definition detected
+      (let ((scan-result (scan-definitions-and-transform
+                          (definition-value exp))))
+        (cons (set-insert (definition-variable exp)
+                          (car scan-result))
+              ;; definition translated into assignment
+              `(set! ,(definition-variable exp)
+                     ,(cdr scan-result))))))
+   ((if? exp)
+    ;; (if <pred> <cons> <alt>)
+    ;; since the accessor assigns a value
+    ;; when there is no alternative expression
+    ;; the assumed syntax here is safe
+    (let ((scan-resultp (scan-definitions-and-transform
+                         (if-predicate exp)))
+          (scan-resultc (scan-definitions-and-transform
+                         (if-consequent exp)))
+          (scan-resulta (scan-definitions-and-transform
+                         (if-alternative exp))))
+      (cons (set-union (car scan-resultp)
+                       (set-union (car scan-resultc)
+                                  (car scan-resulta)))
+            `(if ,(cdr scan-resultp)
+                 ,(cdr scan-resultc)
+                 ,(cdr scan-resulta)))))
+   ((lambda? exp)
+    (error 'todo))
+   ((begin? exp)
+    `(begin ,@(map
+               transform-sexp
+               (begin-actions exp))))
+   ((cond? exp)
+    ;; desugar it
+    (scan-definitions-and-transform (cond->if exp)))
+   ((let? exp)
+    ;; desugar it
+    (scan-definitions-and-transform (let->combination exp)))
+   ((application? exp)
+    (error 'todo))
+   (else
+    (error "invalid s-expression: "
+           exp))))
+
 
 (define (transform-sexp exp)
   ;; invariant:
