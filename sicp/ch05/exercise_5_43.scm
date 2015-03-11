@@ -39,7 +39,15 @@
              #t
              args))
 
-(assert
+(pretty-print
+ (cdr
+  (scan-definitions-and-transform
+   '(let ()
+      (define x 1)
+      (define y 2)
+      (+ x y)))))
+
+#;(assert
  (andf
   (map
    check-scan-consistency
@@ -48,6 +56,11 @@
      'a
      (let ()
        1)
+     (let ()
+       (define x 10)
+       (define y 20)
+       (define k (+ 2 x))
+       (+ k x y))
      ;; complex one
      (begin
        ;; definition/variable
@@ -91,12 +104,6 @@
                 (* x 3 b)))))
       200)
      ))))
-
-(pretty-print
- (scan-definitions-and-transform
-  '(lambda ()
-     (let ()
-       '()))))
 
 #|
 ;; what happens when we have the following expression:

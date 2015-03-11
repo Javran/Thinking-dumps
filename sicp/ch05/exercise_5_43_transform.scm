@@ -1,7 +1,4 @@
 (define (transform-sexp exp)
-  (out "transforming:")
-  (pretty-print exp)
-  (newline)
   ;; invariant:
   ;; * the inner-expressions are always transformed before
   ;;   its outer-expression
@@ -47,19 +44,11 @@
     ;;   this function will have type: SExp -> (Set Var, SExp)
     ;; * after this is done, wrap the subexpression with a "let"
     ;;   to include local variables
-    (let* ((scan-result
-            (scan-and-transform-exps (lambda-body exp)))
-           (local-defs
-            (car scan-result))
-           (transformed-body
-            (cdr scan-result))
-           (transformed-body2
-            `(let ,(map (lambda (var)
-                          `(,var '*unassigned*))
-                        local-defs)
-               ,@(map transform-sexp transformed-body))))
+    (let* ((transformed-body
+            (make-exp-from-scan-result
+             (scan-and-transform-exps (lambda-body exp)))))
       `(lambda ,(lambda-parameters exp)
-         ,transformed-body2)))
+         ,@transformed-body)))
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map
