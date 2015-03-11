@@ -1,4 +1,7 @@
 (define (transform-sexp exp)
+  (out "transforming:")
+  (pretty-print exp)
+  (newline)
   ;; invariant:
   ;; * the inner-expressions are always transformed before
   ;;   its outer-expression

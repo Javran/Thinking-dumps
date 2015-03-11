@@ -9,6 +9,8 @@
 (load "exercise_5_43_scan.scm")
 (load "exercise_5_43_transform.scm")
 
+;; TODO: function names are confusing
+
 (define (make-exp-from-scan-result scan-result)
   (let* ((binding-set (car scan-result))
          (transformed-exp (cdr scan-result)))
@@ -44,6 +46,8 @@
    ;; test expressions
    '(1
      'a
+     (let ()
+       1)
      ;; complex one
      (begin
        ;; definition/variable
@@ -74,7 +78,7 @@
             (+ k (f x y y y x)))))
      ;; another example
      ;; TODO: for now it's causing infinite loop...
-     ((lambda (x)
+     #;((lambda (x)
         (begin
           (define y 1)
           (define z 2)
@@ -89,10 +93,10 @@
      ))))
 
 (pretty-print
- (make-exp-from-scan-result
-  (scan-and-transform-exps
-       ')))
-
+ (scan-definitions-and-transform
+  '(lambda ()
+     (let ()
+       '()))))
 
 #|
 ;; what happens when we have the following expression:
