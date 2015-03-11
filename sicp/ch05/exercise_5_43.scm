@@ -22,6 +22,7 @@
 (define (check-scan-consistency exp)
   (let* ((new-exp (make-exp-from-scan-result
                    (scan-definitions-and-transform exp))))
+    (pretty-print new-exp)(newline)
     (equal? (eval exp user-initial-environment)
             (eval new-exp user-initial-environment))))
 
@@ -43,7 +44,7 @@
   (scan-definitions-and-transform
    '(lambda () (define x 1) (define y 2) (+ x y)))))
 
-#;(assert
+(assert
  (andf
   (map
    check-scan-consistency

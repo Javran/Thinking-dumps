@@ -47,15 +47,19 @@
     (let* ((scan-results
             (scan-and-transform-exps (lambda-body exp)))
            (binding-set (car scan-results))
-           (transformed-exps (cdr scan-results))
-           (transformed-exp
-            `(let ,(map (lambda (var)
-                          `(,var '*unassigned*))
-                        binding-set)
-               ,@transformed-exps)))
-      ;; well, correct one does not terminate...
+           ;; the transformation is supposed to
+           ;; eliminate all (direct) local definitions,
+           ;; if this is true, then we can just transform these
+           ;; subexpression directly.
+           ;; by doing this, the recursive is guaranteed to run
+           ;; on "smaller" structure thus will be able to terminate.
+           (transformed-exps (map transform-sexp (cdr scan-results))))
       `(lambda ,(lambda-parameters exp)
-         ,(transform-sexp transformed-exp))))
+         (let ,(map (lambda (var)
+                      `(,var '*unassigned*))
+                    binding-set)
+           ,@transformed-exps))))
+
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map
