@@ -44,11 +44,18 @@
     ;;   this function will have type: SExp -> (Set Var, SExp)
     ;; * after this is done, wrap the subexpression with a "let"
     ;;   to include local variables
-    (let* ((transformed-body
-            (make-exp-from-scan-result
-             (scan-and-transform-exps (lambda-body exp)))))
+    (let* ((scan-results
+            (scan-and-transform-exps (lambda-body exp)))
+           (binding-set (car scan-results))
+           (transformed-exps (cdr scan-results))
+           (transformed-exp
+            `(let ,(map (lambda (var)
+                          `(,var '*unassigned*))
+                        binding-set)
+               ,@transformed-exps)))
+      ;; well, correct one does not terminate...
       `(lambda ,(lambda-parameters exp)
-         ,@transformed-body)))
+         ,(transform-sexp transformed-exp))))
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map

@@ -10,7 +10,6 @@
 (load "exercise_5_43_transform.scm")
 
 ;; TODO: function names are confusing
-
 (define (make-exp-from-scan-result scan-result)
   (let* ((binding-set (car scan-result))
          (transformed-exp (cdr scan-result)))
@@ -42,10 +41,7 @@
 (pretty-print
  (cdr
   (scan-definitions-and-transform
-   '(let ()
-      (define x 1)
-      (define y 2)
-      (+ x y)))))
+   '(lambda () (define x 1) (define y 2) (+ x y)))))
 
 #;(assert
  (andf

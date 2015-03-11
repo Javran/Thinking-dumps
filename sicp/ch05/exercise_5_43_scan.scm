@@ -1,3 +1,4 @@
+;; [SExp] -> (Set Var, [SExp])
 (define (scan-and-transform-exps exps)
     (let* ((scan-results
             (map scan-definitions-and-transform exps))
@@ -7,8 +8,6 @@
             (map cdr scan-results)))
       (cons (fold-right set-union '() result-sets)
             transformed-exps)))
-
-
 
 ;; SExp -> (Set Var, SExp)
 (define (scan-definitions-and-transform exp)
