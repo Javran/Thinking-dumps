@@ -21,7 +21,7 @@
 ;; test scan
 (define (check-scan-consistency exp)
   (let* ((new-exp (make-exp-from-scan-result
-                   (scan-definitions-and-transform exp))))
+                   (scan-and-transform-exp exp))))
     (pretty-print new-exp)(newline)
     (equal? (eval exp user-initial-environment)
             (eval new-exp user-initial-environment))))
@@ -41,7 +41,7 @@
 
 (pretty-print
  (cdr
-  (scan-definitions-and-transform
+  (scan-and-transform-exp
    '(lambda () (define x 1) (define y 2) (+ x y)))))
 
 (assert
@@ -152,7 +152,7 @@
 
 ;; TODO: need some unit tests to figure it out..
 #;(pretty-print
- (transform-sexp
+ (transform-exp
   `(lambda (x)
      (begin
        (define y 1)

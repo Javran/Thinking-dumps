@@ -1,4 +1,4 @@
-(define (transform-sexp exp)
+(define (transform-exp exp)
   ;; invariant:
   ;; * the inner-expressions are always transformed before
   ;;   its outer-expression
@@ -14,7 +14,7 @@
    ((assignment? exp)
     ;; (set! <var> <exp>)
     `(set! ,(assignment-variable exp)
-           ,(transform-sexp (assignment-value exp))))
+           ,(transform-exp (assignment-value exp))))
    ((definition? exp)
     ;; We are not going to take two cases into account.
     ;; Instead, we "normalize" the definition so we are sure to
@@ -24,15 +24,15 @@
       ;; overwritten exp shadowing the original one
       `(define
          ,(definition-variable exp)
-         ,(transform-sexp (definition-value exp)))))
+         ,(transform-exp (definition-value exp)))))
    ((if? exp)
     ;; (if <pred> <cons> <alt>)
     ;; since the accessor assigns a value
     ;; when there is no alternative expression
     ;; the assumed syntax here is safe
-    `(if ,(transform-sexp (if-predicate exp))
-         ,(transform-sexp (if-consequent exp))
-         ,(transform-sexp (if-alternative exp))))
+    `(if ,(transform-exp (if-predicate exp))
+         ,(transform-exp (if-consequent exp))
+         ,(transform-exp (if-alternative exp))))
    ((lambda? exp)
     ;; here we need to:
     ;; * scan exposed definitions
@@ -53,7 +53,7 @@
            ;; subexpression directly.
            ;; by doing this, the recursive is guaranteed to run
            ;; on "smaller" structure thus will be able to terminate.
-           (transformed-exps (map transform-sexp (cdr scan-results))))
+           (transformed-exps (map transform-exp (cdr scan-results))))
       `(lambda ,(lambda-parameters exp)
          (let ,(map (lambda (var)
                       `(,var '*unassigned*))
@@ -63,18 +63,18 @@
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map
-               transform-sexp
+               transform-exp
                (begin-actions exp))))
    ((cond? exp)
     ;; well, let's desugar it
-    (transform-sexp (cond->if exp)))
+    (transform-exp (cond->if exp)))
    ((let? exp)
     ;; well, let's desugar it
-    (transform-sexp (let->combination exp)))
+    (transform-exp (let->combination exp)))
    ((application? exp)
     ;; (<exp1> <exp2s> ...)
-    `(,(transform-sexp (operator exp))
-      ,@(map transform-sexp (operands exp))))
+    `(,(transform-exp (operator exp))
+      ,@(map transform-exp (operands exp))))
    (else
     (error "invalid s-expression: "
            exp))))

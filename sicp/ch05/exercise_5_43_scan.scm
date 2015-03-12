@@ -1,16 +1,11 @@
-;; [SExp] -> (Set Var, [SExp])
-(define (scan-and-transform-exps exps)
-    (let* ((scan-results
-            (map scan-definitions-and-transform exps))
-           (result-sets
-            (map car scan-results))
-           (transformed-exps
-            (map cdr scan-results)))
-      (cons (fold-right set-union '() result-sets)
-            transformed-exps)))
+;; this module includes "scan and tranform" functionality
 
+;; scans all accessible
+;; locally-defined variables from the expression
+;; and transforms inner subexpressions
+;; into a local-definition-free form
 ;; SExp -> (Set Var, SExp)
-(define (scan-definitions-and-transform exp)
+(define (scan-and-transform-exp exp)
   (cond
    ((or (self-evaluating? exp)
         (quoted? exp)
@@ -19,7 +14,7 @@
     (cons '() exp))
    ((assignment? exp)
     ;; (set! <var> <exp>)
-    (let ((scan-result (scan-definitions-and-transform
+    (let ((scan-result (scan-and-transform-exp
                         (assignment-value exp))))
       ;; pass inner definitions, create transformed expression
       (cons (car scan-result)
@@ -28,7 +23,7 @@
    ((definition? exp)
     (let ((exp (normalize-define exp)))
       ;; one local definition detected
-      (let ((scan-result (scan-definitions-and-transform
+      (let ((scan-result (scan-and-transform-exp
                           (definition-value exp))))
         (cons (set-insert (definition-variable exp)
                           (car scan-result))
@@ -52,7 +47,7 @@
     ;; this loop can be terminated
     ;; because this lambda-expression will be structurally smaller
     (cons '()
-          (transform-sexp exp)))
+          (transform-exp exp)))
    ((begin? exp)
     (let ((scan-result
            (scan-and-transform-exps (begin-actions exp))))
@@ -60,12 +55,25 @@
             `(begin ,@(cdr scan-result)))))
    ((cond? exp)
     ;; desugar it
-    (scan-definitions-and-transform (cond->if exp)))
+    (scan-and-transform-exp (cond->if exp)))
    ((let? exp)
     ;; desugar it
-    (scan-definitions-and-transform (let->combination exp)))
+    (scan-and-transform-exp (let->combination exp)))
    ((application? exp)
     (scan-and-transform-exps exp))
    (else
     (error "invalid s-expression: "
            exp))))
+
+;; the same as "scan-and-transform-exp", but for a list
+;; of expressions, local variable sets are unioned together.
+;; [SExp] -> (Set Var, [SExp])
+(define (scan-and-transform-exps exps)
+    (let* ((scan-results
+            (map scan-and-transform-exp exps))
+           (result-sets
+            (map car scan-results))
+           (transformed-exps
+            (map cdr scan-results)))
+      (cons (fold-right set-union '() result-sets)
+            transformed-exps)))
