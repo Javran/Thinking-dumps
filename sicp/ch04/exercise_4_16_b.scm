@@ -3,9 +3,11 @@
 
 (load "./my-eval.scm")
 
-; I will only eliminate the first layer internal definition
-;   because making the transformation recursive
-;   is far beyond complicated.
+;;  I will only eliminate the first layer internal definition
+;;   because making the transformation recursive
+;;   is far beyond complicated.
+;;  update: exercise 5.43 has a better implementation
+;;  that handles local definitions nicely.
 
 (define (scan-out-defines p-body)
   (define (intern-define? exp)
