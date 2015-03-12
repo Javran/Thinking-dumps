@@ -100,15 +100,6 @@
       1234)
    ))))
 
-;; TODO: conclusion: we have to go deeper
-;; until we can reach another lambda-subexpression
-
-;; based on exercise 4.16
-;; only scans definitions directly appear
-;; in the procedure body
-;; TODO: I think we can do something recursive
-;; to go into deeper internal definitions
-
 ;; TODO: scan-and-transform approach needs 2 traversals
 ;; but I think only one is necessary
 ;; before we try to do this traversal-fusion,
