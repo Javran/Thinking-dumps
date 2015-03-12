@@ -22,7 +22,6 @@
 (define (check-scan-consistency exp)
   (let* ((new-exp (make-exp-from-scan-result
                    (scan-and-transform-exp exp))))
-    (pretty-print new-exp)(newline)
     (equal? (eval exp user-initial-environment)
             (eval new-exp user-initial-environment))))
 
@@ -39,11 +38,6 @@
              #t
              args))
 
-(pretty-print
- (cdr
-  (scan-and-transform-exp
-   '(lambda () (define x 1) (define y 2) (+ x y)))))
-
 (assert
  (andf
   (map
@@ -58,7 +52,7 @@
        (define y 20)
        (define k (+ 2 x))
        (+ k x y))
-     ;; complex one
+     ;; test for coverage
      (begin
        ;; definition/variable
        (define x 10)
@@ -86,9 +80,13 @@
           (let ()
             (define k (+ 2 x))
             (+ k (f x y y y x)))))
-     ;; another example
-     ;; TODO: for now it's causing infinite loop...
-     #;((lambda (x)
+     ;; ====
+     ((lambda ()
+        (define x 1)
+        (define y 2)
+        (+ x y)))
+     ;; ====
+     ((lambda (x)
         (begin
           (define y 1)
           (define z 2)
@@ -99,27 +97,11 @@
               (let ()
                 (define b 320)
                 (* x 3 b)))))
-      200)
-     ))))
+      1234)
+   ))))
 
-#|
-;; what happens when we have the following expression:
-(lambda (x)
-  (begin
-    (define y 1)
-    (define z 2)
-    (if (= x 0)
-        (begin
-          (define a 10)
-          (+ x a))
-        (begin
-          (define b 320)
-          (* x 3 b)))))
-
-;; TODO
-;; conclusion: we have to go deeper
+;; TODO: conclusion: we have to go deeper
 ;; until we can reach another lambda-subexpression
-|#
 
 ;; based on exercise 4.16
 ;; only scans definitions directly appear
@@ -127,47 +109,9 @@
 ;; TODO: I think we can do something recursive
 ;; to go into deeper internal definitions
 
-;; to make an almost-correct local definition
-;; eliminator, we basically need an sexp to sexp
-;; transformer for each form of s-exp:
-;; * self-evaluating?
-;; * quoted?
-;; * variable?
-;; * assignment?
-;; * definition?
-;; * if?
-;; * lambda?
-;; * begin?
-;; * cond?
-;; * let? (derived form)
-;; * application?
-;; we shouldn't assume the derived form is expanded,
-;; as the transformation might introduce s-expressions in derived
-;; form which would require expansion.
-
 ;; TODO: scan-and-transform approach needs 2 traversals
 ;; but I think only one is necessary
 ;; before we try to do this traversal-fusion,
 ;; let's first have a correct implementation
-
-;; TODO: need some unit tests to figure it out..
-#;(pretty-print
- (transform-exp
-  `(lambda (x)
-     (begin
-       (define y 1)
-       (define z 2)
-       (if (= x 0)
-           (begin
-             (define a 10)
-             (+ x a))
-           (begin
-             (define b 320)
-             ;; TODO: local function definition results
-             ;; in infinite loop...
-             (define (f x y)
-               (+ x y))
-             (f (* x 3 b) 20)))))))
-
 
 (end-script)

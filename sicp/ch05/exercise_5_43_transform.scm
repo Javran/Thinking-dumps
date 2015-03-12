@@ -53,13 +53,13 @@
            ;; subexpression directly.
            ;; by doing this, the recursive is guaranteed to run
            ;; on "smaller" structure thus will be able to terminate.
-           (transformed-exps (map transform-exp (cdr scan-results))))
+           ;; NOTE: here we no longer need to go into it .. TODO: more explanation
+           (transformed-exps (cdr scan-results)))
       `(lambda ,(lambda-parameters exp)
          (let ,(map (lambda (var)
                       `(,var '*unassigned*))
                     binding-set)
            ,@transformed-exps))))
-
    ((begin? exp)
     ;; (begin <exp> ...)
     `(begin ,@(map
@@ -72,9 +72,9 @@
     ;; well, let's desugar it
     (transform-exp (let->combination exp)))
    ((application? exp)
-    ;; (<exp1> <exp2s> ...)
-    `(,(transform-exp (operator exp))
-      ,@(map transform-exp (operands exp))))
+    ;; (<exp> ...)
+    (out "APP")
+    (map transform-exp exp))
    (else
     (error "invalid s-expression: "
            exp))))
