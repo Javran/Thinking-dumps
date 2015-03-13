@@ -100,9 +100,4 @@
       1234)
    ))))
 
-;; TODO: scan-and-transform approach needs 2 traversals
-;; but I think only one is necessary
-;; before we try to do this traversal-fusion,
-;; let's first have a correct implementation
-
 (end-script)
