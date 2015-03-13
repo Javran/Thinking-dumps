@@ -2,8 +2,8 @@
 
 ;; scans all accessible
 ;; locally-defined variables from the expression
-;; and transforms inner subexpressions
-;; into a local-definition-free form
+;; and transforms inner subexpressions (using transform-exp)
+;; into their local-definition-free forms
 ;; SExp -> (Set Var, SExp)
 (define (scan-and-transform-exp exp)
   (cond

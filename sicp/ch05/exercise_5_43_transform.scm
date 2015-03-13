@@ -21,7 +21,7 @@
     ;; deal with a normalized form later
     ;; (this makes "lambda" the only form that the transformation cares about)
     (let ((exp (normalize-define exp)))
-      ;; overwritten exp shadowing the original one
+      ;; shadowing the original definition of exp
       `(define
          ,(definition-variable exp)
          ,(transform-exp (definition-value exp)))))
@@ -34,16 +34,45 @@
          ,(transform-exp (if-consequent exp))
          ,(transform-exp (if-alternative exp))))
    ((lambda? exp)
-    ;; here we need to:
-    ;; * scan exposed definitions
-    ;; * eliminate them
-    ;; we can do things in one traversal:
-    ;; * scan definition, if something like "(define ...)"
-    ;;   is found, change it to "(set! ...)" and put the variable
-    ;;   somewhere
-    ;;   this function will have type: SExp -> (Set Var, SExp)
-    ;; * after this is done, wrap the subexpression with a "let"
-    ;;   to include local variables
+    ;; lambda-expression is the most important case
+    ;; in this transformation, as it serves as the "scope boundary"
+    ;; for local-variables. Lambda-expressions are allowed to
+    ;; have local definitions, but these local definitions lie
+    ;; in the scope of the lambda expression itself thus not lexically
+    ;; accessible from outside.
+    ;; Therefore we need to perform the following steps:
+    ;;
+    ;; 1. carefully scan the body of the lambda expression in question.
+    ;;    this scan should extra all reachable local varaibles
+    ;;    (by "reachable" I meant definitions not being inside of
+    ;;    any inner let- or lambda- expressions)
+    ;; 2. wrap the original lambda-body inside a let-binding,
+    ;;    this outer let-binding is supposed to capture all local definitions
+    ;;    found by step 1.
+    ;; 3. transfrom the inner expression - those inner lexical scopes
+    ;;    that we have ignored in step 1. (this violates the invariant we set
+    ;;    at the openning comment of this function - but we can fix that)
+    ;;
+    ;; For better efficiency, we notice that when doing the local definition scan
+    ;; we can already tell whether the expression in question forms a lexical scope.
+    ;; if the expression does not, we do the transformation;
+    ;; but nothing is done when the expression does form one - and we need a second scan
+    ;; to find these expressions again and do the transformation for them.
+    ;; Therefore, we can optimize this a little bit by allowing the local definition scanner
+    ;; to do something on the expression:
+    ;; when it hits a expression which forms a lexical scope,
+    ;; we let the scanner to call "transform-exp" on its inner expressions.
+    ;; Additionally, the scanner does one more extra thing: turns every local definition
+    ;; into an assignement. As the local definitions will be captures by an outer
+    ;; let-expression, this transformation is safe.
+    ;; The benefits will be:
+    ;;
+    ;; * the invariant is preserved: we always transform the inner expression
+    ;;   before the transformation of this outer exprssion is done.
+    ;; * now we only need to traverse the expression once, but 3 things are done, namely:
+    ;;   * local definitions are collected
+    ;;   * at the same time, these definitions are also turned into assignments
+    ;;   * inner expressions are local-definition-free transformed
     (let* ((scan-results
             (scan-and-transform-exps (lambda-body exp)))
            (binding-set (car scan-results))
@@ -53,7 +82,21 @@
            ;; subexpression directly.
            ;; by doing this, the recursive is guaranteed to run
            ;; on "smaller" structure thus will be able to terminate.
-           ;; NOTE: here we no longer need to go into it .. TODO: more explanation
+           ;;
+           ;; NOTE: here we are doing mutual recursion: "transform-exp"
+           ;; calls "scan-and-transform-exps" to collect local defitions
+           ;; and get the transformed expression, whereas "scan-and-transform-exps"
+           ;; calles "transform-exp" to help dealing with inner expression
+           ;; transformations. Extreme care needs to be taken, as I spent
+           ;; some time here figuring out why previously this was causing an infinite loop
+           ;; and finally it turned out I called "transform-exp" on the resulting
+           ;; expression returned by "scan-and-transform-exps".
+           ;; This is not necessary, as the resulting expression is guaranteed to
+           ;; be "local-definition-free". However, doing transformation on this
+           ;; resulting expression can cause some trouble, because to eliminate
+           ;; local definitions, let-expression might be introduced which desugars
+           ;; again into lambda expressions, and we suddenly need to deal with yet
+           ;; another layer of lexical scope -- as you can see, this never ends.
            (transformed-exps (cdr scan-results)))
       `(lambda ,(lambda-parameters exp)
          (let ,(map (lambda (var)
