@@ -23,6 +23,8 @@
   (map
    check-scan-consistency
    ;; test expressions
+   ;; TODO: consider merging this for compiler tests
+   ;; as well...
    '(1
      'a
      (let ()
