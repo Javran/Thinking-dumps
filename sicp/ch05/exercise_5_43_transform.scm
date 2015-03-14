@@ -116,7 +116,6 @@
     (transform-exp (let->combination exp)))
    ((application? exp)
     ;; (<exp> ...)
-    (out "APP")
     (map transform-exp exp))
    (else
     (error "invalid s-expression: "

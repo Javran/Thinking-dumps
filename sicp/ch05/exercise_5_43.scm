@@ -1,42 +1,13 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "simu_utils.scm")
-(load "ec-prim.scm")
-(load "exercise_5_23_common.scm")
-(load "set.scm")
-
-(load "exercise_5_43_scan.scm")
-(load "exercise_5_43_transform.scm")
-
-;; TODO: function names are confusing
-(define (make-exp-from-scan-result scan-result)
-  (let* ((binding-set (car scan-result))
-         (transformed-exp (cdr scan-result)))
-    `(let ,(map (lambda (var)
-                  `(,var '*unassigned*))
-                binding-set)
-       ,transformed-exp)))
+(load "exercise_5_43_common.scm")
 
 ;; test scan
 (define (check-scan-consistency exp)
-  (let* ((new-exp (make-exp-from-scan-result
-                   (scan-and-transform-exp exp))))
+  (let* ((new-exp (transform-exp exp)))
     (equal? (eval exp user-initial-environment)
             (eval new-exp user-initial-environment))))
-
-;; "and" as a function
-;; note that since "andf" is a normal function
-;; its variable will be evaluated *before* entering
-;; the function body.
-;; therefore:
-;; (and #f (error)) is fine, but
-;; (andf #f (error)) is not.
-(define (andf . args)
-  (fold-left (lambda (a b)
-               (and a b))
-             #t
-             args))
 
 (assert
  (andf
