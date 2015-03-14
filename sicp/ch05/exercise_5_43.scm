@@ -1,7 +1,16 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+(load "compiler.scm")
+(load "simu.scm")
+(load "simu_compiler_patch.scm")
+
 (load "exercise_5_43_common.scm")
+(load "exercise_5_43_compiler.scm")
+
+;; TODO: I think it's fine to always do the transformation before compiling
+;; TODO: with all local definitions eliminated, we are now ready to
+;;   apply the technique in ex 5.42.
 
 ;; test scan
 (define (check-scan-consistency exp)
@@ -69,6 +78,32 @@
                 (define b 320)
                 (* x 3 b)))))
       1234)
+     ;; ====
+     (begin
+       (define f (lambda (x)
+                   (lambda (y)
+                     (+ x x y))))
+       ((f 10) 20))
    ))))
+
+;; TODO: the transformation itself works fine,
+;; stuck in infinite loop when doing compiling
+;; I guess forms like (let () <subexps>) is likely to be the culprit
+;; a simple solution will be transform this into (begin <subexps>)
+;; since local definitions are eliminated
+;; but I hate to make special cases
+;; let's find a way to do the transformation only once
+;; TODO: will replacing "compile-and-run-with-env" or
+;; "compile-and-verify" work?
+(error "debug")
+
+(load "ec-tests.scm")
+(load "exercise_5_23_tests.scm")
+
+;; testing the compiler
+(for-each
+ (test-evaluator
+  compile-and-run-with-env)
+ test-exps)
 
 (end-script)

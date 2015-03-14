@@ -1,0 +1,32 @@
+(load "exercise_5_42_compiler.scm")
+
+(define (compile exp target linkage ctenv)
+  (let ((exp (transform-exp exp)))
+    (cond
+     ((self-evaluating? exp)
+      (compile-self-evaluating exp target linkage ctenv))
+     ((quoted? exp)
+      (compile-quoted exp target linkage ctenv))
+     ((variable? exp)
+      (compile-variable exp target linkage ctenv))
+     ((assignment? exp)
+      (compile-assignment exp target linkage ctenv))
+     ((definition? exp)
+      (compile-definition
+       (normalize-define exp)
+       target linkage ctenv))
+     ((if? exp)
+      (compile-if exp target linkage ctenv))
+     ((lambda? exp)
+      (compile-lambda exp target linkage ctenv))
+     ((begin? exp)
+      (compile-sequence
+       (begin-actions exp) target linkage ctenv))
+     ((cond? exp)
+      (compile (cond->if exp) target linkage ctenv))
+     ((let? exp)
+      (compile (let->combination exp) target linkage ctenv))
+     ((application? exp)
+      (compile-application exp target linkage ctenv))
+     (else
+      (error "Unknown expression type: COMPILE" exp)))))
