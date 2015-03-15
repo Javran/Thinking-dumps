@@ -12,10 +12,6 @@
 (load "exercise_5_23_tests.scm")
 (load "exercise_5_43_tests.scm")
 
-;; TODO: I think it's fine to always do the transformation before compiling
-;; TODO: with all local definitions eliminated, we are now ready to
-;;   apply the technique in ex 5.42.
-
 ;; the transformation is consistent if
 ;; the results of executing both the original expression
 ;; and the transformed one are always the same
