@@ -2,6 +2,8 @@
 
 ;; based on the function of same name in ex 5.42
 (define (compile-and-run-with-env exp env)
+  ;; we perform a single transformation step
+  ;; right before compilation
   (let* ((compiled (compile-and-check
                     (transform-exp
                      exp)))
