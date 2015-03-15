@@ -97,7 +97,6 @@
 ;; let's find a way to do the transformation only once
 ;; TODO: will replacing "compile-and-run-with-env" or
 ;; "compile-and-verify" work?
-(error "debug")
 
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
