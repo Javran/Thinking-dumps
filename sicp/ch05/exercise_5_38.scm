@@ -9,8 +9,10 @@
 ;; re-defining procedures which are recognized as open-code
 ;; primitives (as which has been indicated in the book's footnote)
 
+;; one way to solve this problem is described and implemented
+;; in exercise 5.44
+
 ;; for testing program, use "./exercise_5_38_tests.scm"
-(define *ex-5.38-tests* #f)
 
 (define factorial-code
   `(define (factorial n)

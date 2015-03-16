@@ -5,9 +5,26 @@
 (load "simu.scm")
 (load "simu_compiler_patch.scm")
 
-(define *ex-5.38-tests* #t)
-
 (load "exercise_5_38_compiler.scm")
+
+;; tests and also examples
+(do-test
+ transform-right
+ (list
+  ;; a regular one
+  (mat '(+ 1 2 3 4) 0
+       '(+ 1 (+ 2 (+ 3 4))))
+  ;; there are two operands already - keep unchanged
+  (mat '(* 1 2) 1
+       '(* 1 2))
+  ;; single operand - remove function call
+  (mat '(+ 1) 0
+       1)
+  ;; called with nothing - this won't usually happen
+  ;; but when it happens, we return "exp-zero"
+  ;; which should be the "zero" of the corresponding monoid
+  (mat '(+) 0
+       0)))
 
 ;; run tests on the modified compiler
 (load "ec-tests.scm")
