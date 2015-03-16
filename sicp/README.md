@@ -12,7 +12,3 @@ If you spot error messages like the following one:
 Please try to remove the leading `"./"`
 (e.g. change `(load "./something.scm")`
 to `(load "something.scm")`) and try again.
-
-TODO: change all `(load "./foo")`s into `(load "foo")`.
-should be just a batch command,
-but I hate to do it. again it's not my fault.
