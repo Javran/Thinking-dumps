@@ -13,18 +13,10 @@
 
 (compile-and-run-with-env
  '(begin
-    (define x 10)
-    x
-    (begin
-      (define y (if #t 20 40))
-      (set! y 30))
-    (define (f u v) (* u v))
-    (define t (lambda (x) x))
-    (+ (t x) (cond (#f (t y))
-                   (else (t (t y))))
-       (let ()
-         (define k (+ 2 x))
-         (+ k (f x x)))))
+    (define (f x y) (+ x y))
+    (let ()
+         (define k (+ 2 10))
+         (+ k (f 10 10))))
  (init-env))
 
 ;; testing the compiler

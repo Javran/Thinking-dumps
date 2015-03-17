@@ -65,6 +65,12 @@
                   (lambda (y)
                     (+ x x y))))
       ((f 10) 20))
+    ;; ====
+    (begin
+      (define (f x y) (+ x y))
+      (let ()
+        (define k (+ 2 10))
+        (+ k (f 10 10))))
     ))
 
 (set! test-exps
