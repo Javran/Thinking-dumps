@@ -2,8 +2,9 @@
 (load "exercise_5_43_compiler.scm")
 
 ;; open-code support from exercise 5.38
-(load "exercise_5_38_open-code.scm")
 (load "exercise_5_38_transform.scm")
+
+(load "exercise_5_44_open-code.scm")
 
 ;; open-code supports
 (set! primitive-operations
