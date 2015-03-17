@@ -11,12 +11,19 @@
 (load "exercise_5_23_tests.scm")
 (load "exercise_5_43_tests.scm")
 
+;; plan:
+;; * move implementation of ex 5.38 here
+;;   without using ctenv, and make sure it works fine
+;; * query ctenv, this time we can locally bind +/-/etc.
+;; * tests
+
 (compile-and-run-with-env
  '(begin
-    (define (f x y) (+ x y))
+    (define (f x y)
+      (+ x y))
     (let ()
-         (define k (+ 2 10))
-         (+ k (f 10 10))))
+      (define k (+ 2 10))
+      (+ k (f 10 10))))
  (init-env))
 
 ;; testing the compiler
