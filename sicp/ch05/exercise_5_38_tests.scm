@@ -51,6 +51,8 @@
       (let ()
         (define k (+ 2 10))
         (+ k (f 10 10))))
+    ;; TODO: a little more tests:
+    ;; env and continue should be reserved
     ))
 
 (set! test-exps

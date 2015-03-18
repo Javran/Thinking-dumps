@@ -38,7 +38,8 @@
       (assert (= (length rands) 2))
       (end-with-linkage
        linkage
-       (append-instruction-sequences
+       (preserving
+        '(env continue)
         ;; the second arg first
         (cadr compiled-rands)
         (preserving
