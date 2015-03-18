@@ -51,8 +51,13 @@
       (let ()
         (define k (+ 2 10))
         (+ k (f 10 10))))
-    ;; TODO: a little more tests:
     ;; env and continue should be reserved
+    (begin
+      (define (f x)
+        (lambda (y)
+          (* x y y)))
+      (+ ((f (+ 1 2)) (* 3 4))
+         ((f (* 5 6 7)) (- 8 9 10))))
     ))
 
 (set! test-exps
