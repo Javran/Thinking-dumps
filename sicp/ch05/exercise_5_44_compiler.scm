@@ -42,38 +42,45 @@
    ((let? exp)
     (compile (let->combination exp) target linkage ctenv))
    ((application? exp)
-    ;; an application is a non-empty list
-    ;; therefore "car" and "cdr" are guaranteed to be safe
-    (let ((arg-length (length (cdr exp)))
-          (operator (car exp)))
-      (cond
-       ;; to avoid getting into an infinite loop,
-       ;; the open-code compilers are only interested
-       ;; in binary applications
-       ;; therefore the syntactic transformation
-       ;; is done only once, and the recursive compilation
-       ;; on the transformed expression will lead up to here.
-       ((= arg-length 2)
-        (cond
-         ;; TODO: need corresponding changes in open-code
-         ;; because of the newly added compile-time environment
-         ((open-code-bin-op-=? exp)
-          (compile-open-code-bin-op-= exp target linkage ctenv))
-         ((open-code-bin-op-*? exp)
-          (compile-open-code-bin-op-* exp target linkage ctenv))
-         ((open-code-bin-op--? exp)
-          (compile-open-code-bin-op-- exp target linkage ctenv))
-         ((open-code-bin-op-+? exp)
-          (compile-open-code-bin-op-+ exp target linkage ctenv))
-         ;; be aware that we still need a fallback here
-         ;; in case the 2-argument function application
-         ;; cannot be compiled using the handlers above
-         (else
-          (compile-application exp target linkage ctenv))))
-       ((assoc operator transformable-table) =>
-        (lambda (p)
-          (compile (transform-right exp (cadr p)) target linkage ctenv)))
-       (else
-        (compile-application exp target linkage ctenv)))))
+    (compile-application-maybe-open-code exp target linkage ctenv))
    (else
     (error "Unknown expression type: COMPILE" exp))))
+
+;; compile function applications, use open-code compilation
+;; whenever correctness can be preserved
+(define (compile-application-maybe-open-code
+         exp
+         target
+         linkage
+         ctenv)
+  (let* ((rator (car exp))
+         (rands (cdr exp))
+         (ct-result (find-variable rator ctenv)))
+    (if (equal? ct-result 'not-found)
+        ;; if compile-time environment fails to find a binding,
+        ;; then open-code compilation could be applied here
+        (let ((arg-length (length rands)))
+          (cond
+           ((= arg-length 2)
+            (cond
+             ((open-code-bin-op-=? exp)
+              (compile-open-code-bin-op-= exp target linkage ctenv))
+             ((open-code-bin-op-*? exp)
+              (compile-open-code-bin-op-* exp target linkage ctenv))
+             ((open-code-bin-op--? exp)
+              (compile-open-code-bin-op-- exp target linkage ctenv))
+             ((open-code-bin-op-+? exp)
+              (compile-open-code-bin-op-+ exp target linkage ctenv))
+             ;; be aware that we still need a fallback here
+             ;; in case the 2-argument function application
+             ;; cannot be compiled using the handlers above
+             (else
+              (compile-application exp target linkage ctenv))))
+           ((assoc rator transformable-table) =>
+            (lambda (p)
+              (compile (transform-right exp (cadr p)) target linkage ctenv)))
+           (else
+            (compile-application exp target linkage ctenv))))
+        ;; otherwise the variable is bound to something else
+        ;; we'd better keep it as it is
+        (compile-application exp target linkage ctenv))))
