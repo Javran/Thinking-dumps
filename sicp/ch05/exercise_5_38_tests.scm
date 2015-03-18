@@ -24,7 +24,8 @@
   ;; but when it happens, we return "exp-zero"
   ;; which should be the "zero" of the corresponding monoid
   (mat '(+) 0
-       0)))
+       0)
+  ))
 
 ;; run tests on the modified compiler
 (load "ec-tests.scm")
@@ -32,7 +33,8 @@
 
 ;; needs few more to test open-code primitives
 (define test-exps-ex-5-38
-  `(;; complex & mixed
+  `(
+    ;; complex & mixed
     (+ (* 1 2 3) (+ 1 (- 20 19 19) (- 18 20) 3 (* 4 5))
        (+ 6 (+ 1 2 4) 8))
     ;; simple
@@ -42,7 +44,15 @@
     (* 10)
     ;; mixed
     (= (+ 1 2 3) (* 1 2 3))
+    ;; bug found when working on ex 5.44
+    (begin
+      (define (f x y)
+        (+ x y))
+      (let ()
+        (define k (+ 2 10))
+        (+ k (f 10 10))))
     ))
+
 (set! test-exps
       (append test-exps test-exps-ex-5-38))
 
