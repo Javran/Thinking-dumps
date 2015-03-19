@@ -10,9 +10,15 @@
 (load "ec-tests.scm")
 (load "exercise_5_23_tests.scm")
 (load "exercise_5_43_tests.scm")
+(load "exercise_5_44_tests.scm")
 
-;; plan:
-;; * tests
+;; thanks to our local definition-eliminating transformer,
+;; our solution is actually stronger than the exercise expects:
+;; as long as we don't define/set! open-coded operators
+;; in the top level environment, local definitions can be eliminated
+;; and compile-time environment can be used for better performance
+;; and the correctness can be preserved even if we have local definitions
+;; in the original expression.
 
 ;; testing the compiler
 (for-each
@@ -21,6 +27,7 @@
  test-exps)
 (newline)
 
+;; example in the book
 (out
  (compile-and-run-with-env
   '(begin
