@@ -19,5 +19,20 @@
  (test-evaluator
   compile-and-run-with-env)
  test-exps)
+(newline)
+
+(out
+ (compile-and-run-with-env
+  '(begin
+     ;; the detail of matrix implementation is irrelevant
+     ;; so let's just keep it symbolic.
+     (define (+matrix mat1 mat2)
+       (list '+matrix mat1 mat2))
+     (define (*matrix mat1 mat2)
+       (list '*matrix mat1 mat2))
+     (define (calc + * a b x y)
+       (+ (* a x) (* b y)))
+     (calc +matrix *matrix 'a 'b 'x 'y))
+  (init-env)))
 
 (end-script)
