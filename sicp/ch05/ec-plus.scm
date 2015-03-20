@@ -27,3 +27,5 @@
 ;; the result will be:
 ;; * (11 . 22) if arguments are evaluated from left to right
 ;; * (12 . 2)  if arguments are evaluated from right to left
+
+(load "ec-plus-eval.scm")
