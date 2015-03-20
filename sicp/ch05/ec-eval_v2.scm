@@ -1,3 +1,13 @@
+;;; this module is intended to overwrite
+;;; the definition of "evaluator-insns"
+;;; from "ec-eval.scm".
+
+;; explicit control evaluator, version 2
+;; support added for:
+;; * function definitions
+;; * let-form
+;; * cond-form
+
 (define evaluator-insns
   '(
     ;; ==== eval-dispatch
