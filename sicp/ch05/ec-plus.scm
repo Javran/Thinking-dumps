@@ -28,4 +28,23 @@
 ;; * (11 . 22) if arguments are evaluated from left to right
 ;; * (12 . 2)  if arguments are evaluated from right to left
 
+(load "../common/utils.scm")
+(load "../common/test-utils.scm")
+
+(load "simu.scm")
+(load "simu_ec_patch.scm")
+(load "exercise_5_23_common.scm")
 (load "ec-plus-eval.scm")
+
+(load "compiler.scm")
+
+(load "ec-tests.scm")
+(for-each
+ (test-evaluator machine-eval)
+ test-exps)
+(newline)
+
+(out
+ (if (check-labels evaluator-insns)
+     "no problem with the label checker"
+     "some missing labels found"))
