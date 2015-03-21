@@ -44,6 +44,14 @@
  test-exps)
 (newline)
 
+;; TODO: I think the primitive operations used in evaluator
+;; should be a superset of those used in a compiler,
+;; maybe we can just use those primitives in the evaluator
+
+;; TODO: we need some document about how could compiled code
+;; being inserted at run time, doesn't this require the set
+;; of instruction sequence being changed somehow?
+
 (out
  (if (check-labels evaluator-insns)
      "no problem with the label checker"
