@@ -109,7 +109,7 @@
     (branch (label primitive-apply))
     (test (op compound-procedure?) (reg proc))
     (branch (label compound-apply))
-    ;; adding compiled procecure dispatching...
+    ;; adding compiled procedure dispatching...
     (test (op compiled-procedure?) (reg proc))
     (branch (label compiled-apply))
     (goto (label unknown-procedure-type))
@@ -223,6 +223,7 @@
     (assign exp (op let->combination) (reg exp))
     (goto (label eval-dispatch))
 
+    ;; the default entry point
     read-eval-print-loop-init
     (assign env (op init-env))
 
@@ -235,7 +236,7 @@
     (goto (label eval-dispatch))
 
     print-result
-    (perform (op print) (reg val))
+    (perform (op user-print) (reg val))
     (perform (op print-stack-statistics))
     (goto (label read-eval-print-loop))
 
