@@ -259,8 +259,9 @@
     (perform (op print) (reg val))
     (goto (label read-eval-print-loop-init))
 
-    ;; the external-entry, assumming the procedure
-    ;; is loaded into "val" register
+    ;; the external-entry, assumming "val" register
+    ;; contains the proper instruction sequence to
+    ;; build the procedure.
     external-entry
     (perform (op initialize-stack))
     (assign env (op init-env)) ;; TODO.
