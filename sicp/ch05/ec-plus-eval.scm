@@ -225,7 +225,12 @@
 
     ;; the default entry point
     read-eval-print-loop-init
+    ;; TODO: allow user to specify an initial environment
+    ;; or use "(get-global-environment)"
     (assign env (op init-env))
+    ;; TODO: be explicit about the initial flag value
+    ;; TODO: is it possible to have conflicting labels?
+    (branch (label external-entry))
 
     read-eval-print-loop
     (perform (op initialize-stack))
@@ -253,4 +258,12 @@
     (perform (op print) (const "error signaled:"))
     (perform (op print) (reg val))
     (goto (label read-eval-print-loop-init))
+
+    ;; the external-entry, assumming the procedure
+    ;; is loaded into "val" register
+    external-entry
+    (perform (op initialize-stack))
+    (assign env (op init-env)) ;; TODO.
+    (assign continue (label print-result))
+    (goto (reg val))
     ))
