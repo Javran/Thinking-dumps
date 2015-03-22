@@ -43,7 +43,7 @@
      monitor-patch-ops-builder-extra
      default-ops-builder))))
 
-;; use the machine to evlauate a lisp expression
+;; use the machine to evaluate a lisp expression
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
          (exit-label (gensym))
