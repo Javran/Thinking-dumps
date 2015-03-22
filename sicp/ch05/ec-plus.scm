@@ -48,9 +48,11 @@
 ;; should be a superset of those used in a compiler,
 ;; maybe we can just use those primitives in the evaluator
 
-;; TODO: we need some document about how could compiled code
-;; being inserted at run time, doesn't this require the set
-;; of instruction sequence being changed somehow?
+;; well, we are still somehow cheating, because we are allowing
+;; a register to contain entire information of procedures.
+;; in real life we might need some mechanism to compile
+;; procedures, load compiled instruction sequences and
+;; ensure we can transfer control to that instruction sequence.
 
 (out
  (if (check-labels evaluator-insns)
