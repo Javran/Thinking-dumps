@@ -133,7 +133,7 @@
 
     ;; handling compiled procedures
     compiled-apply
-    ;; pasing continuation to the compiled procedure
+    ;; passing continuation to the compiled procedure
     (restore continue)
     (assign val (op compiled-procedure-entry) (reg proc))
     ;; jump to the entry point
@@ -227,7 +227,7 @@
     read-eval-print-loop-init
     ;; TODO: allow user to specify an initial environment
     ;; or use "(get-global-environment)"
-    (assign env (op init-env))
+    (assign env (op get-global-environment))
     ;; TODO: be explicit about the initial flag value
     ;; TODO: is it possible to have conflicting labels?
     (branch (label external-entry))

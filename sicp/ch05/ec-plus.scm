@@ -70,3 +70,49 @@
  (if (check-labels evaluator-insns)
      "no problem with the label checker"
      "some missing labels found"))
+
+(define (ec-ops-builder-modifier current-ops-builder)
+  (lambda (m)
+    (let* ((old-ops (current-ops-builder m))
+           (new-prim-symbols
+            ;; only add those that don't show up
+            ;; in the old primitive list ...
+            (set-delete
+             'get-global-environment
+             (set-diff (ec-get-required-operations)
+                       (map car old-ops)))))
+      `(
+        ;; we are trying to be lazy here by:
+        ;; * extract the list of required operation names direcly
+        ;;   from the code of the evaluator
+        ;; * operation names are symbols, and as we have implemented
+        ;;   them somewhere in our toplevel user environment
+        ;;   we can evaluate them directly to convert each operation symbol
+        ;;   to its corresponding primitive entry
+        ,@(map to-machine-prim-entry new-prim-symbols)
+        (get-global-environment
+         ,(lambda ()
+            (machine-extra-get m 'global-env 'error)))
+        (error ,(lambda args
+                  (apply error args)))
+        ,@old-ops))))
+
+(define (compile-and-go exp)
+  (let* ((compiled (compile-and-check exp))
+         (insn-seq (statements compiled))
+         (env (init-env)))
+    (let ((m  (build-with
+               `(controller
+                 (goto (label read-eval-print-loop-init))
+                 ,@evaluator-insns)
+               `((env ,env)
+                 (flag #t)
+                 (val ,insn-seq))
+               (ec-ops-builder-modifier
+                (ops-builder-union
+                 monitor-patch-ops-builder-extra
+                 default-ops-builder))
+      (machine-extra-set! m 'global-env env)
+      (machine-fresh-start! m))))
+
+
