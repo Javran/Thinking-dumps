@@ -66,6 +66,9 @@
 ;; procedures, load compiled instruction sequences and
 ;; ensure we can transfer control to that instruction sequence.
 
+
+;; TODO: check compiled code as well?
+#;
 (out
  (if (check-labels evaluator-insns)
      "no problem with the label checker"
