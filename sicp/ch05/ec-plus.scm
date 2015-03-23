@@ -50,11 +50,11 @@
           (else (out obj))))
   (for-each user-print-one args))
 
-(load "ec-tests.scm")
-(for-each
+#;(load "ec-tests.scm")
+#;(for-each
  (test-evaluator machine-eval)
  test-exps)
-(newline)
+#;(newline)
 
 ;; TODO: I think the primitive operations used in evaluator
 ;; should be a superset of those used in a compiler,
@@ -77,10 +77,19 @@
            (new-prim-symbols
             ;; only add those that don't show up
             ;; in the old primitive list ...
-            (set-delete
-             'get-global-environment
-             (set-diff (ec-get-required-operations)
-                       (map car old-ops)))))
+            (set-union
+             '(make-compiled-procedure
+               compiled-procedure?
+               compiled-procedure-env
+               compiled-procedure-entry
+               ;; TODO: need to figure out a better way...
+               false?
+               list
+               cons)
+             (set-delete
+              'get-global-environment
+              (set-diff (ec-get-required-operations)
+                        (map car old-ops))))))
       `(
         ;; we are trying to be lazy here by:
         ;; * extract the list of required operation names direcly
@@ -101,18 +110,33 @@
   (let* ((compiled (compile-and-check exp))
          (insn-seq (statements compiled))
          (env (init-env)))
-    (let ((m  (build-with
-               `(controller
-                 (goto (label read-eval-print-loop-init))
-                 ,@evaluator-insns)
-               `((env ,env)
-                 (flag #t)
-                 (val ,insn-seq))
-               (ec-ops-builder-modifier
-                (ops-builder-union
-                 monitor-patch-ops-builder-extra
-                 default-ops-builder))
+    (let ((m (build-with
+              `(controller
+                (goto (label read-eval-print-loop-init))
+                ,@evaluator-insns)
+              `((env ,env)
+                (flag #t))
+              (ec-ops-builder-modifier
+               (ops-builder-union
+                monitor-patch-ops-builder-extra
+                default-ops-builder)))))
+      (machine-reg-set! m 'val (assemble insn-seq m))
+      ;; redo assembling here...
+      ;; TODO: still not working
+      (assemble
+       `(controller
+         (goto (label read-eval-print-loop-init))
+         ,@evaluator-insns)
+       m)
       (machine-extra-set! m 'global-env env)
       (machine-fresh-start! m))))
 
+;; TODO: compiler patch disables it .. not sure why
+(define prompt-for-input display)
 
+(compile-and-go
+ '(define (fib n)
+    (if (<= n 1)
+        n
+        (+ (fib (- n 1))
+           (fib (- n 2))))))

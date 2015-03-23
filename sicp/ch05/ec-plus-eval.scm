@@ -263,8 +263,9 @@
     ;; contains the proper instruction sequence to
     ;; build the procedure.
     external-entry
+
     (perform (op initialize-stack))
-    (assign env (op init-env)) ;; TODO.
+    (assign env (op get-global-environment))
     (assign continue (label print-result))
     (goto (reg val))
     ))
