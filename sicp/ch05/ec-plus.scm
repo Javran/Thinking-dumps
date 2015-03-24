@@ -81,14 +81,8 @@
             ;; only add those that don't show up
             ;; in the old primitive list ...
             (set-union
-             '(make-compiled-procedure
-               compiled-procedure?
-               compiled-procedure-env
-               compiled-procedure-entry
-               ;; TODO: need to figure out a better way...
-               false?
-               list
-               cons)
+             ;; primitive operations used in the compiler
+             primitive-operations
              (set-delete
               'get-global-environment
               (set-diff (ec-get-required-operations)
