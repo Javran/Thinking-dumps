@@ -1,6 +1,19 @@
 (load "simu_machine.scm")
 (load "simu_assemble_handlers.scm")
 
+;; note that for "assemble" procedure,
+;; there is one important difference between our implementation
+;; and the one in the book (which I usually refer to as "the legacy one"):
+;; * the legacy "assemble" procedure is additive,
+;;   in a sense that if you try to assemble instruction sequences
+;;   multiple times in a machine, all of them will get concatenated together
+;; * our implementation makes the instruction sequence tie to the machine,
+;;   we have to pass the whole instruction sequence when doing assembling,
+;;   and if we assemble instruction sequences multiple times,
+;;   only the last one will be installed.
+;;   however, this is not a big problem: under most circumstances
+;;   we are able to figure out the whole instruction sequence
+;;   before start to execute the code
 (define (assemble insns machine)
   ;; expected input: a list of instructions (including labels)
   ;; we don't have to do all the things in one pass

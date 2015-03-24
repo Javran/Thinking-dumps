@@ -142,6 +142,11 @@
     (if (null? insns)
         'done
         (begin
+          ;; uncomment the following s-exp
+          ;; for a quick and dirty instruction tracing
+          #;
+          (out "now executing:"
+               (assembled-insn-text (car insns)))
           ((assembled-insn-proc (car insns)))
           (machine-execute! m)))))
 
