@@ -109,6 +109,21 @@
                   (apply error args)))
         ,@old-ops))))
 
+;; as we have mentioned in the comment of our "assemble" procedure:
+;; our implementation doesn't add instruction sequences together
+;; and only the last one assembled takes effect.
+;; there are two possible solutions:
+;;
+;; * additive "assemble" procedure: I think it's already too late
+;;   to go back and make big changes to "assemble" to make it additive
+;;   so we can simply create a new "assemble-additive" procedure
+;;   that preserves the old instruction sequence and appends
+;;   the newly assembled one right after it.
+;; * we build the instruction sequence before creating the machine,
+;;   and we make sure to only assemble the instruction sequence once.
+;;   but later, we might need to figure out how can we do compilation,
+;;   assemble and insert newly compiled instructions into the machine
+;;   at run time.
 (define (compile-and-go exp)
   (let* ((compiled (compile-and-check exp))
          (insn-seq (statements compiled))
@@ -124,13 +139,6 @@
                 monitor-patch-ops-builder-extra
                 default-ops-builder)))))
       (machine-reg-set! m 'val (assemble insn-seq m))
-      ;; redo assembling here...
-      ;; TODO: still not working
-      (assemble
-       `(controller
-         (goto (label read-eval-print-loop-init))
-         ,@evaluator-insns)
-       m)
       (machine-extra-set! m 'global-env env)
       (machine-fresh-start! m))))
 
