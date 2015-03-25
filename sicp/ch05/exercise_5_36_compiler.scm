@@ -1,18 +1,8 @@
 ;; compiler patch for ex 5.36
-
-(define primitive-operations
-  '(false?
-    lookup-variable-value
-    set-variable-value!
-    define-variable!
-    make-compiled-procedure
-    compiled-procedure-env
-    extend-environment
-    list
-    snoc
-    compiled-procedure-entry
-    primitive-procedure?
-    apply-primitive-procedure))
+(set! primitive-operations
+      (set-union
+       '(snoc)
+       primitive-operations))
 
 ;; appends one element to the end of a list
 (define (snoc xs v)
