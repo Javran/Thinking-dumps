@@ -6,6 +6,16 @@
 ;; on a single machine.
 
 (define (assemble insns machine)
+  ;; unlike "assemble" in "simu.scm",
+  ;; this "assemble" procedure accumulates assembled instructions.
+  ;; and returns the assembled version of "insns" passed to it
+  ;; (note that only the portion corresponding to "insns" are returned
+  ;;  not the whole sequence of assembled instructions)
+  ;; labels are also dropped from the assembled instructions
+  ;; so this procedure produces a value that "continue" register
+  ;; can take, even if the machine don't know how to handle labels
+  ;; (NOTE: handling labels are easy however
+  ;; -- just ignoring them and we are done)
   (define (make-instruction insn-text)
     (if (symbol? insn-text)
         insn-text

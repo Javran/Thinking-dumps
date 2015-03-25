@@ -16,6 +16,8 @@
 ;;   before start to execute the code
 (define (assemble insns machine)
   ;; expected input: a list of instructions (including labels)
+  ;; output: unlike the legacy implementation, the return value
+  ;; of our "assemble" is undefined.
   ;; we don't have to do all the things in one pass
   ;; as this won't be the bottleneck of the whole program
   ;; we also don't have to perform the continuation passing trick
