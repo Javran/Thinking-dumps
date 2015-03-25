@@ -104,6 +104,13 @@
                   (apply error args)))
         ,@old-ops))))
 
+(define (compile-and-check exp)
+  (let ((compiled (compile exp 'val 'next)))
+    (assert (check-instruction-sequence compiled)
+            ;; the error message is not actually reachable
+            "instruction sequence check failed.")
+    compiled))
+
 ;; as we have mentioned in the comment of our "assemble" procedure:
 ;; our implementation doesn't add instruction sequences together
 ;; and only the last one assembled takes effect.
@@ -120,7 +127,8 @@
 ;;   assemble and insert newly compiled instructions into the machine
 ;;   at run time.
 (define (compile-and-go exp)
-  (let* ((compiled (compile-and-check exp))
+  (let* ((compiled
+          (compile exp 'val 'return))
          (insn-seq (statements compiled))
          (env (init-env)))
     (let ((m (build-with
@@ -141,8 +149,18 @@
 (define prompt-for-input display)
 
 (compile-and-go
- '(define (fib n)
-    (if (<= n 1)
-        n
-        (+ (fib (- n 1))
-           (fib (- n 2))))))
+ '(begin
+    (define (fib n)
+      (if (<= n 1)
+          n
+          (+ (fib (- n 1))
+             (fib (- n 2)))))
+    (begin
+      (define x 1)
+      (let ((a (begin
+                 (set! x (+ x 10))
+                 x))
+            (b (begin
+                 (set! x (* x 2))
+                 x)))
+        (cons a b)))))
