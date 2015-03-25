@@ -142,6 +142,11 @@
 ;; TODO: compiler patch disables it .. not sure why
 (define prompt-for-input display)
 
+;; TODO: we can first compile the code,
+;; and put the resulting instruction sequence
+;; in front of the one that evaluator have.
+;; by doing this, we can get rid of the flag hack.
+
 (compile-and-go
  '(begin
     (define (fib n)
