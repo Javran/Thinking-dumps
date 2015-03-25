@@ -61,14 +61,17 @@
            (dup-lbl (first-dup-element labels)))
       (if dup-lbl
           ;; here we can even report all the labels with
-          ;; the same name, but I don't find it not very useful.
+          ;; the same name, but I find it not very useful.
           (error "multiple labels with the same name:"
                  (car dup-lbl))
           'ok)))
 
+  ;; enforcing each label to be unique
   (scan-duplicate-labels insns symbol?)
   (let ((insns (map make-instruction insns)))
     (let ((jump-table
+           ;; traverse the assembled instructions
+           ;; to collect labels to build jump-table
            (let loop ((table '())
                       (insns insns))
              (if (null? insns)
