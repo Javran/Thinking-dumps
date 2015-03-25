@@ -1,6 +1,7 @@
 ;;; explicit control evaluator with compiled-code supports
 
-;; there is an inconsistency between our evaluator and compiler:
+;; originally, there is an inconsistency
+;; between our evaluator and compiler:
 ;; when a function is applied with arguments,
 ;; the evaluator evaluates arguments from left to right while
 ;; the code produces by the compiler evaluates arguments from right to left.
@@ -8,6 +9,8 @@
 ;; so the first problem to be solved is to make this consistent:
 ;; we modify the compiler so that it produces code that evaluates
 ;; the argument from left to right.
+;; this problem is fixed and now both compiler and evaluator
+;; will evaluate arguments from left to right
 
 ;; to verify the order of argument evaluation,
 ;; we can use the following expression:
@@ -38,6 +41,9 @@
 (load "ec-plus-eval.scm")
 
 (load "compiler.scm")
+;; apply this compiler patch
+;; to make argument evaluation consistent
+(load "exercise_5_36_compiler.scm")
 
 (define (user-print . args)
   (define (user-print-one obj)
@@ -57,23 +63,11 @@
  test-exps)
 #;(newline)
 
-;; TODO: I think the primitive operations used in evaluator
-;; should be a superset of those used in a compiler,
-;; maybe we can just use those primitives in the evaluator
-
 ;; well, we are still somehow cheating, because we are allowing
 ;; a register to contain entire information of procedures.
 ;; in real life we might need some mechanism to compile
 ;; procedures, load compiled instruction sequences and
 ;; ensure we can transfer control to that instruction sequence.
-
-
-;; TODO: check compiled code as well?
-#;
-(out
- (if (check-labels evaluator-insns)
-     "no problem with the label checker"
-     "some missing labels found"))
 
 (define (ec-ops-builder-modifier current-ops-builder)
   (lambda (m)
