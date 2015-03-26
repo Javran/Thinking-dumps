@@ -305,6 +305,17 @@
     ;; modified from 5.4.4 Running the Evaluator
     ;; in order to keep definitions between calls,
     ;; we only initialize "env" when initializing
+    ;; note that the original implementation uses
+    ;;   (assign env (op get-global-environment))
+    ;; this assumes an initialized top-level environment.
+    ;; and whenever we want the top-level environment,
+    ;; we can use "get-global-environment" to retrieve it.
+    ;; the original one is actually pretty good to use
+    ;; (if the environment is tied to machine rather than
+    ;; the implementing programming language).
+    ;; here it is a little too late to roll back and
+    ;; use the design in book, the current implementation
+    ;; is good enough IMHO, so I'm not going to change it.
     read-eval-print-loop-init
     (assign env (op init-env))
 
