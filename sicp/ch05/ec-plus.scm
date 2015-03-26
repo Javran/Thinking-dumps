@@ -19,6 +19,7 @@
 ;;(check document for more details)
 (load "exercise_5_36_compiler.scm")
 
+;; TODO: fix syntax errors in the document
 ;; TODO: too many comments, let's create a text file
 ;; TODO: break procedures into meaningful modules
 
