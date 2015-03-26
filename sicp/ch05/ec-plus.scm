@@ -46,6 +46,9 @@
 ;; to make argument evaluation consistent
 (load "exercise_5_36_compiler.scm")
 
+;; TODO: too many comments, let's create a text file
+;; TODO: break procedures into meaningful modules
+
 (define (user-print . args)
   (define (user-print-one obj)
     (cond ((compound-procedure? obj)
@@ -126,6 +129,15 @@
           (compile exp 'val 'return))
          (insn-seq (statements compiled))
          (env (init-env))
+         ;; there should not be conflicting labels.
+         ;; on one hand, our implementation of "simu.scm" can detect
+         ;; duplicated labels automatically, so if it happens to be the case
+         ;; that a compiled label conflicts with one used in our evaluator
+         ;; our "assemble" procedure will reject to proceed.
+         ;; on the other hand, we have carefully designed our evaluator
+         ;; so that labels does not conflict and our compiler keeps a counter
+         ;; itself and guarantees to generate unique labels. With these two
+         ;; facts together, it's safe to say that our labels don't conflict.
          (m (build-with
              `(controller
                (goto (label external-entry))

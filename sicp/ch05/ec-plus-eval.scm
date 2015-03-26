@@ -223,7 +223,6 @@
     (assign exp (op let->combination) (reg exp))
     (goto (label eval-dispatch))
 
-    ;; TODO: is it possible to have conflicting labels?
     read-eval-print-loop
     (perform (op initialize-stack))
     (perform
