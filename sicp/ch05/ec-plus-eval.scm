@@ -223,20 +223,13 @@
     (assign exp (op let->combination) (reg exp))
     (goto (label eval-dispatch))
 
-    ;; the default entry point
-    read-eval-print-loop-init
-    ;; TODO: allow user to specify an initial environment
-    ;; or use "(get-global-environment)"
-    (assign env (op get-global-environment))
-    ;; TODO: be explicit about the initial flag value
     ;; TODO: is it possible to have conflicting labels?
-    (branch (label external-entry))
-
     read-eval-print-loop
     (perform (op initialize-stack))
     (perform
-     (op prompt-for-input) (const "ec-repl> "))
+     (op prompt-for-input) (const "ec-repl+> "))
     (assign exp (op read))
+    (assign env (op get-global-environment))
     (assign continue (label print-result))
     (goto (label eval-dispatch))
 
@@ -257,15 +250,8 @@
     signal-error
     (perform (op print) (const "error signaled:"))
     (perform (op print) (reg val))
-    (goto (label read-eval-print-loop-init))
+    (goto (label read-eval-print-loop))
 
-    ;; the external-entry, assumming "val" register
-    ;; contains the proper instruction sequence to
-    ;; build the procedure.
-    external-entry
-
-    (perform (op initialize-stack))
-    (assign env (op get-global-environment))
-    (assign continue (label print-result))
-    (goto (reg val))
+    ;; external-entry can be set up afterwards,
+    ;; and we are not going to handle it here.
     ))

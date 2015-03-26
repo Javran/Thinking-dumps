@@ -124,20 +124,24 @@
   (let* ((compiled
           (compile exp 'val 'return))
          (insn-seq (statements compiled))
-         (env (init-env)))
-    (let ((m (build-with
-              `(controller
-                (goto (label read-eval-print-loop-init))
-                ,@evaluator-insns)
-              `((env ,env)
-                (flag #t))
-              (ec-ops-builder-modifier
-               (ops-builder-union
-                monitor-patch-ops-builder-extra
-                default-ops-builder)))))
-      (machine-reg-set! m 'val (assemble insn-seq m))
-      (machine-extra-set! m 'global-env env)
-      (machine-fresh-start! m))))
+         (env (init-env))
+         (m (build-with
+             `(controller
+               (goto (label external-entry))
+               ,@evaluator-insns
+               external-entry
+               (perform (op initialize-stack))
+               (assign env (op get-global-environment))
+               (assign continue (label print-result))
+               ,@insn-seq
+               )
+             `((env ,env))
+             (ec-ops-builder-modifier
+              (ops-builder-union
+               monitor-patch-ops-builder-extra
+               default-ops-builder)))))
+    (machine-extra-set! m 'global-env env)
+    (machine-fresh-start! m)))
 
 ;; TODO: compiler patch disables it .. not sure why
 (define prompt-for-input display)
