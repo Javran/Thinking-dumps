@@ -35,6 +35,7 @@
 (load "../common/test-utils.scm")
 
 (load "simu.scm")
+;; this is actually not necessary
 (load "simu_additive-assemble_patch.scm")
 (load "simu_ec_patch.scm")
 (load "exercise_5_23_common.scm")
@@ -56,7 +57,6 @@
            (out '<compiled-procedure>))
           (else (out obj))))
   (for-each user-print-one args))
-
 
 ;; well, we are still somehow cheating, because we are allowing
 ;; a register to contain entire information of procedures.
@@ -143,9 +143,6 @@
                default-ops-builder)))))
     (machine-extra-set! m 'global-env env)
     (machine-fresh-start! m)))
-
-;; TODO: compiler patch disables it .. not sure why
-(define prompt-for-input display)
 
 ;; TODO: we can first compile the code,
 ;; and put the resulting instruction sequence
