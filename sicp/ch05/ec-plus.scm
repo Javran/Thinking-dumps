@@ -57,11 +57,6 @@
           (else (out obj))))
   (for-each user-print-one args))
 
-#;(load "ec-tests.scm")
-#;(for-each
- (test-evaluator machine-eval)
- test-exps)
-#;(newline)
 
 ;; well, we are still somehow cheating, because we are allowing
 ;; a register to contain entire information of procedures.
@@ -97,6 +92,12 @@
         (error ,(lambda args
                   (apply error args)))
         ,@old-ops))))
+
+(load "ec-tests.scm")
+(for-each
+ (test-evaluator machine-eval)
+ test-exps)
+(newline)
 
 (define (compile-and-check exp)
   (let ((compiled (compile exp 'val 'next)))
