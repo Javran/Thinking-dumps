@@ -97,6 +97,34 @@ data into the machine and be able to transfer control to it and back from it.
 
 ## Additive assembling
 
+This is actually a problem with our implementation of simulator,
+which might get in the way if we want to do assembling more than once
+for a single machine.
+
+Different from the legacy simulator, our simulator assumes the user will
+assemble instruction sequence no more than once. Therefore our `assemble`
+procedure does some extra checks on the instruction sequence being assembled
+(because we are receiving the full sequence of instructions, more checks
+can be done to have more confidence about its correctness).
+Instead of appending the resulting to the existing sequence of assembled
+instructions, our implementation overwrites the previous stored
+assembled sequence of instructions.
+
+Therefore we implements a patch to make the implementation a little bit
+closer to the one implemented in the book: if you apply the patch
+`simu_additive-assemble_patch.scm`, you will get an "additive" assemble
+so that the resulting sequence of assembled instructions get appended
+to the existing one instead of overwriting it. Some checks are still there,
+but instead of checking it once for all, every time when a new
+sequence of instruction comes, the jump-table gets checked to ensure
+that every labels are unique.
+
+Note that this patch is not actually necessary if you only need to
+assemble the code once. But because we might need to compile, assemble
+and insert things at run time, this patch is potentially useful.
+
+## No conflicting labels
+
 
 ## Getting rid of initialization hacks
 

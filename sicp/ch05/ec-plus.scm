@@ -6,7 +6,8 @@
 (load "../common/test-utils.scm")
 
 (load "simu.scm")
-;; this is actually not necessary -- TODO: more details
+
+;; see document for details.
 (load "simu_additive-assemble_patch.scm")
 (load "simu_ec_patch.scm")
 (load "exercise_5_23_common.scm")
@@ -84,6 +85,7 @@
 ;;   but later, we might need to figure out how can we do compilation,
 ;;   assemble and insert newly compiled instructions into the machine
 ;;   at run time.
+
 (define (compile-and-go exp)
   (let* ((compiled
           (compile exp 'val 'return))
