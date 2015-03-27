@@ -125,7 +125,31 @@ and insert things at run time, this patch is potentially useful.
 
 ## No conflicting labels
 
+One might wonder, by assembling different sequences of instructions,
+can we eventually have some conflicting labels? The answer is no
+for our simulator using the compiler implemented in the book.
+
+On one hand, as I have mention in the previous section,
+our implementation of `simu.scm` can detect
+duplicated labels automatically, so if it happens to be the case
+that a compiled label conflicts with one used in our evaluator
+our `assemble` procedure will throw an error and reject to proceed.
+
+On the other hand, we have carefully designed our evaluator
+so that labels does not conflict and our compiler keeps a counter
+itself and guarantees to generate unique labels. With these two
+facts together, it's safe to say that our labels don't conflict.
 
 ## Getting rid of initialization hacks
 
+In the book `val` register and `flag` register is used
+to install the code into our machine,
+but this looks awkward and hacky to me.
 
+The observation is that we can construct the full sequence of
+instructions even before we create the machine!
+So we can assemble the sequence of instructions once for all:
+we compile the expression using `return` linkage and set
+`continue` to `print-result` label.
+Finally the same sequence of `external-entry`
+is used but there is no branching nor use of `val` and `flag` registers.

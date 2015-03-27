@@ -91,15 +91,6 @@
           (compile exp 'val 'return))
          (insn-seq (statements compiled))
          (env (init-env))
-         ;; there should not be conflicting labels.
-         ;; on one hand, our implementation of "simu.scm" can detect
-         ;; duplicated labels automatically, so if it happens to be the case
-         ;; that a compiled label conflicts with one used in our evaluator
-         ;; our "assemble" procedure will reject to proceed.
-         ;; on the other hand, we have carefully designed our evaluator
-         ;; so that labels does not conflict and our compiler keeps a counter
-         ;; itself and guarantees to generate unique labels. With these two
-         ;; facts together, it's safe to say that our labels don't conflict.
          (m (build-with
              `(controller
                (goto (label external-entry))
@@ -108,6 +99,8 @@
                ;; of the previous instruction sequence
                ;; so that the behavior is consistent with
                ;; "additive assemble" patch.
+               ;; i.e. new codes are always attached
+               ;; to the existing one.
                external-entry
                (perform (op initialize-stack))
                (assign env (op get-global-environment))
@@ -121,11 +114,6 @@
                default-ops-builder)))))
     (machine-extra-set! m 'global-env env)
     (machine-fresh-start! m)))
-
-;; TODO: we can first compile the code,
-;; and put the resulting instruction sequence
-;; in front of the one that evaluator have.
-;; by doing this, we can get rid of the flag hack.
 
 (compile-and-go
  '(begin
