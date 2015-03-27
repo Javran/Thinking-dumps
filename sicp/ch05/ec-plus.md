@@ -53,10 +53,47 @@ to right. And this patch solves the inconsistency issue.
 
 ## Keeping track of the top-level environment
 
+Top-level environment includes bindings for variables directly available
+to the user. In the book they use the term "global environment" but they are
+the same thing.
 
+In the book the definition for `get-global-environment` is the following:
+
+```scheme
+(define the-global-environment (setup-environment))
+(define (get-global-environment) the-global-environment)
+```
+
+This defnition is bad because if we are using multiple instances of machines,
+their modifications to their own global environment are visible to each other.
+
+Since our simulator is just an object with some fields, we can easily extend
+the structure to make it also store the top-level environment as well.
+Since the environment object is stored somewhere within the machine,
+it will be fine to have multiple machines running at the same time,
+and their environment will be independent of each other.
+
+Of course a little more work needs to be done when creating the machine,
+namely we need to initialize the environment and put it in the machine.
 
 ## We are still cheating a little bit
 
+No actual modification is done on this part, I just want to point out some concerns
+about the machine we are implementing.
+
+It is true that as we go through SICP, we are relying on fewer and fewer
+operations and types, but remember that our `pc` register and `continue` register
+are still storing some complex structures, namely the assembled sequence
+of instructions.
+
+In real life we might need some machanisms to store the assembled
+sequence of instructions somewhere other than machine registers.
+To make it still possible for registers to refer to places in the instruction sequence,
+registers can keep integers as indices to certain instruction location in the machine.
+
+Moreover, if we want to make it possible to compile code in the evaluator,
+we also need to find a way to compile, assemble the code and put the resulting
+data into the machine and be able to transfer control to it and back from it.
 
 ## Additive assembling
 

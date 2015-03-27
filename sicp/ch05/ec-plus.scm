@@ -19,7 +19,6 @@
 ;;(check document for more details)
 (load "exercise_5_36_compiler.scm")
 
-;; TODO: too many comments, let's create a text file
 ;; TODO: break procedures into meaningful modules
 
 (define (user-print . args)
@@ -33,12 +32,6 @@
            (out '<compiled-procedure>))
           (else (out obj))))
   (for-each user-print-one args))
-
-;; well, we are still somehow cheating, because we are allowing
-;; a register to contain entire information of procedures.
-;; in real life we might need some mechanism to compile
-;; procedures, load compiled instruction sequences and
-;; ensure we can transfer control to that instruction sequence.
 
 (define (ec-ops-builder-modifier current-ops-builder)
   (lambda (m)
@@ -54,20 +47,14 @@
               (set-diff (ec-get-required-operations)
                         (map car old-ops))))))
       `(
-        ;; we are trying to be lazy here by:
-        ;; * extract the list of required operation names direcly
-        ;;   from the code of the evaluator
-        ;; * operation names are symbols, and as we have implemented
-        ;;   them somewhere in our toplevel user environment
-        ;;   we can evaluate them directly to convert each operation symbol
-        ;;   to its corresponding primitive entry
         ,@(map to-machine-prim-entry new-prim-symbols)
         (get-global-environment
          ,(lambda ()
             (machine-extra-get m 'global-env 'error)))
         (error ,(lambda args
                   (apply error args)))
-        ,@old-ops))))
+        ,@old-ops
+        ))))
 
 (load "ec-tests.scm")
 (for-each
