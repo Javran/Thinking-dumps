@@ -3,10 +3,13 @@
 (define (user-print . args)
   (define (user-print-one obj)
     (cond ((compound-procedure? obj)
-           (out (list 'compound-procedure
-                      (procedure-parameters obj)
-                      (procedure-body obj)
-                      '<procedure-env>)))
+           (begin
+             (pretty-print
+              (list 'compound-procedure
+                    (procedure-parameters obj)
+                    (procedure-body obj)
+                    '<procedure-env>))
+             (newline)))
           ((compiled-procedure? obj)
            (out '<compiled-procedure>))
           (else (out obj))))

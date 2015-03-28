@@ -1,4 +1,7 @@
-;;; working tests for ec-plus
+;;; standalone ec-plus REPL module
+;;; use `mit-scheme --load ec-plus-repl.scm` to play
+;;; with the REPL
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
