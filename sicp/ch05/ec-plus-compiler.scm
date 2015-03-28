@@ -3,8 +3,9 @@
 
 ;; apply this compiler patch
 ;; to make argument evaluation consistent
-;;(check document for more details)
+;; (check document for more details)
 (load "exercise_5_36_compiler.scm")
+(load "simu_compiler_patch.scm")
 
 (define (compile-and-check exp)
   (let ((compiled (compile exp 'val 'next)))
