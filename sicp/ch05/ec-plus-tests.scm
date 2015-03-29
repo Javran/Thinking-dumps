@@ -37,12 +37,6 @@
          '(11 . 22))
  "assertion on argument evaluation ordering failed for the compiler")
 
-;; TODO: repl expose
-(compile-and-go
- '(begin
-    (define (fib n)
-      (if (<= n 1)
-          n
-          (+ (fib (- n 1))
-             (fib (- n 2)))))))
+;; simply run the REPL for testing
+(compile-and-go ''())
 
