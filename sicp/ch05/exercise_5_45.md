@@ -24,7 +24,25 @@ for `n >= 2`:
 
 * Number of pushes for the compiled version is `7n`.
 * Number of pushes for the interpreted version is `32n-16`
-* The ratio constant for number of pushes (when `n` is large): `0.21875`
+* Number of pushes for the special-purpose factorial machine is `2n-1`
+
 * Maximum stack depth for the compiled version is `3n-1`
 * Maximum stack depth for the interpreted version is `3n+5`
-* The ratio constant for number of pushes (when `n` is large): `1`
+* Maximum stack depth for the special-purpose factorial machine is `2n-1`
+
+* The ratio constant (compiled:interpreted)
+for number of pushes (when `n` is large) is: `0.21875`
+* The ratio constant (compiled:interpreted)
+for maximum stack depth (when `n` is large) is: `1`
+* The ratio constant (special-purpose:interpreted)
+for number of pushes (when `n` is large) is: `0.0625`
+* The ratio constant (special-purpose:interpreted)
+for maximum stack depth (when `n` is large) is: `0.667`
+* The ratio constant (special-purpose:compiled)
+for number of pushes (when `n` is large) is: `0.2857`
+* The ratio constant (special-purpose:compiled)
+for maximum stack depth (when `n` is large) is: `0.667`
+
+**Question b**
+
+TODO
