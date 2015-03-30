@@ -9,16 +9,24 @@
 (load "compiler.scm")
 (load "ec-plus.scm")
 
+(define fac-expr
+  `(define (factorial n)
+    (if (<= n 1)
+        1
+        (* n (factorial (- n 1))))))
+
 #;
 (compile-and-go
  `(begin
     ;; recursive factorial function
     ;;   compiled for collecting stack statistics
-    (define (factorial n)
-      (if (<= n 1)
-          1
-          (* n (factorial (- n 1)))))
+    ,fac-expr
     ))
+
+;; print the instruction sequence and learn the difference.
+(print-instruction-sequence
+ (compile-and-check `(begin
+                       ,fac-expr)))
 
 ;; reloading the simulator and run the special purpose version
 ;; factorial machine
