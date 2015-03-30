@@ -45,4 +45,25 @@ for maximum stack depth (when `n` is large) is: `0.667`
 
 **Question b**
 
-TODO
+To make the compiler generate more efficient code:
+
+* We can perform the open-code optimization
+like we have done before. This is to reduce
+the amount of instructions thus less overhead of
+executing instructions can be achieved.
+
+    Moreover, if we do open-code on certain operations and
+    have some extra registers for storing function arguments,
+    we can reduce the overhead of creating and accessing the
+    argument list.
+
+* Perform lexical addressing optimizations.
+
+    One source of inefficiency comes from the way that value gets
+    accessed: in the hand-tailored version, values are held
+    in registers but in the compiled code they are held
+    in environments. And looking up variables in an environment
+    is likely to be less efficient than accessing registers directly.
+    Also we need to use vector to store environments,
+    this will benefit lexical addressing a lot because vector supports
+    efficient random-accessing.
