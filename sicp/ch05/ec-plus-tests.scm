@@ -10,6 +10,9 @@
 (for-each
  (test-evaluator machine-eval)
  test-exps)
+(for-each
+ (test-evaluator compile-and-run-with-env)
+ test-exps)
 (newline)
 
 (define arg-eval-ord-test-expr
