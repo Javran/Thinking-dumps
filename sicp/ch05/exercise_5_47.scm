@@ -8,6 +8,12 @@
 (load "exercise_5_47_eval.scm")
 (load "exercise_5_47_compiler.scm")
 
+(load "ec-tests.scm")
+(for-each
+ (test-evaluator compile-and-run-with-env)
+ test-exps)
+(newline)
+
 (compile-and-go
  '(begin
     (define (map f xs)

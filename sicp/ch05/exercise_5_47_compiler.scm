@@ -1,3 +1,9 @@
+(set! primitive-operations
+      (set-union (remove-duplicates
+                  '(compound-procedure?
+                    compiled-procedure?))
+                 primitive-operations))
+
 (define (compile-procedure-call target linkage)
   ;; function application for compiled procedures
   (define (compile-proc-appl target linkage)
@@ -53,6 +59,7 @@
   ;; ====
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
+        (compound-branch (make-label 'compound-branch))
         (after-call (make-label 'after-call)))
     (let ((compiled-linkage
            (if (eq? linkage 'next) after-call linkage)))
@@ -61,7 +68,12 @@
         '(proc) '()
         `((test (op primitive-procedure?) (reg proc))
           ;; goto primitive branch
-          (branch (label ,primitive-branch))))
+          (branch (label ,primitive-branch))
+          (test (op compiled-procedure?) (reg proc))
+          (branch (label ,compiled-branch))
+          ;; (perform (op print) (const "unknown proc object"))
+          ;; TODO: starting from here the behavior is not defined
+          ))
        (parallel-instruction-sequences
         (append-instruction-sequences
          ;; otherwise the procedure must be a compiled one
