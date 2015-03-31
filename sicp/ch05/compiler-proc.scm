@@ -225,7 +225,7 @@
          ;; otherwise the procedure must be a compiled one
          compiled-branch
          ;; note that it's not possible for compiled-linkage to
-         ;; take value "next"
+         ;; take the value "next"
          (compile-proc-appl target compiled-linkage))
         (append-instruction-sequences
          primitive-branch
