@@ -1,3 +1,9 @@
+;;; for details, see "./exercise_5_46.ods"
+;;; Number of pushes (compiled:interpreted): close to 0.233.
+;;; Maximum stack depth (compiled:interpreted): around 0.7, not stable.
+;;; Number of pushes (special-purpose:compiled): around 0.3, not stable.
+;;; Maximum stack depth (special-purpose:compiled): around 0.474.
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
