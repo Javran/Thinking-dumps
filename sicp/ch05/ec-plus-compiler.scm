@@ -1,11 +1,45 @@
 ;;; compiler-related changes and extensions
 
-
 ;; apply this compiler patch
 ;; to make argument evaluation consistent
 ;; (check document for more details)
 (load "exercise_5_36_compiler.scm")
 (load "simu_compiler_patch.scm")
+
+;; as we are importing "simu_compiler_patch.scm",
+;; we'd better tell it to use our new ops builder modifier
+(define (compile-and-run-with-env exp env)
+  (let* ((compiled (compile-and-check exp))
+         (insn-seq (statements compiled)))
+    (let ((m (build-and-execute-with
+              `(controller
+                ,@insn-seq)
+              `((env ,env))
+              (ec-ops-builder-modifier
+               (ops-builder-union
+                monitor-patch-ops-builder-extra
+                default-ops-builder)))))
+      (machine-reg-get m 'val))))
+
+;; based on the one with the same name in
+;; "compiler-verify.scm"
+(define (check-instruction-sequence compiled-seq)
+  (let ((insn-seq (statements compiled-seq))
+        (needed (registers-needed compiled-seq)))
+    (assert (or (null? needed)
+                (equal? needed '(env)))
+              "the only required register (if any) should be 'env'")
+    (if (check-labels insn-seq)
+        'ok
+        (out "Error regarding labels occurred."))
+
+    (let ((operations (map car (extract-operations insn-seq))))
+      (assert (set-subset<=? (remove-duplicates operations)
+                             ;; primitive operations are just part of
+                             ;; required operations
+                             (ec-get-required-operations))
+              "unknown operation found"))
+    #t))
 
 (define (compile-and-check exp)
   (let ((compiled (compile exp 'val 'next)))

@@ -4,7 +4,14 @@
 
 (load "simu.scm")
 (load "compiler.scm")
+
 (load "ec-plus.scm")
+
+;; changing "primitive-operations" to an invalid value,
+;; as we are not using this value anymore,
+;; everything should still be fine.
+;; but any use of it can result in errors
+(define primitive-operations #f)
 
 (load "ec-tests.scm")
 (for-each
