@@ -17,22 +17,20 @@
 (define (ec-ops-builder-modifier current-ops-builder)
   (lambda (m)
     (let* ((old-ops (current-ops-builder m))
-           (new-prim-symbols
-            ;; only add those that don't show up
-            ;; in the old primitive list ...
-            (set-union
-             ;; primitive operations used in the compiler
-             primitive-operations
-             (set-delete
-              'get-global-environment
-              (set-diff (ec-get-required-operations)
-                        (map car old-ops))))))
+           (current-ops
+            `((get-global-environment
+               ,(lambda ()
+                  (machine-extra-get m 'global-env 'error)))
+              (error ,(lambda args
+                        (apply error args)))
+              ,@old-ops))
+           (missing-prim-symbols
+            (set-diff
+             (set-union
+              primitive-operations
+              (ec-get-required-operations))
+             (remove-duplicates
+              (map car current-ops)))))
       `(
-        ,@(map to-machine-prim-entry new-prim-symbols)
-        (get-global-environment
-         ,(lambda ()
-            (machine-extra-get m 'global-env 'error)))
-        (error ,(lambda args
-                  (apply error args)))
-        ,@old-ops
-        ))))
+        ,@(map to-machine-prim-entry missing-prim-symbols)
+        ,@current-ops))))
