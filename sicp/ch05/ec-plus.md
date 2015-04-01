@@ -153,3 +153,22 @@ we compile the expression using `return` linkage and set
 `continue` to `print-result` label.
 Finally the same sequence of `external-entry`
 is used but there is no branching nor use of `val` and `flag` registers.
+
+## Maintaining a list of required primitive operations
+
+The `simu_compiler_patch.scm` uses `primitive-operations` to
+do some sanity check against compiled code,
+whereas our `ec-eval.scm` patch uses `ec-get-required-operations`
+to check the instruction sequence.
+
+Both of them are serving the same purpose:
+to have some guarantees on the instructions and also
+to hint the operation list builder modifier about
+the missing operations.
+
+So in this patch, we get rid of the use of `primitive-operations` altogether,
+and use `(ec-get-required-operations)`
+when it previously requires a `primitive-operations`.
+Since `ec-get-required-operations` is a function, we also have the
+benefit of doing some dynamic work and don't need to consider the possibility
+that some other patch could mutate it.
