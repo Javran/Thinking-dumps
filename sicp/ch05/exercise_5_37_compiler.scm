@@ -38,7 +38,6 @@
       (assert (set-subset<=? (remove-duplicates operations)
                              primitive-operations)
               "unknown operation found"))
-
     #t))
 
 ;; Local variables:

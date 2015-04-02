@@ -17,9 +17,10 @@
       compiled-procedure-entry
       primitive-procedure?
       apply-primitive-procedure
-      ;; adding two more operations
+      ;; operations added in ex 5.47
       compound-procedure?
       compiled-procedure?
+      error
       ))
    (map car (extract-operations evaluator-insns))))
 
@@ -90,7 +91,7 @@
           (branch (label ,primitive-branch))
           (test (op compiled-procedure?) (reg proc))
           (branch (label ,compiled-branch))
-          ;; (perform (op print) (const "unknown proc object"))
+          (perform (op error) (const "unknown proc object"))
           ;; TODO: starting from here the behavior is not defined
           ))
        (parallel-instruction-sequences
@@ -111,3 +112,7 @@
                      (reg proc)
                      (reg argl)))))))
        after-call))))
+
+;; Local variables:
+;; proc-entry: "exercise_5_47.scm"
+;; End:
