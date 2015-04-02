@@ -82,6 +82,8 @@
         (compound-branch (make-label 'compound-branch))
         (after-call (make-label 'after-call)))
     (let ((compiled-linkage
+           (if (eq? linkage 'next) after-call linkage))
+          (compound-linkage
            (if (eq? linkage 'next) after-call linkage)))
       (append-instruction-sequences
        (make-instruction-sequence
@@ -91,16 +93,30 @@
           (branch (label ,primitive-branch))
           (test (op compiled-procedure?) (reg proc))
           (branch (label ,compiled-branch))
+          (test (op compound-procedure?) (reg proc))
+          (branch (label ,compound-branch))
           (perform (op error) (const "unknown proc object"))
           ;; TODO: starting from here the behavior is not defined
           ))
        (parallel-instruction-sequences
-        (append-instruction-sequences
-         ;; otherwise the procedure must be a compiled one
-         compiled-branch
-         ;; note that it's not possible for compiled-linkage to
-         ;; take the value "next"
-         (compile-proc-appl target compiled-linkage))
+        (parallel-instruction-sequences
+         ;; ==> dealing with compiled procedures
+         (append-instruction-sequences
+          ;; otherwise the procedure must be a compiled one
+          compiled-branch
+          ;; note that it's not possible for compiled-linkage to
+          ;; take the value "next"
+          (compile-proc-appl target compiled-linkage))
+         ;; ==> TODO: deal with compound procedures
+         (append-instruction-sequences
+          compound-branch
+          (end-with-linkage
+           compound-linkage
+           (make-instruction-sequence
+            '() '()
+            `( ;; TODO
+              (perform (op error) (const "TODO: compound procedure")))))))
+        ;; TODO: ==> deal with primitive procedures
         (append-instruction-sequences
          primitive-branch
          (end-with-linkage
