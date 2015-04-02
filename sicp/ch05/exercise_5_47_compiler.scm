@@ -1,8 +1,27 @@
-(set! primitive-operations
-      (set-union (remove-duplicates
-                  '(compound-procedure?
-                    compiled-procedure?))
-                 primitive-operations))
+(define (ec-get-required-operations)
+  (set-union
+   ;; fool-proof, prevent duplicated elements
+   (remove-duplicates
+    ;; primitive-operations copied from the compiler
+    ;; as it might get mutated when loading patches.
+    '(false?
+      lookup-variable-value
+      set-variable-value!
+      define-variable!
+      make-compiled-procedure
+      compiled-procedure-env
+      extend-environment
+      list
+      cons
+      snoc ;; added for exercise_5_36_compiler.scm
+      compiled-procedure-entry
+      primitive-procedure?
+      apply-primitive-procedure
+      ;; adding two more operations
+      compound-procedure?
+      compiled-procedure?
+      ))
+   (map car (extract-operations evaluator-insns))))
 
 (define (compile-procedure-call target linkage)
   ;; function application for compiled procedures
