@@ -199,7 +199,7 @@
               (goto (reg val)))))
           ((and (not (eq? target 'val))
                 (eq? linkage 'return))
-           ;; - conversion is broken here: whenever we return,
+           ;; - convention is violated here: whenever we return,
            ;;   the resulting value should be available in "val"
            ;; - the only place where a "return" linkage used
            ;;   is in the body of "compile-lambda-body",
