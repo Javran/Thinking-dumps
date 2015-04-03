@@ -67,7 +67,7 @@
               (goto (reg val)))))
           ((and (not (eq? target 'val))
                 (eq? linkage 'return))
-           ;; - conversion is broken here: whenever we return,
+           ;; - convention is violated here: whenever we return,
            ;;   the resulting value should be available in "val"
            ;; - the only place where a "return" linkage used
            ;;   is in the body of "compile-lambda-body",
@@ -76,11 +76,19 @@
            ;; will hit this branch
            (error "return linkage, target not val: COMPILE"
                   target))))
+  (define (compile-compound-proc-appl target linkage)
+    ;; note that compile-compound-proc-appl can never be called with
+    ;; linkage = next
+    (assert (not (eq? linkage 'next))
+            "linkage can never be 'next in this function")
+    (error 'todo))
   ;; ====
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
         (compound-branch (make-label 'compound-branch))
         (after-call (make-label 'after-call)))
+    ;; INVARIANT: compile-proc-appl and compile-compound-proc-appl
+    ;; can never be called with linkage = next
     (let ((compiled-linkage
            (if (eq? linkage 'next) after-call linkage))
           (compound-linkage
@@ -100,7 +108,7 @@
           ))
        (parallel-instruction-sequences
         (parallel-instruction-sequences
-         ;; ==> dealing with compiled procedures
+         ;; ==> deal with compiled procedures
          (append-instruction-sequences
           ;; otherwise the procedure must be a compiled one
           compiled-branch
@@ -110,12 +118,7 @@
          ;; ==> TODO: deal with compound procedures
          (append-instruction-sequences
           compound-branch
-          (end-with-linkage
-           compound-linkage
-           (make-instruction-sequence
-            '() '()
-            `( ;; TODO
-              (perform (op error) (const "TODO: compound procedure")))))))
+          (compile-compound-proc-appl target compound-linkage)))
         ;; TODO: ==> deal with primitive procedures
         (append-instruction-sequences
          primitive-branch
