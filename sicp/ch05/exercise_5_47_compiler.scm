@@ -81,7 +81,28 @@
     ;; linkage = next
     (assert (not (eq? linkage 'next))
             "linkage can never be 'next in this function")
-    (error 'todo))
+    (cond ((and (eq? target 'val)
+                (not (eq? linkage 'return)))
+           ;; case: target == val && linkage /= return
+           (error 'todo)
+           )
+          ((and (not (eq? target 'val))
+                (not (eq? linkage 'return)))
+           ;; case: target /= val && linkage /= return
+           (error 'todo)
+           )
+          ((and (eq? target 'val) (eq? linkage 'return))
+           ;; case: target == val && linkage == return
+           (error 'todo)
+           )
+          ((and (not (eq? target 'val))
+                (eq? linkage 'return))
+           ;; case: target /= val && linkage == return
+           ;; when the linkage is "return", we should have
+           ;; the resulting value in "val", if we ever get
+           ;; into this case, the convention is violated
+           (error "return linkage, target not val: COMPILE"
+                  target))))
   ;; ====
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
@@ -115,11 +136,11 @@
           ;; note that it's not possible for compiled-linkage to
           ;; take the value "next"
           (compile-proc-appl target compiled-linkage))
-         ;; ==> TODO: deal with compound procedures
+         ;; ==> deal with compound procedures
          (append-instruction-sequences
           compound-branch
           (compile-compound-proc-appl target compound-linkage)))
-        ;; TODO: ==> deal with primitive procedures
+        ;; ==> deal with primitive procedures
         (append-instruction-sequences
          primitive-branch
          (end-with-linkage
