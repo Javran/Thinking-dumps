@@ -124,8 +124,8 @@
           (branch (label ,compiled-branch))
           (test (op compound-procedure?) (reg proc))
           (branch (label ,compound-branch))
+          ;; if all of the dispatches have failed ... we panic!
           (perform (op error) (const "unknown proc object"))
-          ;; TODO: starting from here the behavior is not defined
           ))
        (parallel-instruction-sequences
         (parallel-instruction-sequences
