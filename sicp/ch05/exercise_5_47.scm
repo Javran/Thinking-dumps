@@ -10,9 +10,15 @@
 
 (load "ec-tests.scm")
 (for-each
+ (test-evaluator machine-eval)
+ test-exps) (newline)
+
+;; TODO: something is wrong, because
+;; we can never hit this unimplemented branch
+;; if the implementation is correct.
+(for-each
  (test-evaluator compile-and-run-with-env)
- test-exps)
-(newline)
+ test-exps) (newline)
 
 (compile-and-go
  '(begin

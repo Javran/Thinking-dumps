@@ -1,3 +1,7 @@
+(set! all-regs
+      (set-insert 'compapp all-regs))
+;; TODO: init compapp
+
 (define (ec-get-required-operations)
   (set-union
    ;; fool-proof, prevent duplicated elements
