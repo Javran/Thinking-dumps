@@ -1,6 +1,37 @@
 (set! all-regs
       (set-insert 'compapp all-regs))
-;; TODO: init compapp
+
+(define (compile-and-go exp)
+  (let* ((compiled
+          (compile exp 'val 'return))
+         (insn-seq (statements compiled))
+         (env (init-env))
+         (m (build-with
+             `(controller
+               (goto (label external-entry))
+               ,@evaluator-insns
+               ;; we will always append extra code to the tail
+               ;; of the previous instruction sequence
+               ;; so that the behavior is consistent with
+               ;; "additive assemble" patch.
+               ;; i.e. new codes are always attached
+               ;; to the existing one.
+               external-entry
+               ;; initialize compapp - we are not going
+               ;; to change it during the whole program.
+               (assign compapp (label compound-apply))
+               (perform (op initialize-stack))
+               (assign env (op get-global-environment))
+               (assign continue (label print-result))
+               ,@insn-seq
+               )
+             `((env ,env))
+             (ec-ops-builder-modifier
+              (ops-builder-union
+               monitor-patch-ops-builder-extra
+               default-ops-builder)))))
+    (machine-extra-set! m 'global-env env)
+    (machine-fresh-start! m)))
 
 (define (ec-get-required-operations)
   (set-union
