@@ -116,20 +116,30 @@
     ;; linkage = next
     (assert (not (eq? linkage 'next))
             "linkage can never be 'next in this function")
+    ;; TODO: how to trigger these 3 branches?
     (cond ((and (eq? target 'val)
                 (not (eq? linkage 'return)))
            ;; case: target == val && linkage /= return
-           (make-label 'todo)
-           )
+           ;; a (map (lambda (x) x) '(1 2 3)) brings us here.
+           ;; where "map" is compiled but "(lambda (x) x)" needs to be
+           ;; interpreted at runtime.
+           (make-instruction-sequence
+            '() all-regs
+            `((perform (op error) (const "TODO: tgt==val, lkg/=ret"))
+              )))
           ((and (not (eq? target 'val))
                 (not (eq? linkage 'return)))
            ;; case: target /= val && linkage /= return
-           (make-label 'todo)
-           )
+           (make-instruction-sequence
+            '() all-regs
+            `((perform (op error) (const "TODO: tgt/=val, lkg/=ret"))
+              )))
           ((and (eq? target 'val) (eq? linkage 'return))
            ;; case: target == val && linkage == return
-           (make-label 'todo)
-           )
+           (make-instruction-sequence
+            '() all-regs
+            `((perform (op error) (const "TODO: tgt==val, lkg==ret"))
+              )))
           ((and (not (eq? target 'val))
                 (eq? linkage 'return))
            ;; case: target /= val && linkage == return
