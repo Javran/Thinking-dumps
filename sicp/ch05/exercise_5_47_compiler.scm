@@ -88,16 +88,16 @@
     (cond ((and (eq? target 'val)
                 (not (eq? linkage 'return)))
            ;; case: target == val && linkage /= return
-           (error 'todo)
+           (make-label 'todo)
            )
           ((and (not (eq? target 'val))
                 (not (eq? linkage 'return)))
            ;; case: target /= val && linkage /= return
-           (error 'todo)
+           (make-label 'todo)
            )
           ((and (eq? target 'val) (eq? linkage 'return))
            ;; case: target == val && linkage == return
-           (error 'todo)
+           (make-label 'todo)
            )
           ((and (not (eq? target 'val))
                 (eq? linkage 'return))
