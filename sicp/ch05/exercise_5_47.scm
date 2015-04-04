@@ -13,9 +13,12 @@
  (test-evaluator machine-eval)
  test-exps) (newline)
 
-;; TODO: something is wrong, because
-;; we can never hit this unimplemented branch
-;; if the implementation is correct.
+;; some testcases might fail when the compilation
+;; is not fully working, this is desired because
+;; at compile time we cannot check the object and
+;; make the final decision so we must take all the cases
+;; into account, the compilation of compound procedure application
+;; is one of these cases.
 (for-each
  (test-evaluator compile-and-run-with-env)
  test-exps) (newline)
