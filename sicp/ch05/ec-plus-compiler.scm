@@ -26,9 +26,9 @@
 (define (check-instruction-sequence compiled-seq)
   (let ((insn-seq (statements compiled-seq))
         (needed (registers-needed compiled-seq)))
-    (assert (or (null? needed)
-                (equal? needed '(env)))
-              "the only required register (if any) should be 'env'")
+    (assert
+     (set-subset<=? needed '(env))
+     "the only required register (if any) should be 'env'")
     (if (check-labels insn-seq)
         'ok
         (out "Error regarding labels occurred."))
