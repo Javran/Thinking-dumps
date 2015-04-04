@@ -1,6 +1,24 @@
 (set! all-regs
       (set-insert 'compapp all-regs))
 
+(define (check-instruction-sequence compiled-seq)
+  (let ((insn-seq (statements compiled-seq))
+        (needed (registers-needed compiled-seq)))
+    (assert
+     (set-subset<=? needed '(env compapp))
+     "the only required register (if any) should be 'env'")
+    (if (check-labels insn-seq)
+        'ok
+        (out "Error regarding labels occurred."))
+
+    (let ((operations (map car (extract-operations insn-seq))))
+      (assert (set-subset<=? (remove-duplicates operations)
+                             ;; primitive operations are just part of
+                             ;; required operations
+                             (ec-get-required-operations))
+              "unknown operation found"))
+    #t))
+
 (define (compile-and-go exp)
   (let* ((compiled
           (compile exp 'val 'return))
@@ -124,8 +142,15 @@
            ;; where "map" is compiled but "(lambda (x) x)" needs to be
            ;; interpreted at runtime.
            (make-instruction-sequence
-            '() all-regs
-            `((perform (op error) (const "TODO: tgt==val, lkg/=ret"))
+            '(compapp) all-regs
+            `((assign continue (label ,linkage))
+              ;; note that "apply-dispatch" assumes the continuation
+              ;; is placed on the top of the stack
+              ;; and so does its subroutines "compound-apply"
+              ;; so we have to save it on the stack before
+              ;; we call the function.
+              (save continue)
+              (goto (reg compapp))
               )))
           ((and (not (eq? target 'val))
                 (not (eq? linkage 'return)))
