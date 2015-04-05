@@ -24,6 +24,7 @@
  test-exps) (newline)
 
 ;; TODO: need to summarize 3 cases.
+;; TODO: console-free testcases?
 (compile-and-go
  '(begin
     ;; for triggering target == val && linkage == return
@@ -37,7 +38,14 @@
     (define (test-apply2 f)
       (+ (f 10) 20))
 
-    (define (compose g f)
-      (lambda (x)
-        (g (f x))))
+    ;; for triggering target /= val && linkage /= return
+    ;; use: (test-apply3 (lambda (x) x))
+    ;; "(f identity)" has to be compound procedure if "f"
+    ;; is given in the interpreter, therefore the target of
+    ;; compiling "(f identity)" goes to "proc" /= "val"
+    ;; as we need to apply arguments after it, the linkage
+    ;; cannot be "return"
+    (define (identity x) x)
+    (define (test-apply3 f)
+      ((f identity) 10))
     ))

@@ -155,10 +155,19 @@
           ((and (not (eq? target 'val))
                 (not (eq? linkage 'return)))
            ;; case: target /= val && linkage /= return
+           (let ((proc-return (make-label 'proc-return)))
            (make-instruction-sequence
-            '() all-regs
-            `((perform (op error) (const "TODO: tgt/=val, lkg/=ret"))
-              )))
+            '(proc compapp) all-regs
+            `((assign continue (label ,proc-return))
+              (save continue)
+              (goto (reg compapp))
+              ,proc-return
+              ;; since target is not val,
+              ;; we need to move the result to the right place
+              ;; after the application is done
+              (assign ,target (reg val))
+              (goto (label ,linkage))
+              ))))
           ((and (eq? target 'val) (eq? linkage 'return))
            ;; case: target == val && linkage == return
            (make-instruction-sequence
