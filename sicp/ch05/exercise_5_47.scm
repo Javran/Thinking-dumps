@@ -23,6 +23,54 @@
  (test-evaluator compile-and-run-with-env)
  test-exps) (newline)
 
+;; first compile "compile-exp", load it into machine
+;; and then interpret "interp-exp"
+;; returns whatever stored in "val" register
+(define (compile-then-interp-with-env
+         compile-exp
+         interp-exp
+         env)
+  ;; based on compile-and-go
+  (let* ((compiled (compile compile-exp 'val 'return))
+         (insn-seq (statements compiled))
+         (m (build-with
+             `(controller
+               (goto (label external-entry))
+               ,@evaluator-insns
+               external-entry
+               (assign compapp (label compound-apply))
+               (perform (op initialize-stack))
+               (assign env (op get-global-environment))
+               ;; evaluate compiled instructions,
+               ;; then proceed to handle interp-exp
+               (assign continue (label after-eval-compiled))
+               ,@insn-seq
+               after-eval-compiled
+               ;; interpret "interp-exp"
+               ;; as if it was a user input
+               (perform (op initialize-stack))
+               (assign exp (const ,interp-exp))
+               (assign env (op get-global-environment))
+               ;; but stop when the evaluation is done
+               (assign continue (label after-everything))
+               (goto (label eval-dispatch))
+               after-everything)
+             `((env ,env))
+             (ec-ops-builder-modifier
+              (ops-builder-union
+               monitor-patch-ops-builder-extra
+               default-ops-builder)))))
+    (machine-extra-set! m 'global-env env)
+    (machine-fresh-start! m)
+    (machine-reg-get m 'val)))
+
+(out
+ (compile-then-interp-with-env
+  '(define (test-apply f)
+     (f 10))
+  '(test-apply (lambda (x) x))
+  (init-env)))
+
 ;; TODO: need to summarize 3 cases.
 ;; TODO: console-free testcases?
 (compile-and-go
