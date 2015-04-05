@@ -142,7 +142,7 @@
            ;; where "map" is compiled but "(lambda (x) x)" needs to be
            ;; interpreted at runtime.
            (make-instruction-sequence
-            '(compapp) all-regs
+            '(proc compapp) all-regs
             `((assign continue (label ,linkage))
               ;; note that "apply-dispatch" assumes the continuation
               ;; is placed on the top of the stack
@@ -162,9 +162,9 @@
           ((and (eq? target 'val) (eq? linkage 'return))
            ;; case: target == val && linkage == return
            (make-instruction-sequence
-            '() all-regs
-            `((perform (op error) (const "TODO: tgt==val, lkg==ret"))
-              )))
+            '(proc compapp continue) all-regs
+            `((save continue)
+              (goto (reg compapp)))))
           ((and (not (eq? target 'val))
                 (eq? linkage 'return))
            ;; case: target /= val && linkage == return

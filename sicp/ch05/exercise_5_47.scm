@@ -23,8 +23,18 @@
  (test-evaluator compile-and-run-with-env)
  test-exps) (newline)
 
+;; TODO: need to summarize 3 cases.
 (compile-and-go
  '(begin
+    (define (compose g f)
+      (lambda (x)
+        (g (f x))))
+    ;; for triggering target == val && linkage == return
+    ;; use: ((test-apply (lambda (x) x)) 1)
+    (define (test-apply f)
+      (lambda (x) (f x)))
+    (define (identity x) x)
+    ;; for triggering target == val && linkage /= return
     (define (map f xs)
       (if (null? xs)
           '()
