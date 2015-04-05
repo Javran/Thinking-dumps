@@ -26,17 +26,18 @@
 ;; TODO: need to summarize 3 cases.
 (compile-and-go
  '(begin
+    ;; for triggering target == val && linkage == return
+    ;; use: (test-apply (lambda (x) x))
+    (define (test-apply f)
+      (f 10))
+    ;; for triggering target == val && linkage /= return
+    ;; use: (test-apply2 (lambda (x) x))
+    ;; some extra stuff after function application
+    ;; so that the linkage is not "return"
+    (define (test-apply2 f)
+      (+ (f 10) 20))
+
     (define (compose g f)
       (lambda (x)
         (g (f x))))
-    ;; for triggering target == val && linkage == return
-    ;; use: ((test-apply (lambda (x) x)) 1)
-    (define (test-apply f)
-      (lambda (x) (f x)))
-    (define (identity x) x)
-    ;; for triggering target == val && linkage /= return
-    (define (map f xs)
-      (if (null? xs)
-          '()
-          (cons (f (car xs))
-                (map f (cdr xs)))))))
+    ))
