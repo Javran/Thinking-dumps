@@ -64,13 +64,73 @@
     (machine-fresh-start! m)
     (machine-reg-get m 'val)))
 
-(out
+#;(out
  (compile-then-interp-with-env
   '(define (test-apply f)
      (f 10))
   '(test-apply (lambda (x) x))
   (init-env)))
 
+(out "test1")
+(assert
+ (equal?
+  (compile-then-interp-with-env
+   ;; case: target == val && linkage == return
+   ;; This happens when the compiled procedure
+   ;;   does a tail-recursive call to the compound procedure.
+   ;;   this call passed the "return" linkage to the compound
+   ;;   procedure and requires the compound procedure
+   ;;   to place the result on "val" register
+   '(define (test-apply f)
+      (f 10))
+   '(test-apply (lambda (x) (+ 5 x)))
+   (init-env))
+  ;; (+ 5 10) ==> 15
+  15))
+
+(out "test2")
+(assert
+ (equal?
+  (compile-then-interp-with-env
+   ;; case: target == val && linkage /= return
+   ;; This happens when the compiled procedure
+   ;;   needs a compound procedure to give it a result,
+   ;;   but there are still remaining tasks for
+   ;;   this compiled procedure to do.
+   ;;   therefore the compound procedure
+   ;;   need to use linkage other than "return"
+   ;;   to direct back
+   '(define (test-apply f)
+      (+ (f 100) 123))
+   '(test-apply (lambda (x) (* x x)))
+   (init-env))
+  ;; (+ (* 100 100) 123)
+  10123))
+
+(out "test3")
+(assert
+ (equal?
+  (compile-then-interp-with-env
+   ;; case: target /= val && linkage /= return
+   ;; We know there is one case that target is not
+   ;;   "val" register: when we are doing function application,
+   ;;   the result actually goes to "proc" register.
+   ;;   This means we need to have a compound procedure
+   ;;   at the operator position. After evaluating the operator
+   ;;   we still need to worry about operands (even if
+   ;;   there is none, we still need to give "argl" register
+   ;;   some value), so the linkage is unlikely to be "return".
+   ;;   On the other hand, linkage == return
+   ;;   violates the convention because if linkage == return,
+   ;;   we are supposed to place the result in "val" register.
+   '(begin
+     (define (identity x) x)
+     (define (test-apply f)
+       ((f identity) 7)))
+   '(test-apply (lambda (x) x))
+   (init-env))
+  ;; (+ 7 7)
+  7))
 ;; TODO: need to summarize 3 cases.
 ;; TODO: console-free testcases?
 (compile-and-go
