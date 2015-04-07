@@ -1,4 +1,9 @@
 (set! all-regs
+      ;; well this is not actually necessary
+      ;; as "compapp" is supposed to be immutable
+      ;; after its initialization
+      ;; but we want to keep the meaning of "all-regs"
+      ;; consistent.
       (set-insert 'compapp all-regs))
 
 (define (check-instruction-sequence compiled-seq)
