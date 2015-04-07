@@ -64,14 +64,6 @@
     (machine-fresh-start! m)
     (machine-reg-get m 'val)))
 
-#;(out
- (compile-then-interp-with-env
-  '(define (test-apply f)
-     (f 10))
-  '(test-apply (lambda (x) x))
-  (init-env)))
-
-(out "test1")
 (assert
  (equal?
   (compile-then-interp-with-env
@@ -88,7 +80,6 @@
   ;; (+ 5 10) ==> 15
   15))
 
-(out "test2")
 (assert
  (equal?
   (compile-then-interp-with-env
@@ -107,7 +98,6 @@
   ;; (+ (* 100 100) 123)
   10123))
 
-(out "test3")
 (assert
  (equal?
   (compile-then-interp-with-env
@@ -124,36 +114,15 @@
    ;;   violates the convention because if linkage == return,
    ;;   we are supposed to place the result in "val" register.
    '(begin
-     (define (identity x) x)
-     (define (test-apply f)
-       ((f identity) 7)))
+      (define (g x) (* 5 x))
+      (define (test-apply f)
+        ((f g) 7)))
    '(test-apply (lambda (x) x))
    (init-env))
-  ;; (+ 7 7)
-  7))
-;; TODO: need to summarize 3 cases.
-;; TODO: console-free testcases?
+  ;; (* 5 7)
+  35))
+
 (compile-and-go
  '(begin
-    ;; for triggering target == val && linkage == return
-    ;; use: (test-apply (lambda (x) x))
-    (define (test-apply f)
-      (f 10))
-    ;; for triggering target == val && linkage /= return
-    ;; use: (test-apply2 (lambda (x) x))
-    ;; some extra stuff after function application
-    ;; so that the linkage is not "return"
-    (define (test-apply2 f)
-      (+ (f 10) 20))
-
-    ;; for triggering target /= val && linkage /= return
-    ;; use: (test-apply3 (lambda (x) x))
-    ;; "(f identity)" has to be compound procedure if "f"
-    ;; is given in the interpreter, therefore the target of
-    ;; compiling "(f identity)" goes to "proc" /= "val"
-    ;; as we need to apply arguments after it, the linkage
-    ;; cannot be "return"
     (define (identity x) x)
-    (define (test-apply3 f)
-      ((f identity) 10))
     ))
