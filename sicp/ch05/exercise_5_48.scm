@@ -37,3 +37,20 @@
 ;; and then the quotation makes sense. so there are many ways of doing things,
 ;; let's first take the way our exercise wants and then think about other approaches.
 
+;; extend the environment to
+;; install machine-related primitives (currently compile-and-run only)
+(define (install-machine-primitives env machine)
+  (define (compile-and-run-prim exp)
+    (let ((compiled
+           (compile exp 'val 'return))
+          (insn-seq (statements compiled)))
+      (assemble insn-seq machine)
+      ;; at this point .. well I realize
+      ;; we don't know how to transfer the control
+      ;; decently. -- yes it's doable by manipulate the machine
+      ;; but then the implementation would look weird.
+      ))
+  (extend-environment
+   '(compile-and-run)
+   (lift-primitive compile-and-run-prim)
+   env))
