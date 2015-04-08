@@ -7,7 +7,7 @@
 
 ;; based on ex 5.47
 
-(load "exercise_5_47_eval.scm")
+(load "exercise_5_48_eval.scm")
 (load "exercise_5_47_compiler.scm")
 
 ;; TODO: an interface for REPL to compile code
@@ -23,7 +23,7 @@
 ;; but if "compile-and-run" is a special form,
 ;; we don't have to quote the expression inside.
 
-;; TODO: plan:
+;; TODO: plan: (pause this plan)
 ;; * implement "compile-and-run" as a special form
 ;; * something corresponding to "compile-and-run" as a machine primitive
 ;;   (this something need to have a different name, the distinction is
@@ -31,3 +31,9 @@
 ;;   into the machine object, which means lifting the primitive from
 ;;   scheme directly is not going to work.)
 ;; * run the code after assembling, transfer control back to REPL
+
+;; TODO: now I guess the exercise want us to implement
+;; "compile-and-run" as a function available at run time.
+;; and then the quotation makes sense. so there are many ways of doing things,
+;; let's first take the way our exercise wants and then think about other approaches.
+
