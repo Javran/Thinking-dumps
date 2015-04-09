@@ -229,7 +229,15 @@
 
     ;; compile-and-run handler
     ev-compile-and-run
-    (perform (op error) (const "TODO"))
+    ;; workflow:
+    ;; * call primitive compiler to compile
+    ;; * store label in "val"
+    ;; * jump to compiled code and run it
+    ;; * return just like other branches
+    ;;   (since the linkage is "return", we don't
+    ;;   need to do much)
+    (assign val (op magic-compile) (reg exp))
+    (goto (reg val))
 
     read-eval-print-loop
     (perform (op initialize-stack))
