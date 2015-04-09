@@ -55,7 +55,24 @@
         ,@(map to-machine-prim-entry missing-prim-symbols)
         ,@current-ops))))
 
-(compile-and-go ''())
+;; (compile-and-go ''())
+
+(assert
+ (equal?
+  (compile-then-interp-with-env
+   ;; leave nothing to compile
+   ''()
+   ;; the expression below is interpreted
+   ;; at runtime.
+   `(begin
+      (define (factorial n)
+        (if (= n 1)
+            1
+            (* (factorial (- n 1)) n)))
+      (factorial 5))
+   (init-env))
+  ;; 5! = 120
+  120))
 
 ;; TOOD:
 ;; For now I can't see why we need an extra quote.
