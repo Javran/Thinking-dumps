@@ -37,9 +37,16 @@
 ;; and then the quotation makes sense. so there are many ways of doing things,
 ;; let's first take the way our exercise wants and then think about other approaches.
 
+;; NOTE: I find it's difficult to implement "compile" as a
+;; primitive procedure, because after compilation,
+;; we still need to transfer control to call the newly generated code
+;; which can be tricky to make it right by allowing a primitive procedure
+;; to manipulate machine states. let's go back and try the special-form method
+
+
 ;; extend the environment to
 ;; install machine-related primitives (currently compile-and-run only)
-(define (install-machine-primitives env machine)
+#;(define (install-machine-primitives env machine)
   (define (compile-and-run-prim exp)
     (let ((compiled
            (compile exp 'val 'return))

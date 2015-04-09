@@ -35,8 +35,8 @@
     (branch (label ev-let))
 
     ;; new special form: compile-and-run
-    ;; (test (op compile-and-run?) (reg exp))
-    ;; (branch (label ev-compile-and-run))
+    (test (op compile-and-run?) (reg exp))
+    (branch (label ev-compile-and-run))
 
     (test (op application?) (reg exp))
     (branch (label ev-application))
@@ -226,6 +226,10 @@
     ev-let
     (assign exp (op let->combination) (reg exp))
     (goto (label eval-dispatch))
+
+    ;; compile-and-run handler
+    ev-compile-and-run
+    (perform (op error) (const "TODO"))
 
     read-eval-print-loop
     (perform (op initialize-stack))
