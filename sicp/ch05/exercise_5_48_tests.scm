@@ -27,10 +27,14 @@
    ;; the expression below is interpreted
    ;; at runtime.
    `(begin
-      (define (factorial n)
-        (if (= n 1)
-            1
-            (* (factorial (- n 1)) n)))
+      ;; call compile-and-run here
+      ;; so that we are not executing the code
+      ;; directly dire
+      (compile-and-run
+       '(define (factorial n)
+          (if (= n 1)
+              1
+              (* (factorial (- n 1)) n))))
       (factorial 5))
    (init-env))
   ;; 5! = 120

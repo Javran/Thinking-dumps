@@ -12,11 +12,10 @@
 (load "exercise_5_48_prim.scm")
 (load "exercise_5_48_machine.scm")
 
-;; (compile-and-go ''())
+;; load this module to play with it dirrectly
+(compile-and-go ''())
 
-
-
-;; TOOD:
+;; TODO:
 ;; For now I can't see why we need an extra quote.
 ;; Namely we need to implement something that runs in REPL:
 ;;
