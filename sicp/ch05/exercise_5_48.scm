@@ -57,10 +57,6 @@
 
 (compile-and-go ''())
 
-;; TODO: an interface for REPL to compile code
-;;   most importantly, we should have the ability of doing
-;;   runtime assembling.
-
 ;; TOOD:
 ;; For now I can't see why we need an extra quote.
 ;; Namely we need to implement something that runs in REPL:
@@ -70,7 +66,7 @@
 ;; but if "compile-and-run" is a special form,
 ;; we don't have to quote the expression inside.
 
-;; TODO: plan: (pause this plan)
+;; TODO:
 ;; * implement "compile-and-run" as a special form
 ;; * something corresponding to "compile-and-run" as a machine primitive
 ;;   (this something need to have a different name, the distinction is
@@ -89,22 +85,3 @@
 ;; we still need to transfer control to call the newly generated code
 ;; which can be tricky to make it right by allowing a primitive procedure
 ;; to manipulate machine states. let's go back and try the special-form method
-
-
-;; extend the environment to
-;; install machine-related primitives (currently compile-and-run only)
-#;(define (install-machine-primitives env machine)
-  (define (compile-and-run-prim exp)
-    (let ((compiled
-           (compile exp 'val 'return))
-          (insn-seq (statements compiled)))
-      (assemble insn-seq machine)
-      ;; at this point .. well I realize
-      ;; we don't know how to transfer the control
-      ;; decently. -- yes it's doable by manipulate the machine
-      ;; but then the implementation would look weird.
-      ))
-  (extend-environment
-   '(compile-and-run)
-   (lift-primitive compile-and-run-prim)
-   env))
