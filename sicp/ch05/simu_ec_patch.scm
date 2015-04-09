@@ -23,7 +23,7 @@
                       (map car old-ops))))
       `(
         ;; we are trying to be lazy here by:
-        ;; * extract the list of required operation names direcly
+        ;; * extract the list of required operation names directly
         ;;   from the code of the evaluator
         ;; * operation names are symbols, and as we have implemented
         ;;   them somewhere in our toplevel user environment
