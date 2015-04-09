@@ -236,6 +236,7 @@
     ;; * return just like other branches
     ;;   (since the linkage is "return", we don't
     ;;   need to do much)
+    (assign exp (op compile-and-run-exp) (reg exp))
     (assign val (op magic-compile) (reg exp))
     (goto (reg val))
 

@@ -13,6 +13,11 @@
 (define compile-and-run?
   (list-tagged-with 'compile-and-run))
 
+(define (compile-and-run-exp obj)
+  ;; one cadr for destructing "compile-and-run"
+  ;; one cadr for destructing "quote"
+  (cadr (cadr obj)))
+
 (define (ec-ops-builder-modifier current-ops-builder)
   (lambda (m)
     (let* ((old-ops
@@ -31,13 +36,10 @@
               ;; let's call this new primitive operation
               ;; "magic-compile" -- why not :)
               (magic-compile
-               ,(lambda (exp-raw)
-                  (let* ((exp (cadr (cadr exp-raw)))
-                         ;; TODO: a destructor
-                         (compiled (compile exp 'val 'return))
+               ,(lambda (exp)
+                  (let* ((compiled (compile exp 'val 'return))
                          (insn-seq (statements compiled))
                          (entry (assemble insn-seq m)))
-                    ;; TODO: test if it works
                     ;; put instruction sequence in "val"
                     ;; and we are done
                     entry)))
