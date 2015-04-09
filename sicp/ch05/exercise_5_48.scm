@@ -51,8 +51,7 @@
              (ec-get-required-operations)
              (remove-duplicates
               (map car current-ops)))))
-      `(
-        ,@(map to-machine-prim-entry missing-prim-symbols)
+      `(,@(map to-machine-prim-entry missing-prim-symbols)
         ,@current-ops))))
 
 ;; (compile-and-go ''())
