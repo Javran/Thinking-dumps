@@ -20,3 +20,10 @@
  test-exps) (newline)
 
 ;; TODO: exercise 5.49. will be based on exercise 5.48
+;; * "compile" and "assemble" can be merged into one operation
+;;   since we have to run "assemble" after "compile" (as we did in ex 5.48)
+;; * since everything will now be compiled, I think we can get rid of
+;;   many code we have in the explicit evaluator
+;; * as an addition point, we only need to deal with compiled-procedure
+;;   if all we do is a "read-compile-execute-print" loop,
+;;   because we don't need to interpret anything!
