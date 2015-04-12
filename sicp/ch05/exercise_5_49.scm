@@ -7,7 +7,7 @@
 
 (load "exercise_5_47_compiler.scm")
 
-(load "exercise_5_48_eval.scm")
+(load "exercise_5_49_eval.scm")
 (load "exercise_5_48_prim.scm")
 (load "exercise_5_48_machine.scm")
 
@@ -18,6 +18,8 @@
 (for-each
  (test-evaluator compile-and-run-with-env)
  test-exps) (newline)
+
+(compile-and-go ''())
 
 ;; TODO: exercise 5.49. will be based on exercise 5.48
 ;; * "compile" and "assemble" can be merged into one operation
