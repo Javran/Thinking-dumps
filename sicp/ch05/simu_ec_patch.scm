@@ -48,6 +48,14 @@
   (let* ((entry-label (gensym))
          (exit-label (gensym))
          (eval-label (gensym))
+         ;; TODO: this can be fixed.
+         ;; NOTE: an implicit assumption that this procedure made
+         ;; is that when "exp" and "env" are set properly,
+         ;; "evaluator-insns"' will do what we expect.
+         ;; this assumption is not generally true.
+         ;; for example, "eval-dispatch" might not be
+         ;; the first label "evaluator-insns", in which case
+         ;; something else might happen
          (m (build-and-execute
              `(controller
                (goto (label ,entry-label))
