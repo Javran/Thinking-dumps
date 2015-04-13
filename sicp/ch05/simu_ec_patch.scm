@@ -43,31 +43,14 @@
      monitor-patch-ops-builder-extra
      default-ops-builder))))
 
-;; TODO: eval-dispatch
-
-;; TODO: verify:
-;; * ec-plus
-;; * legacy_ec_patch
-;; * ec-tests
-;; * simu_ec_patch
-;; * 5.24
-;; * 5.25
-;; * 5.32
-;; * 5.47
-;; * 5.48
-
 ;; use the machine to evaluate a lisp expression
+;; NOTE: "machine-eval" expects a "eval-dispatch" label
+;; available in "evaluator-insns", which should use "exp"
+;; and "env" registers for interpreting the expression and
+;; use "continue" register to transfer control.
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
          (exit-label (gensym))
-         ;; TODO: this can be fixed.
-         ;; NOTE: an implicit assumption that this procedure made
-         ;; is that when "exp" and "env" are set properly,
-         ;; "evaluator-insns"' will do what we expect.
-         ;; this assumption is not generally true.
-         ;; for example, "eval-dispatch" might not be
-         ;; the first label "evaluator-insns", in which case
-         ;; something else might happen
          (m (build-and-execute
              `(controller
                ;; set up control, assuming
