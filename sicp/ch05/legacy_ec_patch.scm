@@ -29,6 +29,9 @@
           ,@old-ops)))))
 
 ;; use the machine to evlauate a lisp expression
+;; NOTE: eval-dispatch should always be the immediate first label
+;; in "evaluator-insns", or otherwise "machine-eval" is not guaranteed
+;; to work properly.
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
          (exit-label (gensym))
