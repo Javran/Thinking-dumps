@@ -43,11 +43,23 @@
      monitor-patch-ops-builder-extra
      default-ops-builder))))
 
+;; TODO: eval-dispatch
+
+;; TODO: verify:
+;; * ec-plus
+;; * legacy_ec_patch
+;; * ec-tests
+;; * simu_ec_patch
+;; * 5.24
+;; * 5.25
+;; * 5.32
+;; * 5.47
+;; * 5.48
+
 ;; use the machine to evaluate a lisp expression
 (define (machine-eval exp env)
   (let* ((entry-label (gensym))
          (exit-label (gensym))
-         (eval-label (gensym))
          ;; TODO: this can be fixed.
          ;; NOTE: an implicit assumption that this procedure made
          ;; is that when "exp" and "env" are set properly,
@@ -58,12 +70,21 @@
          ;; something else might happen
          (m (build-and-execute
              `(controller
-               (goto (label ,entry-label))
-               ,eval-label
-               ,@evaluator-insns
-               ,entry-label
+               ;; set up control, assuming
+               ;; "exp" and "env" are set properly
                (assign continue (label ,exit-label))
-               (goto (label ,eval-label))
+               (goto (label eval-dispatch))
+               ;; instructions for the evaluator
+               ,@evaluator-insns
+               ;; the evaluating subroutine isn't supposed
+               ;; to run past this line.
+               ;; if it does, the something is wrong
+               ;; with the evaluator
+               (perform
+                (op error)
+                (const "evaluator instruction sequence error"))
+               ;; if everything works fine, we should be able to
+               ;; jump to here.
                ,exit-label)
              `((exp ,exp)
                (env ,env)))))
