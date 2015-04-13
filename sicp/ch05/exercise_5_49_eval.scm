@@ -2,11 +2,18 @@
 
 (define evaluator-insns
   '(
+    ;; to make "evaluator-insns" worth its name
+    ;; "eval-dispatch" subroutine need to exist.
+    eval-dispatch
+    (assign val (op magic-compile) (reg exp))
+    (goto (reg val))
+
     ;; these are just tmp hacks
     ;; and we need to get rid of it
     compound-apply
     (assign argl (reg argl))
     (assign proc (reg proc))
+    (assign compapp (reg compapp))
     (perform (op error) (const "impossible"))
 
     ;; TODO: label name
