@@ -1,3 +1,15 @@
+;; based on ex 5.47
+
+(load "exercise_5_47_compiler.scm")
+
+(set! all-regs
+      ;; well this is not actually necessary
+      ;; as "compapp" is supposed to be immutable
+      ;; after its initialization
+      ;; but we want to keep the meaning of "all-regs"
+      ;; consistent.
+      (set-delete 'compapp all-regs))
+
 (define (compile-procedure-call target linkage)
   ;; function application for compiled procedures
   (define (compile-proc-appl target linkage)
