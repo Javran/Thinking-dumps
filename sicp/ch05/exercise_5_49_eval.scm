@@ -1,5 +1,7 @@
 ;; based on ex 5.47
 
+(load "exercise_5_47_compiler.scm")
+
 (define evaluator-insns
   '(
     ;; to make "evaluator-insns" worth its name

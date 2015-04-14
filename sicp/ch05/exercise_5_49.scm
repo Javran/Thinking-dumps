@@ -5,8 +5,7 @@
 (load "compiler.scm")
 (load "ec-plus.scm")
 
-(load "exercise_5_47_compiler.scm")
-
+(load "exercise_5_49_compiler.scm")
 (load "exercise_5_49_eval.scm")
 (load "exercise_5_48_prim.scm")
 (load "exercise_5_48_machine.scm")
