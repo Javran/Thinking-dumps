@@ -70,7 +70,10 @@
                ;; jump to here.
                ,exit-label)
              `((exp ,exp)
-               (env ,env)))))
+               (env ,env)
+               (argl *unassigned*)
+               (proc *unassigned*)
+               ))))
     (machine-reg-get m 'val)))
 
 (define (ec-repl)

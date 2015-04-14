@@ -10,6 +10,25 @@
       ;; consistent.
       (set-delete 'compapp all-regs))
 
+(define (check-instruction-sequence compiled-seq)
+  (let ((insn-seq (statements compiled-seq))
+        (needed (registers-needed compiled-seq)))
+    (assert
+     ;; we no longer need compapp
+     (set-subset<=? needed '(env))
+     "the only required register (if any) should be 'env'")
+    (if (check-labels insn-seq)
+        'ok
+        (out "Error regarding labels occurred."))
+
+    (let ((operations (map car (extract-operations insn-seq))))
+      (assert (set-subset<=? (remove-duplicates operations)
+                             ;; primitive operations are just part of
+                             ;; required operations
+                             (ec-get-required-operations))
+              "unknown operation found"))
+    #t))
+
 (define (compile-procedure-call target linkage)
   ;; function application for compiled procedures
   (define (compile-proc-appl target linkage)
@@ -65,7 +84,6 @@
   ;; ====
   (let ((primitive-branch (make-label 'primitive-branch))
         (compiled-branch (make-label 'compiled-branch))
-        (compound-branch (make-label 'compound-branch))
         (after-call (make-label 'after-call)))
     ;; INVARIANT: compile-proc-appl and compile-compound-proc-appl
     ;; can never be called with linkage = next
@@ -103,3 +121,34 @@
                      (reg proc)
                      (reg argl)))))))
        after-call))))
+
+(define (compile-and-go exp)
+  (let* ((compiled
+          (compile exp 'val 'return))
+         (insn-seq (statements compiled))
+         (env (init-env))
+         (m (build-with
+             `(controller
+               (goto (label external-entry))
+               ,@evaluator-insns
+               ;; we will always append extra code to the tail
+               ;; of the previous instruction sequence
+               ;; so that the behavior is consistent with
+               ;; "additive assemble" patch.
+               ;; i.e. new codes are always attached
+               ;; to the existing one.
+               external-entry
+               ;; initialize compapp - we are not going
+               ;; to change it during the whole program.
+               (perform (op initialize-stack))
+               (assign env (op get-global-environment))
+               (assign continue (label print-result))
+               ,@insn-seq
+               )
+             `((env ,env))
+             (ec-ops-builder-modifier
+              (ops-builder-union
+               monitor-patch-ops-builder-extra
+               default-ops-builder)))))
+    (machine-extra-set! m 'global-env env)
+    (machine-fresh-start! m)))
