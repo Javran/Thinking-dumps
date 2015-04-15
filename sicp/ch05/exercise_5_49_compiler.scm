@@ -145,7 +145,9 @@
                (assign continue (label print-result))
                ,@insn-seq
                )
-             `((env ,env))
+             `((env ,env)
+               (proc *unassigned*)
+               (argl *unassigned*))
              (ec-ops-builder-modifier
               (ops-builder-union
                monitor-patch-ops-builder-extra
