@@ -7,5 +7,10 @@ defined functions as possible)
 
 * run it
 
-* have a testsuite, I don't have a big picture of how to implement this
-for now, let me come back later
+* have a testsuite
+
+  - testcases should be easy, we write expressions
+  - and the eval function from the implemented language
+    should agree with the one from the implementing language
+    the only issue will be the imcompatible environment representation
+    need some code to work it out.
