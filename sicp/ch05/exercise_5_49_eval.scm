@@ -42,20 +42,4 @@
     (perform (op print-stack-statistics))
     (goto (label read-eval-print-loop))
 
-    unknown-expression-type
-    (assign val (const unknown-expression-type-error))
-    (goto (label signal-error))
-
-    unknown-procedure-type
-    (restore continue)
-    (assign val (const unknown-procedure-type-error))
-    (goto (label signal-error))
-
-    signal-error
-    (perform (op print) (const "error signaled:"))
-    (perform (op print) (reg val))
-    (goto (label read-eval-print-loop))
-
-    ;; external-entry can be set up afterwards,
-    ;; and we are not going to handle it here.
     ))
