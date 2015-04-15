@@ -16,10 +16,10 @@
 ;;   if all we do is a "read-compile-execute-print" loop,
 ;;   because we don't need to interpret anything.
 
-(load "exercise_5_49_compiler.scm")
-(load "exercise_5_49_eval.scm")
 (load "exercise_5_48_prim.scm")
 (load "exercise_5_48_machine.scm")
+(load "exercise_5_49_compiler.scm")
+(load "exercise_5_49_eval.scm")
 
 (load "ec-tests.scm")
 

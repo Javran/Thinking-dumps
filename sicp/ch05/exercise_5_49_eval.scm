@@ -7,10 +7,13 @@
     (assign val (op magic-compile) (reg exp))
     (goto (reg val))
 
-    ;; TODO: label name
-    ;; RCEPL for:
-    ;; Read-Compile-Execute-Print-Loop
-    read-eval-print-loop
+    ;; surprisingly there is no hard-coded
+    ;; entry outside of the instruction sequences
+    ;; because we are actually calling "print-result"
+    ;; as a continuation of executing the statically
+    ;; compiled code, which not only prints out
+    ;; the result, but also jumps to this label
+    read-compile-execute-print-loop
     ;; read
     (perform
      (op prompt-for-input) (const "ec-repl+> "))
@@ -40,6 +43,6 @@
     print-result
     (perform (op user-print) (reg val))
     (perform (op print-stack-statistics))
-    (goto (label read-eval-print-loop))
+    (goto (label read-compile-execute-print-loop))
 
     ))
