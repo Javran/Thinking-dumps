@@ -11,7 +11,7 @@
         (needed (registers-needed compiled-seq)))
     (assert
      (set-subset<=? needed '(env compapp))
-     "the only required register (if any) should be 'env'")
+     "the required registers (if any) should be a subset of ('env' 'compapp')")
     (if (check-labels insn-seq)
         'ok
         (out "Error regarding labels occurred."))
