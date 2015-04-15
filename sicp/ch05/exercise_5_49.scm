@@ -5,6 +5,17 @@
 (load "compiler.scm")
 (load "ec-plus.scm")
 
+;; based on exercise 5.48
+;; * "compile" and "assemble" are combined together into "magic-compile"
+;;   (this part is actually just reusing the implementation in ex 5.48)
+;;   since we have to run "assemble" after "compile",
+;;   I think we can just keep it simple by merging them into one single step.
+;; * since everything will now be compiled, we can get rid of
+;;   many code we have in the explicit evaluator
+;; * as an addition point, we only need to deal with compiled-procedure
+;;   if all we do is a "read-compile-execute-print" loop,
+;;   because we don't need to interpret anything.
+
 (load "exercise_5_49_compiler.scm")
 (load "exercise_5_49_eval.scm")
 (load "exercise_5_48_prim.scm")
@@ -21,12 +32,3 @@
  test-exps) (newline)
 
 (compile-and-go ''())
-
-;; TODO: exercise 5.49. will be based on exercise 5.48
-;; * "compile" and "assemble" can be merged into one operation
-;;   since we have to run "assemble" after "compile" (as we did in ex 5.48)
-;; * since everything will now be compiled, I think we can get rid of
-;;   many code we have in the explicit evaluator
-;; * as an addition point, we only need to deal with compiled-procedure
-;;   if all we do is a "read-compile-execute-print" loop,
-;;   because we don't need to interpret anything!
