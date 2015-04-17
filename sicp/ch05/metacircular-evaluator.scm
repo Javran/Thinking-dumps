@@ -37,10 +37,10 @@
 (define out
   (lambda items
     (for-each
-      (lambda (x)
-           (display x)
-           (newline))
-      items)))
+     (lambda (x)
+       (display x)
+       (newline))
+     items)))
 
 (load "../common/test-utils.scm")
 ;; TODO: remove tests - we can test it against the evaluator
@@ -48,10 +48,10 @@
 (define *my-eval-do-test* #t)
 
 (define (make-handler
-          slot
-          proc-eval
-          proc-analyze
-          test-proc)
+         slot
+         proc-eval
+         proc-analyze
+         test-proc)
   (list 'handler
         slot
         proc-eval
@@ -68,19 +68,17 @@
 (define handler-proc-analyze cadddr)
 (define handler-test (compose car cddddr))
 
+;; TODO: remove
 (define (handler-run-test h)
   (if (handler-test h)
     ((handler-test h))
     'no-test-available))
 
 (define (handler-eval handler exp env)
-  ((handler-proc-eval handler)
-   exp
-   env))
+  ((handler-proc-eval handler) exp env))
 
 (define (handler-analyze handler exp)
-  ((handler-proc-analyze handler)
-   exp))
+  ((handler-proc-analyze handler) exp))
 
 (define (handler-register! h)
   (my-eval-put! (handler-slot h) h))
@@ -96,20 +94,20 @@
       (cons (cons (list slot handler)
                   (del-assq slot alist))
             (if slot-list
-              (cadr slot-list)
-              #f))))
+                (cadr slot-list)
+                #f))))
 
   (define (put! slot handler)
     (let ((modified
-            (put-handler slot handler eval-handler-alist)))
+           (put-handler slot handler eval-handler-alist)))
       (set! eval-handler-alist (car modified))
       (cdr modified)))
 
   (define (get-handler slot alist)
     (let ((slot-list (assq slot alist)))
       (if slot-list
-        (cadr slot-list)
-        #f)))
+          (cadr slot-list)
+          #f)))
 
   (define (get slot)
     (get-handler slot eval-handler-alist))
@@ -139,11 +137,11 @@
            slots))
     (define not-ok
       (map
-        car
-        (filter
-          (lambda (pair)
-            (not (eq? (cdr pair) 'ok)))
-          (map cons slots results))))
+       car
+       (filter
+        (lambda (pair)
+          (not (eq? (cdr pair) 'ok)))
+        (map cons slots results))))
     (out "Summary: slots that did not return with 'ok: ")
     (display "  ") (display not-ok) (newline)
     (out "Test done.")
@@ -224,97 +222,12 @@
     (scan (frame-variables frame)
           (frame-values    frame))))
 
-(define (test-environment)
-  (define env (extend-environment
-               '(a b c)
-               '(1 2 3)
-               the-empty-environment))
-
-  (define-variable! 'c 'cval env)
-  (define-variable! 'b 'bval env)
-
-  (define-variable! 'd 'd env)
-
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'a env 1)
-    (mat 'c env 'cval)
-    (mat 'd env 'd)
-    (mat 'b env 'bval)))
-
-  (define env1 (extend-environment
-                '(c d e f)
-                '(10 20 30 40)
-                env))
-  (define env2 (extend-environment
-                '(b)
-                '(bb22)
-                env))
-
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'a env1 1)
-    (mat 'b env1 'bval)
-    (mat 'c env1 10)
-    (mat 'd env1 20)
-    (mat 'e env1 30)
-    (mat 'f env1 40)))
-
-  (define-variable! 'g '50  env1)
-  (define-variable! 'a 'aaa env1)
-
-
-  (define-variable! 'c 'ccc env1)
-
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'a env 1)
-    (mat 'c env 'cval)
-    (mat 'd env 'd)
-    (mat 'b env 'bval)))
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'a env1 'aaa)
-    (mat 'b env1 'bval)
-    (mat 'c env1 'ccc)
-    (mat 'd env1 20)
-    (mat 'e env1 30)
-    (mat 'f env1 40)
-    (mat 'g env1 50)))
-
-  (set-variable-value! 'b 'bbb env1)
-
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'b env  'bbb)
-    (mat 'b env1 'bbb)
-    (mat 'b env2 'bb22)))
-
-  (set-variable-value! 'b 'new-b env2)
-
-  (do-test
-   lookup-variable-value
-   (list
-    (mat 'b env  'bbb)
-    (mat 'b env1 'bbb)
-    (mat 'b env2 'new-b)))
-
-  'ok)
-
-(if *my-eval-do-test*
-  (test-environment))
 (define (list-tagged-with tag)
   (lambda (l)
     (and
       (list? l)
       (non-empty? l)
       (eq? (car l) tag))))
-
 
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
@@ -326,13 +239,13 @@
 
 (define (list-of-values exps env)
   (if (no-operands? exps)
-    '()
-    (cons (my-eval (first-operand exps) env)
-          (list-of-values (rest-operands exps) env))))
+      '()
+      (cons (my-eval (first-operand exps) env)
+            (list-of-values (rest-operands exps) env))))
 
 (define (test-both test-eval-xxx
-                      eval-xxx
-                      analyze-xxx)
+                   eval-xxx
+                   analyze-xxx)
   (lambda ()
     (let ((result
            (list
@@ -342,24 +255,6 @@
           'ok
           result))))
 
-(define (test-utils)
-  (let ((testcases
-          (list
-            (mat 'a #f)
-            (mat '(t1 a b) #t)
-            (mat '(t2 b) #f)
-            (mat '(t1 a b c) #t)
-            (mat '() #f)))
-        (proc (lambda (exp)
-                (tagged-list? exp 't1))))
-    (do-test (list-tagged-with 't1) testcases)
-    (do-test proc testcases)))
-
-
-
-(if *my-eval-do-test*
-  (test-utils))
-
 (define (just a)
   (cons 'just a))
 
@@ -367,8 +262,7 @@
   (and (non-empty? maybe)
        (eq? 'just (car maybe))))
 
-(define nothing
-  #f)
+(define nothing #f)
 
 (define from-just cdr)
 
@@ -463,60 +357,6 @@
             "Unknown procedure type: APPLY" proc))))
   (apply-proc proc args))
 
-(define (test-my-apply)
-  (define env1
-    the-empty-environment)
-
-  (define proc+
-    (make-proc-primitive +))
-
-  (define proc-
-    (make-proc-primitive -))
-
-  (define proc*
-    (make-proc-primitive *))
-
-  (define proc-id
-    (my-eval
-     `(lambda (x) x)
-     env1))
-
-  (define proc-branch
-    (my-eval
-     `(lambda (p a b)
-        (if p a b))
-     env1))
-
-  (my-apply proc-id '(#f))
-
-  (define testcases1
-    (list
-     (mat proc+ '(1 2 3) 6)
-     (mat proc- '(10 20) -10)
-     (mat proc* '(1 4 9) 36)
-     (mat proc-id '(#f) #f)
-     (mat proc-branch '(#t 10 20) 10)
-     (mat proc-branch '(#t 10 20) 10)
-     ))
-
-  (do-test my-apply testcases1)
-
-  (define env2
-    (extend-environment
-     (list '+ '- '*)
-     (list proc+ proc- proc*)
-     env1))
-
-  (define testcases2
-    (list
-     (mat '(+ 1 2 3 4) env2 10)
-     (mat '(* (+ 1 2) (- 3 4)) env2 -3)
-     (mat '(+ (* 1 2) (* 3 4)) env2 14)
-     (mat '(- (* 3 4 5) (* 2 (- 7 2))) env2 50)))
-
-  (do-test my-eval testcases2)
-
-  'ok)
 (define (lift-primitive-pair sym)
   (cons sym
         (make-proc-primitive
@@ -563,30 +403,6 @@
         (map car proc-list)
         (map cdr proc-list)
         the-empty-environment))))
-
-(define (test-init-env)
-  (let ((env (init-env)))
-    (do-test
-      my-eval
-      (list
-        (mat '(+ 1 2 3) env 6)
-        (mat '(- 7 1 2 3) env 1)
-        (mat '(/ 1024 256) env 4)
-        (mat '(= 1 1) env #t)
-        (mat '(= 1 0) env #f)
-        (mat '(zero? 0) env #t)
-        (mat '(eq? 'a 'a) env #t)
-        (mat '(eq? 'a 'b) env #f)
-        (mat '(= (* 1 2 3 4) (* 2 (+ 10 2))) env #t)
-        (mat `(cons 1 '(2 3)) env '(1 2 3))
-        (mat `(cons 'a 'b) env '(a . b))
-        (mat `(car '(1 2)) env 1)
-        (mat `(cdr '(1 2)) env '(2))
-        (mat `(null? '()) env #t)
-        (mat `(null? '(1)) env #f)
-        (mat `(list 'a 'b) env '(a b))
-        )
-      equal?)))
 
 (define (self-evaluating? exp)
   (or (number? exp)
@@ -1629,8 +1445,6 @@
    (lambda (approach)
      (begin
        (my-eval-select-approach approach)
-       (test-my-apply)
-       (test-init-env)
        (my-eval-test-installed-handlers)
        ))
    (map car eval-approaches)))
