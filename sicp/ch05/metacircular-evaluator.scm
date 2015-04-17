@@ -6,7 +6,6 @@
 
 ;; TODO: eliminate all use of "format"
 ;; to make this portable
-(load-option 'format)
 
 (define (compose . procs)
   (define (compose-inv procs)
@@ -105,13 +104,18 @@
     (get-handler slot eval-handler-alist))
 
   (define (test-slot slot alist)
-    (format #t "Testing ~A " slot)
+    (for-each
+     display
+     '("Testing " slot " "))
     (define handler
       (get-handler slot alist))
     (assert handler "handler not found")
     (define result
       (handler-run-test handler))
-    (format #t "~%  Result: ~A~%" result)
+    (newline)
+    (display "  Result: ")
+    (display result)
+    (newline)
     result)
 
   (define (test-all-slots)
@@ -130,7 +134,7 @@
             (not (eq? (cdr pair) 'ok)))
           (map cons slots results))))
     (out "Summary: slots that did not return with 'ok: ")
-    (format #t "  ~A~%" not-ok)
+    (display "  ") (display not-ok) (newline)
     (out "Test done.")
     'ok)
 
@@ -340,10 +344,7 @@
     (do-test (list-tagged-with 't1) testcases)
     (do-test proc testcases)))
 
-(define (my-eval-message fmt . msgs)
-  (let ((message
-         (apply format `(#f ,fmt ,@msgs))))
-    (format #t "; [my-eval]: ~A~%" message)))
+
 
 (if *my-eval-do-test*
   (test-utils))
@@ -1590,8 +1591,10 @@
   'uninitialized)
 
 (define (my-eval-select-approach approach)
-  (my-eval-message
-   "switching to approach: ~A" approach)
+  (display "; [my-eval]: ")
+  (display "switching to approach: ")
+  (display approach)
+  (newline)
   (set! *my-eval-approach* approach)
   (set! my-eval
         (cadr (assoc *my-eval-approach* eval-approaches))))
@@ -1609,6 +1612,7 @@
 (install-eval-let*)
 (install-eval-letrec)
 
+(newline)
 (define (my-eval-test-all)
   (for-each
    (lambda (approach)
@@ -1635,11 +1639,9 @@
       (user-print output)))
     (driver-loop env))
 
-(define (prompt-for-input string)
-  (format #t "~A" string))
+(define prompt-for-input display)
 
-(define (announce-output string)
-  (format #t "~A" string))
+(define announce-output display)
 
 (define (user-print object)
   (if (proc-compound? object)
