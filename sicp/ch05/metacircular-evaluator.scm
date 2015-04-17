@@ -21,8 +21,19 @@
 (define (const x)
   (lambda (y) x))
 
-;; TODO: um,..not portable.
-(define gensym generate-uninterned-symbol)
+(define gensym
+  ;; procedure-local counter
+  (let ((symbol-counter 0))
+    (lambda ()
+      (let ((old-sym symbol-counter))
+        (set! symbol-counter (+ symbol-counter 1))
+        (string->symbol
+         ;; we make a long name so there is
+         ;; less chance of name confliction
+         (string-append
+          "gensym-generated-symbol#"
+          (number->string old-sym)))))))
+
 (define out
   (lambda items
     (for-each
