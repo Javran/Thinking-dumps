@@ -6,6 +6,51 @@
 
 (define test-exprs
   '(
+    ;; self-evaluating & quotation
+    'abc
+    1
+    '(1 2 3)
+    "a"
+    #\a
+    '"a"
+    '1
+    ;; if-expression
+    (if 1 10)
+    (if 1 10 20)
+    (if #t 10 20)
+    (if 'a 10 20)
+    (if #f 10 20)
+    (if (= 0 1) (+ 10 20) (* 10 20))
+
+    ;; begin-form
+    (begin (if #f 10 20) 30)
+    (begin 1 2 3)
+    (begin 30 (if #t 10 20))
+
+    ;; cond-form
+    (begin
+      (define a 0)
+      (cond ((= a 0) 2)
+            ((= a 1) 1)
+            ((= a 2) 0)))
+    (begin
+      (define a 2)
+      (cond ((= a 0) 2)
+            ((= a 1) 1)
+            ((= a 2) 0)))
+    (begin
+      (define a 1)
+      (cond ((= a 0) => (lambda (x) (if x 10 20)))
+            ((= a 1) => (lambda (x) (if x 30 40)))
+            ((= a 2) 50)
+            (else 60)))
+    (begin
+      (define a 3)
+      (cond ((= a 0) => (lambda (x) (if x 10 20)))
+            ((= a 1) => (lambda (x) (if x 30 40)))
+            ((= a 2) 50)
+            (else 60)))
+    ;; env functionality
     (+ 1 2 3)
     (- 7 1 2 3)
     (/ 1024 256)

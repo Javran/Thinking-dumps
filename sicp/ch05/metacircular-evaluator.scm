@@ -197,18 +197,6 @@
       (cons (my-eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
 
-(define (test-both test-eval-xxx
-                   eval-xxx
-                   analyze-xxx)
-  (lambda ()
-    (let ((result
-           (list
-            (test-eval-xxx eval-xxx)
-            (test-eval-xxx (analyze->eval analyze-xxx)))))
-      (if (equal? result '(ok ok))
-          'ok
-          result))))
-
 (define (just a)
   (cons 'just a))
 
@@ -319,44 +307,44 @@
 
 (define (init-env)
   (let ((proc-list
-          (list
-            (lift-primitive-pair '+)
-            (lift-primitive-pair '-)
-            (lift-primitive-pair '*)
-            (lift-primitive-pair '/)
-            (lift-primitive-pair '=)
-            (lift-primitive-pair '>)
-            (lift-primitive-pair '>=)
-            (lift-primitive-pair '<)
-            (lift-primitive-pair '<=)
-            (lift-primitive-pair 'zero?)
-            (lift-primitive-pair 'eq?)
-            (lift-primitive-pair 'eqv?)
-            (lift-primitive-pair 'car)
-            (lift-primitive-pair 'cdr)
-            (lift-primitive-pair 'cons)
-            (lift-primitive-pair 'null?)
-            (lift-primitive-pair 'list)
-            (lift-primitive-pair 'even?)
-            (lift-primitive-pair 'odd?)
-            (lift-primitive-pair 'not)
-            (lift-primitive-pair 'remainder)
-            (lift-primitive-pair 'quotient)
-            (lift-primitive-pair 'sqrt)
-            (lift-primitive-pair 'integer?)
-            (lift-primitive-pair 'member)
-            (lift-primitive-pair 'memq)
-            (lift-primitive-pair 'delete)
-            (lift-primitive-pair 'abs)
-            (lift-primitive-pair 'append)
-            )))
+         (list
+          (lift-primitive-pair '+)
+          (lift-primitive-pair '-)
+          (lift-primitive-pair '*)
+          (lift-primitive-pair '/)
+          (lift-primitive-pair '=)
+          (lift-primitive-pair '>)
+          (lift-primitive-pair '>=)
+          (lift-primitive-pair '<)
+          (lift-primitive-pair '<=)
+          (lift-primitive-pair 'zero?)
+          (lift-primitive-pair 'eq?)
+          (lift-primitive-pair 'eqv?)
+          (lift-primitive-pair 'car)
+          (lift-primitive-pair 'cdr)
+          (lift-primitive-pair 'cons)
+          (lift-primitive-pair 'null?)
+          (lift-primitive-pair 'list)
+          (lift-primitive-pair 'even?)
+          (lift-primitive-pair 'odd?)
+          (lift-primitive-pair 'not)
+          (lift-primitive-pair 'remainder)
+          (lift-primitive-pair 'quotient)
+          (lift-primitive-pair 'sqrt)
+          (lift-primitive-pair 'integer?)
+          (lift-primitive-pair 'member)
+          (lift-primitive-pair 'memq)
+          (lift-primitive-pair 'delete)
+          (lift-primitive-pair 'abs)
+          (lift-primitive-pair 'append)
+          )))
     (extend-environment
-      '(true false)
-      '(#t   #f)
-      (extend-environment
-        (map car proc-list)
-        (map cdr proc-list)
-        the-empty-environment))))
+     '(true false)
+     '(#t   #f)
+     (extend-environment
+      (map car proc-list)
+      (map cdr proc-list)
+      the-empty-environment))))
 
 (define (self-evaluating? exp)
   (or (number? exp)
@@ -366,55 +354,22 @@
 
 (define variable? symbol?)
 
-(define (test-eval-simple)
-  (let ((testcases
-          (list
-            (mat 'abc #f)
-            (mat 1    #t)
-            (mat 1.5  #t)
-            (mat '(1 2 3) #f)
-            (mat "a"  #t)
-            (mat #\a  #t))))
-    (do-test self-evaluating? testcases))
-  (let ((testcases
-          (list
-            (mat 'a   #t)
-            (mat '(a) #f)
-            (mat 10   #f))))
-    (do-test variable? testcases))
-  'ok)
-
-(if *my-eval-do-test*
-  (test-eval-simple))
-
 (define quoted?
   (list-tagged-with 'quote))
 
 (define text-of-quotation cadr)
 
 (define (install-eval-quote)
-
   (define (eval-quote exp env)
     (text-of-quotation exp))
-
   (define (analyze-quote exp)
     (let ((result (text-of-quotation exp)))
       (const result)))
-
-  (define (test-eval eval-quote)
-    (let ((testcases
-           (list
-            (mat '(quote a) #f 'a)
-            (mat '(quote "a") #f "a")
-            (mat '(quote 1) #f 1))))
-      (do-test eval-quote testcases))
-    'ok)
-
   (define handler
     (make-handler
-      'quote
-      eval-quote
-      analyze-quote))
+     'quote
+     eval-quote
+     analyze-quote))
 
   (handler-register! handler)
   'ok)
@@ -426,9 +381,9 @@
 
   (define (eval-set! exp env)
     (set-variable-value!
-      (assignment-variable exp)
-      (my-eval (assignment-value exp) env)
-      env)
+     (assignment-variable exp)
+     (my-eval (assignment-value exp) env)
+     env)
     'ok)
 
   (define (analyze-set! exp)
@@ -444,53 +399,53 @@
   (define (test-eval eval-set!)
     (define env
       (extend-environment
-        (list 'a 'b 'c)
-        (list 1 2 3)
-        the-empty-environment))
+       (list 'a 'b 'c)
+       (list 1 2 3)
+       the-empty-environment))
     (define env1
       (extend-environment
-        (list 'c 'd 'e)
-        (list #\c #\d #\e)
-        env))
+       (list 'c 'd 'e)
+       (list #\c #\d #\e)
+       env))
     (define env2
       (extend-environment
-        (list 'd 'e 'f)
-        (list "d" "e" "f")
-        env1))
+       (list 'd 'e 'f)
+       (list "d" "e" "f")
+       env1))
     (define env3
       (extend-environment
-        (list 'a 'b 'c)
-        (list "a3" "b3" "c3")
-        env1))
+       (list 'a 'b 'c)
+       (list "a3" "b3" "c3")
+       env1))
 
     (eval-set! '(set! a "ax") env3)
 
     (do-test
-      lookup-variable-value
-      (list
-        (mat 'a env  1)
-        (mat 'a env1 1)
-        (mat 'a env2 1)
-        (mat 'a env3 "ax"))
-      equal?)
+     lookup-variable-value
+     (list
+      (mat 'a env  1)
+      (mat 'a env1 1)
+      (mat 'a env2 1)
+      (mat 'a env3 "ax"))
+     equal?)
 
     (eval-set! '(set! a "ay") env1)
 
     (do-test
-      lookup-variable-value
-      (list
-        (mat 'a env  "ay")
-        (mat 'a env1 "ay")
-        (mat 'a env2 "ay")
-        (mat 'a env3 "ax"))
-      equal?)
+     lookup-variable-value
+     (list
+      (mat 'a env  "ay")
+      (mat 'a env1 "ay")
+      (mat 'a env2 "ay")
+      (mat 'a env3 "ax"))
+     equal?)
     'ok)
 
   (define handler
     (make-handler
-      'set!
-      eval-set!
-      analyze-set!))
+     'set!
+     eval-set!
+     analyze-set!))
 
   (handler-register! handler)
   'ok)
@@ -598,12 +553,10 @@
       '#f))
 
 (define (install-eval-if)
-
   (define (eval-if exp env)
     (if (true? (my-eval (if-predicate exp) env))
-      (my-eval (if-consequent exp) env)
-      (my-eval (if-alternative exp) env)))
-
+        (my-eval (if-consequent exp) env)
+        (my-eval (if-alternative exp) env)))
   (define (analyze-if exp)
     (let ((pproc (my-analyze (if-predicate exp)))
           (cproc (my-analyze (if-consequent exp)))
@@ -612,28 +565,6 @@
         (if (true? (pproc env))
             (cproc env)
             (aproc env)))))
-
-  (define (test-eval eval-if)
-    (define env
-      (init-env))
-
-    (define testcases
-      (list
-        (mat '(if 1 10) env 10)
-        (mat '(if 1 10 20) env 10)
-        (mat '(if #t 10 20) env 10)
-        (mat '(if 'a 10 20) env 10)
-        (mat '(if '#f 10 20) env 20)
-        (mat '(if #f 10 20) env 20)
-        (mat '(if true 10 20) env 10)
-        (mat '(if 'false 10 20) env 10)
-        (mat '(if false 10 20) env 20)
-        (mat '(if (= 1 1) (+ 10 20) (* 10 20)) env 30)
-        (mat '(if (= 0 1) (+ 10 20) (* 10 20)) env 200)
-        ))
-    (do-test eval-if testcases)
-    'ok)
-
   (define handler
     (make-handler
      'if
@@ -658,18 +589,15 @@
         (else (make-begin seq))))
 
 (define (install-eval-begin)
-
   (define begin-actions cdr)
-
   (define (eval-sequence exps env)
     (cond ((null? exps)
-            '#f)
+           '#f)
           ((last-exp? exps)
-            (my-eval (first-exp exps) env))
+           (my-eval (first-exp exps) env))
           (else
-            (my-eval (first-exp exps) env)
-            (eval-sequence (rest-exps exps) env))))
-
+           (my-eval (first-exp exps) env)
+           (eval-sequence (rest-exps exps) env))))
   (define (analyze-sequence exps)
     (define (sequentially proc1 proc2)
       (lambda (env)
@@ -684,33 +612,10 @@
       (if (null? procs)
           (const #f)
           (loop (car procs) (cdr procs)))))
-
   (define (eval-begin exp env)
     (eval-sequence (begin-actions exp) env))
-
   (define (analyze-begin exp)
     (analyze-sequence (begin-actions exp)))
-
-  (define (test-eval eval-begin)
-    (define env
-      (extend-environment
-        (list 'a 'b 'c)
-        (list 1 2 3)
-        the-empty-environment))
-
-    (define testcases
-      (list
-        (mat '(begin) env #f)
-        (mat '(begin a) env 1)
-        (mat '(begin 1 2 3) env 3)
-        (mat '(begin a b b b c c c) env 3)
-        (mat '(begin 30 (if #t 10 20)) env 10)
-        (mat '(begin 30 (if #f 10 20)) env 20)
-        (mat '(begin (if #t 10 20) 30) env 30)
-        (mat '(begin (if #f 10 20) 30) env 30)
-        ))
-    (do-test eval-begin testcases)
-    'ok)
 
   (define handler
     (make-handler
@@ -831,65 +736,10 @@
   (expand-clauses (cond-clauses exp)))
 
 (define (install-eval-cond)
-
   (define (eval-cond exp env)
     (my-eval (cond->if exp) env))
-
   (define (analyze-cond exp)
     (my-analyze (cond->if exp)))
-
-  (define (test-eval eval-cond)
-    (define env
-      (init-env))
-
-    (define cond-test-exp-1
-      `(cond ((= a 0) 2)
-             ((= a 1) 1)
-             ((= a 2) 0)))
-
-    (define cond-test-exp-2
-      `(cond ((= a 0) 10)
-             (else 10 15 20)))
-
-    (define cond-test-exp-3
-      `(cond ((= a 0) => (lambda (x) (if x 10 20)))
-             ((= a 1) => (lambda (x) (if x 30 40)))
-             ((= a 2) 50)
-             (else 60)))
-
-    (do-test
-      eval-cond
-      (list
-        (mat cond-test-exp-1
-             (extend-environment
-               '(a) '(0) env) 2)
-        (mat cond-test-exp-1
-             (extend-environment
-               '(a) '(1) env) 1)
-        (mat cond-test-exp-1
-             (extend-environment
-               '(a) '(2) env) 0)
-        (mat cond-test-exp-2
-             (extend-environment
-               '(a) '(0) env) 10)
-        (mat cond-test-exp-2
-             (extend-environment
-               '(a) '(1) env) 20)
-        (mat cond-test-exp-3
-             (extend-environment
-               '(a) '(0) env) 10)
-        (mat cond-test-exp-3
-             (extend-environment
-               '(a) '(1) env) 30)
-        (mat cond-test-exp-3
-             (extend-environment
-               '(a) '(2) env) 50)
-        (mat cond-test-exp-3
-             (extend-environment
-               '(a) '(3) env) 60)
-        ))
-    'ok)
-
   (define handler
     (make-handler
      'cond
