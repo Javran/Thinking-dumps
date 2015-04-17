@@ -50,13 +50,11 @@
 (define (make-handler
          slot
          proc-eval
-         proc-analyze
-         test-proc)
+         proc-analyze)
   (list 'handler
         slot
         proc-eval
-        proc-analyze
-        test-proc))
+        proc-analyze))
 
 (define (handler? h)
   (and (list? h)
@@ -66,13 +64,6 @@
 (define handler-slot cadr)
 (define handler-proc-eval caddr)
 (define handler-proc-analyze cadddr)
-(define handler-test (compose car cddddr))
-
-;; TODO: remove
-(define (handler-run-test h)
-  (if (handler-test h)
-    ((handler-test h))
-    'no-test-available))
 
 (define (handler-eval handler exp env)
   ((handler-proc-eval handler) exp env))
@@ -85,7 +76,6 @@
 
 (define my-eval-get #f)
 (define my-eval-put! #f)
-(define my-eval-test-installed-handlers #f)
 (define my-eval-get-all-slot-names #f)
 
 (let ((eval-handler-alist '()))
@@ -112,44 +102,8 @@
   (define (get slot)
     (get-handler slot eval-handler-alist))
 
-  (define (test-slot slot alist)
-    (for-each
-     display
-     '("Testing " slot " "))
-    (define handler
-      (get-handler slot alist))
-    (assert handler "handler not found")
-    (define result
-      (handler-run-test handler))
-    (newline)
-    (display "  Result: ")
-    (display result)
-    (newline)
-    result)
-
-  (define (test-all-slots)
-    (define slots
-      (map car eval-handler-alist))
-    (newline)
-    (define results
-      (map (lambda (slot)
-             (test-slot slot eval-handler-alist))
-           slots))
-    (define not-ok
-      (map
-       car
-       (filter
-        (lambda (pair)
-          (not (eq? (cdr pair) 'ok)))
-        (map cons slots results))))
-    (out "Summary: slots that did not return with 'ok: ")
-    (display "  ") (display not-ok) (newline)
-    (out "Test done.")
-    'ok)
-
   (set! my-eval-get get)
   (set! my-eval-put! put!)
-  (set! my-eval-test-installed-handlers test-all-slots)
   (set! my-eval-get-all-slot-names
         (lambda ()
           (map car eval-handler-alist)))
@@ -460,11 +414,7 @@
     (make-handler
       'quote
       eval-quote
-      analyze-quote
-      (test-both
-       test-eval
-       eval-quote
-       analyze-quote)))
+      analyze-quote))
 
   (handler-register! handler)
   'ok)
@@ -540,11 +490,7 @@
     (make-handler
       'set!
       eval-set!
-      analyze-set!
-      (test-both
-       test-eval
-       eval-set!
-       analyze-set!)))
+      analyze-set!))
 
   (handler-register! handler)
   'ok)
@@ -634,13 +580,9 @@
 
   (define handler
     (make-handler
-      'define
-      eval-define
-      analyze-define
-      (test-both
-       test-eval
-       eval-define
-       analyze-define)))
+     'define
+     eval-define
+     analyze-define))
 
   (handler-register! handler)
   'ok)
@@ -694,13 +636,9 @@
 
   (define handler
     (make-handler
-      'if
-      eval-if
-      analyze-if
-      (test-both
-       test-eval
-       eval-if
-       analyze-if)))
+     'if
+     eval-if
+     analyze-if))
 
   (handler-register! handler)
   'ok)
@@ -776,13 +714,9 @@
 
   (define handler
     (make-handler
-      'begin
-      eval-begin
-      analyze-begin
-      (test-both
-       test-eval
-       eval-begin
-       analyze-begin)))
+     'begin
+     eval-begin
+     analyze-begin))
 
   (handler-register! handler)
 
@@ -851,12 +785,7 @@
     (make-handler
       'lambda
       eval-lambda
-      analyze-lambda
-      (test-both
-       test-eval
-       eval-lambda
-       analyze-lambda
-       )))
+      analyze-lambda))
 
   (handler-register! handler)
   'ok)
@@ -963,13 +892,9 @@
 
   (define handler
     (make-handler
-      'cond
-      eval-cond
-      analyze-cond
-      (test-both
-       test-eval
-       eval-cond
-       analyze-cond)))
+     'cond
+     eval-cond
+     analyze-cond))
 
   (handler-register! handler)
   'ok)
@@ -1022,13 +947,10 @@
 
   (define handler
     (make-handler
-      'and
-      eval-and
-      analyze-and
-      (test-both
-       test-eval
-       eval-and
-       analyze-and)))
+     'and
+     eval-and
+     analyze-and
+     ))
 
   (handler-register! handler)
   'ok)
@@ -1085,11 +1007,7 @@
     (make-handler
       'or
       eval-or
-      analyze-or
-      (test-both
-       test-eval
-       eval-or
-       analyze-or)))
+      analyze-or))
 
   (handler-register! handler)
   'ok)
@@ -1172,13 +1090,9 @@
 
   (define handler
     (make-handler
-      'let
-      eval-let
-      analyze-let
-      (test-both
-       test-eval
-       eval-let
-       analyze-let)))
+     'let
+     eval-let
+     analyze-let))
 
   (handler-register! handler)
   'ok)
@@ -1227,13 +1141,9 @@
 
   (define handler
     (make-handler
-      'let*
-      eval-let*
-      analyze-let*
-      (test-both
-       test-eval
-       eval-let*
-       analyze-let*)))
+     'let*
+     eval-let*
+     analyze-let*))
 
   (handler-register! handler)
   'ok)
@@ -1291,11 +1201,7 @@
     (make-handler
       'letrec
       eval-letrec
-      analyze-letrec
-      (test-both
-       test-eval
-       eval-letrec
-       analyze-letrec)))
+      analyze-letrec))
 
   (handler-register! handler)
   'ok)
@@ -1438,20 +1344,6 @@
 (install-eval-let)
 (install-eval-let*)
 (install-eval-letrec)
-
-(newline)
-(define (my-eval-test-all)
-  (for-each
-   (lambda (approach)
-     (begin
-       (my-eval-select-approach approach)
-       (my-eval-test-installed-handlers)
-       ))
-   (map car eval-approaches)))
-
-(if *my-eval-do-test*
-    (my-eval-test-all)
-    'skipped)
 
 (define input-prompt "my-eval> ")
 (define output-prompt "")
