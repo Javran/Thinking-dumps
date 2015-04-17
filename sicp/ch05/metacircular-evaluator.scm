@@ -378,14 +378,12 @@
 (define assignment-value   caddr)
 
 (define (install-eval-set!)
-
   (define (eval-set! exp env)
     (set-variable-value!
      (assignment-variable exp)
      (my-eval (assignment-value exp) env)
      env)
     'ok)
-
   (define (analyze-set! exp)
     (let ((var (assignment-variable exp))
           (vproc (my-analyze (assignment-value exp))))
@@ -396,51 +394,6 @@
          env)
         'ok)))
 
-  (define (test-eval eval-set!)
-    (define env
-      (extend-environment
-       (list 'a 'b 'c)
-       (list 1 2 3)
-       the-empty-environment))
-    (define env1
-      (extend-environment
-       (list 'c 'd 'e)
-       (list #\c #\d #\e)
-       env))
-    (define env2
-      (extend-environment
-       (list 'd 'e 'f)
-       (list "d" "e" "f")
-       env1))
-    (define env3
-      (extend-environment
-       (list 'a 'b 'c)
-       (list "a3" "b3" "c3")
-       env1))
-
-    (eval-set! '(set! a "ax") env3)
-
-    (do-test
-     lookup-variable-value
-     (list
-      (mat 'a env  1)
-      (mat 'a env1 1)
-      (mat 'a env2 1)
-      (mat 'a env3 "ax"))
-     equal?)
-
-    (eval-set! '(set! a "ay") env1)
-
-    (do-test
-     lookup-variable-value
-     (list
-      (mat 'a env  "ay")
-      (mat 'a env1 "ay")
-      (mat 'a env2 "ay")
-      (mat 'a env3 "ax"))
-     equal?)
-    'ok)
-
   (define handler
     (make-handler
      'set!
@@ -449,6 +402,7 @@
 
   (handler-register! handler)
   'ok)
+
 (define (definition-variable exp)
   (if (symbol? (cadr exp))
     (cadr exp)
@@ -478,60 +432,6 @@
           (vproc env)
           env)
         'ok)))
-
-  (define (test-eval eval-define)
-    (define env
-      (extend-environment
-        (list 'a) (list 10) the-empty-environment))
-
-    (define env1
-      (extend-environment
-        '() '() env))
-
-    (eval-define '(define a 1) env)
-    (eval-define '(define b 2) env)
-
-    (do-test
-      lookup-variable-value
-      (list
-        (mat 'a env 1)
-        (mat 'b env 2)
-        (mat 'a env1 1)
-        (mat 'b env1 2)))
-
-    (eval-define '(define a "aaa") env1)
-    (eval-define '(define b "bbb") env1)
-    (eval-define '(define c "ccc") env1)
-
-    (do-test
-      lookup-variable-value
-      (list
-        (mat 'a env 1)
-        (mat 'b env 2)
-        (mat 'a env1 "aaa")
-        (mat 'b env1 "bbb")
-        (mat 'c env1 "ccc")))
-
-    (eval-define
-      '(define (proc-branch a b c)
-         (if a b c))
-      env)
-
-    (eval-define
-      '(define (proc-const a)
-         12345)
-      env)
-
-    (do-test
-      my-eval
-      (list
-        (mat '(proc-branch #t 1 2) env 1)
-        (mat '(proc-branch #f 1 2) env 2)
-        (mat '(proc-const 0) env 12345)
-        (mat '(proc-const #t) env 12345)
-        ))
-
-    'ok)
 
   (define handler
     (make-handler
@@ -634,63 +534,26 @@
   (cons 'lambda (cons parameters body)))
 
 (define (install-eval-lambda)
-
   (define (eval-lambda exp env)
     (make-procedure
-      (lambda-parameters exp)
-      (lambda-body exp)
-      env))
-
+     (lambda-parameters exp)
+     (lambda-body exp)
+     env))
   (define (analyze-lambda exp)
     (let ((vars (lambda-parameters exp))
           (bproc (my-analyze (make-begin
-                   (lambda-body exp)))))
-    (lambda (env)
-      (make-analyzed-procedure
-       vars
-       bproc
-       env))))
-
-  (define (test-eval eval-lambda)
-    (define env
-      the-empty-environment)
-
-    (define proc-branch-exp
-      '(lambda (a b c)
-         (if a b c)))
-    (define proc-const-fun-exp
-      '(lambda (a)
-         (lambda (b)
-           a)))
-
-    (define testcases
-      (list
-        (mat (make-application
-               proc-branch-exp
-               (list #t 10 20)) env 10)
-        (mat (make-application
-               proc-branch-exp
-               (list #f 10 20)) env 20)
-        (mat (make-application
-               (make-application
-                 proc-const-fun-exp
-                 (list 10))
-               (list 20)) env 10)
-        (mat (make-application
-               (make-application
-                 proc-const-fun-exp
-                 (list 10))
-               (list "aaaa")) env 10)
-        ))
-
-    (do-test my-eval testcases)
-    'ok)
+                              (lambda-body exp)))))
+      (lambda (env)
+        (make-analyzed-procedure
+         vars
+         bproc
+         env))))
 
   (define handler
     (make-handler
-      'lambda
-      eval-lambda
-      analyze-lambda))
+     'lambda
+     eval-lambda
+     analyze-lambda))
 
   (handler-register! handler)
   'ok)
@@ -782,19 +645,6 @@
 
     (analyze-aux analyzed-exps))
 
-  (define (test-eval eval-and)
-    (let ((env (init-env)))
-      (do-test
-        eval-and
-        (list
-          (mat '(and) env #t)
-          (mat '(and (= 1 1) (= 2 2)) env #t)
-          (mat '(and (= 1 1) #f (error 'wont-reach)) env #f)
-          (mat '(and 1 2 3 4) env 4)
-          (mat '(and 1) env 1)
-          ))
-      'ok))
-
   (define handler
     (make-handler
      'and
@@ -838,20 +688,6 @@
                           result
                           (analyzed-tls env)))))))))
     (analyze-aux analyzed-exps))
-
-  (define (test-eval eval-or)
-    (let ((env (init-env)))
-      (do-test
-        eval-or
-        (list
-          (mat '(or) env #f)
-          (mat '(or #f) env #f)
-          (mat '(or #t (error 'wont-reach)) env #t)
-          (mat '(or (< 1 1) (> 2 2)) env #f)
-          (mat '(or (quote symbol)) env 'symbol)
-          (mat '(or #f #f 1) env 1)
-          ))
-      'ok))
 
   (define handler
     (make-handler
@@ -897,47 +733,10 @@
         (normal-let->combination exp)))
 
 (define (install-eval-let)
-
   (define (eval-let exp env)
     (my-eval (let->combination exp) env))
-
   (define (analyze-let exp)
     (my-analyze (let->combination exp)))
-
-  (define (test-eval eval-let)
-    (let ((env (init-env)))
-      (do-test
-        eval-let
-        (list
-          (mat `(let ((x 1)
-                      (y 2)
-                      (z 3))
-                  (+ x y z)) env 6)
-          (mat `(let ((a 10)
-                      (b 20))
-                  (+ a a)
-                  (* b a)) env 200)
-          (mat `(let ()
-                  10) env 10)
-          (mat `(let ((a 10))
-                  (let ((a (+ a 20)))
-                    (let ((a (* a 30)))
-                      (+ a a)))) env 1800)
-          (mat `(let fib-iter ((a 1) (b 0) (count 10))
-                  (if (= count 0)
-                    b
-                    (fib-iter (+ a b) a (- count 1)))) env 55)
-          (mat `(let fib-iter ((a 1) (b 0) (count 14))
-                  (if (= count 0)
-                    b
-                    (fib-iter (+ a b) a (- count 1)))) env 377)
-          (mat `(let proc ((i 1) (acc 1))
-                  (if (<= i 10) (proc (+ i 1) (* i acc)) acc)) env 3628800)
-          (mat `(let proc ((i 1) (acc 0))
-                  (if (<= i 100) (proc (+ i 1) (+ i acc)) acc)) env 5050)
-          ))
-      'ok))
-
   (define handler
     (make-handler
      'let
@@ -948,46 +747,27 @@
   'ok)
 
 (define (install-eval-let*)
-
   (define (let*->nested-lets exp)
     (define (consume-bindings vars exps body)
       (if (null? vars)
-        (make-let '() body)
-        (make-let
-          (list (list (car vars) (car exps)))
-          (list
+          (make-let '() body)
+          (make-let
+           (list (list (car vars) (car exps)))
+           (list
             (consume-bindings
-              (cdr vars)
-              (cdr exps)
-              body)))))
-
+             (cdr vars)
+             (cdr exps)
+             body)))))
     (define let*-binding-pairs (cadr exp))
     (define let*-body (cddr exp))
     (consume-bindings
-      (map car  let*-binding-pairs)
-      (map cadr let*-binding-pairs)
-      let*-body))
-
+     (map car  let*-binding-pairs)
+     (map cadr let*-binding-pairs)
+     let*-body))
   (define (eval-let* exp env)
     (my-eval (let*->nested-lets exp) env))
-
   (define (analyze-let* exp)
     (my-analyze (let*->nested-lets exp)))
-
-  (define (test-eval eval-let*)
-    (let ((env (init-env)))
-      (do-test
-        eval-let*
-        (list
-          (mat `(let* ((x 1)
-                       (y (+ 1 x))
-                       (z (* 2 y)))
-                  (+ x y z)) env 7)
-          (mat `(let* ((x 3)
-                       (y (+ x 2))
-                       (z (+ x y 5)))
-                  (* x z)) env 39)))
-      'ok))
 
   (define handler
     (make-handler
@@ -1012,46 +792,15 @@
        ,@(map (lambda (var exp) `(set! ,var ,exp))
               vars exps)
        ,@body))
-
   (define (eval-letrec exp env)
     (my-eval (letrec->let exp) env))
-
   (define (analyze-letrec exp)
     (my-analyze (letrec->let exp)))
-
-  (define (test-eval eval-letrec)
-    (let ((env (init-env)))
-      (do-test
-        eval-letrec
-        (list
-          (mat `(letrec ((fact (lambda (n)
-                                 (if (= n 0)
-                                   1
-                                   (* n (fact (- n 1)))))))
-                  (fact 4)) env
-               24)
-          (mat `(letrec ((f1 (lambda (n)
-                               (if (= n 0)
-                                 1
-                                 (* n (f2 (- n 1))))))
-                         (f2 (lambda (n)
-                               (if (= n 0)
-                                 1
-                                 (* n (f3 (- n 1))))))
-                         (f3 (lambda (n)
-                               (if (= n 0)
-                                 1
-                                 (* n (f1 (- n 1)))))))
-                  (f3 10)) env
-               3628800)
-          ))
-      'ok))
-
   (define handler
     (make-handler
-      'letrec
-      eval-letrec
-      analyze-letrec))
+     'letrec
+     eval-letrec
+     analyze-letrec))
 
   (handler-register! handler)
   'ok)
