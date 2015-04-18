@@ -42,11 +42,6 @@
        (newline))
      items)))
 
-(load "../common/test-utils.scm")
-;; TODO: remove tests - we can test it against the evaluator
-;; in our implementing language.
-(define *my-eval-do-test* #t)
-
 (define (make-handler
          slot
          proc-eval
