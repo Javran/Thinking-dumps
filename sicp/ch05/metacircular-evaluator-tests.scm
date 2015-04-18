@@ -4,6 +4,9 @@
 ;; gives the same result as the one given by the evaluator in our implementing
 ;; language, then it is fine.
 
+;; TODO: I think we can just use ec-tests.
+;; as we don't necessarily need a complete set of testcases.
+
 (define test-exprs
   '(
     ;; self-evaluating & quotation

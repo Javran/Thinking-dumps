@@ -1,11 +1,6 @@
 ;; a standalone version of metacircular evaluator
-;; TODO: not standalone
 ;; TODO: we should better have a list of assumed
 ;; operations somewhere
-;; TODO: too many testcases, should be simplified
-
-;; TODO: eliminate all use of "format"
-;; to make this portable
 
 (define (compose . procs)
   (define (compose-inv procs)
