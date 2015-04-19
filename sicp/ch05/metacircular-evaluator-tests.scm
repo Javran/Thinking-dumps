@@ -2,6 +2,10 @@
 ;; for simplicity, we will instead just test the behavior of our evaluator:
 ;; we reuse tests and the tester in "ec-tests.scm", if the metacircular evaluator
 ;; agrees with our evaluator in the implementing language, then it is fine.
+
+;; TODO: some tests are missing, complete that part before
+;; eliminating quasiquotes
+
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
