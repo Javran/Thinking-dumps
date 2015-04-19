@@ -5,9 +5,9 @@
 (define (compose . procs)
   (define (compose-inv procs)
     (if (null? procs)
-      identity
-      (lambda (x)
-        ((compose-inv (cdr procs)) ((car procs) x)))))
+        identity
+        (lambda (x)
+          ((compose-inv (cdr procs)) ((car procs) x)))))
   (let ((procs-inv (reverse! procs)))
     (compose-inv procs-inv)))
 (define nil '())
@@ -124,32 +124,32 @@
   (define (env-loop env)
     (define (scan vars vals)
       (cond ((null? vars)
-              (env-loop (enclosing-environment env)))
+             (env-loop (enclosing-environment env)))
             ((eq? var (car vars))
-              (car vals))
+             (car vals))
             (else
-              (scan (cdr vars) (cdr vals)))))
+             (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-environment)
-      (error "unbound variable" var)
-      (let ((frame (first-frame env)))
-        (scan (frame-variables frame)
-              (frame-values    frame)))))
+        (error "unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values    frame)))))
   (env-loop env))
 
 (define (set-variable-value! var val env)
   (define (env-loop env)
     (define (scan vars vals)
       (cond ((null? vars)
-              (env-loop (enclosing-environment env)))
+             (env-loop (enclosing-environment env)))
             ((eq? var (car vars))
-              (set-car! vals val))
+             (set-car! vals val))
             (else
-              (scan (cdr vars) (cdr vals)))))
+             (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-environment)
-      (error "unbound variable" var)
-      (let ((frame (first-frame env)))
-        (scan (frame-variables frame)
-              (frame-values    frame)))))
+        (error "unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values    frame)))))
   (env-loop env))
 
 (define (define-variable! var val env)
@@ -158,20 +158,20 @@
   (let ((frame (first-frame env)))
     (define (scan vars vals)
       (cond ((null? vars)
-              (add-binding-to-frame! var val frame))
+             (add-binding-to-frame! var val frame))
             ((eq? var (car vars))
-              (set-car! vals val))
+             (set-car! vals val))
             (else
-              (scan (cdr vars) (cdr vals)))))
+             (scan (cdr vars) (cdr vals)))))
     (scan (frame-variables frame)
           (frame-values    frame))))
 
 (define (list-tagged-with tag)
   (lambda (l)
     (and
-      (list? l)
-      (non-empty? l)
-      (eq? (car l) tag))))
+     (list? l)
+     (non-empty? l)
+     (eq? (car l) tag))))
 
 (define (tagged-list? exp tag)
   ((list-tagged-with tag) exp))
@@ -264,8 +264,8 @@
   (define env  (proc-env  proc))
 
   (my-eval
-    (make-begin body)
-    (extend-environment vars args env)))
+   (make-begin body)
+   (extend-environment vars args env)))
 
 (define (apply-proc-analyzed-compound proc args)
   (define vars  (proc-a-vars proc))
@@ -292,8 +292,8 @@
 (define (lift-primitive-pair sym)
   (cons sym
         (make-proc-primitive
-          (environment-lookup
-            user-initial-environment sym))))
+         (environment-lookup
+          user-initial-environment sym))))
 
 (define (init-env)
   (let ((proc-list
@@ -395,14 +395,14 @@
 
 (define (definition-variable exp)
   (if (symbol? (cadr exp))
-    (cadr exp)
-    (caadr exp)))
+      (cadr exp)
+      (caadr exp)))
 
 (define (definition-value exp)
   (if (symbol? (cadr exp))
-    (caddr exp)
-    (make-lambda (cdadr exp)
-                 (cddr exp))))
+      (caddr exp)
+      (make-lambda (cdadr exp)
+                   (cddr exp))))
 
 (define (install-eval-define)
 
@@ -883,12 +883,12 @@
 (define (my-apply-interpret proc args)
   (define apply-proc
     (cond ((proc-primitive? proc)
-            apply-proc-primitive)
+           apply-proc-primitive)
           ((proc-compound? proc)
-            apply-proc-compound)
+           apply-proc-compound)
           (else
-            (error
-              "Unknown procedure type: APPLY" proc))))
+           (error
+            "Unknown procedure type: APPLY" proc))))
   (apply-proc proc args))
 
 (define (analyze->eval analyze-xxx)
@@ -943,7 +943,7 @@
     (let ((output (my-eval input env)))
       (announce-output output-prompt)
       (user-print output)))
-    (driver-loop env))
+  (driver-loop env))
 
 (define prompt-for-input display)
 
