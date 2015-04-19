@@ -2,6 +2,9 @@
 ;; TODO: we should better have a list of assumed
 ;; operations somewhere
 
+;; TODO: unquote / quasiquote-free
+;; TODO: notes about it..
+
 (define (compose . procs)
   (define (compose-inv procs)
     (if (null? procs)
