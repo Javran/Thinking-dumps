@@ -2,7 +2,6 @@
 ;; TODO: we should better have a list of assumed
 ;; operations somewhere
 
-;; TODO: unquote / quasiquote-free
 ;; TODO: notes about it..
 
 (define (compose . procs)
@@ -779,12 +778,17 @@
     (define exps (map cadr binding-pairs))
     (define body
       (cddr exp))
-    `(let ,(map (lambda (var)
-                  `(,var '*unassigned*))
-                vars)
-       ,@(map (lambda (var exp) `(set! ,var ,exp))
-              vars exps)
-       ,@body))
+    (let ((bindings
+           (map (lambda (var)
+                  (list var ''*unassigned*))
+                vars))
+          (set-exprs
+           (map (lambda (var exp) (list 'set! var exp))
+                vars exps)))
+      (append '(let)
+              (list bindings)
+              set-exprs
+              body)))
   (define (eval-letrec exp env)
     (my-eval (letrec->let exp) env))
   (define (analyze-letrec exp)
