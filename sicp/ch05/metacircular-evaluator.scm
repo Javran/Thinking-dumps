@@ -2,7 +2,12 @@
 ;; TODO: we should better have a list of assumed
 ;; operations somewhere
 
-;; TODO: notes about it..
+;; NOTE: Our basic implementation will not support
+;; quasiquotes. I guess this is one of the reason
+;; why SICP rarely talks about quasiquotes when
+;; implementing the metacircular evaluator,
+;; as we need to write down something we can easily
+;; implement.
 
 (define (compose . procs)
   (define (compose-inv procs)
