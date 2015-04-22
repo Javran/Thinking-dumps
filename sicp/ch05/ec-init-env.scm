@@ -20,7 +20,7 @@
                 not remainder quotient
                 sqrt integer?
                 member memq delete
-                abs append
+                abs append pair?
                 ))))
     (extend-environment
      '(true false)
