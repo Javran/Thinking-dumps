@@ -14,11 +14,11 @@
  `(begin
     ,@metacircular-program))
 
-;; (load "compiler.scm")
-
-#;(compile-and-check
- `(begin
-    ,@metacircular-program))
+(load "compiler.scm")
+(print-instruction-sequence
+ (compile-and-check
+  `(begin
+     ,@metacircular-program)))
 
 
 (end-script)
