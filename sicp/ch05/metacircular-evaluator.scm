@@ -524,6 +524,13 @@
 
   'ok)
 
+#|
+;; TODO:
+;; giving all definitions at the same time
+;; causes a maximam stack depth error
+;; not sure how to fix it for now,
+;; let's try first make it partially working
+
 (define lambda-parameters cadr)
 (define lambda-body cddr)
 
@@ -975,3 +982,5 @@
 
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
+
+|#
