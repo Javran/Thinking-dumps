@@ -124,10 +124,8 @@
 (define (concat ls)
   (fold-right append nil ls))
 
-(define (flatmap f ls)
-  (concat (map f ls)))
-
-(define concat-map flatmap)
+(define flatmap append-map)
+(define concat-map append-map)
 
 ; are a and b close enough?
 (define (close-number? eps)

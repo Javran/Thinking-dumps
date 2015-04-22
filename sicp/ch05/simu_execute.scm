@@ -20,6 +20,8 @@
 ;; since now the register list fully depends on the controller text
 ;; if some registers are not present, we might have troube initializing
 ;; their values.
+;; TODO: this function might be causing some trouble when
+;; the list of instructions is too big
 (define (extract-register-names insns)
   (define (extract insn)
     (if (symbol? insn)
@@ -41,6 +43,7 @@
                                    (eq? 'reg (car e))))
                             insn))))
           (append names1 names2))))
+  ;; -- remove-duplicates has performance issue
   (remove-duplicates
    (concat-map extract insns)))
 
