@@ -15,11 +15,12 @@
     ,@metacircular-program))
 
 (load "compiler.scm")
-(print-instruction-sequence
- (compile-and-check
-  `(begin
-     ,@metacircular-program)))
+(load "simu.scm")
+(load "simu_compiler_patch.scm")
 
+(compile-and-run
+ `(begin
+    ,@metacircular-program))
 
 (end-script)
 
