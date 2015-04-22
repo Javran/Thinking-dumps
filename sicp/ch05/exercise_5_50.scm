@@ -10,17 +10,26 @@
             '()
             (cons next-result (loop (read p))))))))
 
-(pretty-print
- `(begin
-    ,@metacircular-program))
-
 (load "compiler.scm")
 (load "simu.scm")
 (load "simu_compiler_patch.scm")
 
-(compile-and-run
- `(begin
-    ,@metacircular-program))
+(let* ((compiled
+        (compile-and-check
+         `(begin
+            ,@metacircular-program)))
+       (env (init-env))
+       (insn-seq (statements compiled)))
+  (out "compiled")
+  (let ((m (build-and-execute-with
+            `(controller
+              ,@insn-seq)
+            `((env ,env))
+            machine-ops-builder)))
+    (machine-reg-get m 'val)))
+
+;; TODO: note: looks like we can use --stack to get rid of
+;; stack limit, but somehow the memory still brow up...
 
 (end-script)
 
