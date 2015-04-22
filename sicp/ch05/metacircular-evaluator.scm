@@ -23,6 +23,19 @@
 (define (const x)
   (lambda (y) x))
 
+(define cadr
+  (compose car cdr))
+
+(define (length xs)
+  (if (null? xs)
+      0
+      (+ (length (cdr xs)) 1)))
+
+(define (assert val reason)
+  (if val
+      'ok
+      (error reason)))
+
 (define gensym
   ;; procedure-local counter
   (let ((symbol-counter 0))
@@ -524,13 +537,6 @@
 
   'ok)
 
-#|
-;; TODO:
-;; giving all definitions at the same time
-;; causes a maximam stack depth error
-;; not sure how to fix it for now,
-;; let's try first make it partially working
-
 (define lambda-parameters cadr)
 (define lambda-body cddr)
 
@@ -982,5 +988,3 @@
 
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
-
-|#
