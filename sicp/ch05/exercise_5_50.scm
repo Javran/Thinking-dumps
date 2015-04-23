@@ -20,7 +20,6 @@
             ,@metacircular-program)))
        (env (init-env))
        (insn-seq (statements compiled)))
-  (out "compiled")
   (let ((m (build-and-execute-with
             `(controller
               ,@insn-seq)
