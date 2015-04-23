@@ -9,22 +9,52 @@
 ;; as we need to write down something we can easily
 ;; implement.
 
-(define (compose . procs)
-  (define (compose-inv procs)
-    (if (null? procs)
-        identity
-        (lambda (x)
-          ((compose-inv (cdr procs)) ((car procs) x)))))
-  (let ((procs-inv (reverse! procs)))
-    (compose-inv procs-inv)))
+;; NOTE: our compiler does not support
+;; the alternative form of arguments
+;; so if something like (define (compose . fs) ...)
+;; appears, try to use something else
+
+(define (compose g f)
+  (lambda (x)
+    (g (f x))))
 (define nil '())
 (define non-empty? pair?)
 (define (identity x) x)
 (define (const x)
   (lambda (y) x))
 
+(define (map f xs)
+  (if (null? xs)
+      '()
+      (cons (f (car xs))
+            (map f (cdr xs)))))
+
+(define (zip f xs ys)
+  (if (or (null? xs)
+          (null? ys))
+      '()
+      (cons (f (car xs) (car ys))
+            (zip f (cdr xs) (cdr ys)))))
+
+(define (filter f xs)
+  (if (null? xs)
+      '()
+      (let ((hd (car xs))
+            (tl (cdr xs)))
+        (if (f hd)
+            (cons hd (filter f tl))
+            (filter f tl)))))
+
+(define for-each map)
+
+(define cddr
+  (compose cdr cdr))
 (define cadr
   (compose car cdr))
+(define caddr
+  (compose cadr cdr))
+(define cadddr
+  (compose caddr cdr))
 
 (define (length xs)
   (if (null? xs)
@@ -801,7 +831,7 @@
                   (list var ''*unassigned*))
                 vars))
           (set-exprs
-           (map (lambda (var exp) (list 'set! var exp))
+           (zip (lambda (var exp) (list 'set! var exp))
                 vars exps)))
       (append '(let)
               (list bindings)
