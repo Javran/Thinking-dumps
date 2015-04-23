@@ -79,14 +79,6 @@
           "gensym-generated-symbol#"
           (number->string old-sym)))))))
 
-(define out
-  (lambda items
-    (for-each
-     (lambda (x)
-       (display x)
-       (newline))
-     items)))
-
 (define (make-handler
          slot
          proc-eval
@@ -1006,11 +998,16 @@
 
 (define (user-print object)
   (if (proc-compound? object)
-    (out (list 'proc-compound
+      (begin
+        (display
+         (list 'proc-compound
                (proc-vars object)
                (proc-body object)
                '<proc-env>))
-    (out object)))
+        (newline))
+      (begin
+        (display object)
+        (newline))))
 
 (define (my-eval-start-using-approach approach)
   (my-eval-select-approach approach)

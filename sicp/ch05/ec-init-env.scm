@@ -21,6 +21,7 @@
                 sqrt integer?
                 member memq delete
                 abs append pair?
+                symbol? display newline
                 ))))
     (extend-environment
      '(true false)
