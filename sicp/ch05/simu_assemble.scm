@@ -71,9 +71,12 @@
   ;; enforcing each label to be unique
   (scan-duplicate-labels insns symbol?)
   (let ((insns (map make-instruction insns)))
+    ;; TODO: performance issue here
     (let ((jump-table
            ;; traverse the assembled instructions
            ;; to collect labels to build jump-table
+           ;; TODO: --heap 10000 solves the problem ...
+           ;; but do we really need it?
            (let loop ((table '())
                       (insns insns))
              (if (null? insns)
