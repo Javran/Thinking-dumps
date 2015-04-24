@@ -32,22 +32,25 @@
     (let ((insns (car state))
           (no-lbl-insns (cadr state)))
       (let ((hd1 (car insns))
-            (tl1 (cdr insns))
-            (hd2 (car no-lbl-insns))
-            (tl2 (cdr no-lbl-insns)))
+            (tl1 (cdr insns)))
+        ;; NOTE: it is possible that no-lbl-insns have no element
+        ;; but insns has something
+        ;; (should be all labels in this case)
         (if (label? hd1)
             state
             ;; hd1 is an instruction
-            (begin
-              (assert
-               (and
-                ;; hd2 should better be an instruction
-                (not (label? hd2))
-                ;; and hd1 should be exactly the same as hd2
-                (equal? hd1 hd2))
-               "state out of sync")
-              ;; time to proceed
-              (sync-insn-skip (list tl1 tl2)))))))
+            (let ((hd2 (car no-lbl-insns))
+                  (tl2 (cdr no-lbl-insns)))
+              (begin
+                (assert
+                 (and
+                  ;; hd2 should better be an instruction
+                  (not (label? hd2))
+                  ;; and hd1 should be exactly the same as hd2
+                  (equal? hd1 hd2))
+                 "state out of sync")
+                ;; time to proceed
+                (sync-insn-skip (list tl1 tl2))))))))
 
   (define (sync-next-label lbl state)
     (let ((state (sync-insn-skip state)))
@@ -93,9 +96,6 @@
                  (state (list origin-insns
                               no-lbl-insns))
                  (jump-table '()))
-        (out "jtbl")
-        (for-each out jump-table)
-        (out "..jtbl")
         (if (null? labels)
             jump-table
             (let ((hd (car labels))
