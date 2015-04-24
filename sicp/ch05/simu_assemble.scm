@@ -77,6 +77,11 @@
            ;; to collect labels to build jump-table
            ;; TODO: --heap 10000 solves the problem ...
            ;; but do we really need it?
+           ;; we can build jump table by maintaining 2 list of instructions
+           ;; one with label and one without, keep them synchronized
+           ;; and assign the one without labels to each label
+           ;; so that this whole thing shares one single instruction list
+           ;; and some memory could be saved
            (let loop ((table '())
                       (insns insns))
              (if (null? insns)
