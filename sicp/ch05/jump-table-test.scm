@@ -16,7 +16,13 @@
 ;; by enabliing more sharing between jump-table cells,
 ;; hopefully the result will be more space-efficient.
 
+;; module assumptions:
+;;
+;; * instructions are either label or non-label
+;;   this can be examined by "label?" function
+;; * every label is unique
 
+(define label? symbol?)
 
 ;; a test for building up jump tables
 ;; the simplified list elements are either
@@ -25,7 +31,7 @@
 ;; let's try to do the two instruction list approach
 
 (define (build-jump-table origin-insns)
-  (define label? symbol?)
+
   ;; define internal state to be
   ;; (list <insns> <no-lbl-insns>)
   ;; insns: the original list of instructions
