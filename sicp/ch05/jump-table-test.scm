@@ -1,6 +1,23 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
+;; this module contains a more space-efficient
+;; implementation of building jump-tables.
+;; in the original implementation of my "simu.scm",
+;; the naive approach is used. It works fine
+;; when the number of instructions is not too large.
+;; but when the number of instructions goes up,
+;; there are many spaces storing duplicated informations
+;; and eventually runs out of memory,
+;; in a modern machine, it might be possible to solve it
+;; by increasing the allowed memory upper bound,
+;; but that solution does not sound good.
+;; this module tries to deal with the problem
+;; by enabliing more sharing between jump-table cells,
+;; hopefully the result will be more space-efficient.
+
+
+
 ;; a test for building up jump tables
 ;; the simplified list elements are either
 ;; symbol or a list of something (it doesn't matter
