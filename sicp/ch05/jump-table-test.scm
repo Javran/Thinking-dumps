@@ -30,6 +30,8 @@
 ;; for our purpose)
 ;; let's try to do the two instruction list approach
 
+;; TODO: need a document talking about the implementation details
+;; I guess it will be more clean to have an individual doc
 (define (build-jump-table origin-insns)
 
   ;; define internal state to be
