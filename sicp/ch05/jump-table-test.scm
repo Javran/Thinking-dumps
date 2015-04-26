@@ -24,16 +24,9 @@
 
 (define label? symbol?)
 
-;; a test for building up jump tables
-;; the simplified list elements are either
-;; symbol or a list of something (it doesn't matter
-;; for our purpose)
-;; let's try to do the two instruction list approach
-
 ;; TODO: need a document talking about the implementation details
 ;; I guess it will be more clean to have an individual doc
 (define (build-jump-table origin-insns)
-
   ;; define internal state to be
   ;; (list <insns> <no-lbl-insns>)
   ;; insns: the original list of instructions
@@ -41,12 +34,20 @@
   ;; no-lbl-insns: the instruction list
   ;;   with all the labels removed.
   ;; INVARIANT: two lists should be synchronizing
-  ;;   with each other, if we removed labels from insns,
+  ;;   with each other: if we removed labels from insns,
   ;;   the resulting list should exactly be no-lbl-insns
 
   (define (sync-insn-skip state)
+    ;; the purpose for "sync-insn-skip" is to skip matching
+    ;; instructions, and get to a state where the head of "insns"
+    ;; is a label, and the head of "no-lbl-insns" is pointing to
+    ;; the place where the label is supposed to point to.
     ;; INVARIANTS:
     ;; * state can never be (list '() '())
+    ;; * this function will always return a state
+    ;;   where the head of "insns" is a label
+    ;;   and "no-lbl-insns" points to the list of instructions
+    ;;   that "label" leads to.
     (assert (not (equal? (list '() '())
                          state))
             "invalid input state to sync-insn-skip")
@@ -54,7 +55,7 @@
     ;;   exactly be the first instruction in no-lbl-insns
     ;; (if the state invariant is satisfied, this invariant
     ;;  is guaranteed to be followed)
-    (let ((insns (car state))
+    (let ((insns        (car  state))
           (no-lbl-insns (cadr state)))
       (let ((hd1 (car insns))
             (tl1 (cdr insns)))
@@ -78,9 +79,17 @@
                 (sync-insn-skip (list tl1 tl2))))))))
 
   (define (sync-next-label lbl state)
+    ;; first we "normalize" the state
+    ;; by skipping instructions in both lists
+    ;; until "insns" is a label and "no-lbl-insns"
+    ;; has the corresponding elements
+    ;; INVARIANT:
+    ;; * "lbl" should be the next label available in
+    ;;   current "insns"
     (let ((state (sync-insn-skip state)))
       (let ((insns (car state))
             (no-lbl-insns (cadr state)))
+        (assert (eq? lbl (car insns)))
         ;; first one must be a label
         (list (list lbl no-lbl-insns)
               ;; new state
