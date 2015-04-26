@@ -83,6 +83,9 @@
     ;; by skipping instructions in both lists
     ;; until "insns" is a label and "no-lbl-insns"
     ;; has the corresponding elements
+    ;; returns:
+    ;; (list (list <label> <ptr-to-no-lbl-insns>)
+    ;;       <new-state>)
     ;; INVARIANT:
     ;; * "lbl" should be the next label available in
     ;;   current "insns"
@@ -95,10 +98,6 @@
               ;; new state
               (list (cdr insns) no-lbl-insns)))))
 
-  ;; TODO: synchonized search against two lists
-  ;; TODO: synchonized until left side is a label
-  ;; make the binding, return new state
-  ;; keep going until all labels are consumed
   ;; TODO: demonstrate why it works
   (let ((collected
          ;; collect labels and instructions in order
@@ -124,11 +123,15 @@
                      (loop labels
                            (cons hd no-lbl-insns)
                            tl)))))))
-    (let ((labels (car collected))
+    ;; destruct collected results
+    (let ((labels       (car collected))
           (no-lbl-insns (cdr collected)))
-      (let loop ((labels labels)
+      (let loop (;; this is all remaning labels in order
+                 (labels labels)
+                 ;; initial state
                  (state (list origin-insns
                               no-lbl-insns))
+                 ;; accumulated result
                  (jump-table '()))
         (if (null? labels)
             jump-table
