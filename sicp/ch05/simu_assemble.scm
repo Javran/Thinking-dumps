@@ -1,6 +1,8 @@
 (load "simu_machine.scm")
 (load "simu_assemble_handlers.scm")
 
+(load "jump-table.scm")
+
 ;; note that for "assemble" procedure,
 ;; there is one important difference between our implementation
 ;; and the one in the book (which I usually refer to as "the legacy one"):
@@ -82,19 +84,9 @@
            ;; and assign the one without labels to each label
            ;; so that this whole thing shares one single instruction list
            ;; and some memory could be saved
-           (let loop ((table '())
-                      (insns insns))
-             (if (null? insns)
-                 table
-                 (let ((hd (car insns))
-                       (tl (cdr insns)))
-                   (if (symbol? hd)
-                       ;; label detected
-                       (loop (cons (list hd (drop-labels tl))
-                                   table)
-                             tl)
-                       (loop table
-                             tl)))))))
+           (build-jump-table
+            insns
+            symbol?)))
       (machine-set-instruction-sequence! machine (drop-labels insns))
       (machine-set-jump-table! machine jump-table))))
 
