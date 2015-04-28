@@ -110,6 +110,30 @@
 (define my-eval-put! #f)
 (define my-eval-get-all-slot-names #f)
 
+(define (assq key alist)
+  (let loop ((alist alist))
+    (if (null? alist)
+        #f
+        (if (eq? (car (car alist)) key)
+            (car alist)
+            (loop (cdr alist))))))
+
+(define (del-assq key alist)
+  (if (null? alist)
+      alist
+      (begin
+        (let ((head (cons (car alist) '())))
+          (let loop ((alist (cdr alist)) (previous head))
+            (cond ((pair? alist)
+                   (if (eq? (car (car alist)) key)
+                       (loop (cdr alist) previous)
+                       (let ((new (cons (car alist) '())))
+                         (set-cdr! previous new)
+                         (loop (cdr alist) new))))))
+          (if (eq? (car (car alist)) key)
+              (cdr head)
+              head)))))
+
 (let ((eval-handler-alist '()))
   (define (put-handler slot handler alist)
     (let ((slot-list (assq slot alist)))
@@ -334,8 +358,7 @@
 (define (lift-primitive-pair sym)
   (cons sym
         (make-proc-primitive
-         (environment-lookup
-          user-initial-environment sym))))
+         (magic-lift sym))))
 
 (define (init-env)
   (let ((proc-list
@@ -966,7 +989,7 @@
   (newline)
   (set! *my-eval-approach* approach)
   (set! my-eval
-        (cadr (assoc *my-eval-approach* eval-approaches))))
+        (cadr (assq *my-eval-approach* eval-approaches))))
 
 (install-eval-quote)
 (install-eval-define)
@@ -1015,3 +1038,5 @@
 
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
+
+(my-eval-start)

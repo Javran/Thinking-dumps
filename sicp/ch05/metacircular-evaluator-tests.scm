@@ -10,6 +10,11 @@
 
 (load "ec-tests.scm")
 
+;; TODO: we need magic-lift as a hack
+(define (magic-lift sym)
+  (environment-lookup
+   user-initial-environment sym))
+
 (set! test-exps
       (append
        test-exps
