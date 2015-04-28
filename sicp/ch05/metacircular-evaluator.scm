@@ -1039,4 +1039,6 @@
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
 
+;; (display "Module initialized.\n")
+
 (my-eval-start)

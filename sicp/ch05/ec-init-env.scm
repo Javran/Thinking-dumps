@@ -22,10 +22,14 @@
                 member memq delete
                 abs append pair?
                 symbol? display newline
+                ;; TODO: justify them?
+                set-car! set-cdr!
+                apply
                 ))))
     (extend-environment
-     '(true false)
-     '(#t   #f)
+     ;; TODO: remove hacking
+     '(true false magic-lift)
+     `(#t   #f  ,(lambda (sym) (environment-lookup user-initial-environment sym)   )  )
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)
