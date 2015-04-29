@@ -24,12 +24,14 @@
                 symbol? display newline
                 ;; TODO: justify them?
                 set-car! set-cdr!
-                apply
+                apply read
                 ))))
     (extend-environment
      ;; TODO: remove hacking
      '(true false magic-lift)
-     `(#t   #f  ,(lambda (sym) (environment-lookup user-initial-environment sym)   )  )
+     `(#t   #f  ,(lift-primitive
+                  (lambda (sym)
+                    (environment-lookup user-initial-environment sym))   )  )
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)

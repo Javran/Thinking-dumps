@@ -6,7 +6,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "metacircular-evaluator.scm")
+
 
 (load "ec-tests.scm")
 
@@ -14,6 +14,8 @@
 (define (magic-lift sym)
   (environment-lookup
    user-initial-environment sym))
+
+(load "metacircular-evaluator.scm")
 
 (set! test-exps
       (append
