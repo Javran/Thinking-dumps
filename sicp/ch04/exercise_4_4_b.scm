@@ -1,7 +1,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-(load "./exercise_4_4_common.scm")
+(load "exercise_4_4_common.scm")
 
 ; (and) => #t
 ; (and <expr>) => <expr>
@@ -54,7 +54,7 @@
                             (list 'or (or->if (cdr exp)))))
                 (car exp))))))
   (eval (or->if (cdr exp)) env))
-                       
+
 (test-and-or eval-and eval-or)
 
 (end-script)
