@@ -23,7 +23,10 @@
                 abs append pair?
                 symbol? display newline
                 ;; TODO: justify them?
+                error
                 set-car! set-cdr!
+                number? string? char? boolean?
+                list?
                 apply read
                 ))))
     (extend-environment

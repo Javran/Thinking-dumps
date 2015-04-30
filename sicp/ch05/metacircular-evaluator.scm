@@ -47,12 +47,19 @@
 
 (define for-each map)
 
+;; TODO: all of them?
 (define cddr
   (compose cdr cdr))
 (define cadr
   (compose car cdr))
+(define caadr
+  (compose car cadr))
 (define caddr
   (compose cadr cdr))
+(define cdadr
+  (compose cdr cadr))
+(define cdddr
+  (compose cdr cddr))
 (define cadddr
   (compose caddr cdr))
 
