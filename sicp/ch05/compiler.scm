@@ -43,6 +43,11 @@
    ;; adding let-form
    ((let? exp)
     (compile (let->combination exp) target linkage))
+   ;; adding and-form and or-form
+   ((and? exp)
+    (compile (and->if exp) target linkage))
+   ((or? exp)
+    (compile (or->if exp) target linkage))
    ((application? exp)
     (compile-application exp target linkage))
    (else

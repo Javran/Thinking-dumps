@@ -9,7 +9,6 @@
 ;; include syntax extensions from ex 5.23
 (load "exercise_5_23_common.scm")
 
-;; TODO: tests
 (define and? (list-tagged-with 'and))
 (define or? (list-tagged-with 'or))
 
@@ -38,7 +37,7 @@
   (define (exprs->if exps)
     (cond
      ((null? exps)
-      #t)
+      #f)
      ((null? (cdr exps))
       (car exps))
      (else
