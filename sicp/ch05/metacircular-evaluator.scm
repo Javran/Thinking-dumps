@@ -329,6 +329,7 @@
 (define (rest-operands ops) (cdr ops))
 
 (define (apply-proc-primitive proc args)
+  ;; TODO: I suspect this isn't being handled properly
   (apply (proc-prim proc) args))
 
 (define (apply-proc-compound proc args)
