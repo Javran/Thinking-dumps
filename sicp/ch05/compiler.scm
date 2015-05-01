@@ -10,8 +10,6 @@
 (define all-regs
   '(env proc val argl continue))
 
-;; TODO: support for "and" and "or"
-
 ;; exp: the expression to be compiled.
 ;; target: the target register to hold resulting value.
 ;; linkage: how should we proceed after the expression

@@ -27,9 +27,6 @@
             machine-ops-builder)))
     (machine-reg-get m 'val)))
 
-;; TODO: note: looks like we can use --stack to get rid of
-;; stack limit, but somehow the memory still brow up...
-
 (end-script)
 
 ;; Local variables:

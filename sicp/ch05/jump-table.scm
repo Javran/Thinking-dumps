@@ -13,6 +13,8 @@
 ;; by enabliing more sharing between jump-table cells,
 ;; hopefully the result will be more space-efficient.
 
+;; see: jump-table.md for some explanation of how it works
+
 ;; module assumptions:
 ;;
 ;; * instructions are either label or non-label

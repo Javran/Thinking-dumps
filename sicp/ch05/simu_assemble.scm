@@ -73,17 +73,11 @@
   ;; enforcing each label to be unique
   (scan-duplicate-labels insns symbol?)
   (let ((insns (map make-instruction insns)))
-    ;; TODO: performance issue here
     (let ((jump-table
-           ;; traverse the assembled instructions
-           ;; to collect labels to build jump-table
-           ;; TODO: --heap 10000 solves the problem ...
-           ;; but do we really need it?
-           ;; we can build jump table by maintaining 2 list of instructions
-           ;; one with label and one without, keep them synchronized
-           ;; and assign the one without labels to each label
-           ;; so that this whole thing shares one single instruction list
-           ;; and some memory could be saved
+           ;; the previous approach of building jump-table
+           ;; suffers from performance (both time & space)
+           ;; the new version is in jump-table.scm
+           ;; read that file for more details
            (build-jump-table
             insns
             symbol?)))
