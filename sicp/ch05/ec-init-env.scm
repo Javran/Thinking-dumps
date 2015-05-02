@@ -31,7 +31,7 @@
                 member memq delete
                 abs append pair?
                 symbol? display newline
-                ;; TODO: justify them?
+                ;; TODO: justify them? -- split it.
                 error
                 set-car! set-cdr!
                 number? string? char? boolean?
