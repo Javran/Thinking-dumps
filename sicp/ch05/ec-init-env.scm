@@ -6,6 +6,15 @@
 (define (to-eval-prim-entry sym)
   `(,sym ,(lift-primitive (eval sym user-initial-environment))))
 
+;; TODO:
+;; undo changes made by ex 5.50.
+;; as it should keep its own set of patches
+
+#;
+(define (apply-meta proc args)
+  (define proc-prim (compose car   proc-fields))
+  (apply (proc-prim proc) args))
+
 ;; initialize an environment that contains basic stuff
 ;; for the implemented language
 (define (init-env)
@@ -27,14 +36,17 @@
                 set-car! set-cdr!
                 number? string? char? boolean?
                 list?
-                apply read
+                apply
+                read
                 ))))
     (extend-environment
      ;; TODO: remove hacking
      '(true false magic-lift)
      `(#t   #f  ,(lift-primitive
                   (lambda (sym)
-                    (environment-lookup user-initial-environment sym))   )  )
+                    (environment-lookup user-initial-environment sym))   )
+
+            )
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)
