@@ -14,6 +14,9 @@
 (load "simu.scm")
 (load "simu_compiler_patch.scm")
 
+(load "exercise_5_50_init-env.scm")
+
+
 (let* ((compiled
         (compile-and-check
          `(begin
