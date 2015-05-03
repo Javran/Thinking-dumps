@@ -30,12 +30,8 @@
                 read
                 ))))
     (extend-environment
-     ;; TODO: remove hacking
-     '(true false magic-lift)
-     `(#t   #f  ,(lift-primitive
-                  (lambda (sym)
-                    (environment-lookup user-initial-environment sym))   )
-            )
+     '(true false)
+     `(#t   #f)
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)
