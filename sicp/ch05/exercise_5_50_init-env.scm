@@ -30,8 +30,14 @@
                 read
                 ))))
     (extend-environment
-     '(true false)
-     `(#t   #f)
+     '(true false apply-prim)
+     `(#t   #f
+            ,(lift-primitive
+              ( lambda (proc args)
+                ;; TODO: why (cadr proc)?
+                ;; TODO: why we have an extra level of "primitive"
+                ;; wrapping?
+                (apply (cadr proc) args))))
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)
