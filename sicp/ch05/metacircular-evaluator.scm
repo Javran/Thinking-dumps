@@ -364,10 +364,8 @@
   (apply-proc proc args))
 
 (define (mk-primitive-pair sym val)
-  (cons sym (make-proc-primitive (magic-lift sym))))
-
-;; TODO: not working
-;;  (cons sym (make-proc-primitive val)))
+  ;;  (cons sym (make-proc-primitive (magic-lift sym))))
+  (cons sym (make-proc-primitive val)))
 
 (define (init-env)
   (let ((proc-list
@@ -1050,4 +1048,4 @@
 
 ;; (display "Module initialized.\n")
 
-(my-eval-start)
+;; (my-eval-start)

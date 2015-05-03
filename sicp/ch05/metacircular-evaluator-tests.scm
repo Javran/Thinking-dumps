@@ -6,14 +6,7 @@
 (load "../common/utils.scm")
 (load "../common/test-utils.scm")
 
-
-
 (load "ec-tests.scm")
-
-;; TODO: we need magic-lift as a hack
-(define (magic-lift sym)
-  (environment-lookup
-   user-initial-environment sym))
 
 (load "metacircular-evaluator.scm")
 

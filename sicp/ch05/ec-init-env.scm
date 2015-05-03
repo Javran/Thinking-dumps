@@ -36,7 +36,6 @@
                 set-car! set-cdr!
                 number? string? char? boolean?
                 list?
-                apply
                 read
                 ))))
     (extend-environment
@@ -45,7 +44,6 @@
      `(#t   #f  ,(lift-primitive
                   (lambda (sym)
                     (environment-lookup user-initial-environment sym))   )
-
             )
      (extend-environment
       (map car proc-list)
