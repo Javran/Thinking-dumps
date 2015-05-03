@@ -10,6 +10,10 @@
 
 (load "metacircular-evaluator.scm")
 
+;; assume  "apply-prim"
+;; does primitive application
+(define apply-prim apply)
+
 (set! test-exps
       (append
        test-exps

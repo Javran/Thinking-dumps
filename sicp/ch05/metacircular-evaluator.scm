@@ -330,7 +330,7 @@
 
 (define (apply-proc-primitive proc args)
   ;; TODO: I suspect this isn't being handled properly
-  (apply (proc-prim proc) args))
+  (apply-prim (proc-prim proc) args))
 
 (define (apply-proc-compound proc args)
   (define vars (proc-vars proc))
@@ -1046,6 +1046,4 @@
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
 
-;; (display "Module initialized.\n")
-
-;; (my-eval-start)
+(my-eval-start)
