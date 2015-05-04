@@ -14,6 +14,10 @@
 ;; so if something like (define (compose . fs) ...)
 ;; appears, try to use something else
 
+;; TODO: say something about the correspondence
+;; between primitive procedure object and
+;; the primitive application function
+
 (define (compose g f)
   (lambda (x)
     (g (f x))))
@@ -329,7 +333,6 @@
 (define (rest-operands ops) (cdr ops))
 
 (define (apply-proc-primitive proc args)
-  ;; TODO: I suspect this isn't being handled properly
   (apply-prim (proc-prim proc) args))
 
 (define (apply-proc-compound proc args)
@@ -364,7 +367,6 @@
   (apply-proc proc args))
 
 (define (mk-primitive-pair sym val)
-  ;;  (cons sym (make-proc-primitive (magic-lift sym))))
   (cons sym (make-proc-primitive val)))
 
 (define (init-env)
