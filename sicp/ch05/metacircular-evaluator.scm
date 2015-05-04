@@ -51,11 +51,12 @@
 
 (define for-each map)
 
-;; TODO: all of them?
-(define cddr
-  (compose cdr cdr))
+;; we only provide things necessary
+;; listing all of them is boring
 (define cadr
   (compose car cdr))
+(define cddr
+  (compose cdr cdr))
 (define caadr
   (compose car cadr))
 (define caddr
