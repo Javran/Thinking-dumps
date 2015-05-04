@@ -22,22 +22,22 @@
                 member memq delete
                 abs append pair?
                 symbol? display newline
-                ;; TODO: justify them? -- split it.
-                error
-                set-car! set-cdr!
+                error set-car! set-cdr!
                 number? string? char? boolean?
-                list?
-                read
+                list? read
                 ))))
     (extend-environment
      '(true false apply-prim)
-     `(#t   #f
-            ,(lift-primitive
-              ( lambda (proc args)
-                ;; TODO: why (cadr proc)?
-                ;; TODO: why we have an extra level of "primitive"
-                ;; wrapping?
-                (apply (cadr proc) args))))
+     `(#t
+       #f
+       ,(lift-primitive
+         (lambda (proc args)
+           ;; "proc" is a value held in the environment,
+           ;; the compiled program calls "primitive-procedure?"
+           ;; to see whether it is a primitive object (ec-prim.scm)
+           ;; therefore here we need to unwrap the procedure
+           ;; to do the actual function application
+           (apply (primitive-implementation proc) args))))
      (extend-environment
       (map car proc-list)
       (map cadr proc-list)
