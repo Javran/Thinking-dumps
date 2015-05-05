@@ -29,6 +29,9 @@
             machine-ops-builder)))
     (machine-reg-get m 'val)))
 
+;; TODO: warning: the definition of "init-env" might
+;; be conflicting with other modules
+
 (define (metacirc-compile-eval exp env)
   (let* ((compiled
           (compile-and-check
