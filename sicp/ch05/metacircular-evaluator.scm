@@ -14,9 +14,15 @@
 ;; so if something like (define (compose . fs) ...)
 ;; appears, try to use something else
 
-;; TODO: say something about the correspondence
-;; between primitive procedure object and
-;; the primitive application function
+;; NOTE: the correspondence between these 3 functions:
+;; * make-proc-Primitive
+;; * proc-prim
+;; * apply-prim (assumed operation,
+;;   should be provided by the environment)
+;; while "make-proc-primitive" wraps a value of primitive function
+;; into a new representation, "proc-prim" should be able to extract
+;; this value, and "apply-prim" should be able to deal with the value
+;; extracted from "proc-prim"
 
 (define (compose g f)
   (lambda (x)
