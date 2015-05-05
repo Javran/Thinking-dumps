@@ -16,7 +16,6 @@
 
 (load "exercise_5_50_init-env.scm")
 
-
 (let* ((compiled
         (compile-and-check
          `(begin
@@ -29,6 +28,23 @@
             `((env ,env))
             machine-ops-builder)))
     (machine-reg-get m 'val)))
+
+(define (metacirc-compile-eval exp env)
+  (let* ((compiled
+          (compile-and-check
+           `(begin
+              ,@metacircular-program
+              ,exp)))
+         (insn-seq (statements compiled)))
+    (let ((m (build-and-execute-with
+              `(controller
+                ,@insn-seq)
+              `((env ,env))
+              machine-ops-builder)))
+      (machine-reg-get m 'val))))
+
+#;
+(out (metacirc-compile-eval '((lambda (x) x) (+ 1 2 3 4)) (init-env)))
 
 (end-script)
 

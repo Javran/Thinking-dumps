@@ -1054,5 +1054,3 @@
 
 (define (my-eval-start)
   (my-eval-start-using-approach 'analyze))
-
-(my-eval-start)
