@@ -14,6 +14,8 @@
 (load "simu.scm")
 (load "simu_compiler_patch.scm")
 
+(load "ec-tests.scm")
+;; make sure to load the new definition of "init-env" after "ec-tests.scm"
 (load "exercise_5_50_init-env.scm")
 
 (let* ((compiled
@@ -29,25 +31,33 @@
             machine-ops-builder)))
     (machine-reg-get m 'val)))
 
-;; TODO: warning: the definition of "init-env" might
-;; be conflicting with other modules
+;; approach can take either 'interpret or 'analyze
+(define (metacirc-compile-eval-with-approach approach)
+  (lambda (exp env)
+    (let* ((compiled
+            (compile-and-check
+             `(begin
+                ,@metacircular-program
+                (my-eval-select-approach (quote ,approach))
+                ,exp)))
+           (insn-seq (statements compiled)))
+      (let ((m (build-and-execute-with
+                `(controller
+                  ,@insn-seq)
+                `((env ,env))
+                machine-ops-builder)))
+        (machine-reg-get m 'val)))))
 
-(define (metacirc-compile-eval exp env)
-  (let* ((compiled
-          (compile-and-check
-           `(begin
-              ,@metacircular-program
-              ,exp)))
-         (insn-seq (statements compiled)))
-    (let ((m (build-and-execute-with
-              `(controller
-                ,@insn-seq)
-              `((env ,env))
-              machine-ops-builder)))
-      (machine-reg-get m 'val))))
+;; note that these tests will take a while,
+;; since we are compiling and running the metacircular evaluator
+;; on the virtual machine we have for each test case.
+(for-each
+ (test-evaluator (metacirc-compile-eval-with-approach 'interpret))
+ test-exps)
 
-#;
-(out (metacirc-compile-eval '((lambda (x) x) (+ 1 2 3 4)) (init-env)))
+(for-each
+ (test-evaluator (metacirc-compile-eval-with-approach 'analyze))
+ test-exps)
 
 (end-script)
 
