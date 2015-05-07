@@ -9,7 +9,7 @@ letter  [A-Za-z]
 
 .      ; // does nothing on mismatches
 \n     ;
-%%
+%% we can put comments here, within a line, totally ignored
 
 int yywrap(void) {
     return 1;
