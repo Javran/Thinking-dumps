@@ -1,5 +1,4 @@
 %%
-
         /* match everything except newline */
 .       ECHO;
         /* match newline */
