@@ -1,27 +1,36 @@
+%token INTEGER VARIABLE
+%left '+' '-'
+%left '*' '/'
+
 %{
     #include <stdio.h>
-    int yylex(void);
     void yyerror(char *);
+    int yylex(void);
+    int sym[26];
 %}
-
-%token INTEGER
 
 %%
 
 program:
-    program expr '\n'   { printf("%d\n", $2); }
-    |
-    ;
+        program statement '\n'
+        |
+        ;
+
+statement:
+        expr                    { printf("%d\n", $1); }
+        | VARIABLE '=' expr     { sym[$1] = $3; }
+        ;
+
 
 expr:
-    INTEGER             {
-                          // this is actually the default action
-                          // not necessary to specify it
-                          $$ = $1;
-                        }
-    | expr '+' expr     { $$ = $1 + $3; }
-    | expr '-' expr     { $$ = $1 - $3; }
-    ;
+        INTEGER
+        | VARIABLE          { $$ = sym[$1]; }
+        | expr '+' expr     { $$ = $1 + $3; }
+        | expr '-' expr     { $$ = $1 - $3; }
+        | expr '*' expr     { $$ = $1 * $3; }
+        | expr '/' expr     { $$ = $1 / $3; }
+        | '(' expr ')'      { $$ = $2; }
+        ;
 
 %%
 

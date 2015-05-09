@@ -1,4 +1,4 @@
-lex/lex.yy.c
+*/lex.yy.c
 
-yacc/y.tab.c
-yacc/y.tab.h
+*/y.tab.c
+*/y.tab.h
