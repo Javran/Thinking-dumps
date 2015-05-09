@@ -1,1 +1,4 @@
 lex/lex.yy.c
+
+yacc/y.tab.c
+yacc/y.tab.h
