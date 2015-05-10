@@ -7,8 +7,10 @@
 %%
 
     /* variables */
-
+    // variable contains exactly one character
 [a-z]                   {
+                            // and the range is from 'a' to 'z'
+                            // with 'a' indexed as 0
                             yylval = *yytext - 'a';
                             return VARIABLE;
                         }
