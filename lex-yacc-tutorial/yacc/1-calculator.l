@@ -22,14 +22,26 @@
                         }
 
     /* operators */
-[-+()=/*\n]             { return *yytext; }
+[-+()=/*\n]             {
+                            // by doing so, we must
+                            // make sure operator values
+                            // do not conflict with
+                            // VARIABLE / INTEGER / etc.
+                            return *yytext;
+                        }
     /* skip whitespace */
-[ \t]                   ;
+[ \t]                   ;   // skip them
     /* anything else is an error */
 
 .                       yyerror("invalid character");
 
 %%
+
+// seems like there are two ways of returning
+// parse results:
+// * use a return value
+// * assign something to yylval
+// TODO: roles that yacc and lex play?
 
 int yywrap(void) {
     return 1;
