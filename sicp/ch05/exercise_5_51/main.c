@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
+
+#define SMALL_BUFFER_SIZE 512
 
 char *srcText;
 long srcSize;
@@ -26,7 +29,42 @@ void freeFile() {
     srcText = NULL;
 }
 
+int isLetter(char c) { return isalpha(c); }
+
+int isSpecialInitial(char c) {
+    static const char *sp = "!$%&*/:<=>?^_~";
+    const int spLen = strlen(sp);
+    int i;
+    for (i=0; i<spLen; ++i)
+        if (sp[i] == c)
+            return 1;
+    return 0;
+}
+
+int isPeculiarIdentifierInitial(char c) {
+    // I don't want to worry about "..." here
+    return '+' == c || '-' == c;
+}
+
+int isSpecialSubsequent(char c) {
+    return '+' == c || '-' == c
+        || '.' == c || '@' == c;
+}
+
+int isInitial(char c) {
+ return isLetter(c)
+     || isSpecialInitial(c)
+     || isPeculiarIdentifierInitial(c);
+}
+
+int isSubsequent(char c) {
+    return isInitial(c)
+        || isdigit(c)
+        || isSpecialSubsequent(c);
+}
+
 void tokenize(char *curPos) {
+    char buff[SMALL_BUFFER_SIZE] = {0};
     // skip spaces so we always
     // end up with non-space for tokenizing
     while (0 != *curPos && isspace(*curPos))
@@ -47,16 +85,28 @@ void tokenize(char *curPos) {
         tokenize(curPos);
         return;
     case '(':
-        printf("l paren");
+        printf("l paren\n");
         tokenize(++curPos);
         return;
     case ')':
-        printf("r paren");
+        printf("r paren\n");
         tokenize(++curPos);
         return;
     }
 
     // dynamic initials
+    if (isInitial(*curPos)) {
+        char *oldCurPos = curPos;
+        ++curPos;
+        // consume subsequent
+        while (isSubsequent(*curPos))
+            ++curPos;
+        // print symbol
+        strncpy(buff,oldCurPos,curPos-oldCurPos);
+        buff[curPos-oldCurPos] = 0;
+        printf("symbol detected: %s\n", buff);
+        tokenize(curPos);
+    }
 
 }
 
