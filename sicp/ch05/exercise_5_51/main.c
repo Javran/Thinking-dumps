@@ -26,25 +26,38 @@ void freeFile() {
     srcText = NULL;
 }
 
-void tokenize(char *curPos, int parenStack) {
+void tokenize(char *curPos) {
     // skip spaces so we always
     // end up with non-space for tokenizing
     while (0 != *curPos && isspace(*curPos))
         ++ curPos;
 
-    // end of file
-    if (0 == *curPos) {
+    // static initials
+    switch (*curPos) {
+    case 0:
+        // end of file
         printf("end of file\n");
-    }
-
-    // a comment
-    if (';' == *curPos) {
+        return;
+    case ';':
+        // a comment
         while ('\n' != *curPos && 0 != *curPos)
             ++curPos;
         printf("comment skipped\n");
         if (0 != *curPos) ++curPos;
-        tokenize(curPos,parenStack);
+        tokenize(curPos);
+        return;
+    case '(':
+        printf("l paren");
+        tokenize(++curPos);
+        return;
+    case ')':
+        printf("r paren");
+        tokenize(++curPos);
+        return;
     }
+
+    // dynamic initials
+
 }
 
 int main(int argc, char *argv[]) {
@@ -54,7 +67,7 @@ int main(int argc, char *argv[]) {
     loadFile( argv[1] );
     // TODO: second pass tokenize
     // TODO: first we do tokenizing without storing anything.
-    tokenize(srcText,0);
+    tokenize(srcText);
 
     freeFile();
     return 0;
