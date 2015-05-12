@@ -64,6 +64,9 @@ int isSubsequent(char c) {
 }
 
 void tokenize(char *curPos) {
+    // INVARIANT: make sure every possible path
+    // does a return unless EOF is reached
+
     char buff[SMALL_BUFFER_SIZE] = {0};
     // skip spaces so we always
     // end up with non-space for tokenizing
@@ -92,10 +95,15 @@ void tokenize(char *curPos) {
         printf("r paren\n");
         tokenize(++curPos);
         return;
+    case '\'':
+        printf("quote symbol\n");
+        tokenize(++curPos);
+        return;
     }
 
     // dynamic initials
     if (isInitial(*curPos)) {
+        // begin tokenizing symbol
         char *oldCurPos = curPos;
         ++curPos;
         // consume subsequent
@@ -106,8 +114,22 @@ void tokenize(char *curPos) {
         buff[curPos-oldCurPos] = 0;
         printf("symbol detected: %s\n", buff);
         tokenize(curPos);
+        return;
     }
-
+    if (isdigit(*curPos)) {
+        // begin tokenizing number
+        char *oldCurPos = curPos;
+        ++curPos;
+        // consume subsequent
+        while (isdigit(*curPos))
+            ++curPos;
+        // print num
+        strncpy(buff,oldCurPos,curPos-oldCurPos);
+        buff[curPos-oldCurPos] = 0;
+        printf("number detected: %s\n", buff);
+        tokenize(curPos);
+        return;
+    }
 }
 
 int main(int argc, char *argv[]) {
