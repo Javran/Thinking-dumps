@@ -99,6 +99,24 @@ void tokenize(char *curPos) {
         printf("quote symbol\n");
         tokenize(++curPos);
         return;
+    case '#':
+        ++curPos;
+        // we will only handle "#t" and "#f" here ... for now
+        switch (*curPos) {
+        case 'T':
+        case 't':
+            printf("true value\n");
+            tokenize(++curPos);
+            return;
+        case 'F':
+        case 'f':
+            printf("false value\n");
+            tokenize(++curPos);
+            return;
+        default:
+            printf("error: not supported\n");
+            return;
+        }
     case '"':
         ++curPos;
         {
