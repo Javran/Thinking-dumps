@@ -99,6 +99,51 @@ void tokenize(char *curPos) {
         printf("quote symbol\n");
         tokenize(++curPos);
         return;
+    case '"':
+        ++curPos;
+        {
+            char *oldCurPos = curPos;
+            // parse a string
+            while (0 != *curPos && '"' != *curPos) {
+                if ('\\' == *curPos) {
+                    ++curPos;
+                    // handle escaping
+                    switch (*curPos) {
+                    case 'n':
+                        printf("newline\n");
+                        break;
+                    case 't':
+                        printf("tab\n");
+                        break;
+                    case 'r':
+                        printf("carry\n");
+                        break;
+                    default:
+                        // take this character literally
+                        break;
+                    }
+                    ++ curPos;
+                    continue;
+                } else {
+                    // take this character literally
+                    ++curPos;
+                    continue;
+                }
+            }
+            if (0 == *curPos) {
+                printf("error during tokenizing"
+                       "string literal not terminated\n");
+                return;
+            }
+            // otherwise the string is tokenized
+            assert( SMALL_BUFFER_SIZE >= (curPos - oldCurPos + 1) );
+            strncpy(buff,oldCurPos,curPos - oldCurPos);
+            buff[curPos-oldCurPos] = 0;
+            printf("string detected: %s\n", buff);
+            ++curPos;
+        }
+        tokenize(curPos);
+        return;
     }
 
     // dynamic initials
