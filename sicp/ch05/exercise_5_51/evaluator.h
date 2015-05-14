@@ -33,7 +33,6 @@ int isInitial(char);
 int isSubsequent(char);
 
 // functions related to tokens
-
 Token *mkTokenEof(void);
 Token *mkTokenLParen(void);
 Token *mkTokenRParen(void);
