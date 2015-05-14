@@ -66,3 +66,28 @@ Token *mkTokenInteger(long int i) {
     return ptr;
 }
 
+void freeToken(Token **pp) {
+    if (! pp && !*pp) {
+        Token *p = *pp;
+        switch (p->tag) {
+        case tok_eof:
+        case tok_lparen:
+        case tok_rparen:
+        case tok_quote:
+        case tok_true:
+        case tok_false:
+        case tok_integer:
+            break;
+        case tok_string:
+            free(p->fields.string_content);
+            p->fields.string_content = NULL;
+            break;
+        case tok_symbol:
+            free(p->fields.symbol_name);
+            p->fields.symbol_name = NULL;
+            break;
+        }
+        free(p);
+        pp = NULL;
+    }
+}
