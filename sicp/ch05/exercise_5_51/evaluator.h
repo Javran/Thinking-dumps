@@ -11,13 +11,18 @@ typedef enum {
     tok_string,
     tok_symbol,
     tok_integer
-} TokenType;
+} TokenTag;
 
 typedef union {
     char *string_content;
     char *symbol_name;
-    long int *integer_content;
+    long int integer_content;
 } TokenFields;
+
+typedef struct {
+    TokenTag tag;
+    TokenFields fields;
+} Token;
 
 // syntax related functions
 int isLetter(char);
@@ -26,5 +31,17 @@ int isPeculiarIdentifierInitial(char);
 int isSpecialSubsequent(char);
 int isInitial(char);
 int isSubsequent(char);
+
+// functions related to tokens
+
+Token *mkTokenEof(void);
+Token *mkTokenLParen(void);
+Token *mkTokenRParen(void);
+Token *mkTokenQuote(void);
+Token *mkTokenTrue(void);
+Token *mkTokenFalse(void);
+Token *mkTokenString(const char*);
+Token *mkTokenSymbol(const char*);
+Token *mkTokenInteger(long int);
 
 #endif
