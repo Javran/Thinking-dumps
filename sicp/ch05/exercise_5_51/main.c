@@ -6,8 +6,6 @@
 
 #include "evaluator.h"
 
-#define SMALL_BUFFER_SIZE 512
-
 char *srcText;
 long srcSize;
 
