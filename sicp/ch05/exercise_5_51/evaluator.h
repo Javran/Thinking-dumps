@@ -1,6 +1,17 @@
 #ifndef _EVALUATOR_H_
 #define _EVALUATOR_H_
 
+#define SMALL_BUFFER_SIZE 512
+
+// syntax related functions
+int isLetter(char);
+int isSpecialInitial(char);
+int isPeculiarIdentifierInitial(char);
+int isSpecialSubsequent(char);
+int isInitial(char);
+int isSubsequent(char);
+
+// representing tokens
 typedef enum {
     tok_eof,
     tok_lparen,
@@ -23,14 +34,6 @@ typedef struct {
     TokenTag tag;
     TokenFields fields;
 } Token;
-
-// syntax related functions
-int isLetter(char);
-int isSpecialInitial(char);
-int isPeculiarIdentifierInitial(char);
-int isSpecialSubsequent(char);
-int isInitial(char);
-int isSubsequent(char);
 
 // functions related to tokens
 Token *mkTokenEof(void);
