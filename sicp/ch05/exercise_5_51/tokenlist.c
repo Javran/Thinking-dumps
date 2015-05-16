@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 
 #include "evaluator.h"
@@ -18,10 +19,12 @@ void tokenListAdjust() {
         tokenListCap *= 2;
         tokenList = realloc(tokenList, sizeof(Token *) * tokenListCap);
         assert( tokenList );
+        fprintf(stderr,"reallocation triggered\n");
     }
 }
 
 void tokenListInsert(Token *ptr) {
+    tokenListAdjust();
     tokenList[tokenListCurMax] = ptr;
     ++tokenListCurMax;
 }
