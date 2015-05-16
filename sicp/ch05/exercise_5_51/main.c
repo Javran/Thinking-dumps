@@ -169,7 +169,19 @@ int main(int argc, char *argv[]) {
     // TODO: second pass tokenize
     // TODO: first we do tokenizing without storing anything.
     tokenize(srcText);
-
     freeFile();
+
+    tokenListInit();
+    int i;
+    for (i=0; i<100; ++i) {
+        Token *tok = mkTokenEof();
+        tokenListInsert(tok);
+    }
+    Token *p = tokenListBegin();
+    for (; ! tokenListIsLastElement(p); ++p) {
+        Token *p2 = p;
+        freeToken(&p2);
+    }
+    tokenListFree();
     return 0;
 }
