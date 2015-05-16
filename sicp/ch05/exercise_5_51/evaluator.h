@@ -46,4 +46,12 @@ Token *mkTokenString(const char*);
 Token *mkTokenSymbol(const char*);
 Token *mkTokenInteger(long int);
 
+// token list manipulations
+void tokenListInit(void);
+void tokenListAdjust(void);
+void tokenListInsert(Token *);
+Token* tokenListBegin(void);
+int tokenListIsLastElement(Token *);
+void tokenListFree();
+
 #endif
