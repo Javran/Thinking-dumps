@@ -1,6 +1,10 @@
 // a simple self-adjusting array
 
+#include <assert.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "evaluator.h"
 
 // TODO: about free:
 // so far I'm coding but haven't make
@@ -21,7 +25,27 @@ typedef struct {
     // or we might get into alignment-related troubles
     size_t elemSize;
     // number of elements currently have
-    unsigned int elemMax;
+    size_t elemMax;
     // current capacity
-    unsigned int elemCap;
+    size_t elemCap;
 } DynArr;
+
+void dynArrInit(DynArr *p, size_t elemSize) {
+    // pointer should not be null
+    // all fields should be zero
+    assert( p
+            && !p->base
+            && !p->elemSize
+            && !p->elemMax
+            && !p->elemCap );
+    p->elemMax = 0;
+    p->elemSize = elemSize;
+    p->elemCap = SMALL_BUFFER_SIZE / elemSize;
+    p->base = calloc(elemSize, p->elemCap);
+}
+
+void dynArrFree(DynArr *p) {
+    assert( p );
+    free(p->base);
+    memset(p, 0x00, sizeof(DynArr));
+}
