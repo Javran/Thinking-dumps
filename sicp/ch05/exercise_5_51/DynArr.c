@@ -17,19 +17,6 @@
 //   and the responsiblity of freeing the object itself
 //   should be taken care by the caller to this free procedure.
 
-typedef struct {
-    // base pointer for this dynamic array
-    void *base;
-    // size of each element
-    // should always be a result of sizeof operator
-    // or we might get into alignment-related troubles
-    size_t elemSize;
-    // number of elements currently have
-    size_t elemMax;
-    // current capacity
-    size_t elemCap;
-} DynArr;
-
 void dynArrInit(DynArr *p, size_t elemSize) {
     // pointer should not be null
     // all fields should be zero

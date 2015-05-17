@@ -1,5 +1,8 @@
+#include <stdlib.h>
+
 #ifndef _EVALUATOR_H_
 #define _EVALUATOR_H_
+
 
 #define SMALL_BUFFER_SIZE 512
 
@@ -54,5 +57,21 @@ void tokenListInsert(Token *);
 Token* tokenListBegin(void);
 int tokenListIsLastElement(Token *);
 void tokenListFree();
+
+typedef struct {
+    // base pointer for this dynamic array
+    void *base;
+    // size of each element
+    // should always be a result of sizeof operator
+    // or we might get into alignment-related troubles
+    size_t elemSize;
+    // number of elements currently have
+    size_t elemMax;
+    // current capacity
+    size_t elemCap;
+} DynArr;
+
+void dynArrInit(DynArr *, size_t);
+void dynArrFree(DynArr *);
 
 #endif

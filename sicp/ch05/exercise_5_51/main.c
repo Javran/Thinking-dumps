@@ -170,5 +170,10 @@ int main(int argc, char *argv[]) {
     // TODO: first we do tokenizing without storing anything.
     tokenize(srcText);
     freeFile();
+
+    DynArr da = {0};
+    dynArrInit(&da,sizeof(int));
+    dynArrFree(&da);
+
     return 0;
 }
