@@ -8,6 +8,7 @@
 
 char *srcText;
 long srcSize;
+DynArr tokenList;
 
 void loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
@@ -39,30 +40,34 @@ void tokenize(char *curPos) {
     while (0 != *curPos && isspace(*curPos))
         ++ curPos;
 
+    Token *newTok = NULL;
     // static initials
     switch (*curPos) {
     case 0:
         // end of file
-        printf("end of file\n");
+        newTok = dynArrNew(&tokenList);
+        mkTokenEof(newTok);
         return;
     case ';':
         // a comment
         while ('\n' != *curPos && 0 != *curPos)
             ++curPos;
-        printf("comment skipped\n");
         if (0 != *curPos) ++curPos;
         tokenize(curPos);
         return;
     case '(':
-        printf("l paren\n");
+        newTok = dynArrNew(&tokenList);
+        mkTokenLParen(newTok);
         tokenize(++curPos);
         return;
     case ')':
-        printf("r paren\n");
+        newTok = dynArrNew(&tokenList);
+        mkTokenRParen(newTok);
         tokenize(++curPos);
         return;
     case '\'':
-        printf("quote symbol\n");
+        newTok = dynArrNew(&tokenList);
+        mkTokenQuote(newTok);
         tokenize(++curPos);
         return;
     case '#':
@@ -71,16 +76,16 @@ void tokenize(char *curPos) {
         switch (*curPos) {
         case 'T':
         case 't':
-            printf("true value\n");
-            tokenize(++curPos);
+            newTok = dynArrNew(&tokenList);
+            mkTokenTrue(newTok);
             return;
         case 'F':
         case 'f':
-            printf("false value\n");
-            tokenize(++curPos);
+            newTok = dynArrNew(&tokenList);
+            mkTokenFalse(newTok);
             return;
         default:
-            printf("error: not supported\n");
+            fprintf(stderr,"error: not supported\n");
             return;
         }
     case '"':
@@ -88,6 +93,8 @@ void tokenize(char *curPos) {
         {
             char *oldCurPos = curPos;
             // parse a string
+            // TODO: for proper handling,
+            // we should keep a counter for buffer
             while (0 != *curPos && '"' != *curPos) {
                 if ('\\' == *curPos) {
                     ++curPos;
@@ -123,7 +130,8 @@ void tokenize(char *curPos) {
             assert( SMALL_BUFFER_SIZE >= (curPos - oldCurPos + 1) );
             strncpy(buff,oldCurPos,curPos - oldCurPos);
             buff[curPos-oldCurPos] = 0;
-            printf("string detected: %s\n", buff);
+            newTok = dynArrNew(&tokenList);
+            mkTokenString(newTok,buff);
             ++curPos;
         }
         tokenize(curPos);
@@ -141,7 +149,9 @@ void tokenize(char *curPos) {
         // print symbol
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        printf("symbol detected: %s\n", buff);
+        // printf("symbol detected: %s\n", buff);
+        newTok = dynArrNew(&tokenList);
+        mkTokenSymbol(newTok, buff);
         tokenize(curPos);
         return;
     }
@@ -155,7 +165,8 @@ void tokenize(char *curPos) {
         // print num
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        printf("number detected: %s\n", buff);
+        newTok = dynArrNew(&tokenList);
+        mkTokenInteger(newTok,atol(buff));
         tokenize(curPos);
         return;
     }
@@ -164,21 +175,24 @@ void tokenize(char *curPos) {
 int main(int argc, char *argv[]) {
     // just assume we have only one argument,
     // which is the file
-    // assert( argc == 1+1 );
-    // loadFile( argv[1] );
+    assert( argc == 1+1 );
+    loadFile( argv[1] );
     // TODO: second pass tokenize
     // TODO: first we do tokenizing without storing anything.
-    // tokenize(srcText);
-    // freeFile();
+    dynArrInit(&tokenList, sizeof(Token));
 
-    DynArr da = {0};
-    dynArrInit(&da,sizeof(int));
+    tokenize(srcText);
+    freeFile();
 
-    int i;
-    for (i=0; i<10000; ++i) {
-        dynArrNew(&da);
+    Token *it; int count = 0;
+    for (it = dynArrBegin(&tokenList);
+         it != dynArrEnd(&tokenList);
+         it = dynArrNext(&tokenList,it)) {
+        ++count;
+        // fprintf(stderr,"freeing: %p\n",it);
+        freeToken(it);
     }
-    dynArrFree(&da);
-
+    printf("token count=%d\n",count);
+    dynArrFree(&tokenList);
     return 0;
 }

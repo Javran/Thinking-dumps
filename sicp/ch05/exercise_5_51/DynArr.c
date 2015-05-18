@@ -41,14 +41,14 @@ void dynArrAdjust(DynArr *p) {
     if (p->elemMax+1 >= p->elemCap) {
         p->elemCap *= 2;
         p->base = realloc(p->base, p->elemSize*p->elemCap);
-        assert( p-> base );
+        assert( p->base );
     }
 }
 
 // allocate a new object
 void *dynArrNew(DynArr *p) {
     dynArrAdjust(p);
-    void *retVal = p->base + p->elemMax;
+    void *retVal = p->base + p->elemMax*p->elemSize;
     ++ p->elemMax;
     return retVal;
 }
@@ -57,4 +57,25 @@ void dynArrFree(DynArr *p) {
     assert( p );
     free(p->base);
     memset(p, 0x00, sizeof(DynArr));
+}
+
+// return the place pointing to the first element
+void *dynArrBegin(DynArr *p) {
+    return p->base;
+}
+
+// return the last element, might not be a valid
+// pointer depending on the emptiness.
+void *dynArrLast(DynArr *p) {
+    return p->base + p->elemSize*(p->elemMax - 1);
+}
+
+void *dynArrEnd(DynArr *p) {
+    return p->base + p->elemSize*p->elemMax;
+}
+
+// get next pointer
+void *dynArrNext(DynArr *p, void *ptr) {
+    unsigned char *tPtr = ptr;
+    return tPtr + p->elemSize;
 }

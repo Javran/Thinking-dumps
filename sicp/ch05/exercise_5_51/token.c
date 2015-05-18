@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include <stdio.h>
 
 #include "evaluator.h"
 
@@ -32,7 +34,7 @@ void mkTokenInteger(Token *tp, long int i) {
 }
 
 void freeToken(Token *tp) {
-    if (! tp ) {
+    if (tp) {
         switch (tp->tag) {
         case tok_eof:
         case tok_lparen:
@@ -43,14 +45,17 @@ void freeToken(Token *tp) {
         case tok_integer:
             break;
         case tok_string:
+            printf("freeing string: %s\n", tp->fields.string_content);
             free(tp->fields.string_content);
             tp->fields.string_content = NULL;
             break;
         case tok_symbol:
+            printf("freeing symbol: %s\n", tp->fields.symbol_name);
             free(tp->fields.symbol_name);
             tp->fields.symbol_name = NULL;
             break;
+        default:
+            assert( 0 );
         }
-        free(tp);
     }
 }
