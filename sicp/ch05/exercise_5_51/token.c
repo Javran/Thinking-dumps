@@ -3,73 +3,37 @@
 
 #include "evaluator.h"
 
-Token *mkTokenEof() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_eof;
-    return ptr;
-}
+void mkTokenEof(Token *tp)      { tp->tag = tok_eof;    }
+void mkTokenLParen(Token *tp)   { tp->tag = tok_lparen; }
+void mkTokenRParen(Token *tp)   { tp->tag = tok_rparen; }
+void mkTokenQuote(Token *tp)    { tp->tag = tok_quote;  }
+void mkTokenTrue(Token *tp)     { tp->tag = tok_true;   }
+void mkTokenFalse(Token *tp)    { tp->tag = tok_false;  }
 
-Token *mkTokenLParen() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_lparen;
-    return ptr;
-}
-
-Token *mkTokenRParen() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_rparen;
-    return ptr;
-}
-
-Token *mkTokenQuote() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_quote;
-    return ptr;
-}
-
-Token *mkTokenTrue() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_true;
-    return ptr;
-}
-
-Token *mkTokenFalse() {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_false;
-    return ptr;
-}
-
-Token *mkTokenString(const char* src) {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_string;
+void mkTokenString(Token *tp, const char* src) {
+    tp->tag = tok_string;
     size_t len = strlen(src);
     char *dst = malloc(len+1);
     memset(dst, 0, len+1);
-    ptr->fields.string_content = strncpy(dst, src, len);
-    return ptr;
+    tp->fields.string_content = strncpy(dst, src, len);
 }
 
-Token *mkTokenSymbol(const char* src) {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_symbol;
+void mkTokenSymbol(Token *tp, const char* src) {
+    tp->tag = tok_symbol;
     size_t len = strlen(src);
     char *dst = malloc(len+1);
     memset(dst, 0, len+1);
-    ptr->fields.symbol_name = strncpy(dst, src, len);
-    return ptr;
+    tp->fields.symbol_name = strncpy(dst, src, len);
 }
 
-Token *mkTokenInteger(long int i) {
-    Token *ptr = malloc(sizeof( Token ));
-    ptr->tag = tok_symbol;
-    ptr->fields.integer_content = i;
-    return ptr;
+void mkTokenInteger(Token *tp, long int i) {
+    tp->tag = tok_symbol;
+    tp->fields.integer_content = i;
 }
 
-void freeToken(Token **pp) {
-    if (! pp && !*pp) {
-        Token *p = *pp;
-        switch (p->tag) {
+void freeToken(Token *tp) {
+    if (! tp ) {
+        switch (tp->tag) {
         case tok_eof:
         case tok_lparen:
         case tok_rparen:
@@ -79,15 +43,14 @@ void freeToken(Token **pp) {
         case tok_integer:
             break;
         case tok_string:
-            free(p->fields.string_content);
-            p->fields.string_content = NULL;
+            free(tp->fields.string_content);
+            tp->fields.string_content = NULL;
             break;
         case tok_symbol:
-            free(p->fields.symbol_name);
-            p->fields.symbol_name = NULL;
+            free(tp->fields.symbol_name);
+            tp->fields.symbol_name = NULL;
             break;
         }
-        free(p);
-        pp = NULL;
+        free(tp);
     }
 }

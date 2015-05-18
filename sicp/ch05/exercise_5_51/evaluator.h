@@ -39,16 +39,16 @@ typedef struct {
 } Token;
 
 // functions related to tokens
-Token *mkTokenEof(void);
-Token *mkTokenLParen(void);
-Token *mkTokenRParen(void);
-Token *mkTokenQuote(void);
-Token *mkTokenTrue(void);
-Token *mkTokenFalse(void);
-Token *mkTokenString(const char*);
-Token *mkTokenSymbol(const char*);
-Token *mkTokenInteger(long int);
-void freeToken(Token **);
+void mkTokenEof(Token *);
+void mkTokenLParen(Token *);
+void mkTokenRParen(Token *);
+void mkTokenQuote(Token *);
+void mkTokenTrue(Token *);
+void mkTokenFalse(Token *);
+void mkTokenString(Token *, const char*);
+void mkTokenSymbol(Token *, const char*);
+void mkTokenInteger(Token *, long int);
+void freeToken(Token *);
 
 // token list manipulations
 void tokenListInit(void);
