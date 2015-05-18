@@ -60,7 +60,7 @@ void tokenListFree();
 
 typedef struct {
     // base pointer for this dynamic array
-    void *base;
+    unsigned char *base;
     // size of each element
     // should always be a result of sizeof operator
     // or we might get into alignment-related troubles
@@ -72,6 +72,7 @@ typedef struct {
 } DynArr;
 
 void dynArrInit(DynArr *, size_t);
+void *dynArrNew(DynArr *);
 void dynArrFree(DynArr *);
 
 #endif

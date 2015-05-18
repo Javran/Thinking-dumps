@@ -164,15 +164,20 @@ void tokenize(char *curPos) {
 int main(int argc, char *argv[]) {
     // just assume we have only one argument,
     // which is the file
-    assert( argc == 1+1 );
-    loadFile( argv[1] );
+    // assert( argc == 1+1 );
+    // loadFile( argv[1] );
     // TODO: second pass tokenize
     // TODO: first we do tokenizing without storing anything.
-    tokenize(srcText);
-    freeFile();
+    // tokenize(srcText);
+    // freeFile();
 
     DynArr da = {0};
     dynArrInit(&da,sizeof(int));
+
+    int i;
+    for (i=0; i<10000; ++i) {
+        dynArrNew(&da);
+    }
     dynArrFree(&da);
 
     return 0;

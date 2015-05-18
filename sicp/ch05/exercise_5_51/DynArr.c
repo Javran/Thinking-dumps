@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "evaluator.h"
 
@@ -29,6 +30,27 @@ void dynArrInit(DynArr *p, size_t elemSize) {
     p->elemSize = elemSize;
     p->elemCap = SMALL_BUFFER_SIZE / elemSize;
     p->base = calloc(elemSize, p->elemCap);
+}
+
+// adjust the array so that it guarantees
+// to contain the next element
+// for internal use. no need to expose it
+void dynArrAdjust(DynArr *p) {
+    // should not be zero
+    assert(p->elemCap);
+    if (p->elemMax+1 >= p->elemCap) {
+        p->elemCap *= 2;
+        p->base = realloc(p->base, p->elemSize*p->elemCap);
+        assert( p-> base );
+    }
+}
+
+// allocate a new object
+void *dynArrNew(DynArr *p) {
+    dynArrAdjust(p);
+    void *retVal = p->base + p->elemMax;
+    ++ p->elemMax;
+    return retVal;
 }
 
 void dynArrFree(DynArr *p) {
