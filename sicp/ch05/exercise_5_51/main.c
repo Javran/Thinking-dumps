@@ -130,8 +130,8 @@ void tokenize(char *curPos) {
             assert( SMALL_BUFFER_SIZE >= (curPos - oldCurPos + 1) );
             strncpy(buff,oldCurPos,curPos - oldCurPos);
             buff[curPos-oldCurPos] = 0;
-            newTok = dynArrNew(&tokenList);
-            mkTokenString(newTok,buff);
+            // newTok = dynArrNew(&tokenList);
+            // mkTokenString(newTok,buff);
             ++curPos;
         }
         tokenize(curPos);
@@ -150,8 +150,8 @@ void tokenize(char *curPos) {
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
         // printf("symbol detected: %s\n", buff);
-        newTok = dynArrNew(&tokenList);
-        mkTokenSymbol(newTok, buff);
+        // newTok = dynArrNew(&tokenList);
+        // mkTokenSymbol(newTok, buff);
         tokenize(curPos);
         return;
     }
@@ -165,8 +165,8 @@ void tokenize(char *curPos) {
         // print num
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        newTok = dynArrNew(&tokenList);
-        mkTokenInteger(newTok,atol(buff));
+        //newTok = dynArrNew(&tokenList);
+        //mkTokenInteger(newTok,atol(buff));
         tokenize(curPos);
         return;
     }
@@ -189,7 +189,6 @@ int main(int argc, char *argv[]) {
          it != dynArrEnd(&tokenList);
          it = dynArrNext(&tokenList,it)) {
         ++count;
-        // fprintf(stderr,"freeing: %p\n",it);
         freeToken(it);
     }
     printf("token count=%d\n",count);

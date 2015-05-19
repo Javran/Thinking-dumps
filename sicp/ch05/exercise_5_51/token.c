@@ -28,7 +28,7 @@ void mkTokenSymbol(Token *tp, const char* src) {
     tp->fields.symbol_name = strncpy(dst, src, len);
 }
 
-void mkTokenInteger(Token *tp, long int i) {
+void mkTokenInteger(Token *tp, long i) {
     tp->tag = tok_symbol;
     tp->fields.integer_content = i;
 }

@@ -30,7 +30,7 @@ typedef enum {
 typedef union {
     char *string_content;
     char *symbol_name;
-    long int integer_content;
+    long integer_content;
 } TokenFields;
 
 typedef struct {
@@ -47,7 +47,7 @@ void mkTokenTrue(Token *);
 void mkTokenFalse(Token *);
 void mkTokenString(Token *, const char*);
 void mkTokenSymbol(Token *, const char*);
-void mkTokenInteger(Token *, long int);
+void mkTokenInteger(Token *, long);
 void freeToken(Token *);
 
 // token list manipulations
