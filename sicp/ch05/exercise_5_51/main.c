@@ -165,8 +165,8 @@ void tokenize(char *curPos) {
         // print num
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        //newTok = dynArrNew(&tokenList);
-        //mkTokenInteger(newTok,atol(buff));
+        newTok = dynArrNew(&tokenList);
+        mkTokenInteger(newTok,atol(buff));
         tokenize(curPos);
         return;
     }

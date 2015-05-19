@@ -29,7 +29,7 @@ void mkTokenSymbol(Token *tp, const char* src) {
 }
 
 void mkTokenInteger(Token *tp, long i) {
-    tp->tag = tok_symbol;
+    tp->tag = tok_integer;
     tp->fields.integer_content = i;
 }
 
