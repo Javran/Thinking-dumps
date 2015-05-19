@@ -50,7 +50,6 @@ void freeToken(Token *tp) {
             tp->fields.string_content = NULL;
             break;
         case tok_symbol:
-            printf("freeing symbol: %s\n", tp->fields.symbol_name);
             free(tp->fields.symbol_name);
             tp->fields.symbol_name = NULL;
             break;

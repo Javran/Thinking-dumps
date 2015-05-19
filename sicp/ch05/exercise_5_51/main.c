@@ -78,11 +78,13 @@ void tokenize(char *curPos) {
         case 't':
             newTok = dynArrNew(&tokenList);
             mkTokenTrue(newTok);
+            tokenize(++curPos);
             return;
         case 'F':
         case 'f':
             newTok = dynArrNew(&tokenList);
             mkTokenFalse(newTok);
+            tokenize(++curPos);
             return;
         default:
             fprintf(stderr,"error: not supported\n");
@@ -130,8 +132,8 @@ void tokenize(char *curPos) {
             assert( SMALL_BUFFER_SIZE >= (curPos - oldCurPos + 1) );
             strncpy(buff,oldCurPos,curPos - oldCurPos);
             buff[curPos-oldCurPos] = 0;
-            // newTok = dynArrNew(&tokenList);
-            // mkTokenString(newTok,buff);
+            newTok = dynArrNew(&tokenList);
+            mkTokenString(newTok,buff);
             ++curPos;
         }
         tokenize(curPos);
@@ -149,9 +151,8 @@ void tokenize(char *curPos) {
         // print symbol
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        // printf("symbol detected: %s\n", buff);
-        // newTok = dynArrNew(&tokenList);
-        // mkTokenSymbol(newTok, buff);
+        newTok = dynArrNew(&tokenList);
+        mkTokenSymbol(newTok, buff);
         tokenize(curPos);
         return;
     }
