@@ -93,31 +93,35 @@ void tokenize(char *curPos) {
     case '"':
         ++curPos;
         {
-            char *oldCurPos = curPos;
+            char *curBuff = buff;
             // parse a string
-            // TODO: for proper handling,
-            // we should keep a counter for buffer
             while (0 != *curPos && '"' != *curPos) {
                 if ('\\' == *curPos) {
                     ++curPos;
                     // handle escaping
                     switch (*curPos) {
                     case 'n':
-                        printf("newline\n");
+                        *curBuff = '\n';
+                        ++curBuff;
                         break;
                     case 't':
-                        printf("tab\n");
+                        *curBuff = '\t';
+                        ++curBuff;
                         break;
                     case 'r':
-                        printf("carry\n");
+                        *curBuff = '\r';
+                        ++curBuff;
                         break;
                     default:
-                        // take this character literally
+                        *curBuff = *curPos;
+                        ++curBuff;
                         break;
                     }
                     ++ curPos;
                     continue;
                 } else {
+                    *curBuff = *curPos;
+                    ++curBuff;
                     // take this character literally
                     ++curPos;
                     continue;
@@ -128,10 +132,9 @@ void tokenize(char *curPos) {
                        "string literal not terminated\n");
                 return;
             }
+            *curBuff = 0;
             // otherwise the string is tokenized
-            assert( SMALL_BUFFER_SIZE >= (curPos - oldCurPos + 1) );
-            strncpy(buff,oldCurPos,curPos - oldCurPos);
-            buff[curPos-oldCurPos] = 0;
+            assert( SMALL_BUFFER_SIZE >= (curBuff - buff + 1) );
             newTok = dynArrNew(&tokenList);
             mkTokenString(newTok,buff);
             ++curPos;

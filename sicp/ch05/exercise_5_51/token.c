@@ -45,7 +45,6 @@ void freeToken(Token *tp) {
         case tok_integer:
             break;
         case tok_string:
-            printf("freeing string: %s\n", tp->fields.string_content);
             free(tp->fields.string_content);
             tp->fields.string_content = NULL;
             break;
