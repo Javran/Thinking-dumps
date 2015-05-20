@@ -1,9 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <stdio.h>
-
-#include "evaluator.h"
+#include "Common.h"
+#include "Token.h"
 
 void mkTokenEof(Token *tp)      { tp->tag = tok_eof;    }
 void mkTokenLParen(Token *tp)   { tp->tag = tok_lparen; }

@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <ctype.h>
-#include <string.h>
-
-#include "evaluator.h"
+#include "Common.h"
+#include "Token.h"
+#include "DynArr.h"
+#include "Tokenizer.h"
 
 char *srcText;
 long srcSize;
@@ -29,7 +26,6 @@ void freeFile() {
     free(srcText);
     srcText = NULL;
 }
-
 
 int main(int argc, char *argv[]) {
     // TODO: better error handling

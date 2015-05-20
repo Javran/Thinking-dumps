@@ -1,8 +1,7 @@
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "evaluator.h"
+#include "Common.h"
+#include "Syntax.h"
+#include "Token.h"
+#include "Tokenizer.h"
 
 void tokenize(char *curPos, DynArr *tokenList) {
     // INVARIANT: make sure every possible path

@@ -1,11 +1,7 @@
 // a simple self-adjusting array
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
-#include "evaluator.h"
+#include "Common.h"
+#include "DynArr.h"
 
 // TODO: about free:
 // so far I'm coding but haven't make

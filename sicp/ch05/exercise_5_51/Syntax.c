@@ -1,7 +1,5 @@
-#include <ctype.h>
-#include <string.h>
-
-#include "evaluator.h"
+#include "Common.h"
+#include "Syntax.h"
 
 int isLetter(char c) { return isalpha(c); }
 
