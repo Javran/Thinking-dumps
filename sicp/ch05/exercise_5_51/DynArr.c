@@ -79,3 +79,12 @@ void *dynArrNext(DynArr *p, void *ptr) {
     unsigned char *tPtr = ptr;
     return tPtr + p->elemSize;
 }
+
+void dynArrVisit(DynArr *p, DynArrVisitor dv) {
+    void *it;
+    for (it = dynArrBegin(p);
+         it != dynArrEnd(p);
+         it = dynArrNext(p,it)) {
+        dv(it);
+    }
+}

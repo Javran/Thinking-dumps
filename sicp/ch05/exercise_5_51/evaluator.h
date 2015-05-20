@@ -38,6 +38,8 @@ typedef struct {
     TokenFields fields;
 } Token;
 
+typedef void (*DynArrVisitor)(void *);
+
 // functions related to tokens
 void mkTokenEof(Token *);
 void mkTokenLParen(Token *);
@@ -78,5 +80,5 @@ void *dynArrBegin(DynArr *);
 void *dynArrLast(DynArr *);
 void *dynArrEnd(DynArr *);
 void *dynArrNext(DynArr *, void *);
-
+void dynArrVisit(DynArr *, DynArrVisitor);
 #endif

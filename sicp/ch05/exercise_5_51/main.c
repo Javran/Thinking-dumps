@@ -188,14 +188,7 @@ int main(int argc, char *argv[]) {
     tokenize(srcText);
     freeFile();
 
-    Token *it; int count = 0;
-    for (it = dynArrBegin(&tokenList);
-         it != dynArrEnd(&tokenList);
-         it = dynArrNext(&tokenList,it)) {
-        ++count;
-        freeToken(it);
-    }
-    printf("token count=%d\n",count);
+    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
     dynArrFree(&tokenList);
     return 0;
 }
