@@ -177,12 +177,11 @@ void tokenize(char *curPos) {
 }
 
 int main(int argc, char *argv[]) {
+    // TODO: better error handling
     // just assume we have only one argument,
     // which is the file
     assert( argc == 1+1 );
     loadFile( argv[1] );
-    // TODO: second pass tokenize
-    // TODO: first we do tokenizing without storing anything.
     dynArrInit(&tokenList, sizeof(Token));
 
     tokenize(srcText);
