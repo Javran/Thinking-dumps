@@ -8,7 +8,7 @@
 
 char *srcText;
 long srcSize;
-DynArr tokenList;
+DynArr gTokenList;
 
 void loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
@@ -30,7 +30,7 @@ void freeFile() {
     srcText = NULL;
 }
 
-void tokenize(char *curPos) {
+void tokenize(char *curPos, DynArr *tokenList) {
     // INVARIANT: make sure every possible path
     // does a return unless EOF is reached
 
@@ -45,7 +45,7 @@ void tokenize(char *curPos) {
     switch (*curPos) {
     case 0:
         // end of file
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenEof(newTok);
         return;
     case ';':
@@ -53,22 +53,22 @@ void tokenize(char *curPos) {
         while ('\n' != *curPos && 0 != *curPos)
             ++curPos;
         if (0 != *curPos) ++curPos;
-        tokenize(curPos);
+        tokenize(curPos,tokenList);
         return;
     case '(':
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenLParen(newTok);
-        tokenize(++curPos);
+        tokenize(++curPos,tokenList);
         return;
     case ')':
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenRParen(newTok);
-        tokenize(++curPos);
+        tokenize(++curPos,tokenList);
         return;
     case '\'':
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenQuote(newTok);
-        tokenize(++curPos);
+        tokenize(++curPos,tokenList);
         return;
     case '#':
         ++curPos;
@@ -76,15 +76,15 @@ void tokenize(char *curPos) {
         switch (*curPos) {
         case 'T':
         case 't':
-            newTok = dynArrNew(&tokenList);
+            newTok = dynArrNew(tokenList);
             mkTokenTrue(newTok);
-            tokenize(++curPos);
+            tokenize(++curPos,tokenList);
             return;
         case 'F':
         case 'f':
-            newTok = dynArrNew(&tokenList);
+            newTok = dynArrNew(tokenList);
             mkTokenFalse(newTok);
-            tokenize(++curPos);
+            tokenize(++curPos,tokenList);
             return;
         default:
             fprintf(stderr,"error: not supported\n");
@@ -135,11 +135,11 @@ void tokenize(char *curPos) {
             *curBuff = 0;
             // otherwise the string is tokenized
             assert( SMALL_BUFFER_SIZE >= (curBuff - buff + 1) );
-            newTok = dynArrNew(&tokenList);
+            newTok = dynArrNew(tokenList);
             mkTokenString(newTok,buff);
             ++curPos;
         }
-        tokenize(curPos);
+        tokenize(curPos,tokenList);
         return;
     }
 
@@ -154,9 +154,9 @@ void tokenize(char *curPos) {
         // print symbol
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenSymbol(newTok, buff);
-        tokenize(curPos);
+        tokenize(curPos,tokenList);
         return;
     }
     if (isdigit(*curPos)) {
@@ -169,9 +169,9 @@ void tokenize(char *curPos) {
         // print num
         strncpy(buff,oldCurPos,curPos-oldCurPos);
         buff[curPos-oldCurPos] = 0;
-        newTok = dynArrNew(&tokenList);
+        newTok = dynArrNew(tokenList);
         mkTokenInteger(newTok,atol(buff));
-        tokenize(curPos);
+        tokenize(curPos,tokenList);
         return;
     }
 }
@@ -182,12 +182,12 @@ int main(int argc, char *argv[]) {
     // which is the file
     assert( argc == 1+1 );
     loadFile( argv[1] );
-    dynArrInit(&tokenList, sizeof(Token));
+    dynArrInit(&gTokenList, sizeof(Token));
 
-    tokenize(srcText);
+    tokenize(srcText,&gTokenList);
     freeFile();
 
-    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
-    dynArrFree(&tokenList);
+    dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
+    dynArrFree(&gTokenList);
     return 0;
 }
