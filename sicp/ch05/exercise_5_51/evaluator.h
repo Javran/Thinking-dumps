@@ -81,4 +81,6 @@ void *dynArrLast(DynArr *);
 void *dynArrEnd(DynArr *);
 void *dynArrNext(DynArr *, void *);
 void dynArrVisit(DynArr *, DynArrVisitor);
+
+void tokenize(char *, DynArr *);
 #endif
