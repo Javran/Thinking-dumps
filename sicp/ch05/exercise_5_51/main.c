@@ -2,6 +2,7 @@
 #include "Token.h"
 #include "DynArr.h"
 #include "Tokenizer.h"
+#include "Util.h"
 
 char *srcText;
 long srcSize;
@@ -27,12 +28,26 @@ void freeFile() {
     srcText = NULL;
 }
 
+void helpAndQuit(char *execName) {
+    fprintf(stderr,
+            "Usage: %s <lisp source file>\n",
+            execName);
+    exit(1);
+}
+
 int main(int argc, char *argv[]) {
-    // TODO: better error handling
-    // just assume we have only one argument,
-    // which is the file
-    assert( argc == 1+1 );
-    loadFile( argv[1] );
+    if ( argc != 1+1 )
+        helpAndQuit(argv[0]);
+
+    const char *fileName = argv[1];
+    if ( !isFileExist(fileName) ||
+         !isFileReadable(fileName) ) {
+        fprintf(stderr,
+                "File is not available.\n");
+        exit(errno);
+    }
+
+    loadFile( fileName );
     dynArrInit(&gTokenList, sizeof(Token));
 
     tokenize(srcText,&gTokenList);

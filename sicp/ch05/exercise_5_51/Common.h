@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #ifndef _JAVEV_COMMON_H_
 #define _JAVEV_COMMON_H_
