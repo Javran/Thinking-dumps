@@ -47,3 +47,25 @@ SExp *newPair(SExp *car, SExp *cdr) {
     p->fields.pairContent.cdr = cdr;
     return p;
 }
+
+void freeSExp(SExp *p) {
+    if (!p) return;
+    switch (p->tag) {
+    case sexpInteger:
+    case sexpBool:
+    case sexpNil:
+        break;
+    case sexpSymbol:
+        free(p->fields.symbolName);
+        break;
+    case sexpString:
+        free(p->fields.stringContent);
+        break;
+    case sexpPair:
+        freeSExp(p->fields.pairContent.car);
+        freeSExp(p->fields.pairContent.cdr);
+        break;
+    }
+    memset(p,0x00,sizeof(SExp));
+    free(p);
+}
