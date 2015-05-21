@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "Token.h"
+#include "Util.h"
 
 void mkTokenEof(Token *tp)      { tp->tag = tok_eof;    }
 void mkTokenLParen(Token *tp)   { tp->tag = tok_lparen; }
@@ -10,18 +11,12 @@ void mkTokenFalse(Token *tp)    { tp->tag = tok_false;  }
 
 void mkTokenString(Token *tp, const char* src) {
     tp->tag = tok_string;
-    size_t len = strlen(src);
-    char *dst = malloc(len+1);
-    memset(dst, 0, len+1);
-    tp->fields.string_content = strncpy(dst, src, len);
+    tp->fields.string_content = allocCopyString(src);
 }
 
 void mkTokenSymbol(Token *tp, const char* src) {
     tp->tag = tok_symbol;
-    size_t len = strlen(src);
-    char *dst = malloc(len+1);
-    memset(dst, 0, len+1);
-    tp->fields.symbol_name = strncpy(dst, src, len);
+    tp->fields.symbol_name = allocCopyString(src);
 }
 
 void mkTokenInteger(Token *tp, long i) {

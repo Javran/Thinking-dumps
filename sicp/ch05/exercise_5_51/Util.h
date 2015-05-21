@@ -5,5 +5,6 @@
 
 char isFileExist(const char *);
 char isFileReadable(const char *);
+char *allocCopyString(const char *);
 
 #endif
