@@ -32,4 +32,12 @@ typedef struct SExp {
     SExpFields fields;
 } SExp;
 
+SExp *newSymbol(const char *);
+SExp *newString(const char *);
+SExp *newInteger(long);
+SExp *newBool(char);
+SExp *newNil();
+SExp *newPair(SExp *, SExp *);
+void freeSExp(SExp *);
+
 #endif
