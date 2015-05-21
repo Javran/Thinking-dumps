@@ -1,6 +1,49 @@
 #include "Common.h"
+#include "Util.h"
 #include "SExp.h"
 
+// internal use only, allocate and assign tag
+// caller is responsible for finishing the object creation
+SExp *allocWithTag(SExpTag t) {
+    SExp *p = calloc(1,sizeof(SExp));
+    p->tag = t;
+    return p;
+}
+
 SExp *newSymbol(const char *name) {
-    assert( 0 );
+    SExp *p = allocWithTag(sexpSymbol);
+    p->fields.symbolName = allocCopyString(name);
+    return p;
+}
+
+SExp *newString(const char *content) {
+    SExp *p = allocWithTag(sexpString);
+    p->fields.stringContent = allocCopyString(content);
+    return p;
+}
+
+SExp *newInteger(long val) {
+    SExp *p = allocWithTag(sexpInteger);
+    p->fields.integerContent = val;
+    return p;
+}
+
+SExp *newBool(char val) {
+    SExp *p = allocWithTag(sexpInteger);
+    p->fields.truthValue = val;
+    return p;
+}
+
+// TODO: one optimization would be sharing nil pointers.
+// but the free procedure need to take that into account
+SExp *newNil() {
+    // no content is required
+    return allocWithTag(sexpNil);
+}
+
+SExp *newPair(SExp *car, SExp *cdr) {
+    SExp *p = allocWithTag(sexpPair);
+    p->fields.pairContent.car = car;
+    p->fields.pairContent.cdr = cdr;
+    return p;
 }

@@ -2,46 +2,46 @@
 #include "Token.h"
 #include "Util.h"
 
-void mkTokenEof(Token *tp)      { tp->tag = tok_eof;    }
-void mkTokenLParen(Token *tp)   { tp->tag = tok_lparen; }
-void mkTokenRParen(Token *tp)   { tp->tag = tok_rparen; }
-void mkTokenQuote(Token *tp)    { tp->tag = tok_quote;  }
-void mkTokenTrue(Token *tp)     { tp->tag = tok_true;   }
-void mkTokenFalse(Token *tp)    { tp->tag = tok_false;  }
+void mkTokenEof(Token *tp)      { tp->tag = tokEof;    }
+void mkTokenLParen(Token *tp)   { tp->tag = tokLParen; }
+void mkTokenRParen(Token *tp)   { tp->tag = tokRParen; }
+void mkTokenQuote(Token *tp)    { tp->tag = tokQuote;  }
+void mkTokenTrue(Token *tp)     { tp->tag = tokTrue;   }
+void mkTokenFalse(Token *tp)    { tp->tag = tokFalse;  }
 
 void mkTokenString(Token *tp, const char* src) {
-    tp->tag = tok_string;
-    tp->fields.string_content = allocCopyString(src);
+    tp->tag = tokString;
+    tp->fields.stringContent = allocCopyString(src);
 }
 
 void mkTokenSymbol(Token *tp, const char* src) {
-    tp->tag = tok_symbol;
-    tp->fields.symbol_name = allocCopyString(src);
+    tp->tag = tokSymbol;
+    tp->fields.symbolName = allocCopyString(src);
 }
 
 void mkTokenInteger(Token *tp, long i) {
-    tp->tag = tok_integer;
-    tp->fields.integer_content = i;
+    tp->tag = tokInteger;
+    tp->fields.integerContent = i;
 }
 
 void freeToken(Token *tp) {
     if (tp) {
         switch (tp->tag) {
-        case tok_eof:
-        case tok_lparen:
-        case tok_rparen:
-        case tok_quote:
-        case tok_true:
-        case tok_false:
-        case tok_integer:
+        case tokEof:
+        case tokLParen:
+        case tokRParen:
+        case tokQuote:
+        case tokTrue:
+        case tokFalse:
+        case tokInteger:
             break;
-        case tok_string:
-            free(tp->fields.string_content);
-            tp->fields.string_content = NULL;
+        case tokString:
+            free(tp->fields.stringContent);
+            tp->fields.stringContent = NULL;
             break;
-        case tok_symbol:
-            free(tp->fields.symbol_name);
-            tp->fields.symbol_name = NULL;
+        case tokSymbol:
+            free(tp->fields.symbolName);
+            tp->fields.symbolName = NULL;
             break;
         default:
             assert( 0 );

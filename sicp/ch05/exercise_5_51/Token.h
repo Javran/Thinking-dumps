@@ -3,21 +3,21 @@
 
 // representing tokens
 typedef enum {
-    tok_eof,
-    tok_lparen,
-    tok_rparen,
-    tok_quote,
-    tok_true,
-    tok_false,
-    tok_string,
-    tok_symbol,
-    tok_integer
+    tokEof,
+    tokLParen,
+    tokRParen,
+    tokQuote,
+    tokTrue,
+    tokFalse,
+    tokString,
+    tokSymbol,
+    tokInteger
 } TokenTag;
 
 typedef union {
-    char *string_content;
-    char *symbol_name;
-    long integer_content;
+    char *stringContent;
+    char *symbolName;
+    long integerContent;
 } TokenFields;
 
 typedef struct {
