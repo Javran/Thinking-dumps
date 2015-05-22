@@ -33,3 +33,21 @@
 * `Util`
 
     Utilities.
+
+## Notes
+
+
+* A principle of allocationg and deallocating objects
+
+    A procedure who is responsible for deallocating objects,
+    should only deallocate object contents.
+    And the caller to this procedure should be responsible for
+    deallocating the pointer to that object.
+
+    (The mistake I made before is to pass a deallocating-function
+    object-pointer pointers so that the function can handle the object
+    pointer deallocation and set the object pointer to 0.
+    This would complicate the process of deallocation.
+    More importantly, the object pointer is just a value that can be
+    assigned to another variable, therefore it does not make much sense
+    to let the deallocating-function aware of the object-pointer pointer)
