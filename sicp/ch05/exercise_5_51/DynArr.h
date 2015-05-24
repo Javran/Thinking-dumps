@@ -25,6 +25,7 @@ void *dynArrBegin(DynArr *);
 void *dynArrLast(DynArr *);
 void *dynArrEnd(DynArr *);
 void *dynArrNext(DynArr *, void *);
+int dynArrCount(DynArr *);
 void dynArrVisit(DynArr *, DynArrVisitor);
 
 #endif

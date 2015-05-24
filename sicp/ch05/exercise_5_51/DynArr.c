@@ -65,6 +65,10 @@ void *dynArrNext(DynArr *p, void *ptr) {
     return tPtr + p->elemSize;
 }
 
+int dynArrCount(DynArr *p) {
+    return p->elemMax;
+}
+
 void dynArrVisit(DynArr *p, DynArrVisitor dv) {
     void *it;
     for (it = dynArrBegin(p);
