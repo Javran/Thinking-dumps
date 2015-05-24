@@ -51,6 +51,14 @@ int main(int argc, char *argv[]) {
     dynArrInit(&gTokenList, sizeof(Token));
 
     tokenize(srcText,&gTokenList);
+
+    if (dynArrCount(&gTokenList)) {
+        // TODO: call parser here
+        // to make sure we have at least one token to worry about.
+    } else {
+        fprintf(stderr, "Empty token list.\n");
+    }
+
     freeFile();
 
     dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
