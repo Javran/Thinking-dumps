@@ -3,6 +3,24 @@
 #include "Token.h"
 #include "SExp.h"
 
+typedef struct {
+    DynArr *tokenList;
+    void *current;
+    void *lookahead;
+} ParseState;
+
+// TODO: invariant at least one element from tokenList
+void parseStateInit(DynArr *tokenList, ParseState *ps) {
+    assert( ps
+            && !ps->tokenList
+            && !ps->current
+            && !ps->lookahead );
+
+    ps->tokenList = tokenList;
+    ps->current = dynArrBegin(tokenList);
+    ps->lookahead = dynArrNext(tokenList,ps->current);
+}
+
 // accepts token list and an iterator
 SExp *parseList(DynArr *tl, void *it) {
     return NULL;
