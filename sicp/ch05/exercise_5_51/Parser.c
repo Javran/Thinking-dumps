@@ -1,13 +1,4 @@
-#include "Common.h"
-#include "DynArr.h"
-#include "Token.h"
-#include "SExp.h"
-
-typedef struct {
-    DynArr *tokenList;
-    Token *current;
-    Token *lookahead;
-} ParseState;
+#include "Parser.h"
 
 // INVARIANT: the token list should never be empty
 // and ParseState should have all fields being zero.
