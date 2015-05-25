@@ -5,12 +5,14 @@
 
 typedef struct {
     DynArr *tokenList;
-    void *current;
-    void *lookahead;
+    Token *current;
+    Token *lookahead;
 } ParseState;
 
-// TODO: invariant at least one element from tokenList
+// INVARIANT: the token list should never be empty
+// and ParseState should have all fields being zero.
 void parseStateInit(DynArr *tokenList, ParseState *ps) {
+    assert( tokenList && dynArrCount(tokenList) );
     assert( ps
             && !ps->tokenList
             && !ps->current
@@ -19,6 +21,16 @@ void parseStateInit(DynArr *tokenList, ParseState *ps) {
     ps->tokenList = tokenList;
     ps->current = dynArrBegin(tokenList);
     ps->lookahead = dynArrNext(tokenList,ps->current);
+}
+
+Token *parseStateCurrent(const ParseState *ps) {
+    return ps->current;
+}
+
+Token *parseStateLookahead(const ParseState *ps) {
+    return ( ps->lookahead < (Token *)dynArrEnd(ps->tokenList) )
+        ? ps->lookahead
+        : NULL;
 }
 
 // accepts token list and an iterator
