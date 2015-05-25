@@ -33,6 +33,11 @@ Token *parseStateLookahead(const ParseState *ps) {
         : NULL;
 }
 
+void parseStateNext(ParseState *ps) {
+    ps->current = ps->lookahead;
+    ++ ps->lookahead;
+}
+
 // accepts token list and an iterator
 SExp *parseList(DynArr *tl, void *it) {
     return NULL;
