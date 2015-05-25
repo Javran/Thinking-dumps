@@ -2,11 +2,13 @@
 #include "Token.h"
 #include "DynArr.h"
 #include "Tokenizer.h"
+#include "Parser.h"
 #include "Util.h"
 
 char *srcText;
 long srcSize;
 DynArr gTokenList;
+ParseState gParseState;
 
 void loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
@@ -55,6 +57,14 @@ int main(int argc, char *argv[]) {
     if (dynArrCount(&gTokenList)) {
         // TODO: call parser here
         // to make sure we have at least one token to worry about.
+        memset(&gParseState, 0x00, sizeof(gParseState));
+        parseStateInit(&gTokenList,&gParseState);
+
+        while (parseStateLookahead(&gParseState)) {
+            printToken(stdout, parseStateCurrent(&gParseState) );
+            parseStateNext(&gParseState);
+        }
+
     } else {
         fprintf(stderr, "Empty token list.\n");
     }

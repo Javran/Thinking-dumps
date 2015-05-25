@@ -1,3 +1,5 @@
+#include "Common.h"
+
 #ifndef _JAVEV_TOKEN_H_
 #define _JAVEV_TOKEN_H_
 
@@ -35,6 +37,7 @@ void mkTokenFalse(Token *);
 void mkTokenString(Token *, const char*);
 void mkTokenSymbol(Token *, const char*);
 void mkTokenInteger(Token *, long);
+void printToken(FILE *, const Token *);
 void freeToken(Token *);
 
 #endif
