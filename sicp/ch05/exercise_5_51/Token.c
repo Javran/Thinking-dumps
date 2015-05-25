@@ -24,6 +24,33 @@ void mkTokenInteger(Token *tp, long i) {
     tp->fields.integerContent = i;
 }
 
+void printToken(FILE *f, const Token *tp) {
+#define P(...) fprintf(f, __VA_ARGS__)
+    assert( tp );
+    switch (tp->tag) {
+    case tokEof:
+        P("[EOF]"); break;
+    case tokLParen:
+        P("[LPAR]"); break;
+    case tokRParen:
+        P("[RPAR]"); break;
+    case tokQuote:
+        P("[Q]"); break;
+    case tokTrue:
+        P("[T]"); break;
+    case tokFalse:
+        P("[F]"); break;
+    case tokInteger:
+        P("[%ld]",tp->fields.integerContent); break;
+        break;
+    case tokString:
+        P("[%s]",tp->fields.stringContent); break;
+    case tokSymbol:
+        P("[%s]",tp->fields.symbolName); break;
+    }
+#undef P
+}
+
 void freeToken(Token *tp) {
     if (tp) {
         switch (tp->tag) {
