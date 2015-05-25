@@ -34,24 +34,31 @@ SExp *parseList(DynArr *tl, void *it) {
     return NULL;
 }
 
-SExp *parseAtom(DynArr *tl, void *it) {
-    // TODO: iterator should make progress
-    // TODO: parsing state
-    Token *p = it;
+// missing cases:
+// tokEof
+// tokLParen
+// tokRParen
+// tokQuote
+
+SExp *parseAtom(ParseState *ps) {
+    Token *p = parseStateCurrent(ps);
     switch (p->tag) {
     case tokInteger:
+        parseStateNext(ps);
         return newInteger(p->fields.integerContent);
     case tokSymbol:
+        parseStateNext(ps);
         return newSymbol(p->fields.symbolName);
     case tokTrue:
+        parseStateNext(ps);
         return newBool(1);
     case tokFalse:
+        parseStateNext(ps);
         return newBool(0);
     case tokString:
+        parseStateNext(ps);
         return newString(p->fields.stringContent);
     default:
-        // TODO
-        assert(0);
+        return NULL;
     }
-    return NULL;
 }
