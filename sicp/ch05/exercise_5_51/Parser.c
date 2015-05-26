@@ -36,11 +36,9 @@ SExp *parseSExp(ParseState *ps) {
 
     SExp *retVal = parseList(ps);
     if (NULL == retVal) {
-        fprintf(stderr,"list failed\n");
         retVal = parseAtom(ps);
     }
     if (NULL == retVal) {
-        fprintf(stderr,"atom failed\n");
         memcpy(ps, &oldPs, sizeof(ParseState));
     }
     return retVal;
@@ -57,35 +55,32 @@ SExp *parseList(ParseState *ps) {
         goto parse_list_exit;
     parseStateNext(ps);
     p = parseStateCurrent(ps);
-    if (p->tag == tokRParen) {
-        // found "()"
-        parseStateNext(ps);
-        return newNil();
-    } else {
-        // TODO: impl is wrong,
-        // try loop.
-        SExp* car = parseAtom(ps);
-        if (car == NULL) {
-            puts("car failed");
+
+    SExp *head = newNil();
+    SExp **current = &head;
+
+    while (p->tag != tokRParen) {
+        SExp *now = parseSExp(ps);
+        if (NULL == now)
             goto parse_list_exit;
-        }
-        SExp* cdr = parseList(ps);
-        if (cdr == NULL) {
-            puts("cdr failed");
-            goto parse_list_exit;
-        }
-        return newPair(car,cdr);
+        p = parseStateCurrent(ps);
+        SExp *newElem = newPair(now,*current);
+        *current = newElem;
+        current = &(newElem->fields.pairContent.cdr);
     }
+    parseStateNext(ps);
+    return head;
 
 parse_list_exit:
+    if (head)
+        freeSExp(head);
+    head = NULL;
     memcpy(ps, &oldPs, sizeof(ParseState));
     return NULL;
 }
 
 // missing cases:
 // tokEof
-// tokLParen
-// tokRParen
 // tokQuote
 
 SExp *parseAtom(ParseState *ps) {
