@@ -16,4 +16,6 @@ Token *parseStateCurrent(const ParseState *);
 Token *parseStateLookahead(const ParseState *);
 void parseStateNext(ParseState *);
 
+SExp *parseList(ParseState *);
+SExp *parseAtom(ParseState *);
 #endif

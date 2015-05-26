@@ -30,7 +30,32 @@ void parseStateNext(ParseState *ps) {
 }
 
 // accepts token list and an iterator
-SExp *parseList(DynArr *tl, void *it) {
+SExp *parseList(ParseState *ps) {
+    ParseState oldPs;
+    // backup old state
+    memcpy(&oldPs, ps, sizeof(ParseState));
+    // the current one must be '('
+    Token *p = parseStateCurrent(ps);
+    if (p->tag != tokLParen)
+        goto parse_list_exit;
+    parseStateNext(ps);
+    p = parseStateCurrent(ps);
+    if (p->tag == tokRParen) {
+        // found "()"
+        parseStateNext(ps);
+        return newNil();
+    } else {
+        SExp* car = parseAtom(ps);
+        if (car == NULL)
+            goto parse_list_exit;
+        SExp* cdr = parseList(ps);
+        if (cdr == NULL)
+            goto parse_list_exit;
+        return newPair(car,cdr);
+    }
+
+parse_list_exit:
+    memcpy(ps, &oldPs, sizeof(ParseState));
     return NULL;
 }
 
