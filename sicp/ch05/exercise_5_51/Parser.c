@@ -29,6 +29,23 @@ void parseStateNext(ParseState *ps) {
     ++ ps->lookahead;
 }
 
+SExp *parseSExp(ParseState *ps) {
+    ParseState oldPs;
+    // backup old state
+    memcpy(&oldPs, ps, sizeof(ParseState));
+
+    SExp *retVal = parseList(ps);
+    if (NULL == retVal) {
+        fprintf(stderr,"list failed\n");
+        retVal = parseAtom(ps);
+    }
+    if (NULL == retVal) {
+        fprintf(stderr,"atom failed\n");
+        memcpy(ps, &oldPs, sizeof(ParseState));
+    }
+    return retVal;
+}
+
 // accepts token list and an iterator
 SExp *parseList(ParseState *ps) {
     ParseState oldPs;
@@ -45,12 +62,18 @@ SExp *parseList(ParseState *ps) {
         parseStateNext(ps);
         return newNil();
     } else {
+        // TODO: impl is wrong,
+        // try loop.
         SExp* car = parseAtom(ps);
-        if (car == NULL)
+        if (car == NULL) {
+            puts("car failed");
             goto parse_list_exit;
+        }
         SExp* cdr = parseList(ps);
-        if (cdr == NULL)
+        if (cdr == NULL) {
+            puts("cdr failed");
             goto parse_list_exit;
+        }
         return newPair(car,cdr);
     }
 

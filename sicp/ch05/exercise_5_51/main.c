@@ -60,6 +60,9 @@ int main(int argc, char *argv[]) {
         memset(&gParseState, 0x00, sizeof(gParseState));
         parseStateInit(&gTokenList,&gParseState);
 
+        SExp *result = parseSExp(&gParseState);
+        (void)result;
+
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
             parseStateNext(&gParseState);
