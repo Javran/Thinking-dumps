@@ -51,13 +51,20 @@ SExp *parseList(ParseState *ps) {
     memcpy(&oldPs, ps, sizeof(ParseState));
     // the current one must be '('
     Token *p = parseStateCurrent(ps);
+
+    // need to initialize these two values
+    // so that when we jump to the end,
+    // the pointer is properly initialized
+    SExp *head = NULL;
+    SExp **current = NULL;
+
     if (p->tag != tokLParen)
         goto parse_list_exit;
     parseStateNext(ps);
     p = parseStateCurrent(ps);
 
-    SExp *head = newNil();
-    SExp **current = &head;
+    head = newNil();
+    current = &head;
 
     while (p->tag != tokRParen) {
         SExp *now = parseSExp(ps);

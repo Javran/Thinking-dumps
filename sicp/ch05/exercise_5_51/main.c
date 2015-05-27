@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
         parseStateInit(&gTokenList,&gParseState);
 
         SExp *result = parseSExp(&gParseState);
-        (void)result;
+        printSExp(stdout,result);
 
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
