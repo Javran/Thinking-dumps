@@ -1,3 +1,5 @@
+#include "Common.h"
+
 #ifndef _JAVEV_SEXP_H_
 #define _JAVEV_SEXP_H_
 
@@ -39,5 +41,6 @@ SExp *newBool(char);
 SExp *newNil();
 SExp *newPair(SExp *, SExp *);
 void freeSExp(SExp *);
+void printSExp(FILE *, SExp *);
 
 #endif

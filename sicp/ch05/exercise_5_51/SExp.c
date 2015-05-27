@@ -70,4 +70,30 @@ void freeSExp(SExp *p) {
     free(p);
 }
 
-// TODO: SExp pretty print
+void printSExp(FILE *f, SExp *p) {
+    switch (p->tag) {
+    case sexpSymbol:
+        // in case '%' gets accidentally handled...
+        fprintf(f, "%s", p->fields.symbolName);
+        break;
+    case sexpString:
+        fprintf(f,"\"%s\"", p->fields.stringContent);
+        break;
+    case sexpInteger:
+        fprintf(f,"%ld", p->fields.integerContent);
+        break;
+    case sexpBool:
+        fprintf(f,p->fields.truthValue? "#t": "#f");
+        break;
+    case sexpNil:
+        fprintf(f, "()");
+        break;
+    case sexpPair:
+        fprintf(f,"(");
+        printSExp(f,p->fields.pairContent.car);
+        fprintf(f," . ");
+        printSExp(f,p->fields.pairContent.cdr);
+        fprintf(f,")");
+        break;
+    }
+}
