@@ -19,4 +19,5 @@ void parseStateNext(ParseState *);
 SExp *parseList(ParseState *);
 SExp *parseAtom(ParseState *);
 SExp *parseSExp(ParseState *);
+SExp *parseQuote(ParseState *);
 #endif

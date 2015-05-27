@@ -39,6 +39,9 @@ SExp *parseSExp(ParseState *ps) {
         retVal = parseAtom(ps);
     }
     if (NULL == retVal) {
+        retVal = parseQuote(ps);
+    }
+    if (NULL == retVal) {
         memcpy(ps, &oldPs, sizeof(ParseState));
     }
     return retVal;
