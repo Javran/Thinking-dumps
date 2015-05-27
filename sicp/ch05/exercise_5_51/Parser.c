@@ -112,3 +112,20 @@ SExp *parseAtom(ParseState *ps) {
         return NULL;
     }
 }
+
+SExp *parseQuote(ParseState *ps) {
+    ParseState oldPs;
+    // backup old state
+    memcpy(&oldPs, ps, sizeof(ParseState));
+    Token *p = parseStateCurrent(ps);
+    if (p->tag != tokQuote)
+        goto parse_quote_exit;
+    parseStateNext(ps);
+    SExp *sub = parseSExp(ps);
+    if (sub == NULL)
+        goto parse_quote_exit;
+    return newPair(newSymbol("quote"),newPair(sub,newNil()));
+parse_quote_exit:
+    memcpy(ps, &oldPs, sizeof(ParseState));
+    return NULL;
+}
