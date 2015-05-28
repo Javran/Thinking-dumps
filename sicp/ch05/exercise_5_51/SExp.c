@@ -88,6 +88,37 @@ void freeSExp(SExp *p) {
     free(p);
 }
 
+void printPairR(FILE *f, SExp *p) {
+    switch (p->tag) {
+    case sexpNil:
+        fputc(')', f); return;
+    case sexpPair:
+        fputc(' ', f);
+        printSExp(f,p->fields.pairContent.car);
+        printPairR(f,p->fields.pairContent.cdr);
+        return;
+    default:
+        // TODO:
+        // since for now we don't have a parser for
+        // parsing improper list,
+        // this part of the implementation is unconfirmed.
+        fputs(" . ", f);
+        printSExp(f,p);
+        fputc(')', f);
+        return;
+    }
+}
+
+void printPairL(FILE *f, SExp *p) {
+    assert(p && p->tag == sexpPair
+           /* the second argument should be
+            * a valid object of sexpPair
+            */);
+    fputc('(',f);
+    printSExp(f,p->fields.pairContent.car);
+    printPairR(f,p->fields.pairContent.cdr);
+}
+
 void printSExp(FILE *f, SExp *p) {
     switch (p->tag) {
     case sexpSymbol:
@@ -107,11 +138,7 @@ void printSExp(FILE *f, SExp *p) {
         fprintf(f, "()");
         break;
     case sexpPair:
-        fprintf(f,"(");
-        printSExp(f,p->fields.pairContent.car);
-        fprintf(f," . ");
-        printSExp(f,p->fields.pairContent.cdr);
-        fprintf(f,")");
+        printPairL(f,p);
         break;
     }
 }
