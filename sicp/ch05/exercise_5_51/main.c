@@ -5,6 +5,12 @@
 #include "Parser.h"
 #include "Util.h"
 
+// TODO: consider this to be just a quick and dirty
+// evaluator, plus some experimental idea of optimization.
+// should we deal with error cases?
+// I'm a little bit worrying that handling errors would
+// complicate the code
+
 char *srcText;
 long srcSize;
 DynArr gTokenList;
@@ -54,25 +60,26 @@ int main(int argc, char *argv[]) {
 
     tokenize(srcText,&gTokenList);
 
-    if (dynArrCount(&gTokenList)) {
-        // at this point
-        // we have at least one element in the token list,
-        // which is the invariant we need to maintain
-        // when calling parser.
-        memset(&gParseState, 0x00, sizeof(gParseState));
-        parseStateInit(&gTokenList,&gParseState);
+    assert( dynArrCount(&gTokenList)
+            /* the tokenizer should at least return tokEof,
+               making the token list non-empty
+             */);
+    // at this point
+    // we have at least one element in the token list,
+    // which is the invariant we need to maintain
+    // when calling parser.
+    memset(&gParseState, 0x00, sizeof(gParseState));
+    parseStateInit(&gTokenList,&gParseState);
 
-        SExp *result = parseSExp(&gParseState);
-        printSExp(stdout,result);
-        freeSExp(result);
+    SExp *result = parseSExp(&gParseState);
+    printSExp(stdout,result);
+    freeSExp(result);
 
-        // TODO: should have nothing to consume now
-        while (parseStateLookahead(&gParseState)) {
-            printToken(stdout, parseStateCurrent(&gParseState) );
-            parseStateNext(&gParseState);
-        }
-    } else {
-        fprintf(stderr, "Empty token list.\n");
+    printf("Remainng tokens:\n");
+    // TODO: should have nothing to consume now
+    while (parseStateLookahead(&gParseState)) {
+        printToken(stdout, parseStateCurrent(&gParseState) );
+        parseStateNext(&gParseState);
     }
 
     freeFile();

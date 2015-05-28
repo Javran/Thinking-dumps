@@ -1,5 +1,12 @@
 #include "Parser.h"
 
+// there is no case for tokEof,
+// which is intentionally left out.
+// our parser always fail (return NULL) on unrecognized
+// token stream, so that we can just stop when the parser
+// yields nothing. (and if the remaining part is more than just an eof,
+// there must be some parsing/syntax errors.
+
 // INVARIANT: the token list should never be empty
 // and ParseState should have all fields being zero.
 void parseStateInit(DynArr *tokenList, ParseState *ps) {
@@ -88,10 +95,6 @@ parse_list_exit:
     memcpy(ps, &oldPs, sizeof(ParseState));
     return NULL;
 }
-
-// missing cases:
-// tokEof
-// tokQuote
 
 SExp *parseAtom(ParseState *ps) {
     Token *p = parseStateCurrent(ps);
