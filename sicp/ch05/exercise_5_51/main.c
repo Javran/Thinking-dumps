@@ -44,6 +44,11 @@ void helpAndQuit(char *execName) {
     exit(1);
 }
 
+void printAndFreeSExpP(SExp **p) {
+    printSExp(stdout,*p); puts("");
+    freeSExp(*p);
+}
+
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
@@ -61,9 +66,7 @@ int main(int argc, char *argv[]) {
     dynArrInit(&gSExpList, sizeof(SExp *));
 
     tokenize(srcText,&gTokenList);
-
-    // TODO: have a list of `SExp*`.
-    // stop when the parse produces nothing
+    freeFile();
 
     assert( dynArrCount(&gTokenList)
             /* the tokenizer should at least return tokEof,
@@ -76,25 +79,32 @@ int main(int argc, char *argv[]) {
     memset(&gParseState, 0x00, sizeof(gParseState));
     parseStateInit(&gTokenList,&gParseState);
 
-
     SExp *result = NULL;
 
+    // keep parsing results until there is an error
+    // since there is no handler for tokEof,
+    // an error must happen, which guarantees that
+    // this loop can terminate.
     for (result = parseSExp(&gParseState);
          NULL != result;
          result = parseSExp(&gParseState)) {
-        printSExp(stdout,result); puts("");
-        freeSExp(result);
+        SExp **newExp = dynArrNew(&gSExpList);
+        *newExp = result;
     }
 
-    printf("Remainng tokens:\n");
-    // TODO: should have nothing to consume now
-    while (parseStateLookahead(&gParseState)) {
-        printToken(stdout, parseStateCurrent(&gParseState) );
-        parseStateNext(&gParseState);
+    // it is guaranteed that parseStateCurrent always produces
+    // a valid pointer. no check is necessary.
+    char parseFailed = ! ( tokEof == parseStateCurrent(&gParseState)->tag );
+    if (parseFailed) {
+        printf("Remainng tokens:\n");
+        // TODO: should have nothing to consume now
+        while (parseStateLookahead(&gParseState)) {
+            printToken(stdout, parseStateCurrent(&gParseState) );
+            parseStateNext(&gParseState);
+        }
     }
 
-    freeFile();
-
+    dynArrVisit(&gSExpList,(DynArrVisitor)printAndFreeSExpP);
     dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
 
     dynArrFree(&gSExpList);
