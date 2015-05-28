@@ -2,7 +2,17 @@
 #include "Util.h"
 #include "SExp.h"
 
-SExp nilExp = {sexpNil, {0}};
+// statically allocated objects,
+// which are intended for sharing
+// (to reduce runtime-allocation overhead)
+SExp nilExp =
+    {sexpNil, {0}};
+// use `!!val` to limit the index to be one of {0,1},
+// in which 0 stands for false and 1 stands for true.
+SExp boolExps[2] = {
+    {sexpBool, {.truthValue = 0}},
+    {sexpBool, {.truthValue = 1}},
+};
 
 // internal use only, allocate and assign tag
 // caller is responsible for finishing the object creation
@@ -31,9 +41,7 @@ SExp *newInteger(long val) {
 }
 
 SExp *newBool(char val) {
-    SExp *p = allocWithTag(sexpInteger);
-    p->fields.truthValue = val;
-    return p;
+    return &boolExps[!!val];
 }
 
 // optimization: nil is assigned in static space
@@ -53,8 +61,6 @@ void freeSExp(SExp *p) {
     if (!p) return;
     switch (p->tag) {
     case sexpInteger:
-    case sexpBool:
-        break;
     case sexpSymbol:
         free(p->fields.symbolName);
         break;
@@ -65,9 +71,15 @@ void freeSExp(SExp *p) {
         freeSExp(p->fields.pairContent.car);
         freeSExp(p->fields.pairContent.cdr);
         break;
+    // special cases for statically allocated objects
     case sexpNil:
         assert(p == &nilExp
                /* nil should never be allocated at run time
+                */);
+        return;
+    case sexpBool:
+        assert(p == &boolExps[0] || p == &boolExps[1]
+               /* boolExp should never be allocated at run time
                 */);
         return;
     }
