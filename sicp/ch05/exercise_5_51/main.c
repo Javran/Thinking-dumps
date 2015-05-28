@@ -15,6 +15,7 @@ char *srcText;
 long srcSize;
 DynArr gTokenList;
 ParseState gParseState;
+DynArr gSExpList; // a list of (SExp *)
 
 void loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
@@ -57,6 +58,7 @@ int main(int argc, char *argv[]) {
 
     loadFile( fileName );
     dynArrInit(&gTokenList, sizeof(Token));
+    dynArrInit(&gSExpList, sizeof(SExp *));
 
     tokenize(srcText,&gTokenList);
 
@@ -74,9 +76,15 @@ int main(int argc, char *argv[]) {
     memset(&gParseState, 0x00, sizeof(gParseState));
     parseStateInit(&gTokenList,&gParseState);
 
-    SExp *result = parseSExp(&gParseState);
-    printSExp(stdout,result);
-    freeSExp(result);
+
+    SExp *result = NULL;
+
+    for (result = parseSExp(&gParseState);
+         NULL != result;
+         result = parseSExp(&gParseState)) {
+        printSExp(stdout,result); puts("");
+        freeSExp(result);
+    }
 
     printf("Remainng tokens:\n");
     // TODO: should have nothing to consume now
@@ -88,6 +96,8 @@ int main(int argc, char *argv[]) {
     freeFile();
 
     dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
+
+    dynArrFree(&gSExpList);
     dynArrFree(&gTokenList);
     return 0;
 }
