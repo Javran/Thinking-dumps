@@ -55,8 +55,10 @@ int main(int argc, char *argv[]) {
     tokenize(srcText,&gTokenList);
 
     if (dynArrCount(&gTokenList)) {
-        // TODO: call parser here
-        // to make sure we have at least one token to worry about.
+        // at this point
+        // we have at least one element in the token list,
+        // which is the invariant we need to maintain
+        // when calling parser.
         memset(&gParseState, 0x00, sizeof(gParseState));
         parseStateInit(&gTokenList,&gParseState);
 
@@ -64,11 +66,11 @@ int main(int argc, char *argv[]) {
         printSExp(stdout,result);
         freeSExp(result);
 
+        // TODO: should have nothing to consume now
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
             parseStateNext(&gParseState);
         }
-
     } else {
         fprintf(stderr, "Empty token list.\n");
     }
