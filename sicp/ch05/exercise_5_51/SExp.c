@@ -61,6 +61,7 @@ void freeSExp(SExp *p) {
     if (!p) return;
     switch (p->tag) {
     case sexpInteger:
+        break;
     case sexpSymbol:
         free(p->fields.symbolName);
         break;
