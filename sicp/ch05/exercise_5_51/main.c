@@ -60,6 +60,9 @@ int main(int argc, char *argv[]) {
 
     tokenize(srcText,&gTokenList);
 
+    // TODO: have a list of `SExp*`.
+    // stop when the parse produces nothing
+
     assert( dynArrCount(&gTokenList)
             /* the tokenizer should at least return tokEof,
                making the token list non-empty
