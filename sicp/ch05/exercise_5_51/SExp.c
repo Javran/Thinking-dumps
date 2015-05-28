@@ -2,6 +2,8 @@
 #include "Util.h"
 #include "SExp.h"
 
+SExp nilExp = {sexpNil, {0}};
+
 // internal use only, allocate and assign tag
 // caller is responsible for finishing the object creation
 SExp *allocWithTag(SExpTag t) {
@@ -34,11 +36,10 @@ SExp *newBool(char val) {
     return p;
 }
 
-// TODO: one optimization would be sharing nil pointers.
-// but the free procedure need to take that into account
+// optimization: nil is assigned in static space
+// so that it can be shared.
 SExp *newNil() {
-    // no content is required
-    return allocWithTag(sexpNil);
+    return &nilExp;
 }
 
 SExp *newPair(SExp *car, SExp *cdr) {
@@ -53,7 +54,6 @@ void freeSExp(SExp *p) {
     switch (p->tag) {
     case sexpInteger:
     case sexpBool:
-    case sexpNil:
         break;
     case sexpSymbol:
         free(p->fields.symbolName);
@@ -65,6 +65,11 @@ void freeSExp(SExp *p) {
         freeSExp(p->fields.pairContent.car);
         freeSExp(p->fields.pairContent.cdr);
         break;
+    case sexpNil:
+        assert(p == &nilExp
+               /* nil should never be allocated at run time
+                */);
+        return;
     }
     memset(p,0x00,sizeof(SExp));
     free(p);
