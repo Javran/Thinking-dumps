@@ -42,3 +42,13 @@ void evalSelfEvaluating(Machine *m) {
 SExpHandler selfEvaluatingHandler = {
     isSelfEvaluating,
     evalSelfEvaluating };
+
+// TODO:
+// * variable
+// * quoted
+// * assignment
+// * definition
+// * if
+// * lambda
+// * begin
+// * application
