@@ -88,16 +88,28 @@ void freeSExp(SExp *p) {
     free(p);
 }
 
+// this function is only intended to be called by "printPairR"
 void printPairR(FILE *f, SExp *p) {
+    // according to the situation, the following things might happen:
     switch (p->tag) {
     case sexpNil:
+        // the "cdr" part (of the parent pair) is empty, output ")"
+        // making the whole output to be "({a})"
         fputc(')', f); return;
     case sexpPair:
+        // we have another pair here, in this case
+        // the "car" part is outputed first to make the output like:
+        // "({a} {b}", then notice this is the perfect situation for
+        // printPairR to run recursively.
         fputc(' ', f);
         printSExp(f,p->fields.pairContent.car);
         printPairR(f,p->fields.pairContent.cdr);
         return;
     default:
+        // finally, if none of the above matches,
+        // we are facing a improper list,
+        // in this case " . {b})" is outputed to make
+        // the whole thing look like "({a} . {b})"
         // TODO:
         // since for now we don't have a parser for
         // parsing improper list,
@@ -109,6 +121,9 @@ void printPairR(FILE *f, SExp *p) {
     }
 }
 
+// pretty prints a pair by first outputing
+// "({a}" and then transfering control to "printPairR"
+// to generate rest of the output.
 void printPairL(FILE *f, SExp *p) {
     assert(p && p->tag == sexpPair
            /* the second argument should be
