@@ -49,6 +49,10 @@ void printAndFreeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
+void freeSExpP(SExp **p) {
+    freeSExp(*p);
+}
+
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
@@ -97,17 +101,20 @@ int main(int argc, char *argv[]) {
     char parseFailed = ! ( tokEof == parseStateCurrent(&gParseState)->tag );
     if (parseFailed) {
         printf("Remainng tokens:\n");
-        // TODO: should have nothing to consume now
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
             parseStateNext(&gParseState);
         }
+    } else {
+        // now we are ready for interpreting these s-expressions
+
     }
 
-    dynArrVisit(&gSExpList,(DynArrVisitor)printAndFreeSExpP);
+    // releasing resources
+    dynArrVisit(&gSExpList,(DynArrVisitor)freeSExpP);
     dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
 
     dynArrFree(&gSExpList);
     dynArrFree(&gTokenList);
-    return 0;
+    return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
