@@ -77,3 +77,14 @@ void dynArrVisit(DynArr *p, DynArrVisitor dv) {
         dv(it);
     }
 }
+
+void * dynArrFoldLeft(DynArr *p, DynArrFoldLeftAccumulator acc, void *init) {
+    void *it;
+    void *state = init;
+    for (it = dynArrBegin(p);
+         it != dynArrEnd(p);
+         it = dynArrNext(p,it)) {
+        state = acc(state,it);
+    }
+    return state;
+}

@@ -4,6 +4,7 @@
 #define _JAVEV_DYNARR_H_
 
 typedef void (*DynArrVisitor)(void *);
+typedef void * (*DynArrFoldLeftAccumulator)(void *, void *);
 
 typedef struct {
     // base pointer for this dynamic array
@@ -27,5 +28,7 @@ void *dynArrEnd(DynArr *);
 void *dynArrNext(DynArr *, void *);
 int dynArrCount(DynArr *);
 void dynArrVisit(DynArr *, DynArrVisitor);
+
+void * dynArrFoldLeft(DynArr *, DynArrFoldLeftAccumulator, void *);
 
 #endif
