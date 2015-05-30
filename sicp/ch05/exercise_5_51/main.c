@@ -100,11 +100,12 @@ int main(int argc, char *argv[]) {
     // a valid pointer. no check is necessary.
     char parseFailed = ! ( tokEof == parseStateCurrent(&gParseState)->tag );
     if (parseFailed) {
-        printf("Remainng tokens:\n");
+        printf("Remaining tokens:\n");
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
             parseStateNext(&gParseState);
         }
+        putchar('\n');
     } else {
         // now we are ready for interpreting these s-expressions
 

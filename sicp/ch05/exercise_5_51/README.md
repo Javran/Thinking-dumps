@@ -23,7 +23,7 @@
 
 * `SExp`
 
-    Implements S-Exprssion. `newXXX` family allocates a new object
+    Implements S-Expression. `newXXX` family allocates a new object
     and `freeSExp` frees that object.
 
 * `Common`
