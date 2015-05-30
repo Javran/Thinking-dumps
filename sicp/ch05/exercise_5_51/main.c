@@ -53,6 +53,11 @@ void freeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
+int *testFold(int *state, int *next) {
+    *state = *state + *next;
+    return state;
+}
+
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
@@ -117,5 +122,20 @@ int main(int argc, char *argv[]) {
 
     dynArrFree(&gSExpList);
     dynArrFree(&gTokenList);
+
+    // test fold left
+    DynArr testA = {0};
+    dynArrInit(&testA, sizeof(int));
+    int i;
+    int state = 0;
+    for (i = 0; i <= 100; ++i) {
+        int *p = dynArrNew(&testA);
+        *p = i;
+    }
+    // fold left
+    dynArrFoldLeft(&testA,(DynArrFoldLeftAccumulator)testFold,&state);
+    dynArrFree(&testA);
+    printf("result=%d\n",state);
+
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
