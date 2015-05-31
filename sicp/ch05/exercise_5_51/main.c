@@ -123,6 +123,7 @@ int main(int argc, char *argv[]) {
     dynArrFree(&gSExpList);
     dynArrFree(&gTokenList);
 
+    /*
     // test fold left
     DynArr testA = {0};
     dynArrInit(&testA, sizeof(int));
@@ -136,6 +137,7 @@ int main(int argc, char *argv[]) {
     dynArrFoldLeft(&testA,(DynArrFoldLeftAccumulator)testFold,&state);
     dynArrFree(&testA);
     printf("result=%d\n",state);
+    */
 
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
