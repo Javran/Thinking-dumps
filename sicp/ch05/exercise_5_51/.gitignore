@@ -3,9 +3,13 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
+config.h
+
+Testing
+CTestTestfile.cmake
 
 evaluator
 
 tests/CTestTestfile.cmake
-tests/Testing/*
+
 tests/run_checks
