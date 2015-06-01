@@ -5,3 +5,7 @@ cmake_install.cmake
 install_manifest.txt
 
 evaluator
+
+tests/CTestTestfile.cmake
+tests/Testing/*
+tests/run_checks
