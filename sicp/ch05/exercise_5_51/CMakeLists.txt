@@ -82,5 +82,21 @@ target_link_libraries(evaluator javev)
 
 ###############################################################################
 # Unit tests
+
+find_program( MEMORYCHECK_COMMAND valgrind )
+set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --error-exitcode=1" )
+
+function(add_memcheck_test name binary)
+  set(memcheck_command "${MEMORYCHECK_COMMAND} ${MEMORYCHECK_COMMAND_OPTIONS}")
+  separate_arguments(memcheck_command)
+  add_test(${name} ${binary} ${ARGN})
+  add_test(memcheck_${name} ${memcheck_command} ./${binary} ${ARGN})
+endfunction(add_memcheck_test)
+
+function(set_memcheck_test_properties name)
+  set_tests_properties(${name} ${ARGN})
+  set_tests_properties(memcheck_${name} ${ARGN})
+endfunction(set_memcheck_test_properties)
+
 enable_testing()
-add_test(NAME check_entry COMMAND run_checks)
+add_memcheck_test(run_unit_tests tests/run_unit_tests)

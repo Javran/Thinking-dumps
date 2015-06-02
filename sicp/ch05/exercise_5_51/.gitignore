@@ -9,6 +9,7 @@ Testing
 CTestTestfile.cmake
 
 evaluator
+tests/run_unit_tests
 
 *.a
 

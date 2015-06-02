@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 find_package(Check REQUIRED)
 include_directories(${CHECK_INCLUDE_DIRS})
 
-file(GLOB run_checks_SRC "*.h" "*.c")
-add_executable(run_checks ${run_checks_SRC})
+file(GLOB run_unit_tests_SRC "*.h" "*.c")
+add_executable(run_unit_tests ${run_unit_tests_SRC})
 
-target_link_libraries(run_checks javev ${CHECK_LIBRARIES})
+target_link_libraries(run_unit_tests javev ${CHECK_LIBRARIES})
