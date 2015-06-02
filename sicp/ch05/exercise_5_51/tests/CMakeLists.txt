@@ -12,4 +12,4 @@ include_directories(${CHECK_INCLUDE_DIRS})
 file(GLOB run_checks_SRC "*.h" "*.c")
 add_executable(run_checks ${run_checks_SRC})
 
-target_link_libraries(run_checks ${CHECK_LIBRARIES})
+target_link_libraries(run_checks javev ${CHECK_LIBRARIES})

@@ -1,5 +1,7 @@
-project (evaluator C)
+project (javev C)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+# ==== BEGIN BOILERPLATE
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra -pedantic -std=c99")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -57,12 +59,26 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DHAVE_CONFIG_H)
 set(CONFIG_HEADER ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+
+# ==== END BOILERPLATE
+
 ###############################################################################
 # Subdirectories
 add_subdirectory(tests)
 
-file(GLOB evaluator_SRC "*.h" "*.c")
-add_executable(evaluator ${evaluator_SRC})
+set(javev_SRCS
+  Util.c DynArr.c Frame.c Machine.c 
+  Parser.c SExp.c Syntax.c Token.c Tokenizer.c)
+
+set(javev_HDRS
+  Common.h
+  Util.h DynArr.h
+  Parser.h SExp.h Syntax.h Token.h Tokenizer.h)
+
+add_library(javev ${javev_SRCS}  ${javev_HDRS})
+
+add_executable(evaluator main.c ${javev_HDRS})
+target_link_libraries(evaluator javev)
 
 ###############################################################################
 # Unit tests

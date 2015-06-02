@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include <check.h>
+#include "../DynArr.h"
 
-START_TEST (test_first)
+START_TEST (test_DynArr_init_free)
 {
-    ck_assert_int_eq(10,10);
+    DynArr da = {0};
+    dynArrInit(&da, sizeof(int));
+    dynArrFree(&da);
 }
 END_TEST
 
@@ -16,7 +19,7 @@ Suite * money_suite(void)
     /* Core test case */
     tc_core = tcase_create("Core");
 
-    tcase_add_test(tc_core, test_first);
+    tcase_add_test(tc_core, test_DynArr_init_free);
     suite_add_tcase(s, tc_core);
 
     return s;
