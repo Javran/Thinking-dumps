@@ -10,6 +10,8 @@ CTestTestfile.cmake
 
 evaluator
 
+*.a
+
 tests/CTestTestfile.cmake
 
 tests/run_checks
