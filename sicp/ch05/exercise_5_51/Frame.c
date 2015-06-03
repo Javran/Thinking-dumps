@@ -41,6 +41,7 @@ void *frameInsert(Frame *frame, const char *key, void *val) {
 }
 
 // TODO: current problem: need proper handling for values' free
+// need to provide an interface for value-visiting or key-value-visiting
 void frameEntryFree(FrameEntry *fe) {
     free(fe->key);
 }

@@ -65,7 +65,6 @@ START_TEST (test_Frame_basic)
     ck_assert_ptr_eq(resultD, NULL);
 
     frameFree(&fr);
-
 }
 END_TEST
 
