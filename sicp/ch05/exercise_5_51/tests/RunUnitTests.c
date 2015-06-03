@@ -2,6 +2,7 @@
 #include <check.h>
 #include "../DynArr.h"
 
+// DynArr should be initialized and freed successfully.
 START_TEST (test_DynArr_init_free)
 {
     DynArr da = {0};
@@ -15,6 +16,7 @@ int *testFold(int *state, int *next) {
     return state;
 }
 
+// DynArr foldl test
 START_TEST (test_DynArr_foldl)
 {
    DynArr testA = {0};
