@@ -48,6 +48,22 @@ START_TEST (test_Frame_basic)
     frameInsert(&fr,"key_B",&testArr[1]);
     frameInsert(&fr,"key_C",&testArr[2]);
 
+    FrameEntry *resultA = frameLookup(&fr,"key_A");
+    FrameEntry *resultB = frameLookup(&fr,"key_B");
+    FrameEntry *resultC = frameLookup(&fr,"key_C");
+    FrameEntry *resultD = frameLookup(&fr,"key_D");
+
+    ck_assert_ptr_ne(resultA, NULL);
+    ck_assert_ptr_eq(resultA->val,&testArr[0]);
+
+    ck_assert_ptr_ne(resultB, NULL);
+    ck_assert_ptr_eq(resultB->val,&testArr[1]);
+
+    ck_assert_ptr_ne(resultC, NULL);
+    ck_assert_ptr_eq(resultC->val,&testArr[2]);
+
+    ck_assert_ptr_eq(resultD, NULL);
+
     frameFree(&fr);
 
 }
