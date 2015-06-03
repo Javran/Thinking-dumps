@@ -47,6 +47,7 @@ void *frameInsert(Frame *frame, const char *key, void *val) {
     return retVal;
 }
 
+// TODO: current problem: need proper handling for values' free
 void frameEntryFree(FrameEntry *fe) {
     free(fe->key);
 }
