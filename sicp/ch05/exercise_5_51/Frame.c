@@ -6,14 +6,7 @@
 
 #include "Common.h"
 #include "Util.h"
-#include "DynArr.h"
-
-typedef struct {
-    char *key;
-    void *val;
-} FrameEntry;
-
-typedef DynArr Frame;
+#include "Frame.h"
 
 void frameInit(DynArr *pairs) {
     dynArrInit(pairs, sizeof(FrameEntry));
