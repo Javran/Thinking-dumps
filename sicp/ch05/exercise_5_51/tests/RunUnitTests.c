@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <check.h>
 #include "../DynArr.h"
+#include "../Frame.h"
 
 // DynArr should be initialized and freed successfully.
 START_TEST (test_DynArr_init_free)
@@ -35,6 +36,23 @@ START_TEST (test_DynArr_foldl)
 }
 END_TEST
 
+// basic functionality of Frame
+START_TEST (test_Frame_basic)
+{
+    int testArr[] = {0,1,2,3};
+    Frame fr = {0};
+
+    frameInit(&fr);
+
+    frameInsert(&fr,"key_A",&testArr[0]);
+    frameInsert(&fr,"key_B",&testArr[1]);
+    frameInsert(&fr,"key_C",&testArr[2]);
+
+    frameFree(&fr);
+
+}
+END_TEST
+
 Suite * money_suite(void)
 {
     Suite *s;
@@ -46,6 +64,8 @@ Suite * money_suite(void)
 
     tcase_add_test(tc_core, test_DynArr_init_free);
     tcase_add_test(tc_core, test_DynArr_foldl);
+
+    tcase_add_test(tc_core, test_Frame_basic);
     suite_add_tcase(s, tc_core);
 
     return s;
