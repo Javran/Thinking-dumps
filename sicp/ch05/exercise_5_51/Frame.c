@@ -54,4 +54,5 @@ void frameEntryFree(FrameEntry *fe) {
 
 void frameFree(Frame *frame) {
     dynArrVisit(frame,(DynArrVisitor)frameEntryFree);
+    dynArrFree(frame);
 }
