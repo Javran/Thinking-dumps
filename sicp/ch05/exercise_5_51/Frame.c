@@ -12,7 +12,7 @@ void frameInit(DynArr *pairs) {
     dynArrInit(pairs, sizeof(FrameEntry));
 }
 
-FrameEntry *frameLookup(Frame *frame, const char *keyword) {
+FrameEntry *frameLookup(const Frame *frame, const char *keyword) {
     FrameEntry *result = NULL;
     FrameEntry *it;
     for (it = dynArrBegin(frame);

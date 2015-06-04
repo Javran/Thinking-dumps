@@ -22,11 +22,11 @@ typedef struct {
 void dynArrInit(DynArr *, size_t);
 void *dynArrNew(DynArr *);
 void dynArrFree(DynArr *);
-void *dynArrBegin(DynArr *);
-void *dynArrLast(DynArr *);
-void *dynArrEnd(DynArr *);
-void *dynArrNext(DynArr *, void *);
-int dynArrCount(DynArr *);
+void *dynArrBegin(const DynArr *);
+void *dynArrLast(const DynArr *);
+void *dynArrEnd(const DynArr *);
+void *dynArrNext(const DynArr *, void *);
+int dynArrCount(const DynArr *);
 void dynArrVisit(DynArr *, DynArrVisitor);
 
 void * dynArrFoldLeft(DynArr *, DynArrFoldLeftAccumulator, void *);

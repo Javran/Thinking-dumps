@@ -11,7 +11,7 @@ typedef struct {
 typedef DynArr Frame;
 
 void frameInit(DynArr *);
-FrameEntry *frameLookup(Frame *, const char *);
+FrameEntry *frameLookup(const Frame *, const char *);
 void *frameInsert(Frame *, const char *, void *);
 void frameFree(Frame *);
 
