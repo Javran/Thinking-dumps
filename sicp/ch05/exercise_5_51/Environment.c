@@ -1,16 +1,4 @@
-#include "Common.h"
-#include "Frame.h"
-
-struct Environment;
-
-typedef struct Environment {
-    // INVARIANT:
-    // * frame is never NULL
-    // * following parent recursively should
-    //   not get stuck in a loop
-    Frame *frame;
-    const struct Environment *parent;
-} Environment;
+#include "Environment.h"
 
 void envInit(Environment *env) {
     // all env fields should be zero.
@@ -41,5 +29,6 @@ void envInsert(Environment *env, const char *key, void *val) {
 void envFree(Environment *env) {
     assert( env->frame );
     frameFree( env->frame );
+    free( env->frame );
     env->frame = NULL;
 }
