@@ -2,6 +2,7 @@
 #include <check.h>
 #include "../DynArr.h"
 #include "../Frame.h"
+#include "../Environment.h"
 
 // DynArr should be initialized and freed successfully.
 START_TEST (test_DynArr_init_free)
@@ -68,6 +69,26 @@ START_TEST (test_Frame_basic)
 }
 END_TEST
 
+START_TEST (test_Environment_basic)
+{
+    Environment envRoot = {0};
+    Environment envLvl1 = {0};
+    Environment envLvl2 = {0};
+
+    envInit(&envRoot);
+
+    envInit(&envLvl1);
+    envSetParent(&envLvl1,&envRoot);
+
+    envInit(&envLvl2);
+    envSetParent(&envLvl2,&envLvl1);
+
+    envFree(&envLvl2);
+    envFree(&envLvl1);
+    envFree(&envRoot);
+}
+END_TEST
+
 Suite * money_suite(void)
 {
     Suite *s;
@@ -81,6 +102,9 @@ Suite * money_suite(void)
     tcase_add_test(tc_core, test_DynArr_foldl);
 
     tcase_add_test(tc_core, test_Frame_basic);
+
+    tcase_add_test(tc_core, test_Environment_basic);
+
     suite_add_tcase(s, tc_core);
 
     return s;
