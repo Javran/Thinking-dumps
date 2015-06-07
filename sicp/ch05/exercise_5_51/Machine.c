@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "SExp.h"
+#include "Environment.h"
 
 // TODO: for now I have no idea about what could
 // be a valid value for register to hold
@@ -37,6 +38,22 @@ char isSelfEvaluating(const SExp *p) {
 
 void evalSelfEvaluating(Machine *m) {
     m->val = m->exp;
+}
+
+char isVariable(const SExp *p) {
+    return sexpSymbol == p->tag;
+}
+
+void evalVariable(Machine *m) {
+    SExp *exp = m->exp;
+    const char *keyword = exp->fields.symbolName;
+    Environment *env = m->env;
+    FrameEntry *result = envLookup(env,keyword);
+
+    // TODO: deal with lookup error
+    assert( result );
+
+    m->val = result->val;
 }
 
 SExpHandler selfEvaluatingHandler = {
