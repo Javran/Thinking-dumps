@@ -25,6 +25,13 @@ typedef struct {
     SExpEval eval;
 } SExpHandler;
 
+// for simplicity, case-insensitive comparison
+// is NOT implemented
+char isSymbol(const char *symbol, const SExp *p) {
+    return sexpSymbol == p->tag
+        && 0 == strcmp(symbol, p->fields.symbolName);
+}
+
 char isSelfEvaluating(const SExp *p) {
     switch (p->tag) {
     case sexpInteger:
@@ -63,6 +70,18 @@ void evalVariable(Machine *m) {
 SExpHandler variableHandler = {
     isVariable,
     evalVariable };
+
+char isQuoted(const SExp *p) {
+    return sexpPair == p->tag
+        && isSymbol("quote", p->fields.pairContent.car);
+}
+
+void evalQuoted(Machine *m) {
+    SExp *quotedExp = m->exp;
+    SExp *eCdr = quotedExp->fields.pairContent.cdr;
+    SExp *eCadr = eCdr->fields.pairContent.car;
+    m->val = eCadr;
+}
 
 // TODO:
 // * quoted
