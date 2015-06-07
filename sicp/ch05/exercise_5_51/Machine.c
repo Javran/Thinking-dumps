@@ -40,6 +40,10 @@ void evalSelfEvaluating(Machine *m) {
     m->val = m->exp;
 }
 
+SExpHandler selfEvaluatingHandler = {
+    isSelfEvaluating,
+    evalSelfEvaluating };
+
 char isVariable(const SExp *p) {
     return sexpSymbol == p->tag;
 }
@@ -56,12 +60,11 @@ void evalVariable(Machine *m) {
     m->val = result->val;
 }
 
-SExpHandler selfEvaluatingHandler = {
-    isSelfEvaluating,
-    evalSelfEvaluating };
+SExpHandler variableHandler = {
+    isVariable,
+    evalVariable };
 
 // TODO:
-// * variable
 // * quoted
 // * assignment
 // * definition
