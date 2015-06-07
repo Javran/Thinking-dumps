@@ -80,11 +80,15 @@ void evalQuoted(Machine *m) {
     SExp *quotedExp = m->exp;
     SExp *eCdr = quotedExp->fields.pairContent.cdr;
     SExp *eCadr = eCdr->fields.pairContent.car;
+    // TODO: validate
     m->val = eCadr;
 }
 
+SExpHandler quotedHandler = {
+    isQuoted,
+    evalQuoted };
+
 // TODO:
-// * quoted
 // * assignment
 // * definition
 // * if
