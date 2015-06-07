@@ -123,21 +123,5 @@ int main(int argc, char *argv[]) {
     dynArrFree(&gSExpList);
     dynArrFree(&gTokenList);
 
-    /*
-    // test fold left
-    DynArr testA = {0};
-    dynArrInit(&testA, sizeof(int));
-    int i;
-    int state = 0;
-    for (i = 0; i <= 100; ++i) {
-        int *p = dynArrNew(&testA);
-        *p = i;
-    }
-    // fold left
-    dynArrFoldLeft(&testA,(DynArrFoldLeftAccumulator)testFold,&state);
-    dynArrFree(&testA);
-    printf("result=%d\n",state);
-    */
-
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
