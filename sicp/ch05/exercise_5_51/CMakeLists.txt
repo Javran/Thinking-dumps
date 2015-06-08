@@ -67,12 +67,12 @@ set(CONFIG_HEADER ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 add_subdirectory(tests)
 
 set(javev_SRCS
-  Util.c DynArr.c Frame.c Machine.c Environment.c
+  Util.c DynArr.c Frame.c Machine.c Environment.c Register.c
   Parser.c SExp.c Syntax.c Token.c Tokenizer.c)
 
 set(javev_HDRS
   Common.h
-  Util.h DynArr.h Frame.h Environment.h
+  Util.h DynArr.h Frame.h Environment.h Register.h
   Parser.h SExp.h Syntax.h Token.h Tokenizer.h)
 
 add_library(javev ${javev_SRCS}  ${javev_HDRS})
