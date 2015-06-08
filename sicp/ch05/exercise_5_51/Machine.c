@@ -1,18 +1,16 @@
 #include "Common.h"
 #include "SExp.h"
 #include "Environment.h"
+#include "Register.h"
 
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
 // we have no knowledge of how to use it
 
-// TODO: for now I have no idea about what could
-// be a valid value for register to hold
-typedef void *RegVal;
-
 typedef struct {
-    RegVal exp,env,val;
-    RegVal cont,proc,argl,unev;
+    // INVARIANT: exp is always holding an expression
+    Register exp,env,val;
+    Register cont,proc,argl,unev;
 } Machine;
 
 // S-expresion related.
@@ -48,6 +46,7 @@ char isSelfEvaluating(const SExp *p) {
 }
 
 void evalSelfEvaluating(Machine *m) {
+    // shallow copy
     m->val = m->exp;
 }
 
@@ -60,15 +59,16 @@ char isVariable(const SExp *p) {
 }
 
 void evalVariable(Machine *m) {
-    SExp *exp = m->exp;
+    SExp *exp = m->exp.data.asSExp;
     const char *keyword = exp->fields.symbolName;
-    Environment *env = m->env;
+    Environment *env = m->env.data.asEnv;
     FrameEntry *result = envLookup(env,keyword);
 
     // TODO: deal with lookup error
     assert( result );
 
-    m->val = result->val;
+    Register *r = result->val;
+    m->val = *r;
 }
 
 SExpHandler variableHandler = {
@@ -81,11 +81,12 @@ char isQuoted(const SExp *p) {
 }
 
 void evalQuoted(Machine *m) {
-    SExp *quotedExp = m->exp;
+    SExp *quotedExp = m->exp.data.asSExp;
     SExp *eCdr = quotedExp->fields.pairContent.cdr;
     SExp *eCadr = eCdr->fields.pairContent.car;
     // TODO: validate
-    m->val = eCadr;
+    m->val.tag = regSExp;
+    m->val.data.asSExp = eCadr;
 }
 
 SExpHandler quotedHandler = {
