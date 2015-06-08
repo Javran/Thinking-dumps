@@ -2,6 +2,10 @@
 #include "SExp.h"
 #include "Environment.h"
 
+// TODO: registers have to be typed (tagged),
+// consider `(display a)`, without knowing the type of `a`,
+// we have no knowledge of how to use it
+
 // TODO: for now I have no idea about what could
 // be a valid value for register to hold
 typedef void *RegVal;
