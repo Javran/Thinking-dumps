@@ -3,6 +3,9 @@
 #include "Environment.h"
 #include "Register.h"
 
+// TODO: am I doing it wrong?
+// this is not a translation but a re-implementation!
+
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
 // we have no knowledge of how to use it
@@ -99,7 +102,7 @@ char isDefinition(const SExp *p) {
 }
 
 void evalSequence(Machine *m, const SExp *exps) {
-
+    
 }
 
 void evalDefinition(Machine *m) {
