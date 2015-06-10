@@ -93,6 +93,26 @@ SExpHandler quotedHandler = {
     isQuoted,
     evalQuoted };
 
+char isDefinition(const SExp *p) {
+    return sexpPair == p->tag
+        && isSymbol("define", p->fields.pairContent.car);
+}
+
+void evalSequence(Machine *m, const SExp *exps) {
+
+}
+
+void evalDefinition(Machine *m) {
+    SExp *exp = m->exp.data.asSExp;
+
+    // TODO: function definition
+    SExp *expVar = exp->fields.pairContent.cdr->fields.pairContent.car;
+
+    SExp *expBody = exp->fields.pairContent.cdr->fields.pairContent.cdr;
+
+    // TODO: need eval!
+}
+
 // TODO:
 // * assignment
 // * definition
