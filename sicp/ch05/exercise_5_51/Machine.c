@@ -6,6 +6,8 @@
 // TODO: am I doing it wrong?
 // this is not a translation but a re-implementation!
 
+// TODO: new plan: implement operations as handlers
+
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
 // we have no knowledge of how to use it
