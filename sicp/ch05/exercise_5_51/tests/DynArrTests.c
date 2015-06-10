@@ -3,13 +3,11 @@
 #include "../DynArr.h"
 
 // DynArr should be initialized and freed successfully.
-START_TEST (test_DynArr_init_free)
-{
+START_TEST (test_DynArr_init_free) {
     DynArr da = {0};
     dynArrInit(&da, sizeof(int));
     dynArrFree(&da);
-}
-END_TEST
+} END_TEST
 
 int *testFold(int *state, int *next) {
     *state = *state + *next;
@@ -17,8 +15,7 @@ int *testFold(int *state, int *next) {
 }
 
 // DynArr foldl test
-START_TEST (test_DynArr_foldl)
-{
+START_TEST (test_DynArr_foldl) {
    DynArr testA = {0};
     dynArrInit(&testA, sizeof(int));
     int i;
@@ -32,8 +29,7 @@ START_TEST (test_DynArr_foldl)
     dynArrFree(&testA);
 
     ck_assert_int_eq(state, 5050);
-}
-END_TEST
+} END_TEST
 
 Suite * dynArrSuite(void) {
     Suite *s;
