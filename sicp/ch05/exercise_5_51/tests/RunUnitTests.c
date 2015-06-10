@@ -4,15 +4,6 @@
 #include "../Frame.h"
 #include "../Environment.h"
 
-// DynArr should be initialized and freed successfully.
-START_TEST (test_DynArr_init_free)
-{
-    DynArr da = {0};
-    dynArrInit(&da, sizeof(int));
-    dynArrFree(&da);
-}
-END_TEST
-
 int *testFold(int *state, int *next) {
     *state = *state + *next;
     return state;
@@ -174,7 +165,7 @@ Suite * money_suite(void)
     /* Core test case */
     tc_core = tcase_create("Core");
 
-    tcase_add_test(tc_core, test_DynArr_init_free);
+//    tcase_add_test(tc_core, test_DynArr_init_free);
     tcase_add_test(tc_core, test_DynArr_foldl);
 
     tcase_add_test(tc_core, test_Frame_basic);
@@ -186,14 +177,18 @@ Suite * money_suite(void)
     return s;
 }
 
+extern Suite *dynArrSuite(void);
+
 int main(void) {
     int number_failed;
+    Suite *sDynArr;
     Suite *s;
     SRunner *sr;
 
     s = money_suite();
+    sDynArr = dynArrSuite();
     sr = srunner_create(s);
-
+    srunner_add_suite(sr,sDynArr);
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
