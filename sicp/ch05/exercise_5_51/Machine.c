@@ -3,10 +3,9 @@
 #include "Environment.h"
 #include "Register.h"
 
-// TODO: am I doing it wrong?
-// this is not a translation but a re-implementation!
-
 // TODO: new plan: implement operations as handlers
+
+// TODO: rename procedures with its corresponding label names
 
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
@@ -125,3 +124,13 @@ void evalDefinition(Machine *m) {
 // * lambda
 // * begin
 // * application
+
+// TODO: it might be possible to make some of the arguments
+// explicit. Although having access to the machine object is enough,
+// I still think we can benefit from this.
+void evalDispatch(Machine *m) {
+    SExp *exp = m->exp.data.asSExp;
+
+    // INVARIANT: every branch should end with a return
+
+}
