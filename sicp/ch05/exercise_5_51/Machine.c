@@ -5,8 +5,6 @@
 
 // TODO: new plan: implement operations as handlers
 
-// TODO: rename procedures with its corresponding label names
-
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
 // we have no knowledge of how to use it
@@ -49,20 +47,20 @@ char isSelfEvaluating(const SExp *p) {
     }
 }
 
-void evalSelfEvaluating(Machine *m) {
+void evSelfEval(Machine *m) {
     // shallow copy
     m->val = m->exp;
 }
 
 SExpHandler selfEvaluatingHandler = {
     isSelfEvaluating,
-    evalSelfEvaluating };
+    evSelfEval };
 
 char isVariable(const SExp *p) {
     return sexpSymbol == p->tag;
 }
 
-void evalVariable(Machine *m) {
+void evVariable(Machine *m) {
     SExp *exp = m->exp.data.asSExp;
     const char *keyword = exp->fields.symbolName;
     Environment *env = m->env.data.asEnv;
@@ -77,14 +75,14 @@ void evalVariable(Machine *m) {
 
 SExpHandler variableHandler = {
     isVariable,
-    evalVariable };
+    evVariable };
 
 char isQuoted(const SExp *p) {
     return sexpPair == p->tag
         && isSymbol("quote", p->fields.pairContent.car);
 }
 
-void evalQuoted(Machine *m) {
+void evQuoted(Machine *m) {
     SExp *quotedExp = m->exp.data.asSExp;
     SExp *eCdr = quotedExp->fields.pairContent.cdr;
     SExp *eCadr = eCdr->fields.pairContent.car;
@@ -95,7 +93,7 @@ void evalQuoted(Machine *m) {
 
 SExpHandler quotedHandler = {
     isQuoted,
-    evalQuoted };
+    evQuoted };
 
 char isDefinition(const SExp *p) {
     return sexpPair == p->tag
@@ -103,10 +101,10 @@ char isDefinition(const SExp *p) {
 }
 
 void evalSequence(Machine *m, const SExp *exps) {
-    
+    // TODO
 }
 
-void evalDefinition(Machine *m) {
+void evDefinition(Machine *m) {
     SExp *exp = m->exp.data.asSExp;
 
     // TODO: function definition
@@ -118,6 +116,7 @@ void evalDefinition(Machine *m) {
 }
 
 // TODO:
+// * definition
 // * assignment
 // * definition
 // * if
