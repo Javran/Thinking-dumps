@@ -115,6 +115,10 @@ void evDefinition(Machine *m) {
     // TODO: need eval!
 }
 
+// (lambda (x y z) x x z)
+// * lambda-parameters: (x y z)
+// * lambda-body: (x x z)
+
 // TODO:
 // * definition
 // * assignment
