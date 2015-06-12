@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Util.h"
 #include "SExp.h"
+#include "DynArr.h"
 
 // statically allocated objects,
 // which are intended for sharing
@@ -156,4 +157,15 @@ void printSExp(FILE *f, SExp *p) {
         printPairL(f,p);
         break;
     }
+}
+
+DynArr *sexpListToDynArr(const SExp *exp) {
+    DynArr *da = calloc(1,sizeof(DynArr));
+    dynArrInit(da,sizeof(SExp *));
+    while (sexpNil != exp->tag) {
+        SExp ** p = dynArrNew(da);
+        *p = exp->fields.pairContent.car;
+        exp = exp->fields.pairContent.cdr;
+    }
+    return da;
 }
