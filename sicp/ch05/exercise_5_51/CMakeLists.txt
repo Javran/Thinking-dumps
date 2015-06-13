@@ -68,7 +68,7 @@ add_subdirectory(tests)
 
 set(javev_SRCS
   Util.c DynArr.c Frame.c Machine.c Environment.c Register.c
-  Parser.c SExp.c Syntax.c Token.c Tokenizer.c)
+  Parser.c SExp.c Syntax.c Token.c Tokenizer.c EvalSimple.c)
 
 set(javev_HDRS
   Common.h
