@@ -72,7 +72,7 @@ set(javev_SRCS
 
 set(javev_HDRS
   Common.h
-  Util.h DynArr.h Frame.h Environment.h Register.h
+  Util.h DynArr.h Frame.h Machine.h Environment.h Register.h
   Parser.h SExp.h Syntax.h Token.h Tokenizer.h)
 
 add_library(javev ${javev_SRCS}  ${javev_HDRS})
