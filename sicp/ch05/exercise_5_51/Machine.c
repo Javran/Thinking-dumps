@@ -144,12 +144,15 @@ void evLambda(Machine *m) {
     m->val.data.asLambda = lo;
 }
 
+SExpHandler lambdaHandler = {
+    isLambda,
+    evLambda };
+
 // TODO:
 // * definition
 // * assignment
 // * definition
 // * if
-// * lambda
 // * begin
 // * application
 
