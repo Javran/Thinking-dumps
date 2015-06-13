@@ -8,6 +8,7 @@ typedef enum {
     regBool,
     regSExp,
     regEnvironment,
+    regLamda,
 } RegTag;
 
 typedef union {
@@ -15,6 +16,8 @@ typedef union {
     char truthValue;
     SExp *asSExp;
     Environment *asEnv;
+    // quick and dirty
+    void *asLambda;
 } RegContent;
 
 typedef struct {

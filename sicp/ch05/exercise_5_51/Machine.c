@@ -109,15 +109,40 @@ void evDefinition(Machine *m) {
 
     // TODO: function definition
     SExp *expVar = exp->fields.pairContent.cdr->fields.pairContent.car;
-
     SExp *expBody = exp->fields.pairContent.cdr->fields.pairContent.cdr;
 
     // TODO: need eval!
 }
 
-// (lambda (x y z) x x z)
-// * lambda-parameters: (x y z)
-// * lambda-body: (x x z)
+char isLambda(const SExp *p) {
+    return sexpPair == p->tag
+        && isSymbol("lambda", p->fields.pairContent.car);
+}
+
+typedef struct {
+    // TODO: might change to some
+    // other type in future.
+    SExp* parameters;
+    SExp* body;
+    Environment* env;
+} LambdaObject;
+
+void evLambda(Machine *m) {
+    // (lambda (x y z) x x z)
+    // * lambda-parameters: (x y z) -- cadr gives the parameters
+    // * lambda-body: (x x z)       -- cddr gives the body
+    SExp *cdr = m->exp.data.asSExp->fields.pairContent.cdr;
+    SExp *lamParam = cdr->fields.pairContent.car;
+    SExp *lamBody = cdr->fields.pairContent.cdr;
+
+    LambdaObject *lo = calloc(1,sizeof(LambdaObject));
+    lo->parameters = lamParam;
+    lo->body = lamBody;
+    lo->env = m->env.data.asEnv;
+
+    m->val.tag = regLamda;
+    m->val.data.asLambda = lo;
+}
 
 // TODO:
 // * definition
