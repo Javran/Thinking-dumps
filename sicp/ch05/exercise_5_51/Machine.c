@@ -9,8 +9,11 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", p->fields.pairContent.car);
 }
 
-void evalSequence(Machine *m, const SExp *exps) {
-    // TODO
+// correponding to ev-sequence
+// requires unev to store the sequence of expressions
+void evSequence(Machine *m) {
+    SExp *firstExp = m->unev.data.asSExp->fields.pairContent.car;
+    // save?
 }
 
 void evDefinition(Machine *m) {
