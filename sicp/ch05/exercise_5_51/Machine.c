@@ -14,6 +14,8 @@ char isDefinition(const SExp *p) {
 void evSequence(Machine *m) {
     SExp *firstExp = m->unev.data.asSExp->fields.pairContent.car;
     // save?
+    // we need a stack.
+    // TODO: wrap dynarr to implement stack?
 }
 
 void evDefinition(Machine *m) {
