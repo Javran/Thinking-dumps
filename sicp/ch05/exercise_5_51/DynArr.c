@@ -33,7 +33,7 @@ void dynArrAdjust(DynArr *p) {
 // allocate a new object
 void *dynArrNew(DynArr *p) {
     dynArrAdjust(p);
-    void *retVal = p->base + p->elemMax*p->elemSize;
+    void *retVal = dynArrEnd(p);
     ++ p->elemMax;
     return retVal;
 }
@@ -60,7 +60,7 @@ void *dynArrLast(const DynArr *p) {
 }
 
 void *dynArrEnd(const DynArr *p) {
-    return dynArrNth(p,p->elemMax-1);
+    return dynArrNth(p,p->elemMax);
 }
 
 // get next pointer
