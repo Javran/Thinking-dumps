@@ -22,6 +22,7 @@ typedef struct {
 void dynArrInit(DynArr *, size_t);
 void *dynArrNew(DynArr *);
 void dynArrFree(DynArr *);
+void *dynArrNth(const DynArr *, int);
 void *dynArrBegin(const DynArr *);
 void *dynArrLast(const DynArr *);
 void *dynArrEnd(const DynArr *);

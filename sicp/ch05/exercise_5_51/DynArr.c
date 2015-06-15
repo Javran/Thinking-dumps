@@ -44,19 +44,23 @@ void dynArrFree(DynArr *p) {
     memset(p, 0x00, sizeof(DynArr));
 }
 
+void *dynArrNth(const DynArr *p, int nth) {
+    return p->base + p->elemSize * nth;
+}
+
 // return the place pointing to the first element
 void *dynArrBegin(const DynArr *p) {
-    return p->base;
+    return dynArrNth(p,0);
 }
 
 // return the last element, might not be a valid
 // pointer depending on the emptiness.
 void *dynArrLast(const DynArr *p) {
-    return p->base + p->elemSize*(p->elemMax - 1);
+    return dynArrNth(p,p->elemMax-1);
 }
 
 void *dynArrEnd(const DynArr *p) {
-    return p->base + p->elemSize*p->elemMax;
+    return dynArrNth(p,p->elemMax-1);
 }
 
 // get next pointer
