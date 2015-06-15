@@ -5,7 +5,7 @@
 
 typedef struct {
     DynArr content;
-    int size;
+    size_t size;
 } Stack;
 
 void stackInit(Stack *, size_t);
