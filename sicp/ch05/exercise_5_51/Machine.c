@@ -10,12 +10,6 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", p->fields.pairContent.car);
 }
 
-// the last element of an S-exp is of form (a . ())
-char isLastExp(const SExp *e) {
-    return sexpPair == e->tag
-        && sexpNil == e->fields.pairContent.cdr->tag;
-}
-
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
 void evSequence(Machine *m) {

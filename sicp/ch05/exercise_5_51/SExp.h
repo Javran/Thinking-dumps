@@ -43,4 +43,17 @@ SExp *newPair(SExp *, SExp *);
 void freeSExp(SExp *);
 void printSExp(FILE *, SExp *);
 
+inline SExp *sexpCar(const SExp *e) { return e->fields.pairContent.car; }
+inline SExp *sexpCdr(const SExp *e) { return e->fields.pairContent.cdr; }
+inline SExp *sexpCadr(const SExp *e) { return sexpCar(sexpCdr(e)); }
+inline SExp *sexpCddr(const SExp *e) { return sexpCdr(sexpCdr(e)); }
+
+inline SExp *firstExp(const SExp *e) { return sexpCar(e); }
+inline SExp *restExps(const SExp *e) { return sexpCdr(e); }
+
+// INVARIANT: "e" must be a non-empty proper list
+inline char isLastExp(const SExp *e) {
+    return sexpNil == sexpCdr(e)->tag;
+}
+
 #endif
