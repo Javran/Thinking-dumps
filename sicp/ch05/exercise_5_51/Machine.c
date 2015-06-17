@@ -13,22 +13,18 @@ char isDefinition(const SExp *p) {
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
 void evSequence(Machine *m) {
-    SExp *firstExp = m->unev.data.asSExp->fields.pairContent.car;
-    m->exp.tag = regSExp;
-    m->exp.data.asSExp = firstExp;
-    if (isLastExp(m->unev.data.asSExp)) {
-        // I am actually just hoping the compiler
-        // can do the optimization so I do not have to
-        // manipulate "continue" myself.
-        evalDispatch(m);
-        return;
-    } else {
+    // TODO: the list is assume to be non-empty
+    while (! isLastExp(m->unev.data.asSExp) ) {
+        SExp *firstExp = sexpCar( m->unev.data.asSExp );
+        m->exp.tag = regSExp;
+        m->exp.data.asSExp = firstExp;
         evalDispatch(m);
         m->unev.tag = regSExp;
-        m->unev.data.asSExp = m->unev.data.asSExp->fields.pairContent.cdr;
-        evSequence(m);
-        return;
+        m->unev.data.asSExp = sexpCdr( m->unev.data.asSExp );
     }
+
+    // otherwise this is the last expression, transfer control
+    evalDispatch(m);
 }
 
 void evDefinition(Machine *m) {
