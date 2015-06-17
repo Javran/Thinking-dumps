@@ -39,6 +39,10 @@ void evBegin(Machine *m) {
     evSequence(m);
 }
 
+SExpHandler beginHandler = {
+    isBegin,
+    evBegin };
+
 void evDefinition(Machine *m) {
     SExp *exp = m->exp.data.asSExp;
 
