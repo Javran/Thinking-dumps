@@ -7,7 +7,7 @@ void evalDispatch(Machine *);
 
 char isDefinition(const SExp *p) {
     return sexpPair == p->tag
-        && isSymbol("define", p->fields.pairContent.car);
+        && isSymbol("define", sexpCar(p));
 }
 
 // correponding to ev-sequence
@@ -25,6 +25,18 @@ void evSequence(Machine *m) {
 
     // otherwise this is the last expression, transfer control
     evalDispatch(m);
+}
+
+char isBegin(const SExp *p) {
+    return sexpPair == p->tag
+        && isSymbol("begin", sexpCar(p));
+}
+
+void evBegin(Machine *m) {
+    SExp *beginActions = sexpCdr( m->exp.data.asSExp );
+    m->unev.tag = regSExp;
+    m->unev.data.asSExp = beginActions;
+    evSequence(m);
 }
 
 void evDefinition(Machine *m) {
