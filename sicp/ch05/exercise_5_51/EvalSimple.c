@@ -6,7 +6,7 @@
 // I guess they are "simple" in terms of
 // the complexity of implementation.
 
-#include "Machine.h"
+#include "EvalSimple.h"
 
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
@@ -83,14 +83,6 @@ char isLambda(const SExp *p) {
     return sexpPair == p->tag
         && isSymbol("lambda", p->fields.pairContent.car);
 }
-
-typedef struct {
-    // TODO: might change to some
-    // other type in future.
-    SExp* parameters;
-    SExp* body;
-    Environment* env;
-} LambdaObject;
 
 void evLambda(Machine *m) {
     // (lambda (x y z) x x z)
