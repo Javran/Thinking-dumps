@@ -5,6 +5,7 @@
 
 typedef struct {
     // INVARIANT: exp is always holding an expression
+    // TODO: eliminate exp
     Register exp,env,val;
     Register cont,proc,argl,unev;
     // TODO: by being aware of the fact that we

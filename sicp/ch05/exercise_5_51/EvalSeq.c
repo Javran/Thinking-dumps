@@ -38,6 +38,7 @@ SExpHandler beginHandler = {
     isBegin,
     evBegin };
 
+// TODO: definition should not belong to this file
 void evDefinition(Machine *m) {
     SExp *exp = m->exp.data.asSExp;
 
