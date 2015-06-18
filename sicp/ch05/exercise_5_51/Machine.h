@@ -27,4 +27,6 @@ typedef struct {
     SExpEval eval;
 } SExpHandler;
 
+void evalDispatch(Machine *);
+
 #endif
