@@ -8,8 +8,8 @@
 char isDefinition(const SExp *);
 char isBegin(const SExp *);
 
-void evSequence(Machine *);
-void evBegin(Machine *);
+void evSequence(const SExp *, Machine *);
+void evBegin(const SExp*, Machine *);
 
 SExpHandler beginHandler;
 

@@ -7,19 +7,18 @@ char isDefinition(const SExp *p) {
 
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
-void evSequence(Machine *m) {
+void evSequence(const SExp *unev, Machine *m) {
+    SExp *firstExp = NULL;
     // TODO: the list is assume to be non-empty
-    while (! isLastExp(m->unev.data.asSExp) ) {
-        SExp *firstExp = sexpCar( m->unev.data.asSExp );
-        m->exp.tag = regSExp;
-        m->exp.data.asSExp = firstExp;
-        evalDispatch(m);
-        m->unev.tag = regSExp;
-        m->unev.data.asSExp = sexpCdr( m->unev.data.asSExp );
+    while (! isLastExp( unev ) ) {
+        firstExp = sexpCar( unev);
+        evalDispatch(firstExp,m);
+        unev = sexpCdr( unev );
     }
 
+    firstExp = sexpCar( unev );
     // otherwise this is the last expression, transfer control
-    evalDispatch(m);
+    evalDispatch(firstExp,m);
 }
 
 char isBegin(const SExp *p) {
@@ -27,11 +26,9 @@ char isBegin(const SExp *p) {
         && isSymbol("begin", sexpCar(p));
 }
 
-void evBegin(Machine *m) {
-    SExp *beginActions = sexpCdr( m->exp.data.asSExp );
-    m->unev.tag = regSExp;
-    m->unev.data.asSExp = beginActions;
-    evSequence(m);
+void evBegin(const SExp *exp, Machine *m) {
+    SExp *beginActions = sexpCdr(exp);
+    evSequence(beginActions,m);
 }
 
 SExpHandler beginHandler = {
