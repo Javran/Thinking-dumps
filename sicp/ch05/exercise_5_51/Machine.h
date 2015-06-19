@@ -4,10 +4,8 @@
 #define _JAVEV_MACHINE_H_
 
 typedef struct {
-    // INVARIANT: exp is always holding an expression
-    // TODO: eliminate exp
-    Register exp,env,val;
-    Register cont,proc,argl,unev;
+    Register env,val;
+    Register cont,proc,argl;
     // TODO: by being aware of the fact that we
     // are using C, we might actually get rid of "continue"
     // register by letting the compiler to take care

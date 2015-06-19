@@ -13,6 +13,6 @@ void evBegin(const SExp*, Machine *);
 
 SExpHandler beginHandler;
 
-void evDefinition(Machine *);
+void evDefinition(const SExp *, Machine *);
 
 #endif

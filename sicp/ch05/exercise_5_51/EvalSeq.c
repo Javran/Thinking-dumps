@@ -36,9 +36,7 @@ SExpHandler beginHandler = {
     evBegin };
 
 // TODO: definition should not belong to this file
-void evDefinition(Machine *m) {
-    SExp *exp = m->exp.data.asSExp;
-
+void evDefinition(const SExp *exp, Machine *m) {
     // TODO: function definition
     SExp *expVar = exp->fields.pairContent.cdr->fields.pairContent.car;
     SExp *expBody = exp->fields.pairContent.cdr->fields.pairContent.cdr;
