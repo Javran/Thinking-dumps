@@ -16,7 +16,7 @@ typedef struct {
 
 // S-expresion related.
 typedef char (*SExpPredicate)(const SExp *);
-typedef void (*SExpEval)(Machine *);
+typedef void (*SExpEval)(const SExp *, Machine *);
 
 // an s-expression handler
 // consists of a predicate and an evaluator

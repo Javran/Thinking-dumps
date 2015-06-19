@@ -30,9 +30,10 @@ char isSelfEvaluating(const SExp *p) {
     }
 }
 
-void evSelfEval(Machine *m) {
+void evSelfEval(const SExp *exp, Machine *m) {
     // shallow copy
-    m->val = m->exp;
+    m->val.tag = regSExp;
+    m->val.data.asSExp = exp;
 }
 
 SExpHandler selfEvaluatingHandler = {
@@ -44,8 +45,7 @@ char isVariable(const SExp *p) {
     return sexpSymbol == p->tag;
 }
 
-void evVariable(Machine *m) {
-    SExp *exp = m->exp.data.asSExp;
+void evVariable(const SExp* exp, Machine *m) {
     const char *keyword = exp->fields.symbolName;
     Environment *env = m->env.data.asEnv;
     FrameEntry *result = envLookup(env,keyword);
@@ -66,9 +66,8 @@ char isQuoted(const SExp *p) {
         && isSymbol("quote", p->fields.pairContent.car);
 }
 
-void evQuoted(Machine *m) {
-    SExp *quotedExp = m->exp.data.asSExp;
-    SExp *eCdr = quotedExp->fields.pairContent.cdr;
+void evQuoted(const SExp *exp, Machine *m) {
+    SExp *eCdr = exp->fields.pairContent.cdr;
     SExp *eCadr = eCdr->fields.pairContent.car;
     // TODO: validate
     m->val.tag = regSExp;
@@ -84,11 +83,11 @@ char isLambda(const SExp *p) {
         && isSymbol("lambda", p->fields.pairContent.car);
 }
 
-void evLambda(Machine *m) {
+void evLambda(const SExp *exp, Machine *m) {
     // (lambda (x y z) x x z)
     // * lambda-parameters: (x y z) -- cadr gives the parameters
     // * lambda-body: (x x z)       -- cddr gives the body
-    SExp *cdr = m->exp.data.asSExp->fields.pairContent.cdr;
+    SExp *cdr = exp->fields.pairContent.cdr;
     SExp *lamParam = cdr->fields.pairContent.car;
     SExp *lamBody = cdr->fields.pairContent.cdr;
 

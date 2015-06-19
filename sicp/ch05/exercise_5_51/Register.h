@@ -14,7 +14,7 @@ typedef enum {
 typedef union {
     // INVARIANT: truthValue = either 0 or 1
     char truthValue;
-    SExp *asSExp;
+    const SExp *asSExp;
     Environment *asEnv;
     // quick and dirty
     void *asLambda;
