@@ -28,6 +28,6 @@ typedef struct {
     SExpEval eval;
 } SExpHandler;
 
-void evalDispatch(Machine *);
+void evalDispatch(const SExp *, Machine *);
 
 #endif
