@@ -1,4 +1,10 @@
 #include "Machine.h"
+#include "EvalSimple.h"
+
+char isIf(const SExp *p) {
+    return sexpPair == p->tag
+        && isSymbol("if", sexpCar(p));
+}
 
 void evIf(const SExp *exp, Machine *m) {
     SExp *expPred = sexpCadr(exp);
@@ -13,3 +19,7 @@ void evIf(const SExp *exp, Machine *m) {
                   ? expConseq
                   : expAlter, m);
 }
+
+SExpHandler ifHandler = {
+    isIf,
+    evIf };
