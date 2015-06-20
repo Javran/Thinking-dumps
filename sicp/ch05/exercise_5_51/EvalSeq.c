@@ -11,13 +11,15 @@ void evSequence(const SExp *unev, Machine *m) {
     SExp *firstExp = NULL;
     // TODO: the list is assume to be non-empty
     while (! isLastExp( unev ) ) {
-        firstExp = sexpCar( unev);
+        firstExp = sexpCar( unev );
         evalDispatch(firstExp,m);
         unev = sexpCdr( unev );
     }
 
+    // for the last expression, there is no need
+    // to keep information on stack
+    // and we make a tailing call to evalDispatch
     firstExp = sexpCar( unev );
-    // otherwise this is the last expression, transfer control
     evalDispatch(firstExp,m);
 }
 
