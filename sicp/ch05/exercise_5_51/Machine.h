@@ -4,6 +4,9 @@
 #define _JAVEV_MACHINE_H_
 
 typedef struct {
+    // TODO: potential memory leak might be caused
+    // when the old value of a register
+    // is not deallocated properly?
     Register env,val;
     Register cont,proc,argl;
     // TODO: by being aware of the fact that we
