@@ -13,7 +13,7 @@ typedef enum {
 
 typedef union {
     // INVARIANT: truthValue = either 0 or 1
-    const char truthValue;
+    char truthValue;
     const SExp *asSExp;
     Environment *asEnv;
     // quick and dirty
