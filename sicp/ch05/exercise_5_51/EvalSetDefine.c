@@ -11,6 +11,7 @@ void evAssignment(const SExp *exp, Machine *m) {
     SExp *expVal = sexpCddr( exp );
     Environment *env = m->env.data.asEnv;
     evalDispatch(expVal, m);
+    // TODO: what should be stored in the environment?
     // void * val = m -> val;
     // envInsert(env, varName, ???)
 }
