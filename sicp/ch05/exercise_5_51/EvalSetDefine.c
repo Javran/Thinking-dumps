@@ -38,13 +38,15 @@ void evDefinition(const SExp *exp, Machine *m) {
         SExp *args = sexpCdr(expLook);
         SExp *body = sexpCddr( exp );
         // (cons 'lambda (cons args body))
+        expVal = newPair(newSymbol( "lambda" ),
+                         newPair(args, body));
     }
 
     char *varName = expVar->fields.symbolName;
 //    SExp *expVal = sexpCddr( exp );
     Environment *env = m->env.data.asEnv;
     evalDispatch(expVal, m);
-    // TODO?
+    // TODO
+    const SExp *result = m->val.data.asSExp;
+    envInsert(env, varName, (void *) result);
 }
-
-
