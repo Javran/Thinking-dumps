@@ -10,10 +10,13 @@ void evAssignment(const SExp *exp, Machine *m) {
     char *varName = sexpCadr( exp )->fields.symbolName;
     SExp *expVal = sexpCddr( exp );
     Environment *env = m->env.data.asEnv;
+    FrameEntry *fe = envLookup(env, varName);
+    assert( fe /* the frame entry must exist */ );
     evalDispatch(expVal, m);
-    // TODO: what should be stored in the environment?
-    // void * val = m -> val;
-    // envInsert(env, varName, ???)
+    const SExp *result = m->val.data.asSExp;
+    fe->val = (void *) result;
+    // TODO: not sure if this decision is correct,
+    // but let's store SExp * in the environment
 }
 
 char isDefinition(const SExp *p) {
