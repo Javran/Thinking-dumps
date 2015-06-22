@@ -11,7 +11,6 @@
 // I'm a little bit worrying that handling errors would
 // complicate the code
 
-
 DynArr gTokenList;
 ParseState gParseState;
 DynArr gSExpList; // a list of (SExp *)
@@ -46,11 +45,6 @@ void printAndFreeSExpP(SExp **p) {
 
 void freeSExpP(SExp **p) {
     freeSExp(*p);
-}
-
-int *testFold(int *state, int *next) {
-    *state = *state + *next;
-    return state;
 }
 
 int main(int argc, char *argv[]) {
