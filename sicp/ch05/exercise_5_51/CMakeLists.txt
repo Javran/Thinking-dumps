@@ -75,7 +75,7 @@ set(javev_HDRS
   Common.h
   Util.h DynArr.h Frame.h Machine.h Environment.h Register.h
   Parser.h SExp.h Syntax.h Token.h Tokenizer.h
-  EvalSimple.h EvalSeq.h EvalCond.h)
+  EvalSimple.h EvalSeq.h EvalCond.h EvalSetDefine.h)
 
 add_library(javev ${javev_SRCS}  ${javev_HDRS})
 

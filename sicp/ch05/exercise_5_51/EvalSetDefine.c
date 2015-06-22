@@ -1,5 +1,4 @@
-#include "Machine.h"
-#include "EvalSimple.h"
+#include "EvalSetDefine.h"
 
 char isAssignment(const SExp *p) {
     return sexpPair == p->tag
