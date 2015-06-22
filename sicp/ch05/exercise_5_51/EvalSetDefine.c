@@ -24,12 +24,27 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", sexpCar(p));
 }
 
-// evaluate normalized definitions
-void evNormalizedDefinition(const SExp *exp, Machine *m) {
-    // form: (define <var> <value>)
-    char *varName = sexpCadr( exp )->fields.symbolName;
-    SExp *expVal = sexpCddr( exp );
+void evDefinition(const SExp *exp, Machine *m) {
+    SExp *expLook = sexpCadr( exp );
+    SExp *expVar = NULL;
+    SExp *expVal = NULL;
+    if ( sexpSymbol == expLook->tag ) {
+        // form: (define <var> <val>)
+        expVar = expLook;
+        expVal = sexpCar(sexpCddr( exp ));
+    } else {
+        // form: (define (<var> <args> ...) <exps> ...)
+        expVar = sexpCar( expLook );
+        SExp *args = sexpCdr(expLook);
+        SExp *body = sexpCddr( exp );
+        // (cons 'lambda (cons args body))
+    }
+
+    char *varName = expVar->fields.symbolName;
+//    SExp *expVal = sexpCddr( exp );
     Environment *env = m->env.data.asEnv;
     evalDispatch(expVal, m);
     // TODO?
 }
+
+
