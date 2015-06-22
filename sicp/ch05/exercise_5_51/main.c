@@ -11,30 +11,25 @@
 // I'm a little bit worrying that handling errors would
 // complicate the code
 
-char *srcText;
-long srcSize;
+
 DynArr gTokenList;
 ParseState gParseState;
 DynArr gSExpList; // a list of (SExp *)
 
-void loadFile(const char* fileName) {
+char *loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
     // find file length
     fseek(fp,0,SEEK_END);
-    srcSize = ftell(fp);
+    size_t srcSize = ftell(fp);
     fseek(fp,0,SEEK_SET);
 
     // read into memory
     // one extra bit for string termination
-    srcText = malloc(srcSize+1);
-    fread(srcText, 1, srcSize, fp);
-    srcText[srcSize] = 0;
+    char *retVal = malloc(srcSize+1);
+    fread(retVal, 1, srcSize, fp);
+    retVal[srcSize] = 0;
     fclose(fp);
-}
-
-void freeFile() {
-    free(srcText);
-    srcText = NULL;
+    return retVal;
 }
 
 void helpAndQuit(char *execName) {
@@ -70,12 +65,12 @@ int main(int argc, char *argv[]) {
         exit(errno);
     }
 
-    loadFile( fileName );
+    char *srcText = loadFile( fileName );
     dynArrInit(&gTokenList, sizeof(Token));
     dynArrInit(&gSExpList, sizeof(SExp *));
 
     tokenize(srcText,&gTokenList);
-    freeFile();
+    free( srcText ); srcText = NULL;
 
     assert( dynArrCount(&gTokenList)
             /* the tokenizer should at least return tokEof,
@@ -113,7 +108,6 @@ int main(int argc, char *argv[]) {
         putchar('\n');
     } else {
         // now we are ready for interpreting these s-expressions
-
     }
 
     // releasing resources
