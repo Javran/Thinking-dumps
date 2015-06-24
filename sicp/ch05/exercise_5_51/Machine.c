@@ -24,11 +24,6 @@ const size_t evalHandlerCount =
     sizeof(evalHandlers) / sizeof(SExpHandler *);
 
 // TODO:
-// * definition
-// * assignment
-// * definition
-// * if
-// * begin
 // * application
 
 // TODO: it might be possible to make some of the arguments
