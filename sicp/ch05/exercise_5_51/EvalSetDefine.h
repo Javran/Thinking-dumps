@@ -9,4 +9,7 @@ void evAssignment(const SExp *, Machine *);
 char isDefinition(const SExp *);
 void evDefinition(const SExp *, Machine *);
 
+SExpHandler assignmentHandler;
+SExpHandler definitionHandler;
+
 #endif

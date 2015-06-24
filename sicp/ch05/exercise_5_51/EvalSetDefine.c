@@ -18,6 +18,11 @@ void evAssignment(const SExp *exp, Machine *m) {
     // but let's store SExp * in the environment
 }
 
+SExpHandler assignmentHandler = {
+    isAssignment,
+    evAssignment
+};
+
 char isDefinition(const SExp *p) {
     return sexpPair == p->tag
         && isSymbol("define", sexpCar(p));
@@ -49,3 +54,8 @@ void evDefinition(const SExp *exp, Machine *m) {
     const SExp *result = m->val.data.asSExp;
     envInsert(env, varName, (void *) result);
 }
+
+SExpHandler definitionHandler = {
+    isDefinition,
+    evDefinition
+};
