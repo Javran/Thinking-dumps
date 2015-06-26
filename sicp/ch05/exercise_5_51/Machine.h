@@ -3,6 +3,9 @@
 #ifndef _JAVEV_MACHINE_H_
 #define _JAVEV_MACHINE_H_
 
+// TODO: get rid of Machine,
+// the machine is builtin with c language!
+
 typedef struct {
     // TODO: potential memory leak might be caused
     // when the old value of a register
