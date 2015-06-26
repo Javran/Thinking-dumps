@@ -3,7 +3,7 @@
 #include "Token.h"
 #include "Tokenizer.h"
 
-void tokenize(char *curPos, DynArr *tokenList) {
+void tokenize(const char *curPos, DynArr *tokenList) {
     // INVARIANT: make sure every possible path
     // does a return unless EOF is reached
 
@@ -119,7 +119,7 @@ void tokenize(char *curPos, DynArr *tokenList) {
     // dynamic initials
     if (isInitial(*curPos)) {
         // begin tokenizing symbol
-        char *oldCurPos = curPos;
+        const char *oldCurPos = curPos;
         ++curPos;
         // consume subsequent
         while (isSubsequent(*curPos))
@@ -134,7 +134,7 @@ void tokenize(char *curPos, DynArr *tokenList) {
     }
     if (isdigit(*curPos)) {
         // begin tokenizing number
-        char *oldCurPos = curPos;
+        const char *oldCurPos = curPos;
         ++curPos;
         // consume subsequent
         while (isdigit(*curPos))
