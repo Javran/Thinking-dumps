@@ -47,6 +47,63 @@ void freeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
+/*
+DynArr *parseSExps(const char *programText) {
+    DynArr tokenList;
+    dynArrInit(&tokenList, sizeof(Token));
+    tokenize(programText,&tokenList);
+    assert( dynArrCount(&tokenList)
+            // the tokenizer should at least return tokEof,
+               making the token list non-empty
+            //);
+    // TODO: abort when the input is not fully consumed?
+    // TODO: or is it the case where all contents are eventually consumed?
+    // at this point
+    // we have at least one element in the token list,
+    // which is the invariant we need to maintain
+    // when calling parser.
+    ParseState parseState = {0};
+    parseStateInit(&tokenList,&parseState);
+
+    DynArr sexpList;  // a list of (SExp *)
+    dynArrInit(&sexpList, sizeof(SExp *));
+
+    SExp *result = NULL;
+    // keep parsing results until there is an error
+    // since there is no handler for tokEof,
+    // an error must happen, which guarantees that
+    // this loop can terminate.
+    for (result = parseSExp(&parseState);
+         NULL != result;
+         result = parseSExp(&parseState)) {
+        SExp **newExp = dynArrNew(&sexpList);
+        *newExp = result;
+    }
+
+    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
+    dynArrFree(&tokenList);
+    // it is guaranteed that parseStateCurrent always produces
+    // a valid pointer. no check is necessary.
+    char parseFailed = ! ( tokEof == parseStateCurrent(&parseState)->tag );
+    if (parseFailed) {
+        printf("Remaining tokens:\n");
+        while (parseStateLookahead(&parseState)) {
+            printToken(stdout, parseStateCurrent(&parseState) );
+            parseStateNext(&parseState);
+        }
+        putchar('\n');
+        dynArrVisit(&sexpList,(DynArrVisitor)freeSExpP);
+        dynArrFree(&sexpList);
+        return NULL;
+
+    } else {
+        // now we are ready for interpreting these s-expressions
+        return tokenList;
+    }
+        // releasing resources
+}
+*/
+
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
@@ -62,9 +119,6 @@ int main(int argc, char *argv[]) {
     char *srcText = loadFile( fileName );
     dynArrInit(&gTokenList, sizeof(Token));
     dynArrInit(&gSExpList, sizeof(SExp *));
-
-    tokenize(srcText,&gTokenList);
-    free( srcText ); srcText = NULL;
 
     assert( dynArrCount(&gTokenList)
             /* the tokenizer should at least return tokEof,
