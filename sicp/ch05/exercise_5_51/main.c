@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
     // it is guaranteed that parseStateCurrent always produces
     // a valid pointer. no check is necessary.
-    char parseFailed = ! pSExpList;
+    char parseFailed = !pSExpList;
     if (pSExpList) {
         // now we are ready for interpreting these s-expressions
     }

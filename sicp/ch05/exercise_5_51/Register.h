@@ -4,7 +4,13 @@
 #ifndef _JAVEV_REGISTER_H_
 #define _JAVEV_REGISTER_H_
 
+// TODO: Register -> EvValue when
+// the Machine can be totally removed.
+
 typedef enum {
+    // use this value when the return value
+    // should be unspecified
+    regUnspecified,
     regBool,
     regSExp,
     regEnvironment,
