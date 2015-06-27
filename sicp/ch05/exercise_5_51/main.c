@@ -47,15 +47,15 @@ void freeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
-/*
+
 DynArr *parseSExps(const char *programText) {
-    DynArr tokenList;
+    DynArr tokenList = {0};
     dynArrInit(&tokenList, sizeof(Token));
     tokenize(programText,&tokenList);
     assert( dynArrCount(&tokenList)
-            // the tokenizer should at least return tokEof,
+            /* the tokenizer should at least return tokEof,
                making the token list non-empty
-            //);
+            */);
     // TODO: abort when the input is not fully consumed?
     // TODO: or is it the case where all contents are eventually consumed?
     // at this point
@@ -65,8 +65,8 @@ DynArr *parseSExps(const char *programText) {
     ParseState parseState = {0};
     parseStateInit(&tokenList,&parseState);
 
-    DynArr sexpList;  // a list of (SExp *)
-    dynArrInit(&sexpList, sizeof(SExp *));
+    DynArr *pSExpList = calloc(1, sizeof(DynArr));
+    dynArrInit(pSExpList, sizeof(SExp *));
 
     SExp *result = NULL;
     // keep parsing results until there is an error
@@ -76,7 +76,7 @@ DynArr *parseSExps(const char *programText) {
     for (result = parseSExp(&parseState);
          NULL != result;
          result = parseSExp(&parseState)) {
-        SExp **newExp = dynArrNew(&sexpList);
+        SExp **newExp = dynArrNew(pSExpList);
         *newExp = result;
     }
 
@@ -92,17 +92,15 @@ DynArr *parseSExps(const char *programText) {
             parseStateNext(&parseState);
         }
         putchar('\n');
-        dynArrVisit(&sexpList,(DynArrVisitor)freeSExpP);
-        dynArrFree(&sexpList);
-        return NULL;
-
+        dynArrVisit(pSExpList,(DynArrVisitor)freeSExpP);
+        dynArrFree(pSExpList);
+        pSExpList = NULL;
     } else {
         // now we are ready for interpreting these s-expressions
-        return tokenList;
     }
-        // releasing resources
+    // TODO: releasing resources
+    return pSExpList;
 }
-*/
 
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
