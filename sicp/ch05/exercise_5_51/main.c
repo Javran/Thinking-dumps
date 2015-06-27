@@ -43,8 +43,15 @@ void freeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
+void releaseSExps(DynArr *pSExpList) {
+    if (pSExpList) {
+        dynArrVisit(pSExpList,(DynArrVisitor)freeSExpP);
+        dynArrFree(pSExpList);
+        free(pSExpList);
+    }
+}
 
-DynArr *parseSExps(const char *programText) {
+DynArr *parseSExps(const char *programText, FILE *errF) {
     DynArr tokenList = {0};
     dynArrInit(&tokenList, sizeof(Token));
     tokenize(programText,&tokenList);
@@ -82,19 +89,15 @@ DynArr *parseSExps(const char *programText) {
     // a valid pointer. no check is necessary.
     char parseFailed = ! ( tokEof == parseStateCurrent(&parseState)->tag );
     if (parseFailed) {
-        printf("Remaining tokens:\n");
+        fprintf(errF, "Remaining tokens:\n");
         while (parseStateLookahead(&parseState)) {
-            printToken(stdout, parseStateCurrent(&parseState) );
+            printToken(errF, parseStateCurrent(&parseState) );
             parseStateNext(&parseState);
         }
-        putchar('\n');
-        dynArrVisit(pSExpList,(DynArrVisitor)freeSExpP);
-        dynArrFree(pSExpList);
+        fputc('\n',errF);
+        releaseSExps(pSExpList);
         pSExpList = NULL;
-    } else {
-        // now we are ready for interpreting these s-expressions
     }
-    // TODO: releasing resources
     return pSExpList;
 }
 
@@ -112,24 +115,16 @@ int main(int argc, char *argv[]) {
 
     char *srcText = loadFile( fileName );
 
-    DynArr *pSExpList = parseSExps(srcText);
+    DynArr *pSExpList = parseSExps(srcText,stderr);
+    free(srcText); srcText = NULL;
 
     // it is guaranteed that parseStateCurrent always produces
     // a valid pointer. no check is necessary.
     char parseFailed = ! pSExpList;
-    if (parseFailed) {
-        printf("Remaining tokens:\n");
-        // TODO: missing error report
-        /*
-        while (parseStateLookahead(&gParseState)) {
-            printToken(stdout, parseStateCurrent(&gParseState) );
-            parseStateNext(&gParseState);
-        } */
-        putchar('\n');
-    } else {
+    if (pSExpList) {
         // now we are ready for interpreting these s-expressions
     }
-
+    releaseSExps(pSExpList);
     // releasing resources
     // TODO: proper resource releasing
 
