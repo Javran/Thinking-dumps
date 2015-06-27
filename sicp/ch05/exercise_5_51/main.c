@@ -43,7 +43,7 @@ void freeSExpP(SExp **p) {
     freeSExp(*p);
 }
 
-void releaseSExps(DynArr *pSExpList) {
+void freeSExps(DynArr *pSExpList) {
     if (pSExpList) {
         dynArrVisit(pSExpList,(DynArrVisitor)freeSExpP);
         dynArrFree(pSExpList);
@@ -82,9 +82,6 @@ DynArr *parseSExps(const char *programText, FILE *errF) {
         SExp **newExp = dynArrNew(pSExpList);
         *newExp = result;
     }
-
-    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
-    dynArrFree(&tokenList);
     // it is guaranteed that parseStateCurrent always produces
     // a valid pointer. no check is necessary.
     char parseFailed = ! ( tokEof == parseStateCurrent(&parseState)->tag );
@@ -95,9 +92,11 @@ DynArr *parseSExps(const char *programText, FILE *errF) {
             parseStateNext(&parseState);
         }
         fputc('\n',errF);
-        releaseSExps(pSExpList);
+        freeSExps(pSExpList);
         pSExpList = NULL;
     }
+    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
+    dynArrFree(&tokenList);
     return pSExpList;
 }
 
@@ -114,7 +113,6 @@ int main(int argc, char *argv[]) {
     }
 
     char *srcText = loadFile( fileName );
-
     DynArr *pSExpList = parseSExps(srcText,stderr);
     free(srcText); srcText = NULL;
 
@@ -124,9 +122,8 @@ int main(int argc, char *argv[]) {
     if (pSExpList) {
         // now we are ready for interpreting these s-expressions
     }
-    releaseSExps(pSExpList);
     // releasing resources
-    // TODO: proper resource releasing
+    freeSExps(pSExpList);
 
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
