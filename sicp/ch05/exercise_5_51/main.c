@@ -11,9 +11,9 @@
 // I'm a little bit worrying that handling errors would
 // complicate the code
 
-DynArr gTokenList;
-ParseState gParseState;
-DynArr gSExpList; // a list of (SExp *)
+// DynArr gTokenList;
+// ParseState gParseState;
+// DynArr gSExpList; // a list of (SExp *)
 
 char *loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
@@ -115,53 +115,31 @@ int main(int argc, char *argv[]) {
     }
 
     char *srcText = loadFile( fileName );
-    dynArrInit(&gTokenList, sizeof(Token));
-    dynArrInit(&gSExpList, sizeof(SExp *));
 
-    assert( dynArrCount(&gTokenList)
-            /* the tokenizer should at least return tokEof,
-               making the token list non-empty
-             */);
-    // at this point
-    // we have at least one element in the token list,
-    // which is the invariant we need to maintain
-    // when calling parser.
-    memset(&gParseState, 0x00, sizeof(gParseState));
-    parseStateInit(&gTokenList,&gParseState);
-
-    SExp *result = NULL;
-
-    // keep parsing results until there is an error
-    // since there is no handler for tokEof,
-    // an error must happen, which guarantees that
-    // this loop can terminate.
-    for (result = parseSExp(&gParseState);
-         NULL != result;
-         result = parseSExp(&gParseState)) {
-        SExp **newExp = dynArrNew(&gSExpList);
-        *newExp = result;
-    }
+    DynArr *pSExpList = parseSExps(srcText);
 
     // it is guaranteed that parseStateCurrent always produces
     // a valid pointer. no check is necessary.
-    char parseFailed = ! ( tokEof == parseStateCurrent(&gParseState)->tag );
+    char parseFailed = ! pSExpList;
     if (parseFailed) {
         printf("Remaining tokens:\n");
+        // TODO: missing error report
+        /*
         while (parseStateLookahead(&gParseState)) {
             printToken(stdout, parseStateCurrent(&gParseState) );
             parseStateNext(&gParseState);
-        }
+        } */
         putchar('\n');
     } else {
         // now we are ready for interpreting these s-expressions
     }
 
     // releasing resources
-    dynArrVisit(&gSExpList,(DynArrVisitor)freeSExpP);
-    dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
+//    dynArrVisit(&gSExpList,(DynArrVisitor)freeSExpP);
+//    dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
 
-    dynArrFree(&gSExpList);
-    dynArrFree(&gTokenList);
+//    dynArrFree(&gSExpList);
+//    dynArrFree(&gTokenList);
 
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
