@@ -11,10 +11,6 @@
 // I'm a little bit worrying that handling errors would
 // complicate the code
 
-// DynArr gTokenList;
-// ParseState gParseState;
-// DynArr gSExpList; // a list of (SExp *)
-
 char *loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");
     // find file length
@@ -135,11 +131,7 @@ int main(int argc, char *argv[]) {
     }
 
     // releasing resources
-//    dynArrVisit(&gSExpList,(DynArrVisitor)freeSExpP);
-//    dynArrVisit(&gTokenList,(DynArrVisitor)freeToken);
-
-//    dynArrFree(&gSExpList);
-//    dynArrFree(&gTokenList);
+    // TODO: proper resource releasing
 
     return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
