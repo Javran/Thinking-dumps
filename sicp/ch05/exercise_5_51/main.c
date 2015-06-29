@@ -54,7 +54,7 @@ void freeSExps(DynArr *pSExpList) {
 DynArr *parseSExps(const char *programText, FILE *errF) {
     DynArr tokenList = {0};
     dynArrInit(&tokenList, sizeof(Token));
-    tokenize(programText,&tokenList);
+    tokenize(programText,&tokenList,errF);
     assert( dynArrCount(&tokenList)
             /* the tokenizer should at least return tokEof,
                making the token list non-empty

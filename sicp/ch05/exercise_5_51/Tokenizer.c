@@ -3,9 +3,9 @@
 #include "Token.h"
 #include "Tokenizer.h"
 
-void tokenize(const char *curPos, DynArr *tokenList) {
+void tokenize(const char *curPos, DynArr *tokenList, FILE* err) {
     // INVARIANT: make sure every possible path
-    // does a return unless EOF is reached
+    // do a return unless EOF is reached
 
     char buff[SMALL_BUFFER_SIZE] = {0};
     // skip spaces so we always
@@ -26,22 +26,22 @@ void tokenize(const char *curPos, DynArr *tokenList) {
         while ('\n' != *curPos && 0 != *curPos)
             ++curPos;
         if (0 != *curPos) ++curPos;
-        tokenize(curPos,tokenList);
+        tokenize(curPos,tokenList,err);
         return;
     case '(':
         newTok = dynArrNew(tokenList);
         mkTokenLParen(newTok);
-        tokenize(++curPos,tokenList);
+        tokenize(++curPos,tokenList,err);
         return;
     case ')':
         newTok = dynArrNew(tokenList);
         mkTokenRParen(newTok);
-        tokenize(++curPos,tokenList);
+        tokenize(++curPos,tokenList,err);
         return;
     case '\'':
         newTok = dynArrNew(tokenList);
         mkTokenQuote(newTok);
-        tokenize(++curPos,tokenList);
+        tokenize(++curPos,tokenList,err);
         return;
     case '#':
         ++curPos;
@@ -51,16 +51,16 @@ void tokenize(const char *curPos, DynArr *tokenList) {
         case 't':
             newTok = dynArrNew(tokenList);
             mkTokenTrue(newTok);
-            tokenize(++curPos,tokenList);
+            tokenize(++curPos,tokenList,err);
             return;
         case 'F':
         case 'f':
             newTok = dynArrNew(tokenList);
             mkTokenFalse(newTok);
-            tokenize(++curPos,tokenList);
+            tokenize(++curPos,tokenList,err);
             return;
         default:
-            fprintf(stderr,"error: not supported\n");
+            fprintf(err,"error: unsupported char at %d\n",(int)(curPos - buff));
             return;
         }
     case '"':
@@ -112,7 +112,7 @@ void tokenize(const char *curPos, DynArr *tokenList) {
             mkTokenString(newTok,buff);
             ++curPos;
         }
-        tokenize(curPos,tokenList);
+        tokenize(curPos,tokenList,err);
         return;
     }
 
@@ -129,7 +129,7 @@ void tokenize(const char *curPos, DynArr *tokenList) {
         buff[curPos-oldCurPos] = 0;
         newTok = dynArrNew(tokenList);
         mkTokenSymbol(newTok, buff);
-        tokenize(curPos,tokenList);
+        tokenize(curPos,tokenList,err);
         return;
     }
     if (isdigit(*curPos)) {
@@ -144,7 +144,9 @@ void tokenize(const char *curPos, DynArr *tokenList) {
         buff[curPos-oldCurPos] = 0;
         newTok = dynArrNew(tokenList);
         mkTokenInteger(newTok,atol(buff));
-        tokenize(curPos,tokenList);
+        tokenize(curPos,tokenList,err);
         return;
     }
+    fprintf(err,"error: unsupported char at %d\n",(int)(curPos - buff));
+    return;
 }
