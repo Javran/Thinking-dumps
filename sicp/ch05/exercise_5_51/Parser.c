@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "Tokenizer.h"
 
 // there is no case for tokEof,
 // which is intentionally left out.
@@ -134,4 +135,68 @@ SExp *parseQuote(ParseState *ps) {
 parse_quote_exit:
     memcpy(ps, &oldPs, sizeof(ParseState));
     return NULL;
+}
+
+void freeSExpP(SExp **p) {
+    freeSExp(*p);
+}
+
+void freeSExps(DynArr *pSExpList) {
+    if (pSExpList) {
+        dynArrVisit(pSExpList,(DynArrVisitor)freeSExpP);
+        dynArrFree(pSExpList);
+        free(pSExpList);
+    }
+}
+
+DynArr *parseSExps(const char *programText, FILE *errF) {
+    DynArr tokenList = {0};
+    dynArrInit(&tokenList, sizeof(Token));
+    tokenize(programText,&tokenList,errF);
+    assert( dynArrCount(&tokenList)
+            /* the tokenizer should at least return tokEof,
+               making the token list non-empty
+            */);
+    // it is not guaranteed that the tokenizer
+    // will consume the whole file content.
+    // but when something goes wrong (which prevents the full content
+    // being consumed), an EOF is returned with error message printed to errF
+
+    // at this point
+    // we have at least one element in the token list,
+    // which is the invariant we need to maintain
+    // when calling parser.
+    ParseState parseState = {0};
+    parseStateInit(&tokenList,&parseState);
+
+    DynArr *pSExpList = calloc(1, sizeof(DynArr));
+    dynArrInit(pSExpList, sizeof(SExp *));
+
+    SExp *result = NULL;
+    // keep parsing results until there is an error
+    // since there is no handler for tokEof,
+    // an error must happen, which guarantees that
+    // this loop can terminate.
+    for (result = parseSExp(&parseState);
+         NULL != result;
+         result = parseSExp(&parseState)) {
+        SExp **newExp = dynArrNew(pSExpList);
+        *newExp = result;
+    }
+    // it is guaranteed that parseStateCurrent always produces
+    // a valid pointer. no check is necessary.
+    char parseFailed = ! ( tokEof == parseStateCurrent(&parseState)->tag );
+    if (parseFailed) {
+        fprintf(errF, "Remaining tokens:\n");
+        while (parseStateLookahead(&parseState)) {
+            printToken(errF, parseStateCurrent(&parseState) );
+            parseStateNext(&parseState);
+        }
+        fputc('\n',errF);
+        freeSExps(pSExpList);
+        pSExpList = NULL;
+    }
+    dynArrVisit(&tokenList,(DynArrVisitor)freeToken);
+    dynArrFree(&tokenList);
+    return pSExpList;
 }

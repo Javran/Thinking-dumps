@@ -20,4 +20,7 @@ SExp *parseList(ParseState *);
 SExp *parseAtom(ParseState *);
 SExp *parseSExp(ParseState *);
 SExp *parseQuote(ParseState *);
+
+void freeSExps(DynArr *);
+DynArr *parseSExps(const char *, FILE *);
 #endif
