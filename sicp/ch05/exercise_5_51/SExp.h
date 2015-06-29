@@ -43,6 +43,8 @@ SExp *newPair(SExp *, SExp *);
 void freeSExp(SExp *);
 void printSExp(FILE *, SExp *);
 
+char isSExpEqual(const SExp *, const SExp *);
+
 inline SExp *sexpCar(const SExp *e) { return e->fields.pairContent.car; }
 inline SExp *sexpCdr(const SExp *e) { return e->fields.pairContent.cdr; }
 inline SExp *sexpCadr(const SExp *e) { return sexpCar(sexpCdr(e)); }
