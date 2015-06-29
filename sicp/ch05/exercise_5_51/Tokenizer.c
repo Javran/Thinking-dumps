@@ -4,8 +4,12 @@
 #include "Tokenizer.h"
 
 void tokenize(const char *curPos, DynArr *tokenList, FILE* err) {
-    // INVARIANT: make sure every possible path
-    // do a return unless EOF is reached
+    // INVARIANT:
+    // * every possible path does an explicit tail recursive call
+    //   unless EOF is reached
+    // * if something is not supported, a EOF token will be generated
+    //   in the result list and an error message outputed to err
+    // * result tokenList is always non-empty
 
     char buff[SMALL_BUFFER_SIZE] = {0};
     // skip spaces so we always
@@ -60,8 +64,7 @@ void tokenize(const char *curPos, DynArr *tokenList, FILE* err) {
             tokenize(++curPos,tokenList,err);
             return;
         default:
-            fprintf(err,"error: unsupported char at %d\n",(int)(curPos - buff));
-            return;
+            goto failed;
         }
     case '"':
         ++curPos;
@@ -147,6 +150,15 @@ void tokenize(const char *curPos, DynArr *tokenList, FILE* err) {
         tokenize(curPos,tokenList,err);
         return;
     }
+
+failed:
+    // if something goes wrong during tokenization,
+    // we report the error and terminate tokenization
+    // but at the same time we create a EOF token
+    // so that we can make sure the result list is always non-empty
     fprintf(err,"error: unsupported char at %d\n",(int)(curPos - buff));
+    // end of file
+    newTok = dynArrNew(tokenList);
+    mkTokenEof(newTok);
     return;
 }
