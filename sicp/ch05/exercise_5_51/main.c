@@ -1,7 +1,5 @@
 #include "Common.h"
-#include "Token.h"
-#include "DynArr.h"
-#include "Parser.h"
+#include "Evaluate.h"
 #include "Util.h"
 
 // TODO: consider this to be just a quick and dirty
@@ -46,17 +44,8 @@ int main(int argc, char *argv[]) {
     }
 
     char *srcText = loadFile( fileName );
-    DynArr *pSExpList = parseSExps(srcText,stderr);
+    SExp *result = evalProgramText(srcText, stderr);
     free(srcText); srcText = NULL;
 
-    // it is guaranteed that parseStateCurrent always produces
-    // a valid pointer. no check is necessary.
-    char parseFailed = !pSExpList;
-    if (pSExpList) {
-        // now we are ready for interpreting these s-expressions
-    }
-    // releasing resources
-    freeSExps(pSExpList);
-
-    return parseFailed ? EXIT_FAILURE : EXIT_SUCCESS;
+    return !result ? EXIT_FAILURE : EXIT_SUCCESS;
 }
