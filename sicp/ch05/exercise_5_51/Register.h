@@ -7,6 +7,8 @@
 // TODO: Register -> EvValue when
 // the Machine can be totally removed.
 
+// TODO: The result should actually be of type "SExp *".
+
 typedef enum {
     // use this value when the return value
     // should be unspecified
