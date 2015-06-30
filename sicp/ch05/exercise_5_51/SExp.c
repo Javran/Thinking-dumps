@@ -170,39 +170,42 @@ DynArr *sexpListToDynArr(const SExp *exp) {
     return da;
 }
 
+// INVARIANT: e1 and e2 are both non-NULL
+// if we are comparing 2 concrete values, a NULL value
+// should never appear in the AST (note that nil object
+// is represented as a static object rather than
+// using NULL directly, this might not be necessary,
+// but it helps disambiguating a null value from implementing language
+// and a null value from implemended language
 char isSExpEqual(const SExp *e1, const SExp *e2) {
-    // handle both referencial equality and null equality
+    assert( e1 /* e1 should not be NULL */ );
+    assert( e2 /* e2 should not be NULL */ );
+
     if (e1 == e2) return 1;
 
-    if (e1 && e2) {
-        // e1 and e2 are not null
-        if (e1->tag == e2->tag) {
-            switch(e1->tag) {
-            case sexpSymbol:
-                return 0 == strcmp(e1->fields.symbolName,
-                                   e2->fields.symbolName);
-            case sexpString:
-                return 0 == strcmp(e1->fields.stringContent,
-                                   e2->fields.stringContent);
-            case sexpInteger:
-                return e1->fields.integerContent
-                    == e2->fields.integerContent;
-            case sexpBool:
-                return e1->fields.truthValue
-                    == e2->fields.truthValue;
-            case sexpNil:
-                return 1;
-            case sexpPair:
-                return isSExpEqual(sexpCar(e1),sexpCar(e2))
-                    && isSExpEqual(sexpCdr(e1),sexpCdr(e2));
-            }
-            assert(0 /* dead code */);
-        } else
-            return 0;
+    // e1 and e2 are not null
+    if (e1->tag == e2->tag) {
+        switch(e1->tag) {
+        case sexpSymbol:
+            return 0 == strcmp(e1->fields.symbolName,
+                               e2->fields.symbolName);
+        case sexpString:
+            return 0 == strcmp(e1->fields.stringContent,
+                               e2->fields.stringContent);
+        case sexpInteger:
+            return e1->fields.integerContent
+                == e2->fields.integerContent;
+        case sexpBool:
+            return e1->fields.truthValue
+                == e2->fields.truthValue;
+        case sexpNil:
+            return 1;
+        case sexpPair:
+            return isSExpEqual(sexpCar(e1),sexpCar(e2))
+                && isSExpEqual(sexpCdr(e1),sexpCdr(e2));
+        }
+        assert(0 /* dead code */);
     } else {
-        // either of e1 or e2 is NULL
-        // we must have !(e1 == e2) at this point
-        // which means they are definitely not equal
         return 0;
     }
 }
