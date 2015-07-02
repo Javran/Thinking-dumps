@@ -7,12 +7,13 @@ char isDefinition(const SExp *p) {
 
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
-void evSequence(const SExp *unev, Machine *m) {
+const SExp *evSequence(const SExp *unev, Environment *env) {
     SExp *firstExp = NULL;
     // TODO: the list is assume to be non-empty
     while (! isLastExp( unev ) ) {
         firstExp = sexpCar( unev );
-        evalDispatch(firstExp,m);
+        // TODO
+        evalDispatch1(firstExp,env);
         unev = sexpCdr( unev );
     }
 
@@ -20,7 +21,7 @@ void evSequence(const SExp *unev, Machine *m) {
     // to keep information on stack
     // and we make a tailing call to evalDispatch
     firstExp = sexpCar( unev );
-    evalDispatch(firstExp,m);
+    return evalDispatch1(firstExp,env);
 }
 
 char isBegin(const SExp *p) {
@@ -28,20 +29,12 @@ char isBegin(const SExp *p) {
         && isSymbol("begin", sexpCar(p));
 }
 
-void evBegin(const SExp *exp, Machine *m) {
+const SExp *evBegin(const SExp *exp, Environment *env) {
     SExp *beginActions = sexpCdr(exp);
-    evSequence(beginActions,m);
+    return evSequence(beginActions,env);
 }
 
 SExpHandler beginHandler = {
     isBegin,
+    NULL,
     evBegin };
-
-// TODO: definition should not belong to this file
-void evDefinition(const SExp *exp, Machine *m) {
-    // TODO: function definition
-    SExp *expVar = exp->fields.pairContent.cdr->fields.pairContent.car;
-    SExp *expBody = exp->fields.pairContent.cdr->fields.pairContent.cdr;
-
-    // TODO: need eval!
-}
