@@ -42,3 +42,14 @@ void evalDispatch(const SExp *exp, Machine *m) {
 
     // TODO: not handled expressions
 }
+
+const SExp *evalDispatch1(const SExp *exp, Environment *env) {
+    // INVARIANT: every branch should end with a return
+    size_t i;
+    for (i=0; i<evalHandlerCount; ++i) {
+        SExpHandler *h = evalHandlers[i];
+        if (h->pred(exp))
+            return h->eval1(exp,env);
+    }
+    return NULL;
+}
