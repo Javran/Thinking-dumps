@@ -23,6 +23,8 @@ typedef struct {
 typedef char (*SExpPredicate)(const SExp *);
 typedef void (*SExpEval)(const SExp *, Machine *);
 
+typedef const SExp *(*SExpEval1)(const SExp *, Environment *);
+
 // TODO: overhaul plan:
 // * make eval-handler return "SExp *" and accept also an environment
 // * eliminate Machine
@@ -37,6 +39,7 @@ typedef struct {
     // invariant: the s-exp must meet the requirement
     // that "pred" has specified
     SExpEval eval;
+    SExpEval1 eval1;
 } SExpHandler;
 
 void evalDispatch(const SExp *, Machine *);

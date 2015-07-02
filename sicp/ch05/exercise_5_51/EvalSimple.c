@@ -7,6 +7,7 @@
 // the complexity of implementation.
 
 #include "EvalSimple.h"
+#include "PointerManager.h"
 
 // TODO: registers have to be typed (tagged),
 // consider `(display a)`, without knowing the type of `a`,
@@ -30,35 +31,32 @@ char isSelfEvaluating(const SExp *p) {
     }
 }
 
-void evSelfEval(const SExp *exp, Machine *m) {
-    // shallow copy
-    m->val.tag = regSExp;
-    m->val.data.asSExp = exp;
+const SExp *evSelfEval(const SExp *exp, Environment *env) {
+    // suppressing warning
+    (void)env;
+    return exp;
 }
 
 SExpHandler selfEvaluatingHandler = {
     isSelfEvaluating,
+    NULL,
     evSelfEval };
-
 
 char isVariable(const SExp *p) {
     return sexpSymbol == p->tag;
 }
 
-void evVariable(const SExp* exp, Machine *m) {
+const SExp *evVariable(const SExp* exp, Environment *env) {
     const char *keyword = exp->fields.symbolName;
-    Environment *env = m->env.data.asEnv;
     FrameEntry *result = envLookup(env,keyword);
 
-    // TODO: deal with lookup error
-    assert( result );
-
-    Register *r = result->val;
-    m->val = *r;
+    // returns NULL on failure
+    return result ? result->val : NULL;
 }
 
 SExpHandler variableHandler = {
     isVariable,
+    NULL,
     evVariable };
 
 char isQuoted(const SExp *p) {
@@ -66,16 +64,14 @@ char isQuoted(const SExp *p) {
         && isSymbol("quote", p->fields.pairContent.car);
 }
 
-void evQuoted(const SExp *exp, Machine *m) {
-    SExp *eCdr = exp->fields.pairContent.cdr;
-    SExp *eCadr = eCdr->fields.pairContent.car;
-    // TODO: validate
-    m->val.tag = regSExp;
-    m->val.data.asSExp = eCadr;
+const SExp *evQuoted(const SExp *exp, Environment *env) {
+    (void)env;
+    return sexpCadr(exp);
 }
 
 SExpHandler quotedHandler = {
     isQuoted,
+    NULL,
     evQuoted };
 
 char isLambda(const SExp *p) {
@@ -83,23 +79,24 @@ char isLambda(const SExp *p) {
         && isSymbol("lambda", p->fields.pairContent.car);
 }
 
-void evLambda(const SExp *exp, Machine *m) {
+const SExp *evLambda(const SExp *exp, Environment *env) {
     // (lambda (x y z) x x z)
     // * lambda-parameters: (x y z) -- cadr gives the parameters
     // * lambda-body: (x x z)       -- cddr gives the body
-    SExp *cdr = exp->fields.pairContent.cdr;
-    SExp *lamParam = cdr->fields.pairContent.car;
-    SExp *lamBody = cdr->fields.pairContent.cdr;
+    SExp *cdr = sexpCdr(exp);
+    SExp *lamParam = sexpCar(cdr);
+    SExp *lamBody = sexpCdr(cdr);
 
     LambdaObject *lo = calloc(1,sizeof(LambdaObject));
     lo->parameters = lamParam;
     lo->body = lamBody;
-    lo->env = m->env.data.asEnv;
+    lo->env = env;
 
-    m->val.tag = regLamda;
-    m->val.data.asLambda = lo;
+    pointerManagerRegister(lo);
+    return lo;
 }
 
 SExpHandler lambdaHandler = {
     isLambda,
+    NULL,
     evLambda };

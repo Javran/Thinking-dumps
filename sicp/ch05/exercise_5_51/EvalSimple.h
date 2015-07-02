@@ -9,10 +9,10 @@ char isVariable(const SExp *);
 char isQuoted(const SExp *);
 char isLambda(const SExp *);
 
-void evSelfEval(const SExp*, Machine *);
-void evVariable(const SExp*, Machine *);
-void evQuoted(const SExp*, Machine *);
-void evLambda(const SExp*, Machine *);
+const SExp *evSelfEval(const SExp*, Environment *);
+const SExp *evVariable(const SExp*, Environment *);
+const SExp *evQuoted(const SExp*, Environment *);
+const SExp *evLambda(const SExp*, Environment *);
 
 SExpHandler selfEvaluatingHandler;
 SExpHandler variableHandler;
