@@ -84,6 +84,9 @@ void freeSExp(SExp *p) {
                /* boolExp should never be allocated at run time
                 */);
         return;
+    case sexpLamObj:
+        free(p->fields.pLamObj);
+        break;
     }
     memset(p,0x00,sizeof(SExp));
     free(p);
@@ -156,6 +159,9 @@ void printSExp(FILE *f, SExp *p) {
     case sexpPair:
         printPairL(f,p);
         break;
+    case sexpLamObj:
+        fprintf(f,"<LamObj:%p>",(void *)p->fields.pLamObj);
+        break;
     }
 }
 
@@ -180,6 +186,8 @@ DynArr *sexpListToDynArr(const SExp *exp) {
 char isSExpEqual(const SExp *e1, const SExp *e2) {
     assert( e1 /* e1 should not be NULL */ );
     assert( e2 /* e2 should not be NULL */ );
+    assert( sexpLamObj != e1->tag && sexpLamObj != e2 -> tag
+            /* cannot test equality involving LambdaObject */);
 
     if (e1 == e2) return 1;
 
@@ -203,6 +211,8 @@ char isSExpEqual(const SExp *e1, const SExp *e2) {
         case sexpPair:
             return isSExpEqual(sexpCar(e1),sexpCar(e2))
                 && isSExpEqual(sexpCdr(e1),sexpCdr(e2));
+        case sexpLamObj:
+            assert(0 /* dead code */);
         }
         assert(0 /* dead code */);
     } else {

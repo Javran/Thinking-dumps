@@ -1,8 +1,8 @@
-#include "SExp.h"
-#include "Environment.h"
-
 #ifndef _JAVEV_REGISTER_H_
 #define _JAVEV_REGISTER_H_
+
+#include "SExp.h"
+#include "Environment.h"
 
 // TODO: Register -> EvValue when
 // the Machine can be totally removed.

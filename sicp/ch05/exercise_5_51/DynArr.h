@@ -1,7 +1,7 @@
-#include <stdlib.h>
-
 #ifndef _JAVEV_DYNARR_H_
 #define _JAVEV_DYNARR_H_
+
+#include "Common.h"
 
 typedef void (*DynArrVisitor)(void *);
 typedef void * (*DynArrFoldLeftAccumulator)(void *, void *);

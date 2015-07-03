@@ -1,9 +1,9 @@
+#ifndef _JAVEV_PARSER_H_
+#define _JAVEV_PARSER_H_
+
 #include "DynArr.h"
 #include "Token.h"
 #include "SExp.h"
-
-#ifndef _JAVEV_PARSER_H_
-#define _JAVEV_PARSER_H_
 
 typedef struct {
     DynArr *tokenList;

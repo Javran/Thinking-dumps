@@ -1,8 +1,8 @@
-#include "Common.h"
-#include "Frame.h"
-
 #ifndef _JAVEV_ENVIRONMENT_H_
 #define _JAVEV_ENVIRONMENT_H_
+
+#include "Common.h"
+#include "Frame.h"
 
 struct Environment;
 

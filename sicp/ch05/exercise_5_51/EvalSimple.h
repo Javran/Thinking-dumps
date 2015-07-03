@@ -1,7 +1,7 @@
-#include "Machine.h"
-
 #ifndef _JAVEV_EVALSIMPLE_H_
 #define _JAVEV_EVALSIMPLE_H_
+
+#include "Machine.h"
 
 char isSymbol(const char *, const SExp *);
 char isSelfEvaluating(const SExp *);
@@ -18,13 +18,5 @@ SExpHandler selfEvaluatingHandler;
 SExpHandler variableHandler;
 SExpHandler quotedHandler;
 SExpHandler lambdaHandler;
-
-typedef struct {
-    // TODO: might change to some
-    // other type in future.
-    SExp* parameters;
-    SExp* body;
-    Environment* env;
-} LambdaObject;
 
 #endif

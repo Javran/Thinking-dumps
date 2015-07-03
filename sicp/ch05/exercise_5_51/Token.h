@@ -1,7 +1,7 @@
-#include "Common.h"
-
 #ifndef _JAVEV_TOKEN_H_
 #define _JAVEV_TOKEN_H_
+
+#include "Common.h"
 
 // representing tokens
 typedef enum {

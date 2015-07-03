@@ -1,7 +1,7 @@
-#include "Register.h"
-
 #ifndef _JAVEV_MACHINE_H_
 #define _JAVEV_MACHINE_H_
+
+#include "Register.h"
 
 // TODO: get rid of Machine,
 // the machine is builtin with c language!

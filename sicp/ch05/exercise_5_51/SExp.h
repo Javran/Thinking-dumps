@@ -1,7 +1,8 @@
-#include "Common.h"
-
 #ifndef _JAVEV_SEXP_H_
 #define _JAVEV_SEXP_H_
+
+#include "Common.h"
+#include "Environment.h"
 
 typedef enum {
     sexpSymbol,
@@ -10,6 +11,11 @@ typedef enum {
     sexpBool,
     sexpNil,
     sexpPair,
+    // this is a workaround for making lambda object pointers
+    // a valid member of this type.
+    // the lambda objects should be used internally only,
+    // and equality tests involving lambda objects are invalid.
+    sexpLamObj,
 } SExpTag;
 
 // for breaking circular definition,
@@ -21,12 +27,21 @@ typedef struct {
     struct SExp *cdr;
 } PairContent;
 
+typedef struct {
+    // TODO: might change to some
+    // other type in future.
+    struct SExp* parameters;
+    struct SExp* body;
+    Environment* env;
+} LambdaObject;
+
 typedef union {
     char *symbolName;
     char *stringContent;
     long integerContent;
     char truthValue;
     PairContent pairContent;
+    LambdaObject *pLamObj;
 } SExpFields;
 
 typedef struct SExp {
