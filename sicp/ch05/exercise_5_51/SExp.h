@@ -55,6 +55,7 @@ SExp *newInteger(long);
 SExp *newBool(char);
 SExp *newNil();
 SExp *newPair(SExp *, SExp *);
+SExp *newLambdaObject(LambdaObject *);
 void freeSExp(SExp *);
 void printSExp(FILE *, SExp *);
 

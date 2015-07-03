@@ -58,6 +58,12 @@ SExp *newPair(SExp *car, SExp *cdr) {
     return p;
 }
 
+SExp *newLambdaObject(LambdaObject *obj) {
+    SExp *p = allocWithTag(sexpLamObj);
+    p->fields.pLamObj = obj;
+    return p;
+}
+
 void freeSExp(SExp *p) {
     if (!p) return;
     switch (p->tag) {

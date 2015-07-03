@@ -92,10 +92,11 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     lo->body = lamBody;
     lo->env = env;
 
-    pointerManagerRegister(lo);
+    SExp *result = newLambdaObject(lo);
+    pointerManagerRegister(result);
     // TODO: lambda objects are not S-expressions, how should we
     // deal with it properly?
-    return lo;
+    return result;
 }
 
 SExpHandler lambdaHandler = {
