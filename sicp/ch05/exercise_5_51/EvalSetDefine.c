@@ -13,9 +13,7 @@ const SExp *evAssignment(const SExp *exp, Environment *env) {
     if (fe) {
         const SExp *result = evalDispatch1(expVal, env);
         fe->val = (void *) result;
-        const SExp *retVal = newNil();
-        pointerManagerRegister((void *)retVal);
-        return retVal;
+        return newNil();
     } else {
         return NULL;
     }
@@ -53,9 +51,8 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
     const SExp *result = evalDispatch1(expVal, env);
     envInsert(env, varName, (void *) result);
 
-    const SExp *retVal = newNil();
-    pointerManagerRegister((void *)retVal);
-    return retVal;
+    // TODO: should we assume nil to be a static object?
+    return newNil();
 
 }
 
