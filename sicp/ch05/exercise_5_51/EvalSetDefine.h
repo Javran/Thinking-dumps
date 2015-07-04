@@ -5,7 +5,7 @@
 #include "EvalSimple.h"
 
 char isAssignment(const SExp *);
-void evAssignment(const SExp *, Machine *);
+const SExp *evAssignment(const SExp *, Environment *);
 char isDefinition(const SExp *);
 void evDefinition(const SExp *, Machine *);
 

@@ -5,21 +5,22 @@ char isAssignment(const SExp *p) {
         && isSymbol("set!", sexpCar(p));
 }
 
-void evAssignment(const SExp *exp, Machine *m) {
+const SExp *evAssignment(const SExp *exp, Environment *env) {
     char *varName = sexpCadr( exp )->fields.symbolName;
     SExp *expVal = sexpCddr( exp );
-    Environment *env = m->env.data.asEnv;
     FrameEntry *fe = envLookup(env, varName);
-    assert( fe /* the frame entry must exist */ );
-    evalDispatch(expVal, m);
-    const SExp *result = m->val.data.asSExp;
-    fe->val = (void *) result;
-    // TODO: not sure if this decision is correct,
-    // but let's store SExp * in the environment
+    if (fe) {
+        const SExp *result = evalDispatch1(expVal, env);
+        fe->val = (void *) result;
+        return newNil();
+    } else {
+        return NULL;
+    }
 }
 
 SExpHandler assignmentHandler = {
     isAssignment,
+    NULL,
     evAssignment
 };
 
