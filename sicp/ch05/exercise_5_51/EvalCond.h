@@ -4,7 +4,7 @@
 #include "Machine.h"
 
 char isIf(const SExp *);
-void evIf(const SExp *, Machine *);
+const SExp *evIf(const SExp *, Environment *);
 
 SExpHandler ifHandler;
 
