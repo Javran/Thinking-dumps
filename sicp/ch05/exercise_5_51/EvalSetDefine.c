@@ -1,4 +1,5 @@
 #include "EvalSetDefine.h"
+#include "PointerManager.h"
 
 char isAssignment(const SExp *p) {
     return sexpPair == p->tag
@@ -12,7 +13,9 @@ const SExp *evAssignment(const SExp *exp, Environment *env) {
     if (fe) {
         const SExp *result = evalDispatch1(expVal, env);
         fe->val = (void *) result;
-        return newNil();
+        const SExp *retVal = newNil();
+        pointerManagerRegister((void *)retVal);
+        return retVal;
     } else {
         return NULL;
     }
@@ -29,7 +32,7 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", sexpCar(p));
 }
 
-void evDefinition(const SExp *exp, Machine *m) {
+const SExp *evDefinition(const SExp *exp, Environment *env) {
     SExp *expLook = sexpCadr( exp );
     SExp *expVar = NULL;
     SExp *expVal = NULL;
@@ -46,17 +49,18 @@ void evDefinition(const SExp *exp, Machine *m) {
         expVal = newPair(newSymbol( "lambda" ),
                          newPair(args, body));
     }
-
     char *varName = expVar->fields.symbolName;
-//    SExp *expVal = sexpCddr( exp );
-    Environment *env = m->env.data.asEnv;
-    evalDispatch(expVal, m);
-    // TODO
-    const SExp *result = m->val.data.asSExp;
+    const SExp *result = evalDispatch1(expVal, env);
     envInsert(env, varName, (void *) result);
+
+    const SExp *retVal = newNil();
+    pointerManagerRegister((void *)retVal);
+    return retVal;
+
 }
 
 SExpHandler definitionHandler = {
     isDefinition,
+    NULL,
     evDefinition
 };
