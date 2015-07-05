@@ -13,7 +13,22 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
         // now we are ready for interpreting these s-expressions
         pointerManagerInit();
 
+        const SExp *result = NULL;
+        // TODO: proper env initialization
+        Environment *env = NULL;
+        void * it;
+        for (it = dynArrBegin(pSExpList);
+             it != dynArrEnd(pSExpList);
+             it = dynArrNext(pSExpList, it)) {
+            result = evalDispatch1((SExp *)it, env);
+            if (!result) {
+                // TODO:
+                // evaluation failed, stop evaluation at this point
+                // maybe giving more messages will be better
+                break;
+            }
 
+        }
         pointerManagerFinalize();
     }
     // releasing resources
