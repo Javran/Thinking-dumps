@@ -1,10 +1,5 @@
 #include "EvalSeq.h"
 
-char isDefinition(const SExp *p) {
-    return sexpPair == p->tag
-        && isSymbol("define", sexpCar(p));
-}
-
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
 const SExp *evSequence(const SExp *unev, Environment *env) {
@@ -36,5 +31,5 @@ const SExp *evBegin(const SExp *exp, Environment *env) {
 
 SExpHandler beginHandler = {
     isBegin,
-    NULL,
-    evBegin };
+    evBegin
+};

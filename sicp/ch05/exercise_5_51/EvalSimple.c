@@ -39,7 +39,6 @@ const SExp *evSelfEval(const SExp *exp, Environment *env) {
 
 SExpHandler selfEvaluatingHandler = {
     isSelfEvaluating,
-    NULL,
     evSelfEval };
 
 char isVariable(const SExp *p) {
@@ -56,8 +55,8 @@ const SExp *evVariable(const SExp* exp, Environment *env) {
 
 SExpHandler variableHandler = {
     isVariable,
-    NULL,
-    evVariable };
+    evVariable
+};
 
 char isQuoted(const SExp *p) {
     return sexpPair == p->tag
@@ -71,8 +70,8 @@ const SExp *evQuoted(const SExp *exp, Environment *env) {
 
 SExpHandler quotedHandler = {
     isQuoted,
-    NULL,
-    evQuoted };
+    evQuoted
+};
 
 char isLambda(const SExp *p) {
     return sexpPair == p->tag
@@ -101,5 +100,5 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
 
 SExpHandler lambdaHandler = {
     isLambda,
-    NULL,
-    evLambda };
+    evLambda
+};

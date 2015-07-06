@@ -21,7 +21,6 @@ const SExp *evAssignment(const SExp *exp, Environment *env) {
 
 SExpHandler assignmentHandler = {
     isAssignment,
-    NULL,
     evAssignment
 };
 
@@ -53,11 +52,9 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
 
     // TODO: should we assume nil to be a static object?
     return newNil();
-
 }
 
 SExpHandler definitionHandler = {
     isDefinition,
-    NULL,
     evDefinition
 };

@@ -35,7 +35,7 @@ void evalDispatch(const SExp *exp, Machine *m) {
     for (i=0; i<evalHandlerCount; ++i) {
         SExpHandler *h = evalHandlers[i];
         if (h->pred(exp)) {
-            h->eval(exp,m);
+            // h->eval(exp,m);
             return;
         }
     }
@@ -49,7 +49,7 @@ const SExp *evalDispatch1(const SExp *exp, Environment *env) {
     for (i=0; i<evalHandlerCount; ++i) {
         SExpHandler *h = evalHandlers[i];
         if (h->pred(exp))
-            return h->eval1(exp,env);
+            return h->eval(exp,env);
     }
     return NULL;
 }
