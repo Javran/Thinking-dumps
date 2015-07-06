@@ -13,13 +13,13 @@ const SExp *evIf(const SExp *exp, Environment *env) {
     SExp *expConseq = sexpCar(expRemaining);
     SExp *expAlter = sexpCadr(expRemaining);
 
-    const SExp *condResult = evalDispatch1(expPred,env);
+    const SExp *condResult = evalDispatch(expPred,env);
     if (condResult) {
         char isFalse = sexpBool == condResult->tag && \
             !condResult->fields.truthValue;
-        return evalDispatch1(isFalse
-                             ? expAlter
-                             : expConseq, env);
+        return evalDispatch(isFalse
+                            ? expAlter
+                            : expConseq, env);
     } else {
         return NULL;
     }
@@ -28,5 +28,5 @@ const SExp *evIf(const SExp *exp, Environment *env) {
 
 SExpHandler ifHandler = {
     isIf,
-    NULL,
-    evIf };
+    evIf
+};

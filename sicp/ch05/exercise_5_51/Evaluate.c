@@ -20,7 +20,7 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
         for (it = dynArrBegin(pSExpList);
              it != dynArrEnd(pSExpList);
              it = dynArrNext(pSExpList, it)) {
-            result = evalDispatch1((SExp *)it, env);
+            result = evalDispatch((SExp *)it, env);
             if (!result) {
                 // TODO:
                 // evaluation failed, stop evaluation at this point

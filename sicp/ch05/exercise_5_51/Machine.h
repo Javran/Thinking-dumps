@@ -39,7 +39,6 @@ typedef struct {
     SExpEval eval;
 } SExpHandler;
 
-void evalDispatch(const SExp *, Machine *);
-const SExp *evalDispatch1(const SExp *, Environment *);
+const SExp *evalDispatch(const SExp *, Environment *);
 
 #endif

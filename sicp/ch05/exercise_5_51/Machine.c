@@ -29,21 +29,7 @@ const size_t evalHandlerCount =
 // TODO: it might be possible to make some of the arguments
 // explicit. Although having access to the machine object is enough,
 // I still think we can benefit from this.
-void evalDispatch(const SExp *exp, Machine *m) {
-    // INVARIANT: every branch should end with a return
-    size_t i;
-    for (i=0; i<evalHandlerCount; ++i) {
-        SExpHandler *h = evalHandlers[i];
-        if (h->pred(exp)) {
-            // h->eval(exp,m);
-            return;
-        }
-    }
-
-    // TODO: not handled expressions
-}
-
-const SExp *evalDispatch1(const SExp *exp, Environment *env) {
+const SExp *evalDispatch(const SExp *exp, Environment *env) {
     // INVARIANT: every branch should end with a return
     size_t i;
     for (i=0; i<evalHandlerCount; ++i) {

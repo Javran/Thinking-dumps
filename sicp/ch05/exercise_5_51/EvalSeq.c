@@ -8,7 +8,7 @@ const SExp *evSequence(const SExp *unev, Environment *env) {
     while (! isLastExp( unev ) ) {
         firstExp = sexpCar( unev );
         // TODO
-        evalDispatch1(firstExp,env);
+        evalDispatch(firstExp,env);
         unev = sexpCdr( unev );
     }
 
@@ -16,7 +16,7 @@ const SExp *evSequence(const SExp *unev, Environment *env) {
     // to keep information on stack
     // and we make a tailing call to evalDispatch
     firstExp = sexpCar( unev );
-    return evalDispatch1(firstExp,env);
+    return evalDispatch(firstExp,env);
 }
 
 char isBegin(const SExp *p) {

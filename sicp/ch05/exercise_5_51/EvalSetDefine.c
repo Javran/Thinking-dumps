@@ -11,7 +11,7 @@ const SExp *evAssignment(const SExp *exp, Environment *env) {
     SExp *expVal = sexpCddr( exp );
     FrameEntry *fe = envLookup(env, varName);
     if (fe) {
-        const SExp *result = evalDispatch1(expVal, env);
+        const SExp *result = evalDispatch(expVal, env);
         fe->val = (void *) result;
         return newNil();
     } else {
@@ -47,7 +47,7 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
                          newPair(args, body));
     }
     char *varName = expVar->fields.symbolName;
-    const SExp *result = evalDispatch1(expVal, env);
+    const SExp *result = evalDispatch(expVal, env);
     envInsert(env, varName, (void *) result);
 
     // TODO: should we assume nil to be a static object?
