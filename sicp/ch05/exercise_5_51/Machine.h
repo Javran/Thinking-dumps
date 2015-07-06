@@ -1,23 +1,12 @@
 #ifndef _JAVEV_MACHINE_H_
 #define _JAVEV_MACHINE_H_
 
-#include "Register.h"
+#include "SExp.h"
+#include "Environment.h"
 
 // TODO: get rid of Machine,
 // the machine is builtin with c language!
-
-typedef struct {
-    // TODO: potential memory leak might be caused
-    // when the old value of a register
-    // is not deallocated properly?
-    // TODO: it might be possible to totally get rid of "env" and "val"
-    // registers since they don't, and shouldn't be something available globally
-    Register env,val;
-    // TODO: by being aware of the fact that we
-    // are using C, we might actually get rid of "continue"
-    // register by letting the compiler to take care
-    // some of the control for us!
-} Machine;
+// TODO: document about this
 
 // S-expresion related.
 typedef char (*SExpPredicate)(const SExp *);
