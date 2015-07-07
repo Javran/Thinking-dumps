@@ -2,17 +2,45 @@
 #include <check.h>
 #include "../Evaluate.h"
 
-// DynArr should be initialized and freed successfully.
+// evaluating simple expressions
 START_TEST (test_EvalSimple_int) {
     DynArr *pSExpList = parseSExps("1234", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
     ck_assert_int_eq(dynArrCount(pSExpList), 1);
+    // TODO: environment?
+
     SExp expect = { sexpInteger, { .integerContent  = 1234} };
     SExp **pActual = dynArrBegin(pSExpList);
-
     ck_assert(isSExpEqual(&expect,*pActual));
+
     freeSExps(pSExpList);
 } END_TEST
+
+/*
+START_TEST (test_EvalSimple_str) {
+    DynArr *pSExpList = parseSExps("\"string!\"", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpString, { .stringContent = "string!"} };
+    SExp **pActual = dynArrBegin(pSExpList);
+    ck_assert(isSExpEqual(&expect,*pActual));
+
+    freeSExps(pSExpList);
+} END_TEST
+
+START_TEST (test_EvalSimple_quote1) {
+    DynArr *pSExpList = parseSExps("(quote quoted)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpSymbol, { .symbolName = "quoted" } };
+    SExp **pActual = dynArrBegin(pSExpList);
+    ck_assert(isSExpEqual(&expect,*pActual));
+
+    freeSExps(pSExpList);
+} END_TEST */
+
 
 Suite * evalSimpleSuite(void) {
     Suite *s;
@@ -21,6 +49,8 @@ Suite * evalSimpleSuite(void) {
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, test_EvalSimple_int);
+//    tcase_add_test(tc_core, test_EvalSimple_str);
+//    tcase_add_test(tc_core, test_EvalSimple_quote1);
 
     s = suite_create("EvalSimple");
     suite_add_tcase(s, tc_core);
