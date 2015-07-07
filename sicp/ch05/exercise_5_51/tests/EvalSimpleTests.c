@@ -8,8 +8,9 @@ START_TEST (test_EvalSimple_int) {
     ck_assert_ptr_ne(pSExpList, NULL);
     ck_assert_int_eq(dynArrCount(pSExpList), 1);
     SExp expect = { sexpInteger, { .integerContent  = 1234} };
+    SExp **pActual = dynArrBegin(pSExpList);
 
-    ck_assert(isSExpEqual(&expect,dynArrBegin(pSExpList)));
+    ck_assert(isSExpEqual(&expect,*pActual));
     freeSExps(pSExpList);
 } END_TEST
 

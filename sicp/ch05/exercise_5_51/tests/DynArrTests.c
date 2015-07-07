@@ -16,7 +16,7 @@ int *testFold(int *state, int *next) {
 
 // DynArr foldl test
 START_TEST (test_DynArr_foldl) {
-   DynArr testA = {0};
+    DynArr testA = {0};
     dynArrInit(&testA, sizeof(int));
     int i;
     int state = 0;
