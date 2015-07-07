@@ -16,11 +16,11 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
         const SExp *result = NULL;
         // TODO: proper env initialization
         Environment *env = NULL;
-        void * it;
+        SExp ** it;
         for (it = dynArrBegin(pSExpList);
              it != dynArrEnd(pSExpList);
              it = dynArrNext(pSExpList, it)) {
-            result = evalDispatch((SExp *)it, env);
+            result = evalDispatch(*it, env);
             if (!result) {
                 // TODO:
                 // evaluation failed, stop evaluation at this point
