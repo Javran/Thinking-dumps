@@ -4,15 +4,18 @@
 extern Suite *dynArrSuite(void);
 extern Suite *frameSuite(void);
 extern Suite *environmentSuite(void);
+extern Suite *evalSimpleSuite(void);
 
 int main(void) {
     Suite *sDynArr = dynArrSuite();
     Suite *sFrame = frameSuite();
     Suite *sEnvironment = environmentSuite();
+    Suite *sEvalSimple = evalSimpleSuite();
 
     SRunner *sr = srunner_create(sDynArr);
     srunner_add_suite(sr,sFrame);
     srunner_add_suite(sr,sEnvironment);
+    srunner_add_suite(sr,sEvalSimple);
     srunner_run_all(sr, CK_NORMAL);
 
     int number_failed = srunner_ntests_failed(sr);
