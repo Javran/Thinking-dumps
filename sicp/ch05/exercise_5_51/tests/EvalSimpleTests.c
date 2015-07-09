@@ -11,8 +11,7 @@ START_TEST (test_EvalSimple_int) {
 
     SExp expect = { sexpInteger, { .integerContent  = 1234} };
     SExp **pExp = dynArrBegin(pSExpList);
-    // the environment is left NULL intentionally
-    // and the evaluation should not and will not examine the environment
+    // note that NULL is now a valid environment with no bindings
     const SExp *result = evSelfEval(*pExp, NULL);
 
     ck_assert_ptr_ne(result, NULL);
@@ -68,6 +67,22 @@ START_TEST (test_EvalSimple_quote2) {
     freeSExp(expect);
 } END_TEST
 
+START_TEST (test_EvalSimple_var1) {
+    DynArr *pSExpList = parseSExps("var", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpInteger, { .integerContent = 12345 } };
+    Environment env = {0};
+    envInit(&env);
+    envInsert(&env, "var", &expect);
+    SExp **pExp = dynArrBegin(pSExpList);
+    const SExp *result = evVariable(*pExp, &env);
+    ck_assert_ptr_ne(result, NULL);
+    ck_assert(isSExpEqual(&expect,result));
+    freeSExps(pSExpList);
+    envFree(&env);
+} END_TEST
 
 Suite * evalSimpleSuite(void) {
     Suite *s;
@@ -79,6 +94,7 @@ Suite * evalSimpleSuite(void) {
     tcase_add_test(tc_core, test_EvalSimple_str);
     tcase_add_test(tc_core, test_EvalSimple_quote1);
     tcase_add_test(tc_core, test_EvalSimple_quote2);
+    tcase_add_test(tc_core, test_EvalSimple_var1);
 
     s = suite_create("EvalSimple");
     suite_add_tcase(s, tc_core);
