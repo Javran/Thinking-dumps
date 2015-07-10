@@ -87,6 +87,32 @@ START_TEST (test_EvalSimple_var1) {
     envFree(&env);
 } END_TEST
 
+// variable with nested environment
+START_TEST (test_EvalSimple_var2) {
+    DynArr *pSExpList = parseSExps("var", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpInteger, { .integerContent = 12345 } };
+    SExp another = { sexpInteger, { .integerContent = 11111 } };
+    Environment env1 = {0};
+    envInit(&env1);
+    envInsert(&env1, "var", &expect);
+
+    Environment env2 = {0};
+    envInit(&env2);
+    envInsert(&env2, "var", &another);
+    envSetParent(&env2, &env1);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    const SExp *result = evVariable(*pExp, &env2);
+    ck_assert_ptr_ne(result, NULL);
+    ck_assert(isSExpEqual(&another,result));
+    freeSExps(pSExpList);
+    envFree(&env1);
+    envFree(&env2);
+} END_TEST
+
 Suite * evalSimpleSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -98,6 +124,7 @@ Suite * evalSimpleSuite(void) {
     tcase_add_test(tc_core, test_EvalSimple_quote1);
     tcase_add_test(tc_core, test_EvalSimple_quote2);
     tcase_add_test(tc_core, test_EvalSimple_var1);
+    tcase_add_test(tc_core, test_EvalSimple_var2);
 
     s = suite_create("EvalSimple");
     suite_add_tcase(s, tc_core);
