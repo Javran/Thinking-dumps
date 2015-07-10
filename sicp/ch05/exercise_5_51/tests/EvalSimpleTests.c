@@ -19,6 +19,38 @@ START_TEST (test_EvalSimple_int) {
     freeSExps(pSExpList);
 } END_TEST
 
+// boolean value, true
+START_TEST (test_EvalSimple_boot_true) {
+    DynArr *pSExpList = parseSExps("#t", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpBool, { .truthValue = 1 } };
+    SExp **pExp = dynArrBegin(pSExpList);
+    // note that NULL is now a valid environment with no bindings
+    const SExp *result = evSelfEval(*pExp, NULL);
+
+    ck_assert_ptr_ne(result, NULL);
+    ck_assert(isSExpEqual(&expect,result));
+    freeSExps(pSExpList);
+} END_TEST
+
+// boolean value, false
+START_TEST (test_EvalSimple_boot_false) {
+    DynArr *pSExpList = parseSExps("#f", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpBool, { .truthValue = 0 } };
+    SExp **pExp = dynArrBegin(pSExpList);
+    // note that NULL is now a valid environment with no bindings
+    const SExp *result = evSelfEval(*pExp, NULL);
+
+    ck_assert_ptr_ne(result, NULL);
+    ck_assert(isSExpEqual(&expect,result));
+    freeSExps(pSExpList);
+} END_TEST
+
 // simple string
 START_TEST (test_EvalSimple_str) {
     DynArr *pSExpList = parseSExps("\"string!\"", stderr);
@@ -120,6 +152,8 @@ Suite * evalSimpleSuite(void) {
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, test_EvalSimple_int);
+    tcase_add_test(tc_core, test_EvalSimple_boot_true);
+    tcase_add_test(tc_core, test_EvalSimple_boot_false);
     tcase_add_test(tc_core, test_EvalSimple_str);
     tcase_add_test(tc_core, test_EvalSimple_quote1);
     tcase_add_test(tc_core, test_EvalSimple_quote2);

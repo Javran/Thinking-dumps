@@ -23,7 +23,6 @@ const SExp *evIf(const SExp *exp, Environment *env) {
     } else {
         return NULL;
     }
-
 }
 
 SExpHandler ifHandler = {

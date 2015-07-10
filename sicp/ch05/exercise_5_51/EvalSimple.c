@@ -78,6 +78,7 @@ char isLambda(const SExp *p) {
         && isSymbol("lambda", p->fields.pairContent.car);
 }
 
+// TODO: need test for lambda expression
 const SExp *evLambda(const SExp *exp, Environment *env) {
     // (lambda (x y z) x x z)
     // * lambda-parameters: (x y z) -- cadr gives the parameters
