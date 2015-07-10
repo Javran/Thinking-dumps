@@ -19,7 +19,7 @@ START_TEST (test_EvalSimple_int) {
     freeSExps(pSExpList);
 } END_TEST
 
-
+// simple string
 START_TEST (test_EvalSimple_str) {
     DynArr *pSExpList = parseSExps("\"string!\"", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -34,6 +34,7 @@ START_TEST (test_EvalSimple_str) {
     freeSExps(pSExpList);
 } END_TEST
 
+// a quoted expression
 START_TEST (test_EvalSimple_quote1) {
     DynArr *pSExpList = parseSExps("(quote quoted)", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -48,6 +49,7 @@ START_TEST (test_EvalSimple_quote1) {
     freeSExps(pSExpList);
 } END_TEST
 
+// a quoted expression (with more complicated one inside)
 START_TEST (test_EvalSimple_quote2) {
     DynArr *pSExpList = parseSExps("(quote (a b c))", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -67,6 +69,7 @@ START_TEST (test_EvalSimple_quote2) {
     freeSExp(expect);
 } END_TEST
 
+// simple variable test
 START_TEST (test_EvalSimple_var1) {
     DynArr *pSExpList = parseSExps("var", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
