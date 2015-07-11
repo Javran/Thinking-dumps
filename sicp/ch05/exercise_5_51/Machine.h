@@ -13,7 +13,6 @@ typedef char (*SExpPredicate)(const SExp *);
 typedef const SExp *(*SExpEval)(const SExp *, Environment *);
 
 // TODO: overhaul plan:
-// * make eval-handler return "SExp *" and accept also an environment
 // * eliminate Machine
 // * explain why we don't need a Machine
 // * document
