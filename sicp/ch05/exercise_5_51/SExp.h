@@ -4,6 +4,9 @@
 #include "Common.h"
 #include "Environment.h"
 
+// NOTE: one important thing to know about scheme is that
+// the only "false" value is "#f", and any other thing is considered "true"
+// so (if ? ? ?) can work even if the predicate part does not evaluate to a "sexpBool".
 typedef enum {
     sexpSymbol,
     sexpString,
