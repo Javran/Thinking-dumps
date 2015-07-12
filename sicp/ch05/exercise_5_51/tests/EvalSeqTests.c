@@ -12,7 +12,7 @@ START_TEST (test_EvalSeq_one) {
     SExp expect = { sexpInteger, { .integerContent  = 1234} };
     SExp **pExp = dynArrBegin(pSExpList);
     // note that NULL is now a valid environment with no bindings
-    const SExp *result = evSelfEval(*pExp, NULL);
+    const SExp *result = evBegin(*pExp, NULL);
 
     ck_assert_ptr_ne(result, NULL);
     ck_assert(isSExpEqual(&expect,result));
