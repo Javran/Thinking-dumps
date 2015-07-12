@@ -4,14 +4,23 @@
 // requires unev to store the sequence of expressions
 const SExp *evSequence(const SExp *unev, Environment *env) {
     SExp *firstExp = NULL;
-    // TODO: the list is assume to be non-empty
+
+    if (! unev || sexpPair != unev->tag) {
+        // either something wrong is happening (unev == NULL)
+        // or the tag of unev is unexpected (expecting a non-empty list
+        // whose head should be a pair
+        return NULL;
+    }
+    // now we can safely assume the list to be non-empty
     while (! isLastExp( unev ) ) {
         firstExp = sexpCar( unev );
-        // TODO
         evalDispatch(firstExp,env);
         unev = sexpCdr( unev );
+        // it is more safe to check the value of unev
+        // to make sure it is a non-empty list.
+        // but let's assume the "isBegin" predicate has already
+        // taken care of that (yes we are being sloppy here)
     }
-
     // for the last expression, there is no need
     // to keep information on stack
     // and we make a tailing call to evalDispatch
@@ -25,8 +34,7 @@ char isBegin(const SExp *p) {
 }
 
 const SExp *evBegin(const SExp *exp, Environment *env) {
-    SExp *beginActions = sexpCdr(exp);
-    return evSequence(beginActions,env);
+    return evSequence(sexpCdr(exp),env);
 }
 
 SExpHandler beginHandler = {
