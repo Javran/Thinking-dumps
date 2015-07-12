@@ -8,12 +8,16 @@ char isAssignment(const SExp *p) {
 
 const SExp *evAssignment(const SExp *exp, Environment *env) {
     char *varName = sexpCadr( exp )->fields.symbolName;
-    SExp *expVal = sexpCddr( exp );
+    SExp *expVal = sexpCar(sexpCddr( exp ));
     FrameEntry *fe = envLookup(env, varName);
     if (fe) {
         const SExp *result = evalDispatch(expVal, env);
-        fe->val = (void *) result;
-        return newNil();
+        if (result) {
+            fe->val = (void *) result;
+            return newNil();
+        } else {
+            return NULL;
+        }
     } else {
         return NULL;
     }
