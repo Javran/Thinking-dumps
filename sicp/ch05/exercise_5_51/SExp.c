@@ -99,7 +99,7 @@ void freeSExp(SExp *p) {
 }
 
 // this function is only intended to be called by "printPairR"
-void printPairR(FILE *f, SExp *p) {
+void printPairR(FILE *f, const SExp *p) {
     // according to the situation, the following things might happen:
     switch (p->tag) {
     case sexpNil:
@@ -134,7 +134,7 @@ void printPairR(FILE *f, SExp *p) {
 // pretty prints a pair by first outputing
 // "({a}" and then transfering control to "printPairR"
 // to generate rest of the output.
-void printPairL(FILE *f, SExp *p) {
+void printPairL(FILE *f, const SExp *p) {
     assert(p && p->tag == sexpPair
            /* the second argument should be
             * a valid object of sexpPair
@@ -144,7 +144,7 @@ void printPairL(FILE *f, SExp *p) {
     printPairR(f,p->fields.pairContent.cdr);
 }
 
-void printSExp(FILE *f, SExp *p) {
+void printSExp(FILE *f, const SExp *p) {
     switch (p->tag) {
     case sexpSymbol:
         // in case '%' gets accidentally handled...

@@ -58,7 +58,6 @@ START_TEST (test_EvalSetDefine_define_simple) {
     freeSExps(pSExpList);
 } END_TEST
 
-
 Suite * evalSetDefineSuite(void) {
     Suite *s;
     TCase *tc_core;
