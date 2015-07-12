@@ -32,6 +32,33 @@ START_TEST (test_EvalSetDefine_set) {
     freeSExps(pSExpList);
 } END_TEST
 
+START_TEST (test_EvalSetDefine_define_simple) {
+    DynArr *pSExpList = parseSExps("(define var 1234)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpInteger, { .integerContent = 1234} };
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *nil = newNil();
+
+    Environment env = {0};
+    envInit(&env);
+
+    const SExp *result = evDefinition(*pExp, &env);
+    ck_assert_ptr_eq(result, nil);
+    ck_assert(isSExpEqual(nil,result));
+
+    const FrameEntry *fe = envLookup(&env, "var");
+    ck_assert_ptr_ne(fe, NULL);
+    ck_assert_ptr_ne(fe->val, NULL);
+
+    const SExp *actual = fe->val;
+    ck_assert(isSExpEqual(actual, &expect));
+    envFree(&env);
+    freeSExps(pSExpList);
+} END_TEST
+
+
 Suite * evalSetDefineSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -39,6 +66,7 @@ Suite * evalSetDefineSuite(void) {
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, test_EvalSetDefine_set);
+    tcase_add_test(tc_core, test_EvalSetDefine_define_simple);
 
     s = suite_create("EvalSetDefine");
     suite_add_tcase(s, tc_core);
