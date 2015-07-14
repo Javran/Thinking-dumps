@@ -2,6 +2,7 @@
 #include <check.h>
 #include "../Evaluate.h"
 #include "../EvalSetDefine.h"
+#include "../PointerManager.h"
 
 // set! expression
 START_TEST (test_EvalSetDefine_set) {
@@ -72,7 +73,7 @@ START_TEST (test_EvalSetDefine_define_func) {
     Environment env = {0};
     envInit(&env);
 
-
+    pointerManagerInit();
     const SExp *result = evDefinition(*pExp, &env);
     ck_assert_ptr_eq(result, nil);
     ck_assert(isSExpEqual(nil,result));
@@ -84,6 +85,7 @@ START_TEST (test_EvalSetDefine_define_func) {
 */
     // ???
 
+    pointerManagerFinalize();
     envFree(&env);
     freeSExps(pSExpList);
 } END_TEST
