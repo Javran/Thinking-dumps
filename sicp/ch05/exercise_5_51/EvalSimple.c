@@ -92,6 +92,10 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     lo->body = lamBody;
     lo->env = env;
 
+    // TODO: this is causing memory leak because pointer manager
+    // don't know how to free this object
+    // I think we also need the pointer manager to keep track of
+    // "free" callback functions
     SExp *result = newLambdaObject(lo);
     pointerManagerRegister(result);
     // TODO: lambda objects are not S-expressions, how should we
