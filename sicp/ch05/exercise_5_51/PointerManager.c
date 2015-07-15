@@ -17,24 +17,38 @@
 
 typedef DynArr PointerManagerState;
 
+typedef void *PHandle;
+
+typedef void (*PFreeCallback)(PHandle);
+
+typedef struct {
+    PHandle handle;
+    PFreeCallback callback;
+} PRecord;
+
 DynArr pmState;
 
 void pointerManagerInit() {
     memset(&pmState,0x00, sizeof(pmState));
-    dynArrInit(&pmState, sizeof(void *));
+    dynArrInit(&pmState, sizeof(PRecord));
 }
 
-void freeIfNotNull(void **p) {
-    free(*p);
+void freeIfNotNull(PHandle p) {
+    free(p);
+}
+
+void visitAndFree(PRecord *pr) {
+    pr->callback(pr->handle);
 }
 
 void pointerManagerFinalize() {
-    dynArrVisit(&pmState,(DynArrVisitor)freeIfNotNull);
+    dynArrVisit(&pmState,(DynArrVisitor)visitAndFree);
     dynArrFree(&pmState);
     memset(&pmState,0x00, sizeof(pmState));
 }
 
-void pointerManagerRegister(void *p) {
-    void **newP = dynArrNew(&pmState);
-    *newP = p;
+void pointerManagerRegister(void *h) {
+    PRecord *pr = dynArrNew(&pmState);
+    pr->handle = h;
+    pr->callback = free;
 }
