@@ -40,14 +40,12 @@ void pointerManagerFinalize() {
     memset(&pmState,0x00, sizeof(pmState));
 }
 
-void pointerManagerRegister(PHandle h) {
-    PRecord *pr = dynArrNew(&pmState);
-    pr->handle = h;
-    pr->callback = free;
-}
-
 void pointerManagerRegisterCustom(PHandle h, PFreeCallback cb) {
     PRecord *pr = dynArrNew(&pmState);
     pr->handle = h;
     pr->callback = cb;
+}
+
+void pointerManagerRegister(PHandle h) {
+    pointerManagerRegisterCustom(h,free);
 }
