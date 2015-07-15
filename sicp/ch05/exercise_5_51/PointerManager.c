@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "DynArr.h"
+#include "PointerManager.h"
 
 // the point of PointerManager is to keep pointers allocated during
 // the execution of the program.
@@ -16,10 +17,6 @@
 // is annoying.
 
 typedef DynArr PointerManagerState;
-
-typedef void *PHandle;
-
-typedef void (*PFreeCallback)(PHandle);
 
 typedef struct {
     PHandle handle;
@@ -43,8 +40,14 @@ void pointerManagerFinalize() {
     memset(&pmState,0x00, sizeof(pmState));
 }
 
-void pointerManagerRegister(void *h) {
+void pointerManagerRegister(PHandle h) {
     PRecord *pr = dynArrNew(&pmState);
     pr->handle = h;
     pr->callback = free;
+}
+
+void pointerManagerRegisterCustom(PHandle h, PFreeCallback cb) {
+    PRecord *pr = dynArrNew(&pmState);
+    pr->handle = h;
+    pr->callback = cb;
 }
