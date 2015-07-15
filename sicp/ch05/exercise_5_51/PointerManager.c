@@ -33,10 +33,6 @@ void pointerManagerInit() {
     dynArrInit(&pmState, sizeof(PRecord));
 }
 
-void freeIfNotNull(PHandle p) {
-    free(p);
-}
-
 void visitAndFree(PRecord *pr) {
     pr->callback(pr->handle);
 }
