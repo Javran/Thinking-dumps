@@ -145,6 +145,10 @@ START_TEST (test_EvalSimple_var2) {
     envFree(&env2);
 } END_TEST
 
+// test for lambda expressions is in EvalSetDefineSuite,
+// as the special form of function definition is just a syntactic sugar
+// of binding a lambda expression (object) to a variable
+
 Suite * evalSimpleSuite(void) {
     Suite *s;
     TCase *tc_core;
