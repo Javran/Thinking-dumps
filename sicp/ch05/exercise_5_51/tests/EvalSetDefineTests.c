@@ -82,10 +82,10 @@ START_TEST (test_EvalSetDefine_define_func) {
 
     ck_assert_ptr_ne(fe, NULL);
     ck_assert_ptr_ne(fe->val, NULL);
+
     // we should not rely on the result of equality test on LambdaObjects,
     // instead we want to know whether each component of the LambdaObject
     // is the same
-
     SExp *sexpL = fe->val;
     LambdaObject *lo = sexpL->fields.pLamObj;
 
@@ -94,7 +94,9 @@ START_TEST (test_EvalSetDefine_define_func) {
 
     ck_assert( isSExpEqual(args, lo->parameters) );
     ck_assert( isSExpEqual(body, lo->body) );
-
+    // as the address of "env" is not-relocated during evaluation,
+    // we can also verify it
+    ck_assert_ptr_eq( &env, lo->env );
 
     pointerManagerFinalize();
     envFree(&env);
