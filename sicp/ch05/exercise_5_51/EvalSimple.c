@@ -87,6 +87,8 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     SExp *lamParam = sexpCar(cdr);
     SExp *lamBody = sexpCdr(cdr);
 
+    // the lambda object is allocated at runtime, and is supposed
+    // to be freed when its wrapping SExp is freed.
     LambdaObject *lo = calloc(1,sizeof(LambdaObject));
     lo->parameters = lamParam;
     lo->body = lamBody;
@@ -97,7 +99,7 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     // I think we also need the pointer manager to keep track of
     // "free" callback functions
     SExp *result = newLambdaObject(lo);
-    pointerManagerRegister(result);
+    pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
     // TODO: lambda objects are not S-expressions, how should we
     // deal with it properly?
     return result;

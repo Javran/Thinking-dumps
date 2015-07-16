@@ -76,7 +76,8 @@ START_TEST (test_EvalSetDefine_define_func) {
     pointerManagerInit();
     const SExp *result = evDefinition(*pExp, &env);
     ck_assert_ptr_eq(result, nil);
-    ck_assert(isSExpEqual(nil,result));
+
+    //ck_assert(isSExpEqual(nil,result));
 /*
     const FrameEntry *fe = envLookup(&env, "id-like");
 
@@ -98,7 +99,7 @@ Suite * evalSetDefineSuite(void) {
 
     tcase_add_test(tc_core, test_EvalSetDefine_set);
     tcase_add_test(tc_core, test_EvalSetDefine_define_simple);
-    // tcase_add_test(tc_core, test_EvalSetDefine_define_func);
+    tcase_add_test(tc_core, test_EvalSetDefine_define_func);
 
     s = suite_create("EvalSetDefine");
     suite_add_tcase(s, tc_core);
