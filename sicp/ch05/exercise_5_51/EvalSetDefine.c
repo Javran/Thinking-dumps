@@ -49,11 +49,12 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
         // (cons 'lambda (cons args body))
         expVal = newPair(newSymbol( "lambda" ),
                          newPair(args, body));
+
     }
+
     char *varName = expVar->fields.symbolName;
     const SExp *result = evalDispatch(expVal, env);
     envInsert(env, varName, (void *) result);
-
     // TODO: should we assume nil to be a static object?
     return newNil();
 }

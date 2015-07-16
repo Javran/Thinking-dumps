@@ -47,7 +47,7 @@ START_TEST (test_EvalSetDefine_define_simple) {
     envInit(&env);
 
     const SExp *result = evDefinition(*pExp, &env);
-    ck_assert_ptr_eq(result, nil);
+
     ck_assert(isSExpEqual(nil,result));
 
     const FrameEntry *fe = envLookup(&env, "var");
@@ -75,9 +75,8 @@ START_TEST (test_EvalSetDefine_define_func) {
 
     pointerManagerInit();
     const SExp *result = evDefinition(*pExp, &env);
-    ck_assert_ptr_eq(result, nil);
 
-    //ck_assert(isSExpEqual(nil,result));
+//    ck_assert(isSExpEqual(nil,result));
 /*
     const FrameEntry *fe = envLookup(&env, "id-like");
 
@@ -85,6 +84,11 @@ START_TEST (test_EvalSetDefine_define_func) {
     ck_assert_ptr_ne(fe->val, NULL);
 */
     // ???
+    // we should not rely on the result of equality test on LambdaObjects,
+    // instead we want to know whether each component of the LambdaObject
+    // is the same
+
+    //    LambdaObject *lo = 
 
     pointerManagerFinalize();
     envFree(&env);
