@@ -1,5 +1,5 @@
-#ifndef _JAVEV_DYNARR_H_
-#define _JAVEV_DYNARR_H_
+#ifndef JAVEV_DYNARR_H
+#define JAVEV_DYNARR_H
 
 #include "Common.h"
 

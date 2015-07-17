@@ -1,5 +1,5 @@
-#ifndef _JAVEV_SEXP_H_
-#define _JAVEV_SEXP_H_
+#ifndef JAVEV_SEXP_H
+#define JAVEV_SEXP_H
 
 #include "Common.h"
 #include "Environment.h"

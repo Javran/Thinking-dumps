@@ -1,5 +1,5 @@
-#ifndef _JAVEV_UTIL_H_
-#define _JAVEV_UTIL_H_
+#ifndef JAVEV_UTIL_H
+#define JAVEV_UTIL_H
 
 #include <unistd.h>
 

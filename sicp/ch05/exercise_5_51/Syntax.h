@@ -1,5 +1,5 @@
-#ifndef _JAVEV_SYNTAX_H_
-#define _JAVEV_SYNTAX_H_
+#ifndef JAVEV_SYNTAX_H
+#define JAVEV_SYNTAX_H
 
 // syntax related functions
 int isLetter(char);

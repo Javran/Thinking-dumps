@@ -1,5 +1,5 @@
-#ifndef _JAVEV_EVALUATE_H_
-#define _JAVEV_EVALUATE_H_
+#ifndef JAVEV_EVALUATE_H
+#define JAVEV_EVALUATE_H
 
 #include "Common.h"
 #include "Parser.h"

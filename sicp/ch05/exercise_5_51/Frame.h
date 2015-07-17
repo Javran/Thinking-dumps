@@ -1,5 +1,5 @@
-#ifndef _JAVEV_FRAME_H_
-#define _JAVEV_FRAME_H_
+#ifndef JAVEV_FRAME_H
+#define JAVEV_FRAME_H
 
 #include "DynArr.h"
 

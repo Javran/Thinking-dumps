@@ -1,5 +1,5 @@
-#ifndef _JAVEV_TOKEN_H_
-#define _JAVEV_TOKEN_H_
+#ifndef JAVEV_TOKEN_H
+#define JAVEV_TOKEN_H
 
 #include "Common.h"
 

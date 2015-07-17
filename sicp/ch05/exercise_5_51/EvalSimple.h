@@ -1,5 +1,5 @@
-#ifndef _JAVEV_EVALSIMPLE_H_
-#define _JAVEV_EVALSIMPLE_H_
+#ifndef JAVEV_EVALSIMPLE_H
+#define JAVEV_EVALSIMPLE_H
 
 #include "Evaluate.h"
 

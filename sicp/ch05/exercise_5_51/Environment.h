@@ -1,5 +1,5 @@
-#ifndef _JAVEV_ENVIRONMENT_H_
-#define _JAVEV_ENVIRONMENT_H_
+#ifndef JAVEV_ENVIRONMENT_H
+#define JAVEV_ENVIRONMENT_H
 
 #include "Common.h"
 #include "Frame.h"

@@ -1,5 +1,5 @@
-#ifndef _JAVEV_EVALCOND_H
-#define _JAVEV_EVALCOND_H
+#ifndef JAVEV_EVALCOND_H
+#define JAVEV_EVALCOND_H
 
 #include "Evaluate.h"
 #include "EvalSimple.h"

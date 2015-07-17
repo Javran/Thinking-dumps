@@ -1,5 +1,5 @@
-#ifndef _JAVEV_PARSER_H_
-#define _JAVEV_PARSER_H_
+#ifndef JAVEV_PARSER_H
+#define JAVEV_PARSER_H
 
 #include "DynArr.h"
 #include "Token.h"

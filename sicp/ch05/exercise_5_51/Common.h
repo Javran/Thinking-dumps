@@ -1,5 +1,5 @@
-#ifndef _JAVEV_COMMON_H_
-#define _JAVEV_COMMON_H_
+#ifndef JAVEV_COMMON_H
+#define JAVEV_COMMON_H
 
 #include <stdlib.h>
 #include <stdio.h>

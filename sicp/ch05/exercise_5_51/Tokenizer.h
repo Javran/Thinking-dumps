@@ -1,5 +1,5 @@
-#ifndef _JAVEV_TOKENIZER_H_
-#define _JAVEV_TOKENIZER_H_
+#ifndef JAVEV_TOKENIZER_H
+#define JAVEV_TOKENIZER_H
 
 #include "DynArr.h"
 

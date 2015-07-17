@@ -1,5 +1,5 @@
-#ifndef _JAVEV_POINTERMANAGER_H_
-#define _JAVEV_POINTERMANAGER_H_
+#ifndef JAVEV_POINTERMANAGER_H
+#define JAVEV_POINTERMANAGER_H
 
 // the inner struct is intentionally not exposed for isolation
 

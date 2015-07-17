@@ -1,5 +1,5 @@
-#ifndef _JAVEV_EVALSEQ_H_
-#define _JAVEV_EVALSEQ_H_
+#ifndef JAVEV_EVALSEQ_H
+#define JAVEV_EVALSEQ_H
 
 #include "SExp.h"
 #include "EvalSimple.h"
