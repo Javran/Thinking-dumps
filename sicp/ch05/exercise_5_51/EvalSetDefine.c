@@ -55,7 +55,6 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
         expVar = sexpCar( expLook );
         SExp *args = sexpCdr(expLook);
         SExp *body = sexpCddr( exp );
-        // TODO: these run-time-allocated objects are causing troubles
         // (cons 'lambda (cons args body))
         expVal = newPair(newSymbol( "lambda" ),
                          newPair(args, body));

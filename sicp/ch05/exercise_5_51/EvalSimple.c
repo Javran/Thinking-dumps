@@ -9,10 +9,6 @@
 #include "EvalSimple.h"
 #include "PointerManager.h"
 
-// TODO: registers have to be typed (tagged),
-// consider `(display a)`, without knowing the type of `a`,
-// we have no knowledge of how to use it
-
 // for simplicity, case-insensitive comparison
 // is NOT implemented
 char isSymbol(const char *symbol, const SExp *p) {
@@ -94,14 +90,8 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     lo->body = lamBody;
     lo->env = env;
 
-    // TODO: this is causing memory leak because pointer manager
-    // don't know how to free this object
-    // I think we also need the pointer manager to keep track of
-    // "free" callback functions
     SExp *result = newLambdaObject(lo);
     pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
-    // TODO: lambda objects are not S-expressions, how should we
-    // deal with it properly?
     return result;
 }
 
