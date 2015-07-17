@@ -1,7 +1,7 @@
 #ifndef _JAVEV_EVALSIMPLE_H_
 #define _JAVEV_EVALSIMPLE_H_
 
-#include "Machine.h"
+#include "Evaluate.h"
 
 char isSymbol(const char *, const SExp *);
 char isSelfEvaluating(const SExp *);

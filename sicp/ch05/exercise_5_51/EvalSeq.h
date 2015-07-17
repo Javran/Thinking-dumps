@@ -2,7 +2,6 @@
 #define _JAVEV_EVALSEQ_H_
 
 #include "SExp.h"
-#include "Machine.h"
 #include "EvalSimple.h"
 
 char isDefinition(const SExp *);

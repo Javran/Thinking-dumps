@@ -1,5 +1,3 @@
-#include "Machine.h"
-#include "EvalSimple.h"
 #include "EvalCond.h"
 
 char isIf(const SExp *p) {
