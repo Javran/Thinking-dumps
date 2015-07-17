@@ -7,16 +7,11 @@
 #include "SExp.h"
 #include "Environment.h"
 
-// TODO: get rid of Machine,
-// the machine is builtin with c language!
-// TODO: document about this
-
 // S-expresion related.
 typedef char (*SExpPredicate)(const SExp *);
 typedef const SExp *(*SExpEval)(const SExp *, Environment *);
 
 // TODO: overhaul plan:
-// * eliminate Machine
 // * explain why we don't need a Machine
 // * document
 
@@ -31,7 +26,6 @@ typedef struct {
 } SExpHandler;
 
 const SExp *evalDispatch(const SExp *, Environment *);
-
 
 SExp *evalProgramText(const char *, FILE *);
 

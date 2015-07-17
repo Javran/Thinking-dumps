@@ -42,10 +42,6 @@ const SExp *evalDispatch(const SExp *exp, Environment *env) {
     return NULL;
 }
 
-
-// TODO: eventually we will replace Machine by Evaluate
-// eliminating the simulated machine in favor of the built-in
-// abstract machine of c language itself
 SExp *evalProgramText(const char *programText, FILE *errF) {
     DynArr *pSExpList = parseSExps(programText, errF);
     // it is guaranteed that parseStateCurrent always produces
