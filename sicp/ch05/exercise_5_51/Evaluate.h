@@ -11,7 +11,7 @@
 typedef char (*SExpPredicate)(const SExp *);
 typedef const SExp *(*SExpEval)(const SExp *, Environment *);
 
-// TODO: overhaul plan:
+// TODO:
 // * explain why we don't need a Machine
 // * document
 
