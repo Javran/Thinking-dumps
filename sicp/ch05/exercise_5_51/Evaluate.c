@@ -28,9 +28,6 @@ const size_t evalHandlerCount =
 // TODO:
 // * application
 
-// TODO: it might be possible to make some of the arguments
-// explicit. Although having access to the machine object is enough,
-// I still think we can benefit from this.
 const SExp *evalDispatch(const SExp *exp, Environment *env) {
     // INVARIANT: every branch should end with a return
     size_t i;
