@@ -1,4 +1,5 @@
 #include "EvalApp.h"
+#include "EvalSeq.h"
 #include "PointerManager.h"
 
 // an application is a non-empty proper list
@@ -21,23 +22,31 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
     if (!ratorLam || sexpLamObj != ratorLam->tag) {
         return NULL;
     }
+    LambdaObject *lo = ratorLam->fields.pLamObj;
     Environment envArgs = {0};
     envInit(&envArgs);
     pointerManagerRegisterCustom(&envArgs, (PFreeCallback)envFree);
-    envSetParent(&envArgs, ratorLam->fields.pLamObj->env);
-    SExp *argsLam = ratorLam->fields.pLamObj->parameters;
+    envSetParent(&envArgs, lo->env);
+    SExp *argsLam = lo->parameters;
 
     while (sexpNil != rands->tag && sexpNil != argsLam->tag ) {
+        if (sexpSymbol != sexpCar( argsLam ))
+            return NULL;
+        char *varName = sexpCar( argsLam )->fields.symbolName;
+        SExp *rand = sexpCar( rands );
+        const SExp *result = evalDispatch(rand, env);
+        // TODO: change this after the type of envInsert is corrected
+        envInsert(&envArgs, varName, (void *)result);
     }
 
-    if (! (sexpNil == rands->tag && sexpNil == argsLam->tag) ) {
-        // we have an argument mismatch
-    }
+    if (! (sexpNil == rands->tag && sexpNil == argsLam->tag) )
+        return NULL;
 
+    // execute body under new environment
+    return evSequence( lo->body, &envArgs);
 }
 
 SExpHandler applicationHandler = {
-
     isApplication,
     evApplication
 };
