@@ -35,6 +35,8 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
     SExp *argsLam = lo->parameters;
 
     while (sexpNil != rands->tag && sexpNil != argsLam->tag ) {
+        // TODO: somehow this assertion satisfies,
+        // need to investigate later ...
         if (sexpSymbol != sexpCar( argsLam ))
             return NULL;
         char *varName = sexpCar( argsLam )->fields.symbolName;
@@ -42,6 +44,8 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
         const SExp *result = evalDispatch(rand, env);
         // TODO: change this after the type of envInsert is corrected
         envInsert(pEnvArgs, varName, (void *)result);
+        rands = sexpCdr(rands);
+        argsLam = sexpCdr(argsLam);
     }
 
     if (! (sexpNil == rands->tag && sexpNil == argsLam->tag) )

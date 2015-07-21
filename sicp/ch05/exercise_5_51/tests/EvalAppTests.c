@@ -10,10 +10,14 @@ START_TEST (test_EvalApp_simple) {
     ck_assert_ptr_ne(pSExpList, NULL);
     ck_assert_int_eq(dynArrCount(pSExpList), 1);
 
+    SExp expect = { sexpInteger, { .integerContent = 1234} };
     SExp **pExp = dynArrBegin(pSExpList);
     pointerManagerInit();
-    const SExp *result = evApplication(*pExp, NULL);
-
+    Environment env = {0};
+    envInit(&env);
+    const SExp *actual = evApplication(*pExp, &env);
+    ck_assert(isSExpEqual(actual, &expect));
+    envFree(&env);
     pointerManagerFinalize();
     freeSExps(pSExpList);
 } END_TEST
