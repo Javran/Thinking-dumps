@@ -43,7 +43,7 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
         return NULL;
 
     // execute body under new environment
-    return evSequence( lo->body, &envArgs);
+    return evSequence(lo->body, &envArgs);
 }
 
 SExpHandler applicationHandler = {

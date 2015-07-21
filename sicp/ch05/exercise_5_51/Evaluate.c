@@ -9,6 +9,7 @@
 #include "EvalCond.h"
 #include "EvalSeq.h"
 #include "EvalSetDefine.h"
+#include "EvalApp.h"
 
 SExpHandler *evalHandlers[] = {
     &selfEvaluatingHandler,
@@ -18,15 +19,12 @@ SExpHandler *evalHandlers[] = {
     &definitionHandler,
     &ifHandler,
     &lambdaHandler,
-    &beginHandler
-    // TODO: application missing
+    &beginHandler,
+    &applicationHandler
 };
 
 const size_t evalHandlerCount =
     sizeof(evalHandlers) / sizeof(SExpHandler *);
-
-// TODO:
-// * application
 
 const SExp *evalDispatch(const SExp *exp, Environment *env) {
     // INVARIANT: every branch should end with a return
