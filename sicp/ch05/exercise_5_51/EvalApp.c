@@ -13,6 +13,11 @@ char isApplication(const SExp *p) {
     return sexpNil == p->tag;
 }
 
+void releaseTempEnv(Environment *pEnv) {
+    envFree(pEnv);
+    free(pEnv);
+}
+
 const SExp *evApplication(const SExp *exp, Environment *env) {
     SExp *rator = sexpCar(exp);
     SExp *rands = sexpCdr(exp);
@@ -23,10 +28,10 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
         return NULL;
     }
     LambdaObject *lo = ratorLam->fields.pLamObj;
-    Environment envArgs = {0};
-    envInit(&envArgs);
-    pointerManagerRegisterCustom(&envArgs, (PFreeCallback)envFree);
-    envSetParent(&envArgs, lo->env);
+    Environment *pEnvArgs = calloc(1,sizeof(Environment));
+    envInit(pEnvArgs);
+    pointerManagerRegisterCustom(pEnvArgs, (PFreeCallback)releaseTempEnv);
+    envSetParent(pEnvArgs, lo->env);
     SExp *argsLam = lo->parameters;
 
     while (sexpNil != rands->tag && sexpNil != argsLam->tag ) {
@@ -36,14 +41,14 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
         SExp *rand = sexpCar( rands );
         const SExp *result = evalDispatch(rand, env);
         // TODO: change this after the type of envInsert is corrected
-        envInsert(&envArgs, varName, (void *)result);
+        envInsert(pEnvArgs, varName, (void *)result);
     }
 
     if (! (sexpNil == rands->tag && sexpNil == argsLam->tag) )
         return NULL;
 
     // execute body under new environment
-    return evSequence(lo->body, &envArgs);
+    return evSequence(lo->body, pEnvArgs);
 }
 
 SExpHandler applicationHandler = {
