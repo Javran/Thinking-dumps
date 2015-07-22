@@ -37,7 +37,7 @@ const SExp *evApplication(const SExp *exp, Environment *env) {
     while (sexpNil != rands->tag && sexpNil != argsLam->tag ) {
         // TODO: somehow this assertion satisfies,
         // need to investigate later ...
-        if (sexpSymbol != sexpCar( argsLam ))
+        if (sexpSymbol != sexpCar( argsLam )->tag)
             return NULL;
         char *varName = sexpCar( argsLam )->fields.symbolName;
         SExp *rand = sexpCar( rands );
