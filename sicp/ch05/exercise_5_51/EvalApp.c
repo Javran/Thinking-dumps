@@ -18,6 +18,10 @@ void releaseTempEnv(Environment *pEnv) {
     free(pEnv);
 }
 
+// TODO: we actually need another form of value: primitives
+// * extend LambdaObject to include primitives
+// * implement primitive application
+// * document
 const SExp *evApplication(const SExp *exp, Environment *env) {
     SExp *rator = sexpCar(exp);
     SExp *rands = sexpCdr(exp);
