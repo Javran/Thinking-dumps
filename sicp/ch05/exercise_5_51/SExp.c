@@ -225,3 +225,19 @@ char isSExpEqual(const SExp *e1, const SExp *e2) {
         return 0;
     }
 }
+
+DynArr *sexpProperListToDynArr (const SExp *xs) {
+    DynArr *da = calloc(1, sizeof(DynArr));
+    // WARNING: the user of this function is responsible
+    // for freeing this object
+    dynArrInit(da,sizeof(SExp *));
+
+    const SExp *cur = xs;
+    // assume the input is a proper list.
+    for (cur = xs; sexpNil != cur->tag; cur = sexpCdr(cur)) {
+        const SExp **p = dynArrNew(da);
+        *p = cur;
+    }
+
+    return da;
+}
