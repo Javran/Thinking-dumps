@@ -14,8 +14,8 @@ typedef enum {
 } FuncObjTag;
 
 typedef struct {
-    SExp *parameters;
-    SExp *body;
+    const SExp *parameters;
+    const SExp *body;
     Environment *env;
 } FuncCompound;
 
