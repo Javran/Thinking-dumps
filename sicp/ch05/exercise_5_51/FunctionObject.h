@@ -34,4 +34,7 @@ typedef struct {
     FuncFields fields;
 } FuncObj;
 
+FuncObj *newCompoundFunc(const SExp *, const SExp *, Environment *);
+void freeFuncObject(FuncObj *);
+
 #endif
