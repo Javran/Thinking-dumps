@@ -47,5 +47,5 @@ int main(int argc, char *argv[]) {
     SExp *result = evalProgramText(srcText, stderr);
     free(srcText); srcText = NULL;
 
-    return !result ? EXIT_FAILURE : EXIT_SUCCESS;
+    return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }
