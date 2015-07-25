@@ -35,6 +35,7 @@ typedef struct {
 } FuncObj;
 
 FuncObj *newCompoundFunc(const SExp *, const SExp *, Environment *);
+const SExp *funcObjApp(const FuncObj *, const SExp *);
 void freeFuncObject(FuncObj *);
 
 #endif

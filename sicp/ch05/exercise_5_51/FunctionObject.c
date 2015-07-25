@@ -1,5 +1,6 @@
 #include "FunctionObject.h"
 #include "EvalSeq.h"
+#include "PointerManager.h"
 
 FuncObj *newCompoundFunc(const SExp *p,
                               const SExp *bd,
@@ -10,6 +11,11 @@ FuncObj *newCompoundFunc(const SExp *p,
     fc->fields.compObj.body = bd;
     fc->fields.compObj.env = e;
     return fc;
+}
+
+void releaseTempEnv(Environment *pEnv) {
+    envFree(pEnv);
+    free(pEnv);
 }
 
 // apply arguments to a function object
@@ -30,7 +36,7 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands) {
 
         Environment *appEnv = calloc(1,sizeof(Environment));
         envInit(appEnv);
-        // pointerManagerRegisterCustom(pEnvArgs, (PFreeCallback)releaseTempEnv);
+        pointerManagerRegisterCustom(appEnv, (PFreeCallback)releaseTempEnv);
         envSetParent(appEnv, env);
 
         while (sexpNil != rands->tag && sexpNil != ps->tag ) {
@@ -52,5 +58,7 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands) {
 }
 
 void freeFuncObject(FuncObj *p) {
+    // we only need to free the structure we are using.
+    // just assume other components will be release properly.
     free(p);
 }
