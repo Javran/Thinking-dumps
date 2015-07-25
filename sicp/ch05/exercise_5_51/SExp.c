@@ -2,6 +2,7 @@
 #include "Util.h"
 #include "SExp.h"
 #include "DynArr.h"
+#include "FunctionObject.h"
 
 // statically allocated objects,
 // which are intended for sharing
@@ -58,9 +59,9 @@ SExp *newPair(SExp *car, SExp *cdr) {
     return p;
 }
 
-SExp *newLambdaObject(LambdaObject *obj) {
-    SExp *p = allocWithTag(sexpLamObj);
-    p->fields.pLamObj = obj;
+SExp *newLambdaObject(void *obj) {
+    SExp *p = allocWithTag(sexpFuncObj);
+    p->fields.pFuncObj = obj;
     return p;
 }
 
@@ -90,8 +91,8 @@ void freeSExp(SExp *p) {
                /* boolExp should never be allocated at run time
                 */);
         return;
-    case sexpLamObj:
-        free(p->fields.pLamObj);
+    case sexpFuncObj:
+        freeFuncObject(p->fields.pFuncObj);
         break;
     }
     memset(p,0x00,sizeof(SExp));
@@ -165,8 +166,8 @@ void printSExp(FILE *f, const SExp *p) {
     case sexpPair:
         printPairL(f,p);
         break;
-    case sexpLamObj:
-        fprintf(f,"<LamObj:%p>",(void *)p->fields.pLamObj);
+    case sexpFuncObj:
+        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
         break;
     }
 }
@@ -192,7 +193,7 @@ DynArr *sexpListToDynArr(const SExp *exp) {
 char isSExpEqual(const SExp *e1, const SExp *e2) {
     assert( e1 /* e1 should not be NULL */ );
     assert( e2 /* e2 should not be NULL */ );
-    assert( sexpLamObj != e1->tag && sexpLamObj != e2 -> tag
+    assert( sexpFuncObj != e1->tag && sexpFuncObj != e2 -> tag
             /* cannot test equality involving LambdaObject */);
 
     if (e1 == e2) return 1;
@@ -217,7 +218,7 @@ char isSExpEqual(const SExp *e1, const SExp *e2) {
         case sexpPair:
             return isSExpEqual(sexpCar(e1),sexpCar(e2))
                 && isSExpEqual(sexpCdr(e1),sexpCdr(e2));
-        case sexpLamObj:
+        case sexpFuncObj:
             assert(0 /* dead code */);
         }
         assert(0 /* dead code */);

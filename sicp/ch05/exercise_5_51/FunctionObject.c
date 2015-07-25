@@ -1,4 +1,5 @@
 #include "FunctionObject.h"
+#include "Evaluate.h"
 #include "EvalSeq.h"
 #include "PointerManager.h"
 
@@ -18,10 +19,11 @@ void releaseTempEnv(Environment *pEnv) {
     free(pEnv);
 }
 
+// TODO: correct document
 // apply arguments to a function object
 // this function assmes that all operands are evaluated
 // thus it is not necessary to provide an environment
-const SExp *funcObjApp(const FuncObj *rator, const SExp *rands) {
+const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env) {
     // TODO:
     switch (rator->tag) {
     case funcPrim: {
@@ -32,19 +34,21 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands) {
         FuncCompound fc = rator->fields.compObj;
         const SExp *ps = fc.parameters;
         const SExp *bd = fc.body;
-        Environment *env = fc.env;
+        Environment *fenv = fc.env;
 
         Environment *appEnv = calloc(1,sizeof(Environment));
         envInit(appEnv);
         pointerManagerRegisterCustom(appEnv, (PFreeCallback)releaseTempEnv);
-        envSetParent(appEnv, env);
+        envSetParent(appEnv, fenv);
 
         while (sexpNil != rands->tag && sexpNil != ps->tag ) {
             if (sexpSymbol != sexpCar( ps )->tag)
                 return NULL;
             char *varName = sexpCar( ps )->fields.symbolName;
             const SExp *rand = sexpCar( rands );
-            envInsert(appEnv, varName, (void *)rand);
+            const SExp *randVal = evalDispatch(rand, env);
+            if (!randVal) return NULL;
+            envInsert(appEnv, varName, (void *)randVal);
             rands = sexpCdr(rands);
             ps = sexpCdr(ps);
         }

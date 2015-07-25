@@ -7,6 +7,7 @@
 // the complexity of implementation.
 
 #include "EvalSimple.h"
+#include "FunctionObject.h"
 #include "PointerManager.h"
 
 // for simplicity, case-insensitive comparison
@@ -83,14 +84,11 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     SExp *lamParam = sexpCar(cdr);
     SExp *lamBody = sexpCdr(cdr);
 
+    FuncObj *fo = newCompoundFunc(lamParam, lamBody, env);
+
     // the lambda object is allocated at runtime, and is supposed
     // to be freed when its wrapping SExp is freed.
-    LambdaObject *lo = calloc(1,sizeof(LambdaObject));
-    lo->parameters = lamParam;
-    lo->body = lamBody;
-    lo->env = env;
-
-    SExp *result = newLambdaObject(lo);
+    SExp *result = newLambdaObject(fo);
     pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
     return result;
 }

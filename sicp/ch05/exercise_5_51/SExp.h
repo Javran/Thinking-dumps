@@ -18,7 +18,7 @@ typedef enum {
     // a valid member of this type.
     // the lambda objects should be used internally only,
     // and equality tests involving lambda objects are invalid.
-    sexpLamObj,
+    sexpFuncObj,
 } SExpTag;
 
 // for breaking circular definition,
@@ -30,6 +30,7 @@ typedef struct {
     struct SExp *cdr;
 } PairContent;
 
+/*
 typedef struct {
     // TODO: might change to some
     // other type in future.
@@ -37,6 +38,7 @@ typedef struct {
     struct SExp* body;
     Environment* env;
 } LambdaObject;
+*/
 
 typedef union {
     char *symbolName;
@@ -44,7 +46,10 @@ typedef union {
     long integerContent;
     char truthValue;
     PairContent pairContent;
-    LambdaObject *pLamObj;
+    // this is actually a pointer to a FuncObj
+    // we define this to be (void *) so that circular dependency
+    // can be avoided
+    void *pFuncObj;
 } SExpFields;
 
 typedef struct SExp {
@@ -58,7 +63,7 @@ SExp *newInteger(long);
 SExp *newBool(char);
 SExp *newNil();
 SExp *newPair(SExp *, SExp *);
-SExp *newLambdaObject(LambdaObject *);
+SExp *newLambdaObject(void *);
 void freeSExp(SExp *);
 void printSExp(FILE *, const SExp *);
 
