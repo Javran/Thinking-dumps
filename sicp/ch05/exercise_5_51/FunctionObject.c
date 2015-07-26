@@ -6,7 +6,7 @@
 FuncObj *newCompoundFunc(const SExp *p,
                               const SExp *bd,
                               Environment *e) {
-    FuncObj *fc = calloc(1, sizeof(FuncCompound));
+    FuncObj *fc = calloc(1, sizeof(FuncObj));
     fc->tag = funcCompound;
     fc->fields.compObj.parameters = p;
     fc->fields.compObj.body = bd;
