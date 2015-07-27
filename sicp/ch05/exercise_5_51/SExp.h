@@ -30,16 +30,6 @@ typedef struct {
     struct SExp *cdr;
 } PairContent;
 
-/*
-typedef struct {
-    // TODO: might change to some
-    // other type in future.
-    struct SExp* parameters;
-    struct SExp* body;
-    Environment* env;
-} LambdaObject;
-*/
-
 typedef union {
     char *symbolName;
     char *stringContent;

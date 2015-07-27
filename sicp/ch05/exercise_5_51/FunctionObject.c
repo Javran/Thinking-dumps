@@ -19,12 +19,9 @@ void releaseTempEnv(Environment *pEnv) {
     free(pEnv);
 }
 
-// TODO: correct document
 // apply arguments to a function object
-// this function assmes that all operands are evaluated
-// thus it is not necessary to provide an environment
 const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env) {
-    // TODO:
+    assert(rator /* operator cannot be NULL */);
     switch (rator->tag) {
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
