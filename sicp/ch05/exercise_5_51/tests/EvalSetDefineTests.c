@@ -75,24 +75,25 @@ START_TEST (test_EvalSetDefine_define_func) {
     envInit(&env);
 
     pointerManagerInit();
-//    const SExp *result = evDefinition(*pExp, &env);
+    const SExp *result = evDefinition(*pExp, &env);
 
-//    ck_assert(isSExpEqual(nil,result));
+    ck_assert(isSExpEqual(nil,result));
 
-//    const FrameEntry *fe = envLookup(&env, "id-like");
+    const FrameEntry *fe = envLookup(&env, "id-like");
 
-  /*  ck_assert_ptr_ne(fe, NULL);
+    ck_assert_ptr_ne(fe, NULL);
     ck_assert_ptr_ne(fe->val, NULL);
-*/
+
     // we should not rely on the result of equality test on FunctionObjects,
     // instead we want to know whether each component of the FunctionObject
     // is the same
 
+    SExp *sexpL = fe->val;
+    FuncObj *fo = sexpL->fields.pFuncObj;
 
-//    SExp *sexpL = fe->val;
-//    FuncObj *fo = sexpL->fields.pFuncObj;
-
-//    ck_assert( funcCompound == fo->tag);
+    // a compound function object should now be bound as
+    // a value
+    ck_assert( funcCompound == fo->tag);
 
     // check compound object
 //    SExp *args = sexpCdr( sexpCadr(*pExp) );
