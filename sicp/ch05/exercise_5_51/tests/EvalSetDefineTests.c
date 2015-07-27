@@ -96,16 +96,15 @@ START_TEST (test_EvalSetDefine_define_func) {
     ck_assert( funcCompound == fo->tag);
 
     // check compound object
-//    SExp *args = sexpCdr( sexpCadr(*pExp) );
-//    SExp *body = sexpCddr( *pExp );
-/*
-    ck_assert( isSExpEqual(args, fo->fields.parameters) );
-    ck_assert( isSExpEqual(body, fo->fields.body) );
+    SExp *args = sexpCdr( sexpCadr(*pExp) );
+    SExp *body = sexpCddr( *pExp );
+
+    ck_assert( isSExpEqual(args, fo->fields.compObj.parameters) );
+    ck_assert( isSExpEqual(body, fo->fields.compObj.body) );
 
     // as the address of "env" is not-relocated during evaluation,
     // we can also verify it
-    ck_assert_ptr_eq( &env, fo->env );
-*/
+    ck_assert_ptr_eq( &env, fo->fields.compObj.env );
 
     pointerManagerFinalize();
     envFree(&env);
