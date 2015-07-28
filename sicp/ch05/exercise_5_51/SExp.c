@@ -59,7 +59,7 @@ SExp *newPair(SExp *car, SExp *cdr) {
     return p;
 }
 
-SExp *newLambdaObject(void *obj) {
+SExp *newFuncObject(void *obj) {
     SExp *p = allocWithTag(sexpFuncObj);
     p->fields.pFuncObj = obj;
     return p;

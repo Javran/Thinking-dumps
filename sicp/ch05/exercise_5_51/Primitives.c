@@ -20,7 +20,15 @@ const SExp *primPlus(const SExp *args) {
      return retVal;
 }
 
+
 FuncObj primPlusObj = {
     funcPrim,
     { .primHdlr = primPlus }
+};
+
+// TODO: I think it's getting tricky now ...
+SExp primPlusSExp = {
+    sexpFuncObj,
+    { .pFuncObj = &primPlusObj
+    }
 };
