@@ -10,6 +10,7 @@ extern Suite *evalSeqSuite(void);
 extern Suite *evalSetDefineSuite(void);
 extern Suite *evalAppSuite(void);
 extern Suite *pointerManagerSuite(void);
+extern Suite *sexpSuite(void);
 
 int main(void) {
     Suite *sDynArr = dynArrSuite();
@@ -21,6 +22,7 @@ int main(void) {
     Suite *sEvalSetDefine = evalSetDefineSuite();
     Suite *sEvalApp = evalAppSuite();
     Suite *sPointerManager = pointerManagerSuite();
+    Suite *sSexp = sexpSuite();
 
     SRunner *sr = srunner_create(sDynArr);
     srunner_add_suite(sr,sFrame);
@@ -31,6 +33,7 @@ int main(void) {
     srunner_add_suite(sr,sEvalSetDefine);
     srunner_add_suite(sr,sEvalApp);
     srunner_add_suite(sr,sPointerManager);
+    srunner_add_suite(sr,sSexp);
     srunner_run_all(sr, CK_NORMAL);
 
     int number_failed = srunner_ntests_failed(sr);
