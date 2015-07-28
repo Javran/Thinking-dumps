@@ -19,3 +19,8 @@ const SExp *primPlus(const SExp *args) {
      pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
      return retVal;
 }
+
+FuncObj primPlusObj = {
+    funcPrim,
+    { .primHdlr = primPlus }
+};
