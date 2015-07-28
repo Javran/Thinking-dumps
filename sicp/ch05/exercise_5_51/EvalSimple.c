@@ -88,7 +88,7 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
 
     // the lambda object is allocated at runtime, and is supposed
     // to be freed when its wrapping SExp is freed.
-    SExp *result = newLambdaObject(fo);
+    SExp *result = newFuncObject(fo);
     pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
     return result;
 }
