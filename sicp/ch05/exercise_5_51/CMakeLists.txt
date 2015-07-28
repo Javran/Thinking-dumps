@@ -68,13 +68,13 @@ add_subdirectory(tests)
 
 set(javev_SRCS
   Util.c DynArr.c Frame.c Environment.c Evaluate.c FunctionObject.c
-  Parser.c SExp.c Syntax.c Token.c Tokenizer.c PointerManager.c
+  Parser.c SExp.c Syntax.c Token.c Tokenizer.c PointerManager.c Primitives.c
   EvalSimple.c EvalSeq.c EvalCond.c EvalSetDefine.c EvalApp.c)
 
 set(javev_HDRS
   Common.h
   Util.h DynArr.h Frame.h Environment.h Evaluate.h FunctionObject.h
-  Parser.h SExp.h Syntax.h Token.h Tokenizer.h PointerManager.h
+  Parser.h SExp.h Syntax.h Token.h Tokenizer.h PointerManager.h Primitives.h
   EvalSimple.h EvalSeq.h EvalCond.h EvalSetDefine.h EvalApp.h)
 
 add_library(javev ${javev_SRCS}  ${javev_HDRS})
