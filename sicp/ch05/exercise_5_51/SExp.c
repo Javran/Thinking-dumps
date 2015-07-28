@@ -239,6 +239,5 @@ DynArr *sexpProperListToDynArr (const SExp *xs) {
         const SExp **p = dynArrNew(da);
         *p = cur;
     }
-
     return da;
 }

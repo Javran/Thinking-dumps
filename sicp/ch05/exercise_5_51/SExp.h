@@ -72,4 +72,6 @@ static inline char isLastExp(const SExp *e) {
     return sexpNil == sexpCdr(e)->tag;
 }
 
+DynArr *sexpProperListToDynArr(const SExp *);
+
 #endif
