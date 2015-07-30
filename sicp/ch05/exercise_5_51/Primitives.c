@@ -26,7 +26,6 @@ const SExp *primPlus(const SExp *args) {
     }
 }
 
-
 FuncObj primPlusObj = {
     funcPrim,
     { .primHdlr = primPlus }

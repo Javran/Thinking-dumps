@@ -8,4 +8,6 @@
 
 // TODO: + - * = cons car cdr
 
+SExp primPlusSExp;
+
 #endif
