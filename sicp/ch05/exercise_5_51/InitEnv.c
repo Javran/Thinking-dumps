@@ -1,9 +1,8 @@
-#include "Environment.h"
-#include "Primitives.h"
+#include "InitEnv.h"
 
 Environment *mkInitEnv() {
     Environment *env = calloc(1, sizeof(Environment));
     envInit(env);
-    envInsert(env, "+", NULL);
+    envInsert(env, "+", &primPlusSExp);
     return env;
 }
