@@ -2,18 +2,23 @@
 #include "SExp.h"
 #include "PointerManager.h"
 
-long *primPlusFoldHelper(long *acc, const SExp *elem) {
+long *primPlusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
+    const SExp *elem = *pelem;
     assert(sexpInteger == elem->tag);
     *acc = *acc + elem->fields.integerContent;
     return acc;
 }
 
 const SExp *primPlus(const SExp *args) {
+
     DynArr *argsA = sexpProperListToDynArr(args);
     long seed = 0;
-    long *result = dynArrFoldLeft(argsA, (DynArrFoldLeftAccumulator)primPlusFoldHelper,&seed);
+    long *result =
+        dynArrFoldLeft(argsA,
+                       (DynArrFoldLeftAccumulator)primPlusFoldHelper,
+                       &seed);
     dynArrFree(argsA);
     free(argsA);
 
