@@ -54,6 +54,7 @@ START_TEST (test_EvalApp_prim_app) {
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
     envFree(penv);
+    free(penv);
     pointerManagerFinalize();
     freeSExps(pSExpList);
 } END_TEST
