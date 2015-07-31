@@ -3,6 +3,7 @@
 #include "../Evaluate.h"
 #include "../EvalApp.h"
 #include "../PointerManager.h"
+#include "../InitEnv.h"
 
 // simple application, identity function
 START_TEST (test_EvalApp_simple1) {
@@ -40,6 +41,23 @@ START_TEST (test_EvalApp_simple2) {
     freeSExps(pSExpList);
 } END_TEST
 
+// apply primitive function
+START_TEST (test_EvalApp_prim_app) {
+    DynArr *pSExpList = parseSExps("(+ 123 456)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp expect = { sexpInteger, { .integerContent = 579 } };
+    SExp **pExp = dynArrBegin(pSExpList);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evApplication(*pExp, penv);
+    ck_assert(isSExpEqual(actual, &expect));
+    envFree(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
 Suite * evalAppSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -48,6 +66,7 @@ Suite * evalAppSuite(void) {
 
     tcase_add_test(tc_core, test_EvalApp_simple1);
     tcase_add_test(tc_core, test_EvalApp_simple2);
+    tcase_add_test(tc_core, test_EvalApp_prim_app);
 
     s = suite_create("EvalApp");
     suite_add_tcase(s, tc_core);
