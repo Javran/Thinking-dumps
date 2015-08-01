@@ -12,7 +12,6 @@ long *primPlusFoldHelper(long *acc, const SExp **pelem) {
 }
 
 const SExp *primPlus(const SExp *args) {
-
     DynArr *argsA = sexpProperListToDynArr(args);
     long seed = 0;
     long *result =
@@ -36,7 +35,9 @@ FuncObj primPlusObj = {
     { .primHdlr = primPlus }
 };
 
-// TODO: I think it's getting tricky now ...
+// primitives are allocated statically
+// so no resource de-allocation
+// is actually happening for them.
 SExp primPlusSExp = {
     sexpFuncObj,
     { .pFuncObj = &primPlusObj
