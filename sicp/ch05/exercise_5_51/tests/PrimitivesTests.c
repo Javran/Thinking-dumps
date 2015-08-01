@@ -5,6 +5,15 @@
 #include "../PointerManager.h"
 #include "../InitEnv.h"
 
+// this file is for testing:
+//
+// * primitive functions (Primitives.c)
+// * initial environment (InitEnv.c)
+//
+// As it is easier to set up testcases
+// for primitive applications with initial environment,
+// it doesn't hurt to put them together.
+
 // primitive "+"
 START_TEST (test_Primitives_plus) {
     DynArr *pSExpList = parseSExps("(+ 1 2 3 4 5 6 7)", stderr);
