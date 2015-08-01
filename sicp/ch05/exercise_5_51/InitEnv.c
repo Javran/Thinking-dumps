@@ -5,5 +5,6 @@ Environment *mkInitEnv() {
     // parent environment is implictily set to NULL
     envInit(env);
     envInsert(env, "+", &primPlusSExp);
+    envInsert(env, "-", &primMinusSExp);
     return env;
 }
