@@ -43,3 +43,46 @@ SExp primPlusSExp = {
     { .pFuncObj = &primPlusObj
     }
 };
+
+long *primMinusFoldHelper(long *acc, const SExp **pelem) {
+    if (! acc)
+        return NULL;
+    const SExp *elem = *pelem;
+    assert(sexpInteger == elem->tag);
+    *acc = *acc - elem->fields.integerContent;
+    return acc;
+}
+
+const SExp *primMinus(const SExp *args) {
+    // the operand list cannot be empty
+    if (sexpNil == args->tag)
+        return NULL;
+    const SExp *head = sexpCar(args);
+    const SExp *tail = sexpCdr(args);
+    DynArr *argsA = sexpProperListToDynArr(tail);
+    long seed = head->fields.integerContent;
+    long *result =
+        dynArrFoldLeft(argsA,
+                       (DynArrFoldLeftAccumulator)primMinusFoldHelper,
+                       &seed);
+    dynArrFree(argsA);
+    free(argsA);
+    if (!result) {
+        return NULL;
+    } else {
+        SExp *retVal = newInteger( seed );
+        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+        return retVal;
+    }
+}
+
+FuncObj primMinusObj = {
+    funcPrim,
+    { .primHdlr = primMinus }
+};
+
+SExp primMinusSExp = {
+    sexpFuncObj,
+    { .pFuncObj = &primMinusObj
+    }
+};
