@@ -98,7 +98,7 @@ long *primMultFoldHelper(long *acc, const SExp **pelem) {
 
 const SExp *primMult(const SExp *args) {
     DynArr *argsA = sexpProperListToDynArr(args);
-    long seed = 0;
+    long seed = 1;
     long *result =
         dynArrFoldLeft(argsA,
                        (DynArrFoldLeftAccumulator)primMultFoldHelper,

@@ -9,5 +9,6 @@ Environment *mkInitEnv() {
     envInit(env);
     envInsert(env, "+", &primPlusSExp);
     envInsert(env, "-", &primMinusSExp);
+    envInsert(env, "*", &primMultSExp);
     return env;
 }
