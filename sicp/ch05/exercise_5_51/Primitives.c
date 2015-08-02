@@ -97,19 +97,15 @@ long *primMultFoldHelper(long *acc, const SExp **pelem) {
 }
 
 const SExp *primMult(const SExp *args) {
-    // the operand list cannot be empty
-    if (sexpNil == args->tag)
-        return NULL;
-    const SExp *head = sexpCar(args);
-    const SExp *tail = sexpCdr(args);
-    DynArr *argsA = sexpProperListToDynArr(tail);
-    long seed = head->fields.integerContent;
+    DynArr *argsA = sexpProperListToDynArr(args);
+    long seed = 0;
     long *result =
         dynArrFoldLeft(argsA,
                        (DynArrFoldLeftAccumulator)primMultFoldHelper,
                        &seed);
     dynArrFree(argsA);
     free(argsA);
+
     if (!result) {
         return NULL;
     } else {
