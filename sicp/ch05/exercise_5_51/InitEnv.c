@@ -10,5 +10,6 @@ Environment *mkInitEnv() {
     envInsert(env, "+", &primPlusSExp);
     envInsert(env, "-", &primMinusSExp);
     envInsert(env, "*", &primMultSExp);
+    envInsert(env, "cons", &primConsSExp);
     return env;
 }

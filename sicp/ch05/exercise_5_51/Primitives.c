@@ -145,3 +145,14 @@ const SExp *primCons(const SExp *args) {
     free(argsA);
     return retVal;
 }
+
+FuncObj primConsObj = {
+    funcPrim,
+    { .primHdlr = primCons }
+};
+
+SExp primConsSExp = {
+    sexpFuncObj,
+    { .pFuncObj = &primConsObj
+    }
+};

@@ -6,10 +6,11 @@
 // Function primitives for the initial
 // environment
 
-// TODO: = cons car cdr
+// TODO: = car cdr
 
 SExp primPlusSExp;
 SExp primMinusSExp;
 SExp primMultSExp;
+SExp primConsSExp;
 
 #endif
