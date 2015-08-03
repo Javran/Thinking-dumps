@@ -25,6 +25,17 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
     switch (rator->tag) {
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
+        // TODO: nil assumption?
+        const SExp *randVals = newNil();
+        while (sexpNil != rands->tag) {
+            const SExp *carE = sexpCar( rands );
+            const SExp *cdrE = sexpCdr( rands );
+            const SExp *carV = evalDispatch(carE, env);
+            if (! carV) return NULL;
+            // turns out evaluating things from left to right will be tricky
+            assert( 0 );
+        }
+        // TODO: we need to evaluate these operands here.
         return handler(rands);
     }
     case funcCompound: {

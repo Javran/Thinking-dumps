@@ -68,6 +68,27 @@ START_TEST (test_Primitives_mult) {
     freeSExps(pSExpList);
 } END_TEST
 
+START_TEST (test_Primitives_cons) {
+    DynArr *pSExpList = parseSExps("(cons 'a '(b c d)) (a b c d)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+
+    // TODO: seems like quoted expressions are not handled properly?
+    ck_assert(isSExpEqual(actual, *pExpect));
+    free(penv);
+    pointerManagerFinalize();
+
+    freeSExps(pSExpList);
+} END_TEST
+
 Suite * primitivesSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -77,6 +98,7 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_plus);
     tcase_add_test(tc_core, test_Primitives_minus);
     tcase_add_test(tc_core, test_Primitives_mult);
+    tcase_add_test(tc_core, test_Primitives_cons);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
