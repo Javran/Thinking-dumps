@@ -125,3 +125,23 @@ SExp primMultSExp = {
     { .pFuncObj = &primMultObj
     }
 };
+
+const SExp *primCons(const SExp *args) {
+    DynArr *argsA = sexpProperListToDynArr(args);
+    int cnt = dynArrCount(argsA);
+    SExp *retVal = NULL;
+
+    if (cnt != 2) {
+        retVal = NULL;
+    } else {
+        SExp **it  = dynArrBegin( argsA );
+        SExp *car = *it; it = dynArrNext( argsA, it);
+        SExp *cdr = *it;
+        // TODO: lots of things are need to be constants in future
+        retVal = (void *)newPair(car,cdr);
+        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+    }
+    dynArrFree(argsA);
+    free(argsA);
+    return retVal;
+}
