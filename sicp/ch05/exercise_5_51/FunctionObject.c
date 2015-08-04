@@ -19,24 +19,26 @@ void releaseTempEnv(Environment *pEnv) {
     free(pEnv);
 }
 
+// turning argument expressions into values
+const SExp *evalArgs(const SExp *randExps, Environment *env) {
+    if (sexpNil == randExps->tag)
+        return newNil();
+
+    const SExp *firstVal = evalDispatch(sexpCar(randExps), env);
+    const SExp *restVals = evalArgs(sexpCdr(randExps), env);
+
+    // TODO: eliminate hacks
+    return newPair((void *)firstVal,(void *)restVals);
+}
+
 // apply arguments to a function object
 const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env) {
     assert(rator /* operator cannot be NULL */);
     switch (rator->tag) {
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
-        // TODO: nil assumption?
-        const SExp *randVals = newNil();
-        while (sexpNil != rands->tag) {
-            const SExp *carE = sexpCar( rands );
-            const SExp *cdrE = sexpCdr( rands );
-            const SExp *carV = evalDispatch(carE, env);
-            if (! carV) return NULL;
-            // turns out evaluating things from left to right will be tricky
-            assert( 0 );
-        }
-        // TODO: we need to evaluate these operands here.
-        return handler(rands);
+        const SExp *randVals = evalArgs(rands,env);
+        return handler(randVals);
     }
     case funcCompound: {
         FuncCompound fc = rator->fields.compObj;
