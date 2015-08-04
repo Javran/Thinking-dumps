@@ -19,7 +19,9 @@ void releaseTempEnv(Environment *pEnv) {
     free(pEnv);
 }
 
-// turning argument expressions into values
+// (internal use only) turning argument expressions into values
+// given that application itself is proper list, randExps is always
+// either nil or pair
 const SExp *evalArgs(const SExp *randExps, Environment *env) {
     if (sexpNil == randExps->tag)
         return newNil();
@@ -38,6 +40,8 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
         const SExp *randVals = evalArgs(rands,env);
+        // TODO: remove hack
+        // pointerManagerRegisterCustom((void *)randVals, (PFreeCallback)freeSExp);
         return handler(randVals);
     }
     case funcCompound: {
