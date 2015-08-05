@@ -11,6 +11,8 @@
 SExp primPlusSExp;
 SExp primMinusSExp;
 SExp primMultSExp;
+
 SExp primConsSExp;
+SExp primCarSExp;
 
 #endif

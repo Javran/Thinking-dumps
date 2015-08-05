@@ -158,3 +158,23 @@ SExp primConsSExp = {
     { .pFuncObj = &primConsObj
     }
 };
+
+const SExp *primCar(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        // we have exactly one arg
+        return sexpCar(sexpCar(args));
+    }
+
+    return NULL;
+}
+
+FuncObj primCarObj = {
+    funcPrim,
+    { .primHdlr = primCar }
+};
+
+SExp primCarSExp = {
+    sexpFuncObj,
+    { .pFuncObj = &primCarObj
+    }
+};
