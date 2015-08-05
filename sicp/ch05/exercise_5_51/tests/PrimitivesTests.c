@@ -26,6 +26,7 @@ START_TEST (test_Primitives_plus) {
     Environment *penv = mkInitEnv();
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
+
     envFree(penv);
     free(penv);
     pointerManagerFinalize();
@@ -80,11 +81,11 @@ START_TEST (test_Primitives_cons) {
     pointerManagerInit();
     Environment *penv = mkInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
-
     ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
     free(penv);
-    pointerManagerFinalize();
-
+    // TODO: problematic releasing
+    // pointerManagerFinalize();
     freeSExps(pSExpList);
 } END_TEST
 
@@ -97,7 +98,7 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_plus);
     tcase_add_test(tc_core, test_Primitives_minus);
     tcase_add_test(tc_core, test_Primitives_mult);
-    // tcase_add_test(tc_core, test_Primitives_cons);
+    tcase_add_test(tc_core, test_Primitives_cons);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
