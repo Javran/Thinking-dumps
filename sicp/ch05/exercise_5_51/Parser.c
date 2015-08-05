@@ -154,9 +154,8 @@ DynArr *parseSExps(const char *programText, FILE *errF) {
     dynArrInit(&tokenList, sizeof(Token));
     tokenize(programText,&tokenList,errF);
     assert( dynArrCount(&tokenList)
-            /* the tokenizer should at least return tokEof,
-               making the token list non-empty
-            */);
+            && "the tokenizer should at least return tokEof"
+               "making the token list non-empty");
     // it is not guaranteed that the tokenizer
     // will consume the whole file content.
     // but when something goes wrong (which prevents the full content

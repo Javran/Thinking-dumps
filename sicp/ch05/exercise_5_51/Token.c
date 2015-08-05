@@ -26,7 +26,7 @@ void mkTokenInteger(Token *tp, long i) {
 
 void printToken(FILE *f, const Token *tp) {
 #define P(...) fprintf(f, __VA_ARGS__)
-    assert( tp );
+    assert( tp && "token cannot be NULL" );
     switch (tp->tag) {
     case tokEof:
         P("[EOF]"); break;
@@ -71,7 +71,7 @@ void freeToken(Token *tp) {
             tp->fields.symbolName = NULL;
             break;
         default:
-            assert( 0 );
+            assert( 0 && "unknown token tag" );
         }
     }
 }

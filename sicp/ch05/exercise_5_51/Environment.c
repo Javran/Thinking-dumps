@@ -28,7 +28,7 @@ FrameEntry *envLookup(const Environment *env, const char *keyword) {
 }
 
 void envInsert(Environment *env, const char *key, void *val) {
-    assert( env /* cannot insert binding into the empty environment */);
+    assert( env && "cannot insert binding into the empty environment");
     frameInsert(env->frame,key,val);
 }
 

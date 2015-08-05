@@ -83,13 +83,11 @@ void freeSExp(SExp *p) {
     // special cases for statically allocated objects
     case sexpNil:
         assert(p == &nilExp
-               /* nil should never be allocated at run time
-                */);
+               && "nil should never be allocated at run time");
         return;
     case sexpBool:
-        assert(p == &boolExps[0] || p == &boolExps[1]
-               /* boolExp should never be allocated at run time
-                */);
+        assert((p == &boolExps[0] || p == &boolExps[1])
+               && "boolExp should never be allocated at run time");
         return;
     case sexpFuncObj:
         freeFuncObject(p->fields.pFuncObj);
@@ -137,9 +135,7 @@ void printPairR(FILE *f, const SExp *p) {
 // to generate rest of the output.
 void printPairL(FILE *f, const SExp *p) {
     assert(p && p->tag == sexpPair
-           /* the second argument should be
-            * a valid object of sexpPair
-            */);
+           && "the second argument should be a valid object of sexpPair");
     fputc('(',f);
     printSExp(f,p->fields.pairContent.car);
     printPairR(f,p->fields.pairContent.cdr);
@@ -191,10 +187,10 @@ DynArr *sexpListToDynArr(const SExp *exp) {
 // but it helps disambiguating a null value from implementing language
 // and a null value from implemended language
 char isSExpEqual(const SExp *e1, const SExp *e2) {
-    assert( e1 /* e1 should not be NULL */ );
-    assert( e2 /* e2 should not be NULL */ );
+    assert( e1 && "e1 should not be NULL" );
+    assert( e2 && "e2 should not be NULL" );
     assert( sexpFuncObj != e1->tag && sexpFuncObj != e2 -> tag
-            /* cannot test equality involving LambdaObject */);
+            && "cannot test equality involving LambdaObject");
 
     if (e1 == e2) return 1;
 
@@ -219,9 +215,9 @@ char isSExpEqual(const SExp *e1, const SExp *e2) {
             return isSExpEqual(sexpCar(e1),sexpCar(e2))
                 && isSExpEqual(sexpCdr(e1),sexpCdr(e2));
         case sexpFuncObj:
-            assert(0 /* dead code */);
+            assert(0 && "dead code");
         }
-        assert(0 /* dead code */);
+        assert(0 && "dead code");
     } else {
         return 0;
     }

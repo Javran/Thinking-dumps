@@ -22,11 +22,11 @@ void dynArrInit(DynArr *p, size_t elemSize) {
 // for internal use. no need to expose it
 void dynArrAdjust(DynArr *p) {
     // should not be zero
-    assert(p->elemCap);
+    assert(p->elemCap && "DynArr should not be zero");
     if (p->elemMax+1 >= p->elemCap) {
         p->elemCap *= 2;
         p->base = realloc(p->base, p->elemSize*p->elemCap);
-        assert( p->base );
+        assert(p->base && "DynArr base should not be NULL");
     }
 }
 
@@ -39,7 +39,7 @@ void *dynArrNew(DynArr *p) {
 }
 
 void dynArrFree(DynArr *p) {
-    assert( p );
+    assert( p && "DynArr: freeing NULL" );
     free(p->base);
     memset(p, 0x00, sizeof(DynArr));
 }

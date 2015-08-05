@@ -39,7 +39,7 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
 
 // apply arguments to a function object
 const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env) {
-    assert(rator /* operator cannot be NULL */);
+    assert(rator && "operator cannot be NULL");
     switch (rator->tag) {
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
@@ -75,7 +75,7 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
         return evSequence(bd, appEnv);
     }
     }
-    assert(0 /* invalid function object */);
+    assert(0 && "invalid function object");
 }
 
 void freeFuncObject(FuncObj *p) {

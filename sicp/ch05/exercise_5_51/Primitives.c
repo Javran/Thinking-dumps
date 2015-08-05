@@ -6,7 +6,7 @@ long *primPlusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
     const SExp *elem = *pelem;
-    assert(sexpInteger == elem->tag);
+    assert(sexpInteger == elem->tag && "plus: invalid tag");
     *acc = *acc + elem->fields.integerContent;
     return acc;
 }
@@ -48,7 +48,7 @@ long *primMinusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
     const SExp *elem = *pelem;
-    assert(sexpInteger == elem->tag);
+    assert(sexpInteger == elem->tag && "minus: invalid tag");
     *acc = *acc - elem->fields.integerContent;
     return acc;
 }
@@ -91,7 +91,7 @@ long *primMultFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
     const SExp *elem = *pelem;
-    assert(sexpInteger == elem->tag);
+    assert(sexpInteger == elem->tag && "mult: invalid tag");
     *acc = *acc * elem->fields.integerContent;
     return acc;
 }
