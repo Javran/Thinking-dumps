@@ -22,7 +22,6 @@ void releaseTempEnv(Environment *pEnv) {
 // (internal use only) turning argument expressions into values
 // given that application itself is proper list, randExps is always
 // either nil or pair
-// TODO: evalArgs mem leak
 const SExp *evalArgs(const SExp *randExps, Environment *env) {
     if (sexpNil == randExps->tag)
         return newNil();
@@ -46,7 +45,6 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
         FuncPrimHandler handler = rator->fields.primHdlr;
         const SExp *randVals = evalArgs(rands,env);
         // TODO: remove hack
-        // pointerManagerRegisterCustom((void *)randVals, (PFreeCallback)freeSExp);
         return handler(randVals);
     }
     case funcCompound: {
@@ -82,6 +80,6 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
 
 void freeFuncObject(FuncObj *p) {
     // we only need to free the structure we are using.
-    // just assume other components will be release properly.
+    // just assume other components will be released properly.
     free(p);
 }

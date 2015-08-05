@@ -77,15 +77,14 @@ START_TEST (test_Primitives_cons) {
     SExp **pExp = dynArrBegin(pSExpList);
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
-
     pointerManagerInit();
     Environment *penv = mkInitEnv();
-    const SExp *actual = evalDispatch(exp,penv);
+
+    const SExp *actual = evApplication(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
     free(penv);
-    // TODO: problematic releasing
-    // pointerManagerFinalize();
+    pointerManagerFinalize();
     freeSExps(pSExpList);
 } END_TEST
 

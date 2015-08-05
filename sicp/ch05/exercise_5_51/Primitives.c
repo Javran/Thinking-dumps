@@ -139,7 +139,9 @@ const SExp *primCons(const SExp *args) {
         SExp *cdr = *it;
         // TODO: lots of things are need to be constants in future
         retVal = (void *)newPair(car,cdr);
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+        // TODO: too many mistakes on this...
+        // we must find a solution
+        pointerManagerRegister(retVal);
     }
     dynArrFree(argsA);
     free(argsA);
