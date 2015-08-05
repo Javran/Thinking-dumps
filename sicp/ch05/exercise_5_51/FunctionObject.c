@@ -33,8 +33,8 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
     const SExp *retVal = newPair((void *)firstVal,(void *)restVals);
     // TODO: explain
     // we are not going to recursively de-allocate the resource
-    pointerManagerRegister(retVal);
     // TODO: eliminate hacks
+    pointerManagerRegister((void*)retVal);
     return retVal;
 }
 
@@ -44,7 +44,7 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
     switch (rator->tag) {
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
-        const SExp *randVals = rands ; // evalArgs(rands,env);
+        const SExp *randVals = evalArgs(rands,env);
         // TODO: remove hack
         // pointerManagerRegisterCustom((void *)randVals, (PFreeCallback)freeSExp);
         return handler(randVals);
