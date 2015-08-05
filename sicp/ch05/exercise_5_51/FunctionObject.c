@@ -30,8 +30,12 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
     const SExp *firstVal = evalDispatch(sexpCar(randExps), env);
     const SExp *restVals = evalArgs(sexpCdr(randExps), env);
 
+    const SExp *retVal = newPair((void *)firstVal,(void *)restVals);
+    // TODO: explain
+    // we are not going to recursively de-allocate the resource
+    pointerManagerRegister(retVal);
     // TODO: eliminate hacks
-    return newPair((void *)firstVal,(void *)restVals);
+    return retVal;
 }
 
 // apply arguments to a function object
