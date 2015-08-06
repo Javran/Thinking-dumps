@@ -30,20 +30,6 @@ const SExp *primPlus(const SExp *args) {
     }
 }
 
-FuncObj primPlusObj = {
-    funcPrim,
-    { .primHdlr = primPlus }
-};
-
-// primitives are allocated statically
-// so no resource de-allocation
-// is actually happening for them.
-SExp primPlusSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primPlusObj
-    }
-};
-
 long *primMinusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
@@ -76,17 +62,6 @@ const SExp *primMinus(const SExp *args) {
     }
 }
 
-FuncObj primMinusObj = {
-    funcPrim,
-    { .primHdlr = primMinus }
-};
-
-SExp primMinusSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primMinusObj
-    }
-};
-
 long *primMultFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
@@ -115,17 +90,6 @@ const SExp *primMult(const SExp *args) {
     }
 }
 
-FuncObj primMultObj = {
-    funcPrim,
-    { .primHdlr = primMult }
-};
-
-SExp primMultSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primMultObj
-    }
-};
-
 const SExp *primCons(const SExp *args) {
     DynArr *argsA = sexpProperListToDynArr(args);
     int cnt = dynArrCount(argsA);
@@ -148,17 +112,6 @@ const SExp *primCons(const SExp *args) {
     return retVal;
 }
 
-FuncObj primConsObj = {
-    funcPrim,
-    { .primHdlr = primCons }
-};
-
-SExp primConsSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primConsObj
-    }
-};
-
 const SExp *primCar(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         // we have exactly one arg
@@ -168,17 +121,6 @@ const SExp *primCar(const SExp *args) {
     return NULL;
 }
 
-FuncObj primCarObj = {
-    funcPrim,
-    { .primHdlr = primCar }
-};
-
-SExp primCarSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primCarObj
-    }
-};
-
 const SExp *primCdr(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         return sexpCdr(sexpCar(args));
@@ -187,13 +129,19 @@ const SExp *primCdr(const SExp *args) {
     return NULL;
 }
 
-FuncObj primCdrObj = {
-    funcPrim,
-    { .primHdlr = primCdr }
-};
+FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
+FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
+FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
+FuncObj primConsObj = {funcPrim, { .primHdlr = primCons }};
+FuncObj primCarObj = {funcPrim, { .primHdlr = primCar }};
+FuncObj primCdrObj = {funcPrim, { .primHdlr = primCdr }};
 
-SExp primCdrSExp = {
-    sexpFuncObj,
-    { .pFuncObj = &primCdrObj
-    }
-};
+// primitives are allocated statically
+// so no resource de-allocation
+// is actually happening for them.
+SExp primPlusSExp = {sexpFuncObj, { .pFuncObj = &primPlusObj}};
+SExp primMinusSExp = {sexpFuncObj, { .pFuncObj = &primMinusObj}};
+SExp primMultSExp = {sexpFuncObj, { .pFuncObj = &primMultObj}};
+SExp primConsSExp = {sexpFuncObj, { .pFuncObj = &primConsObj}};
+SExp primCarSExp = {sexpFuncObj, { .pFuncObj = &primCarObj}};
+SExp primCdrSExp = {sexpFuncObj, { .pFuncObj = &primCdrObj}};
