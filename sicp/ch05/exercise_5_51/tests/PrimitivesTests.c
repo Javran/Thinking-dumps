@@ -98,7 +98,9 @@ START_TEST (test_Primitives_car) {
     pointerManagerInit();
     Environment *penv = mkInitEnv();
     const SExp *actual = evApplication(exp,penv);
+    SExp expect = { sexpSymbol, { .symbolName = "a" } };
 
+    ck_assert(isSExpEqual(&expect,actual));
     envFree(penv);
     free(penv);
     pointerManagerFinalize();
