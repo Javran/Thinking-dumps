@@ -15,7 +15,12 @@ START_TEST (test_Environment_basic) {
     envInit(&envLvl2);
     envSetParent(&envLvl2,&envLvl1);
 
-    char arr[] = {1,2,3,4,5,6,7,8};
+    // as we know the implementation,
+    // the conversion is safe because
+    // we are only interested in the pointer value
+    // but are not interested in the value the pointer points to
+    char arrTest[] = {1,2,3,4,5,6,7,8};
+    SExp *arr = (void *)arrTest;
     // Root: a -> 1, b -> 2
     // Lvl1: c -> 3, d -> 4
     // Lvl2: e -> 5, f -> 6

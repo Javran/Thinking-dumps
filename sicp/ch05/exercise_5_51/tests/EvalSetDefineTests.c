@@ -88,7 +88,7 @@ START_TEST (test_EvalSetDefine_define_func) {
     // instead we want to know whether each component of the FunctionObject
     // is the same
 
-    SExp *sexpL = fe->val;
+    const SExp *sexpL = fe->val;
     FuncObj *fo = sexpL->fields.pFuncObj;
 
     // a compound function object should now be bound as
