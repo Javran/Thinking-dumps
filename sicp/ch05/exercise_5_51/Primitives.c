@@ -101,7 +101,7 @@ const SExp *primCons(const SExp *args) {
         SExp **it  = dynArrBegin( argsA );
         SExp *car = *it; it = dynArrNext( argsA, it);
         SExp *cdr = *it;
-        // TODO: lots of things are need to be constants in future
+        // TODO: lots of things are need to be constanted in future
         retVal = (void *)newPair(car,cdr);
         // TODO: too many mistakes on this...
         // we must find a solution

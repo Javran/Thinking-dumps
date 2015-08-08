@@ -22,7 +22,6 @@ typedef struct {
 
 // a primtive function handler consumes a S-expression
 // of proper list
-// TODO: consider converting it to list which might work better?
 typedef const SExp * (*FuncPrimHandler)(const SExp *);
 
 typedef union {

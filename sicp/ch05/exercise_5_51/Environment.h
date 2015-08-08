@@ -16,9 +16,6 @@ typedef struct Environment {
     const struct Environment *parent;
 } Environment;
 
-// TODO: value should be of type SExp *,
-// if everything else works out fine
-
 void envInit(Environment *);
 void envSetParent(Environment *, const Environment *);
 FrameEntry *envLookup(const Environment *, const char *);
