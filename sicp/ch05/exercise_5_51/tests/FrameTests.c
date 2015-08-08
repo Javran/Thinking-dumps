@@ -5,7 +5,10 @@
 // basic functionality of Frame
 START_TEST (test_Frame_basic)
 {
-    int testArr[] = {0,1,2,3};
+    // only pointer equivalence is relevant
+    // so the conversion is safe for all these testcases
+    int testArrD[] = {0,1,2,3};
+    const SExp *testArr = (void *)testArrD;
     Frame fr = {0};
 
     frameInit(&fr);
