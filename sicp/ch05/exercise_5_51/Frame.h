@@ -2,17 +2,18 @@
 #define JAVEV_FRAME_H
 
 #include "DynArr.h"
+#include "SExp.h"
 
 typedef struct {
     char *key;
-    void *val;
+    const SExp *val;
 } FrameEntry;
 
 typedef DynArr Frame;
 
 void frameInit(DynArr *);
 FrameEntry *frameLookup(const Frame *, const char *);
-void *frameInsert(Frame *, const char *, void *);
+const SExp *frameInsert(Frame *, const char *, const SExp *);
 void frameFree(Frame *);
 
 #endif

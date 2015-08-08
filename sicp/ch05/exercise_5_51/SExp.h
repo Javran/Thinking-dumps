@@ -2,7 +2,7 @@
 #define JAVEV_SEXP_H
 
 #include "Common.h"
-#include "Environment.h"
+#include "DynArr.h"
 
 // NOTE: one important thing to know about scheme is that
 // the only "false" value is "#f", and any other thing is considered "true"

@@ -2,6 +2,7 @@
 #define JAVEV_FUNCTIONOBJECT_H
 
 #include "SExp.h"
+#include "Environment.h"
 
 // every function and lambda expression
 // is eventually represented in a FunctionObject,

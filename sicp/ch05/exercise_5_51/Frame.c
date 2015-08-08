@@ -24,8 +24,8 @@ FrameEntry *frameLookup(const Frame *frame, const char *keyword) {
     return NULL;
 }
 
-void *frameInsert(Frame *frame, const char *key, void *val) {
-    void *retVal = NULL;
+const SExp *frameInsert(Frame *frame, const char *key, const SExp *val) {
+    const SExp *retVal = NULL;
     FrameEntry *fe = frameLookup(frame, key);
     if (fe) {
         // an old object is found

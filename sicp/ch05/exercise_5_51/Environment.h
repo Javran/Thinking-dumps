@@ -2,6 +2,7 @@
 #define JAVEV_ENVIRONMENT_H
 
 #include "Common.h"
+#include "SExp.h"
 #include "Frame.h"
 
 struct Environment;
@@ -21,7 +22,7 @@ typedef struct Environment {
 void envInit(Environment *);
 void envSetParent(Environment *, const Environment *);
 FrameEntry *envLookup(const Environment *, const char *);
-void envInsert(Environment *, const char *, void *);
+void envInsert(Environment *, const char *, const SExp *);
 void envFree(Environment *);
 
 #endif

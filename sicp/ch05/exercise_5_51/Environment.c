@@ -27,7 +27,7 @@ FrameEntry *envLookup(const Environment *env, const char *keyword) {
         : envLookup(env->parent, keyword);
 }
 
-void envInsert(Environment *env, const char *key, void *val) {
+void envInsert(Environment *env, const char *key, const SExp *val) {
     assert( env && "cannot insert binding into the empty environment");
     frameInsert(env->frame,key,val);
 }
