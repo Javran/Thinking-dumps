@@ -4,6 +4,9 @@
 #include "DynArr.h"
 #include "FunctionObject.h"
 
+// TODO: consider registering dynamic allocated objects
+// so that other parts doesn't have to deal with the mess
+
 // statically allocated objects,
 // which are intended for sharing
 // (to reduce runtime-allocation overhead)
