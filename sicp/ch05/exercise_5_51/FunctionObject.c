@@ -44,7 +44,6 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
     case funcPrim: {
         FuncPrimHandler handler = rator->fields.primHdlr;
         const SExp *randVals = evalArgs(rands,env);
-        // TODO: remove hack
         return handler(randVals);
     }
     case funcCompound: {
