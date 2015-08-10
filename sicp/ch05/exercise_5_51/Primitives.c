@@ -133,6 +133,15 @@ const SExp *primList(const SExp *args) {
     return args;
 }
 
+// TODO: symbol? string? integer? boolean? null? pair?
+
+const SExp *primSymbolQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpSymbol);
+    }
+    return NULL;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -140,6 +149,7 @@ FuncObj primConsObj = {funcPrim, { .primHdlr = primCons }};
 FuncObj primCarObj = {funcPrim, { .primHdlr = primCar }};
 FuncObj primCdrObj = {funcPrim, { .primHdlr = primCdr }};
 FuncObj primListObj = {funcPrim, { .primHdlr = primList }};
+FuncObj primSymbolQObj = {funcPrim, { .primHdlr = primSymbolQ }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -151,3 +161,4 @@ SExp primConsSExp = {sexpFuncObj, { .pFuncObj = &primConsObj}};
 SExp primCarSExp = {sexpFuncObj, { .pFuncObj = &primCarObj}};
 SExp primCdrSExp = {sexpFuncObj, { .pFuncObj = &primCdrObj}};
 SExp primListSExp = {sexpFuncObj, { .pFuncObj = &primListObj}};
+SExp primSymbolQSExp = {sexpFuncObj, { .pFuncObj = &primSymbolQObj}};

@@ -3,8 +3,7 @@
 
 #include "FunctionObject.h"
 
-// Function primitives for the initial
-// environment
+// Function primitives for the initial environment
 
 SExp primPlusSExp;
 SExp primMinusSExp;
@@ -14,5 +13,7 @@ SExp primConsSExp;
 SExp primCarSExp;
 SExp primCdrSExp;
 SExp primListSExp;
+
+SExp primSymbolQSExp;
 
 #endif
