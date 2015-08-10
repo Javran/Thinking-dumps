@@ -14,5 +14,6 @@ Environment *mkInitEnv() {
     envInsert(env, "cons", &primConsSExp);
     envInsert(env, "car", &primCarSExp);
     envInsert(env, "cdr", &primCdrSExp);
+    envInsert(env, "list", &primListSExp);
     return env;
 }

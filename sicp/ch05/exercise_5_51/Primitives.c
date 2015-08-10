@@ -129,12 +129,17 @@ const SExp *primCdr(const SExp *args) {
     return NULL;
 }
 
+const SExp *primList(const SExp *args) {
+    return args;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
 FuncObj primConsObj = {funcPrim, { .primHdlr = primCons }};
 FuncObj primCarObj = {funcPrim, { .primHdlr = primCar }};
 FuncObj primCdrObj = {funcPrim, { .primHdlr = primCdr }};
+FuncObj primListObj = {funcPrim, { .primHdlr = primList }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -145,3 +150,4 @@ SExp primMultSExp = {sexpFuncObj, { .pFuncObj = &primMultObj}};
 SExp primConsSExp = {sexpFuncObj, { .pFuncObj = &primConsObj}};
 SExp primCarSExp = {sexpFuncObj, { .pFuncObj = &primCarObj}};
 SExp primCdrSExp = {sexpFuncObj, { .pFuncObj = &primCdrObj}};
+SExp primListSExp = {sexpFuncObj, { .pFuncObj = &primListObj}};
