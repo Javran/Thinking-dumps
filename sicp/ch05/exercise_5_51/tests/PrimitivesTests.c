@@ -126,6 +126,25 @@ START_TEST (test_Primitives_cdr) {
     freeSExps(pSExpList);
 } END_TEST
 
+START_TEST (test_Primitives_list) {
+    DynArr *pSExpList = parseSExps("(list 'a (+ 1 2) (* 3 4)) (a 3 12)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+
+    const SExp *actual = evApplication(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
 Suite * primitivesSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -138,6 +157,7 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_cons);
     tcase_add_test(tc_core, test_Primitives_car);
     tcase_add_test(tc_core, test_Primitives_cdr);
+    tcase_add_test(tc_core, test_Primitives_list);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
