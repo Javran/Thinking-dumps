@@ -69,6 +69,7 @@ START_TEST (test_Primitives_mult) {
     freeSExps(pSExpList);
 } END_TEST
 
+// primitive "cons"
 START_TEST (test_Primitives_cons) {
     DynArr *pSExpList = parseSExps("(cons 'a '(b c d)) (a b c d)", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -88,6 +89,7 @@ START_TEST (test_Primitives_cons) {
     freeSExps(pSExpList);
 } END_TEST
 
+// primitive "car"
 START_TEST (test_Primitives_car) {
     DynArr *pSExpList = parseSExps("(car '(a c d))", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -107,6 +109,7 @@ START_TEST (test_Primitives_car) {
     freeSExps(pSExpList);
 } END_TEST
 
+// primitive "cdr"
 START_TEST (test_Primitives_cdr) {
     DynArr *pSExpList = parseSExps("(cdr '(b c d)) (c d)", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
@@ -145,6 +148,31 @@ START_TEST (test_Primitives_list) {
     freeSExps(pSExpList);
 } END_TEST
 
+// primitive predicate tests 1
+START_TEST (test_Primitives_primPred1) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x 'a)"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#t #f #f #f #f #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
 Suite * primitivesSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -158,6 +186,7 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_car);
     tcase_add_test(tc_core, test_Primitives_cdr);
     tcase_add_test(tc_core, test_Primitives_list);
+    tcase_add_test(tc_core, test_Primitives_primPred1);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
