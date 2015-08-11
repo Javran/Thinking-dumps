@@ -142,6 +142,41 @@ const SExp *primSymbolQ(const SExp *args) {
     return NULL;
 }
 
+const SExp *primStringQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpString);
+    }
+    return NULL;
+}
+
+const SExp *primIntegerQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpInteger);
+    }
+    return NULL;
+}
+
+const SExp *primBooleanQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpBool);
+    }
+    return NULL;
+}
+
+const SExp *primNullQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpNil);
+    }
+    return NULL;
+}
+
+const SExp *primPairQ(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        return newBool(sexpCar(args)->tag == sexpPair);
+    }
+    return NULL;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -150,6 +185,11 @@ FuncObj primCarObj = {funcPrim, { .primHdlr = primCar }};
 FuncObj primCdrObj = {funcPrim, { .primHdlr = primCdr }};
 FuncObj primListObj = {funcPrim, { .primHdlr = primList }};
 FuncObj primSymbolQObj = {funcPrim, { .primHdlr = primSymbolQ }};
+FuncObj primStringQObj = {funcPrim, { .primHdlr = primStringQ }};
+FuncObj primIntegerQObj = {funcPrim, { .primHdlr = primIntegerQ }};
+FuncObj primBooleanQObj = {funcPrim, { .primHdlr = primBooleanQ }};
+FuncObj primNullQObj = {funcPrim, { .primHdlr = primNullQ }};
+FuncObj primPairQObj = {funcPrim, { .primHdlr = primPairQ }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -162,3 +202,8 @@ SExp primCarSExp = {sexpFuncObj, { .pFuncObj = &primCarObj}};
 SExp primCdrSExp = {sexpFuncObj, { .pFuncObj = &primCdrObj}};
 SExp primListSExp = {sexpFuncObj, { .pFuncObj = &primListObj}};
 SExp primSymbolQSExp = {sexpFuncObj, { .pFuncObj = &primSymbolQObj}};
+SExp primStringQSExp = {sexpFuncObj, { .pFuncObj = &primStringQObj}};
+SExp primIntegerQSExp = {sexpFuncObj, { .pFuncObj = &primIntegerQObj}};
+SExp primBooleanQSExp = {sexpFuncObj, { .pFuncObj = &primBooleanQObj}};
+SExp primNullQSExp = {sexpFuncObj, { .pFuncObj = &primNullQObj}};
+SExp primPairQSExp = {sexpFuncObj, { .pFuncObj = &primPairQObj}};
