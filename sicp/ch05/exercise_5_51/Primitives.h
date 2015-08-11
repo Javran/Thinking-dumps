@@ -15,5 +15,10 @@ SExp primCdrSExp;
 SExp primListSExp;
 
 SExp primSymbolQSExp;
+SExp primStringQSExp;
+SExp primIntegerQSExp;
+SExp primBooleanQSExp;
+SExp primNullQSExp;
+SExp primPairQSExp;
 
 #endif

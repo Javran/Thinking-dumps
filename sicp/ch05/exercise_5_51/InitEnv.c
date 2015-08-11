@@ -17,5 +17,9 @@ Environment *mkInitEnv() {
     envInsert(env, "list", &primListSExp);
 
     envInsert(env, "symbol?", &primSymbolQSExp);
+    envInsert(env, "string?", &primStringQSExp);
+    envInsert(env, "integer?", &primIntegerQSExp);
+    envInsert(env, "pair?", &primPairQSExp);
+
     return env;
 }
