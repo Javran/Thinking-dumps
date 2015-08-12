@@ -47,5 +47,5 @@ void pointerManagerRegisterCustom(PHandle h, PFreeCallback cb) {
 }
 
 void pointerManagerRegister(PHandle h) {
-    pointerManagerRegisterCustom(h,free);
+    pointerManagerRegisterCustom(h,(PFreeCallback)free);
 }
