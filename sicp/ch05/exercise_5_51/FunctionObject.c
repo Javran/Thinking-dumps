@@ -29,6 +29,11 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
     const SExp *firstVal = evalDispatch(sexpCar(randExps), env);
     const SExp *restVals = evalArgs(sexpCdr(randExps), env);
 
+    // if the evaluation for sub-exprs have failed,
+    // stop this immediately
+    if (firstVal == NULL || restVals == NULL)
+        return NULL;
+
     const SExp *retVal = newPair((void *)firstVal,(void *)restVals);
     // TODO: explain
     // we are not going to recursively de-allocate the resource
