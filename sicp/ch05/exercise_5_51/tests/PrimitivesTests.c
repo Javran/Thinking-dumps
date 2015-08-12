@@ -148,7 +148,7 @@ START_TEST (test_Primitives_list) {
     freeSExps(pSExpList);
 } END_TEST
 
-// primitive predicate tests 1
+// primitive predicate test 1
 START_TEST (test_Primitives_primPred1) {
     DynArr *pSExpList =
         parseSExps("(begin"
@@ -157,6 +157,131 @@ START_TEST (test_Primitives_primPred1) {
                    "        (boolean? x) (null? x) (pair? x))"
                    ")"
                    "(#t #f #f #f #f #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+// primitive predicate test 2
+START_TEST (test_Primitives_primPred2) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x \"st\")"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#f #t #f #f #f #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+// primitive predicate test 3
+START_TEST (test_Primitives_primPred3) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x 100)"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#f #f #t #f #f #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+// primitive predicate test 4
+START_TEST (test_Primitives_primPred4) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x #f)"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#f #f #f #t #f #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+// primitive predicate test 5
+START_TEST (test_Primitives_primPred5) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x '())"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#f #f #f #f #t #f)", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 2);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    SExp **pExpect = dynArrNext(pSExpList, pExp);
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evalDispatch(exp,penv);
+    ck_assert(isSExpEqual(actual, *pExpect));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+// primitive predicate test 6
+START_TEST (test_Primitives_primPred6) {
+    DynArr *pSExpList =
+        parseSExps("(begin"
+                   "  (define x '(a b))"
+                   "  (list (symbol? x) (string? x) (integer? x)"
+                   "        (boolean? x) (null? x) (pair? x))"
+                   ")"
+                   "(#f #f #f #f #f #t)", stderr);
     ck_assert_ptr_ne(pSExpList, NULL);
     ck_assert_int_eq(dynArrCount(pSExpList), 2);
 
@@ -186,7 +311,13 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_car);
     tcase_add_test(tc_core, test_Primitives_cdr);
     tcase_add_test(tc_core, test_Primitives_list);
+
     tcase_add_test(tc_core, test_Primitives_primPred1);
+    tcase_add_test(tc_core, test_Primitives_primPred2);
+    tcase_add_test(tc_core, test_Primitives_primPred3);
+    tcase_add_test(tc_core, test_Primitives_primPred4);
+    tcase_add_test(tc_core, test_Primitives_primPred5);
+    tcase_add_test(tc_core, test_Primitives_primPred6);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
