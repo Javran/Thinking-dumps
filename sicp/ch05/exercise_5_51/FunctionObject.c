@@ -35,10 +35,10 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
         return NULL;
 
     const SExp *retVal = newPair((void *)firstVal,(void *)restVals);
-    // TODO: explain
-    // we are not going to recursively de-allocate the resource
-    // TODO: eliminate hacks
-    pointerManagerRegister((void*)retVal);
+    // here we cannot recursively de-allocate the resource,
+    // because eval-handlers might return an existing pointer as results
+    // which means the value returned might be allocated somewhere else.
+    pointerManagerRegister(retVal);
     return retVal;
 }
 
