@@ -2,6 +2,8 @@
 #include "SExp.h"
 #include "PointerManager.h"
 
+// TODO: a more efficient impl of unary / binary operations?
+
 long *primPlusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
