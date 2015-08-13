@@ -298,6 +298,43 @@ START_TEST (test_Primitives_primPred6) {
     freeSExps(pSExpList);
 } END_TEST
 
+// primitive "="
+START_TEST (test_Primitives_primEQ1) {
+    DynArr *pSExpList = parseSExps("(= 10 (+ 2 8))", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evApplication(exp,penv);
+    SExp *expect = newBool(1);
+    ck_assert(isSExpEqual(expect,actual));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
+START_TEST (test_Primitives_primEQ2) {
+    DynArr *pSExpList = parseSExps("(= 11 (+ 2 8))", stderr);
+    ck_assert_ptr_ne(pSExpList, NULL);
+    ck_assert_int_eq(dynArrCount(pSExpList), 1);
+
+    SExp **pExp = dynArrBegin(pSExpList);
+    SExp *exp = *pExp;
+    pointerManagerInit();
+    Environment *penv = mkInitEnv();
+    const SExp *actual = evApplication(exp,penv);
+    SExp *expect = newBool(0);
+    ck_assert(isSExpEqual(expect,actual));
+    envFree(penv);
+    free(penv);
+    pointerManagerFinalize();
+    freeSExps(pSExpList);
+} END_TEST
+
 Suite * primitivesSuite(void) {
     Suite *s;
     TCase *tc_core;
@@ -318,6 +355,9 @@ Suite * primitivesSuite(void) {
     tcase_add_test(tc_core, test_Primitives_primPred4);
     tcase_add_test(tc_core, test_Primitives_primPred5);
     tcase_add_test(tc_core, test_Primitives_primPred6);
+
+    tcase_add_test(tc_core, test_Primitives_primEQ1);
+    tcase_add_test(tc_core, test_Primitives_primEQ2);
 
     s = suite_create("Primitives");
     suite_add_tcase(s, tc_core);
