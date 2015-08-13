@@ -23,5 +23,7 @@ Environment *mkInitEnv() {
     envInsert(env, "null?", &primNullQSExp);
     envInsert(env, "pair?", &primPairQSExp);
 
+    envInsert(env, "=", &primEQSExp);
+
     return env;
 }

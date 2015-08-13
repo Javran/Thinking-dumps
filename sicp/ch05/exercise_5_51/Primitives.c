@@ -177,6 +177,32 @@ const SExp *primPairQ(const SExp *args) {
     return NULL;
 }
 
+// EQ for "=" sign
+const SExp *primEQ(const SExp *args) {
+    DynArr *argsA = sexpProperListToDynArr(args);
+    int cnt = dynArrCount(argsA);
+    SExp *retVal = NULL;
+
+    if (cnt != 2) {
+        retVal = NULL;
+    } else {
+        SExp **it  = dynArrBegin( argsA );
+        SExp *v1 = *it; it = dynArrNext( argsA, it);
+        SExp *v2 = *it;
+
+        if (sexpInteger == v1->tag && sexpInteger == v2->tag) {
+            retVal = newBool( v1->fields.integerContent == v2->fields.integerContent );
+            // TODO: bool as statically allocated .. we are relying on the assumption
+            // is there a way to remove it?
+        } else {
+            retVal = NULL;
+        }
+    }
+    dynArrFree(argsA);
+    free(argsA);
+    return retVal;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -190,6 +216,7 @@ FuncObj primIntegerQObj = {funcPrim, { .primHdlr = primIntegerQ }};
 FuncObj primBooleanQObj = {funcPrim, { .primHdlr = primBooleanQ }};
 FuncObj primNullQObj = {funcPrim, { .primHdlr = primNullQ }};
 FuncObj primPairQObj = {funcPrim, { .primHdlr = primPairQ }};
+FuncObj primEQObj = {funcPrim, { .primHdlr = primEQ }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -207,3 +234,4 @@ SExp primIntegerQSExp = {sexpFuncObj, { .pFuncObj = &primIntegerQObj}};
 SExp primBooleanQSExp = {sexpFuncObj, { .pFuncObj = &primBooleanQObj}};
 SExp primNullQSExp = {sexpFuncObj, { .pFuncObj = &primNullQObj}};
 SExp primPairQSExp = {sexpFuncObj, { .pFuncObj = &primPairQObj}};
+SExp primEQSExp = {sexpFuncObj, { .pFuncObj = &primEQObj}};

@@ -15,11 +15,14 @@ SExp primCdrSExp;
 SExp primListSExp;
 
 // "Q" for "?"
+// "EQ" for "="
 SExp primSymbolQSExp;
 SExp primStringQSExp;
 SExp primIntegerQSExp;
 SExp primBooleanQSExp;
 SExp primNullQSExp;
 SExp primPairQSExp;
+
+SExp primEQSExp;
 
 #endif
