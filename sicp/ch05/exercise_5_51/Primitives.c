@@ -18,7 +18,20 @@ typedef struct {
 // returns 0 if failed (e.g. argument number mismatch)
 char extractBinArgs(BinArgs *ba, const SExp *args) {
     assert(ba && "caller must provide a structure for filling in data");
-
+    if (sexpPair == args->tag) {
+        // we have at least one element
+        ba->arg1 = sexpCar(args);
+        const SExp *rest = sexpCdr(args);
+        if (sexpPair == rest->tag) {
+            ba->arg2 = sexpCar(rest);
+            const SExp *rest2 = sexpCdr(rest);
+            // only true when "args" has exactly two args
+            return sexpNil == rest2->tag;
+        }
+        return 0;
+    } else {
+        return 0;
+    }
 }
 
 long *primPlusFoldHelper(long *acc, const SExp **pelem) {
