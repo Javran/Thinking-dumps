@@ -123,25 +123,14 @@ const SExp *primMult(const SExp *args) {
 }
 
 const SExp *primCons(const SExp *args) {
-    DynArr *argsA = sexpProperListToDynArr(args);
-    int cnt = dynArrCount(argsA);
-    SExp *retVal = NULL;
-
-    if (cnt != 2) {
-        retVal = NULL;
-    } else {
-        SExp **it  = dynArrBegin( argsA );
-        SExp *car = *it; it = dynArrNext( argsA, it);
-        SExp *cdr = *it;
-        // TODO: lots of things are need to be constanted in future
-        retVal = (void *)newPair(car,cdr);
-        // TODO: too many mistakes on this...
-        // we must find a solution
+    BinArgs ba = {0};
+    if (extractBinArgs(&ba,args)) {
+        const SExp *retVal = newPair((void *)ba.arg1,(void *)ba.arg2);
         pointerManagerRegister(retVal);
+        return retVal;
+    } else {
+        return NULL;
     }
-    dynArrFree(argsA);
-    free(argsA);
-    return retVal;
 }
 
 const SExp *primCar(const SExp *args) {
