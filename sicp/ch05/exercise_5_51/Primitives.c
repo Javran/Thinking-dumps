@@ -4,6 +4,23 @@
 
 // TODO: a more efficient impl of unary / binary operations?
 
+// we are limited to construct static objects ...
+// closure supports are not that good in this language.
+
+// maybe it's better to deal with only binary functions.
+
+typedef struct {
+    const SExp *arg1;
+    const SExp *arg2;
+} BinArgs;
+
+// for extracting binary arguments from an argyment list
+// returns 0 if failed (e.g. argument number mismatch)
+char extractBinArgs(BinArgs *ba, const SExp *args) {
+    assert(ba && "caller must provide a structure for filling in data");
+
+}
+
 long *primPlusFoldHelper(long *acc, const SExp **pelem) {
     if (! acc)
         return NULL;
