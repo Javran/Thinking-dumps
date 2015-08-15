@@ -11,6 +11,8 @@
 #include "EvalSetDefine.h"
 #include "EvalApp.h"
 
+#include "InitEnv.h"
+
 SExpHandler *evalHandlers[] = {
     &selfEvaluatingHandler,
     &variableHandler,
@@ -47,8 +49,7 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
         pointerManagerInit();
 
         const SExp *result = NULL;
-        // TODO: proper env initialization
-        Environment *env = NULL;
+        Environment *env = mkInitEnv();
         SExp ** it;
         for (it = dynArrBegin(pSExpList);
              it != dynArrEnd(pSExpList);
@@ -60,8 +61,9 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
                 // maybe giving more messages will be better
                 break;
             }
-
         }
+        envFree(env);
+        free(env);
         pointerManagerFinalize();
     }
     // releasing resources
