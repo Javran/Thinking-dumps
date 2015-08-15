@@ -40,8 +40,9 @@ const SExp *frameInsert(Frame *frame, const char *key, const SExp *val) {
     return retVal;
 }
 
-// TODO: current problem: need proper handling for values' free
-// need to provide an interface for value-visiting or key-value-visiting
+// here we just free whatever we have allocated,
+// as values are allocated by other functions
+// and there is already a mechanism for deallocating them
 void frameEntryFree(FrameEntry *fe) {
     free(fe->key);
 }
