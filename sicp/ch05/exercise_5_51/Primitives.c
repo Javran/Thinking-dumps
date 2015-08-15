@@ -200,28 +200,20 @@ const SExp *primPairQ(const SExp *args) {
 
 // EQ for "=" sign
 const SExp *primEQ(const SExp *args) {
-    DynArr *argsA = sexpProperListToDynArr(args);
-    int cnt = dynArrCount(argsA);
-    SExp *retVal = NULL;
-
-    if (cnt != 2) {
-        retVal = NULL;
-    } else {
-        SExp **it  = dynArrBegin( argsA );
-        SExp *v1 = *it; it = dynArrNext( argsA, it);
-        SExp *v2 = *it;
-
-        if (sexpInteger == v1->tag && sexpInteger == v2->tag) {
-            retVal = newBool( v1->fields.integerContent == v2->fields.integerContent );
+    BinArgs ba = {0};
+    if (extractBinArgs(&ba,args)) {
+        if (sexpInteger == ba.arg1->tag
+            && sexpInteger == ba.arg2->tag) {
             // TODO: bool as statically allocated .. we are relying on the assumption
             // is there a way to remove it?
+            return newBool( ba.arg1->fields.integerContent
+                            == ba.arg2->fields.integerContent );
         } else {
-            retVal = NULL;
+            return NULL;
         }
+    } else {
+        return NULL;
     }
-    dynArrFree(argsA);
-    free(argsA);
-    return retVal;
 }
 
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
