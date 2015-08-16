@@ -216,6 +216,12 @@ const SExp *primEQ(const SExp *args) {
     }
 }
 
+// reading R5RS and only implement things we can support for now
+// "eq?" and "eqv?" don't seem to make any difference
+// "isSExpEqual" can handle most of the cases correctly,
+// except that when it comes to procedures and pairs,
+// a pointer comparison is used instead of going into
+// the structure or throwing an error
 const SExp *primEqQ(const SExp *args) {
     BinArgs ba = {0};
     if (extractBinArgs(&ba,args)) {
