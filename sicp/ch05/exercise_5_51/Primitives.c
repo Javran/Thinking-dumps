@@ -216,6 +216,26 @@ const SExp *primEQ(const SExp *args) {
     }
 }
 
+const SExp *primEqQ(const SExp *args) {
+    BinArgs ba = {0};
+    if (extractBinArgs(&ba,args)) {
+        if (sexpPair == ba.arg1->tag
+            && sexpPair == ba.arg2->tag) {
+            // it is guaranteed that "truthValue" field
+            // can only be 0 or 1, so this comparison
+            // is safe
+            return newBool( ba.arg1->fields.truthValue
+                            == ba.arg2->fields.truthValue );
+        } else {
+            return newBool( isSExpEqual(ba.arg1, ba.arg2));
+        }
+
+        return NULL;
+    } else {
+        return NULL;
+    }
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
