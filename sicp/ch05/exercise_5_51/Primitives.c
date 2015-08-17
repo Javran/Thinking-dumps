@@ -2,11 +2,8 @@
 #include "SExp.h"
 #include "PointerManager.h"
 
-// TODO: a more efficient impl of unary / binary operations?
-
 // we are limited to construct static objects ...
 // closure supports are not that good in this language.
-
 // maybe it's better to deal with only binary functions.
 
 typedef struct {
@@ -153,8 +150,6 @@ const SExp *primCdr(const SExp *args) {
 const SExp *primList(const SExp *args) {
     return args;
 }
-
-// TODO: symbol? string? integer? boolean? null? pair?
 
 const SExp *primSymbolQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
