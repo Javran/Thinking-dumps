@@ -268,6 +268,7 @@ FuncObj primBooleanQObj = {funcPrim, { .primHdlr = primBooleanQ }};
 FuncObj primNullQObj = {funcPrim, { .primHdlr = primNullQ }};
 FuncObj primPairQObj = {funcPrim, { .primHdlr = primPairQ }};
 FuncObj primEQObj = {funcPrim, { .primHdlr = primEQ }};
+FuncObj primEqQObj = {funcPrim, { .primHdlr = primEqQ }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -286,3 +287,4 @@ SExp primBooleanQSExp = {sexpFuncObj, { .pFuncObj = &primBooleanQObj}};
 SExp primNullQSExp = {sexpFuncObj, { .pFuncObj = &primNullQObj}};
 SExp primPairQSExp = {sexpFuncObj, { .pFuncObj = &primPairQObj}};
 SExp primEQSExp = {sexpFuncObj, { .pFuncObj = &primEQObj}};
+SExp primEqQSExp = {sexpFuncObj, { .pFuncObj = &primEqQObj}};
