@@ -232,11 +232,23 @@ const SExp *primEqQ(const SExp *args) {
             // is safe
             return newBool( ba.arg1->fields.truthValue
                             == ba.arg2->fields.truthValue );
-        } else {
-            return newBool( isSExpEqual(ba.arg1, ba.arg2));
         }
 
-        return NULL;
+        if (sexpFuncObj == ba.arg1->tag
+            && sexpFuncObj == ba.arg2->tag) {
+            return newBool( ba.arg1->fields.pFuncObj
+                            == ba.arg2->fields.pFuncObj );
+        }
+
+        if (sexpFuncObj == ba.arg1->tag
+            || sexpFuncObj == ba.arg2->tag) {
+            // "isSExpEqual" is designed not to handle function object
+            // comparison, so we have to take care of this case
+            // specially as well.
+            return newBool( 0 );
+        }
+
+        return newBool( isSExpEqual(ba.arg1, ba.arg2));
     } else {
         return NULL;
     }
