@@ -27,5 +27,7 @@ Environment *mkInitEnv() {
     // TODO: test
     envInsert(env, "eq?", &primEqQSExp);
 
+    envInsert(env, "not", &primNotSExp);
+
     return env;
 }
