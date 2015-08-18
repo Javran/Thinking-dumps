@@ -249,6 +249,19 @@ const SExp *primEqQ(const SExp *args) {
     }
 }
 
+const SExp *primNot(const SExp *args) {
+    if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
+        SExp *a = sexpCar(args);
+        // (not #f) => #t
+        if (sexpBool == a->tag && !a->fields.truthValue) {
+            return newBool(1);
+        } else {
+            return newBool(0);
+        }
+    }
+    return NULL;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -264,6 +277,7 @@ FuncObj primNullQObj = {funcPrim, { .primHdlr = primNullQ }};
 FuncObj primPairQObj = {funcPrim, { .primHdlr = primPairQ }};
 FuncObj primEQObj = {funcPrim, { .primHdlr = primEQ }};
 FuncObj primEqQObj = {funcPrim, { .primHdlr = primEqQ }};
+FuncObj primNotObj = {funcPrim, { .primHdlr = primNot }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -283,3 +297,4 @@ SExp primNullQSExp = {sexpFuncObj, { .pFuncObj = &primNullQObj}};
 SExp primPairQSExp = {sexpFuncObj, { .pFuncObj = &primPairQObj}};
 SExp primEQSExp = {sexpFuncObj, { .pFuncObj = &primEQObj}};
 SExp primEqQSExp = {sexpFuncObj, { .pFuncObj = &primEqQObj}};
+SExp primNotSExp = {sexpFuncObj, { .pFuncObj = &primNotObj}};

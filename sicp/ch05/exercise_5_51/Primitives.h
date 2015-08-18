@@ -26,4 +26,6 @@ SExp primPairQSExp;
 SExp primEQSExp;
 SExp primEqQSExp;
 
+SExp primNotSExp;
+
 #endif
