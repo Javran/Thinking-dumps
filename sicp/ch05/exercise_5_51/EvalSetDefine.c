@@ -35,7 +35,7 @@ char isDefinition(const SExp *p) {
 
 void freeRuntimeLambdaSExp(SExp *exp) {
     // newSymbol
-    freeSExp(sexpCar(exp));
+    freeSExpRec(sexpCar(exp));
     // newPair
     free(sexpCdr(exp));
     // object itself

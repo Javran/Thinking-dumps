@@ -91,7 +91,7 @@ SExp *parseList(ParseState *ps) {
 
 parse_list_exit:
     if (head)
-        freeSExp(head);
+        freeSExpRec(head);
     head = NULL;
     memcpy(ps, &oldPs, sizeof(ParseState));
     return NULL;
@@ -138,7 +138,7 @@ parse_quote_exit:
 }
 
 void freeSExpP(SExp **p) {
-    freeSExp(*p);
+    freeSExpRec(*p);
 }
 
 void freeSExps(DynArr *pSExpList) {

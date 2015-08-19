@@ -82,7 +82,7 @@ SExp *newFuncObject(void *obj) {
     return p;
 }
 
-void freeSExp(SExp *p) {
+void freeSExpRec(SExp *p) {
     if (!p) return;
     switch (p->tag) {
     case sexpInteger:
@@ -94,8 +94,8 @@ void freeSExp(SExp *p) {
         free(p->fields.stringContent);
         break;
     case sexpPair:
-        freeSExp(p->fields.pairContent.car);
-        freeSExp(p->fields.pairContent.cdr);
+        freeSExpRec(p->fields.pairContent.car);
+        freeSExpRec(p->fields.pairContent.cdr);
         break;
     // special cases for statically allocated objects
     case sexpNil:

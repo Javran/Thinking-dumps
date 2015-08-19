@@ -54,7 +54,7 @@ const SExp *primPlus(const SExp *args) {
         return NULL;
     } else {
         SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExpRec);
         return retVal;
     }
 }
@@ -86,7 +86,7 @@ const SExp *primMinus(const SExp *args) {
         return NULL;
     } else {
         SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExpRec);
         return retVal;
     }
 }
@@ -114,7 +114,7 @@ const SExp *primMult(const SExp *args) {
         return NULL;
     } else {
         SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
+        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExpRec);
         return retVal;
     }
 }

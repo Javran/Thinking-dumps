@@ -98,7 +98,7 @@ START_TEST (test_EvalSimple_quote2) {
     ck_assert_ptr_ne(result, NULL);
     ck_assert(isSExpEqual(expect,result));
     freeSExps(pSExpList);
-    freeSExp(expect);
+    freeSExpRec(expect);
 } END_TEST
 
 // simple variable test
