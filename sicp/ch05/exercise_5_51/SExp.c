@@ -12,6 +12,15 @@
 // * freeXXX is not usually recursive (TODO: for now freeSExp violates this, we need to fix it)
 // * mkXXX is not allocating space, but fills in some information
 
+// TODO:
+// * freeSExp should not be recursive
+// * after the previous TODO, register "freeSExp" to pointer managers
+//   properly so that we won't have to rely on the assumption that nil/#t/#f
+//   are statically allocated objects
+// * managedXXXX functions that allocate objects
+//   and register the allocated pointer in PointerManager
+//   so by the time the program ends, the space is released properly
+
 // statically allocated objects,
 // which are intended for sharing
 // (to reduce runtime-allocation overhead)
