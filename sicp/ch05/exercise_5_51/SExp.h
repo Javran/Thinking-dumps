@@ -54,7 +54,12 @@ SExp *newBool(char);
 SExp *newNil();
 SExp *newPair(SExp *, SExp *);
 SExp *newFuncObject(void *);
+
+// non-recursive SExp deallocation, can be used as a deallocation handler
+// because it does not go into structures
+void freeSExp(SExp *);
 void freeSExpRec(SExp *);
+
 void printSExp(FILE *, const SExp *);
 
 char isSExpEqual(const SExp *, const SExp *);

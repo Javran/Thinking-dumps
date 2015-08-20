@@ -114,6 +114,37 @@ void freeSExpRec(SExp *p) {
     free(p);
 }
 
+void freeSExp(SExp *p) {
+    if (!p) return;
+    switch (p->tag) {
+    case sexpInteger:
+        break;
+    case sexpSymbol:
+        free(p->fields.symbolName);
+        break;
+    case sexpString:
+        free(p->fields.stringContent);
+        break;
+    case sexpPair:
+        // non-recursive free won't go into structures
+        break;
+    // special cases for statically allocated objects
+    case sexpNil:
+        assert(p == &nilExp
+               && "nil should never be allocated at run time");
+        return;
+    case sexpBool:
+        assert((p == &boolExps[0] || p == &boolExps[1])
+               && "boolExp should never be allocated at run time");
+        return;
+    case sexpFuncObj:
+        freeFuncObject(p->fields.pFuncObj);
+        break;
+    }
+    memset(p,0x00,sizeof(SExp));
+    free(p);
+}
+
 // this function is only intended to be called by "printPairR"
 void printPairR(FILE *f, const SExp *p) {
     // according to the situation, the following things might happen:
