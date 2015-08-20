@@ -13,7 +13,6 @@
 // * mkXXX is not allocating space, but fills in some information
 
 // TODO:
-// * freeSExp should not be recursive, make it explicit by saying "freeSExpRec"
 // * after the previous TODO, register "freeSExp" to pointer managers
 //   properly so that we won't have to rely on the assumption that nil/#t/#f
 //   are statically allocated objects
