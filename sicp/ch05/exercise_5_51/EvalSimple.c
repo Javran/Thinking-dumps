@@ -86,9 +86,9 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     FuncObj *fo = newCompoundFunc(lamParam, lamBody, env);
 
     // the lambda object is allocated at runtime, and is supposed
-    // to be freed when its wrapping SExp is freed.
+    // to be deallocated when its wrapping SExp is deallocated.
     SExp *result = newFuncObject(fo);
-    pointerManagerRegisterCustom(result,(PFreeCallback)freeSExpRec);
+    pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
     return result;
 }
 
