@@ -1,5 +1,6 @@
 #include "Primitives.h"
 #include "SExp.h"
+#include "ManagedSExp.h"
 #include "PointerManager.h"
 
 // we are limited to construct static objects ...
@@ -53,9 +54,7 @@ const SExp *primPlus(const SExp *args) {
     if (!result) {
         return NULL;
     } else {
-        SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
-        return retVal;
+        return managedInteger(seed);
     }
 }
 
@@ -85,9 +84,7 @@ const SExp *primMinus(const SExp *args) {
     if (!result) {
         return NULL;
     } else {
-        SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
-        return retVal;
+        return managedInteger( seed );
     }
 }
 
@@ -113,18 +110,14 @@ const SExp *primMult(const SExp *args) {
     if (!result) {
         return NULL;
     } else {
-        SExp *retVal = newInteger( seed );
-        pointerManagerRegisterCustom(retVal, (PFreeCallback)freeSExp);
-        return retVal;
+        return managedInteger( seed );
     }
 }
 
 const SExp *primCons(const SExp *args) {
     BinArgs ba = {0};
     if (extractBinArgs(&ba,args)) {
-        const SExp *retVal = newPair((void *)ba.arg1,(void *)ba.arg2);
-        pointerManagerRegister(retVal);
-        return retVal;
+        return managedPair((void *)ba.arg1,(void *)ba.arg2);
     } else {
         return NULL;
     }
@@ -153,42 +146,42 @@ const SExp *primList(const SExp *args) {
 
 const SExp *primSymbolQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpSymbol);
+        return managedBool(sexpCar(args)->tag == sexpSymbol);
     }
     return NULL;
 }
 
 const SExp *primStringQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpString);
+        return managedBool(sexpCar(args)->tag == sexpString);
     }
     return NULL;
 }
 
 const SExp *primIntegerQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpInteger);
+        return managedBool(sexpCar(args)->tag == sexpInteger);
     }
     return NULL;
 }
 
 const SExp *primBooleanQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpBool);
+        return managedBool(sexpCar(args)->tag == sexpBool);
     }
     return NULL;
 }
 
 const SExp *primNullQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpNil);
+        return managedBool(sexpCar(args)->tag == sexpNil);
     }
     return NULL;
 }
 
 const SExp *primPairQ(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        return newBool(sexpCar(args)->tag == sexpPair);
+        return managedBool(sexpCar(args)->tag == sexpPair);
     }
     return NULL;
 }
@@ -199,10 +192,8 @@ const SExp *primEQ(const SExp *args) {
     if (extractBinArgs(&ba,args)) {
         if (sexpInteger == ba.arg1->tag
             && sexpInteger == ba.arg2->tag) {
-            // TODO: bool as statically allocated .. we are relying on the assumption
-            // is there a way to remove it?
-            return newBool( ba.arg1->fields.integerContent
-                            == ba.arg2->fields.integerContent );
+            return managedBool( ba.arg1->fields.integerContent
+                                == ba.arg2->fields.integerContent );
         } else {
             return NULL;
         }
@@ -225,14 +216,14 @@ const SExp *primEqQ(const SExp *args) {
             // it is guaranteed that "truthValue" field
             // can only be 0 or 1, so this comparison
             // is safe
-            return newBool( ba.arg1->fields.truthValue
-                            == ba.arg2->fields.truthValue );
+            return managedBool( ba.arg1->fields.truthValue
+                                == ba.arg2->fields.truthValue );
         }
 
         if (sexpFuncObj == ba.arg1->tag
             && sexpFuncObj == ba.arg2->tag) {
-            return newBool( ba.arg1->fields.pFuncObj
-                            == ba.arg2->fields.pFuncObj );
+            return managedBool( ba.arg1->fields.pFuncObj
+                                == ba.arg2->fields.pFuncObj );
         }
 
         if (sexpFuncObj == ba.arg1->tag
@@ -240,10 +231,10 @@ const SExp *primEqQ(const SExp *args) {
             // "isSExpEqual" is designed not to handle function object
             // comparison, so we have to take care of this case
             // specially as well.
-            return newBool( 0 );
+            return managedBool( 0 );
         }
 
-        return newBool( isSExpEqual(ba.arg1, ba.arg2));
+        return managedBool( isSExpEqual(ba.arg1, ba.arg2));
     } else {
         return NULL;
     }
@@ -254,9 +245,9 @@ const SExp *primNot(const SExp *args) {
         SExp *a = sexpCar(args);
         // (not #f) => #t
         if (sexpBool == a->tag && !a->fields.truthValue) {
-            return newBool(1);
+            return managedBool(1);
         } else {
-            return newBool(0);
+            return managedBool(0);
         }
     }
     return NULL;

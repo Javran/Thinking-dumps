@@ -1,5 +1,6 @@
 #include "EvalSetDefine.h"
 #include "PointerManager.h"
+#include "ManagedSExp.h"
 
 char isAssignment(const SExp *p) {
     return sexpPair == p->tag
@@ -64,8 +65,7 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
     char *varName = expVar->fields.symbolName;
     const SExp *result = evalDispatch(expVal, env);
     envInsert(env, varName, (void *) result);
-    // TODO: should we assume nil to be a static object?
-    return newNil();
+    return managedNil();
 }
 
 SExpHandler definitionHandler = {
