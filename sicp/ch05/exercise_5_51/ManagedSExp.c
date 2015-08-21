@@ -1,5 +1,4 @@
-#include "PointerManager.h"
-#include "SExp.h"
+#include "ManagedSExp.h"
 
 // provide managed SExp that registers itself
 // to the PointerManager at runtime
