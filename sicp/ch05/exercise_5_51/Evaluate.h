@@ -11,9 +11,19 @@
 typedef char (*SExpPredicate)(const SExp *);
 typedef const SExp *(*SExpEval)(const SExp *, Environment *);
 
-// TODO:
-// * explain why we don't need a Machine
-// * document
+// I started working on this exercise by implementing
+// the machine first, then I realized the machine and many other components
+// are not actually necessary. Take registers as an example,
+// in assembly codes we need to manually maintain registers, push / pop values
+// into a limited number of registers, but for programming languages like C,
+// we don't have to do this ourselves, because we can have infinite number
+// of variables and let the compiler deal with register-handling.
+// it's not cheating but taking advantage of the things we have
+// in a programming language. For C programming language, it can be assumed
+// to run on a machine that can have infinite number of register and stack,
+// procedure are called properly with proper arguments loaded -- all these
+// has already be handled by the implementation of the language so we don't
+// have to worry about them.
 
 // an s-expression handler
 // consists of a predicate and an evaluator
