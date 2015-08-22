@@ -9,16 +9,9 @@
 
 // we can have some convention here:
 // * newXXX is like allocating some space, but the user should take care of the de-allocation
-// * freeXXX is not usually recursive (TODO: for now freeSExp violates this, we need to fix it)
+// * freeXXX is not usually recursive
 // * mkXXX is not allocating space, but fills in some information
-
-// TODO:
-// * after the previous TODO, register "freeSExp" to pointer managers
-//   properly so that we won't have to rely on the assumption that nil/#t/#f
-//   are statically allocated objects
-// * managedXXXX functions that allocate objects
-//   and register the allocated pointer in PointerManager
-//   so by the time the program ends, the space is released properly
+//   (TODO: some procedure names are inconsistent with this rule, fix it.)
 
 // statically allocated objects,
 // which are intended for sharing
