@@ -25,6 +25,9 @@ typedef const SExp *(*SExpEval)(const SExp *, Environment *);
 // has already be handled by the implementation of the language so we don't
 // have to worry about them.
 
+// After we taking advantages of C programming language, this is basically
+// becoming a straightforward lisp interpreter.
+
 // an s-expression handler
 // consists of a predicate and an evaluator
 typedef struct {
