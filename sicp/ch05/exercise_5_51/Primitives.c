@@ -266,6 +266,10 @@ const SExp *primNot(const SExp *args) {
     return NULL;
 }
 
+// our "display" only accepts form "(display <expr>)",
+// in the specification there might be one extra argument that
+// specifies the ouput-port, but as a lightweight implementation
+// here we are not going to implement it.
 const SExp *primDisplay(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         // we have exactly one arg
