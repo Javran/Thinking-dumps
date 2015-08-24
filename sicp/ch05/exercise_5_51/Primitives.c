@@ -3,9 +3,22 @@
 #include "ManagedSExp.h"
 #include "PointerManager.h"
 
-// we are limited to construct static objects ...
+// * we are limited to construct static objects ...
 // closure supports are not that good in this language.
 // maybe it's better to deal with only binary functions.
+
+// * (TODO) it's a tedious task to write tests for primitive functions.
+// What we might actually want to do is to implement tests in
+// implemented programming language, this allows the language to do
+// self-testing, and all we need to do is to trust few primtives
+// (e.g. "=", "eq?"), and run a "self-testing" program to do rest
+// of the task for us.
+
+// * (TODO) some operations provided by the initial environment can be implemented
+// using existing primitives and it is not necessay to implement them
+// in this implementing programming language.
+// we need to make a decision about where to put these functions (e.g. "filter" and "map")
+// and how these functions are loaded and invoked at run time.
 
 typedef struct {
     const SExp *arg1;
