@@ -226,11 +226,10 @@ const SExp *primEqQ(const SExp *args) {
     if (extractBinArgs(&ba,args)) {
         if (sexpPair == ba.arg1->tag
             && sexpPair == ba.arg2->tag) {
-            // it is guaranteed that "truthValue" field
-            // can only be 0 or 1, so this comparison
-            // is safe
-            return managedBool( ba.arg1->fields.truthValue
-                                == ba.arg2->fields.truthValue );
+            // location equivalence is used instead of going
+            // into the structure
+            return managedBool( &ba.arg1->fields.pairContent
+                                == &ba.arg2->fields.pairContent );
         }
 
         if (sexpFuncObj == ba.arg1->tag
