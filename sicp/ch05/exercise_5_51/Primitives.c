@@ -252,6 +252,26 @@ const SExp *primEqQ(const SExp *args) {
     }
 }
 
+// similar to "eq?", "isSExpEqual" is capable of handling
+// most of the case except that function's equivalence cannot
+// be compared so we do it manually instead
+const SExp *primEqualQ(const SExp *args) {
+    BinArgs ba = {0};
+    if (extractBinArgs(&ba,args)) {
+        if (ba.arg1->tag != ba.arg2->tag)
+            return managedBool( 0 );
+        // value tags should be the same
+        if (sexpFuncObj == ba.arg1->tag) {
+            // both are function objects
+            return managedBool( ba.arg1->fields.pFuncObj
+                                == ba.arg2->fields.pFuncObj );
+        }
+        return managedBool( isSExpEqual(ba.arg1, ba.arg2));
+    } else {
+        return NULL;
+    }
+}
+
 const SExp *primNot(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         SExp *a = sexpCar(args);
@@ -294,6 +314,7 @@ FuncObj primNullQObj = {funcPrim, { .primHdlr = primNullQ }};
 FuncObj primPairQObj = {funcPrim, { .primHdlr = primPairQ }};
 FuncObj primEQObj = {funcPrim, { .primHdlr = primEQ }};
 FuncObj primEqQObj = {funcPrim, { .primHdlr = primEqQ }};
+FuncObj primEqualQObj = {funcPrim, { .primHdlr = primEqualQ }};
 FuncObj primNotObj = {funcPrim, { .primHdlr = primNot }};
 FuncObj primDisplayObj = {funcPrim, { .primHdlr = primDisplay }};
 
@@ -315,5 +336,6 @@ SExp primNullQSExp = {sexpFuncObj, { .pFuncObj = &primNullQObj}};
 SExp primPairQSExp = {sexpFuncObj, { .pFuncObj = &primPairQObj}};
 SExp primEQSExp = {sexpFuncObj, { .pFuncObj = &primEQObj}};
 SExp primEqQSExp = {sexpFuncObj, { .pFuncObj = &primEqQObj}};
+SExp primEqualQSExp = {sexpFuncObj, { .pFuncObj = &primEqualQObj}};
 SExp primNotSExp = {sexpFuncObj, { .pFuncObj = &primNotObj}};
 SExp primDisplaySExp = {sexpFuncObj, { .pFuncObj = &primDisplayObj}};
