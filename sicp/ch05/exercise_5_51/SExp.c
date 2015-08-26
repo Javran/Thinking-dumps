@@ -160,6 +160,8 @@ void printPairR(FILE *f, const SExp *p) {
         // since for now we don't have a parser for
         // parsing improper list,
         // this part of the implementation is unconfirmed.
+        // TODO: now I can confirm it's working
+        // let's put the testcase somewhere.
         fputs(" . ", f);
         printSExp(f,p);
         fputc(')', f);
