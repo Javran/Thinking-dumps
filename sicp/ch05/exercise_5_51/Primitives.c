@@ -299,10 +299,10 @@ const SExp *primDisplay(const SExp *args) {
     return NULL;
 }
 
-
 void primErrorHelper(const SExp **pelem) {
     const SExp *elem = *pelem;
     printSExp(stdout,elem);
+    putc(' ',stdout);
 }
 
 // R5RS doesn't seem to say anything about "(error _)" procedures
