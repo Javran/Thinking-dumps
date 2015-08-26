@@ -58,10 +58,7 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
              it = dynArrNext(pSExpList, it)) {
             result = evalDispatch(*it, env);
             if (!result) {
-                // TODO:
-                // evaluation failed, stop evaluation at this point
-                // maybe giving more messages will be better
-                printf("Failed to evaluate the expression at: %d / %d\n",
+                printf("\nFailed to evaluate the expression at: %d / %d\n",
                        successCnt+1,
                        dynArrCount(pSExpList));
                 break;
