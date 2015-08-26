@@ -32,6 +32,7 @@ Environment *mkInitEnv() {
 
     envInsert(env, "display", &primDisplaySExp);
     envInsert(env, "error", &primErrorSExp);
+    envInsert(env, "newline", &primNewlineSExp);
 
     return env;
 }

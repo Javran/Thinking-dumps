@@ -31,5 +31,6 @@ SExp primNotSExp;
 SExp primDisplaySExp;
 
 SExp primErrorSExp;
+SExp primNewlineSExp;
 
 #endif

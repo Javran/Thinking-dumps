@@ -318,6 +318,14 @@ const SExp *primError(const SExp *args) {
     return NULL;
 }
 
+const SExp *primNewline(const SExp *args) {
+    if (sexpNil == args->tag) {
+        putc('\n',stdout);
+        return managedNil();
+    }
+    return NULL;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -337,6 +345,7 @@ FuncObj primEqualQObj = {funcPrim, { .primHdlr = primEqualQ }};
 FuncObj primNotObj = {funcPrim, { .primHdlr = primNot }};
 FuncObj primDisplayObj = {funcPrim, { .primHdlr = primDisplay }};
 FuncObj primErrorObj = {funcPrim, { .primHdlr = primError }};
+FuncObj primNewlineObj = {funcPrim, { .primHdlr = primNewline }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -360,3 +369,4 @@ SExp primEqualQSExp = {sexpFuncObj, { .pFuncObj = &primEqualQObj}};
 SExp primNotSExp = {sexpFuncObj, { .pFuncObj = &primNotObj}};
 SExp primDisplaySExp = {sexpFuncObj, { .pFuncObj = &primDisplayObj}};
 SExp primErrorSExp = {sexpFuncObj, { .pFuncObj = &primErrorObj}};
+SExp primNewlineSExp = {sexpFuncObj, { .pFuncObj = &primNewlineObj}};
