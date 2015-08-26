@@ -299,6 +299,23 @@ const SExp *primDisplay(const SExp *args) {
     return NULL;
 }
 
+
+void primErrorHelper(const SExp **pelem) {
+    const SExp *elem = *pelem;
+    printSExp(stdout,elem);
+}
+
+// R5RS doesn't seem to say anything about "(error _)" procedures
+// so we just make our own: it prints "error signalled: " and
+// all its arguments. Always results in error.
+const SExp *primError(const SExp *args) {
+    DynArr *argsA = sexpProperListToDynArr(args);
+    dynArrVisit(argsA, (DynArrVisitor)primErrorHelper);
+    dynArrFree(argsA);
+    free(argsA);
+    return NULL;
+}
+
 FuncObj primPlusObj = {funcPrim, { .primHdlr = primPlus }};
 FuncObj primMinusObj = {funcPrim, { .primHdlr = primMinus }};
 FuncObj primMultObj = {funcPrim, { .primHdlr = primMult }};
@@ -317,6 +334,7 @@ FuncObj primEqQObj = {funcPrim, { .primHdlr = primEqQ }};
 FuncObj primEqualQObj = {funcPrim, { .primHdlr = primEqualQ }};
 FuncObj primNotObj = {funcPrim, { .primHdlr = primNot }};
 FuncObj primDisplayObj = {funcPrim, { .primHdlr = primDisplay }};
+FuncObj primErrorObj = {funcPrim, { .primHdlr = primError }};
 
 // primitives are allocated statically
 // so no resource de-allocation
@@ -339,3 +357,4 @@ SExp primEqQSExp = {sexpFuncObj, { .pFuncObj = &primEqQObj}};
 SExp primEqualQSExp = {sexpFuncObj, { .pFuncObj = &primEqualQObj}};
 SExp primNotSExp = {sexpFuncObj, { .pFuncObj = &primNotObj}};
 SExp primDisplaySExp = {sexpFuncObj, { .pFuncObj = &primDisplayObj}};
+SExp primErrorSExp = {sexpFuncObj, { .pFuncObj = &primErrorObj}};

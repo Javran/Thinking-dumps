@@ -30,4 +30,6 @@ SExp primEqualQSExp;
 SExp primNotSExp;
 SExp primDisplaySExp;
 
+SExp primErrorSExp;
+
 #endif
