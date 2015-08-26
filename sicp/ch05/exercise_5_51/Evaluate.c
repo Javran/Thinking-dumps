@@ -49,6 +49,8 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
         pointerManagerInit();
 
         const SExp *result = NULL;
+        // record how many s-exprs are evaluated successfully
+        int successCnt = 0;
         Environment *env = mkInitEnv();
         SExp ** it;
         for (it = dynArrBegin(pSExpList);
@@ -59,12 +61,19 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
                 // TODO:
                 // evaluation failed, stop evaluation at this point
                 // maybe giving more messages will be better
+                printf("Failed to evaluate the expression at: %d / %d\n",
+                       successCnt+1,
+                       dynArrCount(pSExpList));
                 break;
+            } else {
+                ++ successCnt;
             }
         }
         envFree(env);
         free(env);
         pointerManagerFinalize();
+    } else {
+        printf("Failed to parse the program.\n");
     }
     // releasing resources
     freeSExps(pSExpList);
