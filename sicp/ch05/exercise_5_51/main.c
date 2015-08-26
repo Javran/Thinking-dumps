@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     }
 
     char *srcText = loadFile( fileName );
-    SExp *result = evalProgramText(srcText, stderr);
+    char result = evalProgramText(srcText, stderr);
     free(srcText); srcText = NULL;
 
     return result ? EXIT_SUCCESS : EXIT_FAILURE;

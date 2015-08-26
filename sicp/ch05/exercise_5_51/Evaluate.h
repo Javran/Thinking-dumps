@@ -40,6 +40,6 @@ typedef struct {
 
 const SExp *evalDispatch(const SExp *, Environment *);
 
-SExp *evalProgramText(const char *, FILE *);
+char evalProgramText(const char *, FILE *);
 
 #endif

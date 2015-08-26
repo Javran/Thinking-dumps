@@ -39,11 +39,16 @@ const SExp *evalDispatch(const SExp *exp, Environment *env) {
     return NULL;
 }
 
-SExp *evalProgramText(const char *programText, FILE *errF) {
+// note that by the time the program returns, the PointerManager is already
+// released, making it not possible to return a "managed" result.
+// so instead we just return whether the execution was successful.
+char evalProgramText(const char *programText, FILE *errF) {
     DynArr *pSExpList = parseSExps(programText, errF);
     // it is guaranteed that parseStateCurrent always produces
     // a valid pointer. no check is necessary.
     char parseFailed = !pSExpList;
+    char successFlag = 1;
+
     if (!parseFailed) {
         // now we are ready for interpreting these s-expressions
         pointerManagerInit();
@@ -58,6 +63,7 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
              it = dynArrNext(pSExpList, it)) {
             result = evalDispatch(*it, env);
             if (!result) {
+                successFlag = 0;
                 printf("\nFailed to evaluate the expression at: %d / %d\n",
                        successCnt+1,
                        dynArrCount(pSExpList));
@@ -74,5 +80,5 @@ SExp *evalProgramText(const char *programText, FILE *errF) {
     }
     // releasing resources
     freeSExps(pSExpList);
-    return NULL;
+    return successFlag;
 }
