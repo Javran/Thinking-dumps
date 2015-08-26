@@ -30,5 +30,8 @@ Environment *mkInitEnv() {
 
     envInsert(env, "not", &primNotSExp);
 
+    envInsert(env, "display", &primDisplaySExp);
+    envInsert(env, "error", &primErrorSExp);
+
     return env;
 }
