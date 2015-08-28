@@ -289,13 +289,13 @@ const SExp *primNot(const SExp *args) {
 // in the specification there might be one extra argument that
 // specifies the ouput-port, but as a lightweight implementation
 // here we are not going to implement it.
-// TODO: "display" should not print quotes, its "write" 's job to print it
-// explicitly
+// note that "display" is supposed to print human-readable messages
+// and thus does not print beginning and ending quotation marks.
 const SExp *primDisplay(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         // we have exactly one arg
         SExp *arg = sexpCar(args);
-        printSExp(stdout,arg);
+        displaySExp(stdout,arg);
         return managedNil();
     }
     return NULL;
