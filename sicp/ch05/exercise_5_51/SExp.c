@@ -169,6 +169,24 @@ void printPairR(FILE *f, const SExp *p) {
     }
 }
 
+// for "display", almost the same as "printPairR"
+void displayPairR(FILE *f, const SExp *p) {
+    switch (p->tag) {
+    case sexpNil:
+        fputc(')', f); return;
+    case sexpPair:
+        fputc(' ', f);
+        displaySExp(f,p->fields.pairContent.car);
+        displayPairR(f,p->fields.pairContent.cdr);
+        return;
+    default:
+        fputs(" . ", f);
+        displaySExp(f,p);
+        fputc(')', f);
+        return;
+    }
+}
+
 // pretty prints a pair by first outputing
 // "({a}" and then transfering control to "printPairR"
 // to generate rest of the output.
@@ -178,6 +196,15 @@ void printPairL(FILE *f, const SExp *p) {
     fputc('(',f);
     printSExp(f,p->fields.pairContent.car);
     printPairR(f,p->fields.pairContent.cdr);
+}
+
+// for "display", almost the same as "displayPairL"
+void displayPairL(FILE *f, const SExp *p) {
+    assert(p && p->tag == sexpPair
+           && "the second argument should be a valid object of sexpPair");
+    fputc('(',f);
+    displaySExp(f,p->fields.pairContent.car);
+    displayPairR(f,p->fields.pairContent.cdr);
 }
 
 void printSExp(FILE *f, const SExp *p) {
@@ -200,6 +227,41 @@ void printSExp(FILE *f, const SExp *p) {
         break;
     case sexpPair:
         printPairL(f,p);
+        break;
+    case sexpFuncObj:
+        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
+        break;
+    }
+}
+
+// TODO: this is awkward, the purpose of having "displaySExp"
+// is to support the intended behavior for displaying strings,
+// as the quotation mark should not be displayed.
+// in order to do so, we have to copy everything in "printSExp"
+// just to make this small modification
+// I'm thinking about having a function to handle basic cases
+// (primitive values, list pretty-printing) and leave some unknown thing
+// as arguments.
+void displaySExp(FILE *f, const SExp *p) {
+    switch (p->tag) {
+    case sexpSymbol:
+        // in case '%' gets accidentally handled...
+        fprintf(f, "%s", p->fields.symbolName);
+        break;
+    case sexpString:
+        fprintf(f,"%s", p->fields.stringContent);
+        break;
+    case sexpInteger:
+        fprintf(f,"%ld", p->fields.integerContent);
+        break;
+    case sexpBool:
+        fprintf(f,p->fields.truthValue? "#t": "#f");
+        break;
+    case sexpNil:
+        fprintf(f, "()");
+        break;
+    case sexpPair:
+        displayPairL(f,p);
         break;
     case sexpFuncObj:
         fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);

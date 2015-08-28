@@ -61,6 +61,7 @@ void freeSExp(SExp *);
 void freeSExpRec(SExp *);
 
 void printSExp(FILE *, const SExp *);
+void displaySExp(FILE *, const SExp *);
 
 char isSExpEqual(const SExp *, const SExp *);
 
