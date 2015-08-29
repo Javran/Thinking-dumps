@@ -2,11 +2,9 @@
 #include "Evaluate.h"
 #include "Util.h"
 
-// TODO: consider this to be just a quick and dirty
-// evaluator, plus some experimental idea of optimization.
-// should we deal with error cases?
-// I'm a little bit worrying that handling errors would
-// complicate the code
+// here we keep the convention that returning NULL means error
+// it is recommended but optional to print out information which
+// could come in handy for troubleshooting.
 
 char *loadFile(const char* fileName) {
     FILE* fp = fopen(fileName,"r");

@@ -156,10 +156,6 @@ void printPairR(FILE *f, const SExp *p) {
         // we are facing a improper list,
         // in this case " . {b})" is outputed to make
         // the whole thing look like "({a} . {b})"
-        // TODO:
-        // since for now we don't have a parser for
-        // parsing improper list,
-        // this part of the implementation is unconfirmed.
         // TODO: now I can confirm it's working
         // let's put the testcase somewhere.
         fputs(" . ", f);
