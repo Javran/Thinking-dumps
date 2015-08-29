@@ -207,29 +207,6 @@ void displayPairL(FILE *f, const SExp *p) {
     displayPairR(f,p->fields.pairContent.cdr);
 }
 
-// internal use only, print values that are neither strings nor pairs
-void printNonStringPrimitives(FILE *f, const SExp *p) {
-    switch (p->tag) {
-    case sexpSymbol:
-        fputs(p->fields.symbolName,f);
-        return;
-    case sexpInteger:
-        fprintf(f,"%ld", p->fields.integerContent);
-        return;
-    case sexpBool:
-        fprintf(f,p->fields.truthValue? "#t": "#f");
-        return;
-    case sexpNil:
-        fprintf(f, "()");
-        return;
-    case sexpFuncObj:
-        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
-        return;
-    default:
-        assert(0 && "printNonStringPrimitives gets invalid input");
-    }
-}
-
 void printSExp(FILE *f, const SExp *p) {
     switch (p->tag) {
     case sexpSymbol:
@@ -257,14 +234,14 @@ void printSExp(FILE *f, const SExp *p) {
     }
 }
 
-// TODO: this is awkward, the purpose of having "displaySExp"
+// this is awkward, the purpose of having "displaySExp"
 // is to support the intended behavior for displaying strings,
 // as the quotation mark should not be displayed.
 // in order to do so, we have to copy everything in "printSExp"
-// just to make this small modification
-// I'm thinking about having a function to handle basic cases
-// (primitive values, list pretty-printing) and leave some unknown thing
-// as arguments.
+// just to make this small modification.
+// for now I don't find a better solution
+// because all handlers interleave with each other and I feel
+// limited about the thing I can do in this language.
 void displaySExp(FILE *f, const SExp *p) {
     switch (p->tag) {
     case sexpSymbol:
