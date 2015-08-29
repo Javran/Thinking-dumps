@@ -207,6 +207,29 @@ void displayPairL(FILE *f, const SExp *p) {
     displayPairR(f,p->fields.pairContent.cdr);
 }
 
+// internal use only, print values that are neither strings nor pairs
+void printNonStringPrimitives(FILE *f, const SExp *p) {
+    switch (p->tag) {
+    case sexpSymbol:
+        fputs(p->fields.symbolName,f);
+        return;
+    case sexpInteger:
+        fprintf(f,"%ld", p->fields.integerContent);
+        return;
+    case sexpBool:
+        fprintf(f,p->fields.truthValue? "#t": "#f");
+        return;
+    case sexpNil:
+        fprintf(f, "()");
+        return;
+    case sexpFuncObj:
+        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
+        return;
+    default:
+        assert(0 && "printNonStringPrimitives gets invalid input");
+    }
+}
+
 void printSExp(FILE *f, const SExp *p) {
     switch (p->tag) {
     case sexpSymbol:
