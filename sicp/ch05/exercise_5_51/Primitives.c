@@ -14,11 +14,12 @@
 // (e.g. "=", "eq?"), and run a "self-testing" program to do rest
 // of the task for us.
 
-// * (TODO) some operations provided by the initial environment can be implemented
+// some operations provided by the initial environment can be implemented
 // using existing primitives and it is not necessay to implement them
 // in this implementing programming language.
-// we need to make a decision about where to put these functions (e.g. "filter" and "map")
-// and how these functions are loaded and invoked at run time.
+// we choose to leave only primitive functions in our initial environment.
+// an optional source file can be prefixed to the real program
+// to build up an environment that sets up rest of the things.
 
 typedef struct {
     const SExp *arg1;
