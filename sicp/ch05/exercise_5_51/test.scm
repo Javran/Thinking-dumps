@@ -14,3 +14,18 @@
  (lambda (x)
    (display x)(newline))
  '("this" "is" "a" "test"))
+
+(define (assert-thunk thunk mesg)
+  (if (thunk)
+      #t
+      (error mesg)))
+
+(assert-thunk
+ (lambda ()
+   #t)
+ "true")
+
+(assert-thunk
+ (lambda ()
+   (not #f))
+ "false")
