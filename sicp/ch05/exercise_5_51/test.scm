@@ -29,3 +29,23 @@
  (lambda ()
    (not #f))
  "false")
+
+(assert-thunk
+ (lambda ()
+   (eq? #t #t))
+ "eq #t")
+
+(assert-thunk
+ (lambda ()
+   (not (eq? #f #t)))
+ "eq #f")
+
+(assert-thunk
+ (lambda ()
+   (eq? 'a 'a))
+ "eq symbol 1")
+
+(assert-thunk
+ (lambda ()
+   (not (eq? 'a 'b)))
+ "eq symbol 2")
