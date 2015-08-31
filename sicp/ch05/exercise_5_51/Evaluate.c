@@ -13,6 +13,8 @@
 
 #include "InitEnv.h"
 
+// TODO: handle let-expression
+
 SExpHandler *evalHandlers[] = {
     &selfEvaluatingHandler,
     &variableHandler,
