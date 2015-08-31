@@ -21,10 +21,24 @@
 
     Traverses a string and tokenizes it into a dynamic array.
 
+* `Parser`
+
+    Language parser that takes token and converts them into S-exps
+
 * `SExp`
 
-    Implements S-Expression. `newXXX` family allocates a new object
-    and `freeSExp` frees that object.
+    Implements S-Expression. `newXXX` family allocates a new object,
+    and the user is responsible for releasing the resource.
+    and `freeSExp` non-recursively frees that object.
+
+* `Environment`
+
+    Implements runtime environment object that can be nested, inserted
+    and lookup-ed.
+
+* `Frame`
+
+    One single frame from an environment, which stores key-value bindings
 
 * `Common`
 
@@ -33,6 +47,20 @@
 * `Util`
 
     Utilities.
+
+* (TODO) undocummented parts
+
+    EvalApp.c
+    EvalCond.c
+    EvalSeq.c
+    EvalSetDefine.c
+    EvalSimple.c
+    Evaluate.c
+    FunctionObject.c
+    InitEnv.c
+    ManagedSExp.c
+    PointerManager.c
+    Primitives.c
 
 ## Notes
 
