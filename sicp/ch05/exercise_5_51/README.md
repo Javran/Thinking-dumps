@@ -57,11 +57,22 @@
     to it. `EvalXXXX`s are for the actual implementation of
     each handler.
 
-* (TODO) undocummented parts
+* `PointerManager`
 
-    ManagedSExp.c
-    PointerManager.c
-    Primitives.c
+    For keeping track of runtime-generated objects.
+    After initializing the PointerManager, any resource
+    can be registered with a custom de-allocation handler.
+    And the resource will be released properly when the PointerManager
+    is released.
+
+* `ManagedSExp`
+
+    Managed SExp are allocated at runtime and automatically registered
+    in the PointerManager.
+
+* `Primitives`
+
+    The implementation of primitive functions for `InitEnv`
 
 * `Common`
 
