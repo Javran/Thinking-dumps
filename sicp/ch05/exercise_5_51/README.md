@@ -40,6 +40,29 @@
 
     One single frame from an environment, which stores key-value bindings
 
+* `InitEnv`
+
+    Initial environment that provides only primitive values
+
+* `FunctionObject`
+
+    Represents compound procedures and primitive procedures
+
+
+* `Evaluate` and `EvalXXXX`
+
+
+    `Evaluate` contains the definition of `evalDispatch`,
+    which is used for looking up proper handler and dispatch
+    to it. `EvalXXXX`s are for the actual implementation of
+    each handler.
+
+* (TODO) undocummented parts
+
+    ManagedSExp.c
+    PointerManager.c
+    Primitives.c
+
 * `Common`
 
     Contains some commonly shared stuff.
@@ -47,20 +70,6 @@
 * `Util`
 
     Utilities.
-
-* (TODO) undocummented parts
-
-    EvalApp.c
-    EvalCond.c
-    EvalSeq.c
-    EvalSetDefine.c
-    EvalSimple.c
-    Evaluate.c
-    FunctionObject.c
-    InitEnv.c
-    ManagedSExp.c
-    PointerManager.c
-    Primitives.c
 
 ## Notes
 
