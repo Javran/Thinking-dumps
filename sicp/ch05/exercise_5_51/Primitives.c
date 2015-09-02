@@ -7,10 +7,10 @@
 // closure supports are not that good in this language.
 // maybe it's better to deal with only binary functions.
 
-// * (TODO) it's a tedious task to write tests for primitive functions.
-// What we might actually want to do is to implement tests in
-// implemented programming language, this allows the language to do
-// self-testing, and all we need to do is to trust few primtives
+// * it's a tedious task to write tests for primitive functions.
+// we instead write tests in implemented programming language.
+// This allows the language to do self-testing, and
+// all we need to do is to trust few primtives
 // (e.g. "=", "eq?"), and run a "self-testing" program to do rest
 // of the task for us.
 
