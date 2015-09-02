@@ -10,6 +10,7 @@
 #include "EvalSeq.h"
 #include "EvalSetDefine.h"
 #include "EvalApp.h"
+#include "EvalLet.h"
 
 #include "InitEnv.h"
 
@@ -23,6 +24,7 @@ SExpHandler *evalHandlers[] = {
     &definitionHandler,
     &ifHandler,
     &lambdaHandler,
+    &letHandler,
     &beginHandler,
     &applicationHandler
 };
