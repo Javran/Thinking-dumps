@@ -56,3 +56,10 @@
 ;; we should run this program twice:
 ;; one for testing the evaluator itself
 ;; another for testing if all the resources are properly released
+(let ((a (* 2 4))
+      (b (+ 3 4))
+      (c 10)
+      (d 5))
+  'unused
+  'unused
+  (+ (* a b) c (* d d)))

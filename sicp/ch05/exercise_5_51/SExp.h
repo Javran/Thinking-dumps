@@ -64,6 +64,7 @@ void printSExp(FILE *, const SExp *);
 void displaySExp(FILE *, const SExp *);
 
 char isSExpEqual(const SExp *, const SExp *);
+char countProperListSize(const SExp *);
 
 static inline SExp *sexpCar(const SExp *e) { return e->fields.pairContent.car; }
 static inline SExp *sexpCdr(const SExp *e) { return e->fields.pairContent.cdr; }

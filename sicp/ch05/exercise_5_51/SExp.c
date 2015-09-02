@@ -320,6 +320,20 @@ char isSExpEqual(const SExp *e1, const SExp *e2) {
     }
 }
 
+// count number of elements in a proper list
+// if the input expression is not a proper list,
+// "-1" is returned instead
+char countProperListSize(const SExp *e) {
+    assert( e && "argument cannot be null" );
+    const SExp *cur = e;
+    int cnt = 0;
+    while (sexpPair == cur->tag) {
+        ++cnt;
+        cur = sexpCdr( cur );
+    }
+    return sexpNil == cur -> tag ? cnt : -1;
+}
+
 DynArr *sexpProperListToDynArr(const SExp *xs) {
     DynArr *da = calloc(1, sizeof(DynArr));
     // WARNING: the user of this function is responsible
