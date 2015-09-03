@@ -4,12 +4,12 @@
 #include "PointerManager.h"
 #include "SExp.h"
 
-SExp *managedSymbol(const char *);
-SExp *managedString(const char *);
-SExp *managedInteger(long);
-SExp *managedBool(char);
-SExp *managedNil();
-SExp *managedPair(SExp *, SExp *);
-SExp *managedFuncObject(void *);
+const SExp *managedSymbol(const char *);
+const SExp *managedString(const char *);
+const SExp *managedInteger(long);
+const SExp *managedBool(char);
+const SExp *managedNil();
+const SExp *managedPair(const SExp *, const SExp *);
+const SExp *managedFuncObject(void *);
 
 #endif

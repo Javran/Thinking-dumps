@@ -79,15 +79,15 @@ const SExp *evLambda(const SExp *exp, Environment *env) {
     // (lambda (x y z) x x z)
     // * lambda-parameters: (x y z) -- cadr gives the parameters
     // * lambda-body: (x x z)       -- cddr gives the body
-    SExp *cdr = sexpCdr(exp);
-    SExp *lamParam = sexpCar(cdr);
-    SExp *lamBody = sexpCdr(cdr);
+    const SExp *cdr = sexpCdr(exp);
+    const SExp *lamParam = sexpCar(cdr);
+    const SExp *lamBody = sexpCdr(cdr);
 
     FuncObj *fo = newCompoundFunc(lamParam, lamBody, env);
 
     // the lambda object is allocated at runtime, and is supposed
     // to be deallocated when its wrapping SExp is deallocated.
-    SExp *result = newFuncObject(fo);
+    const SExp *result = newFuncObject(fo);
     pointerManagerRegisterCustom(result,(PFreeCallback)freeSExp);
     return result;
 }

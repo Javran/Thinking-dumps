@@ -275,7 +275,7 @@ const SExp *primEqualQ(const SExp *args) {
 
 const SExp *primNot(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
-        SExp *a = sexpCar(args);
+        const SExp *a = sexpCar(args);
         // (not #f) => #t
         if (sexpBool == a->tag && !a->fields.truthValue) {
             return managedBool(1);
@@ -295,7 +295,7 @@ const SExp *primNot(const SExp *args) {
 const SExp *primDisplay(const SExp *args) {
     if (sexpPair == args->tag && sexpNil == sexpCdr(args)->tag) {
         // we have exactly one arg
-        SExp *arg = sexpCar(args);
+        const SExp *arg = sexpCar(args);
         displaySExp(stdout,arg);
         return managedNil();
     }

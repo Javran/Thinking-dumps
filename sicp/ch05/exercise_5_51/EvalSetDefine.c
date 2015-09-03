@@ -9,7 +9,7 @@ char isAssignment(const SExp *p) {
 
 const SExp *evAssignment(const SExp *exp, Environment *env) {
     char *varName = sexpCadr( exp )->fields.symbolName;
-    SExp *expVal = sexpCar(sexpCddr( exp ));
+    const SExp *expVal = sexpCar(sexpCddr( exp ));
     FrameEntry *fe = envLookup(env, varName);
     if (fe) {
         const SExp *result = evalDispatch(expVal, env);
@@ -34,19 +34,20 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", sexpCar(p));
 }
 
+// TODO: use PointerManager
 void freeRuntimeLambdaSExp(SExp *exp) {
     // newSymbol
     freeSExp(sexpCar(exp));
     // newPair
-    free(sexpCdr(exp));
+    free((void *)sexpCdr(exp));
     // object itself
     free(exp);
 }
 
 const SExp *evDefinition(const SExp *exp, Environment *env) {
-    SExp *expLook = sexpCadr( exp );
-    SExp *expVar = NULL;
-    SExp *expVal = NULL;
+    const SExp *expLook = sexpCadr( exp );
+    const SExp *expVar = NULL;
+    const SExp *expVal = NULL;
     if ( sexpSymbol == expLook->tag ) {
         // form: (define <var> <val>)
         expVar = expLook;
@@ -54,8 +55,8 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
     } else {
         // form: (define (<var> <args> ...) <exps> ...)
         expVar = sexpCar( expLook );
-        SExp *args = sexpCdr(expLook);
-        SExp *body = sexpCddr( exp );
+        const SExp *args = sexpCdr(expLook);
+        const SExp *body = sexpCddr( exp );
         // (cons 'lambda (cons args body))
         expVal = newPair(newSymbol( "lambda" ),
                          newPair(args, body));

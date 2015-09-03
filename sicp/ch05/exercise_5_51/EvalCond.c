@@ -6,10 +6,10 @@ char isIf(const SExp *p) {
 }
 
 const SExp *evIf(const SExp *exp, Environment *env) {
-    SExp *expPred = sexpCadr(exp);
-    SExp *expRemaining = sexpCddr(exp);
-    SExp *expConseq = sexpCar(expRemaining);
-    SExp *expAlter = sexpCadr(expRemaining);
+    const SExp *expPred = sexpCadr(exp);
+    const SExp *expRemaining = sexpCddr(exp);
+    const SExp *expConseq = sexpCar(expRemaining);
+    const SExp *expAlter = sexpCadr(expRemaining);
 
     const SExp *condResult = evalDispatch(expPred,env);
     if (condResult) {

@@ -3,7 +3,7 @@
 // correponding to ev-sequence
 // requires unev to store the sequence of expressions
 const SExp *evSequence(const SExp *unev, Environment *env) {
-    SExp *firstExp = NULL;
+    const SExp *firstExp = NULL;
 
     if (! unev || sexpPair != unev->tag) {
         // either something wrong is happening (unev == NULL)

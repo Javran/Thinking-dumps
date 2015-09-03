@@ -9,40 +9,40 @@
 // (it's just a matter of performance as "freeSExp" won't do anything
 // on a statically allocated object anyway)
 
-SExp *managedSymbol(const char *name) {
-    SExp *p = newSymbol(name);
+const SExp *managedSymbol(const char *name) {
+    const SExp *p = newSymbol(name);
     pointerManagerRegisterCustom(p,(PFreeCallback)freeSExp);
     return p;
 }
 
-SExp *managedString(const char *content) {
-    SExp *p = newString(content);
+const SExp *managedString(const char *content) {
+    const SExp *p = newString(content);
     pointerManagerRegisterCustom(p,(PFreeCallback)freeSExp);
     return p;
 }
 
-SExp *managedInteger(long val) {
-    SExp *p = newInteger(val);
+const SExp *managedInteger(long val) {
+    const SExp *p = newInteger(val);
     pointerManagerRegisterCustom(p,(PFreeCallback)freeSExp);
     return p;
 }
 
-SExp *managedBool(char val) {
+const SExp *managedBool(char val) {
     return newBool(val);
 }
 
-SExp *managedNil() {
+const SExp *managedNil() {
     return newNil();
 }
 
-SExp *managedPair(SExp *car, SExp *cdr) {
-    SExp *p = newPair(car,cdr);
+const SExp *managedPair(const SExp *car, const SExp *cdr) {
+    const SExp *p = newPair(car,cdr);
     pointerManagerRegisterCustom(p,(PFreeCallback)freeSExp);
     return p;
 }
 
-SExp *managedFuncObject(void *obj) {
-    SExp *p = newFuncObject(obj);
+const SExp *managedFuncObject(void *obj) {
+    const SExp *p = newFuncObject(obj);
     pointerManagerRegisterCustom(p,(PFreeCallback)freeSExp);
     return p;
 }
