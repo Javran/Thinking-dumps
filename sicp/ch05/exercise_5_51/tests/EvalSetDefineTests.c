@@ -15,7 +15,7 @@ START_TEST (test_EvalSetDefine_set) {
     SExp initVal = { sexpInteger, { .integerContent = 1234} };
     SExp expect = { sexpInteger, { .integerContent = 4567} };
     SExp **pExp = dynArrBegin(pSExpList);
-    SExp *nil = newNil();
+    const SExp *nil = newNil();
 
     Environment env = {0};
     envInit(&env);
@@ -43,7 +43,7 @@ START_TEST (test_EvalSetDefine_define_simple) {
 
     SExp expect = { sexpInteger, { .integerContent = 1234} };
     SExp **pExp = dynArrBegin(pSExpList);
-    SExp *nil = newNil();
+    const SExp *nil = newNil();
 
     Environment env = {0};
     envInit(&env);
@@ -69,7 +69,7 @@ START_TEST (test_EvalSetDefine_define_func) {
     ck_assert_int_eq(dynArrCount(pSExpList), 1);
 
     SExp **pExp = dynArrBegin(pSExpList);
-    SExp *nil = newNil();
+    const SExp *nil = newNil();
 
     Environment env = {0};
     envInit(&env);
@@ -96,8 +96,8 @@ START_TEST (test_EvalSetDefine_define_func) {
     ck_assert( funcCompound == fo->tag);
 
     // check compound object
-    SExp *args = sexpCdr( sexpCadr(*pExp) );
-    SExp *body = sexpCddr( *pExp );
+    const SExp *args = sexpCdr( sexpCadr(*pExp) );
+    const SExp *body = sexpCddr( *pExp );
 
     ck_assert( isSExpEqual(args, fo->fields.compObj.parameters) );
     ck_assert( isSExpEqual(body, fo->fields.compObj.body) );

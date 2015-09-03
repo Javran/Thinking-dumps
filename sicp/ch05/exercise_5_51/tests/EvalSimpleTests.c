@@ -87,11 +87,11 @@ START_TEST (test_EvalSimple_quote2) {
     ck_assert_ptr_ne(pSExpList, NULL);
     ck_assert_int_eq(dynArrCount(pSExpList), 1);
 
-    SExp *nil = newNil();
-    SExp *sa = newSymbol("a");
-    SExp *sb = newSymbol("b");
-    SExp *sc = newSymbol("c");
-    SExp *expect = newPair(sa,newPair(sb,newPair(sc,nil)));
+    const SExp *nil = newNil();
+    const SExp *sa = newSymbol("a");
+    const SExp *sb = newSymbol("b");
+    const SExp *sc = newSymbol("c");
+    const SExp *expect = newPair(sa,newPair(sb,newPair(sc,nil)));
     SExp **pExp = dynArrBegin(pSExpList);
     const SExp *result = evQuoted(*pExp, NULL);
 

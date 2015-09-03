@@ -309,7 +309,7 @@ START_TEST (test_Primitives_primEQ1) {
     pointerManagerInit();
     Environment *penv = mkInitEnv();
     const SExp *actual = evApplication(exp,penv);
-    SExp *expect = newBool(1);
+    const SExp *expect = newBool(1);
     ck_assert(isSExpEqual(expect,actual));
     envFree(penv);
     free(penv);
@@ -327,7 +327,7 @@ START_TEST (test_Primitives_primEQ2) {
     pointerManagerInit();
     Environment *penv = mkInitEnv();
     const SExp *actual = evApplication(exp,penv);
-    SExp *expect = newBool(0);
+    const SExp *expect = newBool(0);
     ck_assert(isSExpEqual(expect,actual));
     envFree(penv);
     free(penv);
