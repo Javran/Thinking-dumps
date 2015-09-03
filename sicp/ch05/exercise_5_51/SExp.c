@@ -30,42 +30,42 @@ SExp *allocWithTag(SExpTag t) {
     return p;
 }
 
-SExp *newSymbol(const char *name) {
+const SExp *newSymbol(const char *name) {
     SExp *p = allocWithTag(sexpSymbol);
     p->fields.symbolName = allocCopyString(name);
     return p;
 }
 
-SExp *newString(const char *content) {
+const SExp *newString(const char *content) {
     SExp *p = allocWithTag(sexpString);
     p->fields.stringContent = allocCopyString(content);
     return p;
 }
 
-SExp *newInteger(long val) {
+const SExp *newInteger(long val) {
     SExp *p = allocWithTag(sexpInteger);
     p->fields.integerContent = val;
     return p;
 }
 
-SExp *newBool(char val) {
+const SExp *newBool(char val) {
     return &boolExps[!!val];
 }
 
 // optimization: nil is assigned in static space
 // so that it can be shared.
-SExp *newNil() {
+const SExp *newNil() {
     return &nilExp;
 }
 
-SExp *newPair(SExp *car, SExp *cdr) {
+const SExp *newPair(const SExp *car, const SExp *cdr) {
     SExp *p = allocWithTag(sexpPair);
     p->fields.pairContent.car = car;
     p->fields.pairContent.cdr = cdr;
     return p;
 }
 
-SExp *newFuncObject(void *obj) {
+const SExp *newFuncObject(void *obj) {
     SExp *p = allocWithTag(sexpFuncObj);
     p->fields.pFuncObj = obj;
     return p;

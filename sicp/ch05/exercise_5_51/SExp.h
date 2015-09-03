@@ -26,8 +26,8 @@ typedef enum {
 struct SExp;
 
 typedef struct {
-    struct SExp *car;
-    struct SExp *cdr;
+    const struct SExp *car;
+    const struct SExp *cdr;
 } PairContent;
 
 typedef union {
@@ -47,13 +47,13 @@ typedef struct SExp {
     SExpFields fields;
 } SExp;
 
-SExp *newSymbol(const char *);
-SExp *newString(const char *);
-SExp *newInteger(long);
-SExp *newBool(char);
-SExp *newNil();
-SExp *newPair(SExp *, SExp *);
-SExp *newFuncObject(void *);
+const SExp *newSymbol(const char *);
+const SExp *newString(const char *);
+const SExp *newInteger(long);
+const SExp *newBool(char);
+const SExp *newNil();
+const SExp *newPair(const SExp *, const SExp *);
+const SExp *newFuncObject(void *);
 
 // non-recursive SExp deallocation, can be used as a deallocation handler
 // because it does not go into structures
@@ -66,13 +66,13 @@ void displaySExp(FILE *, const SExp *);
 char isSExpEqual(const SExp *, const SExp *);
 char countProperListSize(const SExp *);
 
-static inline SExp *sexpCar(const SExp *e) { return e->fields.pairContent.car; }
-static inline SExp *sexpCdr(const SExp *e) { return e->fields.pairContent.cdr; }
-static inline SExp *sexpCadr(const SExp *e) { return sexpCar(sexpCdr(e)); }
-static inline SExp *sexpCddr(const SExp *e) { return sexpCdr(sexpCdr(e)); }
+static inline const SExp *sexpCar(const SExp *e) { return e->fields.pairContent.car; }
+static inline const SExp *sexpCdr(const SExp *e) { return e->fields.pairContent.cdr; }
+static inline const SExp *sexpCadr(const SExp *e) { return sexpCar(sexpCdr(e)); }
+static inline const SExp *sexpCddr(const SExp *e) { return sexpCdr(sexpCdr(e)); }
 
-static inline SExp *firstExp(const SExp *e) { return sexpCar(e); }
-static inline SExp *restExps(const SExp *e) { return sexpCdr(e); }
+static inline const SExp *firstExp(const SExp *e) { return sexpCar(e); }
+static inline const SExp *restExps(const SExp *e) { return sexpCdr(e); }
 
 // INVARIANT: "e" must be a non-empty proper list
 static inline char isLastExp(const SExp *e) {
