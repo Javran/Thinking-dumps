@@ -60,6 +60,6 @@
       (b (+ 3 4))
       (c 10)
       (d 5))
-  'unused
-  'unused
-  (+ (* a b) c (* d d)))
+  ;; 56 + 10 + 25 = 91
+  (display (+ (* a b) c (* d d))))
+(newline)

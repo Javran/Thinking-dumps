@@ -36,7 +36,7 @@ char isLetExpression(const SExp *p) {
     return countProperListSize(bindings) >= 0;
 }
 
-
+// let-expression is transformed into a function application
 const SExp *evLet(const SExp *exp, Environment *env) {
     const SExp *bindings = sexpCadr(exp);
     const SExp *vars = collectVars(bindings);
@@ -47,11 +47,7 @@ const SExp *evLet(const SExp *exp, Environment *env) {
                                                    (void*)bodies));
     const SExp *newApp = managedPair( (void *)newLam,
                                       (void *)defs);
-    // TODO
-    printf("dbg:");
-    printSExp(stdout, newApp);
-    printf("\n");
-    return NULL;
+    return evalDispatch(newApp, env);
 }
 
 SExpHandler letHandler = {
