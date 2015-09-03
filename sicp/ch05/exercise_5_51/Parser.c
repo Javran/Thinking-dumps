@@ -37,12 +37,12 @@ void parseStateNext(ParseState *ps) {
     ++ ps->lookahead;
 }
 
-SExp *parseSExp(ParseState *ps) {
+const SExp *parseSExp(ParseState *ps) {
     ParseState oldPs;
     // backup old state
     memcpy(&oldPs, ps, sizeof(ParseState));
 
-    SExp *retVal = parseList(ps);
+    const SExp *retVal = parseList(ps);
     if (NULL == retVal) {
         retVal = parseAtom(ps);
     }
@@ -56,7 +56,7 @@ SExp *parseSExp(ParseState *ps) {
 }
 
 // accepts token list and an iterator
-SExp *parseList(ParseState *ps) {
+const SExp *parseList(ParseState *ps) {
     ParseState oldPs;
     // backup old state
     memcpy(&oldPs, ps, sizeof(ParseState));
@@ -66,8 +66,8 @@ SExp *parseList(ParseState *ps) {
     // need to initialize these two values
     // so that when we jump to the end,
     // the pointer is properly initialized
-    SExp *head = NULL;
-    SExp **current = NULL;
+    const SExp *head = NULL;
+    const SExp **current = NULL;
 
     if (p->tag != tokLParen)
         goto parse_list_exit;
@@ -78,13 +78,13 @@ SExp *parseList(ParseState *ps) {
     current = &head;
 
     while (p->tag != tokRParen) {
-        SExp *now = parseSExp(ps);
+        const SExp *now = parseSExp(ps);
         if (NULL == now)
             goto parse_list_exit;
         p = parseStateCurrent(ps);
-        SExp *newElem = newPair(now,*current);
+        const SExp *newElem = newPair(now,*current);
         *current = newElem;
-        current = &(newElem->fields.pairContent.cdr);
+        current = (void *)&(newElem->fields.pairContent.cdr);
     }
     parseStateNext(ps);
     return head;
@@ -97,7 +97,7 @@ parse_list_exit:
     return NULL;
 }
 
-SExp *parseAtom(ParseState *ps) {
+const SExp *parseAtom(ParseState *ps) {
     Token *p = parseStateCurrent(ps);
     switch (p->tag) {
     case tokInteger:
@@ -120,7 +120,7 @@ SExp *parseAtom(ParseState *ps) {
     }
 }
 
-SExp *parseQuote(ParseState *ps) {
+const SExp *parseQuote(ParseState *ps) {
     ParseState oldPs;
     // backup old state
     memcpy(&oldPs, ps, sizeof(ParseState));
@@ -128,7 +128,7 @@ SExp *parseQuote(ParseState *ps) {
     if (p->tag != tokQuote)
         goto parse_quote_exit;
     parseStateNext(ps);
-    SExp *sub = parseSExp(ps);
+    const SExp *sub = parseSExp(ps);
     if (sub == NULL)
         goto parse_quote_exit;
     return newPair(newSymbol("quote"),newPair(sub,newNil()));
@@ -171,7 +171,7 @@ DynArr *parseSExps(const char *programText, FILE *errF) {
     DynArr *pSExpList = calloc(1, sizeof(DynArr));
     dynArrInit(pSExpList, sizeof(SExp *));
 
-    SExp *result = NULL;
+    const SExp *result = NULL;
     // keep parsing results until there is an error
     // since there is no handler for tokEof,
     // an error must happen, which guarantees that
@@ -179,7 +179,7 @@ DynArr *parseSExps(const char *programText, FILE *errF) {
     for (result = parseSExp(&parseState);
          NULL != result;
          result = parseSExp(&parseState)) {
-        SExp **newExp = dynArrNew(pSExpList);
+        const SExp **newExp = dynArrNew(pSExpList);
         *newExp = result;
     }
     // it is guaranteed that parseStateCurrent always produces

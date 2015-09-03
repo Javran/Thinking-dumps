@@ -26,8 +26,8 @@ typedef enum {
 struct SExp;
 
 typedef struct {
-    const struct SExp *car;
-    const struct SExp *cdr;
+    struct SExp * const car;
+    struct SExp * const cdr;
 } PairContent;
 
 typedef union {
@@ -57,8 +57,8 @@ const SExp *newFuncObject(void *);
 
 // non-recursive SExp deallocation, can be used as a deallocation handler
 // because it does not go into structures
-void freeSExp(SExp *);
-void freeSExpRec(SExp *);
+void freeSExp(const SExp *);
+void freeSExpRec(const SExp *);
 
 void printSExp(FILE *, const SExp *);
 void displaySExp(FILE *, const SExp *);

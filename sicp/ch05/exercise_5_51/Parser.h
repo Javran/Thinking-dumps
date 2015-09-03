@@ -16,10 +16,10 @@ Token *parseStateCurrent(const ParseState *);
 Token *parseStateLookahead(const ParseState *);
 void parseStateNext(ParseState *);
 
-SExp *parseList(ParseState *);
-SExp *parseAtom(ParseState *);
-SExp *parseSExp(ParseState *);
-SExp *parseQuote(ParseState *);
+const SExp *parseList(ParseState *);
+const SExp *parseAtom(ParseState *);
+const SExp *parseSExp(ParseState *);
+const SExp *parseQuote(ParseState *);
 
 void freeSExps(DynArr *);
 DynArr *parseSExps(const char *, FILE *);

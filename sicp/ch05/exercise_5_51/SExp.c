@@ -58,10 +58,18 @@ const SExp *newNil() {
     return &nilExp;
 }
 
+// mutable structure used for initializing a pair object
+// at runtime
+typedef struct {
+    struct SExp * car;
+    struct SExp * cdr;
+} MPairContent;
+
 const SExp *newPair(const SExp *car, const SExp *cdr) {
     SExp *p = allocWithTag(sexpPair);
-    p->fields.pairContent.car = car;
-    p->fields.pairContent.cdr = cdr;
+    MPairContent *mContent = (void *)&(p->fields.pairContent);
+    mContent->car = (void*)car;
+    mContent->cdr = (void*)cdr;
     return p;
 }
 
@@ -71,7 +79,7 @@ const SExp *newFuncObject(void *obj) {
     return p;
 }
 
-void freeSExpRec(SExp *p) {
+void freeSExpRec(const SExp *p) {
     if (!p) return;
     switch (p->tag) {
     case sexpInteger:
@@ -99,11 +107,10 @@ void freeSExpRec(SExp *p) {
         freeFuncObject(p->fields.pFuncObj);
         break;
     }
-    memset(p,0x00,sizeof(SExp));
-    free(p);
+    free((void *)p);
 }
 
-void freeSExp(SExp *p) {
+void freeSExp(const SExp *p) {
     if (!p) return;
     switch (p->tag) {
     case sexpInteger:
@@ -130,8 +137,7 @@ void freeSExp(SExp *p) {
         freeFuncObject(p->fields.pFuncObj);
         break;
     }
-    memset(p,0x00,sizeof(SExp));
-    free(p);
+    free((void *)p);
 }
 
 // this function is only intended to be called by "printPairR"
