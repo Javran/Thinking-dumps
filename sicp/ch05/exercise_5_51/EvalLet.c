@@ -7,9 +7,8 @@ const SExp *collectVars(const SExp *bindings) {
     assert( sexpPair == bindings->tag
             && "unexpected data to collectVars");
     const SExp *cur = sexpCar(bindings);
-    // TODO: make pair const?
     return managedPair(sexpCar(cur),
-                       (void *)collectVars( sexpCdr(bindings) ));
+                       collectVars( sexpCdr(bindings) ));
 }
 
 const SExp *collectDefs(const SExp *bindings) {
@@ -18,9 +17,8 @@ const SExp *collectDefs(const SExp *bindings) {
     assert( sexpPair == bindings->tag
             && "unexpected data to collectDefs");
     const SExp *cur = sexpCar(bindings);
-    // TODO: make pair const?
     return managedPair(sexpCadr(cur),
-                       (void *)collectDefs( sexpCdr(bindings) ));
+                       collectDefs( sexpCdr(bindings) ));
 }
 
 char isLetExpression(const SExp *p) {
