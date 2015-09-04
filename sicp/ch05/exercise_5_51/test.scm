@@ -1,3 +1,9 @@
+;; TODO:
+;; this program is one part of the test
+;; we should run this program twice:
+;; one for testing the evaluator itself
+;; another for testing if all the resources are properly released
+
 (define (map f xs)
   (if (null? xs)
       '()
@@ -50,12 +56,7 @@
    (not (eq? 'a 'b)))
  "eq symbol 2")
 
-;; TODO:
-;; this program should be included
-;; as one part of the test
-;; we should run this program twice:
-;; one for testing the evaluator itself
-;; another for testing if all the resources are properly released
+
 (let ((a (* 2 4))
       (b (+ 3 4))
       (c 10)
