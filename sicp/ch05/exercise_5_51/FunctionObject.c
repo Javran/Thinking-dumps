@@ -34,7 +34,7 @@ const SExp *evalArgs(const SExp *randExps, Environment *env) {
     if (firstVal == NULL || restVals == NULL)
         return NULL;
 
-    const SExp *retVal = newPair((void *)firstVal,(void *)restVals);
+    const SExp *retVal = newPair(firstVal,restVals);
     // here we cannot recursively de-allocate the resource,
     // because eval-handlers might return an existing pointer as results
     // which means the value returned might be allocated somewhere else.
@@ -69,7 +69,7 @@ const SExp *funcObjApp(const FuncObj *rator, const SExp *rands, Environment *env
             const SExp *rand = sexpCar( rands );
             const SExp *randVal = evalDispatch(rand, env);
             if (!randVal) return NULL;
-            envInsert(appEnv, varName, (void *)randVal);
+            envInsert(appEnv, varName, randVal);
             rands = sexpCdr(rands);
             ps = sexpCdr(ps);
         }

@@ -131,7 +131,7 @@ const SExp *primMult(const SExp *args) {
 const SExp *primCons(const SExp *args) {
     BinArgs ba = {0};
     if (extractBinArgs(&ba,args)) {
-        return managedPair((void *)ba.arg1,(void *)ba.arg2);
+        return managedPair(ba.arg1,ba.arg2);
     } else {
         return NULL;
     }

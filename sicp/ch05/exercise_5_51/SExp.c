@@ -231,7 +231,7 @@ void printSExp(FILE *f, const SExp *p) {
         printPairL(f,p);
         break;
     case sexpFuncObj:
-        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
+        fprintf(f,"<FuncObj:%p>",p->fields.pFuncObj);
         break;
     }
 }
@@ -266,7 +266,7 @@ void displaySExp(FILE *f, const SExp *p) {
         displayPairL(f,p);
         break;
     case sexpFuncObj:
-        fprintf(f,"<FuncObj:%p>",(void *)p->fields.pFuncObj);
+        fprintf(f,"<FuncObj:%p>",p->fields.pFuncObj);
         break;
     }
 }

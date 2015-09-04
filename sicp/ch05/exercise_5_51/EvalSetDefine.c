@@ -14,7 +14,7 @@ const SExp *evAssignment(const SExp *exp, Environment *env) {
     if (fe) {
         const SExp *result = evalDispatch(expVal, env);
         if (result) {
-            fe->val = (void *) result;
+            fe->val = result;
             return newNil();
         } else {
             return NULL;
@@ -65,7 +65,7 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
 
     char *varName = expVar->fields.symbolName;
     const SExp *result = evalDispatch(expVal, env);
-    envInsert(env, varName, (void *) result);
+    envInsert(env, varName, result);
     return managedNil();
 }
 

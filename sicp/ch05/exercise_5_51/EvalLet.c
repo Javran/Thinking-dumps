@@ -41,10 +41,8 @@ const SExp *evLet(const SExp *exp, Environment *env) {
     const SExp *defs = collectDefs(bindings);
     const SExp *bodies = sexpCddr(exp);
     const SExp *newLam = managedPair( managedSymbol("lambda"),
-                                      managedPair( (void*)vars,
-                                                   (void*)bodies));
-    const SExp *newApp = managedPair( (void *)newLam,
-                                      (void *)defs);
+                                      managedPair(vars,bodies));
+    const SExp *newApp = managedPair(newLam,defs);
     return evalDispatch(newApp, env);
 }
 
