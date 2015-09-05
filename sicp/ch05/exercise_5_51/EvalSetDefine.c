@@ -34,16 +34,6 @@ char isDefinition(const SExp *p) {
         && isSymbol("define", sexpCar(p));
 }
 
-// TODO: use PointerManager
-void freeRuntimeLambdaSExp(SExp *exp) {
-    // newSymbol
-    freeSExp(sexpCar(exp));
-    // newPair
-    free((void *)sexpCdr(exp));
-    // object itself
-    free(exp);
-}
-
 const SExp *evDefinition(const SExp *exp, Environment *env) {
     const SExp *expLook = sexpCadr( exp );
     const SExp *expVar = NULL;
@@ -58,9 +48,8 @@ const SExp *evDefinition(const SExp *exp, Environment *env) {
         const SExp *args = sexpCdr(expLook);
         const SExp *body = sexpCddr( exp );
         // (cons 'lambda (cons args body))
-        expVal = newPair(newSymbol( "lambda" ),
-                         newPair(args, body));
-        pointerManagerRegisterCustom(expVal,(PFreeCallback)freeRuntimeLambdaSExp);
+        expVal = managedPair(managedSymbol( "lambda" ),
+                             managedPair(args, body));
     }
 
     char *varName = expVar->fields.symbolName;
