@@ -31,11 +31,6 @@ void helpAndQuit(char *execName) {
     exit(1);
 }
 
-// TODO:
-// we need a test framework to:
-// * run a source file
-// * capture and compare the result from stdout
-
 int main(int argc, char *argv[]) {
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
