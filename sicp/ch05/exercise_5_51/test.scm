@@ -16,6 +16,9 @@
 (display (map add1 '(1 2 3 4 5)))
 (newline)
 
+;; for testing pretty printer:
+(display (cons 1 2))(newline)
+
 (map
  (lambda (x)
    (display x)(newline))
@@ -55,7 +58,6 @@
  (lambda ()
    (not (eq? 'a 'b)))
  "eq symbol 2")
-
 
 (let ((a (* 2 4))
       (b (+ 3 4))
