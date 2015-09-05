@@ -2,8 +2,6 @@
 #include "Evaluate.h"
 #include "Util.h"
 
-// TODO: justify all uses of (void *) conversion
-
 // here we keep the convention that returning NULL means error
 // it is recommended but optional to print out information which
 // could come in handy for troubleshooting.

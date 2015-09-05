@@ -67,9 +67,11 @@ typedef struct {
 
 const SExp *newPair(const SExp *car, const SExp *cdr) {
     SExp *p = allocWithTag(sexpPair);
+    // convert the structure to a mutable one so we can manipulate data
+    // otherwise it might not be possible to create a runtime constant value
     MPairContent *mContent = (void *)&(p->fields.pairContent);
-    mContent->car = (void*)car;
-    mContent->cdr = (void*)cdr;
+    mContent->car = (void *)car;
+    mContent->cdr = (void *)cdr;
     return p;
 }
 
@@ -79,6 +81,8 @@ const SExp *newFuncObject(void *obj) {
     return p;
 }
 
+// free a SExp recursively, which means it will
+// go into pairs and free data there
 void freeSExpRec(const SExp *p) {
     if (!p) return;
     switch (p->tag) {
@@ -107,9 +111,13 @@ void freeSExpRec(const SExp *p) {
         freeFuncObject(p->fields.pFuncObj);
         break;
     }
+    // for historical reason, "free" on a const pointer
+    // causes warnings. we suppress that by doing this conversion
     free((void *)p);
 }
 
+// non-recursive free SExp, just free the object
+// given but won't trying releasing anything further
 void freeSExp(const SExp *p) {
     if (!p) return;
     switch (p->tag) {

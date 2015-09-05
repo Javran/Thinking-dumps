@@ -84,6 +84,9 @@ const SExp *parseList(ParseState *ps) {
         p = parseStateCurrent(ps);
         const SExp *newElem = newPair(now,*current);
         *current = newElem;
+        // it might be possible to deal with it
+        // but I can't figure out a proper type signature for "current"
+        // so just hack a little bit to make it work
         current = (void *)&(newElem->fields.pairContent.cdr);
     }
     parseStateNext(ps);
