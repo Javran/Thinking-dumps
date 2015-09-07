@@ -1,10 +1,15 @@
 #!/bin/bash
 
+# let's just keep it simple:
+# *  run "test.scm" on the evaluator
+# * compare the output for correctness
+# * use valgrind and run "test.scm" again for testing resource management
+
 VALGRIND_ARGS="--trace-children=yes --leak-check=full --error-exitcode=1"
 
 # Test evaluator by running it using a test program
 
-make evaluator || exit -1
+make evaluator || exit 1
 
 if ./evaluator test.scm | diff - test-expected.out;
 then
@@ -21,8 +26,3 @@ else
     echo "Memcheck failed"
     exit 1
 fi
-
-# TODO:
-# * standard output
-# * output comparison
-# * valgrind
