@@ -11,6 +11,7 @@ then
     echo "Test passed"
 else
     echo "Test failed"
+    exit 1
 fi
 
 if valgrind $VALGRIND_ARGS -- ./evaluator test.scm;
@@ -18,6 +19,7 @@ then
     echo "Memcheck passed"
 else
     echo "Memcheck failed"
+    exit 1
 fi
 
 # TODO:
