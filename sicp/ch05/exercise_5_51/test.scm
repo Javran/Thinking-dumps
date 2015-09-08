@@ -1,6 +1,5 @@
-;; TODO:
 ;; this program is one part of the test
-;; we should run this program twice:
+;; we run this program twice:
 ;; one for testing the evaluator itself
 ;; another for testing if all the resources are properly released
 
