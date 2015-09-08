@@ -10,6 +10,16 @@
 // * mkXXX is not allocating space, but fills in some information
 //   (TODO: some procedure names are inconsistent with this rule, fix it.)
 
+// things to check
+// * DynArr.c
+// * Environment.c
+// * Evaluate.c
+// * Frame.c
+// * FunctionObject.c
+// * InitEnv.c
+// * Parser.c
+// * SExp.c
+
 // statically allocated objects,
 // which are intended for sharing
 // (to reduce runtime-allocation overhead)
@@ -111,9 +121,7 @@ void freeSExpRec(const SExp *p) {
         freeFuncObject(p->fields.pFuncObj);
         break;
     }
-    // for historical reason, "free" on a const pointer
-    // causes warnings. we suppress that by doing this conversion
-    free((void *)p);
+    freeC(p);
 }
 
 // non-recursive free SExp, just free the object
@@ -145,7 +153,7 @@ void freeSExp(const SExp *p) {
         freeFuncObject(p->fields.pFuncObj);
         break;
     }
-    free((void *)p);
+    freeC(p);
 }
 
 // this function is only intended to be called by "printPairR"

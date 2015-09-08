@@ -50,7 +50,7 @@ START_TEST (test_EvalApp_prim_app) {
     SExp expect = { sexpInteger, { .integerContent = 579 } };
     SExp **pExp = dynArrBegin(pSExpList);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
     envFree(penv);

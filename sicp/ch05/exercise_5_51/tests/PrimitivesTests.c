@@ -23,7 +23,7 @@ START_TEST (test_Primitives_plus) {
     SExp expect = { sexpInteger, { .integerContent = 28 } };
     SExp **pExp = dynArrBegin(pSExpList);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
 
@@ -42,7 +42,7 @@ START_TEST (test_Primitives_minus) {
     SExp expect = { sexpInteger, { .integerContent = 2025 } };
     SExp **pExp = dynArrBegin(pSExpList);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
     envFree(penv);
@@ -60,7 +60,7 @@ START_TEST (test_Primitives_mult) {
     SExp expect = { sexpInteger, { .integerContent = 10146 } };
     SExp **pExp = dynArrBegin(pSExpList);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(*pExp, penv);
     ck_assert(isSExpEqual(actual, &expect));
     envFree(penv);
@@ -79,7 +79,7 @@ START_TEST (test_Primitives_cons) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
 
     const SExp *actual = evApplication(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
@@ -98,7 +98,7 @@ START_TEST (test_Primitives_car) {
     SExp **pExp = dynArrBegin(pSExpList);
     SExp *exp = *pExp;
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(exp,penv);
     SExp expect = { sexpSymbol, { .symbolName = "a" } };
 
@@ -119,7 +119,7 @@ START_TEST (test_Primitives_cdr) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
 
     const SExp *actual = evApplication(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
@@ -138,7 +138,7 @@ START_TEST (test_Primitives_list) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
 
     const SExp *actual = evApplication(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
@@ -164,7 +164,7 @@ START_TEST (test_Primitives_primPred1) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -189,7 +189,7 @@ START_TEST (test_Primitives_primPred2) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -214,7 +214,7 @@ START_TEST (test_Primitives_primPred3) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -239,7 +239,7 @@ START_TEST (test_Primitives_primPred4) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -264,7 +264,7 @@ START_TEST (test_Primitives_primPred5) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -289,7 +289,7 @@ START_TEST (test_Primitives_primPred6) {
     SExp *exp = *pExp;
     SExp **pExpect = dynArrNext(pSExpList, pExp);
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evalDispatch(exp,penv);
     ck_assert(isSExpEqual(actual, *pExpect));
     envFree(penv);
@@ -307,7 +307,7 @@ START_TEST (test_Primitives_primEQ1) {
     SExp **pExp = dynArrBegin(pSExpList);
     SExp *exp = *pExp;
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(exp,penv);
     const SExp *expect = newBool(1);
     ck_assert(isSExpEqual(expect,actual));
@@ -325,7 +325,7 @@ START_TEST (test_Primitives_primEQ2) {
     SExp **pExp = dynArrBegin(pSExpList);
     SExp *exp = *pExp;
     pointerManagerInit();
-    Environment *penv = mkInitEnv();
+    Environment *penv = newInitEnv();
     const SExp *actual = evApplication(exp,penv);
     const SExp *expect = newBool(0);
     ck_assert(isSExpEqual(expect,actual));

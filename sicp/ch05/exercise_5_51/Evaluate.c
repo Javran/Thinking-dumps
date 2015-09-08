@@ -58,7 +58,7 @@ char evalProgramText(const char *programText, FILE *errF) {
         const SExp *result = NULL;
         // record how many s-exprs are evaluated successfully
         int successCnt = 0;
-        Environment *env = mkInitEnv();
+        Environment *env = newInitEnv();
         SExp ** it;
         for (it = dynArrBegin(pSExpList);
              it != dynArrEnd(pSExpList);

@@ -4,6 +4,6 @@
 #include "Environment.h"
 #include "Primitives.h"
 
-Environment *mkInitEnv();
+Environment *newInitEnv();
 
 #endif

@@ -3,7 +3,7 @@
 // InitEnv.c is tested together with Primitives.c
 // see PrimitivesTests.c under tests for details
 
-Environment *mkInitEnv() {
+Environment *newInitEnv() {
     Environment *env = calloc(1, sizeof(Environment));
     // parent environment is implictily set to NULL
     envInit(env);
