@@ -11,7 +11,7 @@ VALGRIND_ARGS="--trace-children=yes --leak-check=full --error-exitcode=1"
 
 make evaluator || exit 1
 
-if ./evaluator test.scm | diff - test-expected.out;
+if ./evaluator test.scm | diff - test.expected;
 then
     echo "Test passed"
 else
