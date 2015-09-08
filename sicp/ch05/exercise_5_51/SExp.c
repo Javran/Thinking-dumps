@@ -8,17 +8,6 @@
 // * newXXX is like allocating some space, but the user should take care of the de-allocation
 // * freeXXX is not usually recursive
 // * mkXXX is not allocating space, but fills in some information
-//   (TODO: some procedure names are inconsistent with this rule, fix it.)
-
-// things to check
-// * DynArr.c
-// * Environment.c
-// * Evaluate.c
-// * Frame.c
-// * FunctionObject.c
-// * InitEnv.c
-// * Parser.c
-// * SExp.c
 
 // statically allocated objects,
 // which are intended for sharing
