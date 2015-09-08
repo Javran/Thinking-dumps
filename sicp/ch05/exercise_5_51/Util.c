@@ -1,4 +1,3 @@
-#include "Common.h"
 #include "Util.h"
 
 char isFileExist(const char *pathName) {
