@@ -27,6 +27,9 @@ void helpAndQuit(char *execName) {
 }
 
 int main(int argc, char *argv[]) {
+    // TODO: we need a program that takes no input --
+    // the program is fed to our compiler and here we will
+    // just have generated codes!
     if ( argc != 1+1 )
         helpAndQuit(argv[0]);
 
