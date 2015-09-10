@@ -10,8 +10,10 @@ Our task is to:
 
     * Written code for runtime support
 
-        Like what we did in ex 5.51, the interpreter will accept one file name,
-        parse and interpret code from it. This part will be done in written code.
+        Note the overall task of this execise: we develop a compiler, that
+        compiles lisp code into a fragment of C code.
+        Then we compile generated C code with runtime supports,
+        this yields the final working executable.
 
         This time we need an abstract machine. As we are generating sequence of statements in C,
         it is hard to think about how to implement lisp procedures in C.
