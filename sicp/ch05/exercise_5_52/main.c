@@ -1,5 +1,7 @@
 #include "Common.h"
 #include "Util.h"
+#include "SExp.h"
+#include "Environment.h"
 
 // source code:
 /*
@@ -61,6 +63,16 @@ primitive-branch9
 after-call7
 
 */
+
+typedef struct {
+    SExp *val;
+    // TODO: not sure what type should I give to it
+    Environment *env;
+    void *cont;
+    void *unev;
+    void *proc;
+    void *argl;
+} Machine;
 
 // all args are ignored
 int main() {
