@@ -66,7 +66,11 @@ after-call7
 
 typedef struct {
     SExp *val;
-    // TODO: not sure what type should I give to it
+    // TODO: not sure what type should I give to them
+    // maybe this is not important, as the code is generated,
+    // an (void *) should be fine because the sanity check can
+    // be done in the compiler
+    // It won't hurt if we do double check here though.
     Environment *env;
     void *cont;
     void *unev;
