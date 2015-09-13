@@ -20,4 +20,7 @@ typedef struct {
     Stack *stk;
 } Machine;
 
+Machine *newMachine();
+void freeMachine(Machine *);
+
 #endif
