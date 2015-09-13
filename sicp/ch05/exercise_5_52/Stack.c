@@ -14,6 +14,10 @@ void stackPop(Stack *p) {
     p->elemMax -= 1;
 }
 
+void *stackTop(Stack *p) {
+    return dynArrNth(p,p->elemMax - 1);
+}
+
 void stackFree(Stack *p) {
     dynArrFree(p);
 }

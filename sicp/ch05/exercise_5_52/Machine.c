@@ -10,3 +10,7 @@ void freeMachine(Machine *m) {
     stackFree(m->stk);
     free(m);
 }
+
+void machinePush(Machine *m, void *v) {
+    stackPush(m->stk,v);
+}

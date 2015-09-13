@@ -8,6 +8,7 @@ typedef DynArr Stack;
 void stackInit(Stack *, size_t);
 void stackPush(Stack *, void *);
 void stackPop(Stack *);
+void *stackTop(Stack *);
 void stackFree(Stack *);
 
 #endif
