@@ -23,6 +23,10 @@ int main() {
     Machine *m = newMachine();
     // TODO: function body
 
+    // TODO: question: what to do with (const <???>)?
+    // I guess the proper way would be treating them as SExps
+    // or depending on how const are used, we deal with them differently
+
     // (assign proc (op lookup-variable-value) (const +) (reg env))
     m->proc = lookupVariableValue(m->env, "+");
     // (save proc)
