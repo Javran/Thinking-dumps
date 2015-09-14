@@ -10,12 +10,30 @@
 */
 
 // compiled code (in bytecode language)
+
+void *lookupVariableValue(Environment *env, const char *keyword) {
+    FrameEntry *result = envLookup(env,keyword);
+    assert (result && "env lookup failed");
+    return (void *)result->val;
+}
+
+
+// all args are ignored
+int main() {
+    Machine *m = newMachine();
+    // TODO: function body
+
+    // (assign proc (op lookup-variable-value) (const +) (reg env))
+    m->proc = lookupVariableValue(m->env, "+");
+    // (save proc)
+    stackPush(m->stk, m->proc);
+    // (save env)
+    stackPush(m->stk, m->env);
+    // (assign proc (op lookup-variable-value) (const +) (reg env))
+    m->proc = lookupVariableValue(m->env, "+");
+
 /*
 
-(assign proc (op lookup-variable-value) (const +) (reg env))
-(save proc)
-(save env)
-(assign proc (op lookup-variable-value) (const +) (reg env))
 (assign val (const 6))
 (assign argl (op list) (reg val))
 (assign val (const 5))
@@ -63,9 +81,6 @@ after-call7
 
 */
 
-
-// all args are ignored
-int main() {
-    // TODO: function body
+    freeMachine(m);
     return EXIT_FAILURE;
 }
