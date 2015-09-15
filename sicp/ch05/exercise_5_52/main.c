@@ -37,10 +37,11 @@ int main() {
     // (assign proc (op lookup-variable-value) (const +) (reg env))
     m->proc = lookupVariableValue(m->env, "+");
 
+    // (assign val (const 6))
+    m->val = (void *)managedInteger(6);
+
 
 /*
-
-(assign val (const 6))
 (assign argl (op list) (reg val))
 (assign val (const 5))
 (assign argl (op cons) (reg val) (reg argl))

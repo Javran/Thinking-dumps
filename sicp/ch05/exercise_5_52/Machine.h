@@ -18,6 +18,7 @@ typedef struct {
     void *proc;
     void *argl;
     Stack *stk;
+    char flag; // flag == 0 or flag == 1
 } Machine;
 
 Machine *newMachine();
