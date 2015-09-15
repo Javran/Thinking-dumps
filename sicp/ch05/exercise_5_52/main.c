@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Util.h"
 #include "Machine.h"
+#include "ManagedSExp.h"
 
 // source code:
 /*
@@ -35,6 +36,7 @@ int main() {
     stackPush(m->stk, m->env);
     // (assign proc (op lookup-variable-value) (const +) (reg env))
     m->proc = lookupVariableValue(m->env, "+");
+
 
 /*
 

@@ -2,6 +2,7 @@
 
 Machine *newMachine() {
     Machine *m = calloc(1,sizeof(Machine));
+    m->stk = calloc(1,sizeof(Stack));
     stackInit(m->stk,sizeof(void *));
     return m;
 }
