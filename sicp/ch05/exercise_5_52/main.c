@@ -18,7 +18,6 @@ void *lookupVariableValue(Environment *env, const char *keyword) {
     return (void *)result->val;
 }
 
-
 // all args are ignored
 int main() {
     Machine *m = newMachine();
@@ -39,12 +38,15 @@ int main() {
 
     // (assign val (const 6))
     m->val = (void *)managedInteger(6);
-
+    // (assign argl (op list) (reg val))
+    m->argl = (void *)managedPair(m->val, managedNil());
+    // (assign val (const 5))
+    m->val = (void *)managedInteger(5);
+    // (assign argl (op cons) (reg val) (reg argl))
+    m->argl = (void *)managedPair(m->val, m->argl);
 
 /*
-(assign argl (op list) (reg val))
-(assign val (const 5))
-(assign argl (op cons) (reg val) (reg argl))
+
 (test (op primitive-procedure?) (reg proc))
 (branch (label primitive-branch6))
 compiled-branch5
