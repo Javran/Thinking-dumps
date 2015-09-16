@@ -34,6 +34,10 @@ typedef struct {
     FuncFields fields;
 } FuncObj;
 
+static inline char isFunctionObjPrimitive(const FuncObj *f) {
+    return f->tag == funcPrim;
+}
+
 FuncObj *newCompoundFunc(const SExp *, const SExp *, Environment *);
 const SExp *funcObjApp(const FuncObj *, const SExp *, Environment *);
 void freeFuncObject(FuncObj *);

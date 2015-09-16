@@ -44,6 +44,7 @@ int main() {
     m->val = (void *)managedInteger(5);
     // (assign argl (op cons) (reg val) (reg argl))
     m->argl = (void *)managedPair(m->val, m->argl);
+    // TODO: instead of using "test", can we use c's if statement?
 
 /*
 
