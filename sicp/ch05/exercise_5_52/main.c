@@ -46,16 +46,22 @@ int main() {
     m->argl = (void *)managedPair(m->val, m->argl);
     // TODO: instead of using "test", can we use c's if statement?
 
+    // (test (op primitive-procedure?) (reg proc))
+    // (branch (label primitive-branch6))
+    if (isFunctionObjPrimitive(m->proc)) {
+        // TODO
+        // primitive-branch6
+        // (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
+    } else {
+        // TODO
+        // compiled-branch5
+        // (assign continue (label after-call4))
+        // (assign val (op compiled-procedure-entry) (reg proc))
+        // (goto (reg val))
+    }
+
 /*
 
-(test (op primitive-procedure?) (reg proc))
-(branch (label primitive-branch6))
-compiled-branch5
-(assign continue (label after-call4))
-(assign val (op compiled-procedure-entry) (reg proc))
-(goto (reg val))
-primitive-branch6
-(assign val (op apply-primitive-procedure) (reg proc) (reg argl))
 after-call4
 (assign argl (op list) (reg val))
 (restore env)
