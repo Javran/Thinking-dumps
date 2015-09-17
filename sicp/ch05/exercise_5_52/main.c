@@ -57,6 +57,7 @@ int main() {
         // compiled-branch5
         // (assign continue (label after-call4))
         // (assign val (op compiled-procedure-entry) (reg proc))
+        // TODO: goto reg val?
         // (goto (reg val))
     }
 
