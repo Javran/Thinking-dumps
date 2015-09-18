@@ -6,8 +6,8 @@ module PrimeFactors
 orderedDiff :: Ord a => [a] -> [a] -> [a]
 orderedDiff [] _ = []
 orderedDiff as [] = as
-orderedDiff x@(a:as) (b:bs) = case a `compare` b of
-  LT -> a : orderedDiff as bs
+orderedDiff x@(a:as) y@(b:bs) = case a `compare` b of
+  LT -> a : orderedDiff as y
   EQ -> orderedDiff as bs
   GT -> orderedDiff x bs
 
