@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module PrimeFactors
   ( primeFactors
   , main
@@ -17,8 +18,18 @@ genPrimes :: Integral a => [a] -> [a]
 genPrimes [] = undefined
 genPrimes (x:xs) = x : genPrimes (xs `orderedDiff` [x,x+x..])
 
+-- | @isPrime primes n@ assumes that 'primes' is a sorted list
+-- | and contains at least one factor of 'n'
+isPrime :: forall a .Integral a => [a] -> a -> Bool
+isPrime primes n = all (\k -> n `rem` k /= 0) primes'
+  where
+    primes' = takeWhile (\x -> x*x <= n) primes
+
 primeFactors :: Integral a => a -> [a]
 primeFactors = undefined
 
 main :: IO ()
-main = print (take 2 (dropWhile (< 894119) (genPrimes [2..])))
+main = do
+    let primes = genPrimes [2..]
+    print (filter (isPrime primes) [2..200])
+    print (take 200 primes)
