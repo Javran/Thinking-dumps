@@ -6,17 +6,30 @@ module CryptoSquare
   , normalizeCiphertext
   ) where
 
-normalizePlaintext :: [a] -> [a]
-normalizePlaintext = undefined
+import Data.Char
+import Data.List.Split
+import Data.List
+
+normalizePlaintext :: String -> String
+normalizePlaintext = map toLower . filter isValid
+  where
+    isValid x = isDigit x
+             || isAsciiUpper x
+             || isAsciiLower x
 
 squareSize :: [a] -> Int
-squareSize = undefined
+squareSize xs = ceiling (sqrt (fromIntegral l) :: Double)
+  where
+    l = length xs
 
-plaintextSegments :: [a] -> [[a]]
-plaintextSegments = undefined
+plaintextSegments :: String -> [String]
+plaintextSegments raw = chunksOf col xs
+  where
+    xs = normalizePlaintext raw
+    col = squareSize xs
 
 normalizeCiphertext :: String -> String
-normalizeCiphertext = undefined
+normalizeCiphertext = unwords . transpose . plaintextSegments
 
 ciphertext :: String -> String
-ciphertext = undefined
+ciphertext = concat . transpose . plaintextSegments
