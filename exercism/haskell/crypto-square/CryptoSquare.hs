@@ -10,6 +10,9 @@ import Data.Char
 import Data.List.Split
 import Data.List
 
+-- | plaintexts can contain only 0-9A-Za-z
+--   other characters are filtered out.
+--   additionally, all plaintexts should be converted to lowercases
 normalizePlaintext :: String -> String
 normalizePlaintext = map toLower . filter isValid
   where
@@ -17,11 +20,13 @@ normalizePlaintext = map toLower . filter isValid
              || isAsciiUpper x
              || isAsciiLower x
 
+-- | given normalized plaintext, calculate numbers of columns for it
 squareSize :: [a] -> Int
 squareSize xs = ceiling (sqrt (fromIntegral l) :: Double)
   where
     l = length xs
 
+-- | normalize plaintext and then break it into rectangle
 plaintextSegments :: String -> [String]
 plaintextSegments raw = chunksOf col xs
   where
