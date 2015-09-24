@@ -9,7 +9,6 @@
 * food-chain
 * forth
 * go-counting
-* hexadecimal
 * house
 * largest-series-product
 * lens-person
@@ -19,7 +18,6 @@
 * minesweeper
 * nth-prime
 * ocr-numbers
-* octal
 * palindrome-products
 * parallel-letter-frequency
 * pascals-triangle
