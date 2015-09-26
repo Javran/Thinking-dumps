@@ -4,7 +4,6 @@
 * clock
 * connect
 * custom-set
-* difference-of-squares
 * food-chain
 * forth
 * go-counting
