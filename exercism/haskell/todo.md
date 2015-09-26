@@ -1,7 +1,6 @@
 # list of not yet solved problems
 
 * bank-account
-* binary-search-tree
 * clock
 * connect
 * custom-set
