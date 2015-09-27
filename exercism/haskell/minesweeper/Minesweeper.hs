@@ -7,7 +7,16 @@ import qualified Data.Set as S
 type MineField = S.Set (Int,Int)
 
 annotate :: [String] -> [String]
-annotate = undefined
+annotate xs = [] -- TODO
+  where
+    mf = toMineField xs
+    countMine (x,y) = length (filter (`S.member` mf) neighborhoods)
+      where
+        neighborhoods =
+            [ (x-1,y-1), (x-1,y), (x-1,y+1)
+            , (x  ,y-1),          (x  ,y+1)
+            , (x+1,y-1), (x+1,y), (x+1,y+1)
+            ]
 
 toMineField :: [String] -> MineField
 toMineField xs = S.fromList ys
