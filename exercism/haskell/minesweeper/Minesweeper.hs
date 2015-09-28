@@ -3,12 +3,14 @@ module Minesweeper
   ) where
 
 import qualified Data.Set as S
+import Data.List.Split
 
 type MineField = S.Set (Int,Int)
 
 annotate :: [String] -> [String]
-annotate xs = [] -- TODO
+annotate xs = numOrMine
   where
+    cols = length (head xs)
     ys = flattenWithCoord xs
     mineField :: MineField
     mineField = S.fromList
@@ -22,13 +24,12 @@ annotate xs = [] -- TODO
             , (x  ,y-1),          (x  ,y+1)
             , (x+1,y-1), (x+1,y), (x+1,y+1)
             ]
-
-toMineField :: [String] -> MineField
-toMineField xs = S.fromList ys
-  where
-    ys = map fst
-       . filter ((== '*') . snd)
-       $ flattenWithCoord xs
+    numOrMine = map concat
+              . chunksOf cols
+              $ map idOrCount ys
+      where
+        idOrCount (_,'*') = "*"
+        idOrCount (coord,_) = show (countMine coord)
 
 flattenWithCoord :: [String] -> [((Int,Int),Char)]
 flattenWithCoord xs = zip coords (concat xs)
