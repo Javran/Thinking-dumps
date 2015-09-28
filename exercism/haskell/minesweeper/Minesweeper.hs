@@ -9,8 +9,13 @@ type MineField = S.Set (Int,Int)
 annotate :: [String] -> [String]
 annotate xs = [] -- TODO
   where
-    mf = toMineField xs
-    countMine (x,y) = length (filter (`S.member` mf) neighborhoods)
+    ys = flattenWithCoord xs
+    mineField :: MineField
+    mineField = S.fromList
+              . map fst
+              . filter ((== '*') . snd)
+              $ ys
+    countMine (x,y) = length (filter (`S.member` mineField) neighborhoods)
       where
         neighborhoods =
             [ (x-1,y-1), (x-1,y), (x-1,y+1)
@@ -21,9 +26,16 @@ annotate xs = [] -- TODO
 toMineField :: [String] -> MineField
 toMineField xs = S.fromList ys
   where
+    ys = map fst
+       . filter ((== '*') . snd)
+       $ flattenWithCoord xs
+
+flattenWithCoord :: [String] -> [((Int,Int),Char)]
+flattenWithCoord xs = zip coords (concat xs)
+  where
+    -- assumption on input:
+    -- 1. non-empty
+    -- 2. all rows are of same length
     rows = length xs
     cols = length (head xs)
     coords = [(x,y) | x <- [1..rows], y <- [1..cols]]
-    ys = map fst
-       $ filter ((== '*') . snd)
-       $ zip coords (concat xs)
