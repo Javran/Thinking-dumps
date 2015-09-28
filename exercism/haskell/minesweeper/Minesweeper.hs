@@ -11,12 +11,22 @@ annotate :: [String] -> [String]
 annotate xs = numOrMine
   where
     cols = length (head xs)
+    -- step 1.
+    -- [ "*  *"
+    -- , " ** "
+    -- , "**  "
+    -- ]
+    -- =>
+    -- [ ((1,1),'*'), ((1,2),' ') ... ]
     ys = flattenWithCoord xs
+    -- step 2.
+    -- extract "(<coord>, '*')" to form a set of minefield coords
     mineField :: MineField
     mineField = S.fromList
               . map fst
               . filter ((== '*') . snd)
               $ ys
+    -- for counting how many mines are around
     countMine (x,y) = length (filter (`S.member` mineField) neighborhoods)
       where
         neighborhoods =
@@ -24,6 +34,9 @@ annotate xs = numOrMine
             , (x  ,y-1),          (x  ,y+1)
             , (x+1,y-1), (x+1,y), (x+1,y+1)
             ]
+    -- step 3. from the flatten representation,
+    -- count mine if there isn't a mine
+    -- and convert back to the original representation
     numOrMine = map concat
               . chunksOf cols
               $ map idOrCount ys
