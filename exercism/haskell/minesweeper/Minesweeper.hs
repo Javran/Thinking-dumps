@@ -29,7 +29,11 @@ annotate xs = numOrMine
               $ map idOrCount ys
       where
         idOrCount (_,'*') = "*"
-        idOrCount (coord,_) = show (countMine coord)
+        idOrCount (coord,_) = case cnt of
+            0 -> " "
+            _ -> show cnt
+          where
+            cnt = countMine coord
 
 flattenWithCoord :: [String] -> [((Int,Int),Char)]
 flattenWithCoord xs = zip coords (concat xs)
