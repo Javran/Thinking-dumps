@@ -13,7 +13,6 @@
 * linked-list
 * luhn
 * matrix
-* minesweeper
 * nth-prime
 * ocr-numbers
 * palindrome-products
