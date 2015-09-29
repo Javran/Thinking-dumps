@@ -13,15 +13,20 @@ number = do
     sgnF <- option id (char '-' *> return negate)
     sgnF . read <$> munch1 isDigit
 
-operation :: ReadP (Integer -> Integer)
-operation = do
-    let parseOp = (string "plus" *> return (+))
-              +++ (string "minus" *> return (-))
-              +++ (string "multiplied by" *> return (*))
-              +++ (string "divided by" *> return div)
-    op <- skipSpaces *> parseOp <* skipSpaces
-    n <- number
-    return (`op` n)
+operation :: ReadP (Integer -> Integer -> Integer)
+operation = skipSpaces *> op <* skipSpaces
+  where
+    op = (string "plus" *> return (+))
+     +++ (string "minus" *> return (-))
+     +++ (string "multiplied by" *> return (*))
+     +++ (string "divided by" *> return div)
+
+question :: ReadP Integer
+question = do
+    string "What is "
+    result <- chainl1 number operation
+    char '?'
+    return result
 
 -- patterns:
 -- number : (-?)(\d+)
