@@ -64,17 +64,16 @@ territories bd = map tagWithOwner (clusterCells emptyCells S.empty [])
                  else clusterCells remaining (found `S.union` curCells) clusters
     tagWithOwner coordSet = (coordSet, owner)
       where
-        neighborOwners :: [Color]
-        neighborOwners = nub
-                       . sort
+        neighborOwners :: S.Set Color
+        neighborOwners = S.fromList
                        . mapMaybe (ca !)
                        . concatMap neighbor
                        . S.toList
                        $ coordSet
-        owner = case neighborOwners of
-            [Black] -> Just Black
-            [White] -> Just White
-            _ -> Nothing
+        owner
+            | neighborOwners == S.singleton Black = Just Black
+            | neighborOwners == S.singleton White = Just White
+            | otherwise = Nothing
 
 territoryFor :: Board -> Coord -> Maybe (S.Set Coord, Owner)
 territoryFor b coord = find (\(cs,_) -> coord `S.member` cs) t
