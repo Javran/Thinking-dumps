@@ -31,10 +31,13 @@ territories :: Board -> [(S.Set Coord, Owner)]
 territories = undefined
 
 territoryFor :: Board -> Coord -> Maybe (S.Set Coord, Owner)
-territoryFor = undefined
+territoryFor b coord = find (\(cs,_) -> coord `S.member` cs) t
+  where
+    t = territories b
 
 toCellArray :: Board -> CellArray
-toCellArray b = listArray ((1,1),(cols,rows)) (map toOwner (concat (transpose b)))
+toCellArray b = listArray ((1,1),(cols,rows))
+                          (map toOwner (concat (transpose b)))
   where
     rows = length b
     cols = length (head b)
