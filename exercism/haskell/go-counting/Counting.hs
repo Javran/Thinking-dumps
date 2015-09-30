@@ -8,6 +8,7 @@ import qualified Data.Set as S
 import Data.Array
 import Data.List
 import Data.Foldable
+import Data.Maybe
 
 data Color
   = Black
@@ -50,11 +51,14 @@ board9x9 =
 
 -- TODO: determine cluster owner
 territories :: Board -> [(S.Set Coord, Owner)]
-territories b = map (\x -> (x,Nothing)) (clusterCells emptyCells S.empty [])
+territories bd = map tagWithOwner (clusterCells emptyCells S.empty [])
   where
-    ca = toCellArray b
+    ca = toCellArray bd
     -- get coords of empty cells
     emptyCells = map fst $ filter ((== Nothing). snd) (assocs ca)
+
+    neighbor (x,y) = filter (inRange (bounds ca))
+                            [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
 
     clusterCells :: [Coord] -- cells to be visited
                  -> S.Set Coord -- current set of cells
@@ -72,14 +76,26 @@ territories b = map (\x -> (x,Nothing)) (clusterCells emptyCells S.empty [])
             -- pick one element to form the initial set
             clusterCells xs (S.singleton x) clusters
           else
-            let neighbor (a,b) = [(a-1,b),(a+1,b),(a,b-1),(a,b+1)]
-                neighbors = S.fromList . concatMap neighbor . toList $ curCells
+            let neighbors = S.fromList . concatMap neighbor . toList $ curCells
                 todoSet = S.fromList todos
                 found = neighbors `S.intersection` todoSet
                 remaining = toList (todoSet `S.difference` found)
             in if S.null found
                  then clusterCells todos S.empty (curCells : clusters)
                  else clusterCells remaining (found `S.union` curCells) clusters
+    tagWithOwner coordSet = (coordSet, owner)
+      where
+        neighborOwners :: [Color]
+        neighborOwners = nub
+                       . sort
+                       . mapMaybe (ca !)
+                       . concatMap neighbor
+                       . S.toList
+                       $ coordSet
+        owner = case neighborOwners of
+            [Black] -> Just Black
+            [White] -> Just White
+            _ -> Nothing
 
 territoryFor :: Board -> Coord -> Maybe (S.Set Coord, Owner)
 territoryFor b coord = find (\(cs,_) -> coord `S.member` cs) t
