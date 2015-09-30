@@ -20,27 +20,6 @@ type Board = [ [] Char ] -- shut up hlint
 type Owner = Maybe Color
 type CellArray = Array Coord Owner
 
--- for manual testing
-board5x5 :: [[Char]]
-board5x5 =
-    ["  B  ",
-     " B B ",
-     "B W B",
-     " W W ",
-     "  W  "]
-
-board9x9 :: [[Char]]
-board9x9 =
-    ["  B   B  ",
-     "B   B   B",
-     "WBBBWBBBW",
-     "W W W W W",
-     "         ",
-     " W W W W ",
-     "B B   B B",
-     " W BBB W ",
-     "   B B   "]
-
 -- one corollary from the rule is that:
 -- + two neighboring empty cells must be of the same side.
 --   otherwise these two cells cannot be counted as their sides
