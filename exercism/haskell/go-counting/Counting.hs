@@ -64,18 +64,20 @@ territories bd = map tagWithOwner (clusterCells (S.fromList emptyCells) S.empty 
                 in if S.null found
                      then clusterCells todoSet S.empty (curCells : clusters)
                      else clusterCells remaining (found `S.union` curCells) clusters
+    -- tag cluster with its owner, by detecting all its neighboring cells
+    -- if there is exacly one owner of all these cells, then this whole cluster
+    -- belongs to that owner
     tagWithOwner coordSet = (coordSet, owner)
       where
         neighborOwners :: S.Set Color
-        neighborOwners = S.fromList
+        neighborOwners = S.fromList -- for removing duplicates
                        . mapMaybe (ca !)
                        . concatMap neighbor
-                       . S.toList
+                       . toList
                        $ coordSet
-        owner
-            | neighborOwners == S.singleton Black = Just Black
-            | neighborOwners == S.singleton White = Just White
-            | otherwise = Nothing
+        owner = case S.minView neighborOwners of
+            Just (color, others) | S.null others -> Just color
+            _ -> Nothing
 
 territoryFor :: Board -> Coord -> Maybe (S.Set Coord, Owner)
 territoryFor b coord = find (\(cs,_) -> coord `S.member` cs) t
