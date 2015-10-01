@@ -28,9 +28,8 @@ type CellArray = Array Coord Owner
 -- empty intersections, and then we can determine which side owns the
 -- territory.
 
--- TODO: determine cluster owner
 territories :: Board -> [(S.Set Coord, Owner)]
-territories bd = map tagWithOwner (clusterCells emptyCells S.empty [])
+territories bd = map tagWithOwner (clusterCells (S.fromList emptyCells) S.empty [])
   where
     ca = toCellArray bd
     -- get coords of empty cells
@@ -39,29 +38,32 @@ territories bd = map tagWithOwner (clusterCells emptyCells S.empty [])
     neighbor (x,y) = filter (inRange (bounds ca))
                             [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
 
-    clusterCells :: [Coord] -- cells to be visited
+    clusterCells :: S.Set Coord -- cells to be visited
                  -> S.Set Coord -- current set of cells
                  -> [S.Set Coord] -- current set of clusters
                  -> [S.Set Coord] -- return
-    clusterCells [] curCells clusters =
-        if S.null curCells
-          then clusters
-          else curCells : clusters
-    clusterCells todos@(x:xs) curCells clusters =
-        -- if the current set of coords is empty
-        -- then we are not ready to expand the set,
-        if S.null curCells
-          then
-            -- pick one element to form the initial set
-            clusterCells xs (S.singleton x) clusters
-          else
-            let neighbors = S.fromList . concatMap neighbor . toList $ curCells
-                todoSet = S.fromList todos
-                found = neighbors `S.intersection` todoSet
-                remaining = toList (todoSet `S.difference` found)
-            in if S.null found
-                 then clusterCells todos S.empty (curCells : clusters)
-                 else clusterCells remaining (found `S.union` curCells) clusters
+    clusterCells todoSet curCells clusters = case S.minView todoSet of
+        Nothing -> -- no more cells to check
+            if S.null curCells
+              then clusters
+              else curCells : clusters
+        Just (x,xs) ->
+            -- if the current set of coords is empty
+            -- then we are not ready to expand the set,
+            if S.null curCells
+              then
+                -- pick one element to form the initial set
+                -- note that S.maxView can also be used,
+                -- we just want to pick one element from the set
+                -- how it's picked is irrelevant.
+                clusterCells xs (S.singleton x) clusters
+              else
+                let neighbors = S.fromList . concatMap neighbor . toList $ curCells
+                    found = neighbors `S.intersection` todoSet
+                    remaining = todoSet `S.difference` found
+                in if S.null found
+                     then clusterCells todoSet S.empty (curCells : clusters)
+                     else clusterCells remaining (found `S.union` curCells) clusters
     tagWithOwner coordSet = (coordSet, owner)
       where
         neighborOwners :: S.Set Color
