@@ -6,7 +6,6 @@
 * custom-set
 * food-chain
 * forth
-* go-counting
 * house
 * largest-series-product
 * lens-person
@@ -32,5 +31,4 @@
 * sieve
 * simple-cipher
 * trinary
-* wordy
 * zipper
