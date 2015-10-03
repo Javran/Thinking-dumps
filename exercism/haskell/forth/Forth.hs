@@ -8,7 +8,7 @@ module Forth
   ) where
 
 import qualified Data.Text as T
-import Text.ParserCombinators.ReadP hiding (skipSpaces)
+import Text.ParserCombinators.ReadP
 import Data.Char
 import Data.Functor
 import Debug.Trace
@@ -39,28 +39,41 @@ formatStack = error "TODO: Return the current stack as Text with the element \
                     \on top of the stack being the rightmost element in the \
                     \output"
 
+-- non-printables count as spaces
+isFSpace :: Char -> Bool
+isFSpace x = not (isPrint x) || isSpace x
+
 -- | skip spaces in Forth
-skipSpaces :: ReadP ()
-skipSpaces = void (munch (\x -> not (isPrint x) || isSpace x))
+skipFSpaces :: ReadP ()
+skipFSpaces = void (munch isFSpace)
 
 lexeme :: ReadP a -> ReadP a
-lexeme = (<* skipSpaces)
+lexeme = (<* skipFSpaces)
+
+-- | parse a word or a digit
+wordOrDigit :: ReadP ForthCommand
+wordOrDigit = do
+    raw <- munch1 (not . isFSpace)
+    case raw of
+        ":" -> pfail
+        ";" -> pfail
+        _ -> return (if all isDigit raw
+                       then FNum (read raw)
+                       else FPrim raw)
 
 -- the program consists of: printable but non-space chars
 -- + all digits -> a number
 -- + not all are digits -> a word (composed or primitive)
 -- + otherwise its's a command (refered to by name)
-atom :: ReadP ForthCommand
-atom = do
-    raw <- munch1 (\x -> isPrint x && not (isSpace x))
-    case raw of
-        ":" -> do
-            skipSpaces
-            wordName <- lexeme (munch1 (\x -> isPrint x && not (isSpace x)))
-            traceM wordName
-            as <- sepBy ((char ';' >> return (FDef "" [])) <++ atom) skipSpaces
-            char ';' >> skipSpaces
-            return (FDef wordName as)
-        _ -> return (if all isDigit raw
-                       then FNum (read raw)
-                       else FPrim raw)
+definition :: ReadP ForthCommand
+definition = do
+    void $ lexeme (char ':')
+    wordName <- lexeme (munch1 (not . isFSpace))
+    traceM wordName
+    as <- sepBy command skipFSpaces
+    skipFSpaces
+    void $ lexeme (char ';')
+    return (FDef wordName as)
+
+command :: ReadP ForthCommand
+command = wordOrDigit +++ definition
