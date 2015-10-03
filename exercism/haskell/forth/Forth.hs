@@ -8,7 +8,7 @@ module Forth
   ) where
 
 import qualified Data.Text as T
-import Text.ParserCombinators.ReadP
+import Text.ParserCombinators.ReadP hiding (skipSpaces)
 import Data.Char
 import Data.Functor
 
@@ -37,13 +37,17 @@ formatStack = error "TODO: Return the current stack as Text with the element \
                     \on top of the stack being the rightmost element in the \
                     \output"
 
+-- | skip spaces in Forth
+skipSpaces :: ReadP ()
+skipSpaces = void (munch (\x -> not (isPrint x) || isSpace x))
+
 -- the program consists of: printable but non-space chars
 -- + all digits -> a number
 -- + not all are digits -> a word (composed or primitive)
 -- + otherwise its's a command (refered to by name)
 atom :: ReadP ForthCommand
 atom = do
-    void (munch (not . isPrint))
+    skipSpaces
     raw <- munch1 (\x -> isPrint x && not (isSpace x))
     -- TODO: check if this is a definition
     if all isDigit raw
