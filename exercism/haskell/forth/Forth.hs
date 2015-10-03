@@ -11,6 +11,7 @@ import qualified Data.Text as T
 import Text.ParserCombinators.ReadP hiding (skipSpaces)
 import Data.Char
 import Data.Functor
+import Debug.Trace
 
 data ForthState -- TODO: define this data type
 
@@ -25,6 +26,7 @@ data ForthCommand
   = FNum Int -- number
   | FPrim String -- primitives
   | FDef String [ForthCommand] -- definitions
+    deriving Show
 
 empty :: ForthState
 empty = error "TODO: An empty ForthState"
@@ -55,8 +57,9 @@ atom = do
         ":" -> do
             skipSpaces
             wordName <- lexeme (munch1 (\x -> isPrint x && not (isSpace x)))
-            as <- sepBy ((char ';' >> pfail) <++ atom) skipSpaces
-            void (char ';')
+            traceM wordName
+            as <- sepBy ((char ';' >> return (FDef "" [])) <++ atom) skipSpaces
+            char ';' >> skipSpaces
             return (FDef wordName as)
         _ -> return (if all isDigit raw
                        then FNum (read raw)
