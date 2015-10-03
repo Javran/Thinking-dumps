@@ -24,7 +24,7 @@ data ForthError
 data ForthCommand
   = FNum Int -- number
   | FPrim String -- primitives
-  | FDef [ForthCommand] -- definitions
+  | FDef String [ForthCommand] -- definitions
 
 empty :: ForthState
 empty = error "TODO: An empty ForthState"
@@ -41,15 +41,23 @@ formatStack = error "TODO: Return the current stack as Text with the element \
 skipSpaces :: ReadP ()
 skipSpaces = void (munch (\x -> not (isPrint x) || isSpace x))
 
+lexeme :: ReadP a -> ReadP a
+lexeme = (<* skipSpaces)
+
 -- the program consists of: printable but non-space chars
 -- + all digits -> a number
 -- + not all are digits -> a word (composed or primitive)
 -- + otherwise its's a command (refered to by name)
 atom :: ReadP ForthCommand
 atom = do
-    skipSpaces
     raw <- munch1 (\x -> isPrint x && not (isSpace x))
-    -- TODO: check if this is a definition
-    if all isDigit raw
-      then return (FNum (read raw))
-      else return (FPrim raw)
+    case raw of
+        ":" -> do
+            skipSpaces
+            wordName <- lexeme (munch1 (\x -> isPrint x && not (isSpace x)))
+            as <- sepBy ((char ';' >> pfail) <++ atom) skipSpaces
+            void (char ';')
+            return (FDef wordName as)
+        _ -> return (if all isDigit raw
+                       then FNum (read raw)
+                       else FPrim raw)
