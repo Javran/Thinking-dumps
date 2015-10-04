@@ -11,7 +11,6 @@ import qualified Data.Text as T
 import Text.ParserCombinators.ReadP
 import Data.Char
 import Data.Functor
-import Debug.Trace
 
 data ForthState -- TODO: define this data type
 
@@ -69,7 +68,6 @@ definition :: ReadP ForthCommand
 definition = do
     void $ lexeme (char ':')
     wordName <- lexeme (munch1 (not . isFSpace))
-    traceM wordName
     as <- sepBy command skipFSpaces
     skipFSpaces
     void $ lexeme (char ';')
