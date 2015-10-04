@@ -47,14 +47,17 @@ evalProg :: forall r.
             => ForthCommand -> Eff r ()
 evalProg fc = case fc of
     FNum v -> push v
-    FDef name cmds -> modify (& fEnv %~ M.insert name cmds)
-    FWord name -> evalPrim name >>= \case
-        Nothing -> do
-            env <- (^. fEnv) <$> get
-            case M.lookup (map toLower name) env of
-                Nothing -> throwExc (UnknownWord (T.pack name))
-                Just cmds -> mapM_ evalProg cmds
-        Just _ -> return ()
+    FDef name cmds -> do
+        when (all isDigit name) (throwExc InvalidWord)
+        modify (& fEnv %~ M.insert name cmds)
+    FWord name -> do
+        env <- (^. fEnv) <$> get
+        case M.lookup (map toLower name) env of
+            Nothing ->
+                evalPrim name >>= \case
+                    Nothing -> throwExc (UnknownWord (T.pack name))
+                    Just _ -> return ()
+            Just cmds -> mapM_ evalProg cmds
   where
     push :: Int -> Eff r ()
     push v = modify (& fStack %~ (v:))
