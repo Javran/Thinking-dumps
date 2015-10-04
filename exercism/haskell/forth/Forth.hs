@@ -1,4 +1,9 @@
-{-# LANGUAGE OverloadedStrings, FlexibleContexts, TemplateHaskell, ScopedTypeVariables, LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE FlexibleContexts #-}
+
 module Forth
   ( ForthError(..)
   , ForthState
@@ -20,9 +25,8 @@ import Control.Eff.Exception
 
 data ForthCommand
   = FNum Int -- number
-  | FWord String -- primitives
+  | FWord String -- primitives -- TODO: when to normalize?
   | FDef String [ForthCommand] -- definitions
-  deriving Show
 
 data ForthState = FState
   { _fStack :: [Int]
@@ -50,7 +54,7 @@ evalProg fc = case fc of
     FDef name cmds -> do
         when (all isDigit name) (throwExc InvalidWord)
         modify (& fEnv %~ M.insert name cmds)
-    FWord name -> do
+    FWord name -> do -- TODO: catch exc
         env <- (^. fEnv) <$> get
         case M.lookup (map toLower name) env of
             Nothing ->
@@ -79,6 +83,7 @@ evalProg fc = case fc of
             push (a `div` b)
             done
         "dup"  -> do { x <- pop; push x; push x; done }
+        -- TODO: pattern match on stack for more efficient impl
         "swap" -> do { b <- pop; a <- pop; push b; push a; done }
         "drop" -> pop >> done
         "over" -> do { b <- pop; a <- pop; push a; push b; push a; done}
