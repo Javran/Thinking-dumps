@@ -51,8 +51,8 @@ evalProg fc = case fc of
     FWord name -> evalPrim name >>= \case
         Nothing -> do
             env <- (^. fEnv) <$> get
-            case M.lookup name env of
-                Nothing -> throwExc InvalidWord
+            case M.lookup (map toLower name) env of
+                Nothing -> throwExc (UnknownWord (T.pack name))
                 Just cmds -> mapM_ evalProg cmds
         Just _ -> return ()
   where
@@ -65,7 +65,7 @@ evalProg fc = case fc of
               (v:xs) -> modify (& fStack .~ xs) >> return v
     -- Nothing -> nothing is done, fallback to non-primitives
     evalPrim :: String -> Eff r (Maybe ())
-    evalPrim cmd = case cmd of
+    evalPrim cmd = case map toLower cmd of
         "+" -> liftBinOp (+)
         "-" -> liftBinOp (-)
         "*" -> liftBinOp (*)
@@ -73,7 +73,7 @@ evalProg fc = case fc of
             b <- pop
             when (b == 0) (throwExc DivisionByZero)
             a <- pop
-            push (b `div` a)
+            push (a `div` b)
             done
         "dup"  -> do { x <- pop; push x; push x; done }
         "swap" -> do { b <- pop; a <- pop; push b; push a; done }
@@ -82,10 +82,10 @@ evalProg fc = case fc of
         _ -> return Nothing
       where
         done = return (Just ())
-        liftBinOp bin = (bin <$> pop <*> pop) >>= push >> done
+        liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b); done }
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
-evalText = error "TODO: Evaluate an input Text, returning the new state"
+evalText rawText initState = run (runExc (execState initState (mapM evalProg (parseForthT rawText))))
 
 formatStack :: ForthState -> T.Text
 formatStack = T.pack . unwords . map show . reverse . (^. fStack)
