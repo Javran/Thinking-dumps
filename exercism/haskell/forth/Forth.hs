@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, FlexibleContexts, TemplateHaskell, ScopedTypeVariables #-}
 module Forth
   ( ForthError(..)
   , ForthState
@@ -11,8 +11,24 @@ import qualified Data.Text as T
 import Text.ParserCombinators.ReadP
 import Data.Char
 import Data.Functor
+import qualified Data.Map as M
+import Control.Lens
+import Control.Eff
+import Control.Eff.State.Strict
+import Control.Eff.Exception
 
-data ForthState -- TODO: define this data type
+data ForthCommand
+  = FNum Int -- number
+  | FWord String -- primitives
+  | FDef String [ForthCommand] -- definitions
+  deriving Show
+
+data ForthState = FState
+  { _fStack :: [Int]
+  , _fEnv :: M.Map String [ForthCommand]
+  }
+
+makeLenses ''ForthState
 
 data ForthError
   = DivisionByZero
@@ -21,22 +37,24 @@ data ForthError
   | UnknownWord T.Text
   deriving (Show, Eq)
 
-data ForthCommand
-  = FNum Int -- number
-  | FPrim String -- primitives
-  | FDef String [ForthCommand] -- definitions
-    deriving Show
-
 empty :: ForthState
-empty = error "TODO: An empty ForthState"
+empty = FState [] M.empty
+
+evalProg :: forall r.
+            ( Member (State ForthState) r
+            , Member (Exc ForthError) r )
+            => ForthCommand -> Eff r ()
+evalProg fc = case fc of
+    FNum v -> push v
+    FDef name cmds -> modify (& fEnv %~ M.insert name cmds)
+  where
+    push v = modify (& fStack %~ (v:)) :: Eff r ()
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
 evalText = error "TODO: Evaluate an input Text, returning the new state"
 
 formatStack :: ForthState -> T.Text
-formatStack = error "TODO: Return the current stack as Text with the element \
-                    \on top of the stack being the rightmost element in the \
-                    \output"
+formatStack = T.pack . unwords . map show . reverse . (^. fStack)
 
 -- non-printables count as spaces
 isFSpace :: Char -> Bool
@@ -58,7 +76,7 @@ wordOrDigit = do
         ";" -> pfail
         _ -> return (if all isDigit raw
                        then FNum (read raw)
-                       else FPrim raw)
+                       else FWord raw)
 
 -- the program consists of: printable but non-space chars
 -- + all digits -> a number
@@ -71,7 +89,8 @@ definition = do
     as <- sepBy command skipFSpaces
     skipFSpaces
     void $ lexeme (char ';')
-    return (FDef wordName as)
+    let normWordName = map toLower wordName
+    return (FDef normWordName as)
 
 command :: ReadP ForthCommand
 command = wordOrDigit +++ definition
