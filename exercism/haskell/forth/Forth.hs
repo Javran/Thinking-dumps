@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, FlexibleContexts, TemplateHaskell, ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings, FlexibleContexts, TemplateHaskell, ScopedTypeVariables, LambdaCase #-}
 module Forth
   ( ForthError(..)
   , ForthState
@@ -8,11 +8,12 @@ module Forth
   ) where
 
 import qualified Data.Text as T
-import Text.ParserCombinators.ReadP
+import Text.ParserCombinators.ReadP hiding (get)
 import Data.Char
 import Data.Functor
 import qualified Data.Map as M
 import Control.Lens
+import Control.Monad
 import Control.Eff
 import Control.Eff.State.Strict
 import Control.Eff.Exception
@@ -47,8 +48,41 @@ evalProg :: forall r.
 evalProg fc = case fc of
     FNum v -> push v
     FDef name cmds -> modify (& fEnv %~ M.insert name cmds)
+    FWord name -> evalPrim name >>= \case
+        Nothing -> do
+            env <- (^. fEnv) <$> get
+            case M.lookup name env of
+                Nothing -> throwExc InvalidWord
+                Just cmds -> mapM_ evalProg cmds
+        Just _ -> return ()
   where
-    push v = modify (& fStack %~ (v:)) :: Eff r ()
+    push :: Int -> Eff r ()
+    push v = modify (& fStack %~ (v:))
+    pop :: Eff r Int
+    pop = ((^. fStack) <$> get) >>=
+          \case
+              [] -> throwExc StackUnderflow
+              (v:xs) -> modify (& fStack .~ xs) >> return v
+    -- Nothing -> nothing is done, fallback to non-primitives
+    evalPrim :: String -> Eff r (Maybe ())
+    evalPrim cmd = case cmd of
+        "+" -> liftBinOp (+)
+        "-" -> liftBinOp (-)
+        "*" -> liftBinOp (*)
+        "/" -> do
+            b <- pop
+            when (b == 0) (throwExc DivisionByZero)
+            a <- pop
+            push (b `div` a)
+            done
+        "dup"  -> do { x <- pop; push x; push x; done }
+        "swap" -> do { b <- pop; a <- pop; push b; push a; done }
+        "drop" -> pop >> done
+        "over" -> do { b <- pop; a <- pop; push a; push b; push a; done}
+        _ -> return Nothing
+      where
+        done = return (Just ())
+        liftBinOp bin = (bin <$> pop <*> pop) >>= push >> done
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
 evalText = error "TODO: Evaluate an input Text, returning the new state"
