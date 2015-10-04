@@ -10,6 +10,7 @@ module Forth
 import qualified Data.Text as T
 import Text.ParserCombinators.ReadP
 import Data.Char
+import Data.Maybe
 import Data.Functor
 
 data ForthState -- TODO: define this data type
@@ -75,3 +76,14 @@ definition = do
 
 command :: ReadP ForthCommand
 command = wordOrDigit +++ definition
+
+parseForth :: String -> [ForthCommand]
+parseForth = getResult . readP_to_S (sepBy command skipFSpaces
+                                     <* skipFSpaces <* eof)
+  where
+    getResult xs = case listToMaybe (filter (null . snd) xs) of
+        Just (x,_) -> x
+        Nothing -> error "error while parsing"
+
+parseForthT :: T.Text -> [ForthCommand]
+parseForthT = parseForth . T.unpack
