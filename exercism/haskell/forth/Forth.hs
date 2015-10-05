@@ -12,16 +12,18 @@ module Forth
   , empty
   ) where
 
-import qualified Data.Text as T
+
 import Text.ParserCombinators.ReadP hiding (get)
 import Data.Char
 import Data.Functor
-import qualified Data.Map as M
 import Control.Lens
 import Control.Monad
 import Control.Eff
 import Control.Eff.State.Strict
 import Control.Eff.Exception
+
+import qualified Data.Text as T
+import qualified Data.Map as M
 
 data ForthCommand
   = FNum Int -- number
@@ -57,10 +59,7 @@ evalProg fc = case fc of
     FWord name -> do -- TODO: catch exc
         env <- (^. fEnv) <$> get
         case M.lookup (map toLower name) env of
-            Nothing ->
-                evalPrim name >>= \case
-                    Nothing -> throwExc (UnknownWord (T.pack name))
-                    Just _ -> return ()
+            Nothing -> evalPrim name
             Just cmds -> mapM_ evalProg cmds
   where
     push :: Int -> Eff r ()
@@ -70,8 +69,7 @@ evalProg fc = case fc of
           \case
               [] -> throwExc StackUnderflow
               (v:xs) -> modify (& fStack .~ xs) >> return v
-    -- Nothing -> nothing is done, fallback to non-primitives
-    evalPrim :: String -> Eff r (Maybe ())
+    evalPrim :: String -> Eff r ()
     evalPrim cmd = case map toLower cmd of
         "+" -> liftBinOp (+)
         "-" -> liftBinOp (-)
@@ -81,16 +79,14 @@ evalProg fc = case fc of
             when (b == 0) (throwExc DivisionByZero)
             a <- pop
             push (a `div` b)
-            done
-        "dup"  -> do { x <- pop; push x; push x; done }
+        "dup"  -> do { x <- pop; push x; push x }
         -- TODO: pattern match on stack for more efficient impl
-        "swap" -> do { b <- pop; a <- pop; push b; push a; done }
-        "drop" -> pop >> done
-        "over" -> do { b <- pop; a <- pop; push a; push b; push a; done}
-        _ -> return Nothing
+        "swap" -> do { b <- pop; a <- pop; push b; push a }
+        "drop" -> void pop
+        "over" -> do { b <- pop; a <- pop; push a; push b; push a}
+        _ -> throwExc (UnknownWord (T.pack cmd))
       where
-        done = return (Just ())
-        liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b); done }
+        liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b) }
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
 evalText rawText initState = run (runExc (execState initState (mapM evalProg (parseForthT rawText))))
