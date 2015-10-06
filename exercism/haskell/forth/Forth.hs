@@ -56,11 +56,14 @@ evalProg fc = case fc of
     FDef name cmds -> do
         when (all isDigit name) (throwExc InvalidWord)
         modify (& fEnv %~ M.insert name cmds)
-    FWord name -> do -- TODO: catch exc
-        env <- (^. fEnv) <$> get
-        case M.lookup (map toLower name) env of
-            Nothing -> evalPrim name
-            Just cmds -> mapM_ evalProg cmds
+    FWord name ->
+        -- first try evalWord, if it fails, we fallback to attempt evalPrim
+        -- if primitives are not expected to be overwritten, we can simply
+        -- swap the position of evalWord and evalPrim, so primitives are attempted
+        -- first without looking up the environment
+        catchExc (evalWord name) $ \case
+            UnknownWord n | name == T.unpack n -> evalPrim name
+            e -> throwExc e
   where
     push :: Int -> Eff r ()
     push v = modify (& fStack %~ (v:))
@@ -87,6 +90,12 @@ evalProg fc = case fc of
         _ -> throwExc (UnknownWord (T.pack cmd))
       where
         liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b) }
+    evalWord :: String -> Eff r ()
+    evalWord name = do
+        env <- (^. fEnv) <$> get
+        case M.lookup (map toLower name) env of
+            Nothing -> throwExc (UnknownWord (T.pack name))
+            Just cmds -> mapM_ evalProg cmds
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
 evalText rawText initState = run (runExc (execState initState (mapM evalProg (parseForthT rawText))))
