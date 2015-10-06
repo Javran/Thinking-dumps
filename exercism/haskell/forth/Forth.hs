@@ -82,11 +82,26 @@ evalProg fc = case fc of
             when (b == 0) (throwExc DivisionByZero)
             a <- pop
             push (a `div` b)
-        "dup"  -> do { x <- pop; push x; push x }
-        -- TODO: pattern match on stack for more efficient impl
-        "swap" -> do { b <- pop; a <- pop; push b; push a }
+        -- DUP, SWAP, DROP, OVER can be implemented in terms
+        -- of push and pop operations,
+        -- but here we directly manipulate the whole stack instead
+        -- it's just a trade-off between efficiency and simplicity
+        "dup"  -> do
+            stk <- (^. fStack) <$> get
+            case stk of
+                (x:_) -> modify (& fStack .~ (x:stk))
+                _ -> throwExc StackUnderflow
+        "swap" -> do
+            stk <- (^. fStack) <$> get
+            case stk of
+                (a:b:xs) -> modify (& fStack .~ (b:a:xs))
+                _ -> throwExc StackUnderflow
         "drop" -> void pop
-        "over" -> do { b <- pop; a <- pop; push a; push b; push a}
+        "over" -> do
+            stk <- (^. fStack) <$> get
+            case stk of
+                (_:b:_) -> modify (& fStack .~ (b:stk))
+                _ -> throwExc StackUnderflow
         _ -> throwExc (UnknownWord (T.pack cmd))
       where
         liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b) }
