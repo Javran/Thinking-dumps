@@ -54,8 +54,9 @@ evalProg :: forall r.
 evalProg fc = case fc of
     FNum v -> push v
     FDef name cmds -> do
+        let normName = map toLower name
         when (all isDigit name) (throwExc InvalidWord)
-        modify (& fEnv %~ M.insert name cmds)
+        modify (& fEnv %~ M.insert normName cmds)
     FWord name ->
         -- first try evalWord, if it fails, we fallback to attempt evalPrim
         -- if primitives are not expected to be overwritten, we can simply
@@ -113,7 +114,14 @@ evalProg fc = case fc of
             Just cmds -> mapM_ evalProg cmds
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
-evalText rawText initState = run (runExc (execState initState (mapM evalProg (parseForthT rawText))))
+evalText rawText initState =
+      run
+    . runExc -- handle exception requests
+    . execState initState -- handle state requests
+    $ program
+  where
+    ast = parseForthT rawText
+    program = mapM evalProg ast
 
 formatStack :: ForthState -> T.Text
 formatStack = T.pack . unwords . map show . reverse . (^. fStack)
@@ -151,8 +159,11 @@ definition = do
     as <- sepBy command skipFSpaces
     skipFSpaces
     void $ lexeme (char ';')
-    let normWordName = map toLower wordName
-    return (FDef normWordName as)
+    -- despite that names are case-insensitive
+    -- we choose not to "normalize" it too early
+    -- this could benefit error messages as less modification
+    -- is introduced during parsing
+    return (FDef wordName as)
 
 command :: ReadP ForthCommand
 command = wordOrDigit +++ definition
