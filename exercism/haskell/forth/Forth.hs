@@ -24,10 +24,12 @@ import Control.Eff.Exception
 import qualified Data.Text as T
 import qualified Data.Map as M
 
+-- | a Forth program command, words are not normalized
+--   and the interpreter is responsible for normalizing
 data ForthCommand
-  = FNum Int -- number
-  | FWord String -- primitives -- TODO: when to normalize?
-  | FDef String [ForthCommand] -- definitions
+  = FNum Int -- ^ push a number onto stack
+  | FWord String -- ^ interpret a word
+  | FDef String [ForthCommand] -- ^ define a word
 
 data ForthState = FState
   { _fStack :: [Int]
@@ -57,7 +59,6 @@ for this language, additionally, there are few rules:
     * otherwise it's a word (referred to by name)
 
 |-}
-
 
 -- | return true if the character is non-printable or is space
 isFSpace :: Char -> Bool
