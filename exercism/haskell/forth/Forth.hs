@@ -12,7 +12,6 @@ module Forth
   , empty
   ) where
 
-
 import Text.ParserCombinators.ReadP hiding (get)
 import Data.Char
 import Data.Functor
@@ -43,6 +42,78 @@ data ForthError
   | InvalidWord
   | UnknownWord T.Text
   deriving (Show, Eq)
+
+{-|
+* Parsing
+From testcases we know printable but non-space characters
+are considered valid for this language.
+
+Each consecutive non-space characters are considered a valid atom / token
+for this language, additionally, there are few rules:
+
+    * there are 2 special tokens: ":" is used to mark the beginning of
+      a word definition whereas ";" marks the end of the definition
+    * if a token consists of only digits, then it is a number
+    * otherwise it's a word (referred to by name)
+
+|-}
+
+
+-- | return true if the character is non-printable or is space
+isFSpace :: Char -> Bool
+isFSpace x = not (isPrint x) || isSpace x
+
+-- | skip spaces in Forth
+skipFSpaces :: ReadP ()
+skipFSpaces = void (munch isFSpace)
+
+-- | transforms a parser so that it consumes all following spaces
+--   in addition to finish its parsing task.
+lexeme :: ReadP a -> ReadP a
+lexeme = (<* skipFSpaces)
+
+-- | parse a word or a digit, assuming the first character is not a space
+wordOrDigit :: ReadP ForthCommand
+wordOrDigit = do
+    raw <- munch1 (not . isFSpace)
+    case raw of
+        -- ":" and ";" are special case, we shouldn't treat them
+        -- as normal words
+        ":" -> pfail
+        ";" -> pfail
+        _ -> return (if all isDigit raw
+                       then FNum (read raw)
+                       else FWord raw)
+
+-- | parse a definition, assuming the first character is not a space
+definition :: ReadP ForthCommand
+definition = do
+    void $ lexeme (char ':')
+    wordName <- lexeme (munch1 (not . isFSpace))
+    as <- sepBy command skipFSpaces
+    skipFSpaces
+    void $ lexeme (char ';')
+    -- despite that names are case-insensitive
+    -- we choose not to "normalize" it too early
+    -- this could benefit error messages as less modification
+    -- is introduced during parsing
+    return (FDef wordName as)
+
+-- | parse a forth command, a command is either word, digits or a definition
+--   it is assumed the first character is not a space
+command :: ReadP ForthCommand
+command = wordOrDigit +++ definition
+
+parseForth :: String -> [ForthCommand]
+parseForth = getResult . readP_to_S (sepBy command skipFSpaces
+                                     <* skipFSpaces <* eof)
+  where
+    getResult xs = case filter (null . snd) xs of
+        (x,_):_ -> x
+        [] -> error "error while parsing"
+
+parseForthT :: T.Text -> [ForthCommand]
+parseForthT = parseForth . T.unpack
 
 empty :: ForthState
 empty = FState [] M.empty
@@ -125,56 +196,3 @@ evalText rawText initState =
 
 formatStack :: ForthState -> T.Text
 formatStack = T.pack . unwords . map show . reverse . (^. fStack)
-
--- non-printables count as spaces
-isFSpace :: Char -> Bool
-isFSpace x = not (isPrint x) || isSpace x
-
--- | skip spaces in Forth
-skipFSpaces :: ReadP ()
-skipFSpaces = void (munch isFSpace)
-
-lexeme :: ReadP a -> ReadP a
-lexeme = (<* skipFSpaces)
-
--- | parse a word or a digit
-wordOrDigit :: ReadP ForthCommand
-wordOrDigit = do
-    raw <- munch1 (not . isFSpace)
-    case raw of
-        ":" -> pfail
-        ";" -> pfail
-        _ -> return (if all isDigit raw
-                       then FNum (read raw)
-                       else FWord raw)
-
--- the program consists of: printable but non-space chars
--- + all digits -> a number
--- + not all are digits -> a word (composed or primitive)
--- + otherwise its's a command (refered to by name)
-definition :: ReadP ForthCommand
-definition = do
-    void $ lexeme (char ':')
-    wordName <- lexeme (munch1 (not . isFSpace))
-    as <- sepBy command skipFSpaces
-    skipFSpaces
-    void $ lexeme (char ';')
-    -- despite that names are case-insensitive
-    -- we choose not to "normalize" it too early
-    -- this could benefit error messages as less modification
-    -- is introduced during parsing
-    return (FDef wordName as)
-
-command :: ReadP ForthCommand
-command = wordOrDigit +++ definition
-
-parseForth :: String -> [ForthCommand]
-parseForth = getResult . readP_to_S (sepBy command skipFSpaces
-                                     <* skipFSpaces <* eof)
-  where
-    getResult xs = case filter (null . snd) xs of
-        (x,_):_ -> x
-        [] -> error "error while parsing"
-
-parseForthT :: T.Text -> [ForthCommand]
-parseForthT = parseForth . T.unpack
