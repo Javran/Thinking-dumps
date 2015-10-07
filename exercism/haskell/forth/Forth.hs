@@ -104,26 +104,34 @@ definition = do
 command :: ReadP ForthCommand
 command = wordOrDigit +++ definition
 
+-- | parse a complete Forth program from raw strings
 parseForth :: String -> [ForthCommand]
-parseForth = getResult . readP_to_S (sepBy command skipFSpaces
-                                     <* skipFSpaces <* eof)
+parseForth = getResult
+           . readP_to_S (skipSpaces *>
+                         sepBy command skipFSpaces
+                         <* skipFSpaces <* eof)
   where
     getResult xs = case filter (null . snd) xs of
         (x,_):_ -> x
         [] -> error "error while parsing"
 
+-- | parse a complete Forth program from raw texts
 parseForthT :: T.Text -> [ForthCommand]
 parseForthT = parseForth . T.unpack
 
 empty :: ForthState
 empty = FState [] M.empty
 
+-- | evaluate a Forth program
 evalProg :: forall r.
             ( Member (State ForthState) r
             , Member (Exc ForthError) r )
             => ForthCommand -> Eff r ()
 evalProg fc = case fc of
+    -- a number itself is a command of pushing that number
     FNum v -> push v
+    -- for a definition, its name is first normalized by casting all characters
+    -- into lowercases and store the definition in current environment
     FDef name cmds -> do
         let normName = map toLower name
         when (all isDigit name) (throwExc InvalidWord)
@@ -144,6 +152,7 @@ evalProg fc = case fc of
           \case
               [] -> throwExc StackUnderflow
               (v:xs) -> modify (& fStack .~ xs) >> return v
+    -- evaluate primitive operations
     evalPrim :: String -> Eff r ()
     evalPrim cmd = case map toLower cmd of
         "+" -> liftBinOp (+)
@@ -177,6 +186,8 @@ evalProg fc = case fc of
         _ -> throwExc (UnknownWord (T.pack cmd))
       where
         liftBinOp bin = do { b <- pop; a <- pop; push (a `bin` b) }
+    -- evaluate a word by looking up the environment to pick
+    -- the correponding sequence of commands
     evalWord :: String -> Eff r ()
     evalWord name = do
         env <- (^. fEnv) <$> get
