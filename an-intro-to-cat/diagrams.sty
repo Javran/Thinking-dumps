@@ -1,12 +1,13 @@
-% mangletex (24 Nov 1995) run at 14:58 BST Wednesday 11 May 2011
+% mangletex (24 Nov 1995) run at 14:56 GMT Sunday 28 December 2014
 \message{==================================================================}%
-\message{<Paul Taylor's commutative diagrams - version 3.94, April 2011>}%%
+\message{<Paul Taylor's commutative diagrams - version 3.95, December 2014>}%
+%%
 %%
 %% This code runs the LaTeX \ProvidesPackage command iff it is defined.
 %% included at the request of Michael Downes <mjd@ams.org> March 2002.
 %% Put \listfiles in your LaTeX preamble to see what this is for.
 \expandafter\ifx\csname ProvidesPackage\endcsname\relax\toks0=\expandafter{%
-\fi\ProvidesPackage{diagrams}[2011/04/19 v3.94 Paul Taylor's commutative
+\fi\ProvidesPackage{diagrams}[2014/12/31 v3.94 Paul Taylor's commutative
 diagrams]%%
 \toks0=\bgroup}%%
 %%======================================================================%
@@ -28,8 +29,8 @@ diagrams]%%
 %%                                                                      %
 %%                                                                      %
 %% CONTENTS:                                                            %
-%%  (O) corruption-sensitive hacks    (to approx line 331)              %
-%%      Arrow components & commands - starts approx line 1247           %
+%%  (O) corruption-sensitive hacks    (to approx line 318)              %
+%%      Arrow components & commands - starts approx line 1234           %
 %% (22) auxillary macros for adjustment of components                   %
 %% (23) bits of arrows  (\rhvee etc)                                    %
 %% (24) arrow commands  (\rTo etc)                                      %
@@ -59,6 +60,9 @@ diagrams]%%
 %%      (ii) you send me a copy of the book when it's published.        %
 %%                                                                      %
 %% HISTORY                                                              %
+%% 3.95 Released 31 December 2014					%
+%%	Fixed spurious extra vertical space when running under LuaTeX	%
+%%	with help from Linas Stonys.					%
 %% 3.94 Released 11 May 2011						%
 %%	defined <= tail							%
 %% 3.93 Released 9 June 2009						%
@@ -109,24 +113,7 @@ diagrams]%%
 %%      "repositionpullbacks" option uses this for \SEpbk etc           %
 %%      \newdiagramgrid declaration, grid option and pentagon grid.     %
 %% 3.80 Alpha release for adjusted diagonals 15 July 1994.              %
-%%      Introduced landscape and portrait options.                      %
-%%      Diagonals adjusted to meet their endpoints, at last!!!!         %
-%% 3.28 Released 30 November 1993                                       %
-%%      Peter Freyd's \puncture symbol provided.                        %
-%% 3.25 Released 30 January 1993                                        %
-%%      LaTeX heads made default (unless \tenln undefined, when vee)    %
-%%      Circle, cross, little vee, little black triangle heads.         %
-%%      First-use warning when defaulted diagonal components are used.  %
-%%      AMSTEX emulation - works at least when amstex not present.      %
 %% 3.24 Release 7 Sept 1992 advertised to users.                        %
-%%      PostScript option introduced:                                   %
-%%      LaTeX, vee, curlyvee, triangle & blacktriangle heads & tails    %
-%%      TPIC option introduced as an alternative to \LaTeX@make@line.   %
-%%      Postscript arrows (basic code).                                 %
-%%      Implemented \newarrow \newarrowhead etc.                        %
-%%      Horizontal arrows outside diagram can stretch by wordspacing.   %
-%%      Added < and > for labels on left and right of arrow;            %
-%% 3.16 (20.7.90) as mass mailed; only have mangled version             %
 %% -- all following version numbers are post-facto --                   %
 %%  3   (Jan 90) stretching vertical arrows                             %
 %%  2   (Sept 89) horizontals stretch to objects; "superscript" labels  %
@@ -235,14 +222,14 @@ command is already defined and will not be loaded again}\expandafter\endinput
 %% psdvi (Elwell) CTAN: dviware/dvi2ps/psdvi
 
 \count@=\year\multiply\count@12 \advance\count@\month%%
-\ifnum\count@>24180 %% (December 2014)
+\ifnum\count@>24240 %% (December 2019)
 \message{***********************************************************}%%ascii
 \message{! YOU HAVE AN OUT OF DATE VERSION OF COMMUTATIVE DIAGRAMS! *}%%
-\message{! it expired in December 2014 and is time-bombed for April *}%%
+\message{! it expired in December 2019 and is time-bombed for April *}%%
 \message{! You may get an up to date version of this package from *}%%ascii
 \message{! either www.ctan.org or www.PaulTaylor.EU/diagrams/ *}%%
 \message{***********************************************************}%%ascii
-\ifnum\count@>24183 %% (March 2015)
+\ifnum\count@>24243 %% (March 2020)
 \errhelp{You may press RETURN and carry on for the time being.}\message{! It
 is embarrassing to see papers in conference proceedings}\message{! and
 journals containing bugs which I had fixed years before.}\message{! It is easy
@@ -529,8 +516,8 @@ must still be in maths.}\CD@rG\CD@WE{Vertical arrows, \CD@FC\space\CD@dH s don%
 't know where\CD@uG where to terminate.}\CD@rG\CD@OE{This prevents them from
 stretching correctly.}\def\CD@YE#1{\CD@YA{"#1" inserted \ifx\CD@YF\empty
 before \CD@vJ\else between \CD@YF\ifx\CD@YF\CD@vJ s\else\space and \CD@vJ\fi
-\fi}}\count@=\year\multiply\count@12 \advance\count@\month\ifnum\count@>24187
-\message{because this one expired in July 2015!}\expandafter\endinput\fi\def
+\fi}}\count@=\year\multiply\count@12 \advance\count@\month\ifnum\count@>24247
+\message{because this one expired in July 2020!}\expandafter\endinput\fi\def
 \Horizontal@Map{\CD@nB{horizontal map}\CD@LC\CD@TJ\CD@qD}\def\CD@TJ{\CD@GB-%
 9999 \let\CD@ZD\CD@XD\ifincommdiag\else\CD@cJ\ifinpile\else\skip2\z@ plus 1.5%
 \CD@VK minus .5\CD@UK\skip4\skip2 \fi\fi\let\CD@kD\@fillh\CD@nF{fill@dot}{rf:%
@@ -931,8 +918,8 @@ diagonal goes outside diagram (lost)}}\def\CD@fI{\advance\CD@uA\CD@XB\ifnum
 \advance\CD@VA-\CD@lA\advance\CD@VA\m@ne\advance\CD@VA\CD@mA\dimen0\wd\CD@VA
 \CD@tI\axisheight\dimen1\CD@uB\advance\dimen1-\CD@YB\dimen2\CD@kI\advance
 \dimen2-\dimen0 \advance\CD@XB-\CD@CA\advance\CD@LB-\CD@lA}\count@\year
-\multiply\count@12 \advance\count@\month\ifnum\count@>24194 \loop\iftrue
-\message{gone February 2016!}\repeat\fi\def\CD@wB{\CD@qI-\CD@NF\CD@pI\CD@NF
+\multiply\count@12 \advance\count@\month\ifnum\count@>24254 \loop\iftrue
+\message{gone February 2021!}\repeat\fi\def\CD@wB{\CD@qI-\CD@NF\CD@pI\CD@NF
 \setbox\CD@MH=\null\dp\CD@MH\CD@NF\ht\CD@MH-\CD@NF\CD@mF\z@\CD@mI\z@\CD@lA
 \CD@LB\advance\CD@lA-\CD@MB\advance\CD@lA\CD@mA\CD@FA\CD@LB\CD@VA\CD@MB\CD@sF
 \ifnum\CD@FA>\CD@lA\advance\CD@FA\m@ne\advance\CD@VA\m@ne\CD@tB\wd\CD@VA
@@ -984,17 +971,17 @@ manual)}\let\CD@pJ\empty\fi\else\let\CD@pJ\empty\fi}\def\CD@KC{\CD@VA\CD@mA
 \floatingpenalty0 \brokenpenalty0 \everypar{}\leftskip\z@\parskip\z@
 \parindent\z@\pretolerance10000 \tolerance10000 \hyphenpenalty10000
 \exhyphenpenalty10000 \binoppenalty10000 \relpenalty10000 \adjdemerits0
-\doublehyphendemerits0 \finalhyphendemerits0 \CD@IA\prevdepth\z@}\newbox
-\CD@KG\newbox\CD@IG\def\CD@JG{\unhcopy\CD@KG}\def\CD@HG{\unhcopy\CD@IG}\def
-\CD@iJ{\hbox{}\penalty1\nointerlineskip}\def\CD@PI{\penalty5 \noindent\setbox
-\CD@MH=\null\CD@mF\z@\CD@mI\z@\ifnum\CD@FA<\CD@LB\ht\CD@MH\ht\CD@FA\dp\CD@MH
-\dp\CD@FA\unhbox\CD@FA\skip0=\lastskip\unskip\else\CD@OK\skip0=\z@\fi\endgraf
-\ifcase\prevgraf\cd@shouldnt Y \or\cd@shouldnt Z \or\CD@RI\or\CD@XI\else
-\CD@QI\fi\unskip\setbox0=\lastbox\unskip\unskip\unpenalty\noindent\unhbox0%
-\setbox0\lastbox\unpenalty\unskip\unskip\unpenalty\setbox0\lastbox\CD@tF
-\CD@GB\lastpenalty\unpenalty\ifnum\CD@GB>\z@\setbox\z@\lastbox\CD@lB\repeat
-\endgraf\unskip\unskip\unpenalty}\def\CD@YJ{\CD@uA\CD@XB\advance\CD@uA-\CD@NB
-\CD@vA\CD@FA\advance\CD@vA-\CD@lA\advance\CD@vA1 \expandafter\message{%
+\doublehyphendemerits0 \finalhyphendemerits0 \baselineskip\z@\CD@IA\prevdepth
+\z@}\newbox\CD@KG\newbox\CD@IG\def\CD@JG{\unhcopy\CD@KG}\def\CD@HG{\unhcopy
+\CD@IG}\def\CD@iJ{\hbox{}\penalty1\nointerlineskip}\def\CD@PI{\penalty5
+\noindent\setbox\CD@MH=\null\CD@mF\z@\CD@mI\z@\ifnum\CD@FA<\CD@LB\ht\CD@MH\ht
+\CD@FA\dp\CD@MH\dp\CD@FA\unhbox\CD@FA\skip0=\lastskip\unskip\else\CD@OK\skip0%
+=\z@\fi\endgraf\ifcase\prevgraf\cd@shouldnt Y \or\cd@shouldnt Z \or\CD@RI\or
+\CD@XI\else\CD@QI\fi\unskip\setbox0=\lastbox\unskip\unskip\unpenalty\noindent
+\unhbox0\setbox0\lastbox\unpenalty\unskip\unskip\unpenalty\setbox0\lastbox
+\CD@tF\CD@GB\lastpenalty\unpenalty\ifnum\CD@GB>\z@\setbox\z@\lastbox\CD@lB
+\repeat\endgraf\unskip\unskip\unpenalty}\def\CD@YJ{\CD@uA\CD@XB\advance\CD@uA
+-\CD@NB\CD@vA\CD@FA\advance\CD@vA-\CD@lA\advance\CD@vA1 \expandafter\message{%
 prevgraf=\the\prevgraf at (\the\CD@uA,\the\CD@vA)}}\def\CD@XI{\CD@CE\setbox
 \CD@lI=\lastbox\setbox\CD@lI=\hbox{\unhbox\CD@lI\unskip\unpenalty}\unskip
 \ifdim\ht\CD@lI>\ht\CD@PC\setbox\CD@MH=\copy\CD@lI\else\ifdim\dp\CD@lI>\dp
