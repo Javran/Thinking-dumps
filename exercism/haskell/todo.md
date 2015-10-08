@@ -4,7 +4,6 @@
 * clock
 * connect
 * custom-set
-* food-chain
 * house
 * largest-series-product
 * lens-person

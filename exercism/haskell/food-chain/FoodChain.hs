@@ -4,9 +4,8 @@ module FoodChain
 
 import Data.List
 
-song :: String
-song = unlines (intercalate [""] paragraphs ++ [""])
-
+-- the ending repeats over and over again
+-- each time a new line is added.
 endings :: [String]
 endings =
     [ "She swallowed the cow to catch the goat."
@@ -29,17 +28,24 @@ initParas = zipWith (:) firstLines
     , [ "I don't know how she swallowed a cow!" ]
     ]
   where
+    -- the first line of each paragraph is almost the same
+    -- so we can factor out common stuff
     firstLines = map swallow (words "fly spider bird cat dog goat cow")
       where
         swallow x = "I know an old lady who swallowed a " ++ x ++ "."
 
+-- special case for the last paragraph
 lastPara :: [String]
 lastPara =
     [ "I know an old lady who swallowed a horse."
     , "She's dead, of course!"
     ]
 
+-- putting components together
 paragraphs :: [ [String] ]
 paragraphs = initParas' ++ [lastPara]
   where
     initParas' = zipWith (++) initParas (reverse . init . tails $ endings)
+
+song :: String
+song = unlines (intercalate [""] paragraphs ++ [""])
