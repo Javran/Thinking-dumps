@@ -5,7 +5,7 @@ module FoodChain
 import Data.List
 
 song :: String
-song = ""
+song = unlines (intercalate [""] paragraphs ++ [""])
 
 endings :: [String]
 endings =
@@ -40,4 +40,6 @@ lastPara =
     ]
 
 paragraphs :: [ [String] ]
-paragraphs = initParas ++ [lastPara]
+paragraphs = initParas' ++ [lastPara]
+  where
+    initParas' = zipWith (++) initParas (reverse . init . tails $ endings)
