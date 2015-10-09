@@ -5,7 +5,6 @@
 * connect
 * custom-set
 * house
-* largest-series-product
 * lens-person
 * linked-list
 * luhn
