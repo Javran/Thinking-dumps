@@ -24,4 +24,10 @@ slices :: Int -> String -> [[Int]]
 slices n xs = listSlices n (digits xs)
 
 largestProduct :: Int -> String -> Int
-largestProduct n raw = maximum $ map product $ slices n raw
+largestProduct n raw = case products of
+    -- this doesn't make any sense,
+    -- it's here simply because testcase wants it.
+    [] -> 1
+    _ -> maximum products
+  where
+    products = map product $ slices n raw
