@@ -10,7 +10,10 @@ import Data.Tuple
 type OCRDigit = [String]
 
 convert :: String -> String
-convert = undefined
+convert = intercalate ","
+        . (map . map) ocrDigitToChar
+        . ocrChunks
+        . lines
 
 ocrTable :: [(OCRDigit, Int)]
 ocrTable = map swap intToOcr
