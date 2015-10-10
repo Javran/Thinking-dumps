@@ -10,7 +10,6 @@
 * luhn
 * matrix
 * nth-prime
-* ocr-numbers
 * palindrome-products
 * parallel-letter-frequency
 * pascals-triangle
