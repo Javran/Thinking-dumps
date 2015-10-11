@@ -36,7 +36,15 @@ checksum :: Integer -> Integer
 checksum = (`rem` 10) . sum . addends
 
 isValid :: Integer -> Bool
-isValid = undefined
+isValid = (== 0) . checksum
 
 create :: Integer -> Integer
-create = undefined
+create v = padV + if curChecksum == 0
+                    then 0
+                    else 10-curChecksum
+  where
+    -- add "0" as last digit and see if it's valid already
+    -- if not, we can change this value to a valid one by subtract it
+    -- from 10
+    padV = v*10
+    curChecksum = checksum padV
