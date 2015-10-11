@@ -21,7 +21,16 @@ toDigits v =
     -- e.g. v=123
 
 addends :: Integer -> [Integer]
-addends = undefined
+addends xs = zipWith ($) fs digits
+  where
+    digits = toDigits xs
+    l = length digits
+    onEverySecond x =
+        let y = x+x
+        in if y >= 10
+             then y - 9
+             else y
+    fs = reverse (take l (cycle [id,onEverySecond]))
 
 checksum :: Integer -> Integer
 checksum = undefined
