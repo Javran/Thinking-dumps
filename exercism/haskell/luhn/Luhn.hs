@@ -33,7 +33,7 @@ addends xs = zipWith ($) fs digits
     fs = reverse (take l (cycle [id,onEverySecond]))
 
 checksum :: Integer -> Integer
-checksum = undefined
+checksum = (`rem` 10) . sum . addends
 
 isValid :: Integer -> Bool
 isValid = undefined
