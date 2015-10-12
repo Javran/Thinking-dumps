@@ -9,6 +9,9 @@
 \usepackage{indentfirst}
 
 \usepackage{diagrams}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \title{My Exercise Answers to \\
 Introduction to Category Theory}
@@ -225,7 +228,260 @@ The associativity of arrow composition holds in the same way that
 the arrow composition in exercise $1.3.1$ holds, and each identity arrow
 is the corresponding pair of identity functions viewed as an arrow.
 
-Therefore, using the arrow composition decribed above
+Therefore, using the arrow composition described above
 gives a category.
+
+% 1.3.5
+
+\subsubsection{}
+
+\begin{proof}
+The defined composition is associative.
+
+Consider \cat{RelA}-arrows $F$, $G$ and $H$:
+
+\begin{diagram}
+A & \rTo^F & B & \rTo^G & C & \rTo^H & D
+\end{diagram}
+
+For $a \in A, d \in D$, consider the composition $d(H \fcomp (G \fcomp F))a$:
+
+\begin{align*}
+                & d(H \fcomp (G \fcomp F))a \\
+\Leftrightarrow & (\exists c \in C)[dHc(G \fcomp F)a] \\
+\Leftrightarrow & (\exists c \in C, \exists b \in B)[dHcGbFa] \\
+\Leftrightarrow & (\exists b \in B)[d(H \fcomp G)bFa] \\
+\Leftrightarrow & d((H \fcomp G) \fcomp F)a
+\end{align*}
+
+Therefore the composition is associate and it does form a category.
+\end{proof}
+
+\begin{proof}
+For each pair of composible \cat{Set}-arrows $f : A \rTo B$, $g : B \rTo C$:
+
+\[
+\forall a \in A, b \in B, b\Gamma(f)a \Leftrightarrow b = f(a)
+\]
+\[
+\forall b \in B, c \in C, c\Gamma(g)b \Leftrightarrow c = g(b)
+\]
+
+Therefore, $\forall a \in A, c \in C$:
+
+\begin{align*}
+                &  c(\Gamma(g) \fcomp \Gamma(f))a \\
+\Leftrightarrow & (\exists b \in B)[c\Gamma(g)b\Gamma(f)a] \\
+\Leftrightarrow & (\exists b \in B)[c\Gamma(g)b \wedge b\Gamma(f)a] \\
+\Leftrightarrow & (\exists b \in B)[c = g(b) \wedge b = f(a)] \\
+\Leftrightarrow & c = g(f(a)) \\
+\Leftrightarrow & c = (g \fcomp f)a \\
+\Leftrightarrow & c\Gamma(g \fcomp f)a
+\end{align*}
+
+Therefore $\Gamma(g \fcomp f) = \Gamma(g) \fcomp \Gamma(f)$
+
+\end{proof}
+
+
+% 1.3.6
+\subsubsection{}
+
+\textbf{(1)}
+
+\begin{proof}
+To show that $f \dashv g$, we need to show that
+\[
+\forall a \in S, b \in T, f(a) \le b \Leftrightarrow a \le g(b)
+\]
+
+First we prove that $\forall a \in S, b \in T, f(a) \le b \Rightarrow a \le g(b)$.
+
+From hypothesis we know that $f(a) \le b$ and since $g$ is a monotonic function,
+we have $(g \circ f)(a) \le g(b)$.
+
+Because $id_S \le g \circ f$, we know that $a \le (g \circ f)(a)$. Since $S$ is a poset,
+$(\le)$ is transitive, we conclude that $a \le g(b)$.
+
+Then we prove that $forall a \in S, b \in T, a \le g(b) \Rightarrow f(a) \le b$.
+
+From hypothesis we have $a \le g(b)$, therefore $f(a) \le (f \circ g)(b)$
+because $f$ is a monotonic function.
+And we also know that $(f \circ g)(b) \le b$.
+
+We therefore conclude that $f(a) \le b$ because of the transitivity of $(\le)$.
+
+\end{proof}
+
+\textbf{(2)}
+
+\begin{proof}
+From $id_S \le g \circ f$, we apply monotonic function $f$ on both side of this inequation:
+
+\[
+\forall a \in S, f(a) \le (f \circ g \circ f)(a)
+\]
+
+Since we know that
+
+\[
+\forall b \in T, (f \circ g)(b) \le b
+\]
+
+For a particular case $b = f(a) \in T$, we have:
+
+\[
+\forall a \in S, (f \circ g \circ f)(a) \le f(a)
+\]
+
+Because $(\le)$ is antisymmetric, we conclude that
+
+\[
+\forall a \in S, f(a) = (f \circ g \circ f)(a)
+\]
+
+Similarly, from $f \circ g \le id_T$, apply monotonic function $g$ on both side of this inequation:
+
+\[
+\forall b \in T, (g \circ f \circ g)(b) \le g(b)
+\]
+
+In addition, for a particular $a = g(b) \in S$, we have:
+
+\[
+\forall b \in T, g(b) \le (g \circ f \circ g)(b)
+\]
+
+Because $(\le)$ is antisymmetric, we conclude that
+
+\[
+\forall b \in T, g(b) = (g \circ f \circ g)(b)
+\]
+
+\end{proof}
+
+
+% 1.3.7
+\subsubsection{}
+
+\begin{proof}
+Suppose we have two \cat{Pos}-arrows $f_1 \dashv g_1$
+and $f_2 \dashv g_2$:
+
+\begin{diagram}
+A & \rPto^{f_1 \dashv g_1} & B & \rPto^{f_2 \dashv g_2} & C
+\end{diagram}
+
+And two arrows can be composed:
+
+\begin{diagram}
+A & \rPto^{(f_2 \circ f_1) \dashv (g_1 \circ g_2)} & C
+\end{diagram}
+
+Since $(f_1,g_1)$ and $(f_2,g_2)$ are both $\cat{Pos}^{pp}$-arrows,
+we have $g_1 \circ f_1 = id_A$ and $g_2 \circ f_2 = id_B$.
+
+For the composed arrow $(f_2 \circ f_1, g_1 \circ g_2)$:
+
+\begin{align*}
+  & g \circ f \\
+= & g_1 \circ g_2 \circ f_2 \circ f_1 \\
+= & g_1 \circ id_B \circ f_1 \\
+= & g_1 \circ f_1 \\
+= & id_A
+\end{align*}
+
+Therefore  $(f_2 \circ f_1, g_1 \circ g_2)$ is also a  $\cat{Pos}^{pp}$-arrow,
+projection pairs are closed under composition.
+
+\end{proof}
+
+% 1.3.8
+
+\subsubsection{}
+
+We first prove a lemma: if $f : \mathbb{R} \rTo \mathbb{Z}$, is a monotonic function,
+and $\forall z \in \mathbb{Z}, f(z) = z$, then $f$ can only be one of the following functions:
+
+\begin{itemize}
+\item $f(x) = \floor{x}$
+\item $f(x) = \ceil{x}$
+\end{itemize}
+
+\begin{proof}
+For any given $r \in \mathbb{R}, r \notin \mathbb{Z}$, there exists a $z \in \mathbb{Z}$ such that
+$z \le r \le z+1$. Since $f$ is a monotone, we know that $f(z) = z \le f(r) \le f(z+1) = z+1$.
+
+Because $\forall r \in \mathbb{R}, f(r) \in \mathbb{Z}$, we know
+$\forall r \in \mathbb{R}, f(r) \in \{\floor{r}, \ceil{r}\}$
+
+Suppose $\exists r \in \mathbb{R}, f(r) = \floor{r}$, then $\forall r_1 \in \mathbb{R}$,
+if $r_1 \le r$, then we must have $f(r_1) \le f(r) = \floor{r}$. This conclusion implies that
+if $\exists r \in \mathbb{R}, f(r) = \floor{r}$, then $\forall r \in \mathbb{R}, f(r) = \floor{r}$
+
+Similarly, we have the conclusion that if $\exists r \in \mathbb{R}, f(r) = \ceil{r}$, then $\forall r \in \mathbb{R}, f(r) = \ceil{r}$
+
+Therefore either $\forall r \in \mathbb{R}, f(r) = \floor{r}$ holds, or $\forall r \in \mathbb{R}, f(r) = \ceil{r}$ holds.
+
+\end{proof}
+
+\textbf{(a)} Consider $\iota \dashv \rho$, $\forall z \in \mathbb{Z}, r \in \mathbb{R}$, we have:
+
+\[
+\iota(z)=z \le r \Leftrightarrow z \le \rho(r)
+\]
+
+Notice that when $r \in \mathbb{Z}$, we have $\rho(r) = r$. We can apply the previous lemma
+and conclude that $\rho$ is either the floor function, or the ceiling function. But the property that
+$\iota(z) \le r \Leftrightarrow z \le \rho(r)$ only holds when $\rho$ is the floor function.
+
+Therefore we conclude that $\forall r \in \mathbb{R}, f(r) = \floor{r}$.
+
+Similarly, consider $\lambda \dashv \iota$, $\forall z \in \mathbb{Z}, r \in \mathbb{R}$, we have:
+
+\[
+\lambda(r) \le z \Leftrightarrow r \le \iota(z) = z
+\]
+
+Since when $r \in \mathbb{Z},\lambda(r) = r$. Apply the previous lemma, we conclude that $\lambda$ is either the floor function, or the ceiling function. But the property that
+$\lambda(r) \le z \Leftrightarrow r \le \iota(z)$ only holds when $\lambda$ is the ceiling function.
+
+Therefore we have proved the uniqueness of $\rho$ and $\lambda$, such that
+
+\begin{diagram}
+\mathbb{Z} & \rPto^{\iota \dashv \rho} & \mathbb{R} & \rPto^{\lambda \dashv \iota} & \mathbb{Z}
+\end{diagram}
+
+\textbf{(b)} $(\lambda \dashv \iota) \fcomp (\iota \dashv \rho) = (\lambda \fcomp \iota \dashv \rho \fcomp \iota)$
+
+The arrow composition result is $f \dashv g$, in which $f = \lambda \fcomp \iota, g = \rho \fcomp \iota$.
+
+\begin{align*}
+g \fcomp f & = \rho \fcomp \iota \fcomp \lambda \fcomp \iota \\
+           & = \rho \fcomp \lambda \\
+           & = \lambda
+\end{align*}
+
+Since $\forall z \in \mathbb{Z}, \lambda(z) = \ceil{z} = z$, we can conclude that $g \fcomp f = id_\mathbb{Z}$.
+
+Also that:
+
+\begin{align*}
+f \fcomp g & = \lambda \fcomp \iota \fcomp \rho \fcomp \iota \\
+	       & = \lambda \fcomp \rho \\
+	       & = \rho
+\end{align*}
+
+Notice that $\forall r \in \mathbb{R}, \rho(\rho(r)) = \rho(\floor{r}) = \rho(r)$,
+we conclude the other composition $f \fcomp g = \rho$ is idempotent.
+
+\textbf{(c)} For $\iota \dashv \rho$, $\rho \fcomp \iota = \rho$.
+Since $\forall z \in \mathbb{Z}, \rho(z) = z$, we can conclude $\rho \fcomp \iota = \rho = id_\mathbb{Z}$.
+
+Thus $\iota \dashv \rho$ is a $\cat{Pos}^{pp}$-arrow.
+
+However, for $\lambda \dashv \iota$, $\iota \fcomp \lambda = \lambda$. $\exists r \in \mathbb{R}, \lambda(r) \neq r$.
+
+Therefore $\lambda \dashv \iota$ is not a $\cat{Pos}^{pp}$-arrow.
 
 \end{document}
