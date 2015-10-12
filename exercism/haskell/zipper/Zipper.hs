@@ -1,26 +1,23 @@
-module Zipper (
-    BinTree(..),
-    Zipper,
-
-    fromTree,
-    toTree,
-
-    value,
-    left,
-    right,
-    up,
-
-    setValue,
-    setLeft,
-    setRight
-) where
+module Zipper
+  ( BinTree(..)
+  , Zipper
+  , fromTree
+  , toTree
+  , value
+  , left
+  , right
+  , up
+  , setValue
+  , setLeft
+  , setRight
+  ) where
 
 -- | A binary tree.
-data BinTree a = BT { 
-    btValue :: a                 -- ^ Value
+data BinTree a = BT
+  { btValue :: a -- ^ Value
   , btLeft  :: Maybe (BinTree a) -- ^ Left child
   , btRight :: Maybe (BinTree a) -- ^ Right child
-} deriving (Eq, Show)
+  } deriving (Eq, Show)
 
 -- | A zipper for a binary tree.
 data Zipper a -- Complete this definition
@@ -35,7 +32,7 @@ toTree = undefined
 
 -- | Get the value of the focus node.
 value :: Zipper a -> a
-value = undefined 
+value = undefined
 
 -- | Get the left child of the focus node, if any.
 left :: Zipper a -> Maybe (Zipper a)
@@ -55,7 +52,7 @@ setValue = undefined
 
 -- | Replace a left child tree.
 setLeft :: Maybe (BinTree a) -> Zipper a -> Zipper a
-setLeft = undefined 
+setLeft = undefined
 
 -- | Replace a right child tree.
 setRight :: Maybe (BinTree a) -> Zipper a -> Zipper a
