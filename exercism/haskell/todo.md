@@ -7,7 +7,6 @@
 * house
 * lens-person
 * linked-list
-* luhn
 * matrix
 * nth-prime
 * palindrome-products
