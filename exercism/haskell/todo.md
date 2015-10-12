@@ -4,18 +4,11 @@
 * clock
 * connect
 * custom-set
-* food-chain
-* forth
-* go-counting
 * house
-* largest-series-product
 * lens-person
 * linked-list
-* luhn
 * matrix
-* minesweeper
 * nth-prime
-* ocr-numbers
 * palindrome-products
 * parallel-letter-frequency
 * pascals-triangle
@@ -33,5 +26,4 @@
 * sieve
 * simple-cipher
 * trinary
-* wordy
 * zipper
