@@ -20,7 +20,12 @@ data BinTree a = BT
   } deriving (Eq, Show)
 
 -- | A zipper for a binary tree.
-data Zipper a -- Complete this definition
+data Zipper a = Zipper
+  { zFocus :: BinTree a -- ^ the binary tree under focus
+  , zContext :: [(a, Bool, BinTree a)] -- ^ a stack of contexts
+                -- (a, False, tree) for context: (<focus>, btValue, tree)
+                -- (a, True, tree) for context: (tree, btValue, <focus>)
+  }
 
 -- | Get a zipper focussed on the root node.
 fromTree :: BinTree a -> Zipper a
