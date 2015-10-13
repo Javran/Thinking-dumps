@@ -26,4 +26,3 @@
 * sieve
 * simple-cipher
 * trinary
-* zipper
