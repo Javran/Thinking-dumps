@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-unused-binds #-}
 module Zipper
   ( BinTree(..)
   , Zipper
