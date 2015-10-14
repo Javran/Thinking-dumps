@@ -11,7 +11,6 @@
 * nth-prime
 * palindrome-products
 * parallel-letter-frequency
-* pascals-triangle
 * pig-latin
 * pov
 * pythagorean-triplet
