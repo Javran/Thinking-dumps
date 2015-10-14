@@ -58,4 +58,5 @@ setBirthMonth bm = (& (born . bornOn) %~ modifyMonth bm)
 
 -- | Transform both birth and current street names.
 renameStreets :: (String -> String) -> Person -> Person
-renameStreets = undefined
+renameStreets renamer = (& (born . bornAt . street) %~ renamer)
+                      . (& address . street %~ renamer)
