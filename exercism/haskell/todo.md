@@ -14,7 +14,6 @@
 * pov
 * pythagorean-triplet
 * queen-attack
-* robot-simulator
 * roman-numerals
 * saddle-points
 * say
