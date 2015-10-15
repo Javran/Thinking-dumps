@@ -5,7 +5,6 @@
 * connect
 * custom-set
 * house
-* lens-person
 * linked-list
 * matrix
 * nth-prime
