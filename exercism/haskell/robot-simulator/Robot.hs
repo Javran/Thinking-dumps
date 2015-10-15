@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 module Robot
   ( Bearing(..)
   , Robot
@@ -32,18 +33,17 @@ coordinates = snd
 simulate :: Robot -> String -> Robot
 simulate r xs = execState (mapM_ interpret xs) r
   where
+    modifyBearing f = modify (& _1 %~ f)
+    modifyCoord f = modify (& _2 %~ f)
     interpret :: Char -> State Robot ()
     interpret c = case c of
-        'L' -> modify (& _1 %~ turnLeft)
-        'R' -> modify (& _1 %~ turnRight)
+        'L' -> modifyBearing turnLeft
+        'R' -> modifyBearing turnRight
         'A' -> advance
         _ -> error "unknown command"
     advance :: State Robot ()
-    advance = do
-        (b,(x,y)) <- get
-        case b of
-            North -> put (b,(x,y+1))
-            South -> put (b,(x,y-1))
-            East  -> put (b,(x+1,y))
-            West  -> put (b,(x-1,y))
-
+    advance = gets bearing >>= \case
+        North -> modifyCoord (& _2 %~ succ)
+        South -> modifyCoord (& _2 %~ pred)
+        East  -> modifyCoord (& _1 %~ succ)
+        West  -> modifyCoord (& _1 %~ pred)
