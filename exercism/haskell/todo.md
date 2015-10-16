@@ -1,6 +1,5 @@
 # list of not yet solved problems
 
-* bank-account
 * clock
 * connect
 * custom-set

@@ -1,4 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
 module BankAccount
   ( BankAccount
   , openAccount
