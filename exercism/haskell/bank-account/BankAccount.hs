@@ -8,7 +8,6 @@ module BankAccount
   ) where
 
 import Data.IORef
-import Control.Lens
 
 type BankAccount = IORef BankAccountFields
 
@@ -17,30 +16,26 @@ data BankAccountFields = BAF
   , _baIsOpen :: Bool
   }
 
-makeLenses ''BankAccountFields
-
 openAccount :: IO BankAccount
 openAccount = newIORef (BAF 0 True)
 
 closeAccount :: BankAccount -> IO ()
-closeAccount ba = modifyIORef' ba (& baIsOpen .~ False)
+closeAccount ba = atomicModifyIORef' ba closeAccount'
+  where
+    closeAccount' (BAF b o) = if o
+      then (BAF b False, ())
+      else error "closing closed account"
 
 getBalance :: BankAccount -> IO (Maybe Int)
 getBalance x = do
-    BAF { _baBalance = b
-        , _baIsOpen = o
-        } <- readIORef x
+    BAF b o <- readIORef x
     return $
         if o then Just b
              else Nothing
 
 incrementBalance :: BankAccount -> Int -> IO (Maybe Int)
-incrementBalance x v = do
-    BAF { _baBalance = b
-        , _baIsOpen = o
-        } <- readIORef x
-    if o
-      then do
-        modifyIORef' x (& baBalance .~ (b+v))
-        return (Just (b+v))
-      else return Nothing
+incrementBalance x v = atomicModifyIORef' x incrementBalance'
+  where
+    incrementBalance' ba@(BAF b o) = if o
+      then let newB = b+v in (BAF newB o, Just newB)
+      else (ba, Nothing)
