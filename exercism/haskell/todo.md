@@ -1,6 +1,5 @@
 # list of not yet solved problems
 
-* clock
 * connect
 * custom-set
 * house
