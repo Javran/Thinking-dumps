@@ -58,5 +58,16 @@ search board color todoSet visitedSet
             freshCoords = expandedSet `S.difference` newVisitedSet
         in search board color freshCoords newVisitedSet
 
+toGameBoard :: [String] -> GameBoard
+toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat raw))
+  where
+    coords = [(x,y) | y <- [1..rows], x <- [1..cols]]
+    cols = length (head raw)
+    rows = length raw
+    toColor '.' = Nothing
+    toColor 'O' = Just White
+    toColor 'X' = Just Black
+    toColor _ = error "invalid game board"
+
 resultFor :: [String] -> Maybe Color
 resultFor = undefined
