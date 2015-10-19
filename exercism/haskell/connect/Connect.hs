@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiWayIf #-}
 module Connect
   ( resultFor
   , Color(..)
@@ -41,9 +42,9 @@ type GameBoard = Array Coord (Maybe Color)
 --   so there might be invalid coordinates in results
 neighborCoords :: Coord -> [Coord]
 neighborCoords (x,y) =
-    [            (x,y-1), (x+1,y+1)
+    [            (x,y-1), (x+1,y-1)
     , (x-1,y  ),          (x+1,y  )
-    , (x-1,y-1), (x,y+1)           ]
+    , (x-1,y+1), (x,y+1)           ]
 
 -- INVARIANT: coords in todoSet must be vaild (within range, color matches)
 search :: GameBoard -> Color -> S.Set Coord -> S.Set Coord -> S.Set Coord
@@ -69,5 +70,29 @@ toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat r
     toColor 'X' = Just Black
     toColor _ = error "invalid game board"
 
+sideCoordsOf :: GameBoard -> Color -> (S.Set Coord, S.Set Coord)
+sideCoordsOf board color = case color of
+    White -> (tops, bottoms)
+    Black -> (lefts, rights)
+  where
+    ((1,1),(cols,rows)) = bounds board
+    tops = S.fromList [(x,1) | x <- [1..cols]]
+    bottoms = S.fromList [(x,rows) | x <- [1..cols]]
+    lefts = S.fromList [(1,y) | y <- [1..rows]]
+    rights = S.fromList [(cols,y) | y <- [1..rows]]
+
 resultFor :: [String] -> Maybe Color
-resultFor = undefined
+resultFor raw = if
+    | not (S.null blackResult) -> Just Black
+    | not (S.null whiteResult) -> Just White
+    | otherwise -> Nothing
+  where
+    board = toGameBoard raw
+    (blackBegins, blackEnds) = sideCoordsOf board Black
+    (whiteBegins, whiteEnds) = sideCoordsOf board White
+
+    blackValidBegins = S.filter (\c -> board ! c == Just Black) blackBegins
+    blackResult = search board Black blackValidBegins S.empty `S.intersection` blackEnds
+
+    whiteValidBegins = S.filter (\c -> board ! c == Just White) whiteBegins
+    whiteResult = search board White whiteValidBegins S.empty `S.intersection` whiteEnds
