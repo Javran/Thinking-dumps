@@ -6,7 +6,6 @@ module Connect
 
 import qualified Data.Set as S
 import Data.Array
-import Data.Foldable
 
 {-
   first of all we assume there should at most be one winner
@@ -59,6 +58,7 @@ search board color todoSet visitedSet
             freshCoords = expandedSet `S.difference` newVisitedSet
         in search board color freshCoords newVisitedSet
 
+-- | convert raw data to game board representation
 toGameBoard :: [String] -> GameBoard
 toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat raw))
   where
@@ -70,6 +70,8 @@ toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat r
     toColor 'X' = Just Black
     toColor _ = error "invalid game board"
 
+-- | calculate coordiates gameboard sides for each color, cell value is not yet
+--   taken into account
 sideCoordsOf :: GameBoard -> Color -> (S.Set Coord, S.Set Coord)
 sideCoordsOf board color = case color of
     White -> (tops, bottoms)
@@ -91,8 +93,12 @@ resultFor raw = if
     (blackBegins, blackEnds) = sideCoordsOf board Black
     (whiteBegins, whiteEnds) = sideCoordsOf board White
 
+    -- search Black side: begin with the set of valid left side cells (within bound &
+    -- the cell itself is black), we expand the set of reachable coordinates that contains
+    -- Black, and see if we can reach the other side
     blackValidBegins = S.filter (\c -> board ! c == Just Black) blackBegins
     blackResult = search board Black blackValidBegins S.empty `S.intersection` blackEnds
 
+    -- search White side again, similar to how we search for Black color
     whiteValidBegins = S.filter (\c -> board ! c == Just White) whiteBegins
     whiteResult = search board White whiteValidBegins S.empty `S.intersection` whiteEnds

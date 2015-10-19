@@ -1,6 +1,5 @@
 # list of not yet solved problems
 
-* connect
 * custom-set
 * house
 * linked-list
