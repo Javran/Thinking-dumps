@@ -3,7 +3,9 @@ module Connect
   , Color(..)
   ) where
 
-data Color = Black | White
+import qualified Data.Set as S
+import Data.Array
+import Data.Foldable
 
 {-
   first of all we assume there should at most be one winner
@@ -30,7 +32,31 @@ data Color = Black | White
 
 -}
 
+data Color = Black | White deriving (Eq, Show)
 
+type Coord = (Int, Int)
+type GameBoard = Array Coord (Maybe Color)
+
+-- | calculate neighbor coordinates, note that bounds are ignored
+--   so there might be invalid coordinates in results
+neighborCoords :: Coord -> [Coord]
+neighborCoords (x,y) =
+    [            (x,y-1), (x+1,y+1)
+    , (x-1,y  ),          (x+1,y  )
+    , (x-1,y-1), (x,y+1)           ]
+
+-- INVARIANT: coords in todoSet must be vaild (within range, color matches)
+search :: GameBoard -> Color -> S.Set Coord -> S.Set Coord -> S.Set Coord
+search board color todoSet visitedSet
+    | S.null todoSet = visitedSet
+    | otherwise =
+        let newVisitedSet = visitedSet `S.union` todoSet
+            expandedSet = S.filter ((== Just color) . (board !))
+                        . S.filter (inRange (bounds board))
+                        . foldMap (S.fromList . neighborCoords)
+                        $ todoSet
+            freshCoords = expandedSet `S.difference` newVisitedSet
+        in search board color freshCoords newVisitedSet
 
 resultFor :: [String] -> Maybe Color
 resultFor = undefined
