@@ -3,13 +3,11 @@
 * custom-set
 * house
 * linked-list
-* matrix
 * nth-prime
 * palindrome-products
 * parallel-letter-frequency
 * pig-latin
 * pov
-* pythagorean-triplet
 * queen-attack
 * roman-numerals
 * saddle-points

@@ -42,7 +42,14 @@ reshape (rs, cs) m = V.fromList
     flattened = flatten m
 
 transpose :: Matrix a -> Matrix a
-transpose = undefined
+transpose m = V.generate
+                originCs
+                (\cInd ->
+                   V.generate
+                     originRs
+                     (\rInd -> m V.! rInd V.! cInd))
+  where
+    (originRs, originCs) = shape m
 
 flatten :: Matrix a -> V.Vector a
 flatten = foldMap id
