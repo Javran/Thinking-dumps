@@ -53,4 +53,10 @@ parseLine raw = result
     element = readS_to_P reads
 
     line = element `sepBy` skipSpaces
-    ((result,""):_) = readP_to_S (skipSpaces *> line <* skipSpaces <* eof) raw
+    ((result,""):_) = readP_to_S
+                        (between
+                         skipSpaces
+                         skipSpaces
+                         line
+                         <* eof)
+                        raw
