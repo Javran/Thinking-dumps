@@ -18,16 +18,19 @@ type Matrix a = V.Vector (V.Vector a)
 
 row, column :: Int -> Matrix a -> V.Vector a
 
-row = undefined
-column = undefined
+row i = (V.! i)
+column i = foldMap (V.singleton . (V.! i))
 
 rows, cols :: Matrix a -> Int
 
-rows = undefined
-cols = undefined
+rows = fst . shape
+cols = snd . shape
 
 shape :: Matrix a -> (Int, Int)
-shape = undefined
+shape m = (rs,cs)
+  where
+    rs = V.length m
+    cs = if rs == 0 then 0 else length (m V.! 0)
 
 reshape :: (Int, Int) -> Matrix a -> Matrix a
 reshape = undefined
@@ -36,7 +39,7 @@ transpose :: Matrix a -> Matrix a
 transpose = undefined
 
 flatten :: Matrix a -> V.Vector a
-flatten = undefined
+flatten = foldMap id
 
 fromString :: Read a => String -> Matrix a
 fromString raw = fromList (map parseLine rawRows)
