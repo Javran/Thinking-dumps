@@ -5,6 +5,8 @@ import Matrix ( Matrix, row, column, rows, cols, shape, transpose
 import Control.Arrow ((&&&))
 import qualified Data.Vector as V
 
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 -- Implementation of a row-major matrix for any type, using Data.Vector.
 
 -- fromString should work for any type that implements the Read typeclass.
