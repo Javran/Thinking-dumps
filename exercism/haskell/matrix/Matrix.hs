@@ -33,7 +33,13 @@ shape m = (rs,cs)
     cs = if rs == 0 then 0 else length (m V.! 0)
 
 reshape :: (Int, Int) -> Matrix a -> Matrix a
-reshape = undefined
+reshape (rs, cs) m = V.fromList
+                     (take rs
+                      (map
+                       (\beginInd -> V.slice beginInd cs flattened)
+                       [0,cs..]))
+  where
+    flattened = flatten m
 
 transpose :: Matrix a -> Matrix a
 transpose = undefined
