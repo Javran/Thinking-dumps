@@ -24,11 +24,14 @@ main = exitProperly $ runTestTT $ TestList
 intSet :: [Int] -> CustomSet Int
 intSet = S.fromList
 
+
 customSetTests :: [Test]
 customSetTests =
   [ testCase "Show" $ do
-    "fromList []" @=? show (S.empty :: CustomSet Int)
-    "fromList [1,2,3]" @=? show (intSet [1, 2, 3])
+--    "fromList []" @=? show (S.empty :: CustomSet Int)
+--    "fromList [1,2,3]" @=? show (intSet [1, 2, 3])
+    "[]" @=? show (S.empty :: CustomSet Int)
+    "[1,2,3]" @=? show (intSet [1, 2, 3])
   , testCase "delete" $ do
     intSet [1, 3] @=? S.delete 2 (intSet [1, 2, 3])
   , testCase "difference" $ do
