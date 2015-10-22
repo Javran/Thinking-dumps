@@ -8,7 +8,6 @@
 * parallel-letter-frequency
 * pig-latin
 * pov
-* queen-attack
 * roman-numerals
 * saddle-points
 * say
