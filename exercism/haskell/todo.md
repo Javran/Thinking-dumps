@@ -1,6 +1,5 @@
 # list of not yet solved problems
 
-* custom-set
 * house
 * linked-list
 * nth-prime
