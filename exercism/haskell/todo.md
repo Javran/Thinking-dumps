@@ -7,7 +7,6 @@
 * pig-latin
 * pov
 * roman-numerals
-* saddle-points
 * say
 * secret-handshake
 * series

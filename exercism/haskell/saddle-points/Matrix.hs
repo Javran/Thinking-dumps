@@ -20,8 +20,8 @@ saddlePoints m = [ (rInd, cInd)
     rowInds = [rowMin .. rowMax]
     colInds = [colMin .. colMax]
 
-    getRow rInd = map (\cInd -> m ! (rInd, cInd)) rowInds
-    getCol cInd = map (\rInd -> m ! (rInd, cInd)) colInds
+    getRow rInd = map (\cInd -> m ! (rInd, cInd)) colInds
+    getCol cInd = map (\rInd -> m ! (rInd, cInd)) rowInds
 
     rowMaxs = map (\rInd -> (rInd, maximum (getRow rInd))) rowInds
     colMins = map (\cInd -> (cInd, minimum (getCol cInd))) colInds
