@@ -17,5 +17,6 @@ genPrimes (x:xs) = x : genPrimes (xs `orderedDiff` [x,x+x..])
 primes :: [Int]
 primes = genPrimes [2..]
 
+-- | TODO: could be faster way of sieving
 nth :: Int -> Int
 nth v = primes !! (v-1)

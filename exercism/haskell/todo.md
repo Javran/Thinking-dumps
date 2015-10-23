@@ -2,7 +2,6 @@
 
 * house
 * linked-list
-* nth-prime
 * palindrome-products
 * parallel-letter-frequency
 * pig-latin
