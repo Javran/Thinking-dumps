@@ -1,4 +1,6 @@
-module Prime where
+module Prime
+  ( nth
+  ) where
 
 -- | list difference, assuming the input list is ordered
 orderedDiff :: Ord a => [a] -> [a] -> [a]
