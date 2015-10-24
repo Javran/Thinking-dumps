@@ -9,7 +9,6 @@
 * roman-numerals
 * say
 * secret-handshake
-* series
 * sgf-parsing
 * sieve
 * simple-cipher
