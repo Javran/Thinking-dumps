@@ -16,6 +16,14 @@ type SgfTree = Tree SgfNode
 -- some extra rules not mentioned but found in the testcases:
 -- - keys should be all-uppercases
 
+-- the following testcase is not making any sense to me:
+--
+--   , tps "(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])" $
+--    Just $ tn [("A", ["]b cd  e\\ ]"])]
+
+-- '(;A[\]b<newline>c\<newline>d  e\\ \<newline> \]])'
+-- well I need to read the doc: http://www.red-bean.com/sgf/sgf4.html#text
+
 parseSgf :: T.Text -> Maybe SgfTree
 parseSgf = undefined
 
