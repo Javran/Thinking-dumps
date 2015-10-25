@@ -13,16 +13,21 @@ import Text.Parsec.Text
 type SgfNode = M.Map T.Text [T.Text]
 type SgfTree = Tree SgfNode
 
--- some extra rules not mentioned but found in the testcases:
--- - keys should be all-uppercases
+{-
 
--- the following testcase is not making any sense to me:
---
---   , tps "(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])" $
---    Just $ tn [("A", ["]b cd  e\\ ]"])]
+To summarize, we need to take care of all the following details:
 
--- '(;A[\]b<newline>c\<newline>d  e\\ \<newline> \]])'
--- well I need to read the doc: http://www.red-bean.com/sgf/sgf4.html#text
+* a key name consists of only uppercase letters
+* at least one value for each key name, could be more than one
+* whitespaces otherthan linebreaks are converted to space
+* soft line break are those linebreaks proceded by a "\"
+* soft line breaks are converted to spaces
+* hard link break "\n" should be kept as-is
+* escaping: "\<any>" is just "<any>", when "<any>" is not whitespaces
+  (note that linebreaks are also whitespaces, but we need to deal with it
+   differently)
+
+-}
 
 parseSgf :: T.Text -> Maybe SgfTree
 parseSgf = undefined
