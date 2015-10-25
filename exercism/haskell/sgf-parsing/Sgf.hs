@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, MultiWayIf #-}
 module Sgf
   ( parseSgf
   ) where
@@ -9,6 +9,7 @@ import Data.Tree
 import Data.Char
 import Text.Parsec
 import Text.Parsec.Text
+import Data.Functor
 
 type SgfNode = M.Map T.Text [T.Text]
 type SgfTree = Tree SgfNode
@@ -40,14 +41,21 @@ node = char ';' >> M.fromList <$> many1 keyValue
     value = between
               (char '[')
               (char ']')
-              (T.pack <$> many1 textChar)
+              (T.pack . concat <$> many1 textChar)
       where
+        -- TODO: return string, because "\\\n" should produce no output
+        -- parsing to Char is not capable of doing this.
         textChar =
                 -- if failed. it's not a space
-                (space >> return ' ')
+                (spaces >> return " ")
                 -- trivial cases
-            <|> satisfy (\ch -> ch `notElem` [']','\\'])
-            <|> _todo
+            <|> (:[]) <$> satisfy (\ch -> ch `notElem` [']','\\'])
+            <|> do
+                    void (char '\\')
+                    ch <- anyChar
+                    if | ch == '\n' -> return ""
+                       | isSpace ch -> return " "
+                       | otherwise -> return [ch]
 
     -- one key with at least one value
     keyValue :: Parser (T.Text, [T.Text])
