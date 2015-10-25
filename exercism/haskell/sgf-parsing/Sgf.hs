@@ -32,6 +32,7 @@ To summarize, we need to take care of all the following details:
 parseSgf :: T.Text -> Maybe SgfTree
 parseSgf = undefined
 
+{-# ANN node ("HLint: ignore Use string literal" :: String) #-}
 node :: Parser SgfNode
 node = char ';' >> M.fromList <$> many1 keyValue
   where
@@ -39,7 +40,15 @@ node = char ';' >> M.fromList <$> many1 keyValue
     value = between
               (char '[')
               (char ']')
-              _
+              (T.pack <$> many1 textChar)
+      where
+        textChar =
+                -- if failed. it's not a space
+                (space >> return ' ')
+                -- trivial cases
+            <|> satisfy (\ch -> ch `notElem` [']','\\'])
+            <|> _todo
+
     -- one key with at least one value
     keyValue :: Parser (T.Text, [T.Text])
     keyValue = do
