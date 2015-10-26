@@ -31,7 +31,9 @@ To summarize, we need to take care of all the following details:
 -}
 
 parseSgf :: T.Text -> Maybe SgfTree
-parseSgf = undefined
+parseSgf t = case parse tree "" t of
+    Left _ -> Nothing
+    Right v -> Just v
 
 {-# ANN node ("HLint: ignore Use string literal" :: String) #-}
 node :: Parser SgfNode
@@ -43,13 +45,12 @@ node = char ';' >> M.fromList <$> many keyValue
               (char ']')
               (T.pack . concat <$> many1 textChar)
       where
-        -- TODO: return string, because "\\\n" should produce no output
-        -- parsing to Char is not capable of doing this.
         textChar =
+                (space >> return " ")
                 -- if failed. it's not a space
-                (many1 space >> return " ")
                 -- trivial cases
             <|> (:[]) <$> satisfy (\ch -> ch `notElem` [']','\\'])
+                -- deal with escaping
             <|> do
                     void (char '\\')
                     ch <- anyChar
@@ -78,6 +79,3 @@ tree = between
         [] -> error "impossible"
         [n] -> Node n subtrees
         (n:ns) -> Node n [mkTree ns subtrees]
-
-testF :: String -> IO ()
-testF raw = parseTest tree (T.pack raw)
