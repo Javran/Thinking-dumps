@@ -35,7 +35,7 @@ parseSgf = undefined
 
 {-# ANN node ("HLint: ignore Use string literal" :: String) #-}
 node :: Parser SgfNode
-node = char ';' >> M.fromList <$> many1 keyValue
+node = char ';' >> M.fromList <$> many keyValue
   where
     value :: Parser T.Text
     value = between
@@ -64,5 +64,20 @@ node = char ';' >> M.fromList <$> many1 keyValue
         vs <- many1 value
         return (key, vs)
 
+tree :: Parser SgfTree
+tree = between
+         (char '(')
+         (char ')')
+         (mkTree <$> many1 node <*> many tree)
+  where
+    mkTree :: [SgfNode] -> [SgfTree] -> SgfTree
+    mkTree nodes subtrees = case nodes of
+        -- note that the first argument is received from "many1 p",
+        -- it must be empty, we can also maintain this invariant on
+        -- recursive calls
+        [] -> error "impossible"
+        [n] -> Node n subtrees
+        (n:ns) -> Node n [mkTree ns subtrees]
+
 testF :: String -> IO ()
-testF raw = parseTest node (T.pack raw)
+testF raw = parseTest tree (T.pack raw)
