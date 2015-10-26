@@ -47,7 +47,7 @@ node = char ';' >> M.fromList <$> many1 keyValue
         -- parsing to Char is not capable of doing this.
         textChar =
                 -- if failed. it's not a space
-                (spaces >> return " ")
+                (many1 space >> return " ")
                 -- trivial cases
             <|> (:[]) <$> satisfy (\ch -> ch `notElem` [']','\\'])
             <|> do
@@ -63,3 +63,6 @@ node = char ';' >> M.fromList <$> many1 keyValue
         key <- T.pack <$> many1 (satisfy isUpper)
         vs <- many1 value
         return (key, vs)
+
+testF :: String -> IO ()
+testF raw = parseTest node (T.pack raw)
