@@ -8,7 +8,6 @@
 * pov
 * roman-numerals
 * say
-* secret-handshake
 * sieve
 * simple-cipher
 * trinary

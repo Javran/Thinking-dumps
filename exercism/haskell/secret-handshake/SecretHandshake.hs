@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances, MonadComprehensions #-}
 module SecretHandshake
   ( handshake
   ) where
@@ -6,6 +6,8 @@ module SecretHandshake
 import Text.ParserCombinators.ReadP
 import Data.Char
 import Data.List
+import Data.Bits
+import Data.Maybe
 
 class IsHandshake a where
     -- the output "x" should have the property that:
@@ -29,4 +31,13 @@ binStr = convert <$> munch1 (`elem` "01")
     convert = foldl' (\acc i -> let v = ord i - ord '0' in v+acc*2) 0
 
 handshake :: IsHandshake a => a -> [String]
-handshake = undefined
+handshake v = (if testBit hs 4 then reverse else id) intermediate
+  where
+    hs = toHandshakeCode v
+    mayExec pos cmd = [ cmd | testBit hs pos ] :: Maybe String
+    intermediate = catMaybes
+                     [ mayExec 0 "wink"
+                     , mayExec 1 "double blink"
+                     , mayExec 2 "close your eyes"
+                     , mayExec 3 "jump"
+                     ]
