@@ -6,12 +6,28 @@ module Cipher
 
 import Control.Monad.Random
 import Control.Monad
+import Data.Char
+
+-- (internal) 'shiftChar ch step',
+-- 'ch' should be lowercase a-z
+shiftChar :: Char -> Int -> Char
+shiftChar ch step = ['a' .. 'z'] !! pos
+  where
+    stepNorm = step `mod` 26
+    pos = (asOffset ch + stepNorm) `rem` 26
+
+asOffset :: Char -> Int
+asOffset ch = ord ch - ord 'a'
+
+{-# ANN applyOffsets "HLint: ignore Use String" #-}
+applyOffsets :: [Int] -> [Char] -> [Char]
+applyOffsets ks = zipWith (flip shiftChar) (cycle ks)
 
 caesarEncode :: String -> String -> String
-caesarEncode = undefined
+caesarEncode ks = applyOffsets (map asOffset ks)
 
 caesarDecode :: String -> String -> String
-caesarDecode = undefined
+caesarDecode ks = applyOffsets (map (\x -> -asOffset x) ks)
 
 caesarEncodeRandom :: String -> IO (String, String)
 caesarEncodeRandom pt = do
