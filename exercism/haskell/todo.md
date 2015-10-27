@@ -9,5 +9,4 @@
 * roman-numerals
 * say
 * sieve
-* simple-cipher
 * trinary
