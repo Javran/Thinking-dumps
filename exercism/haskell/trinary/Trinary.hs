@@ -5,6 +5,7 @@ module Trinary
 
 import Data.List
 import Data.Maybe
+import Data.Char
 
 -- | converts a trinary presentation (in String)
 --   to integer, invalid presentation results in 0
@@ -25,9 +26,10 @@ parseDigit _ = Nothing
 parseBinary :: String -> [Int]
 parseBinary = fromMaybe [] . mapM parseDigit
 
-showTri :: a
-showTri = undefined
-
+showTri :: Integral a => a -> String
+showTri v = map (toDigit . fromIntegral . snd) $ reverse $ tail $ takeWhile (\(x,y) -> x /= 0 || y /= 0) $  iterate (\(x,_) -> x `quotRem` 3) (v,0)
+  where
+    toDigit i = chr (ord '0' + i)
 {-
 
 import Data.Maybe
