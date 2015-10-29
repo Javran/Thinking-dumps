@@ -3,8 +3,11 @@ module Trinary
   , readTri
   ) where
 
-import Data.Maybe
 import Data.Char
+
+fromMaybe :: a -> Maybe a -> a
+fromMaybe _ (Just v) = v
+fromMaybe d _ = d
 
 foldl' :: (b -> a -> b) -> b -> [a] -> b
 foldl' f = foldlf

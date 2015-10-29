@@ -9,4 +9,3 @@
 * roman-numerals
 * say
 * sieve
-* trinary
