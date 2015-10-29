@@ -27,11 +27,12 @@ parseBinary :: String -> [Int]
 parseBinary = fromMaybe [] . mapM parseDigit
 
 showTri :: Integral a => a -> String
-showTri v = map (toDigit . fromIntegral . snd) $ reverse $ tail $ takeWhile (\(x,y) -> x /= 0 || y /= 0) $  iterate (\(x,_) -> x `quotRem` 3) (v,0)
+showTri v = map (toDigit . fromIntegral . snd)
+          . reverse . tail
+            -- until nothing remains
+          . takeWhile (\(x,y) -> x /= 0 || y /= 0)
+            -- repeatly apply division
+          . iterate (\(x,_) -> x `quotRem` 3)
+          $ (v,0)
   where
     toDigit i = chr (ord '0' + i)
-{-
-
-import Data.Maybe
-import Data.List
--}
