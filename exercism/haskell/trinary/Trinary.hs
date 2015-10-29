@@ -3,9 +3,15 @@ module Trinary
   , readTri
   ) where
 
-import Data.List
 import Data.Maybe
 import Data.Char
+
+foldl' :: (b -> a -> b) -> b -> [a] -> b
+foldl' f = foldlf
+  where
+    foldlf s xs = case xs of
+        [] -> s
+        (y:ys) -> (foldlf $! f s y) ys
 
 -- | converts a trinary presentation (in String)
 --   to integer, invalid presentation results in 0
