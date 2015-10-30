@@ -20,6 +20,20 @@ module PigLatin
   * `ys ++ xs ++ "ay"` is the result
 -}
 
-
 translate :: String -> String
 translate ws = undefined
+
+-- | `splitWord acc word` splits word into (xs,ys)
+--   where xs ++ ys == word, acc is used as an accumulating value
+--   and its items are in reversed order
+splitWord :: String -> String -> (String, String)
+splitWord xsRev remaining = case remaining of
+    ('q':'u':ys) -> splitWord ('u':'q':xsRev) ys
+    (y:ys) | y `elem` "aeiou" -> (reverse xsRev, remaining)
+           | otherwise -> splitWord (y:xsRev) ys
+    [] -> error "no vowel found"
+
+translateWord :: String -> String
+translateWord w = ys ++ xs ++ "ay"
+  where
+    (xs,ys) = splitWord "" w
