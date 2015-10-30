@@ -21,7 +21,7 @@ module PigLatin
 -}
 
 translate :: String -> String
-translate ws = undefined
+translate = unwords . map translateWord . words
 
 -- | `splitWord acc word` splits word into (xs,ys)
 --   where xs ++ ys == word, acc is used as an accumulating value
