@@ -36,7 +36,20 @@ mkDeque = mfix $ \r -> newIORef (Guard r r)
 
 push, unshift :: Deque a -> a -> IO (Deque a)
 
-push = undefined
+push refGuard v = do
+    guardNode <- readIORef refGuard
+    -- guard's next pointer points to the head
+    let refHead = eNext guardNode
+    headNode <- readIORef refHead
+    let newNode = Item refGuard refHead v
+    refNew <- newIORef newNode
+    let newGuardNode = guardNode { eNext = refNew }
+        -- now it's the node right after (new) head node
+        newHeadNode = headNode { ePrev = refNew }
+    writeIORef refGuard newGuardNode
+    writeIORef refHead newHeadNode
+    return refGuard
+
 unshift = undefined
 
 pop, shift :: Deque a -> IO (Maybe a)
