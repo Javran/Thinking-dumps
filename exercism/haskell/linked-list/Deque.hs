@@ -1,4 +1,4 @@
-{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE RecursiveDo #-}
 module Deque
   ( mkDeque
   , push
@@ -7,23 +7,32 @@ module Deque
   , unshift
   ) where
 
+import Control.Monad.Fix
 import Data.IORef
 
-data Deque a
+-- INVARIANT: always point to a guard element
+type Deque a = IORef (Element a)
 
-data Element (ref :: * -> *) a
+data Element a
   = Guard
-      { ePrev :: ref (Element ref a)
-      , eNext :: ref (Element ref a)
+      { ePrev :: IORef (Element a)
+      , eNext :: IORef (Element a)
       }
   | Item
-      { ePrev :: ref (Element ref a)
-      , eNext :: ref (Element ref a)
-      , eContent :: ref a
+      { ePrev :: IORef (Element a)
+      , eNext :: IORef (Element a)
+      , eContent :: a
       }
 
+{-
 mkDeque :: IO (Deque a)
-mkDeque = undefined
+mkDeque = do
+    rec r <- newIORef (Guard r r)
+    return r
+-}
+
+mkDeque :: IO (Deque a)
+mkDeque = mfix $ \r -> newIORef (Guard r r)
 
 push, unshift :: Deque a -> a -> IO (Deque a)
 
