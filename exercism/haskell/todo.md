@@ -4,7 +4,6 @@
 * linked-list
 * palindrome-products
 * parallel-letter-frequency
-* pig-latin
 * pov
 * roman-numerals
 * say
