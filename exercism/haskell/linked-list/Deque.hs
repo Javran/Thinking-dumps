@@ -40,14 +40,16 @@ push refGuard v = do
     guardNode <- readIORef refGuard
     -- guard's next pointer points to the head
     let refHead = eNext guardNode
-    headNode <- readIORef refHead
-    let newNode = Item refGuard refHead v
+        newNode = Item refGuard refHead v
     refNew <- newIORef newNode
-    let newGuardNode = guardNode { eNext = refNew }
-        -- now it's the node right after (new) head node
-        newHeadNode = headNode { ePrev = refNew }
-    writeIORef refGuard newGuardNode
-    writeIORef refHead newHeadNode
+    -- there are subtle issues regarding using "writeIORef":
+    -- when refGuard and refHead is pointing to the same location,
+    -- writeIORef will change its content and we have to retrieve
+    -- the updated data (otherwise another writeIORef will overwrite
+    -- our update)
+    -- therefore here we choose to use "modifyIORef" in an atomic manner
+    atomicModifyIORef' refGuard (\gn -> (gn { eNext = refNew },()))
+    atomicModifyIORef' refHead (\hn -> (hn { ePrev = refNew }, ()))
     return refGuard
 
 unshift = undefined
