@@ -36,7 +36,7 @@ mkDeque = mfix $ \r -> newIORef (Guard r r)
 
 push, unshift :: Deque a -> a -> IO (Deque a)
 
-push refGuard v = do
+unshift refGuard v = do
     guardNode <- readIORef refGuard
     -- guard's next pointer points to the head
     let refHead = eNext guardNode
@@ -52,8 +52,23 @@ push refGuard v = do
     atomicModifyIORef' refHead (\hn -> (hn { ePrev = refNew }, ()))
     return refGuard
 
-unshift = undefined
+push = undefined
 
 pop, shift :: Deque a -> IO (Maybe a)
 pop = undefined
 shift = undefined
+
+visitNodes :: (a -> IO b) -> Deque a -> IO [b]
+visitNodes op refGuard = do
+    headNode <- readIORef refGuard
+    visitNodes' (eNext headNode)
+  where
+    visitNodes' refCurrent =
+        if refGuard == refCurrent
+          then return []
+          else do
+            node <- readIORef refCurrent
+            result <- op (eContent node)
+            let refNext = eNext node
+            rs <- visitNodes' refNext
+            return (result:rs)
