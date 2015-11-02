@@ -11,6 +11,8 @@ module Deque
 import Control.Monad.Fix
 import Data.IORef
 
+-- TODO: thread-safe
+
 -- INVARIANT: always point to a guard element
 type Deque a = IORef (Element a)
 
@@ -75,7 +77,20 @@ shift dq = do
         atomicModifyIORef' refNewHead (\hn -> (hn { ePrev = ePrev xNode }, ()))
         return (Just (eContent xNode))
 
-pop = undefined
+pop dq = do
+    let refGuard = dq
+    b <- nullDeque dq
+    if b
+      then return Nothing
+      else do
+        guardNode <- readIORef refGuard
+        -- XNode is the node to be removed
+        let refXNode = ePrev guardNode
+        xNode <- readIORef refXNode
+        let refNewTail = ePrev xNode
+        atomicModifyIORef' refGuard (\gn -> (gn { ePrev = ePrev xNode},()))
+        atomicModifyIORef' refNewTail (\tn -> (tn { eNext = eNext xNode }, ()))
+        return (Just (eContent xNode))
 
 -- a null deque contains nothing but the guard element
 -- which means guard's next item is still guard itself
