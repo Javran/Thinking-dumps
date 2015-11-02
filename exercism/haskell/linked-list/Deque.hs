@@ -61,6 +61,13 @@ pop, shift :: Deque a -> IO (Maybe a)
 pop = undefined
 shift = undefined
 
+-- a null deque contains nothing but the guard element
+-- which means guard's next item is still guard itself
+-- assume this deque is properly maintained, this check
+-- should be sufficient
+nullDeque :: Deque a -> IO Bool
+nullDeque dq = readIORef dq >>= \node -> return (eNext node == dq)
+
 -- | perform action on each non-guard nodes, debugging function
 visitNodes :: (a -> IO b) -> Deque a -> IO [b]
 visitNodes op refGuard = do
