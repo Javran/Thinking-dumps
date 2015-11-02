@@ -1,10 +1,11 @@
-{-# LANGUAGE RecursiveDo #-}
 module Deque
   ( mkDeque
   , push
   , pop
   , shift
   , unshift
+    -- debugging function:
+  , visitNodes
   ) where
 
 import Control.Monad.Fix
@@ -24,18 +25,12 @@ data Element a
       , eContent :: a
       }
 
-{-
-mkDeque :: IO (Deque a)
-mkDeque = do
-    rec r <- newIORef (Guard r r)
-    return r
--}
-
 mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
 
 push, unshift :: Deque a -> a -> IO (Deque a)
 
+-- | unshift inserts elements at front
 unshift refGuard v = do
     guardNode <- readIORef refGuard
     -- guard's next pointer points to the head
@@ -52,12 +47,21 @@ unshift refGuard v = do
     atomicModifyIORef' refHead (\hn -> (hn { ePrev = refNew }, ()))
     return refGuard
 
-push = undefined
+-- | push inserts elements at back
+push refGuard v = do
+    guardNode <- readIORef refGuard
+    let refTail = ePrev guardNode
+        newNode = Item refTail refGuard v
+    refNew <- newIORef newNode
+    atomicModifyIORef' refGuard (\gn -> (gn { ePrev = refNew },()))
+    atomicModifyIORef' refTail (\hn -> (hn { eNext = refNew }, ()))
+    return refGuard
 
 pop, shift :: Deque a -> IO (Maybe a)
 pop = undefined
 shift = undefined
 
+-- | perform action on each non-guard nodes, debugging function
 visitNodes :: (a -> IO b) -> Deque a -> IO [b]
 visitNodes op refGuard = do
     headNode <- readIORef refGuard
