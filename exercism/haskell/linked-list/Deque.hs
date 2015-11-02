@@ -54,12 +54,28 @@ push refGuard v = do
         newNode = Item refTail refGuard v
     refNew <- newIORef newNode
     atomicModifyIORef' refGuard (\gn -> (gn { ePrev = refNew },()))
-    atomicModifyIORef' refTail (\hn -> (hn { eNext = refNew }, ()))
+    atomicModifyIORef' refTail (\tn -> (tn { eNext = refNew }, ()))
     return refGuard
 
 pop, shift :: Deque a -> IO (Maybe a)
+
+shift dq = do
+    -- for readability
+    let refGuard = dq
+    b <- nullDeque dq
+    if b
+      then return Nothing
+      else do
+        guardNode <- readIORef refGuard
+        -- XNode is the node to be removed
+        let refXNode = eNext guardNode
+        xNode <- readIORef refXNode
+        let refNewHead = eNext xNode
+        atomicModifyIORef' refGuard (\gn -> (gn { eNext = eNext xNode},()))
+        atomicModifyIORef' refNewHead (\hn -> (hn { ePrev = ePrev xNode }, ()))
+        return (Just (eContent xNode))
+
 pop = undefined
-shift = undefined
 
 -- a null deque contains nothing but the guard element
 -- which means guard's next item is still guard itself
