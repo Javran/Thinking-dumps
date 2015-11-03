@@ -53,13 +53,23 @@ dqInsert dir revDir refCurrent v = do
                     & revDir .~ refCurrent
     refNew <- newIORef newNode
     -- there are subtle issues regarding using "writeIORef":
-    -- when refGuard and refHead is pointing to the same location,
+    -- when refGuard and refNext is pointing to the same location,
     -- writeIORef will change its content and we have to retrieve
     -- the updated data (otherwise another writeIORef will overwrite
     -- our update)
     -- therefore here we choose to use "modifyIORef" in an atomic manner
     atomicModifyIORef' refCurrent ((,()) . (& dir .~ refNew))
     atomicModifyIORef' refNext ((,()) . (& revDir .~ refNew))
+
+dqDelete :: RefLens a -> RefLens a -> NodeRef a -> IO (Maybe a)
+dqDelete dir revDir refCurrent = do
+    curNode <- readIORef refCurrent
+    let refXNode = curNode ^. dir
+    xNode <- readIORef refXNode
+    let refNewNext = xNode ^. dir
+    atomicModifyIORef' refCurrent ( (,()) . (& dir .~ refNewNext))
+    atomicModifyIORef' refNewNext ( (,()) . (& revDir .~ refCurrent))
+    return (xNode ^? eContent)
 
 unshift, push :: Deque a -> a -> IO ()
 
@@ -70,34 +80,21 @@ shift, pop :: Deque a -> IO (Maybe a)
 
 shift dq = do
     -- for readability
-    let refGuard = dq
     b <- nullDeque dq
     if b
       then return Nothing
-      else do
-        guardNode <- readIORef refGuard
-        -- XNode is the node to be removed
-        let refXNode = _eNext guardNode
-        xNode <- readIORef refXNode
-        let refNewHead = _eNext xNode
-        atomicModifyIORef' refGuard (\gn -> (gn { _eNext = _eNext xNode},()))
-        atomicModifyIORef' refNewHead (\hn -> (hn { _ePrev = _ePrev xNode }, ()))
-        return (Just (_eContent xNode))
+           -- note that the meaning of "Maybe a" from dqDelete and that of return type "Maybe a"
+           -- from this function are different, but
+           -- since at this point deque is not empty, the result of dqDelete
+           -- happens to be the correct return value of this function
+           -- (same for "pop" function)
+      else dqDelete eNext ePrev dq
 
 pop dq = do
-    let refGuard = dq
     b <- nullDeque dq
     if b
       then return Nothing
-      else do
-        guardNode <- readIORef refGuard
-        -- XNode is the node to be removed
-        let refXNode = _ePrev guardNode
-        xNode <- readIORef refXNode
-        let refNewTail = _ePrev xNode
-        atomicModifyIORef' refGuard (\gn -> (gn { _ePrev = _ePrev xNode},()))
-        atomicModifyIORef' refNewTail (\tn -> (tn { _eNext = _eNext xNode }, ()))
-        return (Just (_eContent xNode))
+      else dqDelete ePrev eNext dq
 
 -- a null deque contains nothing but the guard element
 -- which means guard's next item is still guard itself
