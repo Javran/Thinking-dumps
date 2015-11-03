@@ -37,6 +37,9 @@ type RefLens a = Simple Lens (Element a) (NodeRef a)
 mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
 
+atomicModifyIORef_ :: IORef a -> (a -> a) -> IO ()
+atomicModifyIORef_ ref modify = atomicModifyIORef' ref ( (,()) . modify)
+
 dqInsert :: RefLens a -> RefLens a -> NodeRef a -> a -> IO ()
 dqInsert dir revDir refCurrent v = do
     curNode <- readIORef refCurrent
@@ -58,8 +61,8 @@ dqInsert dir revDir refCurrent v = do
     -- the updated data (otherwise another writeIORef will overwrite
     -- our update)
     -- therefore here we choose to use "modifyIORef" in an atomic manner
-    atomicModifyIORef' refCurrent ((,()) . (& dir .~ refNew))
-    atomicModifyIORef' refNext ((,()) . (& revDir .~ refNew))
+    atomicModifyIORef_ refCurrent (& dir .~ refNew)
+    atomicModifyIORef_ refNext (& revDir .~ refNew)
 
 dqDelete :: RefLens a -> RefLens a -> NodeRef a -> IO (Maybe a)
 dqDelete dir revDir refCurrent = do
@@ -67,8 +70,8 @@ dqDelete dir revDir refCurrent = do
     let refXNode = curNode ^. dir
     xNode <- readIORef refXNode
     let refNewNext = xNode ^. dir
-    atomicModifyIORef' refCurrent ( (,()) . (& dir .~ refNewNext))
-    atomicModifyIORef' refNewNext ( (,()) . (& revDir .~ refCurrent))
+    atomicModifyIORef_ refCurrent (& dir .~ refNewNext)
+    atomicModifyIORef_ refNewNext (& revDir .~ refCurrent)
     return (xNode ^? eContent)
 
 unshift, push :: Deque a -> a -> IO ()
