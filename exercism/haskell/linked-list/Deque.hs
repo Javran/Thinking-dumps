@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, RankNTypes, TupleSections #-}
 module Deque
   ( mkDeque
   , push
@@ -34,14 +34,14 @@ makeLenses ''Element
 mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
 
-push, unshift :: Deque a -> a -> IO (Deque a)
-
--- | unshift inserts elements at front
-unshift refGuard v = do
-    guardNode <- readIORef refGuard
+dqInsert :: Simple Lens (Element a) (IORef (Element a))
+            -> Simple Lens (Element a) (IORef (Element a))
+            -> IORef (Element a) -> a -> IO ()
+dqInsert dir revDir refCurrent v = do
+    curNode <- readIORef refCurrent
     -- guard's next pointer points to the head
-    let refHead = _eNext guardNode
-        newNode = Item refGuard refHead v
+    let refNext = curNode ^. dir
+        newNode = Item refCurrent refNext v
     refNew <- newIORef newNode
     -- there are subtle issues regarding using "writeIORef":
     -- when refGuard and refHead is pointing to the same location,
@@ -49,21 +49,24 @@ unshift refGuard v = do
     -- the updated data (otherwise another writeIORef will overwrite
     -- our update)
     -- therefore here we choose to use "modifyIORef" in an atomic manner
-    atomicModifyIORef' refGuard (\gn -> (gn { _eNext = refNew },()))
-    atomicModifyIORef' refHead (\hn -> (hn { _ePrev = refNew }, ()))
-    return refGuard
+    atomicModifyIORef' refCurrent ((,()) . (& dir .~ refNew))
+    atomicModifyIORef' refNext ((,()) . (& revDir .~ refNew))
 
+unshift, push :: Deque a -> a -> IO ()
+
+unshift = dqInsert eNext ePrev
+-- push    = dqInsert ePrev eNext
 -- | push inserts elements at back
 push refGuard v = do
     guardNode <- readIORef refGuard
     let refTail = _ePrev guardNode
+        -- TODO: need to factor out this Item creating function
         newNode = Item refTail refGuard v
     refNew <- newIORef newNode
     atomicModifyIORef' refGuard (\gn -> (gn { _ePrev = refNew },()))
     atomicModifyIORef' refTail (\tn -> (tn { _eNext = refNew }, ()))
-    return refGuard
 
-pop, shift :: Deque a -> IO (Maybe a)
+shift, pop :: Deque a -> IO (Maybe a)
 
 shift dq = do
     -- for readability
