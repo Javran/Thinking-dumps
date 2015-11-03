@@ -35,13 +35,22 @@ mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
 
 dqInsert :: Simple Lens (Element a) (IORef (Element a))
-            -> Simple Lens (Element a) (IORef (Element a))
-            -> IORef (Element a) -> a -> IO ()
+         -> Simple Lens (Element a) (IORef (Element a))
+         -> IORef (Element a) -> a -> IO ()
 dqInsert dir revDir refCurrent v = do
     curNode <- readIORef refCurrent
     -- guard's next pointer points to the head
     let refNext = curNode ^. dir
-        newNode = Item refCurrent refNext v
+        -- note that because of the level of abstraction we have,
+        -- we are not able to figure out how to create this newNode
+        -- (since it requires properly assigne two refs)
+        -- so we just leave it blank ("undefined") and fill these two fields
+        -- immediately. thus "dir" and "revDir" are also responsible for
+        -- Item's creation
+        newNode = Item undefined undefined v
+                    & dir .~ refNext
+                    & revDir .~ refCurrent
+--            Item refCurrent refNext v
     refNew <- newIORef newNode
     -- there are subtle issues regarding using "writeIORef":
     -- when refGuard and refHead is pointing to the same location,
@@ -55,16 +64,7 @@ dqInsert dir revDir refCurrent v = do
 unshift, push :: Deque a -> a -> IO ()
 
 unshift = dqInsert eNext ePrev
--- push    = dqInsert ePrev eNext
--- | push inserts elements at back
-push refGuard v = do
-    guardNode <- readIORef refGuard
-    let refTail = _ePrev guardNode
-        -- TODO: need to factor out this Item creating function
-        newNode = Item refTail refGuard v
-    refNew <- newIORef newNode
-    atomicModifyIORef' refGuard (\gn -> (gn { _ePrev = refNew },()))
-    atomicModifyIORef' refTail (\tn -> (tn { _eNext = refNew }, ()))
+push    = dqInsert ePrev eNext
 
 shift, pop :: Deque a -> IO (Maybe a)
 
