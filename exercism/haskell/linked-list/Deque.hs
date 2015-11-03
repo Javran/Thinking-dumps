@@ -17,6 +17,7 @@ import Control.Lens
 
 -- INVARIANT: always point to a guard element
 type Deque a = IORef (Element a)
+type NodeRef a = IORef (Element a)
 
 data Element a
   = Guard
@@ -31,12 +32,12 @@ data Element a
 
 makeLenses ''Element
 
+type RefLens a = Simple Lens (Element a) (NodeRef a)
+
 mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
 
-dqInsert :: Simple Lens (Element a) (IORef (Element a))
-         -> Simple Lens (Element a) (IORef (Element a))
-         -> IORef (Element a) -> a -> IO ()
+dqInsert :: RefLens a -> RefLens a -> NodeRef a -> a -> IO ()
 dqInsert dir revDir refCurrent v = do
     curNode <- readIORef refCurrent
     -- guard's next pointer points to the head
@@ -50,7 +51,6 @@ dqInsert dir revDir refCurrent v = do
         newNode = Item undefined undefined v
                     & dir .~ refNext
                     & revDir .~ refCurrent
---            Item refCurrent refNext v
     refNew <- newIORef newNode
     -- there are subtle issues regarding using "writeIORef":
     -- when refGuard and refHead is pointing to the same location,
