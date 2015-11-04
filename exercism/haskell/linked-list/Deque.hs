@@ -13,9 +13,11 @@ import Control.Monad.Fix
 import Data.IORef
 import Control.Lens
 
--- TODO: thread-safe
+-- TODO: I don't know what's a proxy pattern
+-- maybe I need to design some protocol and implement
+-- all of the message handling?
 
--- INVARIANT: always point to a guard element
+-- INVARIANT: "Deque a" always point to a guard element
 type Deque a = IORef (Element a)
 type NodeRef a = IORef (Element a)
 
