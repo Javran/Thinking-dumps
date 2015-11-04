@@ -7,16 +7,19 @@ type Context = String -> String
 
 rhymeInfos :: [ (String, Context) ]
 rhymeInfos =
-    [ ( "the house"
-      , (++ "\n\
-            \that lay in the house"))
-    , ( "the malt"
-      , (++ "\n\
-            \that ate the malt"))
-    , ( "the rat"
-      , (++ "\n\
-            \that killed the rat"))
-    ] -- todo: `makeItem "that lay in" "the house"`
+    [ makeItem "that lay in" "the house"
+    , makeItem "that ate" "the malt"
+    , makeItem "that killed" "the rat"
+    ]
+  where
+    makeItem xs ys = (ys, (++ "\n" ++ xs ++ " " ++ ys))
+
+initContext :: Context
+initContext xs = unwords [ "This is", xs, "that Jack built." ]
+
+-- 1: initContext (fst (rhymeInfos !! 0))
+-- 2: (initContext . (snd (rhymeInfos !! 0))) (fst (rhymeInfos !! 1))
+-- 3: (initContext . (snd (rhymeInfos !! 0)) . (snd (rhymeInfos !! 1))) (fst (rhymeInfos !! 2))
 
 rhyme :: String
 rhyme = ""
