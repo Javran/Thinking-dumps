@@ -4,8 +4,9 @@ module House
 
 -- a context is some text with a hole in it
 type Context = String -> String
+type TransformInfo = (String, Context)
 
-rhymeInfos :: [ (String, Context) ]
+rhymeInfos :: [ TransformInfo ]
 rhymeInfos =
     [ makeItem "that lay in" "the house"
     , makeItem "that ate" "the malt"
@@ -17,9 +18,12 @@ rhymeInfos =
 initContext :: Context
 initContext xs = unwords [ "This is", xs, "that Jack built." ]
 
--- 1: initContext (fst (rhymeInfos !! 0))
--- 2: (initContext . (snd (rhymeInfos !! 0))) (fst (rhymeInfos !! 1))
--- 3: (initContext . (snd (rhymeInfos !! 0)) . (snd (rhymeInfos !! 1))) (fst (rhymeInfos !! 2))
+applyTransformInfo :: TransformInfo -> Context -> (String, Context)
+applyTransformInfo (obj, oCtxt) ctxt = (ctxt obj, ctxt . oCtxt)
+
+-- 1: fst (applyTransformInfo (rhymeInfos !! 0) initContext)
+-- 2: fst $ applyTransformInfo (rhymeInfos !! 1) $ snd (applyTransformInfo (rhymeInfos !! 0) initContext)
+-- 3: fst $ applyTransformInfo (rhymeInfos !! 2) $ snd $ applyTransformInfo (rhymeInfos !! 1) $ snd (applyTransformInfo (rhymeInfos !! 0) initContext)
 
 rhyme :: String
 rhyme = ""
