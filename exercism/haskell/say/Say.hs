@@ -3,7 +3,20 @@ module Say
   ) where
 
 inEnglish :: Integral a => a -> Maybe String
-inEnglish = undefined
+inEnglish v = do
+    ts <- chunksOfThousands v
+    -- TODO: zero-handling is wrong
+    let resultChunks = map sayChunk ts
+        results =
+              reverse
+            $ zipWith (\x y -> if null y then "" else x y)
+                      [ id
+                      , (++ " thousand")
+                      , (++ " million")
+                      , (++ " billion")
+                      ]
+                      (map unwords resultChunks)
+    return (unwords results)
 
 -- | break a value into chunks of thousands
 --   note that in result the chunks are in reversed order
