@@ -4,4 +4,3 @@
 * parallel-letter-frequency
 * pov
 * roman-numerals
-* say
