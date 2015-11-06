@@ -2,11 +2,26 @@ module Say
   ( inEnglish
   ) where
 
+import Data.List
+
 inEnglish :: Integral a => a -> Maybe String
+inEnglish 0 = Just "zero"
 inEnglish v = do
+    -- v is always greater than 0,
+    -- otherwise it's captured by the first case
     ts <- chunksOfThousands v
     -- TODO: zero-handling is wrong
-    undefined
+    let safeAccess :: Int -> [a] -> Maybe a
+        safeAccess ind xs
+            | ind < l = Just (xs !! ind)
+            | otherwise = Nothing
+          where
+            l = length xs
+        part1 = maybe [] sayChunk (safeAccess 0 ts)
+        part2 = maybe [] ((\x -> if null x then [] else x ++ ["thousand"]) . sayChunk) (safeAccess 1 ts)
+        part3 = maybe [] ((\x -> if null x then [] else x ++ ["million"]) . sayChunk) (safeAccess 2 ts)
+        part4 = maybe [] ((\x -> if null x then [] else x ++ ["billion"]) . sayChunk) (safeAccess 3 ts)
+    return $ unwords (concat [part4, part3, part2, part1])
 
 -- | break a value into chunks of thousands
 --   note that in result the chunks are in reversed order
@@ -36,6 +51,7 @@ chunksOfThousands v
 --   it's required that '0 <= v <= 999'
 sayChunk :: Int -> [String]
 sayChunk v
+    | v == 0 = []
     | v <  20 = [belowTwenties !! v]
     | v <= 99 =
         -- 20 <= v <= 99
