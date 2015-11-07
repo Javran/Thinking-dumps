@@ -18,12 +18,15 @@ data Graph a
 -}
 data GraphContext a = GContext
   { parentTag :: a
-    -- (<visited>, <rest of the elements>)
+    -- (<visited or visiting>, <rest of the elements>)
+    -- INVARIANT: fst of "bothers" must not be empty
   , bothers :: ([Graph a], [Graph a])
   }
 
 getChildZippers :: Graph a -> [(Graph a, GraphContext a)]
-getChildZippers (Graph t xs) = undefined
+getChildZippers (Graph t xs) = map (\sz -> (head (fst sz),GContext t sz)) subZippers
+  where
+    subZippers = listZippers xs
 
 -- create list zippers: [1,2,3] -> [([],[1,2,3]), ([1],[2,3]), ([2,1],[3]), ([3,2,1],[])]
 listZippers :: [a] -> [([a],[a])]
