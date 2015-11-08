@@ -21,12 +21,14 @@ data GraphContext a = GContext
     -- (<visited or visiting>, <rest of the elements>)
     -- INVARIANT: fst of "bothers" must not be empty
   , bothers :: ([Graph a], [Graph a])
-  }
+  } deriving (Show)
 
 getChildZippers :: Graph a -> [(Graph a, GraphContext a)]
-getChildZippers (Graph t xs) = map (\sz -> (head (fst sz),GContext t sz)) subZippers
+getChildZippers (Graph t cs) = map mkZipper subZippers
   where
-    subZippers = listZippers xs
+    subZippers = listZippers cs
+    mkZipper (x:xs, ys) = (x, GContext t (xs,ys))
+    mkZipper _ = error "invalid listZipper"
 
 -- create list zippers: [1,2,3] -> [([1],[2,3]), ([2,1],[3]), ([3,2,1],[])]
 -- note that the first element of "fst" also contains the focus,
