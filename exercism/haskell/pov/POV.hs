@@ -28,7 +28,9 @@ getChildZippers (Graph t xs) = map (\sz -> (head (fst sz),GContext t sz)) subZip
   where
     subZippers = listZippers xs
 
--- create list zippers: [1,2,3] -> [([],[1,2,3]), ([1],[2,3]), ([2,1],[3]), ([3,2,1],[])]
+-- create list zippers: [1,2,3] -> [([1],[2,3]), ([2,1],[3]), ([3,2,1],[])]
+-- note that the first element of "fst" also contains the focus,
+-- so it cannot be empty
 listZippers :: [a] -> [([a],[a])]
 listZippers xs = unfoldr f ([],xs)
   where
