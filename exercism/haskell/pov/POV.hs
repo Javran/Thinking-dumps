@@ -34,11 +34,11 @@ getChildZippers (Graph t cs) = map mkZipper subZippers
 -- note that the first element of "fst" also contains the focus,
 -- so it cannot be empty
 listZippers :: [a] -> [([a],[a])]
-listZippers xs = unfoldr f ([],xs)
+listZippers cs = unfoldr f ([],cs)
   where
     f (st,xs) = case xs of
         [] -> Nothing
-        (x:xs) -> let v = (x:st,xs) in Just (v,v)
+        (y:ys) -> let v = (y:st,ys) in Just (v,v)
 
 fromPOV :: Eq a => a -> Graph a -> Maybe (Graph a)
 fromPOV = undefined
