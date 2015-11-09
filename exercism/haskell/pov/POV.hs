@@ -8,16 +8,16 @@ import Data.List
 
 -- I'm still not sure why this is called "Graph" when
 -- it's actually a tree-representation
-data Graph a
-  = Graph a [Graph a]
-  deriving (Eq, Show)
+data Graph a = Graph
+  { gTag :: a
+  , gChildren :: [Graph a]
+  } deriving (Eq, Show)
 
 {-
-  plan: we need a zipper, as we walk through
-  the tree, we will try to find the tag, at that time
-  some context will be accumulated, which includes enough
-  information for us to construct the new tree..
+  To solve this problem, we can use zipper, which contains
+  enough information for us to rebuild the tree from current focus
 -}
+
 data GraphContext a = GContext
   { parentTag :: a
     -- (<visited or visiting>, <rest of the elements>)
@@ -60,7 +60,24 @@ rebuildFromZipper (Graph tg children,GContext pt (bsL,bsR):cs) =
     ps = rebuildFromZipper (Graph pt (reverse bsL ++ bsR), cs)
 
 fromPOV :: Eq a => a -> Graph a -> Maybe (Graph a)
-fromPOV = undefined
+fromPOV v t = rebuildFromZipper <$>
+                -- traverse all possible zippers and find the one with
+                -- correct tag value, and then rebuild a tree from it
+                find
+                  ((== v) . gTag . fst)
+                  (getAllZippers (t,[]))
 
 tracePathBetween :: Eq a => a -> a -> Graph a -> Maybe [a]
-tracePathBetween = undefined
+tracePathBetween fromTag toTag t = do
+    -- reconstruct the tree so that node with "fromTag"
+    -- becomes the root
+    povTree <- fromPOV fromTag t
+    -- based on reconstructed tree, we can find the zipper
+    -- along whose context we are able to recover the path
+    (Graph destTag _, cs) <- find
+                               ((== toTag) . gTag . fst)
+                               (getAllZippers (povTree,[]))
+    return (recoverPath [destTag] cs)
+  where
+    recoverPath acc [] = acc
+    recoverPath acc (GContext tg _:cs) = recoverPath (tg : acc) cs
