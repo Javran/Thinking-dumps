@@ -30,6 +30,13 @@ getChildZippers (Graph t cs) = map mkZipper subZippers
     mkZipper (x:xs, ys) = (x, GContext t (xs,ys))
     mkZipper _ = error "invalid listZipper"
 
+getAllZippers :: (Graph a, [GraphContext a]) -> [(Graph a, [GraphContext a])]
+getAllZippers curZipper@(g,gcs) = do
+    let childShallowZippers = getChildZippers g
+        childZippers = map expand childShallowZippers
+        expand (g1, gc1) = getAllZippers (g1, gc1:gcs)
+    curZipper : concat childZippers
+
 -- create list zippers: [1,2,3] -> [([1],[2,3]), ([2,1],[3]), ([3,2,1],[])]
 -- note that the first element of "fst" also contains the focus,
 -- so it cannot be empty
