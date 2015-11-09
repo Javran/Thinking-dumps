@@ -2,5 +2,4 @@
 
 * palindrome-products
 * parallel-letter-frequency
-* pov
 * roman-numerals

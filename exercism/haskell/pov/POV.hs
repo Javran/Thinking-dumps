@@ -1,5 +1,6 @@
 module POV
   ( Graph(..)
+  , GraphContext(..)
   , fromPOV
   , tracePathBetween
   ) where
@@ -77,7 +78,6 @@ tracePathBetween fromTag toTag t = do
     (Graph destTag _, cs) <- find
                                ((== toTag) . gTag . fst)
                                (getAllZippers (povTree,[]))
-    return (recoverPath [destTag] cs)
-  where
-    recoverPath acc [] = acc
-    recoverPath acc (GContext tg _:cs) = recoverPath (tg : acc) cs
+    -- extract tags from the stack of contexts, and attach destionation tag to it
+    -- so we'll have the full path
+    return $ foldl' (\acc ctxt -> parentTag ctxt : acc) [destTag] cs
