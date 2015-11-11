@@ -6,6 +6,7 @@ module Palindromes
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Data.Ord
+import Data.Semigroup
 
 {-
 
@@ -22,8 +23,8 @@ We have 2 approaches:
 
 largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
 
-largestPalindrome = naiveSmallestPalindrome Down getDown
-smallestPalindrome = naiveSmallestPalindrome id id
+largestPalindrome = undefined -- naiveSmallestPalindrome Down getDown
+smallestPalindrome = fastSmallestPalindrome
 
 isPalindrome :: Integral a => a -> Bool
 isPalindrome v = and (zipWith
@@ -55,3 +56,28 @@ naiveSmallestPalindrome toOrd fromOrd vLow vHigh = (fromOrd targetKey, S.toList 
                   products)
     (targetKey, targetSet) = M.findMin collects
 
+fastSmallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
+fastSmallestPalindrome vLow vHigh = (a, S.toList b)
+  where
+    search v1 v2From v2To curBest
+        | v2From > v2To = curBest
+        | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
+        | isPalindrome vProd = case curBest of
+            Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+            Just (vMin, pairs) -> case vMin `compare` vProd of
+                LT -> curBest
+                EQ -> continueSearch (Just (vMin, S.insert (v1, v2From) pairs))
+                GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+        | otherwise = continueSearch curBest
+      where
+        continueSearch = search v1 (succ v2From) v2To
+        vProd = v1 * v2From
+
+    search2 v1From v1To curBest
+        | v1From > v1To = curBest
+        | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
+        | otherwise = search2 (succ v1From) v1To (search v1From v1From vHigh curBest)
+      where
+        vProd = v1From * v1From
+
+    Just (a,b) = search2 vLow vHigh Nothing
