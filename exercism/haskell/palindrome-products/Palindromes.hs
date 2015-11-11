@@ -7,6 +7,7 @@ module Palindromes
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Data.Ord
+import Control.Arrow
 
 {-
 
@@ -23,7 +24,7 @@ We have 2 approaches:
 
 largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
 
-largestPalindrome l h = fastSmallestPalindrome Down getDown pred h l
+largestPalindrome = fastSmallestPalindrome Down getDown pred
 smallestPalindrome = fastSmallestPalindrome id id succ
 
 isPalindrome :: Integral a => a -> Bool
@@ -56,32 +57,43 @@ naiveSmallestPalindrome toOrd fromOrd vLow vHigh = (fromOrd targetKey, S.toList 
                   products)
     (targetKey, targetSet) = M.findMin collects
 
-fastSmallestPalindrome :: forall a b .(Integral a, Ord b) => (a -> b) -> (b -> a) -> (a->a) -> a -> a -> (a, [(a,a)])
-fastSmallestPalindrome toOrd fromOrd next vLow vHigh = (fromOrd a, map (\(x,y) -> (fromOrd x, fromOrd y)) . S.toList $ b)
+fastSmallestPalindrome :: forall a b .(Integral a, Ord b)
+                          -- conversion from and to Ord instances
+                       => (a -> b) -> (b -> a)
+                          -- how to get "next value"
+                       -> (a -> a)
+                       -> a -> a -> (a, [(a,a)])
+fastSmallestPalindrome toOrd fromOrd next l r =
+    let l' = toOrd l
+        r' = toOrd r
+    in if l' <= r'
+         then fastSmallestPalindrome' l' r'
+         else fastSmallestPalindrome' r' l'
   where
-    search :: b -> b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
-    search v1 v2From v2To curBest
-        | v2From > v2To = curBest
-        | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
-        | isPalindrome vProdI = case curBest of
-            Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-            Just (vMin, pairs) -> case vMin `compare` vProd of
-                LT -> curBest
-                EQ -> continueSearch (Just (vMin, S.insert (v1, v2From) pairs))
-                GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-        | otherwise = continueSearch curBest
+    fastSmallestPalindrome' vLow vHigh = (fromOrd a, map (fromOrd *** fromOrd) . S.toList $ b)
       where
-        continueSearch = search v1 (toOrd . next . fromOrd $ v2From) v2To
-        vProdI = fromOrd v1 * fromOrd v2From
-        vProd = toOrd vProdI
+        search :: b -> b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
+        search v1 v2From v2To curBest
+            | v2From > v2To = curBest
+            | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
+            | isPalindrome vProdI = case curBest of
+                Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+                Just (vMin, pairs) -> case vMin `compare` vProd of
+                    LT -> curBest
+                    EQ -> continueSearch (Just (vMin, S.insert (v1, v2From) pairs))
+                    GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+            | otherwise = continueSearch curBest
+          where
+            continueSearch = search v1 (toOrd . next . fromOrd $ v2From) v2To
+            vProdI = fromOrd v1 * fromOrd v2From
+            vProd = toOrd vProdI
 
-    search2 :: b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
-    search2 v1From v1To curBest
-        | v1From > v1To = curBest
-        | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
-        | otherwise = search2 (toOrd . next . fromOrd $ v1From) v1To (search v1From v1From (toOrd vHigh) curBest)
-      where
-        vProdI = fromOrd v1From * fromOrd v1From
-        vProd = toOrd vProdI
+        search2 :: b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
+        search2 v1From v1To curBest
+            | v1From > v1To = curBest
+            | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
+            | otherwise = search2 (toOrd . next . fromOrd $ v1From) v1To (search v1From v1From vHigh curBest)
+          where
+            vProd = toOrd (fromOrd v1From * fromOrd v1From)
 
-    Just (a,b) = search2 (toOrd vLow) (toOrd vHigh) Nothing
+        Just (a,b) = search2 vLow vHigh Nothing
