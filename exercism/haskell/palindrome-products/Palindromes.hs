@@ -23,7 +23,7 @@ We have 2 approaches:
 
 largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
 
-largestPalindrome = undefined -- naiveSmallestPalindrome Down getDown
+largestPalindrome = fastLargestPalindrome
 smallestPalindrome = fastSmallestPalindrome
 
 isPalindrome :: Integral a => a -> Bool
@@ -81,3 +81,29 @@ fastSmallestPalindrome vLow vHigh = (a, S.toList b)
         vProd = v1From * v1From
 
     Just (a,b) = search2 vLow vHigh Nothing
+
+fastLargestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
+fastLargestPalindrome vLow vHigh = (a, S.toList b)
+  where
+    search v1 v2From v2To curBest
+        | v2From < v2To = curBest
+        | maybe False (\(vMax,_) -> vMax > vProd) curBest = curBest
+        | isPalindrome vProd = case curBest of
+            Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+            Just (vMax, pairs) -> case vMax `compare` vProd of
+                GT -> curBest
+                EQ -> continueSearch (Just (vMax, S.insert (v1, v2From) pairs))
+                LT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+        | otherwise = continueSearch curBest
+      where
+        continueSearch = search v1 (pred v2From) v2To
+        vProd = v1 * v2From
+
+    search2 v1From v1To curBest
+        | v1From < v1To = curBest
+        | maybe False (\(vMax,_) -> vMax > vProd) curBest = curBest
+        | otherwise = search2 (pred v1From) v1To (search v1From v1From vLow curBest)
+      where
+        vProd = v1From * v1From
+
+    Just (a,b) = search2 vHigh vLow Nothing
