@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Palindromes
   ( largestPalindrome
   , smallestPalindrome
@@ -6,7 +7,6 @@ module Palindromes
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Data.Ord
-import Data.Semigroup
 
 {-
 
@@ -23,8 +23,8 @@ We have 2 approaches:
 
 largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
 
-largestPalindrome = fastLargestPalindrome
-smallestPalindrome = fastSmallestPalindrome
+largestPalindrome l h = fastSmallestPalindrome Down getDown pred h l
+smallestPalindrome = fastSmallestPalindrome id id succ
 
 isPalindrome :: Integral a => a -> Bool
 isPalindrome v = and (zipWith
@@ -56,13 +56,14 @@ naiveSmallestPalindrome toOrd fromOrd vLow vHigh = (fromOrd targetKey, S.toList 
                   products)
     (targetKey, targetSet) = M.findMin collects
 
-fastSmallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
-fastSmallestPalindrome vLow vHigh = (a, S.toList b)
+fastSmallestPalindrome :: forall a b .(Integral a, Ord b) => (a -> b) -> (b -> a) -> (a->a) -> a -> a -> (a, [(a,a)])
+fastSmallestPalindrome toOrd fromOrd next vLow vHigh = (fromOrd a, map (\(x,y) -> (fromOrd x, fromOrd y)) . S.toList $ b)
   where
+    search :: b -> b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
     search v1 v2From v2To curBest
         | v2From > v2To = curBest
         | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
-        | isPalindrome vProd = case curBest of
+        | isPalindrome vProdI = case curBest of
             Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
             Just (vMin, pairs) -> case vMin `compare` vProd of
                 LT -> curBest
@@ -70,40 +71,17 @@ fastSmallestPalindrome vLow vHigh = (a, S.toList b)
                 GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
         | otherwise = continueSearch curBest
       where
-        continueSearch = search v1 (succ v2From) v2To
-        vProd = v1 * v2From
+        continueSearch = search v1 (toOrd . next . fromOrd $ v2From) v2To
+        vProdI = fromOrd v1 * fromOrd v2From
+        vProd = toOrd vProdI
 
+    search2 :: b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
     search2 v1From v1To curBest
         | v1From > v1To = curBest
         | maybe False (\(vMin,_) -> vMin < vProd) curBest = curBest
-        | otherwise = search2 (succ v1From) v1To (search v1From v1From vHigh curBest)
+        | otherwise = search2 (toOrd . next . fromOrd $ v1From) v1To (search v1From v1From (toOrd vHigh) curBest)
       where
-        vProd = v1From * v1From
+        vProdI = fromOrd v1From * fromOrd v1From
+        vProd = toOrd vProdI
 
-    Just (a,b) = search2 vLow vHigh Nothing
-
-fastLargestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
-fastLargestPalindrome vLow vHigh = (a, S.toList b)
-  where
-    search v1 v2From v2To curBest
-        | v2From < v2To = curBest
-        | maybe False (\(vMax,_) -> vMax > vProd) curBest = curBest
-        | isPalindrome vProd = case curBest of
-            Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-            Just (vMax, pairs) -> case vMax `compare` vProd of
-                GT -> curBest
-                EQ -> continueSearch (Just (vMax, S.insert (v1, v2From) pairs))
-                LT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-        | otherwise = continueSearch curBest
-      where
-        continueSearch = search v1 (pred v2From) v2To
-        vProd = v1 * v2From
-
-    search2 v1From v1To curBest
-        | v1From < v1To = curBest
-        | maybe False (\(vMax,_) -> vMax > vProd) curBest = curBest
-        | otherwise = search2 (pred v1From) v1To (search v1From v1From vLow curBest)
-      where
-        vProd = v1From * v1From
-
-    Just (a,b) = search2 vHigh vLow Nothing
+    Just (a,b) = search2 (toOrd vLow) (toOrd vHigh) Nothing
