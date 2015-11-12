@@ -37,13 +37,31 @@ smallestPalindrome = smallestPalindrome' id id succ
 
 -- | test if a non-negative number is palindrome number
 isPalindrome :: Integral a => a -> Bool
-isPalindrome v = and (zipWith
-                       (==)
-                       (take (l `quot` 2) xs)
-                       (reverse xs))
+isPalindrome v =
+      and
+    . take (l `quot` 2)
+    . (zipWith (==) <$> id <*> reverse)
+    $ xs
   where
     xs = show (toInteger v)
     l = length xs
+
+{-
+-- found on: http://stackoverflow.com/a/26316343/315302
+-- even with some strictness mark,
+-- performance is worse than my naive approach
+
+isPalindrome' :: Integral a => a -> Bool
+isPalindrome' x = reversal x == x
+
+reversal :: Integral a => a -> a
+reversal = go 0
+  where
+    go a 0 = a
+    go !a b = let (q,r) = b `quotRem` 10
+             in go (a*10 + r) q
+
+-}
 
 -- | "smallestPalindrome' toOrd fromOrd next l r" finds the smallest palindrome product
 --   in given range (l & r), "toOrd" and "fromOrd" should convert numbers to an instance of Ord
