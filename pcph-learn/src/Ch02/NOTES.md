@@ -14,3 +14,15 @@ structure of a Haskell expression (noninvasively)
 
 * `seq a b` forces `a` to be evaluated before returning `b`, thus at
 the time when we need `b`, we know `a` must have been evaluated (to at least WHNF)
+
+### `rpar` and `rseq`
+
+* From what I can understand, `rpar` to `rseq` is like a non-blocking operation
+to its blocking counterpart.
+
+* Both `rpar` and `rseq` put computation into some parallelism framework
+
+* `rpar` does not block rest of the operations (in do-notation)
+
+* `rseq` blocks until the result is available, just like `seq` requires
+  its first argument to be WHNF before returning its second argument
