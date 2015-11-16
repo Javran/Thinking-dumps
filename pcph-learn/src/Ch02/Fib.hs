@@ -17,22 +17,31 @@ test1, test2, test3, test4 :: Eval (Integer, Integer)
 test1 = do
   x <- rpar (fib 36)
   y <- rpar (fib 35)
+  -- this should return immediately
+  -- because nothing is blocked
   return (x,y)
 
 test2 = do
   x <- rpar (fib 36)
   y <- rseq (fib 35)
+  -- returns when `y` is available
+  -- at which time `x` might not yet available
+  -- because `fib 36` will take longer to compute than `fib 35`
   return (x,y)
 
 test3 = do
   x <- rpar (fib 36)
   y <- rseq (fib 35)
   void $ rseq x
+  -- returns after both `x` and `y` are available
+  -- actually we first wait for y and then x
   return (x,y)
 
 test4 = do
   x <- rpar (fib 36)
   y <- rpar (fib 35)
+  -- similar to test3, but this time we wait for
+  -- x then y
   void $ rseq x
   void $ rseq y
   return (x,y)
