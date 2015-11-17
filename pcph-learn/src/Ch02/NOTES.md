@@ -42,3 +42,9 @@ We also need RTS option: `-N[x]` (see [here](https://downloads.haskell.org/~ghc/
 ### Debugging
 
 * `+RTS -s -RTS` let the runtime system emit the statistics.
+
+### CPU Time and Elapsed Time
+
+Elapsed time is the wall-clock time, which is always used when calculating
+speedups. CPU time indicates how busy our cores are, this is usually greater than
+elapsed time when multiple cores are running.
