@@ -26,3 +26,10 @@ to its blocking counterpart.
 
 * `rseq` blocks until the result is available, just like `seq` requires
   its first argument to be WHNF before returning its second argument
+
+
+### Compilation
+
+Not sure (probably not) whether `runghc` would work, but we'd better
+compile the program using arguments `-O2 -threaded` to turn on multithreading support.
+We also need RTS option: `-N[x]` (see [here](https://downloads.haskell.org/~ghc/7.0.3/docs/html/users_guide/using-smp.html#parallel-options) for more helps).
