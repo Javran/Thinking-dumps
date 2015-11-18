@@ -1,4 +1,4 @@
-module Ch02 where
+module Fib where
 
 import Data.Functor
 import Control.Parallel.Strategies
