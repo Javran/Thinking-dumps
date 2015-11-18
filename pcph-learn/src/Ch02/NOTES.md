@@ -48,3 +48,53 @@ We also need RTS option: `-N[x]` (see [here](https://downloads.haskell.org/~ghc/
 Elapsed time is the wall-clock time, which is always used when calculating
 speedups. CPU time indicates how busy our cores are, this is usually greater than
 elapsed time when multiple cores are running.
+
+### Eventlog and ThreadScope
+
+You'll need following flags for compilation:
+
+```shell
+ghc -O2 -threaded -rtsopts -fforce-recomp -eventlog <.hs file>
+```
+
+`-fforce-recomp` is there for saving you from removing compiled binaries over and over again.
+
+And following flags should be passed to the RTS:
+
+```shell
+./yourprogram +RTS -N -l -s -RTS
+```
+
+Only `-l` is required, but it's not bad adding other flags to make the output more informative.
+
+### Static Partitioning vs. Dynamic Partitioning
+
+* Static partitioning: partitioning tasks before the program runs,
+so that the work division is fixed
+
+* Dynamic partitioning: distributing smaller units of work among processors at runtime
+
+It's just nature that the workload of each task is uneven, so an important principle is:
+``Try to avoid partitioning the work into small, fixed number of chunks''. Dynamic partitioning
+make the schedule of doing tasks more flexible. At runtime, different tasks take different among
+of resources and time, which is usually hard to predict beforehand. If we can schedule tasks
+according to current number of available workers, we are more likely to keep most of the workers
+busy so that we gain more benefits of parallelism.
+
+* **spark**: the argument to `rpar`, I think it's like a task to be distributed to workers
+
+* work stealing: see wikipedia for detail. From what I understand, if one worker is available,
+it checks other busy workers' task queue and steal tasks from it.
+
+* Amdahl's law: see wikipedia
+
+## DeepSeq
+
+* Traverses the whole data structure and makes sure everything is in its normal form.
+Should avoid repeated uses of `deepseq` for this reason.
+
+* To create instances of NFData, one should chain `rnf`-`seq` pattern to cover all
+possible fields.
+
+* `Control.Seq` provides some facilities for evaluating strategies between WHNF and NF,
+so we have some controls over how deep or how much should we evaluate a data structure.
