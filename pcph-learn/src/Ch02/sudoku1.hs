@@ -3,8 +3,15 @@ import Sudoku
 import System.Environment
 import Data.Maybe
 import Control.DeepSeq
-import Control.Parallel.Strategies
+import Control.Parallel.Strategies hiding (parMap)
 import Data.Functor
+
+parMap :: (a -> b) -> [a] -> Eval [b]
+parMap f [] = return []
+parMap f (a:as) = do
+   b <- rpar (f a)
+   bs <- parMap f as
+   return (b:bs)
 
 main :: IO ()
 main = do
@@ -26,5 +33,6 @@ main = do
               void $ rseq as'
               void $ rseq bs'
               return (as' ++ bs')
+      solutions3 = runEval (parMap solve puzzles)
 
-  print (length (filter isJust solutions2))
+  print (length (filter isJust solutions3))
