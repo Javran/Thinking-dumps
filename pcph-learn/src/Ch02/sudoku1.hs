@@ -4,6 +4,7 @@ import System.Environment
 import Data.Maybe
 import Control.DeepSeq
 import Control.Parallel.Strategies hiding (parMap)
+import Control.Exception.Base
 import Data.Functor
 
 parMap :: (a -> b) -> [a] -> Eval [b]
@@ -33,6 +34,9 @@ main = do
               void $ rseq as'
               void $ rseq bs'
               return (as' ++ bs')
-      solutions3 = runEval (parMap solve puzzles)
+
+  -- uncomment following line for forcing reading to be sequential
+  -- evaluate (length puzzles)
+  let solutions3 = runEval (parMap solve puzzles)
 
   print (length (filter isJust solutions3))
