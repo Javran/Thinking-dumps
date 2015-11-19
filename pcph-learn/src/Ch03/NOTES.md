@@ -17,3 +17,8 @@ type Strategy a = a -> Eval a
 
 using :: a -> Strategy a -> a
 ```
+
+`using` is often written using infix. On the left hand side of it is ``what the program does''
+and on the right hand side we have ``how to add parallelism to it''.
+It has the nice property that it is usually the case that removing ``(`using` strat) ``
+does not change the result of the expression.
