@@ -22,3 +22,13 @@ using :: a -> Strategy a -> a
 and on the right hand side we have ``how to add parallelism to it''.
 It has the nice property that it is usually the case that removing ``(`using` strat) ``
 does not change the result of the expression.
+
+### Parametrized Strategies
+
+* Both `rpar` and `rseq` are of type `a -> Eval a` so they can be viewed as strategies.
+* `rdeeqseq` is like `rseq` but evaluates its argument to NF (and blocks until done)
+* (NOT CONFIRMED) `rparWith` can be combined with `rdeepseq`, by doing so we
+can create sparks to full evaluate some data structure but without waiting for the result
+to proceed.
+* I guesss `dot :: Strategy a -> Strategy a -> Strategy a` could be an important combinator,
+understanding what it does it mean to combine 2 strategies might help us understand `rparWith`
