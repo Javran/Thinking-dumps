@@ -5,7 +5,7 @@ copied from Ch02, for verifying what rparWith does:
 
 * `rparWith` can be used to guaranteed that the evaluation
   is not blocking anything, even if the inner strategy is rseq
-  (TODO: see NOTES.md for more explanations)
+  (see NOTES.md for more explanations)
 
 -}
 
