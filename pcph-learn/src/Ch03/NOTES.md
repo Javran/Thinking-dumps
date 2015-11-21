@@ -91,3 +91,9 @@ So we can write `parPair` without concerns about blocking:
 parPair :: Strategy a -> Strategy b -> Strategy (a,b)
 parPair sa sb = evalPair (rparWith sa) (rparWith sb)
 ```
+
+### Evaluating a List in Parallel
+
+Nothing new here: `evalList` is like `evalPair` and `parList` is like `parList`.
+By using these two combinators for lists, we are able to compute
+elements of the list in parallel.
