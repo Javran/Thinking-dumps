@@ -97,3 +97,24 @@ parPair sa sb = evalPair (rparWith sa) (rparWith sb)
 Nothing new here: `evalList` is like `evalPair` and `parList` is like `parList`.
 By using these two combinators for lists, we are able to compute
 elements of the list in parallel.
+
+### K-Means Example
+
+**Let program measure its own time.**  Sometimes we might want the program to display its own running time instead of relying
+on an external time-measuring mechanism. By doing so we might get benefit of knowing
+more fine-grained running time at the cost of writing few more lines for time measurement.
+In our case the I/O cost is not our focus of optimization, by ignoring this part,
+the speedup more accurately reflects how good our optimization is.
+
+**Some extra factors to consider**
+
+There are few more factors we need to consider
+for putting code into parallelism:
+
+* **How to split tasks and combine results.** It's possible to allow all elements of a list
+to be computed in parallel, but too fine-grained tasks might nullify the benefit of parallelism
+because of the overhead added. So what we do is to group small tasks into chunks, and process them in parallel. Further, when the computations are done, we also need a way to combine chunks' results.
+
+* **To what extent do we need to split our tasks** This might be left as a runtime configuration.
+Previously we know that static partitioning is not good in general, and I think the same
+principle applies here. Depending on the machine on which we run the code, the optimial configuration varies, and for enabling the program to scale we probably need to leave it as a runtime argument.
