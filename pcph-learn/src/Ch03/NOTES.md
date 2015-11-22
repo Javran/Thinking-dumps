@@ -125,3 +125,11 @@ get speedup penalty, sometimes this is big.
 
 * **Extra costs about chunks** Creating chunks takes time and combining results also do,
 keep in mind that the process of combining results of chunks might be sequential.
+
+### `+RTS -s` outputs regarding sparks
+
+* `converted`: number of sparks successfully converted into runtime computation
+* `overflowed`: number of sparks dropped due to too many sparks, if this happens, try
+to create less sparks
+* `GC'd`: number of sparks garbage collected, the spark is never being run because
+nothing is requiring it.
