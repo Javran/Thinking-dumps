@@ -23,8 +23,8 @@ for i = 2, 20 do
 end
 
 function print_first_n(n)
-   count = n
-   curNum = 2
+   local count = n
+   local curNum = 2
 
    -- this procedure bumps curNum until it's a prime that ends in 3
    function next_candidate()
