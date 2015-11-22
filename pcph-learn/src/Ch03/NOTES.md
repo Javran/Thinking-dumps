@@ -113,8 +113,15 @@ for putting code into parallelism:
 
 * **How to split tasks and combine results.** It's possible to allow all elements of a list
 to be computed in parallel, but too fine-grained tasks might nullify the benefit of parallelism
-because of the overhead added. So what we do is to group small tasks into chunks, and process them in parallel. Further, when the computations are done, we also need a way to combine chunks' results.
+because of the overhead added. So what we do is to group small tasks into chunks, and process them in parallel. Further, when the computations are done, we also need a way to combine chunks' results. (`parListChunk` might be good for solving this problem)
 
-* **To what extent do we need to split our tasks** This might be left as a runtime configuration.
+* **To what extent do we need to split our tasks.** This might be left as a runtime configuration.
 Previously we know that static partitioning is not good in general, and I think the same
 principle applies here. Depending on the machine on which we run the code, the optimial configuration varies, and for enabling the program to scale we probably need to leave it as a runtime argument.
+
+* **Be cautious of foreign calls.** A foreign call usually indicates some kind of I/O, if
+we put some unnecessary I/O works (like debugging outputs between iterations), we'll
+get speedup penalty, sometimes this is big.
+
+* **Extra costs about chunks** Creating chunks takes time and combining results also do,
+keep in mind that the process of combining results of chunks might be sequential.
