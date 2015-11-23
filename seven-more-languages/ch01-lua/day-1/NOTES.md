@@ -23,4 +23,3 @@ print "No time" print "for love"
 
 Hm, no need to repeat about basic things here.
 From now I'll only make notes about things I find interesting.
-
