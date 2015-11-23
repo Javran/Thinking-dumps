@@ -20,7 +20,7 @@ the table is an array.
 
 * `pairs(table)` creates an iterator for table key-value pairs
 
-## Metatables
+### Metatables
 
 In Lua metatable is a way to change the default behavior of certain things.
 For now we know three of them:
@@ -35,7 +35,7 @@ One way to create tables that has certain behaviors could be: create a function 
 creates a fresh table, initialize all required fields and set a metatable to it.
 It's just like ``constructors'' in a Object-Oriented sense.
 
-## Special Syntax for Handling OO schemes
+### Special Syntax for Handling OO schemes
 
 In Object-Oriented programming, we will have access to a special reference
 (most of the time it's called `this` or `self`) inside methods.
@@ -43,3 +43,5 @@ In Lua we either write it explicitly (e.g. `function foo.bar(self,baz) ... end`)
 use a special `:`-notation (e.g. `function foo:bar(baz)`), these two things are equivalent.
 (note that `self` will then be a special variable name inside any function defined with
 `:`-notation -- it's introduced implicitly)
+
+## Coroutines
