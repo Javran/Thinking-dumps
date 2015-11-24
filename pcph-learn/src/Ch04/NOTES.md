@@ -31,3 +31,37 @@ This section targets at parallelizing Floyd-Warshall algorithm.
   `IntMap` is one of them that has `traverseWithKey` to do so. (If an data structure
   has supports for traversal, we'd better use it instread of creating an explicit list
   and traverse the list)
+
+### Pipeline Parallelism
+
+A different way to expose parallelism (play nicely with data streams).
+In lazy streams we often want to apply transformation on streams which forms a pipeline.
+The idea is to assign each core with one stream transformation.
+Here each core plays role of producer or consumer and work together to produce the final result.
+
+In book we have a data structure representing a lazy list:
+
+```haskell
+data IList a
+  = Nil
+  | Cons a (IVar (IList a))
+
+type Stream a = IVar (IList a)
+```
+
+By wrapping the tail in an `IVar`, we can allow other threads
+to compute it.
+
+A pipeline consists of 3 roles: producer, transformer and consumer.
+
+* `producer`: a stream source that produces values, it often creates `IVar`
+  and forks dedicated task for value-producing, and returns the `IVar` reference.
+
+* `consumer`: consumes value produced from `IVar`.
+
+* `transformer`: (In book, there is nothing called ``transformer'', but I think it's a good term to use)
+  a transformer do stream transformations, it is both a producer and a consumer:
+  it takes values from `IVar`, applies transformation to it and then forks threads for producing
+  some other values to be consumed by next worker on the pipeline.
+
+
