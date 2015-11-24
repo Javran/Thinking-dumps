@@ -64,4 +64,28 @@ A pipeline consists of 3 roles: producer, transformer and consumer.
   it takes values from `IVar`, applies transformation to it and then forks threads for producing
   some other values to be consumed by next worker on the pipeline.
 
+#### Rate-Limiting the Producer
 
+If a transformer processes values at a rate lower than the producer,
+many unconsumed values will be accumulated, this is undesired, the trick
+is to just produce some limited results and pause,
+if it turns out later that more values are required,
+we can resume the value-producing process.
+
+In book, we make the following extension on `IList` to allow this:
+
+```haskell
+data IList a
+  = Nil
+  | Cons a (IVar (IList a))
+  | Fork (Par ()) (IList a)
+```
+
+(TODO: this is not yet verified) I think there is another way of extending `IList`:
+
+```haskell
+data IList a
+  = Nil
+  | Cons a (IVar (IList a))
+  | Fork (Par (IList a))
+```
