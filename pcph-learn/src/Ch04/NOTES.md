@@ -16,3 +16,18 @@
       the whole data structure, the library provides us a backdoor function `put_`
       that only evaluates value to WHNF. If we know something is already in NF,
       we can also use it to shortcut the computation)
+
+### Example: Shortest Path in a Graph
+
+This section targets at parallelizing Floyd-Warshall algorithm.
+
+* folds vs. maps
+    * folds can be parallelized only when the operation is associative (e.g. sum or product).
+      If this is the case, the linear fold can be turned into a tree, which can in turn be
+      viewed as data dependency graph.
+
+    * maps can be parallelized nicely. (no data dependency between elements)
+* traverse: some data structure can be traversed, effects can then be accumulated.
+  `IntMap` is one of them that has `traverseWithKey` to do so. (If an data structure
+  has supports for traversal, we'd better use it instread of creating an explicit list
+  and traverse the list)
