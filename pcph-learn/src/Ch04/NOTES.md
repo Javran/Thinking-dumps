@@ -59,8 +59,7 @@ A pipeline consists of 3 roles: producer, transformer and consumer.
 
 * `consumer`: consumes value produced from `IVar`.
 
-* `transformer`: (In book, there is nothing called ``transformer'', but I think it's a good term to use)
-  a transformer do stream transformations, it is both a producer and a consumer:
+* `mapper`: mappers do stream transformations, it is both a producer and a consumer:
   it takes values from `IVar`, applies transformation to it and then forks threads for producing
   some other values to be consumed by next worker on the pipeline.
 
