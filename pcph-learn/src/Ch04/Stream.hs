@@ -29,6 +29,7 @@ streamFromList xs = do
             loop ys tl
     -- a fork is necessary to allow the task to be dispatched
     -- in parallel
+    -- (a consumer forks its task)
     fork (loop xs var)
     return var
 
@@ -39,10 +40,29 @@ streamFold func !seed r = do
         Nil -> return seed
         Cons v tl -> streamFold func (seed `func` v) tl
 
+streamMap :: NFData b => (a -> b) -> Stream a -> Par (Stream b)
+streamMap f instrm = do
+    outstrm <- new
+    -- a mapper is both a consumer and a producer
+    -- so it has both:
+    -- * case-expression to consume incoming data stream
+    -- * task-forking for producing data stream
+    fork (loop instrm outstrm)
+    return outstrm
+  where
+    loop instrm outstrm = do
+        ilst <- get instrm
+        case ilst of
+            Nil -> put outstrm Nil
+            (Cons h tl) -> do
+                newtl <- new
+                put outstrm (Cons (f h) newtl)
+                loop tl newtl
+
 main :: IO ()
 main = do
     let result :: Par Int
         result = do
                   s <- streamFromList [1 :: Int ..100] :: Par (Stream Int)
-                  streamFold (+) 1 s
+                  streamFold (+) 0 s
     print (runPar result)
