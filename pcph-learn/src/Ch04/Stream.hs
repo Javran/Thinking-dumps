@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, ScopedTypeVariables #-}
 -- ghc -O2 -rtsopts -threaded -fforce-recomp -eventlog -main-is Stream Stream.hs
 module Stream where
 
@@ -19,10 +19,11 @@ instance NFData a => NFData (IList a) where
     rnf Nil = ()
     rnf (Cons v tl) = v `seq` tl `seq` ()
 
-streamFromList :: NFData a => [a] -> Par (Stream a)
+streamFromList :: forall a. NFData a => [a] -> Par (Stream a)
 streamFromList xs = do
     var <- new
     let -- traverse the list and feed values to the stream
+        loop :: [a] -> IVar (IList a) -> Par ()
         loop [] r = put r Nil
         loop (y:ys) r = do
             tl <- new
