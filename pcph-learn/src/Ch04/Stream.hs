@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+-- ghc -O2 -rtsopts -threaded -fforce-recomp -eventlog -main-is Stream Stream.hs
 module Stream where
 
 import Control.Monad.Par
@@ -59,12 +60,23 @@ streamMap f i = do
                 put outstrm (Cons (f h) newtl)
                 loop tl newtl
 
+{-
+  Test is performed by using (read . show) on a list of integers and calculate the sum
+  looks like the number passed as "-N{num}" has a large impact on productivity:
+  if we use BangPatterns on Cons,
+  *  -N4 works the best while other numbers result in only ~50% productivity.
+  if we don't use it, -N5 works the best (but not very good)
+-}
+
 main :: IO ()
 main = do
-    let result = do
-            s <- xs `deepseq` streamFromList xs
-            s1 <- streamMap show s
-            s2 <- streamMap (read :: String -> Integer) s1
+    let -- for debugging
+        showD = show :: Int -> String
+        readD = read :: String -> Integer
+        result = do
+            s <- streamFromList xs
+            s1 <- streamMap showD s
+            s2 <- streamMap (readD :: String -> Integer) s1
             streamFold (+) 0 s2
         xs = [1 :: Int .. 100000]
     print (runPar result)
