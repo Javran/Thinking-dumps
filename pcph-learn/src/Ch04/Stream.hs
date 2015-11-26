@@ -41,14 +41,14 @@ streamFold func !seed r = do
         Cons v tl -> streamFold func (seed `func` v) tl
 
 streamMap :: NFData b => (a -> b) -> Stream a -> Par (Stream b)
-streamMap f instrm = do
-    outstrm <- new
+streamMap f i = do
+    o <- new
     -- a mapper is both a consumer and a producer
     -- so it has both:
     -- * case-expression to consume incoming data stream
     -- * task-forking for producing data stream
-    fork (loop instrm outstrm)
-    return outstrm
+    fork (loop i o)
+    return o
   where
     loop instrm outstrm = do
         ilst <- get instrm
@@ -61,8 +61,10 @@ streamMap f instrm = do
 
 main :: IO ()
 main = do
-    let result :: Par Int
-        result = do
-                  s <- streamFromList [1 :: Int ..100] :: Par (Stream Int)
-                  streamFold (+) 0 s
+    let result = do
+            s <- xs `deepseq` streamFromList xs
+            s1 <- streamMap show s
+            s2 <- streamMap (read :: String -> Integer) s1
+            streamFold (+) 0 s2
+        xs = [1 :: Int .. 100000]
     print (runPar result)
