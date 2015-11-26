@@ -12,6 +12,11 @@ data IList a
   | Cons a (IVar (IList a))
     -- the exercise asks we to add this alternative
     -- and fill in blanks
+    -- INVARIANT: Fork _ (Cons _ _) is the only possible construction
+    -- meaning that Fork _ Nil and Fork _ (Fork _ _) is invalid
+    -- I understand by modeling Fork in this way we can use some code
+    -- but there is another way: `Fork (Par ()) a (IVar (IList a))`
+    -- this prevents invalid constructions at the cost of a more complex type
   | Fork (Par ()) (IList a)
 
 type Stream a = IVar (IList a)
