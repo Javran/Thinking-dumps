@@ -52,7 +52,7 @@ type Stream a = IVar (IList a)
 By wrapping the tail in an `IVar`, we can allow other threads
 to compute it.
 
-A pipeline consists of 3 roles: producer, transformer and consumer.
+A pipeline consists of 3 roles: producer, mapper and consumer.
 
 * `producer`: a stream source that produces values, it often creates `IVar`
   and forks dedicated task for value-producing, and returns the `IVar` reference.
@@ -65,7 +65,7 @@ A pipeline consists of 3 roles: producer, transformer and consumer.
 
 #### Rate-Limiting the Producer
 
-If a transformer processes values at a rate lower than the producer,
+If a mapper processes values at a rate lower than the producer,
 many unconsumed values will be accumulated, this is undesired, the trick
 is to just produce some limited results and pause,
 if it turns out later that more values are required,
@@ -80,11 +80,18 @@ data IList a
   | Fork (Par ()) (IList a)
 ```
 
-(TODO: this is not yet verified) I think there is another way of extending `IList`:
+At beginning I can't read the type. What I can understand is that:
 
-```haskell
-data IList a
-  = Nil
-  | Cons a (IVar (IList a))
-  | Fork (Par (IList a))
-```
+* `Fork` alternative embeds another `IList a`
+* We should call the field with type `Par ()` for the effects, here this is most likely
+  the computation that restarts value-producing
+
+To actually implement this (see `StreamLimit.hs` for the implementation),
+we should take a closer look at the type of `loop` function:
+`[a] -> IVar (IList a) -> Par ()` (the order of the argument does not matter).
+
+Thanks to [the hints on Stack Overflow](http://stackoverflow.com/a/24780851/315302),
+I can finally figure this out: the `Fork` alternative is used like a tag to `Cons`
+to indicate that there are more data whereas the value-producing process is not yet
+started. So when a consumer meets this tag, it can fork the embeded computation
+to resume value-producing process.
