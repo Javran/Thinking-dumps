@@ -59,13 +59,25 @@ streamFromListWithLimit lim xs = do
     return var
 
 streamFold :: (a -> b -> a) -> a -> Stream b -> Par a
-streamFold func !seed r = do
-    stream <- get r
-    case stream of
-        Nil -> return seed
-        Cons v tl -> streamFold func (seed `func` v) tl
-        Fork m (Cons v tl) -> fork m >> streamFold func (seed `func` v) tl
-        Fork _ _ -> error "impossible"
+streamFold func !seed = consumeStream onNil onCons
+  where
+    onNil = return seed
+    onCons v = streamFold func (seed `func` v)
+
+-- to use this function, one should provide two callbacks: onNil and onCons
+-- the case of Fork is handled automatically so that the user of this
+-- function don't need to take care of them
+consumeStream :: Par b
+              -> (a -> Stream a -> Par b)
+              -> Stream a
+              -> Par b
+consumeStream onNil onCons stream = do
+    st <- get stream
+    case st of
+        Nil -> onNil
+        Cons v tl -> onCons v tl
+        Fork m (Cons v tl) -> fork m >> onCons v tl
+        Fork _ _ -> error "invalid stream construction"
 
 streamMap :: NFData b => (a -> b) -> Stream a -> Par (Stream b)
 streamMap f i = do
@@ -77,20 +89,14 @@ streamMap f i = do
     fork (loop i o)
     return o
   where
-    loop instrm outstrm = do
-        ilst <- get instrm
-        case ilst of
-            Nil -> put outstrm Nil
-            (Cons h tl) -> do
-                newtl <- new
-                put outstrm (Cons (f h) newtl)
-                loop tl newtl
-            (Fork m (Cons h tl)) -> do
-                fork m
-                newtl <- new
-                put outstrm (Cons (f h) newtl)
-                loop tl newtl
-            (Fork _ _) -> error "impossible"
+    loop instrm outstrm = consumeStream onNil onCons instrm
+      where
+        onNil = put outstrm Nil
+        onCons h tl = do
+            newtl <- new
+            put outstrm (Cons (f h) newtl)
+            loop tl newtl
+
 {-
   Test is performed by using (read . show) on a list of integers and calculate the sum
   looks like the number passed as "-N{num}" has a large impact on productivity:
