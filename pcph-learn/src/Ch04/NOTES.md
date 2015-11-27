@@ -95,3 +95,9 @@ I can finally figure this out: the `Fork` alternative is used like a tag to `Con
 to indicate that there are more data whereas the value-producing process is not yet
 started. So when a consumer meets this tag, it can fork the embeded computation
 to resume value-producing process.
+
+### Limitation of Pipeline Parallelism
+
+The idea of pipeline parallelism is to fork a decicated computation
+to process one stage in the pipeline. Obviously this usually can't be as
+efficient as data parallelism, but pipeline parallelism is still a power tool.
