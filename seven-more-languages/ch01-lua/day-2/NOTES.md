@@ -45,3 +45,13 @@ use a special `:`-notation (e.g. `function foo:bar(baz)`), these two things are 
 `:`-notation -- it's introduced implicitly)
 
 ## Coroutines
+
+Lua dosn't handle multithreading, but it uses coroutines instead.
+
+Coroutines are not preemptive, and the program should explicit point out
+when can the current task be safely paused.
+
+`coroutine.create(func)` creates a coroutine that runs function `func`.
+If the body of the function contains some calls to `coroutine.yield(v)`,
+then the execution of the function will be paused at that point and `v` will be produced.
+Also that the coroutine can be resumed in future by calling `coroutine.resume`
