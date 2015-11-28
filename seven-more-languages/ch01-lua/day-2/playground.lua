@@ -26,3 +26,8 @@ g = coroutine.create(five_numbers_start_from(10))
 for i = 1,10 do
    consume_and_print(g)
 end
+
+scheduler = require 'scheduler'
+
+-- try using an external file
+print(scheduler.test(10))
