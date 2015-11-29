@@ -45,3 +45,34 @@ testNum = 1
 testTable = {1,2,3,4}
 
 print_array(testTable + testTable)
+
+function make_queue()
+   local q = {}
+   -- if lastInd < firstInd then the queue is empty
+   q.firstInd = 1
+   q.lastInd = 0
+   return q
+end
+
+function queue_add(q, item)
+   local newInd = q.lastInd + 1
+   q[newInd] = item
+   q.lastInd = newInd
+end
+
+function queue_remove(q)
+   local result = q[q.firstInd]
+   q[q.firstInd] = nil
+   q.firstInd = q.firstInd+1
+   return result
+end
+
+q = make_queue()
+for i = 1, 10 do
+   queue_add(q,i)
+end
+
+for i = 1, 10 do
+   local v = queue_remove(q)
+   print(v)
+end
