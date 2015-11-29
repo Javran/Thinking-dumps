@@ -46,14 +46,6 @@ testTable = {1,2,3,4}
 
 print_array(testTable + testTable)
 
-function make_queue()
-   local q = {}
-   -- if lastInd < firstInd then the queue is empty
-   q.firstInd = 1
-   q.lastInd = 0
-   return q
-end
-
 function queue_add(q, item)
    local newInd = q.lastInd + 1
    q[newInd] = item
@@ -67,12 +59,35 @@ function queue_remove(q)
    return result
 end
 
-q = make_queue()
+-- TODO: this is a working impl,
+-- but I suspect this is not the way intended
+function make_queue()
+   local q = {}
+   -- if lastInd < firstInd then the queue is empty
+   q.firstInd = 1
+   q.lastInd = 0
+
+   function q:add(item)
+      queue_add(self,item)
+   end
+
+   function q:remove()
+      return queue_remove(self)
+   end
+
+   return q
+end
+
+Queue = {
+   new = make_queue
+}
+
+q = Queue.new()
 for i = 1, 10 do
-   queue_add(q,i)
+   q:add(i)
 end
 
 for i = 1, 10 do
-   local v = queue_remove(q)
+   local v = q:remove()
    print(v)
 end
