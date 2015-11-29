@@ -31,3 +31,18 @@ scheduler = require 'scheduler'
 
 -- try using an external file
 print(scheduler.test(10))
+
+test_mt = {
+   hello = function()
+      print("hello")
+   end
+}
+
+-- here is a trick to setup "fallback function",
+-- actually it seems that the creation of OO-style
+-- objects makes use of this trick
+test_mt2 = {}
+setmetatable(test_mt2, test_mt)
+test_mt.__index = test_mt
+
+test_mt2.hello()
