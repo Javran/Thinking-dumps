@@ -38,6 +38,19 @@ test_mt = {
    end
 }
 
+-- if we set __index as a table, that's saying we are using that
+-- table as a fallback .. when we failed to find something
+-- we will lookup that table instead
+print("======")
+dictA = { a = 1, b = 2 }
+dictB = { c = 3, d = 4 }
+setmetatable(dictB, { __index = dictA })
+
+print(dictB.a)
+print(dictB.b)
+print(dictB.c)
+print(dictB.d)
+
 -- here is a trick to setup "fallback function",
 -- actually it seems that the creation of OO-style
 -- objects makes use of this trick
@@ -46,3 +59,4 @@ setmetatable(test_mt2, test_mt)
 test_mt.__index = test_mt
 
 test_mt2.hello()
+
