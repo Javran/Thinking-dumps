@@ -44,12 +44,16 @@ test_mt = {
 print("======")
 dictA = { a = 1, b = 2 }
 dictB = { c = 3, d = 4 }
+dictC = { e = 5 }
 setmetatable(dictB, { __index = dictA })
+setmetatable(dictA, { __index = dictC })
 
 print(dictB.a)
 print(dictB.b)
 print(dictB.c)
 print(dictB.d)
+-- dictB, no "e" -> dictA, no "e", dictC, found
+print(dictB.e)
 
 -- here is a trick to setup "fallback function",
 -- actually it seems that the creation of OO-style
