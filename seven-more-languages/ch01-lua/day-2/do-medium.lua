@@ -67,6 +67,7 @@ function make_queue()
    q.firstInd = 1
    q.lastInd = 0
 
+-- --[[
    function q:add(item)
       queue_add(self,item)
    end
@@ -74,13 +75,28 @@ function make_queue()
    function q:remove()
       return queue_remove(self)
    end
+-- --]]
 
    return q
 end
 
 Queue = {
-   new = make_queue
+   new = function ()
+      local obj = make_queue()
+      setmetatable(obj, Queue)
+      return obj
+   end
 }
+
+function Queue:add(item)
+   queue_add(self,item)
+end
+
+function Queue:remove()
+   return queue_remove(self)
+end
+
+Queue.__index = Queue
 
 q = Queue.new()
 for i = 1, 10 do
