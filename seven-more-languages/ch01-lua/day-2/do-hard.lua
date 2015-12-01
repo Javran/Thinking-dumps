@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 -- need the following lines before using the random module
+-- see: http://stackoverflow.com/a/18199908/315302
 math.randomseed(os.time())
 for i = 1,10 do
    math.random()
@@ -16,6 +17,7 @@ function retry(count, body)
       succeeded, value = coroutine.resume(co)
       -- we need to examine the status to tell if the coroutine has yielded
       -- or returned
+      -- see: http://www.lua.org/pil/9.1.html
       if coroutine.status(co) == 'dead' then
          -- the function has returned normally so the coroutine is dead
          -- no further attempt is necessary
