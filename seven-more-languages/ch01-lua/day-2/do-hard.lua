@@ -1,17 +1,26 @@
 #!/usr/bin/env lua
 
--- need the following lines before using random module
+-- need the following lines before using the random module
 math.randomseed(os.time())
 for i = 1,10 do
    math.random()
 end
 
 function retry(count, body)
-   -- TODO
-   local co = coroutine.create(body)
-   succeeded, value = coroutine.resume(co)
-   print(succeeded)
-   print(value)
+   local remaining = count
+   while remaining > 0 do
+      local co = coroutine.create(body)
+      succeeded, value = coroutine.resume(co)
+      if coroutine.status(co) == 'dead' then
+         -- the function has returned normally so the coroutine is dead
+         -- no further attempt is necessary
+         break
+      else
+         print("Coroutine returned an error message:")
+         print(value)
+         remaining = remaining - 1
+      end
+   end
 end
 
 retry(
