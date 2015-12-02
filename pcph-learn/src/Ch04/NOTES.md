@@ -113,3 +113,8 @@ if adding parallelism has nothing to do with the actually implementation of how 
 a problem into many subproblems), we can leave these specific operations as arguments.
 By doing so we will have a "skeleton", which should have most of the detail abstracted so
 we can focus on adding parallelism to the program.
+
+* Parallelism has its own overhead, if tasks are too fine-grained, this overhead
+will negate the benefit of having parallelism. In this specific problem,
+we set a max-depth, if we want to search any further past this limit, we'd better
+just use one worker instead of splitting that task further
