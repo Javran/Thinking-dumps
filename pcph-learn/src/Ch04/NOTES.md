@@ -108,7 +108,7 @@ efficient as data parallelism, but pipeline parallelism is still a power tool.
 a problem recursively into smaller "subproblems", have them solved separately
 then we merge these results together to form the final answer for the original problem.
 
-* **parallel skeleton** I think the basic idea is: the divide-and-conquer strategy has some stages,
+* **parallel skeleton** I think the basic idea is: the divide-and-conquer strategy has some stages (in the book they call it **search pattern**),
 if adding parallelism has nothing to do with the actually implementation of how to do so (for exammpl, how a subproblem solution could be turned into a global solution, or how we split
 a problem into many subproblems), we can leave these specific operations as arguments.
 By doing so we will have a "skeleton", which should have most of the detail abstracted so
