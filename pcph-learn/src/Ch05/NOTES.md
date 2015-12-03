@@ -19,6 +19,11 @@ An 3x5 array can be represented as `Z :. 3 :. 5` (3 rows, 5 columns).
 Shapes and indices are constructed in the same way: `Z :. 3 :. 5` could
 also mean a two-dimensional coordinate (Repa's indices are zero-based).
 
+Note that in memory everything is just stored in linear space,
+the shape is only useful for calculating the linear index given
+a probably-high-dimensional one. We can change from an array that has 3 rows
+to one that has 5 rows without even copying.
+
 Representation `U` means an unboxed array (those that cannot be delayed,
 e.g. primitive integers), and `D` means a delayed representation.
 A delayed representation allows fusion to happen:
