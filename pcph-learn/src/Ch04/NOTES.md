@@ -118,3 +118,8 @@ we can focus on adding parallelism to the program.
 will negate the benefit of having parallelism. In this specific problem,
 we set a max-depth, if we want to search any further past this limit, we'd better
 just use one worker instead of splitting that task further
+
+### Example: A Parallel Type Inferencer
+
+(TODO) I think the example here is a little bit too involved,
+need more time to figure it out, meanwhile let's skip to the next chapter.
