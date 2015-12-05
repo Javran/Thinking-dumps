@@ -36,3 +36,27 @@ which is more efficient.
 There are other techniques of fusion, with delayed representation,
 we have a chance to find out those things that can be fused, the performence thus
 can be improved.
+
+### Example: Computing Shortest Paths
+
+* For scenarios like using dynamic programming, values depend on each other,
+we should better use `computeS` to force a manifest represetation rather
+than allowing a chain of functions to build up
+
+* Optimizations work better when all the code is visible to the compiler, if
+performance is of important, you can try writing out explicit loops rather than
+using other high-order library functions.
+
+* It is a good practice to put `BangPatterns` on the arguments to those iterative
+loops, which would help Repa to further optimize the code
+
+* Turning on `LLVM` backend (`-fllvm`) sometimes could help to get better performance.
+
+* An alternative to `computeS` is called `computeP`, which has almost the same
+signature except that it has to be run in a monad. The purpose of this function
+is to allow us speed up computation by puting tasks over available cores.
+
+* In Repa, you can also do fold by using `foldS` and `foldP`, the former one is like `computeS`
+and the latter one does not guarantee to fold elements in strict left-to-right order.
+In addition to all requirements `foldS` might have, `foldP` requires its arguments `f :: a -> a -> a`
+to be associative.
