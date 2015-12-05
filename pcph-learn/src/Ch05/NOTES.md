@@ -60,3 +60,10 @@ is to allow us speed up computation by puting tasks over available cores.
 and the latter one does not guarantee to fold elements in strict left-to-right order.
 In addition to all requirements `foldS` might have, `foldP` requires its arguments `f :: a -> a -> a`
 to be associative.
+
+### Example: Image Rotation
+
+* Representation indicator: `F` is similar to `U`, but the resource (most likely an underlying
+foreign pointer) is allocated outside of Haskell.
+
+* `IL` monad ensures the external library *DevIL* being initialized properly. Having multiple calles to `runIL` is fine, the library will only be initialized once.
