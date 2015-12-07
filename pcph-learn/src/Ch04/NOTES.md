@@ -101,3 +101,25 @@ to resume value-producing process.
 The idea of pipeline parallelism is to fork a decicated computation
 to process one stage in the pipeline. Obviously this usually can't be as
 efficient as data parallelism, but pipeline parallelism is still a power tool.
+
+### Example: A Conference Timetable
+
+* Many problems can be solved by a divide-and-conquer strategy: split
+a problem recursively into smaller "subproblems", have them solved separately
+then we merge these results together to form the final answer for the original problem.
+
+* **parallel skeleton** I think the basic idea is: the divide-and-conquer strategy has some stages (in the book they call it **search pattern**),
+if adding parallelism has nothing to do with the actually implementation of how to do so (for exammpl, how a subproblem solution could be turned into a global solution, or how we split
+a problem into many subproblems), we can leave these specific operations as arguments.
+By doing so we will have a "skeleton", which should have most of the detail abstracted so
+we can focus on adding parallelism to the program.
+
+* Parallelism has its own overhead, if tasks are too fine-grained, this overhead
+will negate the benefit of having parallelism. In this specific problem,
+we set a max-depth, if we want to search any further past this limit, we'd better
+just use one worker instead of splitting that task further
+
+### Example: A Parallel Type Inferencer
+
+(TODO) I think the example here is a little bit too involved,
+need more time to figure it out, meanwhile let's skip to the next chapter.
