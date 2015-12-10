@@ -1,7 +1,5 @@
 USING: math math.functions prettyprint kernel ascii sequences io ;
 IN: day-1.do-easy
-! enter following commands in Listener
-! (TODO) for now I haven't figured out how scripting works
 
 ! 1. use only * and + to calculate 3^2 + 4^2
 : ex1 ( -- ) 3 3 * 4 4 * + . ;
@@ -18,11 +16,7 @@ IN: day-1.do-easy
 : ex4 ( x -- ) "Hello, " swap append >upper . ;
 ! yes, one stack shuffling (swap)
 
-: entry ( -- )
-  ex1
-  ex2
-  1 2 ex3 . . .
-  "Javran" ex4
-; 
-
-MAIN: entry
+ex1
+ex2
+1 2 ex3 . . .
+"Javran" ex4
