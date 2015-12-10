@@ -15,6 +15,11 @@ other programming languages.
 
 ## Scripting
 
+* To begin scripting in factor, one should setup `.factor-roots` file in his home directory.
+  The file contains a list of loading paths.
+  To run scripts in this repo, you should append one line to your `.factor-roots` file that
+  looks like: `/path/to/thinking-dumps/seven-more-languages/ch02-factor`
+
 * Note that `MAIN: <word>` accepts a word that has stack effect `( -- )`,
   and use it as an entry point to the program. If you do `MAIN: word1 word2`,
   it actually means `MAIN: word1` and then `word2`.

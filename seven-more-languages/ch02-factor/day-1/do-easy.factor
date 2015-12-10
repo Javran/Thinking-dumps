@@ -1,3 +1,4 @@
+! about how to run codes here, see first bullet of `Scripting` part in `day-2/NOTES.md`
 USING: math math.functions prettyprint kernel ascii sequences io ;
 IN: day-1.do-easy
 
