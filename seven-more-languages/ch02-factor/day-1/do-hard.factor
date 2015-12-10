@@ -1,11 +1,20 @@
-! enter following commands in Listener
-! (TODO) for now I haven't figured out how scripting works
+USING: prettyprint ;
+IN: day-1.do-hard
 
 ! 1. two digits
-
-42 [ 10 /i ] [ 10 mod ] bi
+USING: math kernel ;
+: ex1 ( x -- a b )
+    [ 10 /i ] [ 10 mod ] bi 
+;
 
 ! 2. arbitrary digits
 
-USE: math.parser
-12345 number>string [ 1string string>number ] each
+USING: math.parser strings sequences ;
+! I have to print it out rather than keeping it on the stack
+! because I don't know the correct stack effect signature
+: ex2 ( x -- )
+    number>string [ 1string string>number . ] each
+;
+
+45 ex1 . .
+12345 ex2
