@@ -32,3 +32,10 @@ other programming languages.
 * Unlike working with the Listener, you need to explicitly import all necessary vocabularies.
   I personally think this could become annoying ... hope there are features that re-export multiple
   vocabularies as one
+
+## Testing
+
+* Use `unit-test` from `tools.test` to create unit tests
+* Seems like there are some magics behind `test`: from the book we know calling `test` to
+  consume `"examples"` on the stack actually performs all unit tests prefixed with `examples`.
+  Let's don't investigate too much, just use the code in the book as a templete for now.
