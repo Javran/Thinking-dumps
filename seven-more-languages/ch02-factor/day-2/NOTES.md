@@ -25,5 +25,10 @@ other programming languages.
   it actually means `MAIN: word1` and then `word2`.
   Therefore in this case `word2` is a top level code, which executes before entering entry
   point. (This could be confusing)
+
 * For now I think the easiest way to script in Factor is to just define and use words on top level.
   As defining a new word to serve as `MAIN` just adds up boilerplate and does nothing really useful.
+
+* Unlike working with the Listener, you need to explicitly import all necessary vocabularies.
+  I personally think this could become annoying ... hope there are features that re-export multiple
+  vocabularies as one
