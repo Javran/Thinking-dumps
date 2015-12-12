@@ -29,7 +29,10 @@ other programming languages.
 * Use `IN: <vocab-name>` to specify the name of the vocabulary, note that the name needs to match
   the directory, for example, vocabulary name `day-2.do-easy.strings` should match directory
   `day-2/do-easy/strings/strings.factor`, I feel it is kind of verbose but you need to have a directory
-  called `strings` and a file with basename `strings`
+  called `strings` and a file with basename `strings`.
+  `foo.tests` seems to be an exception of this rule .. there you put `foo-tests.factor` under
+  the same directory of `foo.factor` but use `IN: foo.tests`, maybe I'm entirely wrong
+  but I don't find a documentation about this dirname-vocabname-matching rule.
 
 * For now I think the easiest way to script in Factor is to just define and use words on top level.
   As defining a new word to serve as `MAIN` just adds up boilerplate and does nothing really useful.
