@@ -26,6 +26,11 @@ other programming languages.
   Therefore in this case `word2` is a top level code, which executes before entering entry
   point. (This could be confusing)
 
+* Use `IN: <vocab-name>` to specify the name of the vocabulary, note that the name needs to match
+  the directory, for example, vocabulary name `day-2.do-easy.strings` should match directory
+  `day-2/do-easy/strings/strings.factor`, I feel it is kind of verbose but you need to have a directory
+  called `strings` and a file with basename `strings`
+
 * For now I think the easiest way to script in Factor is to just define and use words on top level.
   As defining a new word to serve as `MAIN` just adds up boilerplate and does nothing really useful.
 
