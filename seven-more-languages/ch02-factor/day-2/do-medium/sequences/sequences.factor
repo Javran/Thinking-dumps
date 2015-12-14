@@ -47,11 +47,11 @@ SYMBOL: find-pred
     { f f } [ find-pred get reduce-helper ] reduce
     dup first
     [ second ]
-    [ drop f ]
+    [ "element not found" throw ]
     if
     ;
 
 ! USE: prettyprint
 ! USE: math
 
-! { 1 2 3 4 5 6 } [ 3 > ] find-first . 
+! { 1 2 3 4 5 6 } [ 9 > ] find-first . 
