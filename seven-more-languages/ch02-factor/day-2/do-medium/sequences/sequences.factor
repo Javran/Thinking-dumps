@@ -19,7 +19,7 @@ IN: day-2.do-medium.sequences
         drop
         ! we get the element on top of the stack
         ! and the quoted word is right next to it
-        dup rot call
+        dup rot call( e -- bool )
         [ 
             ! if true, we need something like { t element }
             { t } swap suffix
