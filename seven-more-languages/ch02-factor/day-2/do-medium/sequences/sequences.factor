@@ -55,3 +55,6 @@ SYMBOL: find-pred
 ! USE: math
 
 ! { 1 2 3 4 5 6 } [ 9 > ] find-first . 
+
+! TODO: testcases
+! TODO: refactor
