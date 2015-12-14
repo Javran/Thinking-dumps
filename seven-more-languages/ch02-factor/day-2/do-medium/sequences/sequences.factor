@@ -1,8 +1,8 @@
 IN: day-2.do-medium.sequences
 
-: find-first ( seq quot: ( e -- bool ) -- x )
+! : find-first ( seq quot: ( e -- bool ) -- x )
     
-    ;
+!    ;
 
 : reduce-helper ( quot: ( e -- bool ) acc1 ele -- quot: ( e -- bool ) acc2 )
     ! save the element for now
@@ -22,10 +22,9 @@ IN: day-2.do-medium.sequences
         dup rot call
         [ 
             ! if true, we need something like { t element }
-            ! for now let's say it's "found" as a placeholder
-            { t "found" }
+            { t } swap suffix
         ]
-        [ drop { f f } ]
+        [ { f f } ]
         if
     ]
     if
