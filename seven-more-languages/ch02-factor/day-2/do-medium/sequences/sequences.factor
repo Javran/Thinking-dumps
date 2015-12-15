@@ -37,10 +37,6 @@ SYMBOL: find-pred
     if
     ;
 
-! try this out:
-! { 1 2 3 4 5 5 1 3 8 } { f f } [ [ 5 > ] reduce-helper ] reduce .
-! produces: { t 8 }
-
 : find-first ( seq quot: ( e -- bool ) -- x )
     ! save quoted predicate
     find-pred set
@@ -51,10 +47,4 @@ SYMBOL: find-pred
     if
     ;
 
-! USE: prettyprint
-! USE: math
-
-! { 1 2 3 4 5 6 } [ 9 > ] find-first . 
-
-! TODO: testcases
 ! TODO: refactor
