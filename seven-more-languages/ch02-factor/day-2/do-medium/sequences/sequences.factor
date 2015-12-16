@@ -36,6 +36,10 @@ SYMBOL: find-pred
     if
     ;
 
+! if none of the element can satisfy the predicate
+! we choose to raise an error signal, because if we return a value as normal
+! we might need more extra works to tell if it is a value from the sequence
+! or it is a value to indicate that we have found nothing.
 : find-first ( seq quot: ( e -- bool ) -- x )
     ! save quoted predicate
     find-pred set
