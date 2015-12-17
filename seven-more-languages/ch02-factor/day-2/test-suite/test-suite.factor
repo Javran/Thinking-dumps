@@ -22,6 +22,13 @@ SYMBOL: vocab-count
     vocab-count set
     ;
 
+! we are expected to count how many tests we have run,
+! but looking at public interfaces provided by unit testing
+! vocabulary we have, it might not be possible to count the number
+! therefore, as the closest solution to the exercise, we print out
+! number of vocabularies we have visited by "test",
+! note that some vocabularies might not have unit tests,
+! but there is no simple way to tell.
 : test-all-examples ( -- )
     0 vocab-count set
     "day-2.do-easy" quiet-test-with-info
@@ -36,3 +43,5 @@ SYMBOL: vocab-count
     ;
 
 MAIN: test-all-examples
+
+! TODO: summarize all problems we have in NOTES.md
