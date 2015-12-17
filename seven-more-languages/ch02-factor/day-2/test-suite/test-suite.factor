@@ -5,13 +5,21 @@ USE: day-2.do-medium.sequences
 
 IN: day-2.test-suite
 
+USING: prettyprint ;
+
+: quiet-test-with-info ( prefix -- )
+    dup dup "++ Testing: " write print
+    [ test ] with-null-writer
+    "-- Test done: " write print
+    ;
+
 : test-all-examples ( -- )
-    ! I wish to see that's going on,
-    ! and the number of testcases is not too much
-    ! so let's don't mute the output
-    "day-2.do-easy" test
-    "day-2.do-medium" test
+    "day-2.do-easy" quiet-test-with-info
+    "day-2.do-medium" quiet-test-with-info
     test-failures get empty?
-    [ "All tests passed." print ] [ :test-failures ] if ;
+    [ "All tests passed." print ]
+    [ "Number of Tests failed: " print
+      test-failures get length .
+    ] if ;
 
 MAIN: test-all-examples
