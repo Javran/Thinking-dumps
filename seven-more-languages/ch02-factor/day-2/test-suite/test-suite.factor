@@ -50,6 +50,10 @@ SYMBOL: vocab-count
     vocab-count get .
     ;
 
+! use this entry for interactive test suite control
+! TODO: impl
+! plan: entry vocab prefix for individual vocabulary tests
+! or use ":quit" to quit, ":test-all" for running all preset tests
 ! : test-interactive ( -- )
 
 MAIN: test-all-examples
