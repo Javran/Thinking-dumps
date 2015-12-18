@@ -13,13 +13,20 @@ SYMBOL: vocab-count
 : quiet-test-with-info ( prefix -- )
     "++ Testing: " write dup print
     [
-      dup test 
+      dup test
     ] with-null-writer
     "-- Test done: " write dup print
     ! bump counter
     child-vocabs length
     vocab-count get +
     vocab-count set
+    ;
+
+! store a list of vocabulary prefixes
+: test-vocab-prefixes ( -- seq )
+    { "day-2.do-easy"
+      "day-2.do-medium"
+    }
     ;
 
 ! we are expected to count how many tests we have run,
@@ -31,8 +38,9 @@ SYMBOL: vocab-count
 ! but there is no simple way to tell.
 : test-all-examples ( -- )
     0 vocab-count set
-    "day-2.do-easy" quiet-test-with-info
-    "day-2.do-medium" quiet-test-with-info 
+    test-vocab-prefixes [ quiet-test-with-info ] each
+    ! "day-2.do-easy" quiet-test-with-info
+    ! "day-2.do-medium" quiet-test-with-info
     test-failures get empty?
     [ "All tests passed." print ]
     [ "Number of Tests failed: " print
@@ -41,6 +49,8 @@ SYMBOL: vocab-count
     "Number of vocabularies visited: " write
     vocab-count get .
     ;
+
+! : test-interactive ( -- )
 
 MAIN: test-all-examples
 
