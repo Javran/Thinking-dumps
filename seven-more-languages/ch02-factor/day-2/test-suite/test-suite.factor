@@ -78,5 +78,3 @@ SYMBOL: vocab-count
 
 ! MAIN: test-all-examples
 MAIN: test-interactive
-
-! TODO: summarize all problems we have in NOTES.md

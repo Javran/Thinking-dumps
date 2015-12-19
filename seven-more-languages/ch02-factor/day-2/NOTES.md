@@ -47,3 +47,15 @@ other programming languages.
 * Seems like there are some magics behind `test`: from the book we know calling `test` to
   consume `"examples"` on the stack actually performs all unit tests prefixed with `examples`.
   Let's don't investigate too much, just use the code in the book as a templete for now.
+
+## Notes regarding exercises
+
+* `call` can invoke quotations whose stack effect can be inferred at compile time
+  while if we have some quotations pushed to the stack at runtime, we need runtime stack
+  effect checkings so need to use `call(` instead. Check builtin document about `call` and `call(`
+  note that `call(` looks odd and to use it you should write something like `call( stack -- effect )`.
+  That is, surround stack effect descriptions by `call(` and `)`
+
+* `find` is actually one valid implementation of `find-first`, examine its stack effect
+  to get an idea about what your stack effect of `find-first` should look like.
+  Note that those ellipsis doesn't seem to be necessary.
