@@ -5,7 +5,7 @@ USE: day-2.do-medium.sequences
 
 IN: day-2.test-suite
 
-USING: prettyprint vocabs math ;
+USING: prettyprint vocabs math combinators ;
 
 SYMBOL: vocab-count
 
@@ -58,7 +58,11 @@ SYMBOL: vocab-count
     "Avaliable tests: " print
     test-vocab-prefixes [ "* " write print ] each
     "Input one from above for running that test suite, " print
-    "or use \":quit\" or \":test-all\"" print
+    "or use \":quit\" or \":test-all\"" print flush
+    readln
+    { { [ dup ":quit" = ] [ drop "Quit." print ] }
+      { [ dup ":test-all" = ] [ drop test-all-examples test-interactive ] }
+      [ drop "TODO" print ] } cond
     ;
 
 ! MAIN: test-all-examples
