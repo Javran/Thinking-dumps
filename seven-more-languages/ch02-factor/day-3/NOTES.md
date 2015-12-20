@@ -9,6 +9,8 @@ Factor has an object system built on tuples.
       - `foo>>` reads the slot value
       - `>>foo` sets the slot value (of an object)
       - `change-slot` apply a quoted code block to the slot value of an object
+      - `foo<<` that has stack effect `( obj val -- )`
+      - See "Slot accessors" of the built-in document
 
 * Tuple construction
 
