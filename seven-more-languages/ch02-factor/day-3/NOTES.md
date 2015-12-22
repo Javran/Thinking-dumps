@@ -40,3 +40,8 @@ Factor has an object system built on tuples.
 # Where to go from here
 
 This part has nothing fancy. I'm not going to summarize it, check them out in the book.
+
+# Exercises
+
+For exercises, I'm getting stuck because even the simplest slot-modification cannot
+run when not in a Listener. There could be something missing.

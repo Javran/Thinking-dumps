@@ -1,4 +1,4 @@
-IN: test
+IN: day-3.test
 
 USING: kernel prettyprint math ;
 
