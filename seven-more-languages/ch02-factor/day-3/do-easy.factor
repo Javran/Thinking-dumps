@@ -1,6 +1,6 @@
-IN: day-3.do-easy
+USING: kernel ;
 
-USE: kernel
+IN: day-3.do-easy
 
 TUPLE: cart-item name price quantity ;
 
@@ -19,8 +19,10 @@ TUPLE: cart-item name price quantity ;
 !    [ * ]
 !    change-price ;
 
-! USE: prettyprint
+USE: prettyprint
 
-! 123 <cart-item-with-price>
+123 <cart-item-with-price>
 
-! dup .
+dup .
+
+[ drop 12323 ] change-name .
