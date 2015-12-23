@@ -22,8 +22,3 @@ USE: math
         *
     ]
     change-price ;
-
-USE: prettyprint
-
-1000 <cart-item-with-price>
-0.9 apply-discount .
