@@ -2,6 +2,7 @@ USING: tools.test io io.streams.null kernel namespaces sequences ;
 
 USE: day-2.do-easy.strings
 USE: day-2.do-medium.sequences
+USE: day-3.do-easy
 
 IN: day-2.test-suite
 
@@ -17,7 +18,7 @@ SYMBOL: vocab-count
     ] with-null-writer
     "-- Test done: " write dup print
     ! bump counter
-    child-vocabs length
+    loaded-child-vocab-names length
     vocab-count get +
     vocab-count set
     ;
@@ -26,6 +27,7 @@ SYMBOL: vocab-count
 : test-vocab-prefixes ( -- seq )
     { "day-2.do-easy"
       "day-2.do-medium"
+      "day-3.do-easy"
     }
     ;
 
@@ -76,5 +78,5 @@ SYMBOL: vocab-count
 ! first line for the non-interactive testing
 ! second line for the interactive one
 
-! MAIN: test-all-examples
-MAIN: test-interactive
+MAIN: test-all-examples
+! MAIN: test-interactive
