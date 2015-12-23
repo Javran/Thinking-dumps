@@ -43,5 +43,4 @@ This part has nothing fancy. I'm not going to summarize it, check them out in th
 
 # Exercises
 
-For exercises, I'm getting stuck because even the simplest slot-modification cannot
-run when not in a Listener. There could be something missing.
+* If you encounter any error regarding `change-slot` cannot be found, try `USE: accessors`.
