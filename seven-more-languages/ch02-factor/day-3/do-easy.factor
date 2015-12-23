@@ -1,5 +1,4 @@
-USING: kernel ;
-
+USING: kernel accessors ;
 IN: day-3.do-easy
 
 TUPLE: cart-item name price quantity ;
@@ -10,19 +9,21 @@ TUPLE: cart-item name price quantity ;
     ! now we have: name, price
     1 cart-item boa ;
 
+USE: math
 
-! "change-price" not found???
-! USE: math
-
-! : apply-discount ( obj percent -- obj )
-!    swap
-!    [ * ]
-!    change-price ;
+: apply-discount ( obj percent -- obj )
+    swap
+    ! object on top
+    [ 
+        ! after "change-price" consumes two elements from the stack
+        ! all we have is the percentage, and on top of it the actually
+        ! price is pushed, all we need to do is modify it -- by simply
+        ! multiply the percentage
+        *
+    ]
+    change-price ;
 
 USE: prettyprint
 
-123 <cart-item-with-price>
-
-dup .
-
-[ drop 12323 ] change-name .
+1000 <cart-item-with-price>
+0.9 apply-discount .
