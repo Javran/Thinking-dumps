@@ -5,6 +5,8 @@ USE: day-3.do-easy
 USE: tools.test
 USE: math
 
+! use day-2.test-suite to run it.
+
 { 1234 } [ 1234 <cart-item-with-price> price>> ] unit-test
 { t } [ 1000 <cart-item-with-price>
         0.9 apply-discount

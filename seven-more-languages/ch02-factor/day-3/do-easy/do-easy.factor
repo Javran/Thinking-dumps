@@ -1,7 +1,7 @@
 USING: kernel accessors ;
 IN: day-3.do-easy
 
-TUPLE: cart-item name price quantity ;
+USE: day-3.tuples
 
 ! ex 1: create cart-item with default name and quantity
 : <cart-item-with-price> ( p -- obj )
