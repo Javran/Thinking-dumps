@@ -4,6 +4,15 @@ USING: kernel accessors math sequences ;
 
 USE: day-3.tuples
 
+! basically the book gives us an idea about keeping fields that would be filled in future:
+! it keep track of what we have for now, and use placeholders (e.g. f here) to indicate
+! that value is unknown up to now.
+! later, as the program progresses, we put information into use and make rest of the fields
+! available.
+! this approach could sometimes get in the way because there is no consistent way to test if
+! a field is properly filled with a value / or the value is up-to-date (given that it's possible
+! the source of the information changes but the update is not reflected in that field)
+
 TUPLE: checkout item-count base-price taxes shipping total-price ;
 
 ! calculate sum of a sequences of things
@@ -44,3 +53,22 @@ CONSTANT: pst-rate 0.09975
     ! store the result in checkout instance
     >>taxes
     ; inline
+
+CONSTANT: base-shipping 1.49
+CONSTANT: per-item-shipping 1.00
+
+: per-item ( checkout -- shipping )
+    per-item-shipping * + base-shipping + ;
+
+: shipping ( checkout shipping-calc -- shipping )
+    ! get item count from checkout
+    [ dup item-count>> ] dip
+    ! calculate shipping cost and write to the checkout instance
+    call >>shipping ; inline
+
+: total ( checkout -- total-price )
+    dup
+    ! the total price comes from 3 sources, we add them together
+    ! to yield the final result
+    [ base-price>> ] [ taxes>> ] [ shipping>> ] tri + +
+    >>total-price ;
