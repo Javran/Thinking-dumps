@@ -72,3 +72,8 @@ CONSTANT: per-item-shipping 1.00
     ! to yield the final result
     [ base-price>> ] [ taxes>> ] [ shipping>> ] tri + +
     >>total-price ;
+
+: sample-checkout ( checkout -- checkout )
+    [ gst-pst ] taxes
+    [ per-item ] shipping
+    total ;
