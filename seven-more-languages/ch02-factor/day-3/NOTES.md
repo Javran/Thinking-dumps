@@ -44,3 +44,22 @@ This part has nothing fancy. I'm not going to summarize it, check them out in th
 # Exercises
 
 * If you encounter any error regarding `change-slot` cannot be found, try `USE: accessors`.
+
+* About **Do (Medium)** Exercises
+
+    - We could simply change the constant, but that is not interesting and not worth
+      a medium difficulty. What we can do is to make tax a piecewise function of the price.
+
+    - We can make the shipping scheme more interesting by turning it into a piecewise function,
+      or we can give a reduction on shipping price if the total price exceeds some number
+      (quite realistic isn't it xD)
+
+    - About the unit-test, instead of rounding it in some way, there is another workaround
+      that I think is better: we test if the absolute value of the difference between expected
+      value and actual one is less than a small number. This makes it easier to write cases
+      where you would expect a floating number -- they will be handled in exact same way.
+
+        However, this would sacrifice the readabilty of unit-testing: instead of writing out
+        the code and expected result, you will define a function that tests the difference
+        and output a truth value, and instead of expecting the result value to come out,
+        we expect a `true` from the comparison done in the code.
