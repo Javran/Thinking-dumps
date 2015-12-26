@@ -31,3 +31,35 @@ CONSTANT: epsilon 1e-6
 : is-close-enough ( x y -- b )
     - abs
     epsilon <= ; inline
+
+
+USE: day-3.checkout
+! let's try this shipping scheme:
+! if total price >= 200, we get free shipping
+! if total price >= 40
+!   if item count <= 10, still free shipping
+!   otherwise, apply a 20% off on shipping (* 0.8)
+! if none of the below applies, apply normal shipping price
+! note that there is a small challenge here: unlike "per-item" in the book
+! we now have to know the total price thus need to prepare 2 pieces of info on
+! the stack.
+: new-shipping-calc ( item-count total-price -- shipping )
+    dup 200 >=
+    ! free shipping
+    [ 2drop 0 ]
+    [ 
+        dup 40 >=
+        [
+            over 10 <=
+            ! free shipping
+            [ 2drop 0 ]
+            ! 20% off
+            [ drop per-item
+              0.8 *
+            ]
+            if
+        ]
+        ! apply old strategy
+        [ drop per-item ]
+    ]
+    if ;
