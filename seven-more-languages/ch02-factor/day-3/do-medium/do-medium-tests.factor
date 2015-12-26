@@ -4,6 +4,8 @@ USE: day-3.do-medium
 USE: day-3.checkout
 USE: math
 USE: tools.test
+USE: kernel
+USE: accessors
 
 { t } [ 1000 new-tax-calc  
         100 is-close-enough ] unit-test
@@ -24,3 +26,12 @@ USE: tools.test
 { t } [ 123 10 new-shipping-calc
         123 per-item
         is-close-enough ] unit-test
+
+! test the whole process of calculation shipping cost
+{ t }
+[ 123 20 f f f checkout boa
+  [ new-shipping-calc ]
+  new-shipping
+  shipping>>
+  123 20 new-shipping-calc
+  is-close-enough ] unit-test

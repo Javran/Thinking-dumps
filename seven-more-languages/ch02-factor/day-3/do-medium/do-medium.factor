@@ -43,7 +43,7 @@ USE: day-3.checkout
 ! note that there is a small challenge here: unlike "per-item" in the book
 ! we now have to know the total price thus need to prepare 2 pieces of info on
 ! the stack.
-: new-shipping-calc ( item-count total-price -- shipping )
+: new-shipping-calc ( item-count base-price -- shipping )
     dup 200 >=
     ! free shipping
     [ 2drop 0 ]
@@ -64,3 +64,15 @@ USE: day-3.checkout
         if
     ]
     if ;
+
+USE: accessors
+! note that a shipping-calc2 needs
+! "item-count total-price" to be kept on the stack
+: new-shipping ( checkout quot: ( item-count base-price -- shipping ) -- shipping )
+    [ dup
+      [ item-count>> ]
+      [ base-price>> ] bi ] dip
+      call
+      >>shipping ; inline
+
+USE: prettyprint
