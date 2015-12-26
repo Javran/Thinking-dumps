@@ -58,7 +58,7 @@ CONSTANT: base-shipping 1.49
 CONSTANT: per-item-shipping 1.00
 
 : per-item ( checkout -- shipping )
-    per-item-shipping * + base-shipping + ;
+    per-item-shipping * base-shipping + ;
 
 : shipping ( checkout shipping-calc -- shipping )
     ! get item count from checkout

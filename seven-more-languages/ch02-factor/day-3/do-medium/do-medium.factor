@@ -61,5 +61,6 @@ USE: day-3.checkout
         ]
         ! apply old strategy
         [ drop per-item ]
+        if
     ]
     if ;
