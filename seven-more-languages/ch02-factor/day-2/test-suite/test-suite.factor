@@ -3,6 +3,7 @@ USING: tools.test io io.streams.null kernel namespaces sequences ;
 USE: day-2.do-easy.strings
 USE: day-2.do-medium.sequences
 USE: day-3.do-easy
+USE: day-3.do-medium
 
 IN: day-2.test-suite
 
@@ -28,6 +29,7 @@ SYMBOL: vocab-count
     { "day-2.do-easy"
       "day-2.do-medium"
       "day-3.do-easy"
+      "day-3.do-medium"
     }
     ;
 

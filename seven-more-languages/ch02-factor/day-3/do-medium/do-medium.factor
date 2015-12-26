@@ -23,3 +23,11 @@ CONSTANT: nt-threshold 4000
     ]
     [ nt-rate-low * ] 
     if ;
+
+CONSTANT: epsilon 1e-6
+
+! test if two numbers are close enough
+! (in other words, less than a value called epsilon here)
+: is-close-enough ( x y -- b )
+    - abs
+    epsilon <= ; inline
