@@ -75,4 +75,15 @@ USE: accessors
       call
       >>shipping ; inline
 
-USE: prettyprint
+! new checkout scheme
+: new-scheme-checkout ( checkout -- checkout )
+    [ new-tax-calc ] taxes
+    [ new-shipping-calc ] new-shipping
+    total ;
+
+! USE: prettyprint
+
+! 40 123 f f f checkout boa
+! dup .
+! dup sample-checkout .
+! new-scheme-checkout .
