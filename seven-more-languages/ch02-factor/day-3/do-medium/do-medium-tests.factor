@@ -35,3 +35,10 @@ USE: accessors
   shipping>>
   123 20 new-shipping-calc
   is-close-enough ] unit-test
+
+! the purpose of this test is just to show that this new pipeline works
+! so we drop the result as most of the details are verified by tests above.
+{ }
+[ 456 123 f f f checkout boa
+  new-scheme-checkout
+  drop ] unit-test
