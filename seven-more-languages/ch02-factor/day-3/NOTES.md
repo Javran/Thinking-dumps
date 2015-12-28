@@ -69,3 +69,6 @@ This part has nothing fancy. I'm not going to summarize it, check them out in th
     - We have already addressed rounding errors by comparing if two number are "close enough" and
       I think this approach solves the problem well. There could be other approaches trying
       to do the math losslessly, but that would be an overkill for such a simple exercise.
+
+    - I will not try writing an user interface in Factor, because of the unstable framework,
+      lack of documentation and even the simplest example "hello-ui" is not working.
