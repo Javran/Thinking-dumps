@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, BangPatterns #-}
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -Wall -fno-warn-name-shadowing #-}
 
 module Main ( main, test {-, maxDistances -} ) where
@@ -83,17 +83,17 @@ toAdjMatrix xs = A.fromList (Z :. k :. k) (concat xs)
 
 main :: IO ()
 main = do
-   (n:_) <- fmap (fmap read) getArgs
-   print (run (let g :: Acc Graph
-                   g    = generate (constant (Z:.n:.n) :: Exp DIM2) f
-
-                   f :: Exp DIM2 -> Exp Weight
-                   f ix = let i,j :: Exp Int
-                              Z:.i:.j = unlift ix
-                          in
-                          A.fromIntegral j +
-                           A.fromIntegral i * constant (Prelude.fromIntegral n)
-               in
-               A.foldAll (+) (constant 0) (shortestPathsAcc n g)))
-
-
+    -- read the first argument and read it as a number
+    -- I think the original impl is little overcomplicated
+    -- so now it's refactored for readability
+    n <- read . head <$> getArgs
+    -- generate a graph to work with,
+    -- the size of the graph seems to be n x n, where n is the number of vertices
+    print (run (let g :: Acc Graph
+                    g = generate (constant (Z:.n:.n) :: Exp DIM2) f
+                    f :: Exp DIM2 -> Exp Weight
+                    f ix = let i,j :: Exp Int
+                               Z:.i:.j = unlift ix
+                           in A.fromIntegral j +
+                              A.fromIntegral i * constant (Prelude.fromIntegral n)
+                in A.foldAll (+) (constant 0) (shortestPathsAcc n g)))
