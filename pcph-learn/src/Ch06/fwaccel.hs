@@ -24,27 +24,32 @@ shortestPaths g0 = run (shortestPathsAcc n (use g0))
     Z :. _ :. n = arrayShape g0
 -- >>
 
--- <<shortestPathsAcc
 shortestPathsAcc :: Int -> Acc Graph -> Acc Graph
-shortestPathsAcc n = foldl1 (>->) steps              -- <3>
+shortestPathsAcc n =
+    -- (>->) is just function composition but to provide the library
+    -- a little bit hint for optimization
+    foldl1 (>->) steps
  where
-  steps :: [ Acc Graph -> Acc Graph ]                      -- <1>
-  steps =  [ step (unit (constant k)) | k <- [0 .. n-1] ]  -- <2>
--- >>
+  -- gradually count to n (take n steps)
+   -- this corresponds to the outermost loop in a standard Floyd-Warshall algorithm
+  steps :: [ Acc Graph -> Acc Graph ]
+  steps =  [ step (unit (constant k)) | k <- [0 .. n-1] ]
 
--- <<step
 step :: Acc (Scalar Int) -> Acc Graph -> Acc Graph
-step k g = generate (shape g) sp                           -- <1>
+step k g =
+    -- make an array of the same shape
+    generate (shape g) sp
  where
-   k' = the k                                              -- <2>
+   -- k is just k' wrapped inside an array
+   -- for some performance issue, we'd better pass arrays around
+   -- when doing a series of array operations
+   k' = the k
 
+   -- unpack index, update as necessary
    sp :: Exp DIM2 -> Exp Weight
-   sp ix = let
-             (Z :. i :. j) = unlift ix                     -- <3>
-           in
-             A.min (g ! index2 i j)                      -- <4>
-                   (g ! index2 i k' + g ! index2 k' j)
--- >>
+   sp ix = let (Z :. i :. j) = unlift ix
+           in A.min (g ! index2 i j)
+                    (g ! index2 i k' + g ! index2 k' j)
 
 -- -----------------------------------------------------------------------------
 -- Testing
@@ -83,6 +88,9 @@ toAdjMatrix xs = A.fromList (Z :. k :. k) (concat xs)
 
 main :: IO ()
 main = do
+    -- uncomment the following line to see if the test works ..
+    -- it should print out "True"
+    -- print test
     -- read the first argument and read it as a number
     -- I think the original impl is little overcomplicated
     -- so now it's refactored for readability
@@ -90,8 +98,12 @@ main = do
     -- generate a graph to work with,
     -- the size of the graph seems to be n x n, where n is the number of vertices
     print (run (let g :: Acc Graph
+                    -- specify size
                     g = generate (constant (Z:.n:.n) :: Exp DIM2) f
+                    -- specify element at each index
                     f :: Exp DIM2 -> Exp Weight
+                    -- looks like an edge from i to j has the length / weight
+                    -- of j+i*n ... I guess it's just a random choice
                     f ix = let i,j :: Exp Int
                                Z:.i:.j = unlift ix
                            in A.fromIntegral j +
