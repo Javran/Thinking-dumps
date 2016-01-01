@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -Wall -fno-warn-name-shadowing #-}
 
-module Main ( main, test {-, maxDistances -} ) where
+module Main ( main, test ) where
 
 import Prelude
 import System.Environment
@@ -9,20 +9,14 @@ import Data.Array.Accelerate as A
 import Data.Array.Accelerate.Interpreter
 import AccelerateCompat as A
 
--- <<Graph
 type Weight = Int32
 type Graph = Array DIM2 Weight
--- >>
 
--- -----------------------------------------------------------------------------
--- shortestPaths
-
--- <<shortestPaths
+-- just wrapping around shortestPathsAcc
 shortestPaths :: Graph -> Graph
 shortestPaths g0 = run (shortestPathsAcc n (use g0))
   where
     Z :. _ :. n = arrayShape g0
--- >>
 
 shortestPathsAcc :: Int -> Acc Graph -> Acc Graph
 shortestPathsAcc n =
@@ -30,10 +24,10 @@ shortestPathsAcc n =
     -- a little bit hint for optimization
     foldl1 (>->) steps
  where
-  -- gradually count to n (take n steps)
+   -- gradually count to n (take n steps)
    -- this corresponds to the outermost loop in a standard Floyd-Warshall algorithm
-  steps :: [ Acc Graph -> Acc Graph ]
-  steps =  [ step (unit (constant k)) | k <- [0 .. n-1] ]
+   steps :: [ Acc Graph -> Acc Graph ]
+   steps =  [ step (unit (constant k)) | k <- [0 .. n-1] ]
 
 step :: Acc (Scalar Int) -> Acc Graph -> Acc Graph
 step k g =
