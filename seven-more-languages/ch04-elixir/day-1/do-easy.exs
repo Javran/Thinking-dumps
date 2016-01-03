@@ -23,4 +23,11 @@ defmodule Day1Easy do
   IO.puts "Get Hypotenuse of right angle (two sides are #{inspect twosides}):"
   IO.puts "  #{inspect hypotenuse.(twosides)}"
 
+  str = "string"
+  IO.puts "String to atom: #{inspect String.to_atom(str)}"
+  IO.puts "Is str an atom? #{inspect is_atom(str)}"
+  IO.puts "Is converted atom an atom? #{inspect is_atom(String.to_atom(str))}"
+  
+  expr = 2*3*5
+  IO.puts "Is #{inspect expr} an atom? #{inspect is_atom(expr)}"
 end
