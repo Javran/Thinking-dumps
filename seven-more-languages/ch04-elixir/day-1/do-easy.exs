@@ -19,4 +19,8 @@ defmodule Day1Easy do
 
   def hypotenuse({a,b}), do: :math.sqrt(a*a+b*b)
 
+  twosides = {6,8}
+  IO.puts "Get Hypotenuse of right angle (two sides are #{inspect twosides}):"
+  IO.puts "  #{inspect hypotenuse.(twosides)}"
+
 end
