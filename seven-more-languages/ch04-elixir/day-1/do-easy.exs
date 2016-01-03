@@ -17,7 +17,7 @@ defmodule Day1Easy do
   triangle1 = { point1, point2, { -10, -10} }
   IO.puts "A triangle: #{inspect triangle1}"
 
-  def hypotenuse({a,b}), do: :math.sqrt(a*a+b*b)
+  hypotenuse = fn({a,b}) -> :math.sqrt(a*a+b*b) end
 
   twosides = {6,8}
   IO.puts "Get Hypotenuse of right angle (two sides are #{inspect twosides}):"
