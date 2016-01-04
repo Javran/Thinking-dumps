@@ -9,6 +9,11 @@ defmodule Day1Medium do
   def find_max([hd|tl]), do: fold_left( &max/2, hd, tl )
   def find_min([hd|tl]), do: fold_left( &min/2, hd, tl )
 
+  def word_count(xs), do: 
+    fold_left(fn(acc,i) -> 
+      Keyword.update(acc, i, 1, fn (x) -> x+1 end) end,
+    [], 
+    xs)
 end
 
 ls1 = []
@@ -26,3 +31,5 @@ p.( Day1Medium.find_max(ls3) )
 
 p.( Day1Medium.find_min(ls2) )
 p.( Day1Medium.find_min(ls3) )
+
+p.( Day1Medium.word_count([:one, :two, :two]) )
