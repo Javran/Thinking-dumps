@@ -5,8 +5,8 @@ defmodule Day1Hard do
   def traverse_with_level(data, level, mk_indent) do
     if is_tuple(data) do
       Enum.each(
-        Tuple.to_list(data), 
-        fn (x) -> traverse_with_level(x, level+1, mk_indent) end)
+        Tuple.to_list(data),
+        &(traverse_with_level(&1, level+1, mk_indent)))
     else
       IO.puts (mk_indent.(level) <> data)
     end
@@ -31,11 +31,84 @@ defmodule Day1Hard do
   # nil if the board is already full
   def board_next_move( { {a,b,c}, {d,e,f}, {g,h,i} } ) do
     xs = [a,b,c,d,e,f,g,h,i]
-    if Enum.all?(xs, fn (x) -> not is_nil(x) end) do
+    if Enum.all?(xs, &(not is_nil(&1))) do
       nil
     else
-      "test"
+      {x_count,o_count} = 
+        Enum.reduce(
+          xs, 
+          {0,0},
+          fn (i,{xc,oc}) ->
+            case i do
+              :x -> {xc+1,oc}
+              :o -> {xc,oc+1}
+              _  -> {xc,oc}
+            end
+          end)
+      if x_count <= o_count do
+        :x
+      else 
+        :o
+      end
     end
+  end
+
+  # given a line and a player, return the position that leads to a win (on this line)
+  # if there's no direct winning move, return false
+  def detect_winning_line_move( line, p ) do
+    case line do
+      # IMPORTANT: pin the pattern!
+      {nil,^p,^p} -> 0
+      {^p,nil,^p} -> 1
+      {^p,^p,nil} -> 2
+      _ -> false
+    end
+  end
+
+  # hm, we could generate this table, but
+  # that sounds like an overkill
+  def line_table do
+    [ # rows
+      { {0,0}, {0,1}, {0,2} },
+      { {1,0}, {1,1}, {1,2} },
+      { {2,0}, {2,1}, {2,2} },
+      # cols
+      { {0,0}, {1,0}, {2,0} },
+      { {0,1}, {1,1}, {2,1} },
+      { {0,2}, {1,2}, {2,2} },
+      # diags
+      { {0,0}, {1,1}, {2,2} },
+      { {0,2}, {1,1}, {2,0} } ]
+  end
+
+  def detect_winning_board_move( board, p ) do
+    Enum.reduce(
+      line_table,
+      # no winning move is found
+      false,
+      fn ( {pos1, pos2, pos3}, acc ) ->
+        case acc do
+          false ->
+            access = fn ({x,y}, board) -> elem(elem(board,x),y) end
+            IO.puts (inspect { access.(pos1,board),
+                access.(pos2,board),
+                access.(pos3,board) } )
+            result = detect_winning_line_move(
+              { access.(pos1,board),
+                access.(pos2,board),
+                access.(pos3,board) },
+              p)
+            case result do
+              # I know it's ugly, but I don't know how can I bind
+              # the whole thing to a name
+              false -> false
+              0 -> pos1
+              1 -> pos2
+              2 -> pos3
+            end
+          _ -> acc
+        end
+      end)
   end
 end
 
@@ -47,4 +120,4 @@ data = {"See Spot.", {"See Spot sit.", "See Spot run.", {"Go Deeper"}, "Back one
 Day1Hard.traverse( data )
 
 p = fn (x) -> IO.puts (inspect x) end
-p.( Day1Hard.board_next_move( {{:x,:o,:x}, {:o,:x,:o}, {:x,:o,:x}} ) )
+p.( Day1Hard.board_next_move( {{:x,:o,:x}, {:o,:x,:o}, {:x,:o,nil}} ) )
