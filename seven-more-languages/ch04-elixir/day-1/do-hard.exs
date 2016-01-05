@@ -90,9 +90,6 @@ defmodule Day1Hard do
         case acc do
           false ->
             access = fn ({x,y}, board) -> elem(elem(board,x),y) end
-            IO.puts (inspect { access.(pos1,board),
-                access.(pos2,board),
-                access.(pos3,board) } )
             result = detect_winning_line_move(
               { access.(pos1,board),
                 access.(pos2,board),
@@ -110,9 +107,36 @@ defmodule Day1Hard do
         end
       end)
   end
+  
+  def another_player p do
+    case p do
+      :x -> :o
+      :o -> :x
+    end
+  end
+
+  def best_next_move(board) do
+    player = board_next_move( board )
+    win_move = detect_winning_board_move( board, player )
+    if win_move do
+      win_move
+    else
+      other_win_move = detect_winning_board_move( board, another_player(player) )
+      if other_win_move do
+        other_win_move
+      else
+        # TODO: refine
+        "no obvious solution"
+      end
+    end
+  end
 end
 
-data = {"See Spot.", {"See Spot sit.", "See Spot run.", {"Go Deeper"}, "Back one level"}}
+data = {"See Spot.",
+        {"See Spot sit.",
+         "See Spot run.",
+         {"Go Deeper"},
+         "Back one level"}}
 
 # we will have an extra indentation on top level, which I think is resonable:
 # consider the difference between passing "foo" and parsing {"foo"},
