@@ -30,6 +30,8 @@ defmodule Day1Hard do
   # returns :x, :o or nil indicating who does the next move
   # nil if the board is already full
   def board_next_player( { {a,b,c}, {d,e,f}, {g,h,i} } ) do
+    # TODO: separate board-flatten logic to another function
+    # (and use Tuple.to_list to do so)
     xs = [a,b,c,d,e,f,g,h,i]
     if Enum.all?(xs, &(not is_nil(&1))) do
       nil
@@ -203,9 +205,8 @@ defmodule Day1Hard do
     end
   end
 
-  def best_next_move(board) do
-    # TODO: if a board is in an end state, return false
-    # instead of going into our algorithm
+  # this function works only on incomplete boards
+  def best_next_move_incomplete(board) do
     player = board_next_player(board)
     foe = another_player(player)
     win_move = detect_winning_board_move(board, player)
@@ -242,6 +243,19 @@ defmodule Day1Hard do
       end
     end
   end
+
+  def best_next_move(board) do
+    case get_winner(board) do
+      false ->
+        # only deal with incomplete baord
+        best_next_move_incomplete(board)
+      _ -> 
+        # if we have reached an end state, there's nothing to do
+        false
+    end
+  end
+
+  # TODO: play with itself and pretty print
 end
 
 data = {"See Spot.",
@@ -256,3 +270,4 @@ data = {"See Spot.",
 Day1Hard.traverse( data )
 
 # p = fn (x) -> IO.puts (inspect x) end
+
