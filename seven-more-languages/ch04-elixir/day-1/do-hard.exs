@@ -111,6 +111,52 @@ defmodule Day1Hard do
     end
   end
 
+  # update a 3-tuple in the specified location
+  def tuple3_modify({a,b,c}, idx, modifier) do
+    case idx do
+      0 -> {modifier.(a),b,c}
+      1 -> {a,modifier.(b),c}
+      2 -> {a,b,modifier.(c)}
+    end
+  end
+
+  # return a score in board's shape
+  # all cells in that line gets one score
+  # if all of them are either empty or taken by that player
+  # e.g. { {:x, nil, nil}, {nil,nil,nil}, {nil,nil,nil} }
+  # with line { {0,0}, {0,1}, {0,2} } is:
+  # { {1,1,1}, {0,0,0}, {0,0,0} } to :x
+  # but all zero to :o
+  def score_line(board,{p1,p2,p3},player) do
+    foe = another_player(player)
+    access = fn ({x,y}, board) -> elem(elem(board,x),y) end
+    cells = 
+      {access.(p1,board),
+       access.(p2,board),
+       access.(p3,board)}
+    score = 
+      case cells do
+        {^foe,_,_} -> 0
+        {_,^foe,_} -> 0
+        {_,_,^foe} -> 0
+        _ -> 1
+      end
+    Enum.reduce(
+      [p1,p2,p3],
+      {{0,0,0},{0,0,0},{0,0,0}},
+      fn ({r_index,c_index}, score_board) ->
+        tuple3_modify(
+          score_board,
+          r_index,
+          fn (row) ->
+            tuple3_modify(
+              row,
+              c_index,
+              &( &1 + score ))
+          end)
+      end)
+  end
+
   def best_next_move(board) do
     player = board_next_player(board)
     foe = another_player(player)
