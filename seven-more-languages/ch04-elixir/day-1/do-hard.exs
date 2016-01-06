@@ -81,6 +81,8 @@ defmodule Day1Hard do
       { {0,2}, {1,1}, {2,0} } ]
   end
 
+  def access({x,y}, board), do: elem(elem(board,x),y)
+
   def detect_winning_board_move( board, p ) do
     Enum.reduce(
       line_table,
@@ -89,11 +91,10 @@ defmodule Day1Hard do
       fn ( line = {pos1, pos2, pos3}, acc ) ->
         case acc do
           false ->
-            access = fn ({x,y}, board) -> elem(elem(board,x),y) end
             result = detect_winning_line_move(
-              { access.(pos1,board),
-                access.(pos2,board),
-                access.(pos3,board) },
+              { access(pos1,board),
+                access(pos2,board),
+                access(pos3,board) },
               p)
             case result do
               false -> false
@@ -129,11 +130,10 @@ defmodule Day1Hard do
   # but all zero to :o
   def score_line(board,{p1,p2,p3},player) do
     foe = another_player(player)
-    access = fn ({x,y}, board) -> elem(elem(board,x),y) end
     cells = 
-      {access.(p1,board),
-       access.(p2,board),
-       access.(p3,board)}
+      {access(p1,board),
+       access(p2,board),
+       access(p3,board)}
     score = 
       case cells do
         {^foe,_,_} -> 0
@@ -157,7 +157,26 @@ defmodule Day1Hard do
       end)
   end
 
+  def merge_score({l1,l2,l3},{r1,r2,r3}) do
+    merge_line =
+      fn ({a,b,c}, {d,e,f}) -> {a+d,b+e,c+f} end
+    { merge_line.(l1,r1),
+      merge_line.(l2,r2),
+      merge_line.(l3,r3) }
+  end
+
+  def score_board(board, player) do
+    Enum.reduce(
+      line_table,
+      {{0,0,0},{0,0,0},{0,0,0}},
+      fn (line, acc) ->
+        merge_score(acc, score_line(board,line,player))
+      end)
+  end
+
   def best_next_move(board) do
+    # TODO: if a board is in an end state, return false
+    # instead of going into our algorithm
     player = board_next_player(board)
     foe = another_player(player)
     win_move = detect_winning_board_move(board, player)
@@ -168,8 +187,29 @@ defmodule Day1Hard do
       if other_win_move do
         other_win_move
       else
-        # TODO: refine
-        "no obvious solution"
+        # analyze the best move for the foe
+        score = score_board(board, foe)
+        # all possible coordinates, let's take it from existing line_table
+        coordinates =
+          Enum.flat_map(
+            Enum.take(Day1Hard.line_table,3),
+            &Tuple.to_list/1)
+        candiates =
+          Enum.sort_by(
+            coordinates,
+            fn (pos) ->
+              case access(pos,board) do
+                nil -> access(pos,score)
+                _ -> 
+                  # here we have a score lower than 0
+                  # so that unless the board is fully filled,
+                  # we cannot choose a taken cell as next best move
+                  -1
+              end
+            end,
+            &( &1 >= &2 ))
+        [solution|_] = candiates
+        solution
       end
     end
   end
