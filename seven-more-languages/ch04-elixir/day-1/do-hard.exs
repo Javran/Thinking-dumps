@@ -174,6 +174,35 @@ defmodule Day1Hard do
       end)
   end
 
+  # return one of: :x, :o, :tie
+  # or false if the game is not finished
+  def get_winner(board) do
+    winner = Enum.reduce(
+      line_table,
+      # nil for not decided
+      nil,
+      fn ({p1,p2,p3}, acc) ->
+        case acc do
+          nil ->
+          case {access(p1,board),
+                access(p2,board),
+                access(p3,board)} do
+            {a,a,a} -> a
+            _ -> nil
+          end
+          _ -> acc
+        end
+      end)
+    case winner do
+      nil -> 
+        case board_next_player(board) do
+          nil -> :tie
+          _ -> false
+        end
+      _ -> winner
+    end
+  end
+
   def best_next_move(board) do
     # TODO: if a board is in an end state, return false
     # instead of going into our algorithm
