@@ -21,7 +21,7 @@ defmodule Day1Hard do
   #   assume :x moves first when the number of cells taken is the same for both
   # * if there's an obvious way to win, do it
   # * if enemy has an obvious way of winning, block it
-  # * otherwise we examine empty cells, take the one that has best "potential"
+  # * otherwise we examine empty cells, take the one that has best "potential" (to the foe)
   # * to estimate "potential", we count lines that might lead to a win (i.e. not
   #   yet taken by the enemy) (note that if the whole board is empty, the center cell
   #   will have a potential of 4, the corners 3, and sides 2, leaving the center cell
@@ -29,7 +29,7 @@ defmodule Day1Hard do
 
   # returns :x, :o or nil indicating who does the next move
   # nil if the board is already full
-  def board_next_move( { {a,b,c}, {d,e,f}, {g,h,i} } ) do
+  def board_next_player( { {a,b,c}, {d,e,f}, {g,h,i} } ) do
     xs = [a,b,c,d,e,f,g,h,i]
     if Enum.all?(xs, &(not is_nil(&1))) do
       nil
@@ -86,7 +86,7 @@ defmodule Day1Hard do
       line_table,
       # no winning move is found
       false,
-      fn ( {pos1, pos2, pos3}, acc ) ->
+      fn ( line = {pos1, pos2, pos3}, acc ) ->
         case acc do
           false ->
             access = fn ({x,y}, board) -> elem(elem(board,x),y) end
@@ -96,12 +96,8 @@ defmodule Day1Hard do
                 access.(pos3,board) },
               p)
             case result do
-              # I know it's ugly, but I don't know how can I bind
-              # the whole thing to a name
               false -> false
-              0 -> pos1
-              1 -> pos2
-              2 -> pos3
+              idx -> elem(line, idx)
             end
           _ -> acc
         end
@@ -116,12 +112,13 @@ defmodule Day1Hard do
   end
 
   def best_next_move(board) do
-    player = board_next_move( board )
-    win_move = detect_winning_board_move( board, player )
+    player = board_next_player(board)
+    foe = another_player(player)
+    win_move = detect_winning_board_move(board, player)
     if win_move do
       win_move
     else
-      other_win_move = detect_winning_board_move( board, another_player(player) )
+      other_win_move = detect_winning_board_move(board, foe)
       if other_win_move do
         other_win_move
       else
@@ -143,5 +140,4 @@ data = {"See Spot.",
 # we want their representations to be unique.
 Day1Hard.traverse( data )
 
-p = fn (x) -> IO.puts (inspect x) end
-p.( Day1Hard.board_next_move( {{:x,:o,:x}, {:o,:x,:o}, {:x,:o,nil}} ) )
+# p = fn (x) -> IO.puts (inspect x) end
