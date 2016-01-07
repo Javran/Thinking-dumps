@@ -256,6 +256,27 @@ defmodule Day1Hard do
   end
 
   # TODO: play with itself and pretty print
+
+  # print a board to stdout
+  def print_board {l1,l2,l3} do
+    cell_str = fn (x) ->
+      case x do
+        :x -> "X"
+        :o -> "O"
+        nil -> " "
+      end
+    end
+    line_str = fn {x,y,z} ->
+      cell_str.(x) <> "|" <> cell_str.(y) <> "|" <> cell_str.(z)
+    end
+    sep = "-+-+-"
+    IO.puts( line_str.(l1) )
+    IO.puts sep
+    IO.puts( line_str.(l2) )
+    IO.puts sep
+    IO.puts( line_str.(l3) )
+  end 
+  
 end
 
 data = {"See Spot.",
@@ -271,3 +292,4 @@ Day1Hard.traverse( data )
 
 # p = fn (x) -> IO.puts (inspect x) end
 
+Day1Hard.print_board( {  {:x,nil,:o}, {:o,:x,:x}, {nil,:o,nil} } )
