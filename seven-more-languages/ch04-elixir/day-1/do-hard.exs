@@ -211,11 +211,11 @@ defmodule Day1Hard do
     foe = another_player(player)
     win_move = detect_winning_board_move(board, player)
     if win_move do
-      win_move
+      {player, win_move}
     else
       other_win_move = detect_winning_board_move(board, foe)
       if other_win_move do
-        other_win_move
+        {player,other_win_move}
       else
         # analyze the best move for the foe
         score = score_board(board, foe)
@@ -239,7 +239,7 @@ defmodule Day1Hard do
             end,
             &( &1 >= &2 ))
         [solution|_] = candiates
-        solution
+        {player,solution}
       end
     end
   end
@@ -275,8 +275,7 @@ defmodule Day1Hard do
     IO.puts( line_str.(l3) )
   end
 
-  def board_make_move(board, {r_ind,c_ind}) do
-    player = board_next_player(board)
+  def board_make_move(board, player, {r_ind,c_ind}) do
     tuple3_modify(
       board,
       r_ind,
@@ -292,9 +291,10 @@ defmodule Day1Hard do
     IO.puts "Step #{step}:"
     print_board board
     IO.puts ""
-    next_move = best_next_move(board)
-    if next_move do
-      board_demo_aux(board_make_move(board,next_move), step+1)
+    next_move_result = best_next_move(board)
+    if next_move_result do
+      {player,next_move} = next_move_result
+      board_demo_aux(board_make_move(board,player,next_move), step+1)
     else
       IO.puts "Game ended."
     end
