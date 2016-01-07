@@ -27,12 +27,15 @@ defmodule Day1Hard do
   #   will have a potential of 4, the corners 3, and sides 2, leaving the center cell
   #   the strongest candidate, which is what we want and how a game usually begins)
 
+  def flatten_board(board), do:
+    Enum.flat_map(
+      Tuple.to_list( board ), 
+      &Tuple.to_list/1)
+
   # returns :x, :o or nil indicating who does the next move
   # nil if the board is already full
-  def board_next_player( { {a,b,c}, {d,e,f}, {g,h,i} } ) do
-    # TODO: separate board-flatten logic to another function
-    # (and use Tuple.to_list to do so)
-    xs = [a,b,c,d,e,f,g,h,i]
+  def board_next_player board do
+    xs = flatten_board(board)
     if Enum.all?(xs, &(not is_nil(&1))) do
       nil
     else
@@ -60,6 +63,7 @@ defmodule Day1Hard do
   def detect_winning_line_move( line, p ) do
     case line do
       # IMPORTANT: pin the pattern!
+      # TODO: summary about problems we have when implementing exercises
       {nil,^p,^p} -> 0
       {^p,nil,^p} -> 1
       {^p,^p,nil} -> 2
