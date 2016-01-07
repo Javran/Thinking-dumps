@@ -255,8 +255,6 @@ defmodule Day1Hard do
     end
   end
 
-  # TODO: play with itself and pretty print
-
   # print a board to stdout
   def print_board {l1,l2,l3} do
     cell_str = fn (x) ->
@@ -275,8 +273,34 @@ defmodule Day1Hard do
     IO.puts( line_str.(l2) )
     IO.puts sep
     IO.puts( line_str.(l3) )
-  end 
-  
+  end
+
+  def board_make_move(board, {r_ind,c_ind}) do
+    player = board_next_player(board)
+    tuple3_modify(
+      board,
+      r_ind,
+      fn (line) ->
+        tuple3_modify(
+          line,
+          c_ind,
+          fn (_) -> player end)
+      end)
+  end
+
+  def board_demo_aux(board,step) do
+    IO.puts "Step #{step}:"
+    print_board board
+    IO.puts ""
+    next_move = best_next_move(board)
+    if next_move do
+      board_demo_aux(board_make_move(board,next_move), step+1)
+    else
+      IO.puts "Game ended."
+    end
+  end
+
+  def board_demo(board), do: board_demo_aux(board,0)
 end
 
 data = {"See Spot.",
@@ -290,6 +314,5 @@ data = {"See Spot.",
 # we want their representations to be unique.
 Day1Hard.traverse( data )
 
-# p = fn (x) -> IO.puts (inspect x) end
-
-Day1Hard.print_board( {  {:x,nil,:o}, {:o,:x,:x}, {nil,:o,nil} } )
+Day1Hard.board_demo( {  {:x,nil,:o}, {:o,:x,:x}, {nil,:o,nil} } )
+Day1Hard.board_demo( Tuple.duplicate(Tuple.duplicate(nil,3),3) )
