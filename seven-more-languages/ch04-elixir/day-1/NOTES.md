@@ -27,3 +27,8 @@ Here are some notes about the exercise and about Elixir language itself.
 * Use `x = <pattern>` so that the whole pattern can be bound to variable `x`. (e.g. `def foo(data={a,b})`)
 * When doing pattern matching, remember to pin some variables so there won't be captured accidentally.
   (see: [Pin Operator](http://elixir-lang.org/getting-started/pattern-matching.html#the-pin-operator) )
+* You can ignore parentheses when doing function calls (or defining functions) (e.g. `IO.puts "foo"`)
+  and simply name the function actually calls the function. If you just want to refer to a function, use
+  "&<function-name>/<arity>", where `function-name` is allowed to contain a module name.
+* When calling a function stored in a variable or written in anonymous manner, you need to use `<var>.(a,b,c)` to
+  make a function call (note the dot in between function variable name and argument list)

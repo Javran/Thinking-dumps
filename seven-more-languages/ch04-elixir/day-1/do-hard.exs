@@ -63,7 +63,6 @@ defmodule Day1Hard do
   def detect_winning_line_move( line, p ) do
     case line do
       # IMPORTANT: pin the pattern!
-      # TODO: summary about problems we have when implementing exercises
       {nil,^p,^p} -> 0
       {^p,nil,^p} -> 1
       {^p,^p,nil} -> 2
