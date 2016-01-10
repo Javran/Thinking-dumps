@@ -24,8 +24,12 @@ defmodule StateMachine do
     end
   end
 
+  # after marco subsitution but before compilation
+  # like a post-processing step
   defmacro __before_compile__(env) do
+    # module attribute is used to exchange data?
     states = Module.get_attribute(env.module, :states)
+    # get all events from state declaration
     events = states
       |> Keyword.values
       |> List.flatten
@@ -44,6 +48,8 @@ defmodule StateMachine do
   def event_callback(name) do
     callback = name
     quote do
+      # I believe it means (unquote(name))(context)
+      # which defines the function for each event name
       def unquote(name)(context) do
         StateMachine.Behavior.fire( state_machine, context, unquote(callback) )
       end
