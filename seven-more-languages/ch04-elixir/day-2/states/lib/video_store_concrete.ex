@@ -5,6 +5,9 @@ defmodule VideoStore.Concrete do import StateMachine.Behavior
     fire(state_machine, video, :return)
   def lose(video), do:
     fire(state_machine, video, :lose)
+  # added when doing exercise
+  def found(video), do:
+    fire(state_machine, video, :found)
 
   def state_machine do
     [ available:
@@ -21,6 +24,12 @@ defmodule VideoStore.Concrete do import StateMachine.Behavior
         [ to: :lost,
           calls: [ &VideoStore.losing/1 ]
         ]],
-      lost: [] ]
+      lost:
+      # added when doing exercise
+      [ found:
+        [ to: :available,
+          calls: [ &VideoStore.found/1 ]
+        ]]
+    ]
   end
 end

@@ -19,5 +19,12 @@ defmodule MarcoGeneratedTest do
     assert 3 == vid.times_rented
   end
 
+  # added when doing exercise
+  should "a lost video be available after found" do
+    import VidStore
+    vid = video |> rent |> lose |> found
+    assert :available == vid.state
+  end
+
   def video, do: %Video{title: "XMen"}
 end

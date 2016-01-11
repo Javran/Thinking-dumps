@@ -17,7 +17,12 @@ defmodule VidStore do
         calls:
         [ &VidStore.losing/1 ]] ]
 
-  state :lost, []
+  # modified when doing exercise
+  state :lost, 
+    [ found:
+      [ to: :available,
+        calls:
+        [ &VidStore.found_action/1 ]] ]
   
   def renting(video) do
     vid = log(video, "Renting #{video.title}")
@@ -27,6 +32,12 @@ defmodule VidStore do
   def returning(video), do: log(video, "Returning #{video.title}")
 
   def losing(video), do: log(video, "Losing #{video.title}")
+
+  # I admit this function name is somehow odd than other ones,
+  # because "found" is both an event and an action,
+  # and we will be generating a function called "found",
+  # so here we'd better give it another name
+  def found_action(video), do: log(video, "Found #{video.title}")
 
   def log(video, message) do
     %{video | log: [message | video.log]}
