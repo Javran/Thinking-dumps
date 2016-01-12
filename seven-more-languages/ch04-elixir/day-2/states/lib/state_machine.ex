@@ -53,6 +53,9 @@ defmodule StateMachine do
       def unquote(name)(context) do
         StateMachine.Behavior.fire( state_machine, context, unquote(callback) )
       end
+
+      # TODO: we could have generated before_name, after_name callbacks here
+      # but then who should be responsible for calling them?
     end
   end
 
