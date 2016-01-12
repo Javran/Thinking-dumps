@@ -9,15 +9,30 @@ defmodule StateMachine.Behavior do
   #       - to: state after the event is fired
   #       - calls: callbacks to transform the context
   #         all calls accepts a context, return the transformed version of it
-  #       - (extended) before_calls: unary functions that take a "transition tuple"
-  #       - (extended) after_calls: unary function that take a "transition tuple"
+  #       - (extended) before_calls: unary functions that 
+  #         take the context before firing the event
+  #       - (extended) after_calls: unary functions that
+  #         take the context after the event is fired
   # (an example can be found in VideoStore.Concrete)
   # the last two are marked "extended", which is part of the exercise.
-  # a "transition tuple" is defined as {before_state, event, after_state}
   def fire(context, event) do
+    if event[:before_calls] do
+      Enum.each( 
+        event[:before_calls],
+        &( &1.(context) ))
+    end
+    
     # NOTE: x |> f(a,b,c) is f(x,a,b,c)
-    %{context | state: event[:to]}
-    |> activate(event)
+    after_context = %{context | state: event[:to]}
+      |> activate(event)
+
+    if event[:after_calls] do
+      Enum.each(
+        event[:after_calls],
+        &( &1.(after_context) ))
+    end
+
+    after_context
   end
 
   def fire(states, context, event_name) do
