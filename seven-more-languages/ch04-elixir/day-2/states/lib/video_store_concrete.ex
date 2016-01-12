@@ -10,10 +10,20 @@ defmodule VideoStore.Concrete do import StateMachine.Behavior
     fire(state_machine, video, :found)
 
   def state_machine do
+    make_hook_with_message = fn (msg) ->
+      fn (ctxt) ->
+        IO.puts "hook function triggered"
+        IO.puts "  message: #{inspect msg}"
+        IO.puts "  context: #{inspect ctxt}"
+      end
+    end
+
     [ available:
       [ rent:
         [ to: :rented,
-          calls: [ &VideoStore.renting/1 ]
+          before_calls: [ make_hook_with_message.("before_rent") ],
+          calls: [ &VideoStore.renting/1 ],
+          after_calls: [ make_hook_with_message.("after_rent") ]
         ]],
       rented:
       [ return:
