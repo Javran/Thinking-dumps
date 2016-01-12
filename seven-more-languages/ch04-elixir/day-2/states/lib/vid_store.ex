@@ -4,6 +4,8 @@ defmodule VidStore do
   state :available,
     [ rent: 
       [ to: :rented,
+        before_calls:
+        [ &VidStore.before_hook_test_callback/1 ],
         calls:
         [ &VidStore.renting/1 ]] ]
 
@@ -23,6 +25,10 @@ defmodule VidStore do
       [ to: :available,
         calls:
         [ &VidStore.found_action/1 ]] ]
+
+  def before_hook_test_callback(ctxt) do
+    IO.puts "right before renting: #{inspect ctxt}"
+  end
   
   def renting(video) do
     vid = log(video, "Renting #{video.title}")
