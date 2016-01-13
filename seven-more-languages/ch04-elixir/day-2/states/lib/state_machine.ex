@@ -64,4 +64,8 @@ defmodule StateMachine do
   def event_callbacks(names) do
     Enum.map(names, &event_callback/1)
   end
+
+  defprotocol StateField do
+    def state( _ )
+  end
 end
