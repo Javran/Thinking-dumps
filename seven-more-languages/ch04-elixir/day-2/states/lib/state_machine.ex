@@ -42,6 +42,10 @@ defmodule StateMachine do
         end
 
         unquote event_callbacks(events)
+
+        defimpl StateMachine.StateField, for: unquote(env.module) do
+          def state( x ), do: x.state_machine
+        end
     end
   end
 

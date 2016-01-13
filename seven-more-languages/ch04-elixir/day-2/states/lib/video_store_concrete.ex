@@ -42,4 +42,9 @@ defmodule VideoStore.Concrete do import StateMachine.Behavior
         ]]
     ]
   end
+
+  import StateMachine
+  defimpl StateMachine.StateField, for: VideoStore.Concrete do
+    def state( vsc ), do: vsc.state_machine
+  end
 end
