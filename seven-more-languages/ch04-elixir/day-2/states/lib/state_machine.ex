@@ -47,6 +47,10 @@ defmodule StateMachine do
 
   def event_callback(name) do
     callback = name
+    # we could have generated before_name, after_name callbacks 
+    # in the following quoted part but then who should be responsible for calling them?
+    # note that they are callbacks, which is only supposed to be called indirectly
+    # by firing some events.
     quote do
       # I believe it means (unquote(name))(context)
       # which defines the function for each event name
@@ -54,8 +58,6 @@ defmodule StateMachine do
         StateMachine.Behavior.fire( state_machine, context, unquote(callback) )
       end
 
-      # TODO: we could have generated before_name, after_name callbacks here
-      # but then who should be responsible for calling them?
     end
   end
 

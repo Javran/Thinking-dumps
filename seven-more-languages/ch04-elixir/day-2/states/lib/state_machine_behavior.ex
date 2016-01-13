@@ -15,7 +15,6 @@ defmodule StateMachine.Behavior do
   #         take the context after the event is fired
   # (an example can be found in VideoStore.Concrete)
   # the last two are marked "extended", which is part of the exercise.
-  # TODO: could they be things like "before_rent", "after_rent"?
   def fire(context, event) do
     if event[:before_calls] do
       Enum.each( 
