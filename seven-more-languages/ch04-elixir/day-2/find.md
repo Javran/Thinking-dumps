@@ -24,7 +24,8 @@ There are series in Elixir online documents, namely:
 * [Macros](http://elixir-lang.org/getting-started/meta/macros.html)
 * [Domain Specific Languages](http://elixir-lang.org/getting-started/meta/domain-specific-languages.html)
 
-TODO: notes after reading them
+Basically metaprogramming in Elixir deals with abstract syntax tree of Elixir expressions.
+We manipulate Elixir expressions through Elixir marco and module libraries.
 
 ## Elixir protocols
 
