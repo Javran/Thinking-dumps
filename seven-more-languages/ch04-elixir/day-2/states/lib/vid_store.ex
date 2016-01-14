@@ -1,6 +1,12 @@
 defmodule VidStore do
   use StateMachine
 
+  # just some afterthoughts:
+  # is this really necessary to give states in this way?
+  # I think simply allowing user to specify a "state table"
+  # would work better, we will no longer need code to put all these
+  # declarations together
+
   state :available,
     [ rent: 
       [ to: :rented,

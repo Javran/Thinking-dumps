@@ -1,6 +1,6 @@
 # States
 
-**TODO: Add description**
+Example from Chapter 4 of Seven More Languages in Seven Weeks
 
 ## Installation
 
