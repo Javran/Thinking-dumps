@@ -2,9 +2,12 @@
 
 [Project home page](https://github.com/batate/elixir-pipes)
 
-TODO: the implementation looks simple but without some basics about Marco module and
-the representation of elixir expressions, I don't think I'm ready for answering this question.
-Will come back later after completing some actually programming exercises.
+All core implementations are in one single file: [pipe.ex](https://github.com/batate/elixir-pipes/blob/0ea5d743a9409dcaef1dec8f81ddb719a59a799f/lib/pipe.ex)
+This module works by modifying the semantics of Elixir pipe: `Marco.unpipe` breaks the pipe apart, `Enum.reduce` applies transformation to each
+of those "code segments" and finally `Marco.pipe` ties things up to make it back into one piece.
+
+`pipe_with` is not an exception of this: it transforms a pipe so that the custom function is embeded into each element of the pipe,
+so the custom function has a chance of consuming intermediate results and determine what to do next.
 
 ## The supported Elixir module attributes
 
