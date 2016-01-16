@@ -3,12 +3,14 @@ defmodule States do
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
-  def start(_type, _args) do
+  def start(_type, videos) do
     import Supervisor.Spec, warn: false
 
     children = [
       # Define workers and child supervisors to be supervised
-      # worker(States.Worker, [arg1, arg2, arg3]),
+
+      # modified: passing in initial state (list of videos)
+      worker(States.Server, [videos])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
