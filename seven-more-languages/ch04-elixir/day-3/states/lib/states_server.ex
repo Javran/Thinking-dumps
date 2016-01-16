@@ -12,16 +12,22 @@ defmodule States.Server do
     { :ok, videos }
   end
 
-  # perform some action to one of the video
-  # and save the change in server's state
+  # handle_call in general is a way to communicate with the server
+  # usually the user will expect some responses after the task is done
   def handle_call({action, item}, _from, videos) do
+    # perform some action to one of the video
+    # and save the change in server's state
     video = videos[item]
     new_video = apply VidStore, action, [video]
     { :reply, new_video, Keyword.put(videos,item,new_video) }
   end
 
-  # adding one new video item
+  # handle_cast is a way to communicate with the server when
+  # we don't need a response from it
+  # here we only handle a very specific case,
+  # which is adding an video to the store.
   def handle_cast({:add, video}, videos) do
+    # adding one new video item
     { :noreply, [video|videos] }
   end
 end
