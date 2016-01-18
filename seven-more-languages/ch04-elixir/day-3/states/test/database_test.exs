@@ -13,6 +13,12 @@ defmodule DatabaseTest do
     GenServer.call :video_store, {:rent, :wolverine}
     GenServer.call :video_store, {:rent, :xmen}
     GenServer.call :video_store, {:rent, :et}
+
+    GenServer.call :video_store, {:return, :wolverine}
+    GenServer.call :video_store, {:rent, :wolverine}
+
+    result = GenServer.call :video_store, {:return, :wolverine}
+    assert 2 == result.times_rented
   end
 
 end
