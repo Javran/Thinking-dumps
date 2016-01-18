@@ -6,4 +6,9 @@ defmodule DatabaseTest do
     assert result == :ok
   end
 
+  test "break into parts? -- we can't do this" do
+    result = GenServer.call :video_store, {:rent, :xmen}
+    IO.puts (inspect result)
+  end
+
 end
