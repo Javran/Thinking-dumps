@@ -1,14 +1,18 @@
 defmodule DatabaseTest do
   use ExUnit.Case
 
-  test "trivial" do
-    result = GenServer.cast :video_store, {:add, {:xmen, %Video{title: "X men"}}}
-    assert result == :ok
+  setup do
+    GenServer.cast :video_store, {:add, {:wolverine, %Video{title: "Wolverine"}}}
+    GenServer.cast :video_store, {:add, {:xmen, %Video{title: "X men"}}}
+    GenServer.cast :video_store, {:add, {:et, %Video{title: "ET"}}}
+    :ok
   end
 
-  test "break into parts? -- we can't do this" do
-    result = GenServer.call :video_store, {:rent, :xmen}
-    IO.puts (inspect result)
+  # try to rent all videos and see if there are any errors
+  test "rent all", _ do
+    GenServer.call :video_store, {:rent, :wolverine}
+    GenServer.call :video_store, {:rent, :xmen}
+    GenServer.call :video_store, {:rent, :et}
   end
 
 end
