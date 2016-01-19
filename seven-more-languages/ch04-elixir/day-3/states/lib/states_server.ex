@@ -31,3 +31,19 @@ defmodule States.Server do
     { :noreply, [video|videos] }
   end
 end
+
+# TODO: will be a backup server that duplicates the state
+# of our main video store server
+defmodule States.ServerBackup do
+  use GenServer
+  require VidStore
+
+  def start_link(videos) do
+    GenServer.start_link(__MODULE__, videos, name: :video_store_backup)
+  end
+
+  def init(videos) do
+    { :ok, videos }
+  end
+
+end
