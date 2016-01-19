@@ -28,6 +28,9 @@ defmodule DatabaseTest do
 
     result_x = GenServer.call :video_store, {:return, :xmen}
     assert 1 == result_x.times_rented
+
+    # result_state = GenServer.call :video_store_backup, :read
+    # IO.puts (inspect result_state)
   end
 
 end

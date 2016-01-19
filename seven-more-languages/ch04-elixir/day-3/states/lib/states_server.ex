@@ -19,8 +19,9 @@ defmodule States.Server do
     # and save the change in server's state
     video = videos[item]
     new_video = apply VidStore, action, [video]
-    GenServer.cast :video_store_backup, :test
-    { :reply, new_video, Keyword.put(videos,item,new_video) }
+    new_state = Keyword.put(videos,item,new_video)
+    GenServer.cast :video_store_backup, {:write,new_state}
+    { :reply, new_video, new_state }
   end
 
   # handle_cast is a way to communicate with the server when
@@ -29,7 +30,9 @@ defmodule States.Server do
   # which is adding an video to the store.
   def handle_cast({:add, video}, videos) do
     # adding one new video item
-    { :noreply, [video|videos] }
+    new_state = [video|videos]
+    GenServer.cast :video_store_backup, {:write,new_state}
+    { :noreply, new_state }
   end
 end
 
@@ -43,13 +46,17 @@ defmodule States.ServerBackup do
     GenServer.start_link(__MODULE__, videos, name: :video_store_backup)
   end
 
-  def handle_cast(:test, state) do
-    IO.puts "Just a test message for now"
+  def init(videos) do
+    { :ok, videos }
+  end
+
+  def handle_cast({:write,state}, _) do
+    # getting new state
     { :noreply, state }
   end
 
-  def init(videos) do
-    { :ok, videos }
+  def handle_call(:read, _from, state) do
+    { :reply, state, state }
   end
 
 end
