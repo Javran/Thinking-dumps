@@ -8,17 +8,26 @@ defmodule DatabaseTest do
     :ok
   end
 
-  # try to rent all videos and see if there are any errors
   test "rent all", _ do
+    # try to rent all videos and see if there are any errors
     GenServer.call :video_store, {:rent, :wolverine}
     GenServer.call :video_store, {:rent, :xmen}
     GenServer.call :video_store, {:rent, :et}
 
-    GenServer.call :video_store, {:return, :wolverine}
-    GenServer.call :video_store, {:rent, :wolverine}
+  end
 
-    result = GenServer.call :video_store, {:return, :wolverine}
-    assert 2 == result.times_rented
+  test "rent multiple times", _ do
+    GenServer.call :video_store, {:rent, :wolverine}
+    GenServer.call :video_store, {:rent, :xmen}
+    GenServer.call :video_store, {:return, :wolverine}
+
+    GenServer.call :video_store, {:rent, :wolverine}
+    GenServer.call :video_store, {:return, :xmen}
+    result_w = GenServer.call :video_store, {:return, :wolverine}
+    assert 2 == result_w.times_rented
+
+    result_x = GenServer.call :video_store, {:return, :xmen}
+    assert 1 == result_x.times_rented
   end
 
 end
