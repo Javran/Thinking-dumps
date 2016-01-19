@@ -19,6 +19,7 @@ defmodule States.Server do
     # and save the change in server's state
     video = videos[item]
     new_video = apply VidStore, action, [video]
+    GenServer.cast :video_store_backup, :test
     { :reply, new_video, Keyword.put(videos,item,new_video) }
   end
 
@@ -40,6 +41,11 @@ defmodule States.ServerBackup do
 
   def start_link(videos) do
     GenServer.start_link(__MODULE__, videos, name: :video_store_backup)
+  end
+
+  def handle_cast(:test, state) do
+    IO.puts "Just a test message for now"
+    { :noreply, state }
   end
 
   def init(videos) do

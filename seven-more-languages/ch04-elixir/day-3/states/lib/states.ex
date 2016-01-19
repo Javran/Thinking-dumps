@@ -10,7 +10,8 @@ defmodule States do
       # Define workers and child supervisors to be supervised
 
       # modified: passing in initial state (list of videos)
-      worker(States.Server, [videos])
+      worker(States.Server, [videos]),
+      worker(States.ServerBackup, [videos])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
