@@ -35,8 +35,6 @@ defmodule States.Server do
   end
 end
 
-# TODO: will be a backup server that duplicates the state
-# of our main video store server
 defmodule States.ServerBackup do
   use GenServer
   require VidStore
