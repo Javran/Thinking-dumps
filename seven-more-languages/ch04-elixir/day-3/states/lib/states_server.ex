@@ -2,7 +2,6 @@ defmodule States.Server do
   use GenServer
   require VidStore
 
-  # boilerplate?
   def start_link(videos) do
     GenServer.start_link(__MODULE__, videos, name: :video_store)
   end
@@ -42,19 +41,23 @@ defmodule States.ServerBackup do
   use GenServer
   require VidStore
 
-  def start_link(videos) do
-    GenServer.start_link(__MODULE__, videos, name: :video_store_backup)
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: :video_store_backup)
   end
 
-  def init(videos) do
-    { :ok, videos }
+  def init(state) do
+    # we could give it a :nothing
+    # or alternatively {:just, <custom-initial-state>}
+    { :ok, state }
   end
 
   def handle_cast({:write,state}, _) do
     # getting new state
-    { :noreply, state }
+    # and store it in a Maybe-thing
+    { :noreply, {:just, state} }
   end
 
+  # note that it returns either :nothing or {:just, videos}
   def handle_call(:read, _from, state) do
     { :reply, state, state }
   end
