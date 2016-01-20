@@ -14,7 +14,7 @@ defmodule States do
       # the backup holds nothing when started
       # I just want to reduce the chance that two different servers
       # are holding out-of-sync info
-      worker(States.ServerBackup, :nothing)
+      worker(States.ServerBackup, [:nothing])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

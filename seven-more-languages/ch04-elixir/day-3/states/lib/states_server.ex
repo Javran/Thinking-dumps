@@ -8,6 +8,8 @@ defmodule States.Server do
 
   # initialize the server with a list of videos as the state
   def init(videos) do
+    # TODO: how can we know if we are restarting or it's a fresh start?
+    rp = GenServer.call :video_store_backup, :read
     { :ok, videos }
   end
 
@@ -33,6 +35,7 @@ defmodule States.Server do
     GenServer.cast :video_store_backup, {:write,new_state}
     { :noreply, new_state }
   end
+
 end
 
 defmodule States.ServerBackup do
