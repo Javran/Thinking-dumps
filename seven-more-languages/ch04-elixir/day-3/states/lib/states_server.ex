@@ -23,7 +23,7 @@ defmodule States.Server do
           {:ok, state}
       end
       catch
-      :exit, _ ->
+        :exit, _ ->
           IO.puts "backup server not found, using default database"
           { :ok, videos }
     end
@@ -50,8 +50,8 @@ defmodule States.Server do
     new_state = [video|videos]
     GenServer.cast :video_store_backup, {:write,new_state}
     { :noreply, new_state }
-  end
 
+  end
 end
 
 defmodule States.ServerBackup do

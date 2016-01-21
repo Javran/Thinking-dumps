@@ -33,4 +33,14 @@ defmodule DatabaseTest do
     # IO.puts (inspect result_state)
   end
 
+  def crash_server() do
+    try do
+      # just send a random message that cannot be captured
+      GenServer.call :video_store, :err
+    catch
+      :exit, _ ->
+        :ok
+    end
+  end
+
 end
