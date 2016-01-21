@@ -11,15 +11,21 @@ defmodule States.Server do
     try do
       # try to communicate with the backup server
       rp = GenServer.call :video_store_backup, :read
+      IO.puts "found backup server"
       case rp do
-        :nothing -> {:ok, videos}
+        :nothing ->
+          IO.puts "backup server is empty"
+          {:ok, videos}
         {:just, state} -> 
           # replace initial value
-        # if backup server returns something other than Nothing
+          # if backup server returns something other than Nothing
+          IO.puts "recovering using backup state"
           {:ok, state}
       end
       catch
-      :exit, _ -> { :ok, videos }
+      :exit, _ ->
+          IO.puts "backup server not found, using default database"
+          { :ok, videos }
     end
   end
 
