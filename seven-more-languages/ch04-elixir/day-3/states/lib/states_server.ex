@@ -8,9 +8,19 @@ defmodule States.Server do
 
   # initialize the server with a list of videos as the state
   def init(videos) do
-    # TODO: how can we know if we are restarting or it's a fresh start?
-    rp = GenServer.call :video_store_backup, :read
-    { :ok, videos }
+    try do
+      # try to communicate with the backup server
+      rp = GenServer.call :video_store_backup, :read
+      case rp do
+        :nothing -> {:ok, videos}
+        {:just, state} -> 
+          # replace initial value
+        # if backup server returns something other than Nothing
+          {:ok, state}
+      end
+      catch
+      :exit, _ -> { :ok, videos }
+    end
   end
 
   # handle_call in general is a way to communicate with the server
