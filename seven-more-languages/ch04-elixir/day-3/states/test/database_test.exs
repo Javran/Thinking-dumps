@@ -33,14 +33,9 @@ defmodule DatabaseTest do
     # IO.puts (inspect result_state)
   end
 
-  def crash_server() do
-    try do
-      # just send a random message that cannot be captured
-      GenServer.call :video_store, :err
-    catch
-      :exit, _ ->
-        :ok
-    end
-  end
+  # TODO: no crash test until we can find a way to prevent
+  # Elixir from exiting on process crash
+  # test "crash test", _ do
+  # end
 
 end
