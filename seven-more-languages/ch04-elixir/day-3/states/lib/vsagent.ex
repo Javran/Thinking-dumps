@@ -6,7 +6,7 @@ defmodule VSAgent do
     Agent.start_link(fn -> state end, name: :vs_agent)
   end
 
-  def perform_action({action,item}) do
+  def call({action,item}) do
     Agent.get_and_update(
       :vs_agent,
       fn videos ->
@@ -15,6 +15,12 @@ defmodule VSAgent do
         new_state = Keyword.put(videos,item,new_video)
         { new_video, new_state }
       end)
+  end
+
+  def cast({:add,video}) do
+    Agent.update(
+      :vs_agent,
+      fn videos -> [video|videos] end)
   end
 
 end
