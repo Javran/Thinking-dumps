@@ -22,3 +22,13 @@ When the main server crashes, same communication happens. As long as there are u
 to the main server, backup server should have received it, so we can recover
 from a known correct state
 (And hopefully a crash to the main server does no harm to our backup server)
+
+Unfortunately I don't know how to tell our test framework not to stop when a server crashes.
+So to test the behavior after crashing main server, you will have to use Elixir REPL.
+
+## Question 2: Use Agent
+
+We can almost reuse the same interface our `GenSever` has.
+The testcases under `states/test/vsagent_test.exs` shows how the user code looks like.
+For the implementation, I find `Agent.get_and_update` to be a perfect primitive for this purpose.
+See `states/lib/vsagent.ex` for detail.
