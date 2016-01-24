@@ -32,3 +32,10 @@ We can almost reuse the same interface our `GenSever` has.
 The testcases under `states/test/vsagent_test.exs` shows how the user code looks like.
 For the implementation, I find `Agent.get_and_update` to be a perfect primitive for this purpose.
 See `states/lib/vsagent.ex` for detail.
+
+## Question 3: Persist into Erlang's DETS database
+
+(TODO) Related document: [dets](http://erlang.org/doc/man/dets.html).
+In our case, we want to persist the whole state of main server into a file.
+The main server state is a `Keyword`, with symbols being keys, object being the other column,
+this task should be easy.
