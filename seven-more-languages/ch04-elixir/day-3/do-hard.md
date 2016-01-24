@@ -1,9 +1,24 @@
 ## Question 1: Backup Server
 
-The plan is: we implement a new server and run this server on a different process.
-When the application is started, two processes will know each other.
-As the main server gets updated, it sends its state to the backup server.
-(This saves us from having to redo everything on the backup server again in order to sync)
-And when the main server crashes, it will attempt to communicate with the backup server
-(which hopefully is still up). If there is a state held by backup server, then
-that state also becomes the initial state of the newly started main server.
+For this task we maintain two servers on different processes:
+one provides user with full functionalities, and another backup.
+
+Two servers are declared in the application so when the application starts,
+both server can refer to the other one by symbols.
+
+Whenever the main server gets updated, it sends its updated state to the backup server.
+This saves us from having to redo everything on the backup server again in order to sync.
+
+When main server starts, it first try to communicate with the backup server and retrieve
+the last correct state.
+This retrieval might fail due to:
+
+- the backup server is not yet available (a fresh start)
+- the backup server does not hold a state (a fresh start)
+
+Both of the above can be recovered by falling back to the default state.
+
+When the main server crashes, same communication happens. As long as there are updates
+to the main server, backup server should have received it, so we can recover
+from a known correct state
+(And hopefully a crash to the main server does no harm to our backup server)
