@@ -35,7 +35,8 @@ See `states/lib/vsagent.ex` for detail.
 
 ## Question 3: Persist into Erlang's DETS database
 
-(TODO) Related document: [dets](http://erlang.org/doc/man/dets.html).
+Related document: [dets](http://erlang.org/doc/man/dets.html).
+
 In our case, we want to persist the whole state of main server into a file.
 The main server state is a `Keyword`, with symbols being keys, object being the other column,
 this task should be easy.
@@ -47,3 +48,5 @@ counter bumps, and when there are sufficient bumps, the counter is reset and the
 This approach is only meant to be simple. I'm sure there are most
 sophisticated technique for addressing this problem,
 I don't know at this time though.
+
+(TODO) I get bored with the language itself, maybe would come back later to finish this task.
