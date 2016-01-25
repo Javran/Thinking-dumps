@@ -39,3 +39,11 @@ See `states/lib/vsagent.ex` for detail.
 In our case, we want to persist the whole state of main server into a file.
 The main server state is a `Keyword`, with symbols being keys, object being the other column,
 this task should be easy.
+
+However, there is still one concern: it will be inefficient writing to files
+for each modification made. What we could do is to allow changes to take some time
+before being persisted in disk. One naive way is to keep a counter: for each one chance, the
+counter bumps, and when there are sufficient bumps, the counter is reset and the current state is persisted.
+This approach is only meant to be simple. I'm sure there are most
+sophisticated technique for addressing this problem,
+I don't know at this time though.
