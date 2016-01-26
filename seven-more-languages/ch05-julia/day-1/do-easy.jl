@@ -14,3 +14,14 @@ typedDict[:c] = 3
 # to convert symbols in floating numbers
 
 println(typedDict)
+
+# we can do it literally:
+magic = Array{Int64}(5,5,5)
+for i = 1:5
+    magic[:,:,i] = fill(i,(5,5))
+end
+
+println(magic)
+
+# every one-dimensional element is applied to that particular function
+println(sin(magic))
