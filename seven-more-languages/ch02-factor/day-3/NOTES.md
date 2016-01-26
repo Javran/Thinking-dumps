@@ -63,3 +63,12 @@ This part has nothing fancy. I'm not going to summarize it, check them out in th
         the code and expected result, you will define a function that tests the difference
         and output a truth value, and instead of expecting the result value to come out,
         we expect a `true` from the comparison done in the code.
+
+* About **Do (Hard)** Exercises
+
+    - We have already addressed rounding errors by comparing if two number are "close enough" and
+      I think this approach solves the problem well. There could be other approaches trying
+      to do the math losslessly, but that would be an overkill for such a simple exercise.
+
+    - I will not try writing an user interface in Factor, because of the unstable framework,
+      lack of documentation and even the simplest example "hello-ui" is not working.
