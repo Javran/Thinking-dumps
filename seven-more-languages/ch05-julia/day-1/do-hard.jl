@@ -1,3 +1,6 @@
+# it's nothing about julia, just math
+# see: https://en.wikipedia.org/wiki/Rotation_matrix
+
 hp = pi/2
 
 rot90_x = [ 1       0        0
