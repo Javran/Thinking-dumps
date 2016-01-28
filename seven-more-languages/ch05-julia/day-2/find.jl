@@ -1,7 +1,6 @@
-# @everywhere include("Common.jl")
+@everywhere include("Common.jl")
 
 # @everywhere include is just not working, don't try it.
-
 @everywhere function pflip_coins(times)
     @parallel (+) for i = 1:times
         Int(rand(Bool))

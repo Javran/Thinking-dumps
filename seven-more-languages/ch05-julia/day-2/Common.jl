@@ -7,7 +7,7 @@ module Common
 
 export pflip_coins
 
-function pflip_coins(times)
+function pflip_coins(times :: Int64)
     @parallel (+) for i = 1:times
         Int(rand(Bool))
     end
