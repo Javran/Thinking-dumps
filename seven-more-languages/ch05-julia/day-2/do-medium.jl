@@ -23,3 +23,14 @@ println( map(factorial, collect(1:10)) )
 
 # @time my_pfactorial(10000)
 # @time my_factorial(10000)
+chunk_size = 1000
+cell_count = Int64(ceil(12345 / chunk_size))
+plan = Array{Array{Int64}}( cell_count )
+
+j = 0
+for i = 1:chunk_size:12345
+    j = j+1
+    plan[j] = [i,min(i+chunk_size-1,12345)]
+end
+
+println(plan)
