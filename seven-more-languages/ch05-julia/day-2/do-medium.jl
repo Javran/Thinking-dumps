@@ -54,3 +54,11 @@ map(simple_test, functions)
 r1,r2,r3 = map(measure_time, functions)
 
 assert( r1 == r2 && r2 == r3 )
+
+# seems "concat" is not used any more,
+# but let's just do what we are asked.
+function concat(n :: Int64, mat :: Array{Int64})
+    hcat( fill(n, size(mat)),mat)
+end
+
+println(concat(5,[1 2;3 4]))
