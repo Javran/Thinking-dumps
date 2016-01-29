@@ -4,33 +4,53 @@ function my_pfactorial(n)
     # small that the extra cost of putting this into parallelism
     # negates the benefit.
     @parallel (*) for i = 1:n
-        i
+        BigInt(i)
     end
 end
 
 function my_factorial(n)
-    p = 1
+    p = BigInt(1)
     for i = 1:n
-        p = p*i
+        p = p*BigInt(i)
     end
     p
 end
 
-# correctness
-println( map(my_pfactorial, collect(1:10)) )
-println( map(my_factorial, collect(1:10)) )
-println( map(factorial, collect(1:10)) )
+# only faster for big numbers
+function my_fast_factorial(n :: Int)
+    chunk_size = 1000
+    cell_count = Int64(ceil(n/ chunk_size))
+    plan = Array{Array{Int64}}( cell_count )
 
-# @time my_pfactorial(10000)
-# @time my_factorial(10000)
-chunk_size = 1000
-cell_count = Int64(ceil(12345 / chunk_size))
-plan = Array{Array{Int64}}( cell_count )
+    j = 0
+    for i = 1:chunk_size:n
+        j = j+1
+        plan[j] = [i,min(i+chunk_size-1,n)]
+    end
 
-j = 0
-for i = 1:chunk_size:12345
-    j = j+1
-    plan[j] = [i,min(i+chunk_size-1,12345)]
+    @parallel (*) for (from,to) = plan
+        p = BigInt(1)
+        for i = from:to
+            p = p*BigInt(i)
+        end
+        p
+    end
 end
 
-println(plan)
+# correctness
+function simple_test( func )
+    println( map(func, collect(1:10)) )
+end
+
+function measure_time( func )
+    # just a random (prime) number
+    # for testing speed
+    @time func(12269)
+end
+
+functions = [my_pfactorial, my_factorial, my_fast_factorial]
+map(simple_test, functions)
+
+r1,r2,r3 = map(measure_time, functions)
+
+assert( r1 == r2 && r2 == r3 )
