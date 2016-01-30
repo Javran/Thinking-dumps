@@ -62,3 +62,12 @@ function concat(n :: Int64, mat :: Array{Int64})
 end
 
 println(concat(5,[1 2;3 4]))
+
+# without the following line Julia might give a warning
+import Base.+
+
+function +(s1 :: AbstractString, s2 :: AbstractString)
+    "$s1$s2"
+end
+
+println("jul" + "ia")
