@@ -40,9 +40,9 @@ img = testimage("cameraman")
 freqs = blockdct6(img)
 img2 = blockidct(freqs)
 
-view(img)
-view(img2)
+println(img)
+println(img2)
 
-readline(STDIN)
+# readline(STDIN)
 
 end
