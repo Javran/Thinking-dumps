@@ -28,7 +28,8 @@ function blockidct(freqs)
     
     pixels = Array(Float32, size(freqs))
     for i = bx, j = by
-        pixels[j:j+7,i:i+7] = idct(freqs[j:j+7,i:i+7]) ./ 255.0
+        # https://forums.pragprog.com/forums/351/topics/13474
+        pixels[j:j+7,i:i+7] = idct(freqs[j:j+7,i:i+7])
     end
     grayim(pixels)
 end
@@ -40,9 +41,9 @@ img = testimage("cameraman")
 freqs = blockdct6(img)
 img2 = blockidct(freqs)
 
-println(img)
-println(img2)
+view(img)
+view(img2)
 
-# readline(STDIN)
+readline(STDIN)
 
 end
