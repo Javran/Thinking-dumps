@@ -2,6 +2,8 @@ module Codec
 
 using Images
 
+export blockdct6, blockidct
+
 function blockdct6(img)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
@@ -34,16 +36,5 @@ function blockidct(freqs)
     grayim(pixels)
 end
 
-using TestImages, ImageView
-
-img = testimage("cameraman")
-
-freqs = blockdct6(img)
-img2 = blockidct(freqs)
-
-view(img)
-view(img2)
-
-readline(STDIN)
 
 end
