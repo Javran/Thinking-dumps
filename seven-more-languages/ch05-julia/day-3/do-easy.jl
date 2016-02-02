@@ -17,3 +17,6 @@ end
     println(2)
     println(1)
 end
+
+# note: the exercise asks us about effects of modification on
+# *frequencies*, make sure to operate on a frequency domain (after DCT)
