@@ -20,3 +20,19 @@ end
 
 # note: the exercise asks us about effects of modification on
 # *frequencies*, make sure to operate on a frequency domain (after DCT)
+
+push!(LOAD_PATH, pwd())
+using TestImages, ImageView
+using Codec
+
+img = testimage("cameraman")
+
+function view_with_noise(img,noise_scale)
+    freqs = blockdct6_with_noise(img,noise_scale)
+    img2 = blockidct(freqs)
+    view(img2)
+end
+
+map( x-> view_with_noise(img,x), [0,0.1,1,10])
+
+readline(STDIN)

@@ -2,25 +2,14 @@ module Codec
 
 using Images
 
-export blockdct6, blockidct
+export blockdct6_with_noise, blockdct6, blockidct
 
-function saturate(x,low=0,high=1)
-    if x < low
-        return low
-    elseif x > high
-        return high
-    else
-        return x
-    end
+function add_noise(block, scale)
+    block + (scale * rand( size(block) ))
 end
 
-function rand_saturate(block, scale)
-    new_block = block + (scale * rand( size(block) ))
-    new_block = map( x -> saturate(x,0.0,1.0), new_block)
-    new_block
-end
 
-function blockdct6(img)
+function blockdct6_with_noise(img, noise_scale)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
 
@@ -36,14 +25,18 @@ function blockdct6(img)
         tmp = pixels[j:j+7, i:i+7]
         tmp = dct(tmp)
         # adding noise to frequencies
-        # we need a better way of saturation
-        # because the value is not taken from [0-1]
-        # tmp = rand_saturate(tmp, 0.1)
+        if noise_scale > 0
+            tmp = add_noise(tmp, noise_scale)
+        end
         tmp .*= mask
         freqs[j:j+7, i:i+7] = tmp
     end
 
     freqs
+end
+
+function blockdct6(img)
+    blockdct6_with_noise(img,0)
 end
 
 function blockidct(freqs)
