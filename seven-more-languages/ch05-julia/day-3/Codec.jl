@@ -4,6 +4,15 @@ using Images
 
 export blockdct6, blockidct
 
+function saturate(x,low=0,high=1)
+    if x < low
+        return low
+    elseif x > high
+        return high
+    else
+        return x
+    end
+end
 function blockdct6(img)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
