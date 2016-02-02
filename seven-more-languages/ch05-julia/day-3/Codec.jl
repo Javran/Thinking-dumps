@@ -13,6 +13,13 @@ function saturate(x,low=0,high=1)
         return x
     end
 end
+
+function rand_saturate(block, scale)
+    new_block = block + (scale * rand( size(block) ))
+    new_block = map( x -> saturate(x,0.0,1.0), new_block)
+    new_block
+end
+
 function blockdct6(img)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
@@ -26,8 +33,11 @@ function blockdct6(img)
     freqs = Array(Float32, (outy*8, outx*8))
 
     for i = bx, j = by
-        freqs[j:j+7, i:i+7] = dct(pixels[j:j+7, i:i+7])
-        freqs[j:j+7, i:i+7] .*= mask
+        tmp = pixels[j:j+7, i:i+7]
+        tmp = rand_saturate(tmp, 0.5)
+        tmp = dct(tmp)
+        tmp .*= mask
+        freqs[j:j+7, i:i+7] = tmp
     end
 
     freqs
