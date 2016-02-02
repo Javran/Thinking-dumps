@@ -34,8 +34,13 @@ function blockdct6(img)
 
     for i = bx, j = by
         tmp = pixels[j:j+7, i:i+7]
-        tmp = rand_saturate(tmp, 0.5)
+        # adding noise to pixels
+        # tmp = rand_saturate(tmp, 0.1)
         tmp = dct(tmp)
+        # adding noise to frequencies
+        # we need a better way of saturation
+        # because the value is not taken from [0-1]
+        # tmp = rand_saturate(tmp, 0.1)
         tmp .*= mask
         freqs[j:j+7, i:i+7] = tmp
     end
