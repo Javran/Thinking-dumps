@@ -42,6 +42,17 @@ end
 # as noise becomes more significant, the image becomes whiter
 # and we can see a clear boundary between 8x8 blocks when scale goes up.
 map( x-> view_with_noise(img,x), [0,0.1,1,10])
+
+# adding high frequency noise, on the other hand, have little impact on the outcome
+# because our mask has already filtered out all high frequency values by
+# only keeping the top-left corner 6 values.
+# here I has experimented to add noises except for the 3 top-left corner values.
+# this is to make sure that at least some of the noises will not be filtered out.
+# the outcome is similar to our experiment of adding noise to everything,
+# but under the same scale, even with large noises, this "only high-freq" modification
+# seems to preseve more details than "view_with_noise" experiment
+# this result confirms that in terms of human preception,
+# the top-left corner contains rather important feature of the original image
 map( x-> view_with_hf_noise(img,x), [0,0.1,1,10])
 
 println("Input anything to proceed")

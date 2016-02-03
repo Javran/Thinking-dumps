@@ -29,8 +29,10 @@ function blockdct6_with_noise_and_high_freq(img, noise_scale, hf_flag)
         # adding noise to frequencies
         if noise_scale > 0
             if hf_flag
+                mask3 = zeros(8,8)
+                mask3[1:2, 1:2] = [1 1; 1 0]
                 # only make noise to high freq parts
-                mask2 = ones(8,8) - mask
+                mask2 = ones(8,8) - mask3
                 noise = make_noise(tmp, noise_scale)
                 tmp .+= noise .* mask2
             else
