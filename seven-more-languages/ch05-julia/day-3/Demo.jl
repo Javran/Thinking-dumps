@@ -27,7 +27,6 @@ function demo2()
 
     view(img)
     view(img2)
-
 end
 
 demo2()

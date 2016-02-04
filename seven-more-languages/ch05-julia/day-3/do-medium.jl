@@ -25,4 +25,37 @@ function make_mask( keep )
     mask
 end
 
-println(make_mask(36))
+function blockdct(img, keep)
+    pixels = convert(Array{Float32}, img.data)
+    y,x = size(pixels)
+
+    # break into parts
+    outx, outy = floor(Integer, x/8), floor(Integer, y/8)
+    bx, by = 1:8:outx*8, 1:8:outy*8
+
+    mask = make_mask( keep )
+    freqs = Array(Float32, (outy*8, outx*8))
+
+    for i = bx, j = by
+        tmp = pixels[j:j+7, i:i+7]
+        tmp = dct(tmp)
+        tmp .*= mask
+        freqs[j:j+7, i:i+7] = tmp
+    end
+
+    freqs
+end
+
+push!(LOAD_PATH, pwd())
+using TestImages, ImageView
+using Codec
+
+img = testimage("cameraman")
+
+freqs = blockdct(img,6)
+img2 = blockidct(freqs)
+
+view(img)
+view(img2)
+
+wait_input()
