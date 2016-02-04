@@ -25,10 +25,51 @@ push!(LOAD_PATH, pwd())
 using TestImages, ImageView
 using Codec
 
+function blockdct6_with_noise_and_high_freq(img, noise_scale, hf_flag)
+    pixels = convert(Array{Float32}, img.data)
+    y,x = size(pixels)
+
+    # break into parts
+    outx, outy = floor(Integer, x/8), floor(Integer, y/8)
+    bx, by = 1:8:outx*8, 1:8:outy*8
+
+    mask = zeros(8,8)
+    mask[1:3, 1:3] = [1 1 1; 1 1 0; 1 0 0]
+    freqs = Array(Float32, (outy*8, outx*8))
+
+    # create a matrix with same size as "block",
+    # fill in random numbers multiplied by a "scale"
+    function make_noise(block, scale)
+        scale * rand( size(block) )
+    end
+
+    for i = bx, j = by
+        tmp = pixels[j:j+7, i:i+7]
+        tmp = dct(tmp)
+        # adding noise to frequencies
+        if noise_scale > 0
+            if hf_flag
+                mask3 = zeros(8,8)
+                mask3[1:2, 1:2] = [1 1; 1 0]
+                # only make noise to high freq parts
+                mask2 = ones(8,8) - mask3
+                noise = make_noise(tmp, noise_scale)
+                tmp .+= noise .* mask2
+            else
+                tmp .+= make_noise(tmp, noise_scale)
+            end
+        end
+        tmp .*= mask
+        freqs[j:j+7, i:i+7] = tmp
+    end
+
+    freqs
+end
+
 img = testimage("cameraman")
 
 function view_with_noise(img,noise_scale)
-    freqs = blockdct6_with_noise(img,noise_scale)
+    freqs = blockdct6_with_noise_and_high_freq(img,noise_scale,false)
     img2 = blockidct(freqs)
     view(img2)
 end
