@@ -2,7 +2,7 @@ module Codec
 
 using Images
 
-export blockdct6, blockidct
+export blockdct6, blockidct, wait_input
 
 # instead of modifying this function, let's keep copies of this
 # function as the base for modification.
@@ -45,5 +45,12 @@ function blockidct(freqs)
     grayim(pixels)
 end
 
+# this function is supposed to put in the end of a program
+# so that it waits for user input instead of terminates immedately
+# keeping ImageView on screen
+function wait_input()
+    println("Input anything to proceed")
+    readline(STDIN)
+end
 
 end

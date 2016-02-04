@@ -96,5 +96,4 @@ map( x-> view_with_noise(img,x), [0,0.1,1,10])
 # the top-left corner contains rather important feature of the original image
 map( x-> view_with_hf_noise(img,x), [0,0.1,1,10])
 
-println("Input anything to proceed")
-readline(STDIN)
+wait_input()
