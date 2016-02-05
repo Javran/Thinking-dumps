@@ -47,6 +47,7 @@ function blockdct(img, keep)
 end
 
 push!(LOAD_PATH, pwd())
+using Images
 using TestImages, ImageView
 using Codec
 
@@ -62,7 +63,7 @@ function task1(img)
     wait_input()
 end
 
-# task1(img)
+
 
 function blockdct6_small(img)
     pixels = convert(Array{Float32}, img.data)
@@ -90,9 +91,39 @@ function blockdct6_small(img)
         # simply because there are newlines characters?
         freqs[y2,x2][1:6] = [tmp[1,1]; tmp[1,2]; tmp[1,3]; 
                              tmp[2,1]; tmp[2,2]; 
-                             tmp[2,3]]
+                             tmp[3,1]]
     end
     freqs
 end
 
-blockdct6_small(img)
+function blockidct_small(freqs)
+    y,x = size(freqs)
+    bx, by = 1:8:x*8, 1:8:y*8
+
+    to_freq_ind = x -> 1 + div(x-1,8)
+    pixels = Array(Float32, (y*8,x*8))
+    for i = bx, j = by
+        tmp = zeros(8,8)
+        y2,x2 = to_freq_ind(j), to_freq_ind(i)
+        ar = freqs[y2,x2]
+        tmp[1:3,1:3] = [ ar[1] ar[2] ar[3] ; 
+                         ar[4] ar[5]     0 ;
+                         ar[6]     0     0 ]
+
+        pixels[j:j+7,i:i+7] = idct(tmp)
+    end
+    grayim(pixels)
+end
+
+function task2(img)
+    freqs = blockdct6_small(img)
+    img2 = blockidct_small(freqs)
+
+    view(img)
+    view(img2)
+
+    wait_input()
+end
+
+task1(img)
+task2(img)
