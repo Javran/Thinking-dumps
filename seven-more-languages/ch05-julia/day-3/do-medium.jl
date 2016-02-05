@@ -114,9 +114,9 @@ function blockidct_small(freqs)
         tmp = zeros(8,8)
         y2,x2 = to_freq_ind(j), to_freq_ind(i)
         ar = freqs[y2,x2]
-        tmp[1:3,1:3] = [ ar[1] ar[2] ar[3] ; 
-                         ar[4] ar[5]     0 ;
-                         ar[6]     0     0 ]
+        tmp[1:3,1:3] = Float32[ ar[1] ar[2] ar[3] ; 
+                                ar[4] ar[5]   0.0 ;
+                                ar[6]   0.0   0.0 ]
 
         pixels[j:j+7,i:i+7] = idct(tmp)
     end
