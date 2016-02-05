@@ -63,8 +63,6 @@ function task1(img)
     wait_input()
 end
 
-
-
 function blockdct6_small(img)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
@@ -73,13 +71,17 @@ function blockdct6_small(img)
     bx, by = 1:8:outx*8, 1:8:outy*8
 
     freqs = Array{Vector{Float32}}(outy, outx)
-    
+
+    # to convert from coordinate of input image to output's
     to_freq_ind = x -> 1 + div(x-1,8)
 
     for i = bx, j = by
         tmp = dct(pixels[j:j+7, i:i+7])
         y2,x2 = to_freq_ind(j), to_freq_ind(i)
         freqs[y2,x2] = Array{Float32,1}(6)
+
+        # instead of using masks, we simply store
+        # values necessary in a small array
 
         # NOTE: do explicit separators to allow
         # arrange elements in an arbitrary manner
@@ -103,6 +105,12 @@ function blockidct_small(freqs)
     to_freq_ind = x -> 1 + div(x-1,8)
     pixels = Array(Float32, (y*8,x*8))
     for i = bx, j = by
+        # because "idct" is expecting a block rather
+        # than our compact representation,
+        # we should recover the block.
+        # this is done by constructing a matrix
+        # filled with 0 then put values back
+        # to their positions
         tmp = zeros(8,8)
         y2,x2 = to_freq_ind(j), to_freq_ind(i)
         ar = freqs[y2,x2]
