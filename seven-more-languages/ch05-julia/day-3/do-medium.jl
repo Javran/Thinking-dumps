@@ -133,5 +133,20 @@ function task2(img)
     wait_input()
 end
 
-task1(img)
-task2(img)
+function task3()
+    # to change the block size, we need to rewrite
+    # many parts of the function
+    # also it remains a question of how many low-frequency
+    # values should we keep.
+    # there are two alternatives:
+    # 1. we always keep these 6 values, no more, no less, and see the effects.
+    # 2. in the orginal setup, block size is 8, and we keep 6 values of
+    # blook's top-left corner. (right triangle side length=3)
+    # let's keep the propotion of block side length : right triangle side length,
+    # which is 8:3, round down.
+
+end
+
+
+# task1(img)
+# task2(img)
