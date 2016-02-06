@@ -1,5 +1,5 @@
 # make a mask by scanning the block diagonally
-function make_mask( keep )
+function make_mask8( keep )
     mask = zeros(8,8)
     # constant of adding x and y, from c = 2 (1+1) to 16 (8+8)
     c = 2
@@ -33,7 +33,7 @@ function blockdct(img, keep)
     outx, outy = floor(Integer, x/8), floor(Integer, y/8)
     bx, by = 1:8:outx*8, 1:8:outy*8
 
-    mask = make_mask( keep )
+    mask = make_mask8( keep )
     freqs = Array(Float32, (outy*8, outx*8))
 
     for i = bx, j = by
@@ -147,6 +147,41 @@ function task3()
 
 end
 
+# make a mask by scanning the block diagonally
+function make_mask(bs, keep)
+    mask = zeros(bs,bs)
+    # constant of adding x and y, from c = 2 (1+1) to 16 (8+8)
+    c = 2
+    while c <= bs+bs && keep > 0
+        if c <= bs+1 #c <= 9
+            x = 1
+            while c-x > 0 && keep > 0
+                mask[x,c-x] = 1
+                x += 1
+                keep -= 1
+            end
+            c += 1
+        else  # c > 9
+            x = c-bs
+            while c-x > 0 && x < bs+1 && keep > 0
+                mask[x,c-x] = 1
+                x += 1
+                keep -= 1
+            end
+            c += 1
+        end
+    end
+    mask
+end
 
 # task1(img)
 # task2(img)
+
+function test_masks()
+    # for verifying generated masks
+    println(make_mask(8,6))
+    println(make_mask(5,24))
+    println(make_mask(11,100))
+    println(make_mask(6,36-21))
+    println(make_mask(7,49-21))
+end
