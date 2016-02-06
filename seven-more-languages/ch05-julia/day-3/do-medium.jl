@@ -160,5 +160,50 @@ function test_masks()
     println(make_mask(7,49-21))
 end
 
-task1(img)
+# task1(img)
 # task2(img)
+
+function blockdct_with_blocksize(img, bs)
+    pixels = convert(Array{Float32}, img.data)
+    y,x = size(pixels)
+
+    # break into parts
+    outx, outy = floor(Integer, x/bs), floor(Integer, y/bs)
+    bx, by = 1:bs:outx*bs, 1:bs:outy*bs
+
+    mask = make_mask(bs, 6)
+    freqs = Array(Float32, (outy*bs, outx*bs))
+
+    for i = bx, j = by
+        tmp = pixels[j:j+bs-1, i:i+bs-1]
+        tmp = dct(tmp)
+        tmp .*= mask
+        freqs[j:j+bs-1, i:i+bs-1] = tmp
+    end
+
+    freqs
+end
+
+function blockidct_with_blocksize(freqs,bs)
+    y,x = size(freqs)
+    bx, by = 1:bs:x, 1:bs:y
+
+    pixels = Array(Float32, size(freqs))
+    for i = bx, j = by
+        # https://forums.pragprog.com/forums/351/topics/13474
+        pixels[j:j+bs-1,i:i+bs-1] = idct(freqs[j:j+bs-1,i:i+bs-1])
+    end
+    grayim(pixels)
+end
+
+function task3(img)
+    freqs = blockdct_with_blocksize(img,10)
+    img2 = blockidct_with_blocksize(freqs,10)
+
+    view(img)
+    view(img2)
+
+    wait_input()
+end
+
+task3(img)
