@@ -1,10 +1,10 @@
 # make a mask by scanning the block diagonally
-function make_mask8( keep )
-    mask = zeros(8,8)
+function make_mask(bs, keep)
+    mask = zeros(bs,bs)
     # constant of adding x and y, from c = 2 (1+1) to 16 (8+8)
     c = 2
-    while c <= 16 && keep > 0
-        if c <= 9
+    while c <= bs+bs && keep > 0
+        if c <= bs+1 #c <= 9
             x = 1
             while c-x > 0 && keep > 0
                 mask[x,c-x] = 1
@@ -12,9 +12,9 @@ function make_mask8( keep )
                 keep -= 1
             end
             c += 1
-        else # c > 9
-            x = c-8
-            while c-x > 0 && x < 9 && keep > 0
+        else  # c > 9
+            x = c-bs
+            while c-x > 0 && x < bs+1 && keep > 0
                 mask[x,c-x] = 1
                 x += 1
                 keep -= 1
@@ -23,6 +23,10 @@ function make_mask8( keep )
         end
     end
     mask
+end
+
+function make_mask8( keep )
+    make_mask(8, keep)
 end
 
 function blockdct(img, keep)
@@ -147,36 +151,6 @@ function task3()
 
 end
 
-# make a mask by scanning the block diagonally
-function make_mask(bs, keep)
-    mask = zeros(bs,bs)
-    # constant of adding x and y, from c = 2 (1+1) to 16 (8+8)
-    c = 2
-    while c <= bs+bs && keep > 0
-        if c <= bs+1 #c <= 9
-            x = 1
-            while c-x > 0 && keep > 0
-                mask[x,c-x] = 1
-                x += 1
-                keep -= 1
-            end
-            c += 1
-        else  # c > 9
-            x = c-bs
-            while c-x > 0 && x < bs+1 && keep > 0
-                mask[x,c-x] = 1
-                x += 1
-                keep -= 1
-            end
-            c += 1
-        end
-    end
-    mask
-end
-
-# task1(img)
-# task2(img)
-
 function test_masks()
     # for verifying generated masks
     println(make_mask(8,6))
@@ -185,3 +159,6 @@ function test_masks()
     println(make_mask(6,36-21))
     println(make_mask(7,49-21))
 end
+
+task1(img)
+# task2(img)
