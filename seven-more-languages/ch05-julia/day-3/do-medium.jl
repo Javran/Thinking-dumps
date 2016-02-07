@@ -197,12 +197,18 @@ function blockidct_with_blocksize(freqs,bs)
 end
 
 function task3(img)
-    freqs = blockdct_with_blocksize(img,10)
-    img2 = blockidct_with_blocksize(freqs,10)
-
     view(img)
-    view(img2)
 
+    function test(bs)
+        freqs = blockdct_with_blocksize(img,bs)
+        img2 = blockidct_with_blocksize(freqs,bs)
+        view(img2)
+    end
+
+    map(test,[8,16,32])
+    # as expected, the quality goes down as the block
+    # size goes bigger
+    # see "do-medium-test-1.png" for screenshots
     wait_input()
 end
 
