@@ -137,20 +137,6 @@ function task2(img)
     wait_input()
 end
 
-function task3()
-    # to change the block size, we need to rewrite
-    # many parts of the function
-    # also it remains a question of how many low-frequency
-    # values should we keep.
-    # there are two alternatives:
-    # 1. we always keep these 6 values, no more, no less, and see the effects.
-    # 2. in the orginal setup, block size is 8, and we keep 6 values of
-    # blook's top-left corner. (right triangle side length=3)
-    # let's keep the propotion of block side length : right triangle side length,
-    # which is 8:3, round down.
-
-end
-
 function test_masks()
     # for verifying generated masks
     println(make_mask(8,6))
@@ -163,7 +149,7 @@ end
 # task1(img)
 # task2(img)
 
-function blockdct_with_blocksize(img, bs)
+function blockdct_with_blocksize_and_mask(img, bs, keep)
     pixels = convert(Array{Float32}, img.data)
     y,x = size(pixels)
 
@@ -171,7 +157,7 @@ function blockdct_with_blocksize(img, bs)
     outx, outy = floor(Integer, x/bs), floor(Integer, y/bs)
     bx, by = 1:bs:outx*bs, 1:bs:outy*bs
 
-    mask = make_mask(bs, 6)
+    mask = make_mask(bs, keep)
     freqs = Array(Float32, (outy*bs, outx*bs))
 
     for i = bx, j = by
@@ -197,18 +183,53 @@ function blockidct_with_blocksize(freqs,bs)
 end
 
 function task3(img)
+    # to change the block size, we need to rewrite
+    # many parts of the function
+    # also it remains a question of how many low-frequency
+    # values should we keep.
+    # there are two alternatives:
+    # 1. we always keep these 6 values, no more, no less, and see the effects.
+    # 2. in the orginal setup, block size is 8, and we keep 6 values of
+    # blook's top-left corner. (right triangle side length=3)
+    # let's keep the propotion of block side length : right triangle side length,
+    # which is 8:3, round down.
     view(img)
 
-    function test(bs)
-        freqs = blockdct_with_blocksize(img,bs)
-        img2 = blockidct_with_blocksize(freqs,bs)
-        view(img2)
+    function approach1()
+        # only 6 values are kept, with increased block size
+        function test(bs)
+            freqs = blockdct_with_blocksize_and_mask(img,bs,6)
+            img2 = blockidct_with_blocksize(freqs,bs)
+            view(img2)
+        end
+
+        map(test,[8,16,32])
+        # as expected, the quality goes down as the block
+        # size goes bigger
+        # see "do-medium-test-1.png" for screenshots
     end
 
-    map(test,[8,16,32])
-    # as expected, the quality goes down as the block
-    # size goes bigger
-    # see "do-medium-test-1.png" for screenshots
+    function approach2()
+        function test(bs)
+            k = Int(ceil(bs*3.0/8.0))
+            keep = div(k * (k+1),2)
+            freqs = blockdct_with_blocksize_and_mask(img,bs,keep)
+            img2 = blockidct_with_blocksize(freqs,bs)
+            view(img2)
+        end
+
+        map(test,[8,16,32])
+        # the quality goes a little down,
+        # but not as much as the first approach
+        # see "do-medium-test-2.png" for the result
+        # and see "do-medium-test-2-zoom-in.png" for a zommed in screenshot
+        # I feel in the image the outline of things blur 
+        # as block size goes up
+    end
+
+    approach1()
+    approach2()
+
     wait_input()
 end
 
