@@ -182,7 +182,7 @@ function blockidct_with_blocksize(freqs,bs)
     grayim(pixels)
 end
 
-function task3(img)
+function experiment3(img)
     # to change the block size, we need to rewrite
     # many parts of the function
     # also it remains a question of how many low-frequency
@@ -233,4 +233,15 @@ function task3(img)
     wait_input()
 end
 
-task3(img)
+imgch = load("./Lorem_Ipsum_Helvetica.png")
+
+function task3()
+    experiment3(img)
+    # see "do-medium-test-3.png" and "do-medium-test-4.png"
+    # for results.
+    # we can observe similar effects on images of lots of text,
+    # but the effect is more significant
+    experiment3(imgch)
+end
+
+wait_input()
