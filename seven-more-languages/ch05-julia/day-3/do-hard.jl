@@ -6,11 +6,7 @@ using ColorTypes
 
 img = testimage("mandrill")
 
-# color experiment
-v = img[1,1]
+mat = convert(Array{YCbCr,2}, img.data)
 
-println(typeof(v))
-println(v)
-
-println(convert(YCbCr,v))
-
+#println(mat)
+println(typeof(mat))
