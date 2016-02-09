@@ -68,13 +68,17 @@ function transform_rgb_mat(img_data)
     # and for now I simply don't know how to convert it back
     # without explicitly permute two dimensions here.
     # (looks like "colorim" is not working for a 2-d RGB matrix)
-    permutedims(result,(2,1))
+    convert(Array{RGB,2},permutedims(result,(2,1)))
 end
 
-img = testimage("mandrill")
-result = convert(Array{RGB,2},transform_rgb_mat(img.data))
+function test(img)
+    result = transform_rgb_mat(img.data)
+    view(img)
+    view(result)
+end
 
-view(img)
-view(result)
+test( testimage("mandrill") )
+# do one more image for good measure
+test( testimage("lena_color_512") )
 
 wait_input()
