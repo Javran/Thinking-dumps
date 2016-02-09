@@ -4,16 +4,6 @@ using TestImages, ImageView
 using Codec
 using ColorTypes
 
-img = testimage("mandrill")
-
-# looks like this conversion also permutes dimension
-# see: http://timholy.github.io/Images.jl/function_reference/
-mat = convert(Array{YCbCr,2}, img.data)
-
-mat_y  = map(x -> x.y , mat)
-mat_cb = map(x -> x.cb, mat)
-mat_cr = map(x -> x.cr, mat)
-
 # we are dealing with matrix of data instead of images
 # so it's unnecessary to convert them from or back to images
 # "blockdct6" and "blockidct" are both modified to remove
@@ -51,32 +41,40 @@ function blockidct_mat(freqs)
     pixels
 end
 
-f = x -> blockidct_mat( blockdct6_mat(x) )
+function transform_rgb_mat(img_data)
+    # looks like this conversion also permutes dimension
+    # see: http://timholy.github.io/Images.jl/function_reference/
+    mat = convert(Array{YCbCr,2}, img_data)
+    mat_y  = map(x -> x.y , mat)
+    mat_cb = map(x -> x.cb, mat)
+    mat_cr = map(x -> x.cr, mat)
 
-result_y = f(mat_y)
-result_cb = f(mat_cb)
-result_cr = f(mat_cr)
+    f = x -> blockidct_mat( blockdct6_mat(x) )
 
-# in case the transform crops the image,
-# we use the resulting size instead of the original one
-y,x = size(result_y)
-# note that in result we permute two dimensions
-# because the previously "convert" permutes it
-# and for now I simply don't know how to convert it back
-# without explicitly permute two dimensions here.
-# (looks like "colorim" is not working for a 2-d RGB matrix)
-result = Array(YCbCr, (x,y))
+    result_y = f(mat_y)
+    result_cb = f(mat_cb)
+    result_cr = f(mat_cr)
 
-# why we got a rotated image?
-for i=1:x, j=1:y
-    # need to find an explanation to this rotation, for now
-    # we just switch two coordinates to rotate it back
-    result[i,j] = YCbCr(result_y[j,i],result_cb[j,i],result_cr[j,i])
+    # in case the transform crops the image,
+    # we use the resulting size instead of the original one
+    y,x = size(result_y)
+    result = Array(YCbCr, (y,x))
+
+    for i=1:x, j=1:y
+        result[j,i] = YCbCr(result_y[j,i],result_cb[j,i],result_cr[j,i])
+    end
+    # note that in result we permute two dimensions
+    # because the previously "convert" permutes it
+    # and for now I simply don't know how to convert it back
+    # without explicitly permute two dimensions here.
+    # (looks like "colorim" is not working for a 2-d RGB matrix)
+    permutedims(result,(2,1))
 end
 
-result2 = convert(Array{RGB,2},result)
+img = testimage("mandrill")
+result = convert(Array{RGB,2},transform_rgb_mat(img.data))
 
 view(img)
-view(result2)
+view(result)
 
 wait_input()
