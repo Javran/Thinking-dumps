@@ -27,10 +27,10 @@ function demo2()
 
     view(img)
     view(img2)
-
-    readline(STDIN)
 end
 
 demo2()
+
+wait_input()
 
 end
