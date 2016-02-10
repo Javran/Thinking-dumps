@@ -81,4 +81,13 @@ test( testimage("mandrill") )
 # do one more image for good measure
 test( testimage("lena_color_512") )
 
+# (In book it doesn't seem to state what is "coefficient",
+# but from what we know from the wikipedia, it's the first value of a block
+# after DCT. which is likely to contain the largest value of the block.)
+# TODO: The exercise of first coefficient is left out for now because of its complexity
+# The DC prediction aims at using less bits to represent an image losslessly,
+# this suggests that we need finer control over value bits. And also I don't have
+# enough information to see the entire picture of how coefficient prediction works.
+# (I believe getting a coarse idea of what it does is not helpful at all)
+
 wait_input()
