@@ -1,7 +1,8 @@
 (ns logical.core
   (:gen-class))
 
+(use 'logical.day1-easy)
+
 (defn -main
   [& args]
-  (println "Excited!"))
-
+  (day1-easy))
