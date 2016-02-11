@@ -6,7 +6,7 @@
 (use 'logical.day1-book)
 
 (db-rel languageo x l)
-(db-rel system x s)
+(db-rel systemo x s)
 
 (def facts1
   (-> facts
@@ -46,4 +46,22 @@
   ;; ()
   (p (run* [q] (appendo q [1 2 3] [1 2 3 1 2 3])))
   ;; ((1 2 3))
+
+  (p "exercise 3")
+  ;; let's try some queries to see database in action
+
+  ;; male scientists that have contributions in languages
+  ;; and won turing awards:
+  (p
+   (with-db facts1
+     (run* [p l y]
+       (languageo p l)
+       (mano p)
+       (turingo p y))))
+  ;; which living scientists has works in the field of systems?
+  (p
+   (with-db facts1
+     (run* [p s]
+       (vitalo p :alive)
+       (systemo p s))))
   )
