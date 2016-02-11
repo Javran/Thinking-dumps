@@ -1,5 +1,4 @@
-(ns logical.day1-easy
-  (:gen-class))
+(ns logical.day1-easy)
 
 (use 'clojure.core.logic)
 (use 'logical.utils)
