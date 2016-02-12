@@ -17,4 +17,12 @@
   (p
    (with-db facts
      (run* [p]
-       (scientisto p)))))
+       (scientisto p))))
+  (p "exercise 2")
+  ;; find all scientists who've won Turing Awards
+  (p
+   (with-db facts
+    (run* [p]
+      (fresh [y]
+        (scientisto p)
+        (turingo p y))))))
