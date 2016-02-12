@@ -25,6 +25,7 @@
 
 (defn day1-easy
   []
+  (p "day 1 - do easy")
   (p "exercise 1")
   ;; whatever element present in both list are shown up as results
   (p (run* [q] (membero q [1 2 3]) (membero q [4 3 2])))
