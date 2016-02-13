@@ -57,8 +57,19 @@
   (p "day 1 - do hard")
   (p "exercise 1")
 
+  (p "find Cain's ancestors")
   (p
    (with-db genealogy-facts
      (run* [p2]
        (ancestoro :cain p2))))
+  (p "find Jubal's ancestors")
+  ;; TODO: take into account spouse?
+  ;; the rule of "ancestoro" can't see
+  ;; why "(childo :lamech :ada)" is true
+  ;; which requires us either give it explicitly
+  ;; or have some rules to deal with it
+  (p
+   (with-db genealogy-facts
+     (run* [p2]
+       (ancestoro :jubal p2))))
   )
