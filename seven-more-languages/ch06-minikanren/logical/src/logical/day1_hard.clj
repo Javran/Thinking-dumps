@@ -4,9 +4,16 @@
 (use 'clojure.core.logic.pldb)
 (use 'logical.utils)
 
+;; the genelogy-facts example is taken from SICP ex 4.63 XD
+;; I think the original relation is hard to read:
+;; you don't know if (childo a b) means "(one of) a's child is b" or
+;; "a is b's child". therefore in the following part we will introduce
+;; some notations to make things easier to read.
+
 ;; c is p's child
 ;; image it as p -> c
-;; where "->" means gives birth to or something
+;; we will use notation "->", imagine
+;; it means gives birth to or something
 (db-rel childo p c)
 ;; p2 is p1's wife
 (db-rel wifeo p1 p2)
@@ -37,9 +44,6 @@
       (ancestoro p1 p3))]))
 
 (def genealogy-facts
-  ;; see: SICP ex 4.63 xD
-  ;; TODO: these relations are very unintuitive to read
-  ;; we need another example to replace this
   (db
    [childo :adam :cain]
    [childo :cain :enoch]
@@ -62,12 +66,18 @@
    (with-db genealogy-facts
      (run* [p2]
        (ancestoro :cain p2))))
+  (p "find Lamech's ancestors")
+  (p
+   (with-db genealogy-facts
+     (run* [p2]
+       (ancestoro :lamech p2))))
   (p "find Jubal's ancestors")
-  ;; TODO: take into account spouse?
-  ;; the rule of "ancestoro" can't see
-  ;; why "(childo :lamech :ada)" is true
-  ;; which requires us either give it explicitly
-  ;; or have some rules to deal with it
+  ;; with our limited rules, the system cannot deduce that
+  ;; Jubal is also Lamech's child so the ancestors
+  ;; originated from Lamech are all missing.
+  ;; to fix this problem, we either need to come up with
+  ;; some helper rules or just put the conclusion into db.
+  ;; for now we just live with it.
   (p
    (with-db genealogy-facts
      (run* [p2]
