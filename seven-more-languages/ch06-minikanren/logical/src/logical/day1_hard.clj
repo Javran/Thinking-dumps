@@ -90,5 +90,9 @@
    (with-db genealogy-facts
      (run* [p]
        (descendanto :cain p))))
+  ;; TODO: skipping cousin relation because I don't know how to negate.
+  ;; basically if a and b are cousins, their parents are different
+  ;; but their parents' parent is the same
+  ;; and to encode this rule, one needs negation
   )
 
