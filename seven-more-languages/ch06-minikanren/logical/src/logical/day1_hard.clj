@@ -43,6 +43,9 @@
       (childo p2 p3)
       (ancestoro p1 p3))]))
 
+(defn descendanto [p1 p2]
+  (ancestoro p2 p1))
+
 (def genealogy-facts
   (db
    [childo :adam :cain]
@@ -82,4 +85,10 @@
    (with-db genealogy-facts
      (run* [p2]
        (ancestoro :jubal p2))))
+  (p "find Cain's descendants")
+  (p
+   (with-db genealogy-facts
+     (run* [p]
+       (descendanto :cain p))))
   )
+
