@@ -100,9 +100,26 @@
    (with-db genealogy-facts
      (run* [p]
        (descendanto :cain p))))
+
   ;; TODO: skipping cousin relation because I don't know how to negate.
   ;; basically if a and b are cousins, their parents are different
   ;; but their parents' parent is the same
   ;; and to encode this rule, one needs negation
+
+  (p "exercise 2")
+  ;; direction 1: result is unknown
+  (p
+   (run* [q]
+       (extendo [1 2 3] [4 5 6] q)))
+  ;; direction 2: 2nd arg is unknown
+  (p
+   (run* [q]
+       (extendo [1 2 3] q [1 2 3 3 2 1])))
+  ;; direction 3: 1st arg is unknown
+  ;; TODO: for now it's not working
+  ;; (p
+  ;; (run* [q]
+  ;; (extendo q [4 5 6] [2 2 4 5 6])))
+
   )
 
