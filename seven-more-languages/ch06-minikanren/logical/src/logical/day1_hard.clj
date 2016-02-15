@@ -59,6 +59,16 @@
 
    [wifeo :lamech :ada]))
 
+(defn extendo [xs ys rs]
+  (conde
+   [
+    (== xs [])
+    (== ys rs)]
+   [(fresh [hd tl rs1]
+      (conso hd tl xs)
+      (extendo tl ys rs1)
+      (conso hd rs1 rs))]))
+
 (defn day1-hard
   []
   (p "day 1 - do hard")
