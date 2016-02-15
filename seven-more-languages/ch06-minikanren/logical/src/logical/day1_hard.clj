@@ -59,15 +59,23 @@
 
    [wifeo :lamech :ada]))
 
+;; TODO: I feel for all 3 directions to work we might need
+;; to "destruct" both arguments
+;; need to think through this.
 (defn extendo [xs ys rs]
   (conde
-   [
+   [;; case 1: when xs is []
     (== xs [])
     (== ys rs)]
-   [(fresh [hd tl rs1]
+   [;; case 2: when xs is non-empty
+    (fresh [hd tl]
+      ;; xs = (cons hd tl)
       (conso hd tl xs)
-      (extendo tl ys rs1)
-      (conso hd rs1 rs))]))
+      ;; result's head is hd, with rest of it
+      ;; concatenated with ys
+      (fresh [rs1]
+        (extendo tl ys rs1)
+        (conso hd rs1 rs)))]))
 
 (defn day1-hard
   []
@@ -118,8 +126,7 @@
   ;; direction 3: 1st arg is unknown
   ;; TODO: for now it's not working
   ;; (p
-  ;; (run* [q]
-  ;; (extendo q [4 5 6] [2 2 4 5 6])))
-
+  ;;  (run* [q]
+  ;;    (extendo q [4 5 6] [2 2 4 5 6])))
   )
 
