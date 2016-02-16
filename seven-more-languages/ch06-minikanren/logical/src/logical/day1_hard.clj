@@ -71,6 +71,17 @@
       ;; result's head is hd, with rest of it
       ;; concatenated with ys
       (fresh [rs1]
+        ;; make sure to put "conso" before recursive "extendo"
+        ;; the reason of this is to make recursion "productive"
+        ;; when xs is unknown.
+        ;;
+        ;; imagine when "xs" is unknown, both branch of "conde" will
+        ;; be attempted, however, when the program searches through
+        ;; this point, if "extendo" follows immediately,
+        ;; we will be going into a new loop, and no extra information
+        ;; about "xs" is known, so we end up with an infinite loop
+        ;; so despite the book says "order does not matter", it's a lie,
+        ;; the order matters and sometimes we need to think carefully about it.
         (conso hd rs1 rs)
         (extendo tl ys rs1)))]))
 
