@@ -132,9 +132,6 @@
    (run* [q]
        (extendo [1 2 3] q [1 2 3 3 2 1])))
   ;; direction 3: 1st arg is unknown
-  ;; TODO: for now it's not working
   (p
    (run* [q]
-     (extendo q [4 5 6] [2 2 4 5 6])))
-  )
-
+     (extendo q [4 5 6] [2 2 4 5 6]))))
