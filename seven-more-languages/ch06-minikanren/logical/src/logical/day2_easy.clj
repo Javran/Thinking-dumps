@@ -5,10 +5,8 @@
 
 (defne extendo2 [xs ys rs]
   ([[] ys ys])
-  ([[hd . tl] ys rs]
-   (fresh [rs1]
-     (conso hd rs1 rs)
-     (extendo2 tl ys rs1))))
+  ([[hd . tl] ys [hd . rs1]]
+   (extendo2 tl ys rs1)))
 
 (defn day2-easy
   []
