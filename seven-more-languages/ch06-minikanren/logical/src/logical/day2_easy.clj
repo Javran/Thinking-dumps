@@ -14,6 +14,31 @@
     (featurec m {:user u})
     (!= u "root")))
 
+(defn whicho1 [x s1 s2 r]
+  (conde
+   [(membero x s1)
+    (== r :one)]
+   [(membero x s2)
+    (== r :two)]
+   [(membero x s1)
+    (membero x s2)
+    (== r :both)]))
+
+(defn whicho2 [x s1 s2 r]
+  (conda
+   [(all
+     (membero x s1)
+     (membero x s2)
+     (== r :both))]
+   [(all
+     (membero x s1)
+     (== r :one))]
+   [(all
+     (membero x s2)
+     (== r :two))]
+   ))
+
+
 (defn day2-easy
   []
   (p "day 2 - do easy")
