@@ -79,14 +79,18 @@
        (== s1 [:a :b :c])
        (== s2 [:b :c :d])
        (whicho2 q s1 s2 :both))))
-  ;; backward on whicho1
+  ;; it turns out both "whicho1" and "whicho2"
+  ;; does not consider the fact of membership
+  ;; in the other set. in other words
+  ;; if (whicho1 x s1 s2 :two) is true,
+  ;; it does not suggest "s1" does not contain "x"
+  ;; so the result is not a set difference
   (p
    (run* [q]
      (fresh [s1 s2]
        (== s1 [:a :b :c])
        (== s2 [:b :c :d])
        (whicho1 q s1 s2 :two))))
-  ;; backward on whicho2
   (p
    (run* [q]
      (fresh [s1 s2]
