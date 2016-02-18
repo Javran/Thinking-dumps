@@ -79,4 +79,18 @@
        (== s1 [:a :b :c])
        (== s2 [:b :c :d])
        (whicho2 q s1 s2 :both))))
+  ;; backward on whicho1
+  (p
+   (run* [q]
+     (fresh [s1 s2]
+       (== s1 [:a :b :c])
+       (== s2 [:b :c :d])
+       (whicho1 q s1 s2 :two))))
+  ;; backward on whicho2
+  (p
+   (run* [q]
+     (fresh [s1 s2]
+       (== s1 [:a :b :c])
+       (== s2 [:b :c :d])
+       (whicho2 q s1 s2 :two))))
   )
