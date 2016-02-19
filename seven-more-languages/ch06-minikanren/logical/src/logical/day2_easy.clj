@@ -65,36 +65,34 @@
        (== m {:user "user"})
        (non-rooto m))))
   (p "exercise 3")
+  ;; we have two "whicho"s to use, one built with
+  ;; conde and another conda
+  (defn test-whicho
+    [whicho s1 s2 r]
+    (run* [q]
+      (whicho q s1 s2 r)))
   ;; backward on whicho1
   (p
-   (run* [q]
-     (fresh [s1 s2]
-       (== s1 [:a :b :c])
-       (== s2 [:b :c :d])
-       (whicho1 q s1 s2 :both))))
+   (test-whicho
+    whicho1
+    [:a :b :c] [:b :c :d] :both))
   ;; backward on whicho2
   (p
-   (run* [q]
-     (fresh [s1 s2]
-       (== s1 [:a :b :c])
-       (== s2 [:b :c :d])
-       (whicho2 q s1 s2 :both))))
+   (test-whicho
+    whicho2
+    [:a :b :c] [:b :c :d] :both))
   ;; it turns out both "whicho1" and "whicho2"
   ;; does not consider the fact of membership
   ;; in the other set. in other words
   ;; if (whicho1 x s1 s2 :two) is true,
-  ;; it does not suggest "s1" does not contain "x"
+  ;; it does not suggest that "s1" does not contain "x"
   ;; so the result is not a set difference
   (p
-   (run* [q]
-     (fresh [s1 s2]
-       (== s1 [:a :b :c])
-       (== s2 [:b :c :d])
-       (whicho1 q s1 s2 :two))))
+   (test-whicho
+    whicho1
+    [:a :b :c] [:b :c :d] :two))
   (p
-   (run* [q]
-     (fresh [s1 s2]
-       (== s1 [:a :b :c])
-       (== s2 [:b :c :d])
-       (whicho2 q s1 s2 :two))))
+   (test-whicho
+    whicho2
+    [:a :b :c] [:b :c :d] :two))
   )
