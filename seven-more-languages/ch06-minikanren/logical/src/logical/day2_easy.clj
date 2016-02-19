@@ -95,4 +95,10 @@
    (test-whicho
     whicho2
     [:a :b :c] [:b :c :d] :two))
+  ;; it seems "conde" and "conda" is not making any
+  ;; difference when being ran backwards, this is because
+  ;; we have specified the result to be one of :one, :two or :both
+  ;; which is mutually exclusive to each other.
+  ;; Therefore in both "conde" and "conda", the result has selected exactly
+  ;; one branch.
   )
