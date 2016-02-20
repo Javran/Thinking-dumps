@@ -43,6 +43,9 @@
    (!= e v) (not-membero e rs))
   ([_ []]))
 
+;; new versions are named with "whichxo" and a number
+;; to show the correspondence between "whicho" version
+;; a new branch :none is added when x is not in any of these sets
 (defn whichxo1 [x s1 s2 r]
   (conde
    [(membero x s1)
@@ -170,4 +173,18 @@
   ;; looks "simplified" in a sense that no duplicated condition is added
   ;; even if some element appears in more than one set.
   ;; (e.g. only one "(!= ? 2)" condition despite that all two sets contain 2)
+
+  ;; I'm not sure what the question the exercise is asking about.
+  ;; "conde" and "conda" works differently, the former represents a parallel universe
+  ;; so results from all branches are collected, and the latter is more like
+  ;; runing things sequentially and shortcut whenever one branch has succeeded.
+  ;; "whicho" of "conda" is the version we usually expect, it gives no more than one
+  ;; result. and "whicho" of "conde" gives more than one result because it runs in
+  ;; "multiple universe", in which case one "universe" cannot observe results from
+  ;; other universes and decide whether to execute this path or not.
+  ;; so for "conde" to work correctly, one should add something like "not-membero"
+  ;; to make branches mutually exclusive to ensure that no more than one result
+  ;; will be yielded.
+  ;; in :none branch, the precondition should always make sure the given element does
+  ;; not appear in any of the sets, no matter which version of "whichxo" we are using.
   )
