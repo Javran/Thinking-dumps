@@ -143,4 +143,9 @@
   (p (run* [q] (not-membero 4 [])))
   (p (run* [q] (not-membero 1 [1 2 3])))
   (p (run* [q] (not-membero 4 [1 2 3])))
+
+  (p (run* [q]
+       (whichxo1 :a [1 2 3] [4 5 6] q)))
+  (p (run* [q]
+       (whichxo2 :a [1 2 3] [4 5 6] q)))
   )
