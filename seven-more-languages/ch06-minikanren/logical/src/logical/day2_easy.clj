@@ -43,6 +43,36 @@
    (!= e v) (not-membero e rs))
   ([_ []]))
 
+(defn whichxo1 [x s1 s2 r]
+  (conde
+   [(membero x s1)
+    (== r :one)]
+   [(membero x s2)
+    (== r :two)]
+   [(membero x s1)
+    (membero x s2)
+    (== r :both)]
+   [(not-membero x s1)
+    (not-membero x s2)
+    (== r :none)]))
+
+(defn whichxo2 [x s1 s2 r]
+  (conda
+   [(all
+     (membero x s1)
+     (membero x s2)
+     (== r :both))]
+   [(all
+     (membero x s1)
+     (== r :one))]
+   [(all
+     (membero x s2)
+     (== r :two))]
+   [(all
+     (not-membero x s1)
+     (not-membero x s2)
+     (== r :none))]))
+
 (defn day2-easy
   []
   (p "day 2 - do easy")
