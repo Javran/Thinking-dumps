@@ -144,8 +144,30 @@
   (p (run* [q] (not-membero 1 [1 2 3])))
   (p (run* [q] (not-membero 4 [1 2 3])))
 
+  ;; "whichxo" is like "whicho" but additionally
+  ;; has :none branch
   (p (run* [q]
        (whichxo1 :a [1 2 3] [4 5 6] q)))
   (p (run* [q]
        (whichxo2 :a [1 2 3] [4 5 6] q)))
+  ;; two programs above should give same results
+
+  ;; specify :none, run it backwards and see what will happen
+  (p (run* [q]
+       (whichxo1 q [1 2 3] [4 5 6] :none)))
+  (p (run* [q]
+       (whichxo2 q [1 2 3] [4 5 6] :none)))
+  ;; two programs above all seem to generate a list of things
+  ;; "q" should not equal to
+
+  ;; what if two sets have something in common?
+  (p (run* [q]
+       (whichxo1 q [1 2 3] [2 3 6] :none)))
+  (p (run* [q]
+       (whichxo2 q [1 2 3] [2 3 6] :none)))
+  ;; two programs produce same result. as we know this logic
+  ;; system adds conditions only when necessary, the result
+  ;; looks "simplified" in a sense that no duplicated condition is added
+  ;; even if some element appears in more than one set.
+  ;; (e.g. only one "(!= ? 2)" condition despite that all two sets contain 2)
   )
