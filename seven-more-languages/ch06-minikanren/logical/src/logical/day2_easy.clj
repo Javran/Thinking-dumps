@@ -38,6 +38,11 @@
      (== r :two))]
    ))
 
+(defne not-membero [e l]
+  ([_ [v . rs]]
+   (!= e v) (not-membero e rs))
+  ([_ []]))
+
 (defn day2-easy
   []
   (p "day 2 - do easy")
@@ -101,4 +106,11 @@
   ;; which is mutually exclusive to each other.
   ;; Therefore in both "conde" and "conda", the result has selected exactly
   ;; one branch.
+  (p "exercise 4")
+  ;; we first need a relation "not-membero"
+  ;; because in Core.logic it doesn't seem to have a way
+  ;; of negation in general
+  (p (run* [q] (not-membero 4 [])))
+  (p (run* [q] (not-membero 1 [1 2 3])))
+  (p (run* [q] (not-membero 4 [1 2 3])))
   )
