@@ -24,6 +24,11 @@
 (defn day2-medium
   []
   (p "day 2 - do medium")
-  (p
-   (with-db facts (run* [q] (unsungo [:alan-turing :grace-hopper]))))
-  )
+  (defn test-list [xs]
+    (with-db facts (run* [q] (unsungo xs))))
+  ;; element is not scienist -- should fail
+  (p (test-list [1 2 3]))
+  ;; none of them has won Turing award -- should succeed
+  (p (test-list [:alan-turing :grace-hopper :alonzo-church]))
+  ;; should fail because :leslie-lamport won Turing award
+  (p (test-list [:alan-turing :grace-hopper :leslie-lamport :alonzo-church])))
