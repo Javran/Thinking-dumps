@@ -27,12 +27,22 @@
 ;;     * recursively, first branch fails because we already know "q != a"
 ;;     * second branch succeeds, with constraints still being "q != a and q != b"
 ;;       * recursively, no branch will match the empty list, and the query fails.
+
+;; the following is the first working impl,
+;; might be easier to read than the simplified one
+;; so I keep it here.
+#_
 (defne insideo1 [e l]
   ([_ [h . t]]
    (conde
     [(== e h)]
     [(!= e h) (insideo1 e t)]
    )))
+(defne insideo1 [e l]
+  ([_ [e . _]])
+  ([_ [h . t]]
+   (!= h e)
+   (insideo e t)))
 
 ;; some reading regarding condX family:
 ;; http://stackoverflow.com/questions/10843563/conda-condi-conde-condu
