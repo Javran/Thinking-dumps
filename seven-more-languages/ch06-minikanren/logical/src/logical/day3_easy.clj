@@ -8,8 +8,11 @@
 (defn day3-easy
   []
   (p "day 3 - do easy")
+  ;; let's find pythagorean triples
   (p
-   (run* [q]
-     ;; q <= 1 and q in range 0~10
-     (fd/in q (fd/interval 0 10))
-     (fd/<= q 1))))
+   (run* [a b c]
+     (fd/in a b c (fd/interval 1 100))
+     (fd/<= a b)
+     (fd/<= b c)
+     (fd/eq
+      (= (+ (* a a) (* b b)) (* c c))))))
