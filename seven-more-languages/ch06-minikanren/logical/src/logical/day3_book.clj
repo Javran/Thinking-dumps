@@ -71,38 +71,52 @@
 
 (db-rel ploto a b)
 
+;; story-db is the result of accumulating elements as "ploto" relation
+;; nothing fancy.
 (def story-db
-  (reduce (fn [dbase elems] ;; (1)
-            (apply db-fact dbase ploto (take 2 elems)))
-          (db) ;; (2)
-          story-elements)) ;; (3)
+  (reduce
+   (fn [dbase elems]
+     (apply db-fact dbase ploto (take 2 elems)))
+   (db)
+   story-elements))
 
+;; resources available at the very beginning
 (def start-state
   [:maybe-telegram-girl :maybe-motorist
    :wadsworth :mr-boddy :cook :yvette])
 
 (defn actiono [state new-state action]
   (fresh [in out temp]
-    (membero in state) ;; (4)
-    (ploto in out) ;; (5)
-    (rembero in state temp) ;; (6)
-    (conso out temp new-state) ;; (7)
+    ;; pick up one available resource
+    (membero in state)
+    ;; try to "trade" it for something else
+    (ploto in out)
+    ;; remove the old resource and add the new one
+    (rembero in state temp)
+    (conso out temp new-state)
     (== action [in out])))
 
 (declare story*)
 
 (defn storyo [end-elems actions]
-  (storyo* (shuffle start-state) end-elems actions)) ;; (8)
+  ;; shuffle start state for a more "randomized" solution
+  (storyo* (shuffle start-state) end-elems actions))
 
 (defn storyo* [start-state end-elems actions]
   (fresh [action new-state new-actions]
-    (actiono start-state new-state action) ;; (9)
-    (conso action new-actions actions) ;; (10)
+    ;; make one action
+    (actiono start-state new-state action)
+    ;; and add it to the list of actions
+    (conso action new-actions actions)
     (conda
-     [(everyg #(membero % new-state) end-elems) ;; (11)
+     ;; story generation ends if all end-elems
+     ;; are accquired in the current state
+     [(everyg #(membero % new-state) end-elems)
       (== new-actions [])]
-     [(storyo* new-state end-elems new-actions)]))) ;; (12)
+     ;; otherwise, we keep generating more actions
+     [(storyo* new-state end-elems new-actions)])))
 
+;; story pretty-printing
 (def story-map
   (reduce (fn [m elems] ;; (13)
             (assoc m (vec (take 2 elems)) (nth elems 2)))
