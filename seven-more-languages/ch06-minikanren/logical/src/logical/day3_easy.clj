@@ -30,14 +30,22 @@
       [(fd/eq
         (= (+ a b) 10))])))
 
-  (let [story-stream
+  (let* [start-state1
+        ;; there are 2 ways to make the motorist never appear:
+        ;; either we put some extra rules to rule out the case
+        ;; in which :maybe-motorist appears
+        ;; or we can just simply remove this resource from start state.
+        ;; here we go with the second approach
+        [:maybe-telegram-girl
+         :wadsworth :mr-boddy :cook :yvette]
+        story-stream
         (fn
           [& goals]
           (with-db story-db
             (run* [q]
-              (storyo (vec goals) q))))]
+              (storyo* (shuffle start-state1) (vec goals) q))))]
     (print-story
      (first
-      (filter #(> (count %) 10)
+      (filter #(> (count %) 5)
               (story-stream :guilty-peacock :dead-yvette)))))
   )
