@@ -96,7 +96,7 @@
     (conso out temp new-state)
     (== action [in out])))
 
-(declare story*)
+(declare storyo*)
 
 (defn storyo [end-elems actions]
   ;; shuffle start state for a more "randomized" solution

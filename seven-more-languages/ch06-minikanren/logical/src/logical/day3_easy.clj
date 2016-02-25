@@ -1,6 +1,8 @@
 (ns logical.day3-easy)
 
 (use 'clojure.core.logic)
+(use 'clojure.core.logic.pldb)
+(use 'logical.day3-book)
 (use 'logical.utils)
 
 (require '[clojure.core.logic.fd :as fd])
@@ -26,4 +28,16 @@
       [(fd/eq
         (= a b))]
       [(fd/eq
-        (= (+ a b) 10))]))))
+        (= (+ a b) 10))])))
+
+  (let [story-stream
+        (fn
+          [& goals]
+          (with-db story-db
+            (run* [q]
+              (storyo (vec goals) q))))]
+    (print-story
+     (first
+      (filter #(> (count %) 10)
+              (story-stream :guilty-peacock :dead-yvette)))))
+  )
