@@ -46,16 +46,34 @@
            (map #(get % 1) story-elements)))
          story-stream
          (fn
-           [& goals]
+           []
            (with-db story-db
              (run* [q]
-               (storyo* (shuffle start-state1) (vec goals) q))))]
-    #_
+               (fresh [m1 m2 g]
+                 ;; we have 2 distinct murderers
+                 (!= m1 m2)
+                 (membero m1 all-possible-murderers)
+                 (membero m2 all-possible-murderers)
+                 ;; and make goals using them
+                 ;; note that this goal is too restrictive
+                 ;; to make a story that contains more than 2 murders
+                 ;; because as long as all goals are satisfied,
+                 ;; the story generation stops.
+                 ;; it would be better to have "goal" in a less restrictive form:
+                 ;; to say that m1 and m2 are members of this goal
+                 ;; but the goal is free to include any extra thing,
+                 ;; the code would look like:
+                 ;; (membero m1 g)
+                 ;; (membero m2 g)
+                 ;; (storyo* (shuffle start-state1) g q)
+                 ;; but this doesn't work, because Clojure have no idea
+                 ;; about what type of "g" we are using.
+                 ;; for now let's just live with the fact
+                 ;; that most of the time this story generator only
+                 ;; generates stories with exactly 2 murders.
+                 ;; this at least satisfies what exercise requies us to do.
+                 (storyo* (shuffle start-state1) [m1 m2] q)))))]
     (print-story
      (first
-      (filter #(> (count %) 5)
-              (story-stream :guilty-peacock :dead-yvette))))
-    (p all-possible-murderers)
-
-    )
-  )
+      (filter #(> (count %) 4)
+              (story-stream))))))
