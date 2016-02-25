@@ -31,21 +31,31 @@
         (= (+ a b) 10))])))
 
   (let* [start-state1
-        ;; there are 2 ways to make the motorist never appear:
-        ;; either we put some extra rules to rule out the case
-        ;; in which :maybe-motorist appears
-        ;; or we can just simply remove this resource from start state.
-        ;; here we go with the second approach
-        [:maybe-telegram-girl
-         :wadsworth :mr-boddy :cook :yvette]
-        story-stream
-        (fn
-          [& goals]
-          (with-db story-db
-            (run* [q]
-              (storyo* (shuffle start-state1) (vec goals) q))))]
+         ;; there are 2 ways to make the motorist never appear:
+         ;; either we put some extra rules to rule out the case
+         ;; in which :maybe-motorist appears
+         ;; or we can just simply remove this resource from start state.
+         ;; here we go with the second approach
+         [:maybe-telegram-girl
+          :wadsworth :mr-boddy :cook :yvette]
+         ;; get a list of all possible murders from story-elements
+         all-possible-murderers
+         (distinct
+          (filter
+           #(.startsWith (name %) "guilty-")
+           (map #(get % 1) story-elements)))
+         story-stream
+         (fn
+           [& goals]
+           (with-db story-db
+             (run* [q]
+               (storyo* (shuffle start-state1) (vec goals) q))))]
+    #_
     (print-story
      (first
       (filter #(> (count %) 5)
-              (story-stream :guilty-peacock :dead-yvette)))))
+              (story-stream :guilty-peacock :dead-yvette))))
+    (p all-possible-murderers)
+
+    )
   )
