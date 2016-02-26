@@ -10,6 +10,7 @@
 (defn day3-easy
   []
   (p "day 3 - do easy")
+  (p "exercise 1")
   ;; let's find pythagorean triples
   (p
    (run* [a b c]
@@ -29,7 +30,7 @@
         (= a b))]
       [(fd/eq
         (= (+ a b) 10))])))
-
+  (p "exercise 2")
   (let* [start-state1
          ;; there are 2 ways to make the motorist never appear:
          ;; either we put some extra rules to rule out the case
