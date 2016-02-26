@@ -38,15 +38,26 @@
   [state actions]
   (reduce apply-action state actions))
 
+(defn available-events
+  [state action-dict]
+  (distinct
+   (mapcat
+    (fn [res]
+      (map (fn [t] [res t])
+           (get action-dict res [])))
+    state)))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
   (let [events
         (first
-         (filter #(> (count %) 10)
+         (filter #(> (count %) 5)
                  (with-db story-db
                    (run* [q]
                      (storyo [:guilty-peacock :dead-yvette] q)))))
+        adict
+        (mk-action-dict story-elements)
         current-state
         (apply-actions start-state events)]
-    (p current-state)))
+    (p (available-events current-state adict))))
