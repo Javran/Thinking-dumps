@@ -43,9 +43,21 @@
   (distinct
    (mapcat
     (fn [res]
-      (map (fn [t] [res t])
+      (map #(conj [res] %)
            (get action-dict res [])))
     state)))
+
+(defn push-story
+  [state action-dict]
+  (let [next-actions
+        (available-events state action-dict)]
+    (if (empty? action-dict)
+      ;; we can perform no more actions
+      [state []]
+      (let* [next-action (first (shuffle next-actions))
+             next-state (apply-action state next-action)
+             [result-state actions] (push-story next-state next-action)]
+        [result-state (into [next-action] actions)]))))
 
 (defn day3-medium
   []
