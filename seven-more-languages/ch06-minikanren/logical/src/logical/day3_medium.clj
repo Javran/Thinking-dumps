@@ -51,12 +51,12 @@
   [state action-dict]
   (let [next-actions
         (available-events state action-dict)]
-    (if (empty? action-dict)
+    (if (empty? next-actions)
       ;; we can perform no more actions
       [state []]
-      (let* [next-action (first (shuffle next-actions))
-             next-state (apply-action state next-action)
-             [result-state actions] (push-story next-state next-action)]
+      (let [next-action (first (shuffle next-actions))
+            next-state (apply-action state next-action)
+            [result-state actions] (push-story next-state action-dict)]
         [result-state (into [next-action] actions)]))))
 
 (defn day3-medium
@@ -72,4 +72,4 @@
         (mk-action-dict story-elements)
         current-state
         (apply-actions start-state events)]
-    (p (available-events current-state adict))))
+    (p (push-story current-state adict))))
