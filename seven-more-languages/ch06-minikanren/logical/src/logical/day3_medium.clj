@@ -22,6 +22,11 @@
     (assoc ad k (conj (get ad k []) v)))
   (reduce combine {} story-elements))
 
+;; we first get the current state by applying ("replaying") events
+;; on the initial state.
+;; this could have been done without "replaying", but that requires modifying
+;; the original function to keep the final state.
+;; here we keep the original lib intact.
 (defn apply-action
   [state [k v]]
   (let [old-res-ind (.indexOf state k)]
@@ -29,9 +34,19 @@
             (str "resource not available: " k))
     (conj (filter #(not= k %) state) v)))
 
+(defn apply-actions
+  [state actions]
+  (reduce apply-action state actions))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
-  (p (apply-action [:maybe-motorist :dead-telegram-girl]
-                   [:maybe-motorist :guilty-peacock]))
-  )
+  (let [events
+        (first
+         (filter #(> (count %) 10)
+                 (with-db story-db
+                   (run* [q]
+                     (storyo [:guilty-peacock :dead-yvette] q)))))
+        current-state
+        (apply-actions start-state events)]
+    (p current-state)))
