@@ -71,5 +71,7 @@
         adict
         (mk-action-dict story-elements)
         current-state
-        (apply-actions start-state events)]
-    (p (push-story current-state adict))))
+        (apply-actions start-state events)
+        [final-state extra-actions] (push-story current-state adict)]
+    (print-story
+     (concat events extra-actions))))
