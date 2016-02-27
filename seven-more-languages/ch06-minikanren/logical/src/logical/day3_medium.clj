@@ -73,19 +73,31 @@
 ;; invalid states (some cases might be that certain resources cannot coexist,
 ;; this problem does not exist for this example though).
 
+;; complete the story by pushing it forward until
+;; no more resource can be consumed
+(defn complete-story
+  [start-state actions story-elements]
+  (let [adict
+        (mk-action-dict story-elements)
+        current-state
+        (apply-actions start-state actions)
+        [final-state extra-actions]
+        (push-story current-state adict)]
+    (concat actions extra-actions)))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
+  (p "exercise 1")
   (let [events
         (first
-         (filter #(> (count %) 5)
-                 (with-db story-db
-                   (run* [q]
-                     (storyo [:guilty-peacock :dead-yvette] q)))))
-        adict
-        (mk-action-dict story-elements)
-        current-state
-        (apply-actions start-state events)
-        [final-state extra-actions] (push-story current-state adict)]
+         (filter
+          ;; we will make the story complete anyway,
+          ;; so it won't make much trouble if the generated story is a bit short
+          #(> (count %) 5)
+          (with-db story-db
+            (run* [q]
+              (storyo [:guilty-peacock :dead-yvette] q)))))]
     (print-story
-     (concat events extra-actions))))
+     (complete-story
+      start-state events story-elements))))
