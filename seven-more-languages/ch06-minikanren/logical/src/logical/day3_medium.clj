@@ -13,6 +13,8 @@
 ;; since we are not using the logic framework anymore, we have to ensure
 ;; the consistency ourselves. However, in this case this is not a problem
 ;; as long as we guarantee that one resource can only be consumed once.
+;; (I prefer "actions" over "events" in code below, but
+;; there is no difference)
 
 ;; make an dictionary of actions from story-elements
 (defn mk-action-dict
@@ -38,7 +40,7 @@
   [state actions]
   (reduce apply-action state actions))
 
-(defn available-events
+(defn available-actions
   [state action-dict]
   (distinct
    (mapcat
@@ -50,7 +52,7 @@
 (defn push-story
   [state action-dict]
   (let [next-actions
-        (available-events state action-dict)]
+        (available-actions state action-dict)]
     (if (empty? next-actions)
       ;; we can perform no more actions
       [state []]
@@ -58,6 +60,18 @@
             next-state (apply-action state next-action)
             [result-state actions] (push-story next-state action-dict)]
         [result-state (into [next-action] actions)]))))
+
+;; In theory the way we make the story complete is also capable of generating strories
+;; on its own: given a set of resources, we are just finding paths of actions
+;; to take us to certain set of resources available.
+;; This remains be a question of what logic-based approach gives us.
+;; In my opinion, it is the expresssiveness: we can easily describe
+;; what is a desired state we want to reach, without
+;; enforcing extra restrictions (e.g. giving a full set of end-resources
+;; while only part of it is intended). And the search task is performed
+;; by the system. In addition, logic-based system is more capable of eliminating
+;; invalid states (some cases might be that certain resources cannot coexist,
+;; this problem does not exist for this example though).
 
 (defn day3-medium
   []
