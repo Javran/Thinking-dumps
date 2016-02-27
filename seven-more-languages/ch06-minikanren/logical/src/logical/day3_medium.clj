@@ -3,6 +3,7 @@
 (use 'clojure.core.logic)
 (use 'clojure.core.logic.pldb)
 (use 'logical.day3-book)
+(use 'logical.day3-easy)
 (use 'logical.utils)
 
 ;; We need to push stroy events to the end to learn about murderers.
@@ -100,4 +101,18 @@
               (storyo [:guilty-peacock :dead-yvette] q)))))]
     (print-story
      (complete-story
-      start-state events story-elements))))
+      start-state events story-elements)))
+
+  (p "exercise 1, extra")
+  ;; we try to push stories generated in day3_easy.clj
+  ;; to the end so we might have more than 2 murderers
+  ;; see comments in that file for detail
+  (print-story
+   (complete-story
+    day3e-exercise2-start-state
+    (first
+     (filter
+      ;; feel "3" is faster
+      #(> (count %) 3)
+      (day3e-exercise2-story-stream)))
+    story-elements)))
