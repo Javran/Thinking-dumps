@@ -133,4 +133,9 @@
   ;; but produce a list of them, by doing so, we can consume :motorist
   ;; and produce [:dead-motorist :policeman] in addition to the existing
   ;; possibilities of producing exactly one of :policeman or :dead-motorist
+  ;; TODO:
+  ;; * modify the system to accept a list of resources as outcome
+  ;;  (if symbol -> wrap to become a list, if list -> a list of actions)
+  ;; * check if it is possible to implement (set-related operations might be a problem)
+  ;; * investigate if it is still possible to run it backwards after the modification
   ;;)
