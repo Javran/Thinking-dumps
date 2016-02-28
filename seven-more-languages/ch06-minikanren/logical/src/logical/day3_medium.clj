@@ -74,6 +74,11 @@
 ;; invalid states (some cases might be that certain resources cannot coexist,
 ;; this problem does not exist for this example though).
 
+;; this approach has one drawback:
+;; all consumable resources have to be comsumed in the end.
+;; this make some optional resources (those prefixed with :maybe-)
+;; no longer optional.
+
 ;; complete the story by pushing it forward until
 ;; no more resource can be consumed
 (defn complete-story
