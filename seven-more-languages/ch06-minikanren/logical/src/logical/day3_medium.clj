@@ -120,4 +120,17 @@
       ;; feel "3" is faster
       #(> (count %) 3)
       (day3e-exercise2-story-stream)))
-    story-elements)))
+    story-elements))
+
+  (p "exercise 2")
+  ;; this idea needs some refinement to work:
+  ;; for example, :dead-mr-boddy could be consumed and
+  ;; produce one of the following:
+  ;; :guilty-plum, :guilty-scarlet :guilty-peacock
+  ;; but we cannot produce them at the same time
+  ;; (that might mean one victim is killed by more than one murderer)
+  ;; I think a better way would be to allow events to consume one resource
+  ;; but produce a list of them, by doing so, we can consume :motorist
+  ;; and produce [:dead-motorist :policeman] in addition to the existing
+  ;; possibilities of producing exactly one of :policeman or :dead-motorist
+  ;;)
