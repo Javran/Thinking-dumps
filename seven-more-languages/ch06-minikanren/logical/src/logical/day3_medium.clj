@@ -98,25 +98,32 @@
          [r1 [r2] text])
        story-elements))
 
+(def story-db-extended
+  (reduce
+   (fn [dbase elems]
+     (apply db-fact dbase ploto (take 2 elems)))
+   (db)
+   story-elements-extended))
+
 ;; extended "actiono" relation that
 ;; might trade one resource for multiple ones
-;; (defn actiono1 [state new-state action]
-;;   (fresh [in outs temp]
-;;     ;; pick up one available resource
-;;     (membero in state)
-;;     ;; try to "trade" it for something else
-;;     (ploto in outs)
-;;     ;; TODO: is outs symbol or list?
-
-;;     ;; remove the old resource and add the new one
-;;     (rembero in state temp)
-;;     (conso out temp new-state)
-;;     (== action [in out])))
+(defn actiono1 [state new-state action]
+  (fresh [in outs temp]
+    ;; pick up one available resource
+    (membero in state)
+    ;; try to "trade" it for something else
+    (ploto in outs)
+    ;; remove the old resource and add the new one
+    (rembero in state temp)
+    (appendo outs temp new-state)
+    (== action [in outs])))
 
 (defn day3-medium
   []
   (p "day 3 - do medium")
   (p "exercise 1")
+  ;; TODO: uncomment
+  #_
   (let [events
         (first
          (filter
@@ -135,6 +142,8 @@
   ;; we try to push stories generated in day3_easy.clj
   ;; to the end so we might have more than 2 murderers
   ;; see comments in that file for detail
+  ;; TODO: uncomment
+  #_
   (print-story
    (complete-story
     day3e-exercise2-start-state
@@ -146,6 +155,10 @@
     story-elements))
 
   (p "exercise 2")
+  (p (with-db story-db-extended
+       (run* [p q]
+         (actiono1 [:yvette] p q))))
+
   ;; this idea needs some refinement to work:
   ;; for example, :dead-mr-boddy could be consumed and
   ;; produce one of the following:
