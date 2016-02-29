@@ -13,12 +13,12 @@
      ;; hd should be a scientist at the first place
      (scientisto hd)
      (conda
-      [(fresh [y]
+      [(fresh [y x]
          (turingo hd y))
-       ;; make it impossible to unify in this branch
-       ;; at this point there's no way to go back
-       ;; so we've somehow managed to express negation
-       (== 1 2)]
+         ;; make it fail in this branch
+         ;; at this point there's no way to go back
+         ;; so we've somehow managed to express negation
+       fail]
       [(unsungo tl)]))))
 
 (defn day2-medium
