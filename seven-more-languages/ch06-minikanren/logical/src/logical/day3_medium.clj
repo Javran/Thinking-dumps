@@ -91,6 +91,21 @@
         (push-story current-state adict)]
     (concat actions extra-actions)))
 
+;; extended "actiono" relation that
+;; might trade one resource for multiple ones
+;; (defn actiono1 [state new-state action]
+;;   (fresh [in outs temp]
+;;     ;; pick up one available resource
+;;     (membero in state)
+;;     ;; try to "trade" it for something else
+;;     (ploto in outs)
+;;     ;; TODO: is outs symbol or list?
+
+;;     ;; remove the old resource and add the new one
+;;     (rembero in state temp)
+;;     (conso out temp new-state)
+;;     (== action [in out])))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
@@ -136,6 +151,9 @@
   ;; TODO:
   ;; * modify the system to accept a list of resources as outcome
   ;;  (if symbol -> wrap to become a list, if list -> a list of actions)
+  ;; not working: hard to find lib functions to distinct symbols and lists
+  ;; (you can match a symbol by using a list pattern, which yields warning)
   ;; * check if it is possible to implement (set-related operations might be a problem)
   ;; * investigate if it is still possible to run it backwards after the modification
-  ;;)
+  ;;
+  )
