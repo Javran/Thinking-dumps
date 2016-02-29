@@ -91,6 +91,13 @@
         (push-story current-state adict)]
     (concat actions extra-actions)))
 
+(def story-elements-extended
+  ;; part 1: extending existing elements
+  ;; to make them actiono1-compatible
+  (map (fn [[r1 r2 text]]
+         [r1 [r2] text])
+       story-elements))
+
 ;; extended "actiono" relation that
 ;; might trade one resource for multiple ones
 ;; (defn actiono1 [state new-state action]
@@ -124,6 +131,7 @@
       start-state events story-elements)))
 
   (p "exercise 1, extra")
+  (p story-elements-extended)
   ;; we try to push stories generated in day3_easy.clj
   ;; to the end so we might have more than 2 murderers
   ;; see comments in that file for detail
