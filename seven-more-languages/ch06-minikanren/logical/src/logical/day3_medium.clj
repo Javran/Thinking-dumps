@@ -118,6 +118,20 @@
     (appendo outs temp new-state)
     (== action [in outs])))
 
+(defn storyo1* [start-state end-elems actions]
+  (fresh [action new-state new-actions]
+    ;; make one action
+    (actiono1 start-state new-state action)
+    ;; and add it to the list of actions
+    (conso action new-actions actions)
+    (conda
+     ;; story generation ends if all end-elems
+     ;; are accquired in the current state
+     [(everyg #(membero % new-state) end-elems)
+      (== new-actions [])]
+     ;; otherwise, we keep generating more actions
+     [(storyo1* new-state end-elems new-actions)])))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
