@@ -132,6 +132,10 @@
      ;; otherwise, we keep generating more actions
      [(storyo1* new-state end-elems new-actions)])))
 
+(defn storyo1 [end-elems actions]
+  ;; shuffle start state for a more "randomized" solution
+  (storyo1* (shuffle start-state) end-elems actions))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
@@ -170,8 +174,9 @@
 
   (p "exercise 2")
   (p (with-db story-db-extended
-       (run* [p q]
-         (actiono1 [:yvette] p q))))
+       (first
+        (run* [q]
+          (storyo1 [:guilty-scarlet] q)))))
 
   ;; this idea needs some refinement to work:
   ;; for example, :dead-mr-boddy could be consumed and
