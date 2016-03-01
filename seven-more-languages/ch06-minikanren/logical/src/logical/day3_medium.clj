@@ -193,6 +193,8 @@
   ;;  (if symbol -> wrap to become a list, if list -> a list of actions)
   ;; not working: hard to find lib functions to distinct symbols and lists
   ;; (you can match a symbol by using a list pattern, which yields warning)
+  ;; * action becomes [in-resource [out-resources ...]]
+  ;;   we might want out-resources to be sorted to pretty-print it
   ;; * check if it is possible to implement (set-related operations might be a problem)
   ;; * investigate if it is still possible to run it backwards after the modification
   ;;
