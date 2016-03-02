@@ -21,4 +21,5 @@
   ;; (day2-hard)
 
   ;; (day3-easy)
-  (day3-medium))
+  (day3-medium)
+  )

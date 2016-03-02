@@ -92,11 +92,15 @@
     (concat actions extra-actions)))
 
 (def story-elements-extended
-  ;; part 1: extending existing elements
-  ;; to make them actiono1-compatible
-  (map (fn [[r1 r2 text]]
-         [r1 [r2] text])
-       story-elements))
+  (vec (concat
+        ;; part 1: extending existing elements
+        ;; to make them actiono1-compatible
+        (map (fn [[r1 r2 text]]
+               [r1 [r2] text])
+             story-elements)
+        [[:motorist [:policeman :dead-motorist]
+          (str "Investigating an abandoned car, a policeman appears"
+               " and the motorist is found dead in the lounge, killed by a wrench")]])))
 
 (def story-db-extended
   (reduce
