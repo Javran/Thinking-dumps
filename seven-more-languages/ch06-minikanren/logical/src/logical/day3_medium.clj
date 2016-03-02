@@ -147,6 +147,17 @@
   ;; shuffle start state for a more "randomized" solution
   (storyo1* (shuffle start-state) end-elems actions))
 
+(def story-map1
+  (reduce (fn [m elems]
+            (assoc m (vec (take 2 elems)) (nth elems 2)))
+          {}
+          story-elements-extended))
+
+(defn print-story1 [actions]
+  (println "PLOT SUMMARY:")
+  (doseq [a actions] ;; (14)
+    (println (story-map1 a))))
+
 (defn day3-medium
   []
   (p "day 3 - do medium")
@@ -167,7 +178,6 @@
       start-state events story-elements)))
 
   (p "exercise 1, extra")
-  (p story-elements-extended)
   ;; we try to push stories generated in day3_easy.clj
   ;; to the end so we might have more than 2 murderers
   ;; see comments in that file for detail
@@ -184,10 +194,12 @@
     story-elements))
 
   (p "exercise 2")
-  (p (with-db story-db-extended
-       (first
-        (run* [q]
-          (storyo1 [:guilty-scarlet] q)))))
+  (p
+   (print-story1
+    (with-db story-db-extended
+      (first
+       (run* [q]
+         (storyo1 [:dead-motorist :policeman] q))))))
 
   ;; this idea needs some refinement to work:
   ;; for example, :dead-mr-boddy could be consumed and
