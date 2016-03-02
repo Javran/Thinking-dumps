@@ -98,6 +98,13 @@
         (map (fn [[r1 r2 text]]
                [r1 [r2] text])
              story-elements)
+        ;; note that since we are using a list of resources as outcome
+        ;; there is a subtle issue with it:
+        ;; if the order of the resource changes, when interpretting the story
+        ;; we might fail to find this element or end up finding a wrong element.
+        ;; here we are using <in-resource> and <out-resources> as identity of each element
+        ;; and in the program the order is not modified in any way.
+        ;; so this might not be a big problem.
         [[:motorist [:policeman :dead-motorist]
           (str "Investigating an abandoned car, a policeman appears"
                " and the motorist is found dead in the lounge, killed by a wrench")]])))
@@ -197,8 +204,6 @@
   ;;  (if symbol -> wrap to become a list, if list -> a list of actions)
   ;; not working: hard to find lib functions to distinct symbols and lists
   ;; (you can match a symbol by using a list pattern, which yields warning)
-  ;; * action becomes [in-resource [out-resources ...]]
-  ;;   we might want out-resources to be sorted to pretty-print it
   ;; * check if it is possible to implement (set-related operations might be a problem)
   ;; * investigate if it is still possible to run it backwards after the modification
   ;;
