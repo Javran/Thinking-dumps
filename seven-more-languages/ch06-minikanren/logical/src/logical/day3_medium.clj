@@ -198,8 +198,10 @@
    (print-story1
     (with-db story-db-extended
       (first
-       (run* [q]
-         (storyo1 [:dead-motorist :policeman] q))))))
+       (filter
+        #(> (count %) 7)
+        (run* [q]
+          (storyo1 [:dead-motorist :policeman] q)))))))
 
   ;; this idea needs some refinement to work:
   ;; for example, :dead-mr-boddy could be consumed and
@@ -212,11 +214,6 @@
   ;; and produce [:dead-motorist :policeman] in addition to the existing
   ;; possibilities of producing exactly one of :policeman or :dead-motorist
   ;; TODO:
-  ;; * modify the system to accept a list of resources as outcome
-  ;;  (if symbol -> wrap to become a list, if list -> a list of actions)
-  ;; not working: hard to find lib functions to distinct symbols and lists
-  ;; (you can match a symbol by using a list pattern, which yields warning)
-  ;; * check if it is possible to implement (set-related operations might be a problem)
   ;; * investigate if it is still possible to run it backwards after the modification
   ;;
   )
