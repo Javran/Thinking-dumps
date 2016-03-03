@@ -169,8 +169,6 @@
   []
   (p "day 3 - do medium")
   (p "exercise 1")
-  ;; TODO: uncomment
-  #_
   (let [events
         (first
          (filter
@@ -188,8 +186,6 @@
   ;; we try to push stories generated in day3_easy.clj
   ;; to the end so we might have more than 2 murderers
   ;; see comments in that file for detail
-  ;; TODO: uncomment
-  #_
   (print-story
    (complete-story
     day3e-exercise2-start-state
@@ -201,6 +197,16 @@
     story-elements))
 
   (p "exercise 2")
+  ;; this idea needs some refinement to work:
+  ;; for example, :dead-mr-boddy could be consumed and
+  ;; produce one of the following:
+  ;; :guilty-plum, :guilty-scarlet :guilty-peacock
+  ;; but we cannot produce them at the same time
+  ;; (that might suggest one victim is killed by more than one murderer)
+  ;; I think a better way would be to allow events to consume one resource
+  ;; but produce a list of them, by doing so, we can consume :motorist
+  ;; and produce [:dead-motorist :policeman] in addition to the existing
+  ;; possibilities of producing exactly one of :policeman or :dead-motorist
   (p
    (print-story1
     (complete-story
@@ -211,19 +217,4 @@
         #(> (count %) 7)
         (run* [q]
           (storyo1 [:dead-motorist :policeman] q)))))
-    story-elements-extended)))
-
-  ;; this idea needs some refinement to work:
-  ;; for example, :dead-mr-boddy could be consumed and
-  ;; produce one of the following:
-  ;; :guilty-plum, :guilty-scarlet :guilty-peacock
-  ;; but we cannot produce them at the same time
-  ;; (that might mean one victim is killed by more than one murderer)
-  ;; I think a better way would be to allow events to consume one resource
-  ;; but produce a list of them, by doing so, we can consume :motorist
-  ;; and produce [:dead-motorist :policeman] in addition to the existing
-  ;; possibilities of producing exactly one of :policeman or :dead-motorist
-  ;; TODO:
-  ;; * investigate if it is still possible to run it backwards after the modification
-  ;;
-  )
+    story-elements-extended))))
