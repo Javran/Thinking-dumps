@@ -35,7 +35,14 @@
   (let [old-res-ind (.indexOf state k)]
     (assert (not= old-res-ind -1)
             (str "resource not available: " k))
-    (conj (filter #(not= k %) state) v)))
+    (let [state1
+          ;; a state without consumed resource
+          (filter #(not= k %) state)]
+      ;; v could be a vector of states
+      ;; after our extension
+      (if (vector? v)
+        (vec (concat state1 v))
+        (conj state1 v)))))
 
 (defn apply-actions
   [state actions]
@@ -196,12 +203,15 @@
   (p "exercise 2")
   (p
    (print-story1
+    (complete-story
+     start-state
     (with-db story-db-extended
       (first
        (filter
         #(> (count %) 7)
         (run* [q]
-          (storyo1 [:dead-motorist :policeman] q)))))))
+          (storyo1 [:dead-motorist :policeman] q)))))
+    story-elements-extended)))
 
   ;; this idea needs some refinement to work:
   ;; for example, :dead-mr-boddy could be consumed and
