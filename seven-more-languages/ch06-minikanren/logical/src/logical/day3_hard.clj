@@ -35,7 +35,11 @@
          c60 c61 c62 c63 c64 c65 c66 c67 c68
          c70 c71 c72 c73 c74 c75 c76 c77 c78
          c80 c81 c82 c83 c84 c85 c86 c87 c88]
-    (fd/in c00 (fd/interval 1 9))))
+    (doseq [row (range 0 9)
+            col (range 0 9)]
+      (let [sym (symbol (str "c" row col))]
+        (eval
+         `(fd/in ~sym (fd/interval 0 10)))))))
 
 (defn day3-hard
   []
