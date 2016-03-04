@@ -9,17 +9,18 @@
 (use 'logical.day2-hard)
 (use 'logical.day3-easy)
 (use 'logical.day3-medium)
+(use 'logical.day3-hard)
 
 (defn -main
   [& args]
-  ;; (day1-easy)
-  ;; (day1-medium)
-  ;; (day1-hard)
+  (day1-easy)
+  (day1-medium)
+  (day1-hard)
 
-  ;; (day2-easy)
-  ;; (day2-medium)
-  ;; (day2-hard)
+  (day2-easy)
+  (day2-medium)
+  (day2-hard)
 
-  ;; (day3-easy)
+  (day3-easy)
   (day3-medium)
-  )
+  (day3-hard))
