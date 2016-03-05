@@ -23,6 +23,7 @@
                 (repeatedly 9
                  (fn []
                    (vec (repeatedly 9 lvar)))))
+        all-vars (apply concat puzzle)
         rows puzzle
         cols (transpose puzzle)
         grids (apply concat
@@ -32,13 +33,12 @@
                                    (transpose
                                     (map #(partition 3 %) group))))
                            (partition 3 puzzle)))]
-    (doseq [i rows] (p i))
-    (p "")
-    (doseq [i cols] (p i))
-    (p "")
-    (doseq [i grids] (p i))
-
-))
-
-    ;; (p (run 5 [q]
-    ;; (== q cols)))))
+    ;; without any constraint, we will get a valid sudoku
+    (p (run 1 [q]
+         (== q puzzle)
+         (everyg #(fd/in % (fd/interval 1 9)) all-vars)
+         (everyg fd/distinct rows)
+         (everyg fd/distinct cols)
+         (everyg fd/distinct grids)
+         ))
+    ))
