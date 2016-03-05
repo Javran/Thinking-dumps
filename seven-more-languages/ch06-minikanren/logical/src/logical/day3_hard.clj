@@ -25,8 +25,17 @@
                    (vec (repeatedly 9 lvar)))))
         rows puzzle
         cols (transpose puzzle)
-        grids (partition 3 puzzle)]
-    (p rows)
-    (p cols)
-    (p (run 5 [q]
-         (== q cols)))))
+        grids (apply concat (mapv (fn [group]
+                     (mapv (fn [x] (vec (apply concat x))) (transpose (map #(partition 3 %) group)))
+                     )
+                   (partition 3 puzzle)))]
+    (doseq [i rows] (p i))
+    (p "")
+    (doseq [i cols] (p i))
+    (p "")
+    (doseq [i grids] (p i))
+
+))
+
+    ;; (p (run 5 [q]
+    ;; (== q cols)))))
