@@ -61,11 +61,11 @@
     ;; without any constraint, we will get a valid sudoku
     (p (run 1 [q]
          (== q puzzle-vars)
-         (everyg #(fd/in % (fd/interval 1 9)) all-vars)
+         ;; (everyg #(fd/in % (fd/interval 1 9)) all-vars)
          (everyg (fn [ [v lv] ]
                    (if (nil? v)
-                     succeed
-                     (fd/eq (= v lv))))
+                     (fd/in lv (fd/interval 1 9))
+                     (== lv v)))
                  zipped-puzzle)
          (everyg fd/distinct rows)
          (everyg fd/distinct cols)
