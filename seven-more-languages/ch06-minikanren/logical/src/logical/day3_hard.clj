@@ -12,6 +12,27 @@
 ;; one clue: https://gist.github.com/swannodette/3217582
 ;; I will be writing my own according to the code above.
 
+(defn parse-sudoku
+  [rawvec]
+  (defn parse-char
+    [ch]
+    (if (and (<= (int \1) (int ch))
+             (<= (int ch) (int \9)))
+      (- (int ch) (int \0))
+      nil))
+  (vec (map #(vec (map parse-char %)) rawvec)))
+
+(def puzzle-raw
+  ["5____2__6"
+   "9____1_31"
+   "_62__19__"
+   "______892"
+   "_79___41_"
+   "123______"
+   "__61__52_"
+   "23_7____9"
+   "7__5____4"])
+
 (defn transpose [m]
   (apply mapv vector m))
 
