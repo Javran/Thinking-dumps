@@ -24,7 +24,7 @@
 
 (def puzzle-raw
   ["5____2__6"
-   "9____1_31"
+   "9____5_31"
    "_62__19__"
    "______892"
    "_79___41_"
@@ -61,7 +61,6 @@
     ;; without any constraint, we will get a valid sudoku
     (p (run 1 [q]
          (== q puzzle-vars)
-         ;; (everyg #(fd/in % (fd/interval 1 9)) all-vars)
          (everyg (fn [ [v lv] ]
                    (if (nil? v)
                      (fd/in lv (fd/interval 1 9))
