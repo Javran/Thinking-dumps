@@ -58,10 +58,12 @@
                                     (map #(partition 3 %) group))))
                            (partition 3 puzzle-vars)))
         ;; flatten both puzzle cells and corresponding logic variables
-        ;; TODO: length check
-        zipped-puzzle (map list
-                           (apply concat puzzle)
-                           (apply concat puzzle-vars))]
+        zipped-puzzle
+        (let [ps (apply concat puzzle)
+              vs (apply concat puzzle-vars)]
+          (assert (== (count ps) (count vs))
+                  "puzzle and lvar's count mismatch")
+          (map list ps vs))]
     (run* [q]
       (== q puzzle-vars)
       (everyg (fn [ [v lv] ]
@@ -77,6 +79,8 @@
       (everyg fd/distinct cols)
       (everyg fd/distinct grids)
       )))
+
+;; TODO: pretty-print?
 
 (defn day3-hard
   []
