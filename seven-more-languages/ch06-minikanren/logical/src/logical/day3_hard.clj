@@ -39,14 +39,12 @@
 (defn transpose [m]
   (apply mapv vector m))
 
-(defn day3-hard
-  []
-  (p "day 3 - do hard")
-  (p "exercise 1")
+(defn solve-sudoku
+  [puzzle]
   (let [puzzle-vars (vec
-                (repeatedly 9
-                 (fn []
-                   (vec (repeatedly 9 lvar)))))
+                     (repeatedly 9
+                                 (fn []
+                                   (vec (repeatedly 9 lvar)))))
         all-vars (apply concat puzzle-vars)
         rows puzzle-vars
         cols (transpose puzzle-vars)
@@ -57,12 +55,11 @@
                                    (transpose
                                     (map #(partition 3 %) group))))
                            (partition 3 puzzle-vars)))
-        puzzle (parse-sudoku puzzle-raw)
         zipped-puzzle (map list
                            (apply concat puzzle)
                            (apply concat puzzle-vars))]
     ;; without any constraint, we will get a valid sudoku
-    (p (run 1 [q]
+    (run* [q]
          (== q puzzle-vars)
          (everyg (fn [ [v lv] ]
                    (if (nil? v)
@@ -72,5 +69,11 @@
          (everyg fd/distinct rows)
          (everyg fd/distinct cols)
          (everyg fd/distinct grids)
-         ))
-    ))
+         )))
+
+(defn day3-hard
+  []
+  (p "day 3 - do hard")
+  (p "exercise 1")
+  (p (first (solve-sudoku (parse-sudoku puzzle-raw)))))
+
