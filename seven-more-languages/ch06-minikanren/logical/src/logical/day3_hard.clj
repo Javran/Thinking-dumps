@@ -14,8 +14,8 @@
 ;; TODO: doc about functions that might be useful
 
 (defn parse-sudoku
-  ;; parse a list of raw lines of one sudoku
-  ;; to a 2-d vector containing only number 1-9 and nil
+  "parse a list of raw lines of one sudoku
+  to a 2-d vector containing only number 1-9 and nil"
   [rawvec]
   (defn parse-char
     [ch]
@@ -25,7 +25,7 @@
       nil))
   (vec (map #(vec (map parse-char %)) rawvec)))
 
-(def puzzle-raw
+(def puzzle-example-raw
   ["5____2__6"
    "9____5_31"
    "_62__19__"
@@ -40,12 +40,14 @@
   (apply mapv vector m))
 
 (defn solve-sudoku
+  "return a stream of all possible sudoku solutions"
   [puzzle]
   (let [puzzle-vars (vec
                      (repeatedly 9
-                                 (fn []
-                                   (vec (repeatedly 9 lvar)))))
+                       (fn []
+                         (vec (repeatedly 9 lvar)))))
         all-vars (apply concat puzzle-vars)
+
         rows puzzle-vars
         cols (transpose puzzle-vars)
         grids (apply concat
@@ -55,25 +57,33 @@
                                    (transpose
                                     (map #(partition 3 %) group))))
                            (partition 3 puzzle-vars)))
+        ;; flatten both puzzle cells and corresponding logic variables
+        ;; TODO: length check
         zipped-puzzle (map list
                            (apply concat puzzle)
                            (apply concat puzzle-vars))]
-    ;; without any constraint, we will get a valid sudoku
     (run* [q]
-         (== q puzzle-vars)
-         (everyg (fn [ [v lv] ]
-                   (if (nil? v)
-                     (fd/in lv (fd/interval 1 9))
-                     (== lv v)))
-                 zipped-puzzle)
-         (everyg fd/distinct rows)
-         (everyg fd/distinct cols)
-         (everyg fd/distinct grids)
-         )))
+      (== q puzzle-vars)
+      (everyg (fn [ [v lv] ]
+                ;; if this cell does not have a concrete value?
+                (if (nil? v)
+                  ;; assign lvar with a possible range
+                  (fd/in lv (fd/interval 1 9))
+                  ;; or assign lvar with the concrete value
+                  (== lv v)))
+              zipped-puzzle)
+      ;; sudoku requirements, distinct rows, cols and grids
+      (everyg fd/distinct rows)
+      (everyg fd/distinct cols)
+      (everyg fd/distinct grids)
+      )))
 
 (defn day3-hard
   []
   (p "day 3 - do hard")
   (p "exercise 1")
-  (p (first (solve-sudoku (parse-sudoku puzzle-raw)))))
+  ;; without any constraint, we will get a valid sudoku
+  (p (first (solve-sudoku (repeat 9 (repeat 9 nil)))))
+  ;; test on real sudoku puzzle
+  (p (first (solve-sudoku (parse-sudoku puzzle-example-raw)))))
 
