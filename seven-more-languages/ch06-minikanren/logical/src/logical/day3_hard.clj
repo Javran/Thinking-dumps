@@ -125,4 +125,7 @@
   ;; without any constraint, we will get a valid sudoku
   (print-puzzle (first (solve-sudoku (repeat 9 (repeat 9 nil)))))
   ;; test on real sudoku puzzle
-  (print-puzzle (first (solve-sudoku (parse-sudoku puzzle-example-raw)))))
+  (print-puzzle (first (solve-sudoku (parse-sudoku puzzle-example-raw))))
+  ;; skipping the last exercise because I'm not interested in making up stories.
+  ;; sorry.
+  )
