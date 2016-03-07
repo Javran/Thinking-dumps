@@ -4,6 +4,7 @@
 (use 'logical.utils)
 
 (require '[clojure.core.logic.fd :as fd])
+(use '[clojure.string :only (join)])
 
 ;; If you don't know how to do this,
 ;; it's not your fault.
@@ -65,6 +66,7 @@
                   "puzzle and lvar's count mismatch")
           (map list ps vs))]
     (run* [q]
+      ;; TODO: talking about (do .... succeed) trick?
       (== q puzzle-vars)
       (everyg (fn [ [v lv] ]
                 ;; if this cell does not have a concrete value?
@@ -80,14 +82,33 @@
       (everyg fd/distinct grids)
       )))
 
-;; TODO: pretty-print?
+(defn print-puzzle
+  [puzzle]
+  (let [horiz-sep "---+---+---"
+        cell-to-char (fn [x] (if (nil? x) "_" (str x)))
+        three-rows
+        (apply concat
+               (interpose
+                ;; insert separator
+                (list horiz-sep)
+                ;; seq of things like "123|456|789" (3 of them)
+                (map (fn [trs]
+                       (map (fn [row]
+                              (join "|"
+                                    ;; ("123" "456" "789")
+                                    (map #(apply str %)
+                                         (partition 3 (map cell-to-char row)))))
+                            trs))
+                     (partition 3 puzzle))))]
+    (doseq [l three-rows]
+      (p l)))
+  (p ""))
 
 (defn day3-hard
   []
   (p "day 3 - do hard")
   (p "exercise 1")
   ;; without any constraint, we will get a valid sudoku
-  (p (first (solve-sudoku (repeat 9 (repeat 9 nil)))))
+  (print-puzzle (first (solve-sudoku (repeat 9 (repeat 9 nil)))))
   ;; test on real sudoku puzzle
-  (p (first (solve-sudoku (parse-sudoku puzzle-example-raw)))))
-
+  (print-puzzle (first (solve-sudoku (parse-sudoku puzzle-example-raw)))))
