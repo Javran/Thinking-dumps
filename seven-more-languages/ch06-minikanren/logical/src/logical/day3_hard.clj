@@ -11,8 +11,11 @@
 ;; that I can't find out anything useful to accomplish our task.
 ;; one clue: https://gist.github.com/swannodette/3217582
 ;; I will be writing my own according to the code above.
+;; TODO: doc about functions that might be useful
 
 (defn parse-sudoku
+  ;; parse a list of raw lines of one sudoku
+  ;; to a 2-d vector containing only number 1-9 and nil
   [rawvec]
   (defn parse-char
     [ch]
