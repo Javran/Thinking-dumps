@@ -12,7 +12,22 @@
 ;; that I can't find out anything useful to accomplish our task.
 ;; one clue: https://gist.github.com/swannodette/3217582
 ;; I will be writing my own according to the code above.
-;; TODO: doc about functions that might be useful
+
+;; some notes that might be useful for the exercise:
+;; - lvar & lvars
+;; one of the problem I'm facing is that I don't know
+;; how to create logic variables without using "fresh" or "run"
+;; and the answer is "lvar". it creates one logic variable at a time
+;; (you can also use "(lvars n)" to create a list of them)
+;; - (do (foo) (bar) ... succeed)
+;; this might be useful for debugging: if you find yourself
+;; want to print something inside the block of "run",
+;; you might get "NullPointerException" errors.
+;; I don't know what exactly goes wrong, but it seems that "run"
+;; (and probably "fresh") expect a sequence of expressions that returns
+;; something "like a constraint" -- and the obviously choice is "succeed".
+;; this trick works fine for me, I'll recommend using it to print out
+;; some intermediate values for debugging.
 
 (defn parse-sudoku
   "parse a list of raw lines of one sudoku
@@ -66,7 +81,6 @@
                   "puzzle and lvar's count mismatch")
           (map list ps vs))]
     (run* [q]
-      ;; TODO: talking about (do .... succeed) trick?
       (== q puzzle-vars)
       (everyg (fn [ [v lv] ]
                 ;; if this cell does not have a concrete value?
