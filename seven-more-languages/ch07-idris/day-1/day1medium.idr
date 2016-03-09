@@ -14,3 +14,7 @@ bt2 = Branch (Branch (Branch (Leaf 'a') 'b' (Leaf 'c'))
                      (Leaf 'e'))
              'f'
              (Leaf 'g')
+
+binTreeToList : BinTree a -> List a
+binTreeToList (Leaf v) = [v]
+binTreeToList (Branch l x r) = binTreeToList l ++ [x] ++ binTreeToList r
