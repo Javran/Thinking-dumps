@@ -1,5 +1,7 @@
 module Day1Medium
 
+-- TODO: even and odd number (can't understand what I'm supposed to do)
+
 -- parameterized data type representing a binary tree
 data BinTree a = Leaf a | Branch (BinTree a) a (BinTree a)
 
