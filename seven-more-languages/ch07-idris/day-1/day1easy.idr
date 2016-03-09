@@ -24,3 +24,7 @@ mkCard : Suit -> Nat -> Maybe Card
 mkCard s n = if n >= 0 && n <= 13
   then Just (C s n) 
   else Nothing
+
+-- a deck of cards
+cardDeck : List Card
+cardDeck = [ C s n | s <- [Clubs, Diamonds, Hearts, Spades], n <- [1..13]] 
