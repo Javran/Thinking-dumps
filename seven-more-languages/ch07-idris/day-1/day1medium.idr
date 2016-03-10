@@ -8,8 +8,8 @@ data Parity : Nat -> Type where
 parity : (n : Nat) -> Parity n
 parity Z = Even Z -- 0 is an even number
 parity (S k) with (parity k)
-  parity (S (plus n n)) | (Even n) = Odd n -- looks misleading ...
-  parity (S (S (plus n n))) | (Odd n) = ?k_rhs_2
+  parity (S (plus n n)) | (Even n) = Odd n -- looks misleading
+  parity (S (S (plus n n))) | (Odd n) = Even (S n)
 
 -- parameterized data type representing a binary tree
 data BinTree a = Leaf a | Branch (BinTree a) a (BinTree a)
