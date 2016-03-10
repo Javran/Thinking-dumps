@@ -20,3 +20,8 @@ bt2 = Branch (Branch (Branch (Leaf 'a') 'b' (Leaf 'c'))
 binTreeToList : BinTree a -> List a
 binTreeToList (Leaf v) = [v]
 binTreeToList (Branch l x r) = binTreeToList l ++ [x] ++ binTreeToList r
+
+-- spotted this when looking at talk slides
+data Parity : Nat -> Type where
+  Even : (n : Nat) -> Parity (n+n)
+  Odd  : (n : Nat) -> Parity (S (n+n))
