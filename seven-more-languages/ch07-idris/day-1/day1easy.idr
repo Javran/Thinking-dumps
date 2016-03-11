@@ -20,8 +20,8 @@ data Suit
 data Card = C Suit Nat
 
 -- safe constructor
-mkCard : Suit -> Nat -> Maybe Card
-mkCard s n = if n >= 0 && n <= 13
+mkCard : Suit -> (n : Nat) -> Maybe Card
+mkCard s n = if n >= 1 && n <= 13
   then Just (C s n) 
   else Nothing
 
