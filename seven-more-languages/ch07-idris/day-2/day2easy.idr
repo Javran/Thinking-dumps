@@ -1,4 +1,6 @@
 module Day2Easy
 
-data Matrix : (m : Nat) -> (n : Nat) -> Vect m (Vect n a) -> Type where
-  
+import Data.Vect
+
+Matrix : (m : Nat) -> (n : Nat) -> (a : Type) -> Type
+Matrix m n a = Vect m (Vect n a)
