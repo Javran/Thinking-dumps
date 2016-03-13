@@ -12,3 +12,8 @@ data Color = RGB Integer Integer Integer
 
 Pixels : (m : Nat) -> (n : Nat) -> Type
 Pixels m n = Matrix m n Color
+
+matTranspose : Matrix m n a -> Matrix n m a
+matTranspose ((x :: xs) :: ys) = (x :: map head ys) :: matTranspose (xs :: map tail ys)
+matTranspose ([] :: xs) = []
+matTranspose {n} [] = replicate n []
