@@ -1,12 +1,7 @@
 module Day2Medium
 
 import Data.Vect
-
--- TODO: from Day2Easy, import not working?
-
--- write a type for an m x n matrix
-Matrix : (m : Nat) -> (n : Nat) -> (a : Type) -> Type
-Matrix m n a = Vect m (Vect n a)
+import Day2Easy
 
 -- write a data type to hold the pixels in a display,
 -- taking into account color and size
