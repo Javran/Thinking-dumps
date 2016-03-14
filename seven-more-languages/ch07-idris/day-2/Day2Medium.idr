@@ -1,6 +1,7 @@
 module Day2Medium
 
 import Data.Vect
+import Data.So
 import Day2Easy
 
 -- write a data type to hold the pixels in a display,
@@ -25,3 +26,11 @@ matTranspose ([] :: xs) = []
   -- when we get [], we need n "[]"s in return
   -- so we need to pattern matching on hidden parameter {n}.
 matTranspose {n} [] = replicate n []
+
+data BndInt : (l : Integer) -> (h : Integer) -> (x : Integer) -> Type where
+  BI : (l : Integer) -> (h : Integer) -> (x : Integer) -> So (l <= x && x <= h) -> BndInt l h x
+
+boundedInt : (l : Integer) -> (h : Integer) -> (x : Integer) -> Maybe (BndInt l h x)
+boundedInt l h x = case choose (l <= x && x <= h) of
+  Left valid => Just (BI l h x valid)
+  Right _ => Nothing
