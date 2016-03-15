@@ -7,6 +7,7 @@ module Day3Easy
 -- more complicated type might need some parsing work
 -- which I don't know how to.
 -- but I guess this is good enough.
+total
 typeNamed : String -> Maybe Type
 typeNamed "Int" = Just Int
 typeNamed "Char" = Just Char
