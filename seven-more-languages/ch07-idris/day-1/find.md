@@ -1,0 +1,6 @@
+- [Official Idris language home page](http://www.idris-lang.org/)
+- Editor plugins or syntax highlighting [for emacs](https://github.com/idris-hackers/idris-mode)
+- Talks about Idris from the creator Edwin Brady
+    - [Idris: Programming with Dependent Types](https://vimeo.com/83665028)
+- [Idris mailing lists](https://groups.google.com/forum/#!forum/idris-lang)
+- [The definition of `List` that ships with Idris](https://github.com/idris-lang/Idris-dev/blob/v0.10/libs/prelude/Prelude/List.idr#L22-L27)
