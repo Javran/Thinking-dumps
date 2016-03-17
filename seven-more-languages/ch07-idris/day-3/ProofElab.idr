@@ -24,5 +24,5 @@ plusSuc (Suc x) y = let hypothesis = plusSuc x y in
   ?plusSuc_Sx_y
 
 plusZero_0 = %runElab (do 
-  fill `(the (Zero = Zero) Refl)
+  fill `(Refl {x=Zero})
   solve)
