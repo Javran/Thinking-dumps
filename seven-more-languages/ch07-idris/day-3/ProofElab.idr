@@ -30,3 +30,20 @@ plusZero_Sx = %runElab (do
   intro'
   rewriteWith (Var "hypothesis")
   search)
+  
+plusSuc_0_y = %runElab (do
+  intro'
+  search)
+
+plusSuc_Sx_y = %runElab (do
+  intro'
+  intro'
+  intro'
+  rewriteWith (Var "hypothesis")
+  search)
+  
+plusCommutes_0_y = %runElab (do
+  intro'
+  rewriteWith (RApp (Var "plusZero") (Var "y"))
+  search)
+
