@@ -1,3 +1,11 @@
 import Day1Easy exposing (..)
+import Day1Medium exposing (..)
 
-main = day1Easy
+import Tools exposing (..)
+
+main = 
+  divConcat
+    [ day1Easy
+    , day1Medium
+    ]
+

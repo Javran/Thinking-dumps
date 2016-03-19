@@ -10,7 +10,6 @@ product xs =
     [] -> 1 
     hd :: tl -> hd * product tl
 
-
 day1Easy =
   let sample = [ { x = 1 }, { x = 3 }, { x = 6 } ]
       person =
