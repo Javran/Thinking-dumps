@@ -9,3 +9,8 @@ it's really hard to track changes made from 0.13 to the current version:
 documentation about how to adjust your code can be found nowhere,
 and you will get more frustrated looking at Elm's commit log on GitHub: renaming happens everywhere.
 It's a rather unstable programming language I should say, and I believe quiting is the best choice.
+
+## Changes
+
+* `lift` is dead, new term is `map`
+* `Graphics.Element.show` instead of `Text.asText`
