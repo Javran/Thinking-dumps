@@ -5,3 +5,9 @@ since the publication of the book (the demo version is 0.13 in the book).
 
 I'll try to follow this chapter and see how things work out.
 Will note about changes if I feel necessary.
+
+# Directories
+
+Notes and exercise answers are under `day-x` directories.
+`my-package` will be a single project for all programming exercises.
+Under `my-package`, `src/Main.elm` will be the entry.

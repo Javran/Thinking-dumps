@@ -4,6 +4,15 @@ import Maybe
 import List
 import Tools exposing (..)
 
+{-
+Use `Maybe`:
+
+http://package.elm-lang.org/packages/elm-lang/core/3.0.0/Maybe
+
+But I find this module does not have convenient combinators like
+`isJust`, making the implemtation a little bit hard to read
+-}
+
 day1Hard =
   let mkPerson n a = { name = n, age = a, address = "unspecified" }
       persons = [ mkPerson "p1" (Just 10)
