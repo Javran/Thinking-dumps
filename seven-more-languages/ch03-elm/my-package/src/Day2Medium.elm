@@ -10,9 +10,11 @@ import Graphics.Collage exposing (..)
 import Color exposing (..)
 
 drawShape (w,h) (x,y) =
-  collage w h [ filled black (rect 10 20) |> move (toFloat x, toFloat y)]
+  collage w h [ filled black (rect 10 20)
+                |> move (toFloat x - toFloat w / 2, toFloat h / 2-toFloat y)
+              ]
 
-main = 
+main =
   Signal.map2 drawShape Window.dimensions Mouse.position
 
 -- counts up from zero with one count per second
