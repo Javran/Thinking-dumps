@@ -6,6 +6,8 @@ import Signal
 import Mouse exposing (..)
 import Window exposing (..)
 import List
+import Array
+import Maybe
 
 import Graphics.Collage exposing (..)
 import Color exposing (..)
@@ -14,13 +16,16 @@ toCollageCoord : (Int, Int) -> (Int,Int) -> (Float,Float)
 toCollageCoord (w,h) (x,y) = ( toFloat x - toFloat w / 2
                              , toFloat h / 2 - toFloat y )
 
-drawShape (w,h) (x,y) =
-  collage w h 
-            [ filled black (ngon 5 40)
-              |> move (toCollageCoord (w,h) (x,y))
-            ]
+drawShape (w,h) (x,y) ind =
+  let sInd = ind % Array.length allForms
+      shape = Array.get sInd allForms
+            |> Maybe.withDefault (filled black (square 40))
+    in collage w h 
+         [ shape
+           |> move (toCollageCoord (w,h) (x,y))
+         ]
 
-allForms : List Form
+allForms : Array.Array Form
 allForms = 
   [ red, green, blue ]
   |> List.concatMap 
@@ -30,6 +35,7 @@ allForms =
         , ngon 5 40
         , ngon 3 40
         ] |> List.concatMap (\shape -> [ filled color shape ]))
+  |> Array.fromList
 
 type Update
   = PositionUpdate (Int,Int) (Int,Int)
@@ -48,7 +54,7 @@ main =
        drawSignal
        (Mouse.isDown |> Signal.map NextPicture)
      |> Signal.foldp onUpdate (((0,0),(0,0)),0)
-     |> Signal.map asDiv
+     |> Signal.map (\((wh,xy),sInd) -> drawShape wh xy sInd)
 
 -- counts up from zero with one count per second
 main2 =
