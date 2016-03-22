@@ -5,6 +5,7 @@ import Time
 import Signal
 import Mouse exposing (..)
 import Window exposing (..)
+import List
 
 import Graphics.Collage exposing (..)
 import Color exposing (..)
@@ -15,9 +16,20 @@ toCollageCoord (w,h) (x,y) = ( toFloat x - toFloat w / 2
 
 drawShape (w,h) (x,y) =
   collage w h 
-            [ filled black (rect 10 20)
+            [ filled black (ngon 5 40)
               |> move (toCollageCoord (w,h) (x,y))
             ]
+
+allForms : List Form
+allForms = 
+  [ red, green, blue ]
+  |> List.concatMap 
+     (\color ->
+        [ square 40
+        , circle 40
+        , ngon 5 40
+        , ngon 3 40
+        ] |> List.concatMap (\shape -> [ filled color shape ]))
 
 main =
   Signal.map2 drawShape Window.dimensions Mouse.position
