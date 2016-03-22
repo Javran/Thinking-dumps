@@ -31,8 +31,24 @@ allForms =
         , ngon 3 40
         ] |> List.concatMap (\shape -> [ filled color shape ]))
 
-main =
-  Signal.map2 drawShape Window.dimensions Mouse.position
+type Update
+  = PositionUpdate (Int,Int) (Int,Int)
+  | NextPicture Bool
+
+main = 
+  let drawSignal = 
+        Signal.map2 (\w p -> PositionUpdate w p) 
+          Window.dimensions
+          Mouse.position
+      onUpdate s (((w,h),(x,y)),styInd) =
+        case s of
+          PositionUpdate newW newP -> ((newW,newP),styInd)
+          NextPicture b -> (((w,h),(x,y)), if b then styInd+1 else styInd)
+  in Signal.merge 
+       drawSignal
+       (Mouse.isDown |> Signal.map NextPicture)
+     |> Signal.foldp onUpdate (((0,0),(0,0)),0)
+     |> Signal.map asDiv
 
 -- counts up from zero with one count per second
 main2 =
