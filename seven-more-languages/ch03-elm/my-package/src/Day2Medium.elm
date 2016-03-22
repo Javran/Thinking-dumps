@@ -9,10 +9,15 @@ import Window exposing (..)
 import Graphics.Collage exposing (..)
 import Color exposing (..)
 
+toCollageCoord : (Int, Int) -> (Int,Int) -> (Float,Float)
+toCollageCoord (w,h) (x,y) = ( toFloat x - toFloat w / 2
+                             , toFloat h / 2 - toFloat y )
+
 drawShape (w,h) (x,y) =
-  collage w h [ filled black (rect 10 20)
-                |> move (toFloat x - toFloat w / 2, toFloat h / 2-toFloat y)
-              ]
+  collage w h 
+            [ filled black (rect 10 20)
+              |> move (toCollageCoord (w,h) (x,y))
+            ]
 
 main =
   Signal.map2 drawShape Window.dimensions Mouse.position
