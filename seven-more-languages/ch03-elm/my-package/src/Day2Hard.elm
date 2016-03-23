@@ -18,3 +18,7 @@ drawCar = collage 300 300
 -- what the exercise is asking us to do
 -- if we just move cars from left to right
 -- or right to left, how can we move across the bottom of the screen?
+-- TODO: make it move from left to right as a constant speed
+-- add speed in "y" direction, so we can eventually
+-- reach the bottom of the screen
+-- might need to wrap it so to make it reappear on top of the screen.
