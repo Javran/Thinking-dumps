@@ -133,9 +133,15 @@ main =
     |> Signal.foldp (\_ s -> let s' = s + 0.01 in if s' <= 1.0 then s' else 0.0) 0.0
     |> Signal.map (\percent ->
                      let points = pathEnds (500,300) 40
-                         point = getPoint points percent
+                         point = getPoint points percent 
+                         carForm = 
+                           group [ carBottom
+                                 , carTop |> moveY 30
+                                 , tire |> move (-40, -28)
+                                 , tire |> move ( 40, -28) 
+                                 ]
                      in  collage 500 300
                      [ filled red (circle 30) |> move (listGet 0 points)
                      , filled blue (circle 30) |> move (listGet 4 points)
-                     , filled black (circle 30) |> move point
+                     , carForm |> move point
                      ] )
