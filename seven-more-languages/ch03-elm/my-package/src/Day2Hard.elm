@@ -124,15 +124,22 @@ getBetweenPoints (beginX,beginY) (endX,endY) percent =
      else
        let dx = endX - beginX
            dy = endY - beginY
-       in Debug.log (toString percent) (beginX + dx*percent, beginY + dy*percent)
+       in (beginX + dx*percent, beginY + dy*percent)
 
 main1 = screenChanges |> Signal.map drawCarAndPaths
 
+-- TODO: use merge
 main = 
-  Time.every (Time.millisecond * 100)
-    |> Signal.foldp (\_ s -> let s' = s + 0.01 in if s' <= 1.0 then s' else 0.0) 0.0
-    |> Signal.map (\percent ->
-                     let points = pathEnds (500,300) 40
+  Signal.map2 (,) 
+    (Time.every (Time.millisecond * 100))
+    Window.dimensions      
+    |> Signal.foldp (\(_,(w,h)) (s,_) -> 
+                      let s' = s + 0.01
+                      in if s' <= 1.0 
+                           then (s',(w,h)) 
+                           else (0.0,(w,h))) (0.0,(0,0))
+    |> Signal.map (\(percent,(w,h)) ->
+                     let points = pathEnds (w,h) 100
                          point = getPoint points percent 
                          carForm = 
                            group [ carBottom
@@ -140,8 +147,4 @@ main =
                                  , tire |> move (-40, -28)
                                  , tire |> move ( 40, -28) 
                                  ]
-                     in  collage 500 300
-                     [ filled red (circle 30) |> move (listGet 0 points)
-                     , filled blue (circle 30) |> move (listGet 4 points)
-                     , carForm |> move point
-                     ] )
+                     in collage w h [carForm |> move point] )
