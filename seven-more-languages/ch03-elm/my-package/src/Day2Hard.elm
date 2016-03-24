@@ -112,8 +112,9 @@ getPoint points percent =
               currentSeg = findSeg 1
               currentSegBeginPoint = listGet (currentSeg-1) points
               currentSegEndPoint = listGet currentSeg points
-              boundedPercent = ( (toFloat currentSeg - percent) / toFloat segCount)
-                               / (1.0 / toFloat segCount)
+              boundedPercentRest = (toFloat currentSeg / toFloat segCount - percent)
+                                   / (1 / toFloat segCount)
+              boundedPercent = 1 - boundedPercentRest
           in getBetweenPoints currentSegBeginPoint currentSegEndPoint boundedPercent
 
 getBetweenPoints : (Float,Float) -> (Float,Float) -> Float -> (Float, Float)
@@ -123,7 +124,7 @@ getBetweenPoints (beginX,beginY) (endX,endY) percent =
      else
        let dx = endX - beginX
            dy = endY - beginY
-       in (beginX + dx*percent, beginY + dy*percent)
+       in Debug.log (toString percent) (beginX + dx*percent, beginY + dy*percent)
 
 main1 = screenChanges |> Signal.map drawCarAndPaths
 
