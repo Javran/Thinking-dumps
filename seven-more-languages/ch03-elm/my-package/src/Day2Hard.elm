@@ -8,6 +8,7 @@ import Window
 import Signal
 import Graphics.Element
 import Debug
+import Time
 
 -- seems collage is using a different coord system
 -- so we abstract out coordinate translation as a separated function
@@ -111,7 +112,7 @@ getPoint points percent =
               currentSeg = findSeg 1
               currentSegBeginPoint = listGet (currentSeg-1) points
               currentSegEndPoint = listGet currentSeg points
-              boundedPercent = (percent - toFloat currentSeg / toFloat segCount)
+              boundedPercent = ( (toFloat currentSeg - percent) / toFloat segCount)
                                / (1.0 / toFloat segCount)
           in getBetweenPoints currentSegBeginPoint currentSegEndPoint boundedPercent
 
@@ -124,4 +125,16 @@ getBetweenPoints (beginX,beginY) (endX,endY) percent =
            dy = endY - beginY
        in (beginX + dx*percent, beginY + dy*percent)
 
-main = screenChanges |> Signal.map drawCarAndPaths
+main1 = screenChanges |> Signal.map drawCarAndPaths
+
+main = 
+  Time.every (Time.millisecond * 100)
+    |> Signal.foldp (\_ s -> let s' = s + 0.01 in if s' <= 1.0 then s' else 1.0) 0.0
+    |> Signal.map (\percent ->
+                     let points = pathEnds (500,300) 40
+                         point = getPoint points percent
+                     in  collage 500 300
+                     [ filled red (circle 30) |> move (listGet 0 points)
+                     , filled blue (circle 30) |> move (listGet 4 points)
+                     , filled black (circle 30) |> move point
+                     ] )
