@@ -130,7 +130,7 @@ main1 = screenChanges |> Signal.map drawCarAndPaths
 
 main = 
   Time.every (Time.millisecond * 100)
-    |> Signal.foldp (\_ s -> let s' = s + 0.01 in if s' <= 1.0 then s' else 1.0) 0.0
+    |> Signal.foldp (\_ s -> let s' = s + 0.01 in if s' <= 1.0 then s' else 0.0) 0.0
     |> Signal.map (\percent ->
                      let points = pathEnds (500,300) 40
                          point = getPoint points percent
