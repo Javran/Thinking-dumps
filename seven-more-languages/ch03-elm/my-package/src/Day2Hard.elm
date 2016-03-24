@@ -3,12 +3,21 @@ module Day2Hard where
 import Color exposing (..)
 import Graphics.Collage exposing (..)
 import Tools exposing (..)
+import Mouse
+import Window
+import Signal
+import Graphics.Element
 
 -- seems collage is using a different coord system
 -- so we abstract out coordinate translation as a separated function
 toCollageCoord : (Int, Int) -> (Int,Int) -> (Float,Float)
 toCollageCoord (w,h) (x,y) = ( toFloat x - toFloat w / 2
                              , toFloat h / 2 - toFloat y )
+
+
+toCollageCoordF : (Int,Int) -> (Float,Float) -> (Float,Float)
+toCollageCoordF (w,h) (x,y) = ( x - toFloat w / 2
+                              , toFloat h / 2 - y )
 
 carBottom = filled black (rect 160 50)
 carTop =    filled black (rect 100 60)
@@ -57,6 +66,26 @@ pathEnds (w,h) pI =
   in  [ (p,p), (p+w',p+h'/4)
       , (p,p+h'/2), (p+w', p+h'*3/4)
       , (p,p+h')
-      ]
+      ] |> List.map (toCollageCoordF (w,h))
 
-main = asDiv (pathEnds (400,300) 10)
+type alias ScreenInfo = (Int,Int)
+type alias MousePos = (Int,Int)
+
+screenChanges : Signal (ScreenInfo,MousePos)
+screenChanges = Signal.map2 (,) Window.dimensions Mouse.position
+
+drawCarAndPaths : (ScreenInfo,MousePos) -> Graphics.Element.Element
+drawCarAndPaths ((w,h),(x,y)) =
+  let carForm = 
+        group [ carBottom
+              , carTop |> moveY 30
+              , tire |> move (-40, -28)
+              , tire |> move ( 40, -28) 
+              ]
+  in collage w h
+       [ traced (dotted grey) (path (pathEnds (w,h) 100))
+       , carForm |> move (toCollageCoord (w,h) (100,100))
+       ]
+
+main = screenChanges |> Signal.map drawCarAndPaths
+
