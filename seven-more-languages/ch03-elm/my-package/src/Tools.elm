@@ -2,6 +2,7 @@ module Tools where
 
 import Html exposing (..)
 import List
+import Debug
 
 divText : String -> Html
 divText s = div [] [text s]
@@ -29,16 +30,16 @@ descAndResult desc r =
             , asDiv r
             ]
 
-getWithDefault : a -> Int -> List a -> a
-getWithDefault def n xs = 
+listGet : Int -> List a -> a
+listGet n xs = 
   case n of
     0 -> case xs of
-           [] -> def
+           [] -> Debug.crash "empty list"
            (h :: _) -> h
     _ -> if n < 0
-           then def
+           then Debug.crash "invalid index"
            else case xs of
                   -- here we know that n /= 0, but the
                   -- list is already empty
-                  [] -> def
-                  (_::t) -> getWithDefault def (n-1) t
+                  [] -> Debug.crash "empty list"
+                  (_::t) -> listGet (n-1) t

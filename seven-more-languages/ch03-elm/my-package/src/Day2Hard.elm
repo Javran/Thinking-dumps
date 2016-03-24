@@ -7,6 +7,7 @@ import Mouse
 import Window
 import Signal
 import Graphics.Element
+import Debug
 
 -- seems collage is using a different coord system
 -- so we abstract out coordinate translation as a separated function
@@ -87,5 +88,40 @@ drawCarAndPaths ((w,h),(x,y)) =
        , carForm |> move (toCollageCoord (w,h) (100,100))
        ]
 
-main = screenChanges |> Signal.map drawCarAndPaths
+getPoint : List (Float,Float) -> Float -> (Float,Float)
+getPoint points percent =
+  if List.length points < 2
+    then Debug.crash "expecting at least 2 points in the list"
+    else
+      if percent > 1.0 || percent < 0.0
+        then Debug.crash "invalid percent value"
+        else
+          let segCount = List.length points - 1
+              -- find out which segment does the current "percent"
+              -- belongs to, the i-th segment begins at points[i-1]
+              -- and ends at points[i], so 1 <= i <= segCount
+              findSeg i =
+                let segEndPercent = toFloat i / toFloat segCount
+                in if percent <= segEndPercent
+                     then i
+                     else 
+                       if i > segCount
+                          then Debug.crash "cannot find a segment that fits"
+                          else findSeg (i+1)
+              currentSeg = findSeg 1
+              currentSegBeginPoint = listGet (currentSeg-1) points
+              currentSegEndPoint = listGet currentSeg points
+              boundedPercent = (percent - toFloat currentSeg / toFloat segCount)
+                               / (1.0 / toFloat segCount)
+          in getBetweenPoints currentSegBeginPoint currentSegEndPoint boundedPercent
 
+getBetweenPoints : (Float,Float) -> (Float,Float) -> Float -> (Float, Float)
+getBetweenPoints (beginX,beginY) (endX,endY) percent =
+  if percent < 0.0 || percent > 1.0
+     then Debug.crash "invalid percent value"
+     else
+       let dx = endX - beginX
+           dy = endY - beginY
+       in (beginX + dx*percent, beginY + dy*percent)
+
+main = screenChanges |> Signal.map drawCarAndPaths
