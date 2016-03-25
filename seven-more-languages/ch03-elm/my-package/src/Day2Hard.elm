@@ -32,15 +32,12 @@ drawCar = collage 300 300
   , tire |> move ( 40, -28) 
   ]
 
--- for now I'm not sure about
--- what the exercise is asking us to do
+-- I'm not sure about what the exercise is asking us to do
 -- if we just move cars from left to right
 -- or right to left, how can we move across the bottom of the screen?
--- TODO: make it move from left to right as a constant speed
--- add speed in "y" direction, so we can eventually
--- reach the bottom of the screen
--- might need to wrap it so to make it reappear on top of the screen.
-
+-- In this exercise I'll add speed in "y" direction, so we can eventually
+-- reach the bottom of the screen,
+-- and when it has reached bottom, make it reappear on top of the screen.
 
 -- pathEnds (w,h) p calculates
 -- 5 important points for determining cars' path
@@ -85,9 +82,12 @@ drawCarAndPaths ((w,h),(x,y)) =
               , tire |> move ( 40, -28) 
               ]
   in collage w h
-       [ traced (dotted grey) (path (pathEnds (w,h) 100))
+       [ traced (solid blue) (path (pathEnds (w,h) 100))
        , carForm |> move (toCollageCoord (w,h) (100,100))
        ]
+
+-- draw car and the path it will follow on screen
+mainTest = screenChanges |> Signal.map drawCarAndPaths
 
 getPoint : List (Float,Float) -> Float -> (Float,Float)
 getPoint points percent =
@@ -126,25 +126,51 @@ getBetweenPoints (beginX,beginY) (endX,endY) percent =
            dy = endY - beginY
        in (beginX + dx*percent, beginY + dy*percent)
 
-main1 = screenChanges |> Signal.map drawCarAndPaths
+type Updates
+  = UMouseMove MousePos
+  | UWindowSize ScreenInfo
+  | UDrawNext
 
--- TODO: use merge
-main = 
-  Signal.map2 (,) 
-    (Time.every (Time.millisecond * 100))
-    Window.dimensions      
-    |> Signal.foldp (\(_,(w,h)) (s,_) -> 
-                      let s' = s + 0.01
-                      in if s' <= 1.0 
-                           then (s',(w,h)) 
-                           else (0.0,(w,h))) (0.0,(0,0))
-    |> Signal.map (\(percent,(w,h)) ->
-                     let points = pathEnds (w,h) 100
-                         point = getPoint points percent 
-                         carForm = 
-                           group [ carBottom
-                                 , carTop |> moveY 30
-                                 , tire |> move (-40, -28)
-                                 , tire |> move ( 40, -28) 
-                                 ]
-                     in collage w h [carForm |> move point] )
+type alias State =
+  { screenInfo : ScreenInfo
+  , mouseX : Int
+  , progress : Float
+  }
+
+main =
+  let signals =
+        [ Signal.map UMouseMove Mouse.position
+        , Signal.map UWindowSize Window.dimensions
+        , Signal.map (always UDrawNext) (Time.every (Time.millisecond * 100))
+        ]
+      initState = 
+        { screenInfo = (200,200)
+        , mouseX = 0
+        , progress = 0
+        }
+      go update state =
+        case update of
+          UMouseMove (x,_) -> { state | mouseX = x }
+          UWindowSize si -> { state | screenInfo = si }
+          UDrawNext -> 
+            { state
+            | progress =
+                let s' = state.progress + 0.01
+                in if s' <= 1.0 
+                  then s'
+                  else 0.0
+            }
+      render state =
+        let (w,h) = state.screenInfo
+            points = pathEnds (w,h) 100
+            point = getPoint points state.progress
+            carForm = 
+              group [ carBottom
+                    , carTop |> moveY 30
+                    , tire |> move (-40, -28)
+                    , tire |> move ( 40, -28) 
+                    ]
+        in collage w h [carForm |> move point]
+  in Signal.mergeMany signals
+    |> Signal.foldp go initState
+    |> Signal.map render
