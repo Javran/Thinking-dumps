@@ -148,7 +148,7 @@ main =
         -- the state.
         [ Signal.map UWindowSize Window.dimensions 
         , Signal.map UMouseMove Mouse.position
-        , Signal.map (always UDrawNext) (Time.fps 60) -- (Time.every (Time.millisecond * 10))
+        , Signal.map (always UDrawNext) (Time.fps 60)
         ]
       makeInitState update = case update of
         UWindowSize (w,h) ->
