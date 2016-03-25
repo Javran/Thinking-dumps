@@ -9,6 +9,9 @@ import Signal
 import Graphics.Element
 import Debug
 import Time
+import Signal.Extra exposing (..)
+
+
 
 -- seems collage is using a different coord system
 -- so we abstract out coordinate translation as a separated function
@@ -137,6 +140,7 @@ type alias State =
   , progress : Float
   }
 
+-- see: http://stackoverflow.com/a/33609553/315302
 main =
   let signals =
         [ Signal.map UMouseMove Mouse.position
@@ -144,8 +148,8 @@ main =
         , Signal.map (always UDrawNext) (Time.every (Time.millisecond * 100))
         ]
       initState = 
-        { screenInfo = (200,200)
-        , mouseX = 0
+        { screenInfo = (1024,768)
+        , mouseX = 512 -- set this to half of screen width
         , progress = 0
         }
       go update state =
@@ -172,5 +176,5 @@ main =
                     ]
         in collage w h [carForm |> move point]
   in Signal.mergeMany signals
-    |> Signal.foldp go initState
+    |> foldp' go (always initState)
     |> Signal.map render
