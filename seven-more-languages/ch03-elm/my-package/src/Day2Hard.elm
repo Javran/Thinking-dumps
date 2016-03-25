@@ -164,7 +164,12 @@ main =
           UDrawNext -> 
             { state
             | progress =
-                let s' = state.progress + 0.005
+                let s' = state.progress + speed
+                    fastest = 0.005
+                    slowest = 0.0001
+                    c = clamp 0 1 ( toFloat state.mouseX
+                                  / toFloat (fst state.screenInfo))
+                    speed = slowest + (fastest - slowest)*c
                 in if s' <= 1.0 
                   then s'
                   else 0.0
