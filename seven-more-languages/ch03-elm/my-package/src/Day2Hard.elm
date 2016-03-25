@@ -136,22 +136,27 @@ type Updates
 
 type alias State =
   { screenInfo : ScreenInfo
-  , mouseX : Int
+  , mouseX : Float
   , progress : Float
   }
 
 -- see: http://stackoverflow.com/a/33609553/315302
 main =
   let signals =
-        [ Signal.map UMouseMove Mouse.position
-        , Signal.map UWindowSize Window.dimensions
-        , Signal.map (always UDrawNext) (Time.every (Time.millisecond * 100))
+        -- note that "Window.dimensions" has to be the first signal
+        -- otherwise neither UMouseMove nor UDrawNext can initialize
+        -- the state.
+        [ Signal.map UWindowSize Window.dimensions 
+        , Signal.map UMouseMove Mouse.position
+        , Signal.map (always UDrawNext) (Time.fps 60) -- (Time.every (Time.millisecond * 10))
         ]
-      initState = 
-        { screenInfo = (1024,768)
-        , mouseX = 512 -- set this to half of screen width
-        , progress = 0
-        }
+      makeInitState update = case update of
+        UWindowSize (w,h) ->
+          { screenInfo = (w,h)
+          , mouseX = w // 2
+          , progress = 0
+          }
+        _ -> Debug.crash "cannot initialize window size"
       go update state =
         case update of
           UMouseMove (x,_) -> { state | mouseX = x }
@@ -159,7 +164,7 @@ main =
           UDrawNext -> 
             { state
             | progress =
-                let s' = state.progress + 0.01
+                let s' = state.progress + 0.005
                 in if s' <= 1.0 
                   then s'
                   else 0.0
@@ -176,5 +181,5 @@ main =
                     ]
         in collage w h [carForm |> move point]
   in Signal.mergeMany signals
-    |> foldp' go (always initState)
+    |> foldp' go makeInitState
     |> Signal.map render
