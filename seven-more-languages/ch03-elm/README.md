@@ -6,6 +6,8 @@ since the publication of the book (the demo version is 0.13 in the book).
 I'll try to follow this chapter and see how things work out.
 Will note about changes if I feel necessary.
 
+Some changes can be found in [the Changelog of Elm core package](https://github.com/elm-lang/core/blob/master/changelog.md)
+
 # Directories
 
 Notes and exercise answers are under `day-x` directories.
