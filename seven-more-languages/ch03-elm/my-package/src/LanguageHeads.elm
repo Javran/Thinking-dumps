@@ -60,10 +60,18 @@ bottom = 550
 secsPerFrame = 1.0 / 50.0  
 delta = inSeconds <~ fps 50
 
+randomNums sg =
+  let g = Random.int 0 4
+      initS = Random.initialSeed 1234
+  in Signal.foldp 
+       (\_ (vOld,s) -> Random.generate g s)
+       (Debug.crash "undefined", initS) sg
+     |> Signal.map fst
+
 input = Signal.sampleOn delta (Input <~ Keyboard.space
                                ~ Mouse.x
                                ~ delta
-                               ~ Random.range 0 4 (every secsPerFrame))
+                               ~ randomNums (every secsPerFrame))
 
 main = Signal.map display gameState
 
