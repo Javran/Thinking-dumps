@@ -9,6 +9,7 @@ import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Color exposing (..)
 import Text
+import Tools exposing (..)
 
 import List
 import Signal
@@ -28,6 +29,7 @@ type alias Head =
   , y : Float
   , vx : Float
   , vy : Float
+  , img : String
   }
 
 type alias Player =
@@ -41,11 +43,15 @@ type alias Game =
   , player : Player
   }
 
+defaultHead : Int -> Head
 defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n }  -- (2)
+
+defaultGame : Game
 defaultGame = { state   = Pause,
                 heads   = [], 
                 player  = {x=0.0, score=0} }
 
+headImage : Int -> String
 headImage n = case n of
   0 -> "/img/brucetate.png"
   1 -> "/img/davethomas.png"
@@ -54,53 +60,60 @@ headImage n = case n of
   4 -> "/img/josevalim.png"
   _ -> ""
 
+bottom : Float
 bottom = 550
 
 -- START:part3
+secsPerFrame : Float
 secsPerFrame = 1.0 / 50.0  
+
+delta : Signal Float
 delta = inSeconds <~ fps 50
 
+randomNums : Signal a -> Signal Int
 randomNums sg =
   let g = Random.int 0 4
       initS = Random.initialSeed 1234
   in Signal.foldp 
        (\_ (vOld,s) -> Random.generate g s)
-       (Debug.crash "undefined", initS) sg
+       (0, initS) sg
      |> Signal.map fst
 
+input : Signal Input
 input = Signal.sampleOn delta (Input <~ Keyboard.space
                                ~ Mouse.x
                                ~ delta
                                ~ randomNums (every secsPerFrame))
 
+main : Signal Element
 main = Signal.map display gameState
 
+gameState : Signal Game
 gameState = Signal.foldp stepGame defaultGame input
--- END:part3
 
--- START:part4a
-stepGame input game =             -- (3)
+stepGame : Input -> Game -> Game
+stepGame input game =
   case game.state of
     Play -> stepGamePlay input game
     Pause -> stepGamePaused input game
     GameOver -> stepGameFinished input game
     
+stepGamePlay : Input -> Game -> Game
 stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =  -- (4)
   { game | state =  stepGameOver x heads
          , heads = stepHeads heads delta x player.score rand
          , player = stepPlayer player x heads }
 
+stepGameOver : Int -> List Head -> State
 stepGameOver x heads = 
   if allHeadsSafe (toFloat x) heads then Play else GameOver
-  
+
 allHeadsSafe x heads =
     List.all (headSafe x) heads
 
 headSafe x head =
     head.y < bottom || abs (head.x - x) < 50
--- END:part4a
 
--- START:part4b
 stepHeads heads delta x score rand =    -- (5)
   spawnHead score heads rand 
   |> bounceHeads
@@ -119,7 +132,7 @@ bounce head =
                  then -head.vy * 0.95 
                  else head.vy }
 
-removeComplete heads = filter (\x -> not (complete x)) heads  -- (8)
+removeComplete heads = List.filter (\x -> not (complete x)) heads  -- (8)
 
 complete {x} = x > 750
 
@@ -157,15 +170,17 @@ stepState space state = if space then Play else state   -- (14)
 -- END:part4d
 
 -- START:part5
+display : Game -> Element
 display ({state, heads, player} as game) =   -- (15)
   let (w, h) = (800, 600)
   in collage w h
        ([ drawRoad w h
-       , drawBuilding w h
-       , drawPaddle w h player.x
-       , drawScore w h player
-       , drawMessage w h state] ++ 
-       (drawHeads w h heads))
+        , drawBuilding w h
+        , drawPaddle w h player.x
+        , drawScore w h player
+        , drawMessage w h state] ++ 
+          (drawHeads w h heads))
+
 
 drawRoad w h =   -- (16)
   filled gray (rect (toFloat w) 100) 
@@ -175,7 +190,7 @@ drawBuilding w h =
   filled red (rect 100 (toFloat h)) 
   |> moveX (-(half w) + 50)
 
-drawHeads w h heads = Signal.map (drawHead w h) heads   -- (17)
+drawHeads w h heads = List.map (drawHead w h) heads   -- (17)
 
 drawHead w h head = 
   let x = half w - head.x
