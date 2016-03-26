@@ -1,34 +1,51 @@
--- START:part1
 module LanguageHead where 
 
 import Keyboard
 import Mouse
 import Random
 import Text
--- END:part1
 
--- START:part2
-data State = Play | Pause | GameOver  -- (1)
+type State = Play | Pause | GameOver
 
-type Input = { space:Bool, x:Int, delta:Time, rand:Int }
-type Head = { x:Float, y:Float, vx:Float, vy:Float }
-type Player = { x:Float, score:Int }
-type Game = { state:State, heads:[Head], player:Player }
+type alias Input = 
+  { space : Bool
+  , x : Int
+  , delta : Time
+  , rand : Int 
+  }
+
+type alias Head = 
+  { x : Float
+  , y : Float
+  , vx : Float
+  , vy : Float
+  }
+
+type alias Player =
+  { x : Float
+  , score : Int
+  }
+
+type alias Game = 
+  { state : State
+  , heads : List Head
+  , player : Player
+  }
 
 defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n }  -- (2)
 defaultGame = { state   = Pause,
                 heads   = [], 
                 player  = {x=0.0, score=0} }
 
-headImage n = 
-  if | n == 0 -> "/img/brucetate.png"
-     | n == 1 -> "/img/davethomas.png"
-     | n == 2 -> "/img/evanczaplicki.png"
-     | n == 3 -> "/img/joearmstrong.png"
-     | n == 4 -> "/img/josevalim.png"
-     | otherwise -> ""
+headImage n = case n of
+  0 -> "/img/brucetate.png"
+  1 -> "/img/davethomas.png"
+  2 -> "/img/evanczaplicki.png"
+  3 -> "/img/joearmstrong.png"
+  4 -> "/img/josevalim.png"
+  _ -> ""
+
 bottom = 550
--- END:part2
 
 -- START:part3
 secsPerFrame = 1.0 / 50.0  
@@ -52,9 +69,9 @@ stepGame input game =             -- (3)
     GameOver -> stepGameFinished input game
     
 stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =  -- (4)
-  { game | state <-  stepGameOver x heads
-         , heads <- stepHeads heads delta x player.score rand
-         , player <- stepPlayer player x heads }
+  { game | state =  stepGameOver x heads
+         , heads = stepHeads heads delta x player.score rand
+         , player = stepPlayer player x heads }
 
 stepGameOver x heads = 
   if allHeadsSafe (toFloat x) heads then Play else GameOver
@@ -81,7 +98,7 @@ spawnHead score heads rand =   -- (6)
 bounceHeads heads = map bounce heads      -- (7)
 
 bounce head = 
-  { head | vy <- if head.y > bottom && head.vy > 0 
+  { head | vy = if head.y > bottom && head.vy > 0 
                  then -head.vy * 0.95 
                  else head.vy }
 
@@ -92,16 +109,16 @@ complete {x} = x > 750
 moveHeads delta heads = map moveHead heads     -- (9)
 
 moveHead ({x, y, vx, vy} as head) = 
-  { head | x <- x + vx * secsPerFrame
-         , y <- y + vy * secsPerFrame
-         , vy <- vy + secsPerFrame * 400 }
+  { head | x = x + vx * secsPerFrame
+         , y = y + vy * secsPerFrame
+         , vy = vy + secsPerFrame * 400 }
 
 -- END:part4b
 
 -- START:part4c
 stepPlayer player mouseX heads =     -- (10)
-  { player | score <- stepScore player heads
-           , x <- toFloat mouseX }
+  { player | score = stepScore player heads
+           , x = toFloat mouseX }
            
 stepScore player heads =   -- (11)
   player.score + 
@@ -111,13 +128,13 @@ stepScore player heads =   -- (11)
 
 -- START:part4d
 stepGamePaused {space, x, delta} ({state, heads, player} as game) =    -- (12)
-  { game | state <- stepState space state
-         , player <- { player |  x <- toFloat x } }    
+  { game | state = stepState space state
+         , player = { player |  x = toFloat x } }    
 
 stepGameFinished {space, x, delta} ({state, heads, player} as game) =   -- (13)
   if space then defaultGame    
-  else { game | state <- GameOver
-              , player <- { player |  x <- toFloat x } }
+  else { game | state = GameOver
+              , player = { player |  x = toFloat x } }
 
 stepState space state = if space then Play else state   -- (14)
 -- END:part4d
