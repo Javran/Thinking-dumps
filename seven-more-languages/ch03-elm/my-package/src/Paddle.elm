@@ -1,3 +1,5 @@
+module Paddle where
+
 import Mouse exposing (..)
 import Window exposing (..)
 import Signal
