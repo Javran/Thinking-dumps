@@ -10,6 +10,7 @@ import Graphics.Collage exposing (..)
 import Color exposing (..)
 import Text
 import Tools exposing (..)
+import Maybe
 
 import List
 import Signal
@@ -40,7 +41,7 @@ type alias Game =
   , heads : List Head
   , player : Player
   , nextRndInt : Random.Seed -> (Int, Random.Seed)
-  , seed : Random.Seed
+  , mSeed : Maybe Random.Seed
   }
 
 defaultHead : Int -> Head
@@ -49,13 +50,12 @@ defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
 defaultGame : Game
 defaultGame =
   let g = Random.int 0 4
-      initSeed = Random.initialSeed 1234
   in 
     { state = Pause
     , heads = []
     , player = {x=0.0, score=0} 
     , nextRndInt = Random.generate g
-    , seed = initSeed
+    , mSeed = Nothing
     }
 
 headImage : Int -> String
@@ -86,7 +86,7 @@ gameState : Signal Game
 gameState = Signal.foldp stepGame defaultGame (Time.timestamp input)
 
 stepGame : (Time, Input) -> Game -> Game
-stepGame (_,input) game =
+stepGame (ts,input) game =
   let 
     {space, x} = input
     xFloat = toFloat x
@@ -116,10 +116,16 @@ stepGame (_,input) game =
              | score = stepScore
              , x = xFloat }
 
-        stepHeads : (List Head, Random.Seed)
+        stepHeads : (List Head, Maybe Random.Seed)
         stepHeads =
           let
-            (rand,nextSeed) = game.nextRndInt game.seed
+            seed = Maybe.withDefault
+                     (ts
+                       |> inMilliseconds 
+                       |> round 
+                       |> Random.initialSeed)
+                     game.mSeed
+            (rand,nextSeed) = game.nextRndInt seed
             newHeadCreated = List.length heads < (player.score // 5000 + 1)
                              && List.all (\head -> head.x > 107.0) heads 
             spawnHead : List Head
@@ -144,15 +150,15 @@ stepGame (_,input) game =
                |> List.map bounce -- bounceHeads
                |> List.filter (not << complete) -- removeComplete
                |> List.map moveHead --  moveHeads
-             , if newHeadCreated then nextSeed else game.seed)
+             , if newHeadCreated then Just nextSeed else game.mSeed)
 
-        (nextHeads,nextSeed) = stepHeads
+        (nextHeads,nextMSeed) = stepHeads
     in
         { game 
         | state = stepGameOver
         , heads = nextHeads
         , player = stepPlayer
-        , seed = nextSeed
+        , mSeed = nextMSeed
         }
 
     stepGameFinished :  Game
