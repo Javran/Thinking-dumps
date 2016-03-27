@@ -20,7 +20,6 @@ type State = Play | Pause | GameOver
 type alias Input =
   { space : Bool
   , x : Int
-  , delta : () -- no need of this piece of info
   , rand : Int
   }
 
@@ -44,7 +43,7 @@ type alias Game =
   }
 
 defaultHead : Int -> Head
-defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n }
+defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
 
 defaultGame : Game
 defaultGame =
@@ -81,10 +80,11 @@ randomNums sg =
      |> Signal.map fst
 
 input : Signal Input
-input = Signal.sampleOn delta (Input <~ Keyboard.space
-                               ~ Mouse.x
-                               ~ delta
-                               ~ randomNums (every secsPerFrame))
+input = Signal.sampleOn 
+          delta 
+          (Input <~ Keyboard.space
+                  ~ Mouse.x
+                  ~ randomNums (every secsPerFrame))
 
 main : Signal Element
 main = Signal.map display gameState
@@ -95,77 +95,70 @@ gameState = Signal.foldp stepGame defaultGame input
 stepGame : Input -> Game -> Game
 stepGame input game =
   let 
-    stepGamePlay : Input -> Game -> Game
-    stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =
+    {space, x, rand} = input
+    xFloat = toFloat x
+    {state, heads, player} = game
+
+    complete : Head -> Bool
+    complete {x} = x > 750
+
+    stepGamePlay : Game
+    stepGamePlay =
       let 
-        stepGameOver : Int -> List Head -> State
-        stepGameOver x heads =
+        stepGameOver : State
+        stepGameOver =
           let 
-            allHeadsSafe : Float -> List Head -> Bool
-            allHeadsSafe x heads =
-              let 
-                headSafe : Float -> Head -> Bool
-                headSafe x head =
-                  head.y < bottom || abs (head.x - x) < 50
-              in List.all (headSafe x) heads
-          in if allHeadsSafe (toFloat x) heads then Play else GameOver
+            headSafe : Head -> Bool
+            headSafe head =
+              head.y < bottom || abs (head.x - xFloat) < 50
+          in if List.all headSafe heads 
+             then Play
+             else GameOver
 
-        stepPlayer : Player -> Int -> List Head -> Player
-        stepPlayer player mouseX heads =
+        stepPlayer : Player
+        stepPlayer =
           let
-            stepScore : Player -> List Head -> Int
-            stepScore player heads =
-              player.score + 1 + 1000 * (List.length (List.filter complete heads))
+            stepScore = player.score + 1 + 1000 * (List.length (List.filter complete heads))
           in { player
-             | score = stepScore player heads
-             , x = toFloat mouseX }
+             | score = stepScore
+             , x = xFloat }
 
-
-        stepHeads : List Head -> a -> b -> Int -> Int -> List Head
-        stepHeads heads delta x score rand =
+        stepHeads : List Head
+        stepHeads =
           let 
             spawnHead : List Head
             spawnHead =
-              let addHead = List.length heads < (score // 5000 + 1)
-                            && List.all (\head -> head.x > 107.0) heads in
-              if addHead then defaultHead rand :: heads else heads
+              if List.length heads < (player.score // 5000 + 1)
+                   && List.all (\head -> head.x > 107.0) heads 
+                then defaultHead rand :: heads
+                else heads
             
-            bounceHeads : List Head -> List Head
-            bounceHeads heads =
-              let 
-                bounce : Head -> Head
-                bounce head =
-                  { head | vy = if head.y > bottom && head.vy > 0
-                                then -head.vy * 0.95
-                                else head.vy }
-              in List.map bounce heads
-            removeComplete : List Head -> List Head
-            removeComplete heads =
-              List.filter (\x -> not (complete x)) heads
-            
-            moveHeads : List Head -> List Head
-            moveHeads heads =
-              let 
-                moveHead : Head -> Head
-                moveHead ({x, y, vx, vy} as head) =
-                  { head | x = x + vx * secsPerFrame
-                  , y = y + vy * secsPerFrame
-                  , vy = vy + secsPerFrame * 400 }
-              in List.map moveHead heads
+            bounce : Head -> Head
+            bounce head =
+              { head | vy = if head.y > bottom && head.vy > 0
+                            then -head.vy * 0.95
+                            else head.vy }
+
+            moveHead : Head -> Head
+            moveHead ({x, y, vx, vy} as head) =
+              { head | x = x + vx * secsPerFrame
+              , y = y + vy * secsPerFrame
+              , vy = vy + secsPerFrame * 400 }
+
           in spawnHead
-            |> bounceHeads
-            |> removeComplete
-            |> moveHeads
+            |> List.map bounce -- bounceHeads
+            |> List.filter (not << complete) -- removeComplete
+            |> List.map moveHead --  moveHeads
 
     in
         { game 
-        | state = stepGameOver x heads
-        , heads = stepHeads heads delta x player.score rand
-        , player = stepPlayer player x heads 
+        | state = stepGameOver
+        , heads = stepHeads
+        , player = stepPlayer
         }
 
-    stepGameFinished : Input -> Game -> Game
-    stepGameFinished {space, x, delta} ({state, heads, player} as game) =
+    stepGameFinished :  Game
+    stepGameFinished =
       if space 
         then defaultGame
         else { game 
@@ -173,21 +166,16 @@ stepGame input game =
              , player = { player |  x = toFloat x }
              }
 
-    stepGamePaused : Input -> Game -> Game
-    stepGamePaused {space, x, delta} ({state, heads, player} as game) =
+    stepGamePaused : Game
+    stepGamePaused =
       { game 
       | state = if space then Play else state
       , player = { player | x = toFloat x } }
 
   in case game.state of
-    Play -> stepGamePlay input game
-    Pause -> stepGamePaused input game
-    GameOver -> stepGameFinished input game
-
-
-complete : Head -> Bool
-complete {x} = x > 750
-
+    Play -> stepGamePlay
+    Pause -> stepGamePaused
+    GameOver -> stepGameFinished
 
 display : Game -> Element
 display ({state, heads, player} as game) =
