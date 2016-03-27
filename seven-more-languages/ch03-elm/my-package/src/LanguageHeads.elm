@@ -20,7 +20,7 @@ type State = Play | Pause | GameOver
 type alias Input =
   { space : Bool
   , x : Int
-  , delta : Time
+  , delta : () -- no need of this piece of info
   , rand : Int
   }
 
@@ -44,12 +44,14 @@ type alias Game =
   }
 
 defaultHead : Int -> Head
-defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n }  -- (2)
+defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n }
 
 defaultGame : Game
-defaultGame = { state   = Pause,
-                heads   = [],
-                player  = {x=0.0, score=0} }
+defaultGame =
+  { state = Pause
+  , heads = []
+  , player = {x=0.0, score=0} 
+  }
 
 headImage : Int -> String
 headImage n = case n of
@@ -66,8 +68,8 @@ bottom = 550
 secsPerFrame : Float
 secsPerFrame = 1.0 / 50.0
 
-delta : Signal Float
-delta = inSeconds <~ fps 50
+delta : Signal ()
+delta = always () <~ fps 50
 
 randomNums : Signal a -> Signal Int
 randomNums sg =
@@ -181,6 +183,55 @@ stepState space state = if space then Play else state   -- (14)
 display : Game -> Element
 display ({state, heads, player} as game) =   -- (15)
   let (w, h) = (800, 600)
+      drawRoad : Int -> Int -> Form
+      drawRoad w h =   -- (16)
+        filled gray (rect (toFloat w) 100)
+          |> moveY (-(half h) + 50)
+      drawBuilding : Int -> Int -> Form
+      drawBuilding w h =
+        filled red (rect 100 (toFloat h))
+          |> moveX (-(half w) + 50)
+
+      drawHeads : Int -> Int -> List Head -> List Form
+      drawHeads w h heads = List.map (drawHead w h) heads   -- (17)
+
+      drawHead : Int -> Int -> Head -> Form
+      drawHead w h head =
+        let x = half w - head.x
+            y = half h - head.y
+            src = head.img
+        in toForm (image 75 75 src)
+             |> move (-x, y)
+             |> rotate (degrees (x * 2 - 100))
+
+
+      drawPaddle : Int -> Int -> Float -> Form
+      drawPaddle w h x =   -- (18)
+        filled black (rect 80 10)
+          |> moveX (x +  10 -  half w)
+          |> moveY (-(half h - 30))
+
+
+      drawScore : Int -> Int -> Player -> Form
+      drawScore w h player =     -- (19)
+        toForm (fullScore player)
+          |> move (half w - 150, half h - 40)
+
+      fullScore : Player -> Element
+      fullScore player = txt (Text.height 50) (toString player.score)
+
+      txt : (Text -> Text) -> String -> Element
+      txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
+
+      drawMessage : Int -> Int -> State -> Form
+      drawMessage w h state =    -- (20)
+        toForm (txt (Text.height 50) (stateMessage state))
+          |> move (50, 50)
+
+      stateMessage : State -> String
+      stateMessage state =
+        if state == GameOver then "Game Over" else "Language Head"
+
   in collage w h
        ([ drawRoad w h
         , drawBuilding w h
@@ -189,53 +240,5 @@ display ({state, heads, player} as game) =   -- (15)
         , drawMessage w h state] ++
           (drawHeads w h heads))
 
-drawRoad : Int -> Int -> Form
-drawRoad w h =   -- (16)
-  filled gray (rect (toFloat w) 100)
-  |> moveY (-(half h) + 50)
-
-drawBuilding : Int -> Int -> Form
-drawBuilding w h =
-  filled red (rect 100 (toFloat h))
-  |> moveX (-(half w) + 50)
-
-drawHeads : Int -> Int -> List Head -> List Form
-drawHeads w h heads = List.map (drawHead w h) heads   -- (17)
-
-drawHead : Int -> Int -> Head -> Form
-drawHead w h head =
-  let x = half w - head.x
-      y = half h - head.y
-      src = head.img
-  in toForm (image 75 75 src)
-     |> move (-x, y)
-     |> rotate (degrees (x * 2 - 100))
-
-drawPaddle : Int -> Int -> Float -> Form
-drawPaddle w h x =   -- (18)
-  filled black (rect 80 10)
-  |> moveX (x +  10 -  half w)
-  |> moveY (-(half h - 30))
-
 half : Int -> Float
 half x = toFloat x / 2
-
-drawScore : Int -> Int -> Player -> Form
-drawScore w h player =     -- (19)
-  toForm (fullScore player)
-  |> move (half w - 150, half h - 40)
-
-fullScore : Player -> Element
-fullScore player = txt (Text.height 50) (toString player.score)
-
-txt : (Text -> Text) -> String -> Element
-txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
-
-drawMessage : Int -> Int -> State -> Form
-drawMessage w h state =    -- (20)
-  toForm (txt (Text.height 50) (stateMessage state))
-  |> move (50, 50)
-
-stateMessage : State -> String
-stateMessage state =
-  if state == GameOver then "Game Over" else "Language Head"
