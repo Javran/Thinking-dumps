@@ -83,10 +83,10 @@ main : Signal Element
 main = Signal.map display gameState
 
 gameState : Signal Game
-gameState = Signal.foldp stepGame defaultGame input
+gameState = Signal.foldp stepGame defaultGame (Time.timestamp input)
 
-stepGame : Input -> Game -> Game
-stepGame input game =
+stepGame : (Time, Input) -> Game -> Game
+stepGame (_,input) game =
   let 
     {space, x} = input
     xFloat = toFloat x
