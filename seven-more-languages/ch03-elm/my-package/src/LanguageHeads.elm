@@ -96,92 +96,98 @@ stepGame : Input -> Game -> Game
 stepGame input game =
   let 
     stepGamePlay : Input -> Game -> Game
-    stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =  -- (4)
-      { game 
-      | state =  stepGameOver x heads
-      , heads = stepHeads heads delta x player.score rand
-      , player = stepPlayer player x heads 
-      }
+    stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =
+      let 
+        stepGameOver : Int -> List Head -> State
+        stepGameOver x heads =
+          let 
+            allHeadsSafe : Float -> List Head -> Bool
+            allHeadsSafe x heads =
+              let 
+                headSafe : Float -> Head -> Bool
+                headSafe x head =
+                  head.y < bottom || abs (head.x - x) < 50
+              in List.all (headSafe x) heads
+          in if allHeadsSafe (toFloat x) heads then Play else GameOver
 
-    stepGameOver : Int -> List Head -> State
-    stepGameOver x heads =
-      if allHeadsSafe (toFloat x) heads then Play else GameOver
+        stepPlayer : Player -> Int -> List Head -> Player
+        stepPlayer player mouseX heads =
+          let
+            stepScore : Player -> List Head -> Int
+            stepScore player heads =
+              player.score + 1 + 1000 * (List.length (List.filter complete heads))
+          in { player
+             | score = stepScore player heads
+             , x = toFloat mouseX }
+
+
+        stepHeads : List Head -> a -> b -> Int -> Int -> List Head
+        stepHeads heads delta x score rand =
+          let 
+            spawnHead : List Head
+            spawnHead =
+              let addHead = List.length heads < (score // 5000 + 1)
+                            && List.all (\head -> head.x > 107.0) heads in
+              if addHead then defaultHead rand :: heads else heads
+            
+            bounceHeads : List Head -> List Head
+            bounceHeads heads =
+              let 
+                bounce : Head -> Head
+                bounce head =
+                  { head | vy = if head.y > bottom && head.vy > 0
+                                then -head.vy * 0.95
+                                else head.vy }
+              in List.map bounce heads
+            removeComplete : List Head -> List Head
+            removeComplete heads =
+              List.filter (\x -> not (complete x)) heads
+            
+            moveHeads : List Head -> List Head
+            moveHeads heads =
+              let 
+                moveHead : Head -> Head
+                moveHead ({x, y, vx, vy} as head) =
+                  { head | x = x + vx * secsPerFrame
+                  , y = y + vy * secsPerFrame
+                  , vy = vy + secsPerFrame * 400 }
+              in List.map moveHead heads
+          in spawnHead
+            |> bounceHeads
+            |> removeComplete
+            |> moveHeads
+
+    in
+        { game 
+        | state = stepGameOver x heads
+        , heads = stepHeads heads delta x player.score rand
+        , player = stepPlayer player x heads 
+        }
+
+    stepGameFinished : Input -> Game -> Game
+    stepGameFinished {space, x, delta} ({state, heads, player} as game) =
+      if space 
+        then defaultGame
+        else { game 
+             | state = GameOver
+             , player = { player |  x = toFloat x }
+             }
+
+    stepGamePaused : Input -> Game -> Game
+    stepGamePaused {space, x, delta} ({state, heads, player} as game) =
+      { game 
+      | state = if space then Play else state
+      , player = { player | x = toFloat x } }
 
   in case game.state of
     Play -> stepGamePlay input game
     Pause -> stepGamePaused input game
     GameOver -> stepGameFinished input game
 
-allHeadsSafe : Float -> List Head -> Bool
-allHeadsSafe x heads =
-    List.all (headSafe x) heads
-
-headSafe : Float -> Head -> Bool
-headSafe x head =
-    head.y < bottom || abs (head.x - x) < 50
-
--- TODO: we don't actually care about what's in "delta"?
-stepHeads : List Head -> a -> b -> Int -> Int -> List Head
-stepHeads heads delta x score rand =
-  spawnHead score heads rand
-  |> bounceHeads
-  |> removeComplete
-  |> moveHeads delta
-
-spawnHead : Int -> List Head -> Int -> List Head
-spawnHead score heads rand =
-  let addHead = List.length heads < (score // 5000 + 1)
-    && List.all (\head -> head.x > 107.0) heads in
-  if addHead then defaultHead rand :: heads else heads
-
-bounceHeads : List Head -> List Head
-bounceHeads heads = List.map bounce heads
-
-bounce : Head -> Head
-bounce head =
-  { head | vy = if head.y > bottom && head.vy > 0
-                 then -head.vy * 0.95
-                 else head.vy }
-
-removeComplete : List Head -> List Head
-removeComplete heads = List.filter (\x -> not (complete x)) heads  -- (8)
 
 complete : Head -> Bool
 complete {x} = x > 750
 
-moveHeads : a -> List Head -> List Head
-moveHeads delta heads = List.map moveHead heads     -- (9)
-
-moveHead : Head -> Head
-moveHead ({x, y, vx, vy} as head) =
-  { head | x = x + vx * secsPerFrame
-         , y = y + vy * secsPerFrame
-         , vy = vy + secsPerFrame * 400 }
-
-stepPlayer : Player -> Int -> List Head -> Player
-stepPlayer player mouseX heads =     -- (10)
-  { player | score = stepScore player heads
-           , x = toFloat mouseX }
-
-stepScore : Player -> List Head -> Int
-stepScore player heads =   -- (11)
-  player.score +
-  1 +
-  1000 * (List.length (List.filter complete heads))
-
-stepGamePaused : Input -> Game -> Game
-stepGamePaused {space, x, delta} ({state, heads, player} as game) =    -- (12)
-  { game | state = stepState space state
-         , player = { player |  x = toFloat x } }
-
-stepGameFinished : Input -> Game -> Game
-stepGameFinished {space, x, delta} ({state, heads, player} as game) =   -- (13)
-  if space then defaultGame
-  else { game | state = GameOver
-              , player = { player |  x = toFloat x } }
-
-stepState : Bool -> State -> State
-stepState space state = if space then Play else state   -- (14)
 
 display : Game -> Element
 display ({state, heads, player} as game) =
