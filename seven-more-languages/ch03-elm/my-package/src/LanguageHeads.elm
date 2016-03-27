@@ -19,16 +19,16 @@ import Random
 type State = Play | Pause | GameOver
 
 type alias Input =
-  { space : Bool
-  , x : Int
+  { space : Bool -- ^ whether "space" has been pressed
+  , x : Int -- ^ x coord of the mouse
   }
 
 type alias Head =
-  { x : Float
+  { x : Float -- x,y coordinate
   , y : Float
-  , vx : Float
+  , vx : Float -- speed of x & y directions
   , vy : Float
-  , img : String
+  , img : String -- image source
   }
 
 type alias Player =
@@ -40,12 +40,29 @@ type alias Game =
   { state : State
   , heads : List Head
   , player : Player
+    -- "nextRndInt" and "mSeed" are added
+    -- for generating (pseudo) random numbers
+    -- "nextRndInt" should not be modified after initialization
+    -- but "mSeed" must be updated once a new random number is
+    -- generated and used.
   , nextRndInt : Random.Seed -> (Int, Random.Seed)
   , mSeed : Maybe Random.Seed
   }
 
+-- generate heads of different people
+-- valid values are [0..4]
 defaultHead : Int -> Head
-defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
+defaultHead n =
+  let
+    headImage : Int -> String
+    headImage n = case n of
+      0 -> "/img/brucetate.png"
+      1 -> "/img/davethomas.png"
+      2 -> "/img/evanczaplicki.png"
+      3 -> "/img/joearmstrong.png"
+      4 -> "/img/josevalim.png"
+      _ -> ""
+  in {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
 
 defaultGame : Game
 defaultGame =
@@ -58,32 +75,29 @@ defaultGame =
     , mSeed = Nothing
     }
 
-headImage : Int -> String
-headImage n = case n of
-  0 -> "/img/brucetate.png"
-  1 -> "/img/davethomas.png"
-  2 -> "/img/evanczaplicki.png"
-  3 -> "/img/joearmstrong.png"
-  4 -> "/img/josevalim.png"
-  _ -> ""
-
 bottom : Float
 bottom = 550
 
 secsPerFrame : Float
 secsPerFrame = 1.0 / 50.0
 
+-- sampling input (keyboard & mouse) 50 times per second
+-- and this also makes the game tick
 input : Signal Input
-input = Signal.sampleOn 
+input = Signal.sampleOn
           (fps 50)
           (Input <~ Keyboard.space
                   ~ Mouse.x)
 
-main : Signal Element
-main = Signal.map display gameState
-
+-- consume input and update game state
+-- a timestamp is added to each input signal
+-- so we can generate a seed on demand
 gameState : Signal Game
 gameState = Signal.foldp stepGame defaultGame (Time.timestamp input)
+
+-- render game state on the screen
+main : Signal Element
+main = Signal.map display gameState
 
 stepGame : (Time, Input) -> Game -> Game
 stepGame (ts,input) game =
