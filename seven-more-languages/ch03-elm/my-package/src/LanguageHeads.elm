@@ -63,7 +63,6 @@ headImage n = case n of
 bottom : Float
 bottom = 550
 
--- START:part3
 secsPerFrame : Float
 secsPerFrame = 1.0 / 50.0  
 
@@ -108,34 +107,44 @@ stepGameOver : Int -> List Head -> State
 stepGameOver x heads = 
   if allHeadsSafe (toFloat x) heads then Play else GameOver
 
+allHeadsSafe : Float -> List Head -> Bool
 allHeadsSafe x heads =
     List.all (headSafe x) heads
 
+headSafe : Float -> Head -> Bool
 headSafe x head =
     head.y < bottom || abs (head.x - x) < 50
 
-stepHeads heads delta x score rand =    -- (5)
+-- TODO: we don't actually care about what's in "delta"?
+stepHeads : List Head -> a -> b -> Int -> Int -> List Head
+stepHeads heads delta x score rand =
   spawnHead score heads rand 
   |> bounceHeads
   |> removeComplete
   |> moveHeads delta
-  
-spawnHead score heads rand =   -- (6)
+
+spawnHead : Int -> List Head -> Int -> List Head
+spawnHead score heads rand =
   let addHead = List.length heads < (score // 5000 + 1) 
     && List.all (\head -> head.x > 107.0) heads in 
   if addHead then defaultHead rand :: heads else heads
 
-bounceHeads heads = List.map bounce heads      -- (7)
+bounceHeads : List Head -> List Head
+bounceHeads heads = List.map bounce heads
 
+bounce : Head -> Head
 bounce head = 
   { head | vy = if head.y > bottom && head.vy > 0 
                  then -head.vy * 0.95 
                  else head.vy }
 
+removeComplete : List Head -> List Head
 removeComplete heads = List.filter (\x -> not (complete x)) heads  -- (8)
 
+complete : Head -> Bool
 complete {x} = x > 750
 
+moveHeads : a -> List Head -> List Head
 moveHeads delta heads = List.map moveHead heads     -- (9)
 
 moveHead ({x, y, vx, vy} as head) = 
@@ -143,9 +152,6 @@ moveHead ({x, y, vx, vy} as head) =
          , y = y + vy * secsPerFrame
          , vy = vy + secsPerFrame * 400 }
 
--- END:part4b
-
--- START:part4c
 stepPlayer player mouseX heads =     -- (10)
   { player | score = stepScore player heads
            , x = toFloat mouseX }
@@ -154,9 +160,7 @@ stepScore player heads =   -- (11)
   player.score + 
   1 + 
   1000 * (List.length (List.filter complete heads))
--- END:part4c
 
--- START:part4d
 stepGamePaused {space, x, delta} ({state, heads, player} as game) =    -- (12)
   { game | state = stepState space state
          , player = { player |  x = toFloat x } }    
@@ -167,9 +171,7 @@ stepGameFinished {space, x, delta} ({state, heads, player} as game) =   -- (13)
               , player = { player |  x = toFloat x } }
 
 stepState space state = if space then Play else state   -- (14)
--- END:part4d
 
--- START:part5
 display : Game -> Element
 display ({state, heads, player} as game) =   -- (15)
   let (w, h) = (800, 600)
