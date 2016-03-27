@@ -183,20 +183,18 @@ stepState space state = if space then Play else state   -- (14)
 display : Game -> Element
 display ({state, heads, player} as game) =   -- (15)
   let (w, h) = (800, 600)
-      drawRoad : Int -> Int -> Form
-      drawRoad w h =   -- (16)
+      drawRoad =
         filled gray (rect (toFloat w) 100)
           |> moveY (-(half h) + 50)
-      drawBuilding : Int -> Int -> Form
-      drawBuilding w h =
+      drawBuilding =
         filled red (rect 100 (toFloat h))
           |> moveX (-(half w) + 50)
 
-      drawHeads : Int -> Int -> List Head -> List Form
-      drawHeads w h heads = List.map (drawHead w h) heads   -- (17)
+      drawHeads : List Head -> List Form
+      drawHeads heads = List.map drawHead heads   -- (17)
 
-      drawHead : Int -> Int -> Head -> Form
-      drawHead w h head =
+      drawHead : Head -> Form
+      drawHead head =
         let x = half w - head.x
             y = half h - head.y
             src = head.img
@@ -204,16 +202,14 @@ display ({state, heads, player} as game) =   -- (15)
              |> move (-x, y)
              |> rotate (degrees (x * 2 - 100))
 
-
-      drawPaddle : Int -> Int -> Float -> Form
-      drawPaddle w h x =   -- (18)
+      drawPaddle : Float -> Form
+      drawPaddle x =   -- (18)
         filled black (rect 80 10)
           |> moveX (x +  10 -  half w)
           |> moveY (-(half h - 30))
 
-
-      drawScore : Int -> Int -> Player -> Form
-      drawScore w h player =     -- (19)
+      drawScore : Player -> Form
+      drawScore player =     -- (19)
         toForm (fullScore player)
           |> move (half w - 150, half h - 40)
 
@@ -223,8 +219,8 @@ display ({state, heads, player} as game) =   -- (15)
       txt : (Text -> Text) -> String -> Element
       txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
 
-      drawMessage : Int -> Int -> State -> Form
-      drawMessage w h state =    -- (20)
+      drawMessage : State -> Form
+      drawMessage state =    -- (20)
         toForm (txt (Text.height 50) (stateMessage state))
           |> move (50, 50)
 
@@ -233,12 +229,12 @@ display ({state, heads, player} as game) =   -- (15)
         if state == GameOver then "Game Over" else "Language Head"
 
   in collage w h
-       ([ drawRoad w h
-        , drawBuilding w h
-        , drawPaddle w h player.x
-        , drawScore w h player
-        , drawMessage w h state] ++
-          (drawHeads w h heads))
+       ([ drawRoad
+        , drawBuilding
+        , drawPaddle player.x
+        , drawScore player
+        , drawMessage state] ++
+          (drawHeads heads))
 
 half : Int -> Float
 half x = toFloat x / 2
