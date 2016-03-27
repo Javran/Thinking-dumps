@@ -20,7 +20,6 @@ type State = Play | Pause | GameOver
 type alias Input =
   { space : Bool
   , x : Int
-  , rand : Int
   }
 
 type alias Head =
@@ -40,6 +39,8 @@ type alias Game =
   { state : State
   , heads : List Head
   , player : Player
+  , nextRndInt : Random.Seed -> (Int, Random.Seed)
+  , seed : Random.Seed
   }
 
 defaultHead : Int -> Head
@@ -47,10 +48,15 @@ defaultHead n = {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
 
 defaultGame : Game
 defaultGame =
-  { state = Pause
-  , heads = []
-  , player = {x=0.0, score=0} 
-  }
+  let g = Random.int 0 4
+      initSeed = Random.initialSeed 1234
+  in 
+    { state = Pause
+    , heads = []
+    , player = {x=0.0, score=0} 
+    , nextRndInt = Random.generate g
+    , seed = initSeed
+    }
 
 headImage : Int -> String
 headImage n = case n of
@@ -67,24 +73,11 @@ bottom = 550
 secsPerFrame : Float
 secsPerFrame = 1.0 / 50.0
 
-delta : Signal ()
-delta = always () <~ fps 50
-
-randomNums : Signal a -> Signal Int
-randomNums sg =
-  let g = Random.int 0 4
-      initS = Random.initialSeed 1234
-  in Signal.foldp
-       (\_ (vOld,s) -> Random.generate g s)
-       (0, initS) sg
-     |> Signal.map fst
-
 input : Signal Input
 input = Signal.sampleOn 
-          delta 
+          (fps 50)
           (Input <~ Keyboard.space
-                  ~ Mouse.x
-                  ~ randomNums (every secsPerFrame))
+                  ~ Mouse.x)
 
 main : Signal Element
 main = Signal.map display gameState
@@ -95,7 +88,7 @@ gameState = Signal.foldp stepGame defaultGame input
 stepGame : Input -> Game -> Game
 stepGame input game =
   let 
-    {space, x, rand} = input
+    {space, x} = input
     xFloat = toFloat x
     {state, heads, player} = game
 
@@ -123,13 +116,15 @@ stepGame input game =
              | score = stepScore
              , x = xFloat }
 
-        stepHeads : List Head
+        stepHeads : (List Head, Random.Seed)
         stepHeads =
-          let 
+          let
+            (rand,nextSeed) = game.nextRndInt game.seed
+            newHeadCreated = List.length heads < (player.score // 5000 + 1)
+                             && List.all (\head -> head.x > 107.0) heads 
             spawnHead : List Head
             spawnHead =
-              if List.length heads < (player.score // 5000 + 1)
-                   && List.all (\head -> head.x > 107.0) heads 
+              if newHeadCreated
                 then defaultHead rand :: heads
                 else heads
             
@@ -145,16 +140,19 @@ stepGame input game =
               , y = y + vy * secsPerFrame
               , vy = vy + secsPerFrame * 400 }
 
-          in spawnHead
-            |> List.map bounce -- bounceHeads
-            |> List.filter (not << complete) -- removeComplete
-            |> List.map moveHead --  moveHeads
+          in (spawnHead
+               |> List.map bounce -- bounceHeads
+               |> List.filter (not << complete) -- removeComplete
+               |> List.map moveHead --  moveHeads
+             , if newHeadCreated then nextSeed else game.seed)
 
+        (nextHeads,nextSeed) = stepHeads
     in
         { game 
         | state = stepGameOver
-        , heads = stepHeads
+        , heads = nextHeads
         , player = stepPlayer
+        , seed = nextSeed
         }
 
     stepGameFinished :  Game
