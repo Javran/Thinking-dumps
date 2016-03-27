@@ -94,20 +94,23 @@ gameState = Signal.foldp stepGame defaultGame input
 
 stepGame : Input -> Game -> Game
 stepGame input game =
-  case game.state of
+  let 
+    stepGamePlay : Input -> Game -> Game
+    stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =  -- (4)
+      { game 
+      | state =  stepGameOver x heads
+      , heads = stepHeads heads delta x player.score rand
+      , player = stepPlayer player x heads 
+      }
+
+    stepGameOver : Int -> List Head -> State
+    stepGameOver x heads =
+      if allHeadsSafe (toFloat x) heads then Play else GameOver
+
+  in case game.state of
     Play -> stepGamePlay input game
     Pause -> stepGamePaused input game
     GameOver -> stepGameFinished input game
-
-stepGamePlay : Input -> Game -> Game
-stepGamePlay {space, x, delta, rand} ({state, heads, player} as game) =  -- (4)
-  { game | state =  stepGameOver x heads
-         , heads = stepHeads heads delta x player.score rand
-         , player = stepPlayer player x heads }
-
-stepGameOver : Int -> List Head -> State
-stepGameOver x heads =
-  if allHeadsSafe (toFloat x) heads then Play else GameOver
 
 allHeadsSafe : Float -> List Head -> Bool
 allHeadsSafe x heads =
@@ -181,7 +184,7 @@ stepState : Bool -> State -> State
 stepState space state = if space then Play else state   -- (14)
 
 display : Game -> Element
-display ({state, heads, player} as game) =   -- (15)
+display ({state, heads, player} as game) =
   let (w, h) = (800, 600)
       drawRoad =
         filled gray (rect (toFloat w) 100)
@@ -191,42 +194,43 @@ display ({state, heads, player} as game) =   -- (15)
           |> moveX (-(half w) + 50)
 
       drawHeads : List Head -> List Form
-      drawHeads heads = List.map drawHead heads   -- (17)
-
-      drawHead : Head -> Form
-      drawHead head =
-        let x = half w - head.x
-            y = half h - head.y
-            src = head.img
-        in toForm (image 75 75 src)
-             |> move (-x, y)
-             |> rotate (degrees (x * 2 - 100))
+      drawHeads heads =
+        let
+          drawHead : Head -> Form
+          drawHead head =
+            let x = half w - head.x
+                y = half h - head.y
+                src = head.img
+            in toForm (image 75 75 src)
+              |> move (-x, y)
+              |> rotate (degrees (x * 2 - 100))
+        in List.map drawHead heads
 
       drawPaddle : Float -> Form
-      drawPaddle x =   -- (18)
+      drawPaddle x =
         filled black (rect 80 10)
           |> moveX (x +  10 -  half w)
           |> moveY (-(half h - 30))
 
-      drawScore : Player -> Form
-      drawScore player =     -- (19)
-        toForm (fullScore player)
-          |> move (half w - 150, half h - 40)
-
-      fullScore : Player -> Element
-      fullScore player = txt (Text.height 50) (toString player.score)
-
       txt : (Text -> Text) -> String -> Element
       txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
 
-      drawMessage : State -> Form
-      drawMessage state =    -- (20)
-        toForm (txt (Text.height 50) (stateMessage state))
-          |> move (50, 50)
+      drawScore : Player -> Form
+      drawScore player =
+        let 
+          fullScore : Player -> Element
+          fullScore player = txt (Text.height 50) (toString player.score)
+        in toForm (fullScore player)
+          |> move (half w - 150, half h - 40)
 
-      stateMessage : State -> String
-      stateMessage state =
-        if state == GameOver then "Game Over" else "Language Head"
+      drawMessage : State -> Form
+      drawMessage state =
+        let 
+          stateMessage : State -> String
+          stateMessage state =
+            if state == GameOver then "Game Over" else "Language Head"
+        in toForm (txt (Text.height 50) (stateMessage state))
+          |> move (50, 50)
 
   in collage w h
        ([ drawRoad
