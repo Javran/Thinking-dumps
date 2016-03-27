@@ -186,6 +186,13 @@ stepState space state = if space then Play else state   -- (14)
 display : Game -> Element
 display ({state, heads, player} as game) =
   let (w, h) = (800, 600)
+
+      half : Int -> Float
+      half x = toFloat x / 2
+
+      -- type signatures for the following definitions
+      -- are all default to "Form" if not stated explicitly
+
       drawRoad =
         filled gray (rect (toFloat w) 100)
           |> moveY (-(half h) + 50)
@@ -193,8 +200,8 @@ display ({state, heads, player} as game) =
         filled red (rect 100 (toFloat h))
           |> moveX (-(half w) + 50)
 
-      drawHeads : List Head -> List Form
-      drawHeads heads =
+      drawHeads : List Form
+      drawHeads =
         let
           drawHead : Head -> Form
           drawHead head =
@@ -206,39 +213,33 @@ display ({state, heads, player} as game) =
               |> rotate (degrees (x * 2 - 100))
         in List.map drawHead heads
 
-      drawPaddle : Float -> Form
-      drawPaddle x =
+      drawPaddle =
         filled black (rect 80 10)
-          |> moveX (x +  10 -  half w)
+          |> moveX (player.x +  10 -  half w)
           |> moveY (-(half h - 30))
 
       txt : (Text -> Text) -> String -> Element
       txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
 
-      drawScore : Player -> Form
-      drawScore player =
+      drawScore =
         let 
           fullScore : Player -> Element
           fullScore player = txt (Text.height 50) (toString player.score)
         in toForm (fullScore player)
           |> move (half w - 150, half h - 40)
 
-      drawMessage : State -> Form
-      drawMessage state =
+      drawMessage =
         let 
-          stateMessage : State -> String
-          stateMessage state =
+          stateMessage =
             if state == GameOver then "Game Over" else "Language Head"
-        in toForm (txt (Text.height 50) (stateMessage state))
+        in toForm (txt (Text.height 50) stateMessage)
           |> move (50, 50)
 
   in collage w h
        ([ drawRoad
         , drawBuilding
-        , drawPaddle player.x
-        , drawScore player
-        , drawMessage state] ++
-          (drawHeads heads))
+        , drawPaddle
+        , drawScore
+        , drawMessage ] ++
+          drawHeads)
 
-half : Int -> Float
-half x = toFloat x / 2
