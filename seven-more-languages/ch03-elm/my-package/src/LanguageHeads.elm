@@ -98,46 +98,66 @@ gameState =
     stepGame : (Time, Input) -> Game -> Game
     stepGame (ts,input) game =
       let 
+        -- shared bindings & util functions
         {space, x} = input
         xFloat = toFloat x
         {state, heads, player} = game
     
         complete : Head -> Bool
         complete {x} = x > 750
+
+        count : (a -> Bool) -> List a -> Int
+        count pred = List.filter pred >> List.length
     
         stepGamePlay : Game
         stepGamePlay =
-          let 
+          let
+            -- if any head is not save, the game is over
             stepGameOver : State
             stepGameOver =
               let 
+                -- a head is safe when one of the following is met:
                 headSafe : Head -> Bool
                 headSafe head =
-                  head.y < bottom || abs (head.x - xFloat) < 50
+                  -- * the head is above bottom
+                     head.y < bottom
+                  -- * or the head is within reach of the paddle
+                  || abs (head.x - xFloat) < 50
               in if List.all headSafe heads 
                  then Play
                  else GameOver
     
+            -- calculate player's current score
             stepPlayer : Player
             stepPlayer =
               let
-                stepScore = player.score + 1 + 1000 * (List.length (List.filter complete heads))
+                stepScore = player.score + 1 + 1000 * (count complete heads)
               in { player
                  | score = stepScore
                  , x = xFloat }
     
+            -- calculate next state of each head,
+            -- might create new ones if necessary
             stepHeads : (List Head, Maybe Random.Seed)
             stepHeads =
               let
+                -- make "seed" available to other member definitions
+                -- create one from timestamp if necessary
                 seed = Maybe.withDefault
                          (ts
                            |> inMilliseconds 
                            |> round 
                            |> Random.initialSeed)
                          game.mSeed
+                -- generate next random number "rand",
+                -- note that if this random number is not used
+                -- then no update should happen to the mSeed field
                 (rand,nextSeed) = game.nextRndInt seed
+
+                -- a flag to indicate if we need to create a new head on the screen
                 newHeadCreated = List.length heads < (player.score // 5000 + 1)
                                  && List.all (\head -> head.x > 107.0) heads 
+
                 spawnHead : List Head
                 spawnHead =
                   if newHeadCreated
@@ -147,14 +167,15 @@ gameState =
                 bounce : Head -> Head
                 bounce head =
                   { head | vy = if head.y > bottom && head.vy > 0
-                                then -head.vy * 0.95
+                                then -head.vy * 0.95 -- bounces the head
                                 else head.vy }
     
                 moveHead : Head -> Head
                 moveHead ({x, y, vx, vy} as head) =
                   { head | x = x + vx * secsPerFrame
                   , y = y + vy * secsPerFrame
-                  , vy = vy + secsPerFrame * 400 }
+                  , vy = vy + secsPerFrame * 400 -- simulate gravity
+                  }
     
               in (spawnHead
                    |> List.map bounce -- bounceHeads
@@ -170,7 +191,11 @@ gameState =
             , player = stepPlayer
             , mSeed = nextMSeed
             }
-    
+        -- END of stepGamePlay
+
+        -- show game over message,
+        -- and restart the game when space is pressed
+        -- paddle's x coordinate is updated accordingly
         stepGameFinished :  Game
         stepGameFinished =
           if space 
@@ -180,6 +205,9 @@ gameState =
                  , player = { player |  x = toFloat x }
                  }
     
+        -- game is initialized at "Pause" state,
+        -- when "space" is pressed, the game state will transit to "Play" state
+        -- paddle's x coordinate is updated accordingly
         stepGamePaused : Game
         stepGamePaused =
           { game 
@@ -197,6 +225,7 @@ gameState =
 main : Signal Element
 main = Signal.map display gameState
     
+-- render game state on screen
 display : Game -> Element
 display ({state, heads, player} as game) =
   let (w, h) = (800, 600)
@@ -256,4 +285,3 @@ display ({state, heads, player} as game) =
         , drawScore
         , drawMessage ] ++
           drawHeads)
-
