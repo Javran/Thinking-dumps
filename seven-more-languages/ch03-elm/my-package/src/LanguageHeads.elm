@@ -93,108 +93,110 @@ input = Signal.sampleOn
 -- a timestamp is added to each input signal
 -- so we can generate a seed on demand
 gameState : Signal Game
-gameState = Signal.foldp stepGame defaultGame (Time.timestamp input)
+gameState =
+  let
+    stepGame : (Time, Input) -> Game -> Game
+    stepGame (ts,input) game =
+      let 
+        {space, x} = input
+        xFloat = toFloat x
+        {state, heads, player} = game
+    
+        complete : Head -> Bool
+        complete {x} = x > 750
+    
+        stepGamePlay : Game
+        stepGamePlay =
+          let 
+            stepGameOver : State
+            stepGameOver =
+              let 
+                headSafe : Head -> Bool
+                headSafe head =
+                  head.y < bottom || abs (head.x - xFloat) < 50
+              in if List.all headSafe heads 
+                 then Play
+                 else GameOver
+    
+            stepPlayer : Player
+            stepPlayer =
+              let
+                stepScore = player.score + 1 + 1000 * (List.length (List.filter complete heads))
+              in { player
+                 | score = stepScore
+                 , x = xFloat }
+    
+            stepHeads : (List Head, Maybe Random.Seed)
+            stepHeads =
+              let
+                seed = Maybe.withDefault
+                         (ts
+                           |> inMilliseconds 
+                           |> round 
+                           |> Random.initialSeed)
+                         game.mSeed
+                (rand,nextSeed) = game.nextRndInt seed
+                newHeadCreated = List.length heads < (player.score // 5000 + 1)
+                                 && List.all (\head -> head.x > 107.0) heads 
+                spawnHead : List Head
+                spawnHead =
+                  if newHeadCreated
+                    then defaultHead rand :: heads
+                    else heads
+                
+                bounce : Head -> Head
+                bounce head =
+                  { head | vy = if head.y > bottom && head.vy > 0
+                                then -head.vy * 0.95
+                                else head.vy }
+    
+                moveHead : Head -> Head
+                moveHead ({x, y, vx, vy} as head) =
+                  { head | x = x + vx * secsPerFrame
+                  , y = y + vy * secsPerFrame
+                  , vy = vy + secsPerFrame * 400 }
+    
+              in (spawnHead
+                   |> List.map bounce -- bounceHeads
+                   |> List.filter (not << complete) -- removeComplete
+                   |> List.map moveHead --  moveHeads
+                 , if newHeadCreated then Just nextSeed else game.mSeed)
+    
+            (nextHeads,nextMSeed) = stepHeads
+        in
+            { game 
+            | state = stepGameOver
+            , heads = nextHeads
+            , player = stepPlayer
+            , mSeed = nextMSeed
+            }
+    
+        stepGameFinished :  Game
+        stepGameFinished =
+          if space 
+            then defaultGame
+            else { game 
+                 | state = GameOver
+                 , player = { player |  x = toFloat x }
+                 }
+    
+        stepGamePaused : Game
+        stepGamePaused =
+          { game 
+          | state = if space then Play else state
+          , player = { player | x = toFloat x } }
+    
+      in case game.state of
+        Play -> stepGamePlay
+        Pause -> stepGamePaused
+        GameOver -> stepGameFinished
+    
+  in Signal.foldp stepGame defaultGame (Time.timestamp input)
 
 -- render game state on the screen
 main : Signal Element
 main = Signal.map display gameState
-
-stepGame : (Time, Input) -> Game -> Game
-stepGame (ts,input) game =
-  let 
-    {space, x} = input
-    xFloat = toFloat x
-    {state, heads, player} = game
-
-    complete : Head -> Bool
-    complete {x} = x > 750
-
-    stepGamePlay : Game
-    stepGamePlay =
-      let 
-        stepGameOver : State
-        stepGameOver =
-          let 
-            headSafe : Head -> Bool
-            headSafe head =
-              head.y < bottom || abs (head.x - xFloat) < 50
-          in if List.all headSafe heads 
-             then Play
-             else GameOver
-
-        stepPlayer : Player
-        stepPlayer =
-          let
-            stepScore = player.score + 1 + 1000 * (List.length (List.filter complete heads))
-          in { player
-             | score = stepScore
-             , x = xFloat }
-
-        stepHeads : (List Head, Maybe Random.Seed)
-        stepHeads =
-          let
-            seed = Maybe.withDefault
-                     (ts
-                       |> inMilliseconds 
-                       |> round 
-                       |> Random.initialSeed)
-                     game.mSeed
-            (rand,nextSeed) = game.nextRndInt seed
-            newHeadCreated = List.length heads < (player.score // 5000 + 1)
-                             && List.all (\head -> head.x > 107.0) heads 
-            spawnHead : List Head
-            spawnHead =
-              if newHeadCreated
-                then defaultHead rand :: heads
-                else heads
-            
-            bounce : Head -> Head
-            bounce head =
-              { head | vy = if head.y > bottom && head.vy > 0
-                            then -head.vy * 0.95
-                            else head.vy }
-
-            moveHead : Head -> Head
-            moveHead ({x, y, vx, vy} as head) =
-              { head | x = x + vx * secsPerFrame
-              , y = y + vy * secsPerFrame
-              , vy = vy + secsPerFrame * 400 }
-
-          in (spawnHead
-               |> List.map bounce -- bounceHeads
-               |> List.filter (not << complete) -- removeComplete
-               |> List.map moveHead --  moveHeads
-             , if newHeadCreated then Just nextSeed else game.mSeed)
-
-        (nextHeads,nextMSeed) = stepHeads
-    in
-        { game 
-        | state = stepGameOver
-        , heads = nextHeads
-        , player = stepPlayer
-        , mSeed = nextMSeed
-        }
-
-    stepGameFinished :  Game
-    stepGameFinished =
-      if space 
-        then defaultGame
-        else { game 
-             | state = GameOver
-             , player = { player |  x = toFloat x }
-             }
-
-    stepGamePaused : Game
-    stepGamePaused =
-      { game 
-      | state = if space then Play else state
-      , player = { player | x = toFloat x } }
-
-  in case game.state of
-    Play -> stepGamePlay
-    Pause -> stepGamePaused
-    GameOver -> stepGameFinished
-
+    
 display : Game -> Element
 display ({state, heads, player} as game) =
   let (w, h) = (800, 600)
