@@ -17,3 +17,6 @@
       of the application state using a render function that renders application's state
       as web page elements.
 
+* Game contributions from the Elm community: [Elm examples](http://elm-lang.org/examples)
+
+* More about dealing with `Text` on HTML pages in Elm: [Text](http://package.elm-lang.org/packages/elm-lang/core/3.0.0/Text)
