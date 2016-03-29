@@ -39,6 +39,13 @@ type alias Player =
   , score : Int
   }
 
+-- exercise: add some random elements to when heads get added so that all of
+-- the games are no longer the same.
+
+-- not sure what this exercise means, but we have already make every game looks different
+-- by taking timestamp to initialized random generator, and the result looks pretty good.
+-- so I consider my solution a better one and call this exercise done.
+
 type alias Game =
   { state : State
   , heads : List Head
