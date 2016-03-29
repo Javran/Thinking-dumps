@@ -65,7 +65,13 @@ defaultHead n =
       3 -> "/img/joearmstrong.png"
       4 -> "/img/josevalim.png"
       _ -> ""
-  in {x=100.0, y=75, vx=60, vy=0.0, img=headImage n}
+
+    -- to make the head bounces more times,
+    -- we need to make it take more time for a head to pass the screen
+    -- one simple solution is just make velocity of x-axis a bit slower:
+    -- defaultVx = 60
+    defaultVx = 55
+  in {x=100.0, y=75, vx=defaultVx, vy=0.0, img=headImage n}
 
 defaultGame : Game
 defaultGame =
@@ -175,7 +181,8 @@ gameState =
     
                 moveHead : Head -> Head
                 moveHead ({x, y, vx, vy} as head) =
-                  { head | x = x + vx * secsPerFrame
+                  { head
+                  | x = x + vx * secsPerFrame
                   , y = y + vy * secsPerFrame
                   , vy = vy + secsPerFrame * 400 -- simulate gravity
                   }
