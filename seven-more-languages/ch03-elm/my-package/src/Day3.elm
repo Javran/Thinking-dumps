@@ -246,9 +246,24 @@ display ({state, heads, player} as game) =
       -- type signatures for the following definitions
       -- are all default to "Form" if not stated explicitly
 
+
+      -- exercise: make the road look more like a road and the building
+      -- look more like a building
+
+      -- what we can do is to have some texture and do:
+      {-
+      drawRoad =
+        textured "/img/some-road-texture" (rect (toFloat w) 100)
+          |> moveY (-(half h) + 50)
+      -}
+      -- however, "textured" in Collage has poor performance
+      -- rendering the game almost unplayable.
+      -- so we just leave this part commented and skip this exercise.
+
       drawRoad =
         filled gray (rect (toFloat w) 100)
           |> moveY (-(half h) + 50)
+
       drawBuilding =
         filled red (rect 100 (toFloat h))
           |> moveX (-(half w) + 50)
