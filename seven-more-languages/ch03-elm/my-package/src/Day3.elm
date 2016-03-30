@@ -78,20 +78,21 @@ listGetWithDefault d n xs = case n of
 -- to achieve this we just need to make an explicit list
 -- of available graphics and let user pick one index
 
+headSources : List String
+headSources =
+  [ "/img/brucetate.png"
+  , "/img/davethomas.png"
+  , "/img/evanczaplicki.png"
+  , "/img/joearmstrong.png"
+  , "/img/josevalim.png"
+  ]
+
 -- generate heads of different people
 defaultHead : Int -> Head
 defaultHead n =
   let
     headImage : Int -> String
-    headImage n = 
-      let heads =
-            [ "/img/brucetate.png"
-            , "/img/davethomas.png"
-            , "/img/evanczaplicki.png"
-            , "/img/joearmstrong.png"
-            , "/img/josevalim.png"
-            ]
-      in listGetWithDefault "" n heads
+    headImage n = listGetWithDefault "" n headSources
 
     -- to make the head bounces more times,
     -- we need to make it take more time for a head to pass the screen
@@ -102,7 +103,9 @@ defaultHead n =
 
 defaultGame : Game
 defaultGame =
-  let g = Random.int 0 4
+  -- since we have an explicit list of available heads
+  -- we should adjust range of the random generator accordingly
+  let g = Random.int 0 (List.length headSources - 1)
   in 
     { state = Pause
     , heads = []
