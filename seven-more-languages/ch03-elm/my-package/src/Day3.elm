@@ -315,7 +315,14 @@ display ({state, heads, player} as game) =
             let x = half w - head.x
                 y = half h - head.y
                 src = head.img
-            in toForm (image 75 75 src)
+                -- exercise: show a different kind of head when one reaches the bottom.
+                -- to do so, we just apply a differnt style on heads
+                -- that reach the bottom (the "+ 10" is just for relaxing the condition).
+                -- there is not much we can do within Collage,
+                -- to keep it simple we just apply a different opacity on the picture:
+                -- when the head reaches the bottom we use 50% opacity instead of 100%
+                hOpacity = if head.y + 10 >= bottom then 0.5 else 1
+            in toForm (opacity hOpacity (image 75 75 src))
               |> move (-x, y)
               |> rotate (degrees (x * 2 - 100))
         in List.map drawHead heads
