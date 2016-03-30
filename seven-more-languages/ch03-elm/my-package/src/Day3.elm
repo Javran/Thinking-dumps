@@ -194,8 +194,17 @@ gameState =
                 (rand,nextSeed) = game.nextRndInt seed
 
                 -- a flag to indicate if we need to create a new head on the screen
+                -- exercise: don't allow another head to be added too closely to
+                -- an existing head.
+                -- to do so, we add extra constraint to the condition of generating new head:
+                -- * get latest generated head (if there is one)
+                -- * see if it is "far enough" from the initial point
+                --   (here we set the threshold to 10)
                 newHeadCreated = List.length heads < (player.score // 5000 + 1)
-                                 && List.all (\head -> head.x > 107.0) heads 
+                                 && List.all (\head -> head.x > 107.0) heads
+                                 && (Maybe.withDefault True
+                                       (List.head heads
+                                         |> Maybe.map (\h -> h.x >= 10)))
 
                 spawnHead : List Head
                 spawnHead =
