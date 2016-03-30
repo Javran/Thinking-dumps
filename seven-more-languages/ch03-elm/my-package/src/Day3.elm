@@ -59,19 +59,39 @@ type alias Game =
   , mSeed : Maybe Random.Seed
   }
 
+-- get element at a specific index of a list
+-- a default value will be returned if the index
+-- is invalid
+listGetWithDefault : a -> Int -> List a -> a
+listGetWithDefault d n xs = case n of
+    0 -> case xs of
+           [] -> d
+           (h :: _) -> h
+    _ -> if n < 0
+           then d
+           else case xs of
+                  [] -> d
+                  (_::t) -> listGet (n-1) t
+
+-- exercise: make the game choose a random head from
+-- a list of graphics.
+-- to achieve this we just need to make an explicit list
+-- of available graphics and let user pick one index
+
 -- generate heads of different people
--- valid values are [0..4]
 defaultHead : Int -> Head
 defaultHead n =
   let
     headImage : Int -> String
-    headImage n = case n of
-      0 -> "/img/brucetate.png"
-      1 -> "/img/davethomas.png"
-      2 -> "/img/evanczaplicki.png"
-      3 -> "/img/joearmstrong.png"
-      4 -> "/img/josevalim.png"
-      _ -> ""
+    headImage n = 
+      let heads =
+            [ "/img/brucetate.png"
+            , "/img/davethomas.png"
+            , "/img/evanczaplicki.png"
+            , "/img/joearmstrong.png"
+            , "/img/josevalim.png"
+            ]
+      in listGetWithDefault "" n heads
 
     -- to make the head bounces more times,
     -- we need to make it take more time for a head to pass the screen
