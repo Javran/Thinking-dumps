@@ -92,10 +92,22 @@ genHeadSource =
   Random.int 0 (List.length headSources - 1)
     |> Random.map (\x -> listGet x headSources)
 
+-- exercise: prevent heads from reaching the bottom at the same time.
+-- TODO:
+-- 2 possible solutions:
+-- * we don't intentionally prevent this from happening,
+--   but give a initial speed in Vy direction, so it's more likely
+--   that they reaches the bottom at different time
+-- * do math, and figure out if there's any existing heads that would
+--   reach the bottom at the same time as the adding head will do.
+
 -- generate heads of different people
 defaultHead : String -> Head
 defaultHead src =
   let
+    -- exercise: make the heads bounce more times as they
+    -- cross the screen.
+    --
     -- to make the head bounces more times,
     -- we need to make it take more time for a head to pass the screen
     -- one simple solution is just make velocity of x-axis a bit slower:
