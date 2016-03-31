@@ -87,6 +87,13 @@ headSources =
   , "/img/josevalim.png"
   ]
 
+genHeadSource : Random.Generator String
+genHeadSource =
+  -- listGet is safe, because we only generate
+  -- valid indices
+  Random.int 0 (List.length headSources - 1)
+    |> Random.map (\x -> listGet x headSources)
+
 -- generate heads of different people
 defaultHead : Int -> Head
 defaultHead n =
