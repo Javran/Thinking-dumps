@@ -50,12 +50,10 @@ type alias Game =
   { state : State
   , heads : List Head
   , player : Player
-    -- "nextRndInt" and "mSeed" are added
-    -- for generating (pseudo) random numbers
-    -- "nextRndInt" should not be modified after initialization
-    -- but "mSeed" must be updated once a new random number is
+    -- "mSeed" is added
+    -- for generating (pseudo) random values,
+    -- "mSeed" must be updated whenever a new random value is
     -- generated and used.
-  , nextRndInt : Random.Seed -> (Int, Random.Seed)
   , mSeed : Maybe Random.Seed
   }
 
@@ -95,18 +93,15 @@ genHeadSource =
     |> Random.map (\x -> listGet x headSources)
 
 -- generate heads of different people
-defaultHead : Int -> Head
-defaultHead n =
+defaultHead : String -> Head
+defaultHead src =
   let
-    headImage : Int -> String
-    headImage n = listGetWithDefault "" n headSources
-
     -- to make the head bounces more times,
     -- we need to make it take more time for a head to pass the screen
     -- one simple solution is just make velocity of x-axis a bit slower:
     -- defaultVx = 60
     defaultVx = 55
-  in {x=100.0, y=75, vx=defaultVx, vy=0.0, img=headImage n}
+  in {x=100.0, y=75, vx=defaultVx, vy=0.0, img=src}
 
 defaultGame : Game
 defaultGame =
@@ -117,7 +112,6 @@ defaultGame =
     { state = Pause
     , heads = []
     , player = {x=0.0, score=0} 
-    , nextRndInt = Random.generate g
     , mSeed = Nothing
     }
 
@@ -198,7 +192,7 @@ gameState =
                 -- generate next random number "rand",
                 -- note that if this random number is not used
                 -- then no update should happen to the mSeed field
-                (rand,nextSeed) = game.nextRndInt seed
+                (rand,nextSeed) = Random.generate genHeadSource seed
 
                 -- a flag to indicate if we need to create a new head on the screen
                 -- exercise: don't allow another head to be added too closely to
