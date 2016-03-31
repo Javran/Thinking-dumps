@@ -92,18 +92,24 @@ genHeadSource =
   Random.int 0 (List.length headSources - 1)
     |> Random.map (\x -> listGet x headSources)
 
+genHeadSpeedV : Random.Generator Float
+genHeadSpeedV =
+  Random.float (-200) 200
+
+genHead : Random.Generator Head
+genHead = Random.map2 defaultHead genHeadSource genHeadSpeedV
+
 -- exercise: prevent heads from reaching the bottom at the same time.
--- TODO:
 -- 2 possible solutions:
 -- * we don't intentionally prevent this from happening,
 --   but give a initial speed in Vy direction, so it's more likely
 --   that they reaches the bottom at different time
--- * do math, and figure out if there's any existing heads that would
+-- * TODO: do math, and figure out if there's any existing heads that would
 --   reach the bottom at the same time as the adding head will do.
 
 -- generate heads of different people
-defaultHead : String -> Head
-defaultHead src =
+defaultHead : String -> Float -> Head
+defaultHead src vyInit =
   let
     -- exercise: make the heads bounce more times as they
     -- cross the screen.
@@ -113,7 +119,8 @@ defaultHead src =
     -- one simple solution is just make velocity of x-axis a bit slower:
     -- defaultVx = 60
     defaultVx = 55
-  in {x=100.0, y=75, vx=defaultVx, vy=0.0, img=src}
+                
+  in {x=100.0, y=75, vx=defaultVx, vy=vyInit, img=src}
 
 defaultGame : Game
 defaultGame =
@@ -204,7 +211,7 @@ gameState =
                 -- generate next random number "rand",
                 -- note that if this random number is not used
                 -- then no update should happen to the mSeed field
-                (rand,nextSeed) = Random.generate genHeadSource seed
+                (newHead,nextSeed) = Random.generate genHead seed
 
                 -- a flag to indicate if we need to create a new head on the screen
                 -- exercise: don't allow another head to be added too closely to
@@ -222,7 +229,7 @@ gameState =
                 spawnHead : List Head
                 spawnHead =
                   if newHeadCreated
-                    then defaultHead rand :: heads
+                    then newHead :: heads
                     else heads
                 
                 bounce : Head -> Head
