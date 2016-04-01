@@ -119,8 +119,9 @@ defaultHead src vyInit =
     -- one simple solution is just make velocity of x-axis a bit slower:
     -- defaultVx = 60
     defaultVx = 55
-                
-  in {x=100.0, y=75, vx=defaultVx, vy=vyInit, img=src}
+  in { x=100.0, y=75, vx=defaultVx
+     , vy=vyInit
+     , img=src}
 
 defaultGame : Game
 defaultGame =
@@ -225,15 +226,25 @@ gameState =
                                  && (Maybe.withDefault True
                                        (List.head heads
                                          |> Maybe.map (\h -> h.x >= 10)))
+                                 && noBottomConflict
 
-                -- all not-yet completed heads (without newly added one)
-                notCompletedHeads = List.filter (not << complete) heads
-                monitor = if newHeadCreated
-                  then always True (Debug.log "bottom time"
-                                      (List.map (\h -> 
-                                                   solveBottomTime h.y h.vy)
-                                         heads))
-                  else True
+                noBottomConflict =
+                  let newHeadBottomTime = solveBottomTime newHead.y newHead.vy
+                  in case newHeadBottomTime of
+                       -- new head's bottom time is valid
+                       Just nhbt ->
+                         let noConflict head =
+                               let curHeadBottomTime = solveBottomTime head.y head.vy
+                               in case curHeadBottomTime of 
+                                    Just chbt ->
+                                      -- newly added head might have a "distinct" bottom time
+                                      -- in a sense that there should be at least an interval
+                                      -- of "30" time units for players to move paddle
+                                      -- to save heads
+                                      abs (nhbt - chbt) > 30
+                                    Nothing -> False
+                         in List.all noConflict (List.filter (not << complete) heads)
+                       Nothing -> False
 
                 spawnHead : List Head
                 spawnHead =
