@@ -394,7 +394,36 @@ display ({state, heads, player} as game) =
     we have:
 
     h(t) = yInit + vyInit*t + secsPerFrame*200*t*t
+
+    now that we consider to solve the equation:
+
+                                       h(t) = bottom
+    yInit + vyInit*t + secsPerFrame*200*t*t - bottom = 0
+    
+    a = secsPerFrame*200
+    b = vyInit
+    c = yInit-bottom
+
+    if this equation has solution, we take the minimal positive one,
+    which should roughly be the time when this head reaches the bottom.
+
+    we don't have to worry about time units,
+    they are not important as all heads are calculated in the same way.
 -}
-calcHeadHigh : Float -> Float -> Float -> Float
-calcHeadHigh yInit vyInit t =
-  yInit + vyInit*t + secsPerFrame*200*t*t
+solveBottomTime : Float -> Float -> Float -> Maybe Float
+solveBottomTime yInit vyInit t = 
+  let a = secsPerFrame*200
+      b = vyInit
+      c = yInit-bottom
+      delta = b*b - 4*a*c
+  in if delta < 0
+       then Nothing
+       else
+         let 
+           sDelta = sqrt delta
+           x1 = (-b + sDelta) / (2*a)
+           x2 = (-b - sDelta) / (2*a)
+         in [x1,x2]
+            |> List.filter (\x -> x >= 0)
+            |> List.minimum
+
