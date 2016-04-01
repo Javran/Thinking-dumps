@@ -379,3 +379,22 @@ display ({state, heads, player} as game) =
         , drawScore
         , drawMessage ] ++
           drawHeads)
+
+{-
+    yInit: initial y location
+    vyInit: initial y speed
+    accInit: acceleration
+    
+    y = yInit + integrate( ySpeed, t: [0..t])
+      = yInit + integrate( vyInit + accInit * t, t: [0..t])
+      = yInit + vyInit*t + accInit * integrate( t, t:[0..t] )
+      = yInit + vyInit*t + 1/2 * accInit*t*t
+    
+    let accInit = secsPerFrame * 400
+    we have:
+
+    h(t) = yInit + vyInit*t + secsPerFrame*200*t*t
+-}
+calcHeadHigh : Float -> Float -> Float -> Float
+calcHeadHigh yInit vyInit t =
+  yInit + vyInit*t + secsPerFrame*200*t*t
