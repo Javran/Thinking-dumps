@@ -226,6 +226,15 @@ gameState =
                                        (List.head heads
                                          |> Maybe.map (\h -> h.x >= 10)))
 
+                -- all not-yet completed heads (without newly added one)
+                notCompletedHeads = List.filter (not << complete) heads
+                monitor = if newHeadCreated
+                  then always True (Debug.log "bottom time"
+                                      (List.map (\h -> 
+                                                   solveBottomTime h.y h.vy)
+                                         heads))
+                  else True
+
                 spawnHead : List Head
                 spawnHead =
                   if newHeadCreated
@@ -410,8 +419,8 @@ display ({state, heads, player} as game) =
     we don't have to worry about time units,
     they are not important as all heads are calculated in the same way.
 -}
-solveBottomTime : Float -> Float -> Float -> Maybe Float
-solveBottomTime yInit vyInit t = 
+solveBottomTime : Float -> Float -> Maybe Float
+solveBottomTime yInit vyInit = 
   let a = secsPerFrame*200
       b = vyInit
       c = yInit-bottom
