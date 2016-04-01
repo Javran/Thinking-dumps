@@ -104,8 +104,18 @@ genHead = Random.map2 defaultHead genHeadSource genHeadSpeedV
 -- * we don't intentionally prevent this from happening,
 --   but give a initial speed in Vy direction, so it's more likely
 --   that they reaches the bottom at different time
--- * TODO: do math, and figure out if there's any existing heads that would
---   reach the bottom at the same time as the adding head will do.
+-- * use math formula to deduce when the head will reach the bottom
+--   when generating new heads, we check if this new head reaches the bottom
+--   at roughly the same time (use a time difference threshold) as other heads.
+--   new head can only be generated if enough time difference can be confirmed
+-- note that even with these 2 steps, it is still possible that 2 heads will reach the bottom
+-- at roughly the same time, this is because the formula we use can only say things about *first
+-- time* the head reaches the bottom. if a head bounces, it maybe have a new reaching-bottom time
+-- that coincide with other heads' reaching-bottom time.
+-- we won't be addressing this issue, as I think the current solution is good enough.
+-- also, more computation will be required if we want to completely prevent this from happening
+-- but we want the check to be as quick as possible because we will be calling this check
+-- on each frame.
 
 -- generate heads of different people
 defaultHead : String -> Float -> Head
