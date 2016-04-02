@@ -55,6 +55,9 @@ type alias Game =
     -- "mSeed" must be updated whenever a new random value is
     -- generated and used.
   , mSeed : Maybe Random.Seed
+    -- exercise: give the user three lives. add additional lives when
+    -- the user hits a certain score.
+  , life : Int
   }
 
 -- get element at a specific index of a list
@@ -143,6 +146,8 @@ defaultGame =
     , heads = []
     , player = {x=0.0, score=0} 
     , mSeed = Nothing
+      -- have 3 lives initially
+    , life = 3
     }
 
 bottom : Float
@@ -326,7 +331,7 @@ main = Signal.map display gameState
     
 -- render game state on screen
 display : Game -> Element
-display ({state, heads, player} as game) =
+display ({state, heads, player,life} as game) =
   let (w, h) = (800, 600)
 
       half : Int -> Float
@@ -398,7 +403,7 @@ display ({state, heads, player} as game) =
             GameOver -> "Game Over"
             -- asks the user to press the spacebar to start.
             Pause -> "Press Spacebar to Start"
-            _ -> "Language Head"
+            _ -> "Live(s):" ++ toString life
         in toForm (txt (Text.height 50) stateMessage)
           |> move (50, 50)
 
