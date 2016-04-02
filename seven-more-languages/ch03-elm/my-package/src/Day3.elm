@@ -59,6 +59,11 @@ type alias Game =
     -- exercise: give the user three lives. add additional lives when
     -- the user hits a certain score.
   , life : Int
+    -- initiallly 0,
+    -- should increases as game continues
+    -- to indicate whether life has been properly awarded.
+    -- e.g. lastAwardedTier = 3 means the award of reaching 3*5000 has been given
+  , lastAwardedTier : Int
   }
 
 -- get element at a specific index of a list
@@ -149,6 +154,7 @@ defaultGame =
     , mSeed = Nothing
       -- have 3 lives initially
     , life = 3
+    , lastAwardedTier = 0
     }
 
 bottom : Float
@@ -177,7 +183,7 @@ gameState =
         -- shared bindings & util functions
         {space, x} = input
         xFloat = toFloat x
-        {state, heads, player,life} = game
+        {state, heads, player,life,lastAwardedTier} = game
     
         complete : Head -> Bool
         complete {x} = x > 750
@@ -188,9 +194,9 @@ gameState =
         stepGamePlay : Game
         stepGamePlay =
           let
-            -- if any head is not save, the game is over
-            stepGameOver : (State,Int)
-            stepGameOver =
+            -- decreases life if player has failed to safe heads
+            lifeDecrModifier : Int -> Int
+            lifeDecrModifier =
               let 
                 -- a head is safe when one of the following is met:
                 headSafe : Head -> Bool
@@ -200,20 +206,19 @@ gameState =
                   -- * or the head is within reach of the paddle
                   || abs (head.x - xFloat) < 50
               in if List.all headSafe heads 
-                 then (Play,life)
-                 else 
-                   if life > 1 
-                     then (Play,life-1)
-                     else (GameOver,0)
+                 then identity
+                 else (\x -> x-1)
     
             -- calculate player's current score
-            stepPlayer : Player
-            stepPlayer =
+            nextPlayerAndTier : (Player,Int)
+            nextPlayerAndTier =
               let
                 nextScore = player.score + 1 + 1000 * (count complete heads)
-              in { player
-                 | score = nextScore
-                 , x = xFloat }
+                currentTier = nextScore // 5000
+                p = { player
+                    | score = nextScore
+                    , x = xFloat }
+              in (p, currentTier)
     
             -- calculate next state of each head,
             -- might create new ones if necessary
@@ -290,15 +295,29 @@ gameState =
                    |> List.filter (not << complete) -- removeComplete
                    |> List.map moveHead --  moveHeads
                  , if newHeadCreated then Just nextSeed else game.mSeed)
-    
+
             (nextHeads,nextMSeed) = stepHeads
-            (nextState,nextLife) = stepGameOver
+            (nextPlayer,currentTier) = nextPlayerAndTier
+
+            lifeGiveBonus : Int -> Int 
+            lifeGiveBonus =
+              if lastAwardedTier /= currentTier
+                 then (\x -> x + (currentTier - lastAwardedTier))
+                 else identity
+                                       
+            nextLife = lifeDecrModifier life |> lifeGiveBonus
+            nextState = if nextLife <= 0 then GameOver else Play
+            nextLastAwardedTier =
+              if lastAwardedTier /= currentTier
+                 then currentTier
+                 else lastAwardedTier
         in
             { game 
             | state = nextState
             , heads = nextHeads
             , life = nextLife
-            , player = stepPlayer
+            , lastAwardedTier = nextLastAwardedTier
+            , player = nextPlayer
             , mSeed = nextMSeed
             }
         -- END of stepGamePlay
