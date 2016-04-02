@@ -46,6 +46,7 @@ type alias Player =
 -- by taking timestamp to initialized random generator, and the result looks pretty good.
 -- so I consider my solution a better one and call this exercise done.
 
+-- TODO: need to tell if life has been awarded
 type alias Game =
   { state : State
   , heads : List Head
@@ -209,9 +210,9 @@ gameState =
             stepPlayer : Player
             stepPlayer =
               let
-                stepScore = player.score + 1 + 1000 * (count complete heads)
+                nextScore = player.score + 1 + 1000 * (count complete heads)
               in { player
-                 | score = stepScore
+                 | score = nextScore
                  , x = xFloat }
     
             -- calculate next state of each head,
