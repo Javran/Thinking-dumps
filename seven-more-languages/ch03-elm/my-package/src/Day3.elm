@@ -176,7 +176,7 @@ gameState =
         -- shared bindings & util functions
         {space, x} = input
         xFloat = toFloat x
-        {state, heads, player} = game
+        {state, heads, player,life} = game
     
         complete : Head -> Bool
         complete {x} = x > 750
@@ -188,7 +188,7 @@ gameState =
         stepGamePlay =
           let
             -- if any head is not save, the game is over
-            stepGameOver : State
+            stepGameOver : (State,Int)
             stepGameOver =
               let 
                 -- a head is safe when one of the following is met:
@@ -199,8 +199,11 @@ gameState =
                   -- * or the head is within reach of the paddle
                   || abs (head.x - xFloat) < 50
               in if List.all headSafe heads 
-                 then Play
-                 else GameOver
+                 then (Play,life)
+                 else 
+                   if life > 1 
+                     then (Play,life-1)
+                     else (GameOver,0)
     
             -- calculate player's current score
             stepPlayer : Player
@@ -288,10 +291,12 @@ gameState =
                  , if newHeadCreated then Just nextSeed else game.mSeed)
     
             (nextHeads,nextMSeed) = stepHeads
+            (nextState,nextLife) = stepGameOver
         in
             { game 
-            | state = stepGameOver
+            | state = nextState
             , heads = nextHeads
+            , life = nextLife
             , player = stepPlayer
             , mSeed = nextMSeed
             }
