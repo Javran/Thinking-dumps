@@ -33,7 +33,6 @@ type State = Play | Pause | GameOver
 -- or arrow keys.
 
 -- TODO: 
--- * change input type to accept keyboard inputs
 -- * one more paddle to be included in Player
 -- * render the second paddle properly
 -- * apply user controls to paddle's position
@@ -42,6 +41,7 @@ type State = Play | Pause | GameOver
 type alias Input =
   { space : Bool -- ^ whether "space" has been pressed
   , x : Int -- ^ x coord of the mouse
+  , lr : { x : Int, y : Int } -- ^ arrows or wasd
   }
 
 type alias Head =
@@ -193,7 +193,8 @@ input : Signal Input
 input = Signal.sampleOn
           (fps 50)
           (Input <~ Keyboard.space
-                  ~ Mouse.x)
+                  ~ Mouse.x
+                  ~ Signal.merge wasd arrows)
 
 -- consume input and update game state
 -- a timestamp is added to each input signal
@@ -205,7 +206,7 @@ gameState =
     stepGame (ts,input) game =
       let 
         -- shared bindings & util functions
-        {space, x} = input
+        {space, x, lr} = input
         xFloat = toFloat x
         {state, heads, player,life,lastAwardedTier} = game
     
