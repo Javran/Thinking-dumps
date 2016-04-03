@@ -33,8 +33,6 @@ type State = Play | Pause | GameOver
 -- or arrow keys.
 
 -- TODO: 
--- * one more paddle to be included in Player
--- * render the second paddle properly
 -- * apply user controls to paddle's position
 -- * head should be considered save if either of the paddle catches it
 
@@ -54,6 +52,7 @@ type alias Head =
 
 type alias Player =
   { x : Float
+  , xKey : Float -- the paddle controlled by key
   , score : Int
   }
 
@@ -174,7 +173,9 @@ defaultGame =
   in 
     { state = Pause
     , heads = []
-    , player = {x=0.0, score=0} 
+      -- xKey: we want to put the keyboard-controlled paddle in the middle
+      -- of the play-zone
+    , player = {x=0.0, score=0, xKey=100+(800-100)/2}
     , mSeed = Nothing
       -- have 3 lives initially
     , life = 3
@@ -437,6 +438,11 @@ display ({state, heads, player,life} as game) =
           |> moveX (player.x +  10 -  half w)
           |> moveY (-(half h - 30))
 
+      drawPaddle2 =
+        filled red (rect 80 10)
+          |> moveX (player.xKey +  10 -  half w)
+          |> moveY (-(half h - 30))
+
       txt : (Text -> Text) -> String -> Element
       txt f = leftAligned << f << monospace << Text.color blue << Text.fromString
 
@@ -461,6 +467,7 @@ display ({state, heads, player,life} as game) =
        ([ drawRoad
         , drawBuilding
         , drawPaddle
+        , drawPaddle2
         , drawScore
         , drawMessage ] ++
           drawHeads)
