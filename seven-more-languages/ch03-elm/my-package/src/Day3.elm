@@ -46,7 +46,6 @@ type alias Player =
 -- by taking timestamp to initialized random generator, and the result looks pretty good.
 -- so I consider my solution a better one and call this exercise done.
 
--- TODO: need to tell if life has been awarded
 type alias Game =
   { state : State
   , heads : List Head
@@ -58,6 +57,13 @@ type alias Game =
   , mSeed : Maybe Random.Seed
     -- exercise: give the user three lives. add additional lives when
     -- the user hits a certain score.
+
+    -- we add 2 components to Game for implementing this:
+    -- "life" indicates how many lifes the player currently have
+    -- when it reaches 0, the game is over
+    -- "lastAwardedTier" is to prevent same award from being given multiple times
+    -- when player reaches certain score, this "variable" will be increased to
+    -- indicate that the award of passing this score has been given.
   , life : Int
     -- initiallly 0,
     -- should increases as game continues
