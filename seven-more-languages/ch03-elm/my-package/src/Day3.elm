@@ -21,6 +21,16 @@ import Random
 
 type State = Play | Pause | GameOver
 
+-- exercise: add another paddle users could move with the A and D keys,
+-- or arrow keys.
+
+-- TODO: 
+-- * change input type to accept keyboard inputs
+-- * one more paddle to be included in Player
+-- * render the second paddle properly
+-- * apply user controls to paddle's position
+-- * head should be considered save if either of the paddle catches it
+
 type alias Input =
   { space : Bool -- ^ whether "space" has been pressed
   , x : Int -- ^ x coord of the mouse
