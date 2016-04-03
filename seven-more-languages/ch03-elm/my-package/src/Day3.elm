@@ -28,13 +28,12 @@ type State = Play | Pause | GameOver
 -- exercise: add heads at predetermined spacings
 
 
-
 -- exercise: add another paddle users could move with the A and D keys,
 -- or arrow keys.
-
--- TODO: 
--- * apply user controls to paddle's position
--- * head should be considered save if either of the paddle catches it
+-- to implement this, "lr" is introduced in Input to receive keyboard controls
+-- and then in Player we keep an extra field to keep track of its position then
+-- render it properly on screen.
+-- finally we modify the condition of testing whether a head is safe.
 
 type alias Input =
   { space : Bool -- ^ whether "space" has been pressed
@@ -369,7 +368,7 @@ gameState =
             then defaultGame
             else { game 
                  | state = GameOver
-                 , player = { player |  x = toFloat x }
+                 , player = { player |  x = xFloat, xKey = nextPaddle2Pos }
                  }
     
         -- game is initialized at "Pause" state,
@@ -379,7 +378,7 @@ gameState =
         stepGamePaused =
           { game 
           | state = if space then Play else state
-          , player = { player | x = toFloat x } }
+          , player = { player | x = xFloat, xKey = nextPaddle2Pos } }
     
       in case game.state of
         Play -> stepGamePlay
