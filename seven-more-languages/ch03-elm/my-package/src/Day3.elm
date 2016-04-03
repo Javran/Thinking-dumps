@@ -209,7 +209,16 @@ gameState =
         -- shared bindings & util functions
         {space, x, lr} = input
         xFloat = toFloat x
+
         {state, heads, player,life,lastAwardedTier} = game
+
+        nextPaddle2Pos =
+          let dx = 
+                if lr.x == -1
+                  then -10
+                  else 
+                    if lr.x == 1 then 10 else 0
+          in clamp 0 800 (player.xKey + dx)
     
         complete : Head -> Bool
         complete {x} = x > 750
@@ -231,6 +240,8 @@ gameState =
                      head.y < bottom
                   -- * or the head is within reach of the paddle
                   || abs (head.x - xFloat) < 50
+                  -- * or the head is within reach of the second paddle
+                  || abs (head.x - nextPaddle2Pos) < 50
               in if List.all headSafe heads 
                  then identity
                  else (\x -> x-1)
@@ -243,7 +254,8 @@ gameState =
                 currentTier = nextScore // 5000
                 p = { player
                     | score = nextScore
-                    , x = xFloat }
+                    , x = xFloat
+                    , xKey = nextPaddle2Pos }
               in (p, currentTier)
     
             -- calculate next state of each head,
@@ -439,7 +451,7 @@ display ({state, heads, player,life} as game) =
           |> moveY (-(half h - 30))
 
       drawPaddle2 =
-        filled red (rect 80 10)
+        filled blue (rect 80 10)
           |> moveX (player.xKey +  10 -  half w)
           |> moveY (-(half h - 30))
 
