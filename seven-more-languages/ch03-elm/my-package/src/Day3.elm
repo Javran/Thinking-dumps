@@ -21,6 +21,14 @@ import Random
 
 type State = Play | Pause | GameOver
 
+-- TODO: remaining exercises:
+--
+-- exercise: add other features that show up at different score increments
+-- exercise: provide a better formula for when to add additional heads
+-- exercise: add heads at predetermined spacings
+
+
+
 -- exercise: add another paddle users could move with the A and D keys,
 -- or arrow keys.
 
