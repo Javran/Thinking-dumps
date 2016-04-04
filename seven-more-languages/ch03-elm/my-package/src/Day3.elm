@@ -14,6 +14,7 @@ import Color exposing (..)
 import Text
 import Tools exposing (..)
 import Maybe
+import Char
 
 import List
 import Signal
@@ -43,7 +44,6 @@ type State = Play | Pause | GameOver
 -- * (skipped) exercise: provide a better formula for when to add additional heads
 -- * (skipped) exercise: add heads at predetermined spacings.
 
-
 -- exercise: add another paddle users could move with the A and D keys,
 -- or arrow keys.
 -- to implement this, "lr" is introduced in Input to receive keyboard controls
@@ -55,6 +55,7 @@ type alias Input =
   { space : Bool -- ^ whether "space" has been pressed
   , x : Int -- ^ x coord of the mouse
   , lr : { x : Int, y : Int } -- ^ arrows or wasd
+  , bounceKey : Bool -- ^ capture bounce key
   }
 
 type alias Head =
@@ -210,7 +211,8 @@ input = Signal.sampleOn
           (fps 50)
           (Input <~ Keyboard.space
                   ~ Mouse.x
-                  ~ Signal.merge wasd arrows)
+                  ~ Signal.merge wasd arrows
+                  ~ Keyboard.isDown (Char.toCode 'b')) -- pressing "b" might bounce all heads
 
 -- consume input and update game state
 -- a timestamp is added to each input signal
