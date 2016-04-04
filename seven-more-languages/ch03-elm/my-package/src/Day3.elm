@@ -105,9 +105,42 @@ type alias Game =
   , lastAwardedTier : Int
   }
 
+-- extract the seed from Maybe, if we haven't initialized
+-- it, then taka timestamp to generate one.
+extractSeed : Time -> Maybe Random.Seed -> Random.Seed
+extractSeed ts =
+  Maybe.withDefault
+         (ts
+         |> inMilliseconds 
+         |> round 
+         |> Random.initialSeed)
+
 -- test whether bounce function is available
 canBounce : Game -> Bool
 canBounce g = List.length g.heads > 2
+
+-- apply random bounce to heads, ignoring condition checks
+applyBounce : Time -> Game -> Game
+applyBounce ts ({state, heads, player,life} as game) = 
+  let 
+    seed = extractSeed ts game.mSeed
+    (multipliers, newSeed) = 
+      Random.generate 
+              (Random.list 
+                 (List.length heads) 
+                 (Random.float 0.5 1))
+              seed
+    applyMult head multiplier = 
+      let newVy = 
+            if head.vy > 0
+              then -head.vy * multiplier
+              else head.vy
+      in { head | vy = newVy }
+    newHeads = List.map2 applyMult heads multipliers
+  in { game 
+     | heads = newHeads 
+     , mSeed = Just newSeed
+     }
 
 -- get element at a specific index of a list
 -- a default value will be returned if the index
@@ -286,12 +319,8 @@ gameState =
               let
                 -- make "seed" available to other member definitions
                 -- create one from timestamp if necessary
-                seed = Maybe.withDefault
-                         (ts
-                           |> inMilliseconds 
-                           |> round 
-                           |> Random.initialSeed)
-                         game.mSeed
+                seed = extractSeed ts game.mSeed
+
                 -- generate next random number "rand",
                 -- note that if this random number is not used
                 -- then no update should happen to the mSeed field
