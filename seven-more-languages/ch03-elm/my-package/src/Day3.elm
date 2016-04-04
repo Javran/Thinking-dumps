@@ -242,6 +242,9 @@ secsPerFrame = 1.0 / 50.0
 
 -- sampling input (keyboard & mouse) 50 times per second
 -- and this also makes the game tick
+-- NOTE: not sure why, but Keyboard.isDown is not working for me.
+-- I was planning to use some other keys as the "bounce" key
+-- but because of this problem, I decide to workaround by using space key
 input : Signal Input
 input = Signal.sampleOn
           (fps 50)
