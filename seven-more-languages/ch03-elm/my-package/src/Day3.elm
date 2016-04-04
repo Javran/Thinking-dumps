@@ -105,6 +105,10 @@ type alias Game =
   , lastAwardedTier : Int
   }
 
+-- test whether bounce function is available
+canBounce : Game -> Bool
+canBounce g = List.length g.heads > 4
+
 -- get element at a specific index of a list
 -- a default value will be returned if the index
 -- is invalid
@@ -488,7 +492,10 @@ display ({state, heads, player,life} as game) =
             GameOver -> "Game Over"
             -- asks the user to press the spacebar to start.
             Pause -> "Press Spacebar to Start"
-            _ -> "Live(s):" ++ toString life
+            _ -> "Live(s):" ++ toString life 
+                 ++ if canBounce game
+                      then "(B)" -- "can bounce" incidator
+                      else ""
         in toForm (txt (Text.height 50) stateMessage)
           |> move (50, 50)
 
