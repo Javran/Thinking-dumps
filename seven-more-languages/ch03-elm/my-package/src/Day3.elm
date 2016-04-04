@@ -29,10 +29,10 @@ type State = Play | Pause | GameOver
 --
 -- I'm not sure what exactly we are supposed to do.
 -- From what I can understand, let's just do the following:
--- * TODO: When there are more than 2 heads visible in game,
---   we enable a feature that allows user to press a specific key
+-- * When there are more than 2 heads visible in game,
+--   we enable a feature that allows user to press a specific key (we are reusing space)
 --   so that all falling heads will bounce up.
--- * TODO: However, I don't think this solution is good, if 2 heads reache the bottom
+-- * However, I don't think this solution is good, if 2 heads reache the bottom
 --   at the same time, they will still be reaching the bottom at the same time,
 --   no matter how many time they bounce.
 --   so let's just add some randomness: for each head, a random multiplier in range [0.5,1.0] will
@@ -55,7 +55,6 @@ type alias Input =
   { space : Bool -- ^ whether "space" has been pressed
   , x : Int -- ^ x coord of the mouse
   , lr : { x : Int, y : Int } -- ^ arrows or wasd
-  , bounceKey : Bool -- ^ capture bounce key
   }
 
 type alias Head =
@@ -248,8 +247,7 @@ input = Signal.sampleOn
           (fps 50)
           (Input <~ Keyboard.space
                   ~ Mouse.x
-                  ~ Signal.merge wasd arrows
-                  ~ Keyboard.isDown (Char.toCode 'b')) -- pressing "b" might bounce all heads
+                  ~ Signal.merge wasd arrows)
 
 -- consume input and update game state
 -- a timestamp is added to each input signal
@@ -399,6 +397,11 @@ gameState =
               if lastAwardedTier /= currentTier
                  then currentTier
                  else lastAwardedTier
+
+            bounceOptionally = 
+              if space && canBounce game
+                 then applyBounce ts
+                 else identity
         in
             { game 
             | state = nextState
@@ -407,7 +410,7 @@ gameState =
             , lastAwardedTier = nextLastAwardedTier
             , player = nextPlayer
             , mSeed = nextMSeed
-            }
+            } |> bounceOptionally
         -- END of stepGamePlay
 
         -- show game over message,
