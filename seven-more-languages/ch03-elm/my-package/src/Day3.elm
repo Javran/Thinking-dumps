@@ -29,7 +29,7 @@ type State = Play | Pause | GameOver
 --
 -- I'm not sure what exactly we are supposed to do.
 -- From what I can understand, let's just do the following:
--- * TODO: When there are more than 4 heads visible in game,
+-- * TODO: When there are more than 2 heads visible in game,
 --   we enable a feature that allows user to press a specific key
 --   so that all falling heads will bounce up.
 -- * TODO: However, I don't think this solution is good, if 2 heads reache the bottom
@@ -107,7 +107,7 @@ type alias Game =
 
 -- test whether bounce function is available
 canBounce : Game -> Bool
-canBounce g = List.length g.heads > 4
+canBounce g = List.length g.heads > 2
 
 -- get element at a specific index of a list
 -- a default value will be returned if the index
@@ -554,4 +554,3 @@ solveBottomTime yInit vyInit =
          in [x1,x2]
             |> List.filter (\x -> x >= 0)
             |> List.minimum
-
