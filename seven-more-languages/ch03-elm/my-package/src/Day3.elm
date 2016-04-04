@@ -21,11 +21,27 @@ import Random
 
 type State = Play | Pause | GameOver
 
--- TODO: remaining exercises:
+-- exercise: add other features that show up at different score increments.
+-- for example, bounce the heads up in the air, wherever they are, when a user
+-- presses a key. This will let the user survive when two heads reach the bottom
+-- at the same time.
 --
--- exercise: add other features that show up at different score increments
--- exercise: provide a better formula for when to add additional heads
--- exercise: add heads at predetermined spacings
+-- I'm not sure what exactly we are supposed to do.
+-- From what I can understand, let's just do the following:
+-- * TODO: When there are more than 4 heads visible in game,
+--   we enable a feature that allows user to press a specific key
+--   so that all falling heads will bounce up.
+-- * TODO: However, I don't think this solution is good, if 2 heads reache the bottom
+--   at the same time, they will still be reaching the bottom at the same time,
+--   no matter how many time they bounce.
+--   so let's just add some randomness: for each head, a random multiplier in range [0.5,1.0] will
+--   be applied to the speed when bouncing. so it's more likely that two heads won't
+--   reach the bottom at the same time.
+
+-- skipping the following exercises because I feel implementing them
+-- is more of game designing rather than praticing programming skills.
+-- * (skipped) exercise: provide a better formula for when to add additional heads
+-- * (skipped) exercise: add heads at predetermined spacings.
 
 
 -- exercise: add another paddle users could move with the A and D keys,
