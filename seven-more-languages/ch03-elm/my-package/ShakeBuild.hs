@@ -5,10 +5,14 @@ import Development.Shake.Util
 
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
-    want ["output/Day3.html"]
+    want ["output/index.html"]
 
     priority 2 $ "output//index.html" %> \out -> do
+        srcFiles <- getDirectoryFiles "src" ["//*.elm"]
+        let elmFiles = map (\src -> "output" </> (src -<.> "html")) srcFiles
+        liftIO $ print elmFiles
         need ["index.md"]
+        need elmFiles
         () <- cmd "pandoc" "index.md" "-o" out
         pure ()
 
