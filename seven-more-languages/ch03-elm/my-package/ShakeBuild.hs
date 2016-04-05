@@ -7,7 +7,9 @@ main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
     want ["output/Day3.html"]
 
-    "output/Day3.html" %> \out -> do
+    "output//*.html" %> \out -> do
+        let src = "src" </> dropDirectory1 (out -<.> "elm")
+        () <- cmd "elm-make" src "--output" out
         pure ()
 
     pure ()
