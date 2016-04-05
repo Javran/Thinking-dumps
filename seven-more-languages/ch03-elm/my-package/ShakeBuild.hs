@@ -2,6 +2,8 @@ import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
+import Data.List
+import Text.Printf
 
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
@@ -10,9 +12,18 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
     priority 2 $ "output//index.html" %> \out -> do
         srcFiles <- getDirectoryFiles "src" ["//*.elm"]
         let elmFiles = map (\src -> "output" </> (src -<.> "html")) srcFiles
-        liftIO $ print elmFiles
-        need ("CopyAssets" : "index.md" : elmFiles)
-        cmd "pandoc" "index.md" "-o" out
+        need ("CopyAssets" : "output/index.md" : elmFiles)
+        cmd "pandoc" "output/index.md" "-o" out
+
+    "output/index.md" %> \out -> do
+        srcFiles <- getDirectoryFiles "src" ["//*.elm"]
+        liftIO $ do
+            let listItems = map transform (sort srcFiles)
+                transform srcFile = printf "* [%s](%s)" item htmlPath
+                  where
+                    item = dropExtension srcFile
+                    htmlPath = "/" ++ srcFile -<.> "html"
+            writeFile out (unlines listItems)
 
     "output//*.html" %> \out -> do
         let src = "src" </> dropDirectory1 (out -<.> "elm")
@@ -25,5 +36,3 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
     phony "CopyAssets" $ do
         srcFiles <- getDirectoryFiles "img" ["//*"]
         need (("output/img" </>) <$> srcFiles)
-
-    pure ()
