@@ -27,3 +27,5 @@ day1Hard =
           [ descAndResult "older than 16, with Maybe support"
               (List.filter (greaterThanAge 16) persons)
           ])
+
+main = day1Hard

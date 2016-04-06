@@ -17,3 +17,5 @@ day1Medium =
           , descAndResult "find all person in the list older than 16"
                           (List.filter (\x -> x.age > 16) persons)
           ])
+
+main = day1Medium

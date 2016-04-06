@@ -14,6 +14,7 @@ import Color exposing (..)
 import Text
 import Tools exposing (..)
 import Maybe
+import Char
 
 import List
 import Signal
@@ -21,12 +22,27 @@ import Random
 
 type State = Play | Pause | GameOver
 
--- TODO: remaining exercises:
+-- exercise: add other features that show up at different score increments.
+-- for example, bounce the heads up in the air, wherever they are, when a user
+-- presses a key. This will let the user survive when two heads reach the bottom
+-- at the same time.
 --
--- exercise: add other features that show up at different score increments
--- exercise: provide a better formula for when to add additional heads
--- exercise: add heads at predetermined spacings
+-- I'm not sure what exactly we are supposed to do.
+-- From what I can understand, let's just do the following:
+-- * When there are more than 2 heads visible in game,
+--   we enable a feature that allows user to press a specific key (we are reusing space)
+--   so that all falling heads will bounce up.
+-- * However, I don't think this solution is good, if 2 heads reache the bottom
+--   at the same time, they will still be reaching the bottom at the same time,
+--   no matter how many time they bounce.
+--   so let's just add some randomness: for each head, a random multiplier in range [0.5,1.0] will
+--   be applied to the speed when bouncing. so it's more likely that two heads won't
+--   reach the bottom at the same time.
 
+-- skipping the following exercises because I feel implementing them
+-- is more of game designing rather than praticing programming skills.
+-- * (skipped) exercise: provide a better formula for when to add additional heads
+-- * (skipped) exercise: add heads at predetermined spacings.
 
 -- exercise: add another paddle users could move with the A and D keys,
 -- or arrow keys.
@@ -87,6 +103,43 @@ type alias Game =
     -- e.g. lastAwardedTier = 3 means the award of reaching 3*5000 has been given
   , lastAwardedTier : Int
   }
+
+-- extract the seed from Maybe, if we haven't initialized
+-- it, then taka timestamp to generate one.
+extractSeed : Time -> Maybe Random.Seed -> Random.Seed
+extractSeed ts =
+  Maybe.withDefault
+         (ts
+         |> inMilliseconds 
+         |> round 
+         |> Random.initialSeed)
+
+-- test whether bounce function is available
+canBounce : Game -> Bool
+canBounce g = List.length g.heads > 2
+
+-- apply random bounce to heads, ignoring condition checks
+applyBounce : Time -> Game -> Game
+applyBounce ts ({state, heads, player,life} as game) = 
+  let 
+    seed = extractSeed ts game.mSeed
+    (multipliers, newSeed) = 
+      Random.generate 
+              (Random.list 
+                 (List.length heads) 
+                 (Random.float 0.5 1))
+              seed
+    applyMult head multiplier = 
+      let newVy = 
+            if head.vy > 0
+              then -head.vy * multiplier
+              else head.vy
+      in { head | vy = newVy }
+    newHeads = List.map2 applyMult heads multipliers
+  in { game 
+     | heads = newHeads 
+     , mSeed = Just newSeed
+     }
 
 -- get element at a specific index of a list
 -- a default value will be returned if the index
@@ -189,6 +242,9 @@ secsPerFrame = 1.0 / 50.0
 
 -- sampling input (keyboard & mouse) 50 times per second
 -- and this also makes the game tick
+-- NOTE: not sure why, but Keyboard.isDown is not working for me.
+-- I was planning to use some other keys as the "bounce" key
+-- but because of this problem, I decide to workaround by using space key
 input : Signal Input
 input = Signal.sampleOn
           (fps 50)
@@ -264,12 +320,8 @@ gameState =
               let
                 -- make "seed" available to other member definitions
                 -- create one from timestamp if necessary
-                seed = Maybe.withDefault
-                         (ts
-                           |> inMilliseconds 
-                           |> round 
-                           |> Random.initialSeed)
-                         game.mSeed
+                seed = extractSeed ts game.mSeed
+
                 -- generate next random number "rand",
                 -- note that if this random number is not used
                 -- then no update should happen to the mSeed field
@@ -348,6 +400,11 @@ gameState =
               if lastAwardedTier /= currentTier
                  then currentTier
                  else lastAwardedTier
+
+            bounceOptionally = 
+              if space && canBounce game
+                 then applyBounce ts
+                 else identity
         in
             { game 
             | state = nextState
@@ -356,7 +413,7 @@ gameState =
             , lastAwardedTier = nextLastAwardedTier
             , player = nextPlayer
             , mSeed = nextMSeed
-            }
+            } |> bounceOptionally
         -- END of stepGamePlay
 
         -- show game over message,
@@ -470,7 +527,10 @@ display ({state, heads, player,life} as game) =
             GameOver -> "Game Over"
             -- asks the user to press the spacebar to start.
             Pause -> "Press Spacebar to Start"
-            _ -> "Live(s):" ++ toString life
+            _ -> "Live(s):" ++ toString life 
+                 ++ if canBounce game
+                      then "(B)" -- "can bounce" incidator
+                      else ""
         in toForm (txt (Text.height 50) stateMessage)
           |> move (50, 50)
 
@@ -529,4 +589,3 @@ solveBottomTime yInit vyInit =
          in [x1,x2]
             |> List.filter (\x -> x >= 0)
             |> List.minimum
-

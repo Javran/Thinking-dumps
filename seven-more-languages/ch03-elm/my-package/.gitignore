@@ -3,4 +3,12 @@ elm-stuff/
 # elm-repl generated files
 repl-temp-*
 
-index.html
+# generated files
+*.html
+
+# shake-related files
+_shake/
+_build/
+
+# output directory
+output/
