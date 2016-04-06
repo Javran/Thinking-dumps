@@ -15,9 +15,9 @@ Notes and exercise answers are under `day-x` directories.
 
 To see all completed exercises:
 
-* make sure you have `elm-make`, [pandoc](http://pandoc.org/) and [shake](http://shakebuild.com/).
+* Make sure you have `elm-make`, [pandoc](http://pandoc.org/) and [shake](http://shakebuild.com/).
 
-* go to directory `my-package`, simply type `./build` and respond any popping messages with `y`.
+* Go to directory `my-package`, simply type `./build` and respond any popping messages with `y`.
 
 * You should be able to build `output` directory. go to that directory.
 
