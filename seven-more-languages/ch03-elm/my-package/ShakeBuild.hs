@@ -9,6 +9,9 @@ main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
     want ["output/index.html"]
 
+    phony "clean" $
+        removeFilesAfter "output" ["//*"]
+
     priority 2 $ "output//index.html" %> \out -> do
         srcFiles <- getDirectoryFiles "src" ["//*.elm"]
         let elmFiles = map (\src -> "output" </> (src -<.> "html")) srcFiles
@@ -16,13 +19,20 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
         cmd "pandoc" "output/index.md" "-o" out
 
     "output/index.md" %> \out -> do
-        srcFiles <- getDirectoryFiles "src" ["//*.elm"]
+        -- Tools.elm is a collection of helper functions
+        -- and has no main entry point, so it's not related to
+        -- the task of generating index file
+        let notTool = (/= "Tools.elm")
+        srcFiles <- filter notTool <$> getDirectoryFiles "src" ["//*.elm"]
         liftIO $ do
-            let listItems = map transform (sort srcFiles)
+            let listItems = map transform
+                          . sort
+                          $ srcFiles
                 transform srcFile = printf "* [%s](%s)" item htmlPath
                   where
                     item = dropExtension srcFile
                     htmlPath = "/" ++ srcFile -<.> "html"
+            print srcFiles
             writeFile out (unlines listItems)
 
     "output//*.html" %> \out -> do
