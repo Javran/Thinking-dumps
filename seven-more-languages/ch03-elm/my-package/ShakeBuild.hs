@@ -27,10 +27,12 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
 
     "output//*.html" %> \out -> do
         let src = "src" </> dropDirectory1 (out -<.> "elm")
+        need [src]
         cmd "elm-make" src "--output" out
 
     "output/img/*" %> \out -> do
         let src = dropDirectory1 out
+        need [src]
         cmd "cp" src out
 
     phony "CopyAssets" $ do
