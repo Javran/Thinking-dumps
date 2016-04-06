@@ -12,4 +12,13 @@ Some changes can be found in [the Changelog of Elm core package](https://github.
 
 Notes and exercise answers are under `day-x` directories.
 `my-package` will be a single project for all programming exercises.
-Under `my-package`, `src/Main.elm` will be the entry.
+
+To see all completed exercises:
+
+* make sure you have `elm-make`, [pandoc](http://pandoc.org/) and [shake](http://shakebuild.com/).
+
+* go to directory `my-package`, simply type `./build` and respond any popping messages with `y`.
+
+* You should be able to build `output` directory. go to that directory.
+
+* Run `python -m SimpleHTTPServer` or any local sever daemon. You'll see them in your browser.
