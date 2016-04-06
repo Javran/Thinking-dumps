@@ -3,9 +3,6 @@ import Signal
 import Graphics.Element
 import Tools exposing (..)
 
--- hm, we might have to compile this file separately
--- as the type of Main has been changed
-
 -- signals are fired when something happens ...
 -- to handle all possibilities we need a sum type
 type Update 
@@ -29,7 +26,7 @@ updates =
 -- foldp allows us to "accumuate values in the the (probably infinite) future
 -- all we need is to provide a function to say what should happen
 -- to the state when a new event has arrived
-main1 =
+main =
   let onUpdate u (p,d) = case u of
         MousePosition newP -> (newP,d)
         MouseDown newD -> (p,newD)
@@ -40,12 +37,3 @@ main1 =
   in Signal.foldp onUpdate ((0,0),False) updates
      -- finally, we need to print current state out
      |> Signal.map (stateToString >> divText)
-
--- on every click, we sample mouse position and render y value on the screen
-main2 = Signal.sampleOn Mouse.clicks Mouse.position
-        |> Signal.map (snd >> asDiv)
-
--- two exercises in this part are named after "main1" and "main2"
--- to see one of them in action, change the following function.
--- TODO: might need to find one better solution
-main = main2
