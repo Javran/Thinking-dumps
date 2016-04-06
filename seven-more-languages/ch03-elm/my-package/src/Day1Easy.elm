@@ -30,3 +30,5 @@ day1Easy =
          , descAndResult "value of x" (List.map .x sample)
          , descAndResult "describe a person" person
          ])
+
+main = day1Easy
