@@ -1,4 +1,4 @@
-import Control.Concurrent hiding (Chan)
+import Control.Concurrent hiding (Chan,readChan,newChan,writeChan)
 import Control.Monad
 import System.IO
 
@@ -45,7 +45,24 @@ readChan (Chan readVar _) = do
 -- take n elements from the channel and put it on MVar
 listConsumer :: Int -> Chan Int -> MVar [Int] -> IO ()
 listConsumer n chan retVar = do
-    _
+    xs <- replicateM n (readChan chan)
+    putMVar retVar xs
+
+listProducer :: Chan Int -> IO a
+listProducer chan = do
+    let loop n = writeChan chan n >> loop (n+1)
+    loop 0
 
 main :: IO ()
-main = pure ()
+main = do
+    c <- newChan
+    forkIO $ listProducer c
+
+    cs <- replicateM 10 newEmptyMVar
+    forM_ cs $ \mvar -> forkIO $ do
+        listConsumer 10 c mvar
+
+    -- wait for all consumers to stop their tasks
+    csResult <- mapM takeMVar cs
+    mapM_ print csResult
+    pure ()
