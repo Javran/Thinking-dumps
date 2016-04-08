@@ -41,5 +41,11 @@ readChan (Chan readVar _) = do
 -- because the consideration of fairness,
 -- each thread should get a good chance taking some values
 -- from the channel
+
+-- take n elements from the channel and put it on MVar
+listConsumer :: Int -> Chan Int -> MVar [Int] -> IO ()
+listConsumer n chan retVar = do
+    _
+
 main :: IO ()
 main = pure ()
