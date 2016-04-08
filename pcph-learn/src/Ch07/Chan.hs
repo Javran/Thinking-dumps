@@ -35,5 +35,11 @@ readChan (Chan readVar _) = do
     putMVar readVar tl
     pure val
 
+-- TODO: test channel by starting multiple threads
+-- that takes elements from the channel
+-- and use a single thread to feed the channel
+-- because the consideration of fairness,
+-- each thread should get a good chance taking some values
+-- from the channel
 main :: IO ()
 main = pure ()
