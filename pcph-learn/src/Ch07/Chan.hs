@@ -26,5 +26,14 @@ writeChan (Chan _ writeVar) val = do
     -- move write pointer forward
     putMVar writeVar newHole
 
+readChan :: Chan a -> IO a
+readChan (Chan readVar _) = do
+    stream <- takeMVar readVar
+    -- get value under read pointer
+    Item val tl <- takeMVar stream
+    -- move pointer of read pointer forward
+    putMVar readVar tl
+    pure val
+
 main :: IO ()
 main = pure ()
