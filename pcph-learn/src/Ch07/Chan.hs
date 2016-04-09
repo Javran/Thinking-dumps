@@ -36,10 +36,15 @@ readChan (Chan readVar _) = do
 
 
 -- read MVar value and put it back
--- NOTE: I'm not sure about the atomicity
+-- NOTE: I'm not sure about the atomicity,
 readMVar :: MVar a -> IO a
 readMVar m = do
     a <- takeMVar m
+    -- NOTE: I suspect this might not be a good idea
+    -- if someone comes in at this moment
+    -- and modifies the content of m
+    -- the following "putMVar" will revert any changes
+    -- done on previous write.
     putMVar m a
     pure a
 
