@@ -1,6 +1,5 @@
 import Control.Concurrent hiding (Chan,readChan,newChan,writeChan)
 import Control.Monad
-import System.IO
 
 data Chan a
   = Chan (MVar (Stream a))
@@ -35,12 +34,6 @@ readChan (Chan readVar _) = do
     putMVar readVar tl
     pure val
 
--- TODO: test channel by starting multiple threads
--- that takes elements from the channel
--- and use a single thread to feed the channel
--- because the consideration of fairness,
--- each thread should get a good chance taking some values
--- from the channel
 
 -- take n elements from the channel and put it on MVar
 listConsumer :: Int -> Chan Int -> MVar [Int] -> IO ()
@@ -53,14 +46,27 @@ listProducer chan = do
     let loop n = writeChan chan n >> loop (n+1)
     loop 0
 
+-- test channel by starting multiple threads
+-- that takes elements from the channel
+-- and use a single thread to feed the channel
+-- because the consideration of fairness,
+-- each thread should get a good chance taking some values
+-- from the channel.
 main :: IO ()
 main = do
     c <- newChan
-    forkIO $ listProducer c
 
+    -- produces a stream of integers on the channel
+    -- it terminates when the program reaches its end.
+    _ <- forkIO $ listProducer c
+
+    -- 10 handlers that will be passed to child threads
+    -- here we use MVar as a way to wait for results from child threads:
+    -- child thread will stop executing once it has passed the result
+    -- on MVar. so to wait for a thread to stop, the main thread
+    -- only need to wait for the corresponding MVar to be filled.
     cs <- replicateM 10 newEmptyMVar
-    forM_ cs $ \mvar -> forkIO $ do
-        listConsumer 10 c mvar
+    forM_ cs $ \mvar -> forkIO (listConsumer 10 c mvar)
 
     -- wait for all consumers to stop their tasks
     csResult <- mapM takeMVar cs
