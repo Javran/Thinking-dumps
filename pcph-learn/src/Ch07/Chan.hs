@@ -35,6 +35,14 @@ readChan (Chan readVar _) = do
     pure val
 
 
+-- read MVar value and put it back
+-- NOTE: I'm not sure about the atomicity
+readMVar :: MVar a -> IO a
+readMVar m = do
+    a <- takeMVar m
+    putMVar m a
+    pure a
+
 -- take n elements from the channel and put it on MVar
 listConsumer :: Int -> Chan Int -> MVar [Int] -> IO ()
 listConsumer n chan retVar = do
