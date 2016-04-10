@@ -36,7 +36,11 @@ readChan (Chan readVar _) = do
 
 
 -- read MVar value and put it back
--- NOTE: I'm not sure about the atomicity,
+-- NOTE: this version is just for demonstration
+-- because of the problem pointed out in the following comment.
+-- we should switch to use the version provided by Control.Concurrent
+-- in order to ensure it's atomicity
+{-
 readMVar :: MVar a -> IO a
 readMVar m = do
     a <- takeMVar m
@@ -47,6 +51,7 @@ readMVar m = do
     -- done on previous write.
     putMVar m a
     pure a
+-}
 
 -- take n elements from the channel and put it on MVar
 listConsumer :: Int -> Chan Int -> MVar [Int] -> IO ()
