@@ -9,6 +9,14 @@
   And threads will be woke up as soon as the required operation becomes possible.
   (e.g. `takeMVar` and `putMVar`)
 
+* "Haskell's philosophy is to provide a set of very simple
+  but general features that you can use to build higher-level functionality."
+  This is also true for concurrent programming. In this chapter we have seen
+  building various kind of things using `MVar` including:
+
+    * sharing values / passing messages among threads
+    * implementing unbounded channel
+
 * When multiple threads are waiting on `MVar`, GHC runtime has a simple way to guarantee
   some properties of fairness: "No thread can be blocked indefinitely on an MVar unless
   another thread holds that MVar indefinitely". This is not a perfect approach,
