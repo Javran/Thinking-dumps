@@ -22,3 +22,8 @@
   another thread holds that MVar indefinitely". This is not a perfect approach,
   as it does not guarantee CPU time are shared equally among threads. But it works fine
   in practice.
+
+* `stdout` handle is represented by `MVar`s. So only one thread can have it
+  and do opreations on it.
+  (NOTE: looking at the definition of `Handle`, you'll find they are indeed represented
+  by MVars, so this is probably true not just for `stdout`, but also for all kinds of handlers)
