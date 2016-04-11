@@ -1,4 +1,4 @@
-## Notes for Chapter 3
+## Notes on Chapter 3
 
 ### Strategy
 

@@ -1,4 +1,4 @@
-## Notes for Chapter 5
+## Notes on Chapter 5
 
 ### Arrays, Shapes, and Indices
 

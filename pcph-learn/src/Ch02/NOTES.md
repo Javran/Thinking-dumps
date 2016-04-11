@@ -1,4 +1,4 @@
-## Notes for Chapter 2
+## Notes on Chapter 2
 
 ### Weak Head Normal Form
 

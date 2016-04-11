@@ -1,4 +1,4 @@
-## Notes for Chapter 1
+## Notes on Chapter 1
 
 ### Parallelism and Concurrency
 

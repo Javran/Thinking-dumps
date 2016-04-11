@@ -1,4 +1,4 @@
-## Notes for Chapter 4
+## Notes on Chapter 4
 
 ### Par monad
 

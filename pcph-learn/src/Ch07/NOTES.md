@@ -1,4 +1,4 @@
-# Notes for Chapter 7
+# Notes on Chapter 7
 
 * Threads can be created using `forkIO`
 * `MVar a`, where `a` is an arbitrary type,
