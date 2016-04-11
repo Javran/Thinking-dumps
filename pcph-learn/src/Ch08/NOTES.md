@@ -14,3 +14,11 @@ Keep in mind that in order to (probably) wait and finally get a result for all t
 waiting on the same `MVar`, it is important to use `readMVar` instead of `takeMVar`.
 Because `takeMVar` reads the value but won't put it back, so only one thread can
 get a result while all other waiting threads can't.
+
+## Exceptions in Haskell
+
+- One must give explicit type on what exception should be caught.
+
+- Exceptions form a hierarchy, at the top of the hierarchy is a type called `SomeException`.
+  If we specify exception to be of this type, then we will end up catching all exceptions
+  in the context.
