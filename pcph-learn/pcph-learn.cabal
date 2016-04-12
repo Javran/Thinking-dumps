@@ -20,6 +20,9 @@ library
                      , repa
                      , repa-devil
                      , accelerate
+                     , bytestring
+                     , network-uri
+                     , HTTP
   default-language:    Haskell2010
 
 executable pcph-learn-exe
