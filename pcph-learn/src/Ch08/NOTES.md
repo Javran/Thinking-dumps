@@ -26,3 +26,22 @@ get a result while all other waiting threads can't.
 - We can implement our own exception type by making it an instance of `Exception` typeclass.
   (but the book doesn't seem to give anything about what exactly does the exception
    hierarchy looks like or how to make use of the hierarchy). (TODO)
+
+- One comment in book: "Exceptions in Haskell can be caught, but only in IO monad.".
+  When programming in Haskell, I have never found this observation. Probably because that
+  the type of `catch` and some other Exception-related functions prevents us from doing something
+  wrong in this respect.
+
+# Error Handling with Async
+
+- Nothing fancy. We are just turning `data Async a = MVar a` into `data Async a = MVar (Either SomeException a)`.
+  So by the time when there is an exception, we will wrap it in the result.
+
+# Merging
+
+- Sometimes we might want each of separate actions to put their results in the same `MVar`.
+  By doing so the first completed action will take over `MVar` first and put the result in it.
+
+- Because all actions have to their results in the same `MVar a`, `a` has to be a sum type.
+  In the book `waitEither` merges 2 events by lifting them into `Either`, and `waitAny` just
+  require all results to be of type `a`, leaving the resposibility of unifying them to users.
