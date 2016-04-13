@@ -7,6 +7,9 @@ import Control.Concurrent
 import Control.Monad
 import Control.Exception
 import Data.List
+import Data.Function
+import Text.Printf
+import qualified Data.ByteString as B
 
 -- in the book `waitAny` is used to wait for one of the actions to be completed
 -- and here I would like to experiment extending `waitAny` a bit
@@ -53,6 +56,8 @@ oneAndRests xs = cut (map (f . cut) . tails $ cycle xs)
     f (y:ys) = (y,ys)
     f _ = error "impossible"
 
+-- wait for any of the action to be terminated
+-- either through regular termination or by excpetions
 waitAny' :: forall a. [Async a] -> IO (Either SomeException a,[Async a])
 waitAny' [] = error  "empty list is not allowed."
 waitAny' as = do
@@ -64,4 +69,30 @@ waitAny' as = do
     readMVar m
 
 main :: IO ()
-main = pure ()
+main = do
+    let sites =
+            [ "http://www.bing.com"
+            , "http://www.yahoo.com"
+            , "http://www.wikipedia.com/wiki/Spade"
+            , "http://www.wikipedia.com/wiki/Shovel"
+            ]
+        download url = do
+            r <- getURL url
+            pure (url,r)
+    as <- mapM (async . download) sites
+    (fix $ \loop tasks ->
+       case tasks of
+           [] -> putStrLn "Done."
+           _ -> do
+               -- whoever returns first will return not only result of itself,
+               -- but also rest of the Async objects in "rests"
+               -- so we can recursively reduce the length of "rests"
+               -- until no task is remaining.
+               -- note that these tasks are already started by using "async",
+               -- so we are just sequentially looking for results but
+               -- tasks are still running in parallel.
+               (result, rests) <- waitAny' tasks
+               case result of
+                   Left e -> putStrLn ("Exception: " ++ show e)
+                   Right (url,r) -> printf "Fetched %s (%d bytes)\n" url (B.length r)
+               loop rests) as -- initial list of tasks
