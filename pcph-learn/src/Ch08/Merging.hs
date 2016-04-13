@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Merging where
 
 import GetURL
@@ -51,6 +52,16 @@ oneAndRests xs = cut (map (f . cut) . tails $ cycle xs)
     cut = takeSameLengthAs xs
     f (y:ys) = (y,ys)
     f _ = error "impossible"
+
+waitAny' :: forall a. [Async a] -> IO (Either SomeException a,[Async a])
+waitAny' [] = error  "empty list is not allowed."
+waitAny' as = do
+    m <- newEmptyMVar :: IO (MVar (Either SomeException a, [Async a]))
+    let forkWait (a,rests) = forkIO $ do
+            r <- try (wait a)
+            putMVar m (r,rests)
+    mapM_ forkWait (oneAndRests as)
+    readMVar m
 
 main :: IO ()
 main = pure ()
