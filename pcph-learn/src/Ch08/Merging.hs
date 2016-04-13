@@ -30,12 +30,15 @@ wait a = do
         Left e -> throwIO e
         Right v -> pure v
 
-{-# ANN module "HLint: ignore Use zipWith" #-}
+{-# ANN takeSameLengthAs "HLint: ignore Use zipWith" #-}
 takeSameLengthAs :: [a] -> [b] -> [b]
 takeSameLengthAs xs ys = map snd (zip xs ys)
 
 -- transform a list so that each element turns into that element together
 -- with rest of the elements. order in the list is not preserved.
+-- example:
+-- > oneAndRests [1..3]
+---[(1,[2,3]),(2,[3,1]),(3,[1,2])]
 oneAndRests :: [a] -> [(a,[a])]
 oneAndRests [] = []
 oneAndRests xs = cut (map (f . cut) . tails $ cycle xs)
