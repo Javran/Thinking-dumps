@@ -12,6 +12,11 @@ import Data.List
 -- so that we can not only tell which action completes first, but also
 -- get a full list of completed results in order.
 
+-- note that there is another problem with `waitAny`:
+-- it won't work if an empty list is given as input.
+-- by doing so nothing will try to put values in `MVar`.
+-- and `wait` will then end up waiting forever.
+
 data Async a = Async (MVar (Either SomeException a))
 
 async :: IO a -> IO (Async a)
