@@ -19,3 +19,22 @@ done in this manner.
   A masked thread cannot receive asynchronous exceptions,
   so we can use this technique on critical part of our programs
   See also: [mask (base-4.8.2.0)](https://hackage.haskell.org/package/base-4.8.2.0/docs/Control-Exception.html#v:mask)
+
+Note: the implementation of `bracket` actually provides a perfect example of it:
+
+```haskell
+bracket
+        :: IO a         -- ^ computation to run first (\"acquire resource\")
+        -> (a -> IO b)  -- ^ computation to run last (\"release resource\")
+        -> (a -> IO c)  -- ^ computation to run in-between
+        -> IO c         -- returns the value from the in-between computation
+bracket before after thing =
+  mask $ \restore -> do
+    a <- before
+    r <- restore (thing a) `onException` after a
+    _ <- after a
+    return r
+```
+
+In the body of `bracket`, only `restore`'s argument `thing a` can receive asynchronous
+exceptions. And this ensures `before` and `after` are paired even when exceptions are raised.
