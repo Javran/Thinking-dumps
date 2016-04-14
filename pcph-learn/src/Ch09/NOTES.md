@@ -18,3 +18,4 @@ done in this manner.
   except for the part where `restore` is called.
   A masked thread cannot receive asynchronous exceptions,
   so we can use this technique on critical part of our programs
+  See also: [mask (base-4.8.2.0)](https://hackage.haskell.org/package/base-4.8.2.0/docs/Control-Exception.html#v:mask)
