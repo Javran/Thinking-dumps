@@ -38,3 +38,11 @@ bracket before after thing =
 
 In the body of `bracket`, only `restore`'s argument `thing a` can receive asynchronous
 exceptions. And this ensures `before` and `after` are paired even when exceptions are raised.
+
+* Even with the presense of `mask`, some operations like `takeMVar` are still interruptible until to the point where it returns.
+  otherwise, while `takeMVar` is waiting, that thread cannot respond to asynchronous exceptions.
+  (In general all operations that may block indefinitely are designated as interruptible.)
+
+* Keep in mind that functions like `mask` or `uninterruptibleMask` are primitives.
+  We can use higher-level combinators like `modifyMVar_` or `modifyMVar` to take care
+  of these issues for us.
