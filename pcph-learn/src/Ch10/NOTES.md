@@ -10,3 +10,7 @@
 
 * One notable feature of `STM` is that atomic operations can be composed
   and the resulting computation is still atomic.
+
+* `STM` monad has the ability to roll back the effects of a transaction.
+  But the tradeoff is that we cannot perform arbitrary computations which
+  might has side effects that the `STM` monad doesn't know how to rollback.
