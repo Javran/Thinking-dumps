@@ -46,3 +46,6 @@ exceptions. And this ensures `before` and `after` are paired even when exception
 * Keep in mind that functions like `mask` or `uninterruptibleMask` are primitives.
   We can use higher-level combinators like `modifyMVar_` or `modifyMVar` to take care
   of these issues for us.
+
+(TODO) Things are getting more involved and I need time to understand. For now I'll skip rest of this chapter and
+take some fresh air from next chapter.
