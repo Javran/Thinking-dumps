@@ -41,6 +41,11 @@ main = do
     ref3 <- atomically $ newEmptyTMVar
     forkIO $ do
         atomically $ addSTM ref1 ref2 ref3
-    -- cause blocking.
+    forkIO $ atomically $ putTMVar ref2 100
+    forkIO $ atomically $ putTMVar ref1 200
+
+    -- this works. there seems to be an allowed timeout,
+    -- I guess if nothing happens to change the situation
+    -- after certain time, an exception will be thrown.
     result <- atomically (takeTMVar ref3)
     print result
