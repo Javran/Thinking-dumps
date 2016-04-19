@@ -2,6 +2,7 @@ module TMVar where
 
 import Control.Concurrent.STM.TVar
 import Control.Monad.STM
+import Control.Concurrent
 
 newtype TMVar a = TMVar (TVar (Maybe a))
 
@@ -26,3 +27,20 @@ putTMVar (TMVar t) a = do
     case m of
         Nothing -> writeTVar t (Just a)
         Just _ -> retry
+
+addSTM :: TMVar Int -> TMVar Int -> TMVar Int -> STM ()
+addSTM ta tb tresult = do
+    a <- takeTMVar ta
+    b <- takeTMVar tb
+    putTMVar tresult (a + b)
+
+main :: IO ()
+main = do
+    ref1 <- atomically $ newEmptyTMVar
+    ref2 <- atomically $ newEmptyTMVar
+    ref3 <- atomically $ newEmptyTMVar
+    forkIO $ do
+        atomically $ addSTM ref1 ref2 ref3
+    -- cause blocking.
+    result <- atomically (takeTMVar ref3)
+    print result
