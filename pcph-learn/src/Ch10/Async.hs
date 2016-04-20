@@ -43,8 +43,9 @@ wait = atomically . waitSTM
 
 -- unlike my previous approach, here I will not transform a list into (<element>,<rest>).
 -- instead, when we gets one result back from a list of Asyncs, we'll remove that Async
--- from list and wait again. We can do this because TMVar has Eq typeclass,
--- using that we can turn Async into Eq as well.
+-- from list and wait again. This might be difficult in general, as
+-- by using `orElse` we lose track of the source.
+-- so when assigning tasks, we also assign the task with an id.
 
 -- sleep for a while and them return to fake some kind of computation
 -- that takes time
