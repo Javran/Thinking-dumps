@@ -4,7 +4,7 @@ import Control.Concurrent
 import Control.Concurrent.STM
 import Control.Exception
 
-data Async a = Async ThreadId (TMVar (Either SomeException a))
+data Async a = Async ThreadId (TMVar (Either SomeException a)) deriving (Eq)
 
 async :: IO a -> IO (Async a)
 async action = do
@@ -32,6 +32,15 @@ waitEither a b =
 {-# ANN waitAny "HLint: ignore Use ." #-}
 waitAny :: [Async a] -> IO a
 waitAny = atomically . foldr orElse retry . map waitSTM
+
+-- like before, here I'd like to build up something that
+-- not only knows which computation is done first,
+-- but also gives a whole list of computations in their order of completion.
+
+-- unlike my previous approach, here I will not transform a list into (<element>,<rest>).
+-- instead, when we gets one result back from a list of Asyncs, we'll remove that Async
+-- from list and wait again. We can do this because TMVar has Eq typeclass,
+-- using that we can turn Async into Eq as well.
 
 main :: IO ()
 main = pure ()
