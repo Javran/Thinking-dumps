@@ -1,9 +1,13 @@
+{-# LANGUAGE TupleSections #-}
 module Async where
 
 import Control.Concurrent
 import Control.Concurrent.STM
 import Control.Exception
+import qualified Data.IntMap as IM
 import System.Random
+import Data.Function
+import Control.Monad
 
 data Async a = Async ThreadId (TMVar (Either SomeException a)) deriving (Eq)
 
@@ -55,12 +59,22 @@ delayedReturn t v = threadDelay t >> pure v
 main :: IO ()
 main = do
     g <- newStdGen
-    -- wait for 1 - 10s
-    let ts = take 10 $ (* 1000000) <$> randomRs (1 :: Int,10) g
-        tasks = zipWith delayedReturn ts [0 :: Int ..]
-    as <- mapM async tasks
-    x <- waitAny as
-    print x
-    ys <- mapM wait as
-    print ys
-    pure ()
+    -- wait for 1 - 5s
+    let ts = take 10 $ (* 1000000) <$> randomRs (1 :: Int,5) g
+        tasks = zipWith (\tId time -> (tId,delayedReturn time tId)) [0 :: Int ..] ts
+        taskDict = IM.fromList tasks
+
+    as <- forM (IM.toList taskDict) $ \(tId, action) -> do
+        r <- async action
+        pure (tId, r)
+
+    let taskDictA = IM.fromList as :: IM.IntMap (Async Int)
+    result <- fix (\loop accumulated dict ->
+         if IM.null dict
+           then pure (reverse accumulated)
+           else do
+             let waitList = IM.elems dict
+             r <- waitAny waitList
+             loop (r:accumulated) (IM.delete r dict)
+         ) [] taskDictA
+    print result
