@@ -3,6 +3,7 @@ module Async where
 import Control.Concurrent
 import Control.Concurrent.STM
 import Control.Exception
+import System.Random
 
 data Async a = Async ThreadId (TMVar (Either SomeException a)) deriving (Eq)
 
@@ -33,6 +34,9 @@ waitEither a b =
 waitAny :: [Async a] -> IO a
 waitAny = atomically . foldr orElse retry . map waitSTM
 
+wait :: Async a -> IO a
+wait = atomically . waitSTM
+
 -- like before, here I'd like to build up something that
 -- not only knows which computation is done first,
 -- but also gives a whole list of computations in their order of completion.
@@ -42,5 +46,20 @@ waitAny = atomically . foldr orElse retry . map waitSTM
 -- from list and wait again. We can do this because TMVar has Eq typeclass,
 -- using that we can turn Async into Eq as well.
 
+-- sleep for a while and them return to fake some kind of computation
+-- that takes time
+delayedReturn :: Int -> a -> IO a
+delayedReturn t v = threadDelay t >> pure v
+
 main :: IO ()
-main = pure ()
+main = do
+    g <- newStdGen
+    -- wait for 1 - 10s
+    let ts = take 10 $ (* 1000000) <$> randomRs (1 :: Int,10) g
+        tasks = zipWith delayedReturn ts [0 :: Int ..]
+    as <- mapM async tasks
+    x <- waitAny as
+    print x
+    ys <- mapM wait as
+    print ys
+    pure ()
