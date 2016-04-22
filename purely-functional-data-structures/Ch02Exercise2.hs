@@ -13,7 +13,10 @@ by always taking _branch2, that results in 2d comparisons.
 
 -}
 
-data BST a = E | T (BST a) a (BST a)
+data BST a = E | T (BST a) a (BST a) deriving (Show)
+
+-- TODO: I'm not sure whether this is a correct implementation
+-- and we probably need some prove.
 
 member :: Ord a => a -> BST a -> Bool
 member v tree = case tree of
