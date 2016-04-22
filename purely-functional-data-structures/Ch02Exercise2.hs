@@ -12,3 +12,5 @@ in the worst case we need to traverse to the deepest element of the tree,
 by always taking _branch2, that results in 2d comparisons.
 
 -}
+
+data BST a = E | T (BST a) a (BST a)
