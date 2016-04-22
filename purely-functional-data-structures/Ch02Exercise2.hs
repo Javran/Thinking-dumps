@@ -14,3 +14,13 @@ by always taking _branch2, that results in 2d comparisons.
 -}
 
 data BST a = E | T (BST a) a (BST a)
+
+member :: Ord a => a -> BST a -> Bool
+member v tree = case tree of
+    E -> False
+    T _ curX _ ->
+        let go E y = v == y -- y is the value that probably equals to v
+            go (T l x r) y = if v <= x
+                                then go l x
+                                else go r y
+        in go tree curX
