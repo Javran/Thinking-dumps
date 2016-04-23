@@ -34,6 +34,20 @@ Reasoning about the correctness of this implementation:
   or right one, this is totally determined by value of v.
   (in other words, given a value v and a tree, the search path from
   root to leaf is fixed.)
+- therefore to show this implementation is correct, we need to show:
+  if there is a value equal to v on this fixed path, it's either not being visted yet
+  or being kept in "keep" variable. so by the time we reach a leaf node,
+  the value in question will be kept in "keep" variable.
+
+- next, we look at "go" function. assuming "keep" has been maintained properly,
+  we need to show this function is correct:
+
+  - on leaf node, the value that might equal to v is kept in "keep",
+    an equality test should give the correct result
+
+  - on non-leaf node, notice that "keep" holds some value on the path,
+    so there is an inequality relation
+
 
 -}
 member :: Ord a => a -> BST a -> Bool
