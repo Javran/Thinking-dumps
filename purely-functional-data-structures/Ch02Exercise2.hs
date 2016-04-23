@@ -1,5 +1,11 @@
 module Ch02Exercise2 where
 
+import Test.Hspec
+import Test.QuickCheck
+import qualified Data.IntSet as IS
+
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 {-
 
 In book it says "in the worst case, `member` performs approximately 2d comparisons".
@@ -42,3 +48,13 @@ fromList = foldr insert E
 toAscList :: BST a -> [a]
 toAscList E = []
 toAscList (T l v r) = toAscList l ++ v : toAscList r
+
+main :: IO ()
+main = hspec $ do
+    describe "member" $ do
+      it "should be the same as Data.IntSet" $ do
+        property $ do
+            xs <- listOf (choose (0,1000 :: Int))
+            let s1 = IS.fromList xs
+                s2 = fromList xs
+            pure $ all (\x -> member x s2 == IS.member x s1) [0..1000]
