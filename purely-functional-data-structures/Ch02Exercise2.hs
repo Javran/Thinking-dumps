@@ -24,6 +24,18 @@ data BST a = E | T (BST a) a (BST a) deriving (Show)
 -- TODO: I'm not sure whether this is a correct implementation
 -- and we probably need some prove.
 
+{-
+
+Reasoning about the correctness of this implementation:
+
+- we notice that if the value we want to find exists,
+  it must be somewhere in a path from root to a leaf.
+- on each node, we need to choose either go recursively into left subtree
+  or right one, this is totally determined by value of v.
+  (in other words, given a value v and a tree, the search path from
+  root to leaf is fixed.)
+
+-}
 member :: Ord a => a -> BST a -> Bool
 member _ E = False
 member v tree@(T _ curX _) = go tree curX
@@ -31,8 +43,14 @@ member v tree@(T _ curX _) = go tree curX
     -- keep is the value that probably equals to v
     go E keep = v == keep
     go (T l x r) keep = if v <= x
-        then go l x
-        else go r keep
+        then
+          -- we know v <= x, in which x should be "closer"
+          -- to v than keep
+          go l x
+        else
+          -- we know v > x, it's clear that x
+          -- cannot be equal to v, so we keep "keep" value
+          go r keep
 
 -- regular insert function
 insert :: Ord a => a -> BST a -> BST a
