@@ -25,14 +25,14 @@ data BST a = E | T (BST a) a (BST a) deriving (Show)
 -- and we probably need some prove.
 
 member :: Ord a => a -> BST a -> Bool
-member v tree = case tree of
-    E -> False
-    T _ curX _ ->
-        let go E y = v == y -- y is the value that probably equals to v
-            go (T l x r) y = if v <= x
-                                then go l x
-                                else go r y
-        in go tree curX
+member _ E = False
+member v tree@(T _ curX _) = go tree curX
+  where
+    -- keep is the value that probably equals to v
+    go E keep = v == keep
+    go (T l x r) keep = if v <= x
+        then go l x
+        else go r keep
 
 -- regular insert function
 insert :: Ord a => a -> BST a -> BST a
@@ -54,7 +54,10 @@ main = hspec $ do
     describe "member" $ do
       it "should be the same as Data.IntSet" $ do
         property $ do
+            -- randomly picking up a list of elements
             xs <- listOf (choose (0,1000 :: Int))
             let s1 = IS.fromList xs
                 s2 = fromList xs
+            -- then test membership on all values within this range
+            -- and their results should be the same.
             pure $ all (\x -> member x s2 == IS.member x s1) [0..1000]
