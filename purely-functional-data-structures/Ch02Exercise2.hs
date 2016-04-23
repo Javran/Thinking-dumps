@@ -27,3 +27,18 @@ member v tree = case tree of
                                 then go l x
                                 else go r y
         in go tree curX
+
+-- regular insert function
+insert :: Ord a => a -> BST a -> BST a
+insert x E = T E x E
+insert x s@(T l y r)
+    | x < y = T (insert x l) y r
+    | x > y = T l y (insert x r)
+    | otherwise = s
+
+fromList :: Ord a => [a] -> BST a
+fromList = foldr insert E
+
+toAscList :: BST a -> [a]
+toAscList E = []
+toAscList (T l v r) = toAscList l ++ v : toAscList r
