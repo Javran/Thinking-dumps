@@ -45,10 +45,7 @@ Reasoning about the correctness of this implementation:
   - on leaf node, the value that might equal to v is kept in "keep",
     an equality test should give the correct result
 
-  - on non-leaf node, notice that "keep" holds some value on the path,
-    so there is an inequality relation
-
-
+  - on non-leaf node, < TODO >
 -}
 member :: Ord a => a -> BST a -> Bool
 member _ E = False
