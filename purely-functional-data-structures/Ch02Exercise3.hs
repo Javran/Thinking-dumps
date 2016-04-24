@@ -1,5 +1,7 @@
 module Ch02Exercise3 where
 
+import Data.Maybe
+
 data BST a = E | T (BST a) a (BST a) deriving (Show)
 
 -- the proper way of implementing "exception" is to make use of Maybe
@@ -11,3 +13,6 @@ insertM v (T l x r)
     | v <  x = (\newL -> T newL x r) <$> insertM v l
     | v >  x = T l x <$> insertM v r
     | otherwise = error "impossible"
+
+insert :: Ord a => a -> BST a -> BST a
+insert v t = fromMaybe t (insertM v t)
