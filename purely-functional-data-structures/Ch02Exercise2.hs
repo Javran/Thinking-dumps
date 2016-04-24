@@ -26,26 +26,32 @@ data BST a = E | T (BST a) a (BST a) deriving (Show)
 
 {-
 
+(See Arne Andersson "A note on searching in a binary search tree.")
+
 Reasoning about the correctness of this implementation:
 
-- we notice that if the value we want to find exists,
-  it must be somewhere in a path from root to a leaf.
-- on each node, we need to choose either go recursively into left subtree
-  or right one, this is totally determined by value of v.
-  (in other words, given a value v and a tree, the search path from
-  root to leaf is fixed.)
-- therefore to show this implementation is correct, we need to show:
-  if there is a value equal to v on this fixed path, it's either not being visted yet
-  or being kept in "keep" variable. so by the time we reach a leaf node,
-  the value in question will be kept in "keep" variable.
+we consider 3 phases:
 
-- next, we look at "go" function. assuming "keep" has been maintained properly,
-  we need to show this function is correct:
+- when the value we want to find is not yet in "keep" variable
 
-  - on leaf node, the value that might equal to v is kept in "keep",
-    an equality test should give the correct result
+    since `v == x` is never met in this phase,
+    so it goes exactly as binary search, except that only one comparison is done.
+    if we reach a leaf during this phase, the element we want to find is clearly not
+    in the tree we are searching
 
-  - on non-leaf node, < TODO >
+- by the time when we hit the node when `v == x` is met
+
+    the value is then kept in `keep` by the recursive call `go l x`, which also goes to
+    the left branch of it.
+
+- by the time when we pass the node in which `v == x` is met.
+
+    because in previous phase we have gone into the left tree,
+    and the property of BST tells us all nodes in this subtree is less than `keep`
+    (and also less than `v` because `v == keep`)
+    so the implementation will always pick right subtree util a leaf node is hit.
+    in this phase no update to "keep" will be performed.
+
 -}
 member :: Ord a => a -> BST a -> Bool
 member _ E = False
