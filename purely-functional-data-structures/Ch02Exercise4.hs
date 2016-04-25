@@ -8,16 +8,15 @@ import Data.Maybe
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
-
 insert :: Ord a => a -> BST a -> BST a
-insert v tree = fromMaybe tree (insertM v tree)
+insert v tree = fromMaybe tree (insertM tree)
   where
-    insertM v1 E = Just (T E v1 E)
-    insertM v1 (T _ curX _) = go tree curX
+    insertM E = Just (T E v E)
+    insertM (T _ curX _) = go tree curX
       where
         -- keep is the value that probably equals to v
-        go E keep = if v1 == keep then Nothing else Just (T E v1 E)
-        go (T l x r) keep = if v1 <= x
+        go E keep = if v == keep then Nothing else Just (T E v E)
+        go (T l x r) keep = if v <= x
             then
               -- we know v <= x, in which x should be "closer"
               -- to v than keep
@@ -26,7 +25,6 @@ insert v tree = fromMaybe tree (insertM v tree)
               -- we know v > x, it's clear that x
               -- cannot be equal to v, so we keep "keep" value
               T l x <$> go r keep
-
 
 fromList :: Ord a => [a] -> BST a
 fromList = makeFromList insert
