@@ -21,9 +21,6 @@ by always taking _branch2, that results in 2d comparisons.
 
 data BST a = E | T (BST a) a (BST a) deriving (Show)
 
--- TODO: I'm not sure whether this is a correct implementation
--- and we probably need some prove.
-
 {-
 
 (See Arne Andersson "A note on searching in a binary search tree.")
