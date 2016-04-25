@@ -3,12 +3,11 @@ module Ch02Exercise3 where
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.IntSet as IS
+import Ch02BST hiding (insert)
 
 import Data.Maybe
 
 {-# ANN module "HLint: ignore Redundant do" #-}
-
-data BST a = E | T (BST a) a (BST a) deriving (Show)
 
 -- the proper way of implementing "exception" is to make use of Maybe
 -- let's try doing it.
@@ -27,20 +26,8 @@ insertM v (T l x r)
 insert :: Ord a => a -> BST a -> BST a
 insert v t = fromMaybe t (insertM v t)
 
--- the "member" function we all know
-member :: Ord a => a -> BST a -> Bool
-member _ E = False
-member v (T l x r)
-    | v < x = member v l
-    | v > x = member v r
-    | otherwise = v == x
-
 fromList :: Ord a => [a] -> BST a
-fromList = foldr insert E
-
-toAscList :: BST a -> [a]
-toAscList E = []
-toAscList (T l v r) = toAscList l ++ v : toAscList r
+fromList = makeFromList insert
 
 -- using the same code to test set behavior
 -- but this time we just want to test insertion

@@ -3,6 +3,7 @@ module Ch02Exercise2 where
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.IntSet as IS
+import Ch02BST hiding (member)
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
@@ -18,8 +19,6 @@ in the worst case we need to traverse to the deepest element of the tree,
 by always taking _branch2, that results in 2d comparisons.
 
 -}
-
-data BST a = E | T (BST a) a (BST a) deriving (Show)
 
 {-
 
@@ -66,20 +65,8 @@ member v tree@(T _ curX _) = go tree curX
           -- cannot be equal to v, so we keep "keep" value
           go r keep
 
--- regular insert function
-insert :: Ord a => a -> BST a -> BST a
-insert x E = T E x E
-insert x s@(T l y r)
-    | x < y = T (insert x l) y r
-    | x > y = T l y (insert x r)
-    | otherwise = s
-
 fromList :: Ord a => [a] -> BST a
-fromList = foldr insert E
-
-toAscList :: BST a -> [a]
-toAscList E = []
-toAscList (T l v r) = toAscList l ++ v : toAscList r
+fromList = makeFromList insert
 
 main :: IO ()
 main = hspec $ do
