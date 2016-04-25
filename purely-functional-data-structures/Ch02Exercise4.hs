@@ -3,14 +3,30 @@ module Ch02Exercise4 where
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.IntSet as IS
-import Ch02BST hiding (member, insert)
-import Ch02Exercise2 (member)
-import Ch02Exercise3 (insert)
+import Ch02BST hiding (insert)
+import Data.Maybe
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
--- nothing special, I think just copying code from Ex 2.2 and Ex 2.3 will do
--- TODO: do performance measurement?
+
+insert :: Ord a => a -> BST a -> BST a
+insert v tree = fromMaybe tree (insertM v tree)
+  where
+    insertM v1 E = Just (T E v1 E)
+    insertM v1 (T _ curX _) = go tree curX
+      where
+        -- keep is the value that probably equals to v
+        go E keep = if v1 == keep then Nothing else Just (T E v1 E)
+        go (T l x r) keep = if v1 <= x
+            then
+              -- we know v <= x, in which x should be "closer"
+              -- to v than keep
+              (\newL -> T newL x r) <$> go l x
+            else
+              -- we know v > x, it's clear that x
+              -- cannot be equal to v, so we keep "keep" value
+              T l x <$> go r keep
+
 
 fromList :: Ord a => [a] -> BST a
 fromList = makeFromList insert
