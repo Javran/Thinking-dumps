@@ -10,6 +10,10 @@ import Control.Monad
 -- I think "complete binary tree" refers to BSTs
 -- that is of depth d and all possible nodes are occupied.
 -- in wikipedia this is actually defined as "perfect binary tree"
+
+-- to show this runs in O(d) time, we just need to notice following facts:
+-- + case analysis is done on the natural number
+-- + at most one recursive call in any branch of the function
 complete :: a -> Int -> BST a
 complete _ 0 = E
 complete v s = T sub v sub
