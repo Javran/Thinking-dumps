@@ -73,3 +73,7 @@ main = hspec $ do
       it "should produce 2^d-1 elements" $ do
           forM_ [0 :: Int ..10] $ \d ->
               toAscList (complete 1 d) `shouldBe` replicate (2^d-1) 1
+    describe "balanced v n" $ do
+      it "should produce n elements" $ do
+          forM_ [0 :: Int ..127] $ \n ->
+              toAscList (balanced 1 n) `shouldBe` replicate n 1
