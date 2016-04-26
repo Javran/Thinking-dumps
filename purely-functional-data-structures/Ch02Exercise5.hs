@@ -69,7 +69,7 @@ balanced v n
     -- r has m+1 elements
     create2 :: Int -> (BST a, BST a)
     -- our strategy is: make a balanced one,
-    -- then add one node and remove one node from it accordingly
+    -- then add one node to or remove one from it accordingly
     create2 m
         | odd m =
             -- we can make a balanced tree with m nodes
