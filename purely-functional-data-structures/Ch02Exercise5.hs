@@ -31,7 +31,7 @@ balanced v n
         let (l,r) = create2 halfN
         in T l v r
   where
-    halfN = n `div` 2
+    halfN = (n-1) `div` 2
 
     create2 :: Int -> (BST a, BST a)
     create2 m
