@@ -20,7 +20,34 @@ complete _ 0 = E
 complete v s = T sub v sub
   where
     sub = complete v (s-1)
+{-
+**to show "balanced _ n" runs in O(log n) time:**
 
+- base case when n == 0,1 it runs in constant time
+- induction step: assume n == k runs in O(log k) time
+
+let's also assume "create2 k" runs in O(log k) time,
+
+then "balanced (k+k)" makes recursive call to either "balanced k"
+or "create2 k", and both of then runs in O(log k) time.
+
+assume extra cost is a constant that has constant upbound C,
+
+we know "balanced (k+k)" runs in O(log k) + O(log k) + C = O(log k) time.
+
+so to summarize, "balanced n" runs in O(log n) time.
+
+**now we need to show "create2 n" runs in O(log n) time**
+
+- "create2 n" creates 2 trees by creating a balanced one
+  then add or remove one from it.
+- tree creation is done by recursive call to "balanced (n/2)", which takes O(log n) time
+- then it takes O(d) time to add one node to or remove one from the resulting tree
+  where d is bounded by O(log n), since we know the resulting tree is balanced,
+  we know d is bounded by O(log n)
+- therefore the time complexity of "create2 n" is O(log n) + O(log n) = O(log n)
+
+-}
 balanced :: forall a. a -> Int -> BST a
 balanced _ 0 = E
 balanced v n
