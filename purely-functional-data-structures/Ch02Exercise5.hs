@@ -5,6 +5,7 @@ import Test.QuickCheck
 import qualified Data.IntSet as IS
 import Ch02BST
 import Control.Monad
+import Data.Maybe
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
@@ -122,6 +123,19 @@ balanced v n
             T l v (oneLess ((m-1) `div` 2 + 1) r)
     oneLess _ _ = error "oneLess: invariant violated"
 
+isBalanced :: BST a -> Bool
+isBalanced = isJust . isBalancedM
+  where
+    -- test whether a tree is balanced,
+    -- return number of nodes upon success
+    isBalancedM :: BST a -> Maybe Int
+    isBalancedM E = Just 0
+    isBalancedM (T l _ r) = do
+        nL <- isBalancedM l
+        nR <- isBalancedM r
+        guard $ abs (nL - nR) <= 1
+        pure (nL+nR+1)
+
 main :: IO ()
 main = hspec $ do
     describe "complete v d" $ do
@@ -130,5 +144,7 @@ main = hspec $ do
               toAscList (complete 1 d) `shouldBe` replicate (2^d-1) 1
     describe "balanced v n" $ do
       it "should produce n elements" $ do
-          forM_ [0 :: Int ..127] $ \n ->
-              toAscList (balanced 1 n) `shouldBe` replicate n 1
+          forM_ [0 :: Int ..127] $ \n -> do
+              let tree = balanced 1 n
+              toAscList tree `shouldBe` replicate n 1
+              isBalanced tree `shouldBe` True
