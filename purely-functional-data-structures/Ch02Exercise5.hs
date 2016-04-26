@@ -45,6 +45,7 @@ balanced v n
 
     -- | INVARIANT for "oneMore n t" and "oneLess n t"
     -- * size t == n
+    -- * (oneLess only) n /= 0
     -- * t is always balanced
     -- * one of the following must be true for all nodes t1 in t:
     --     * size (left t1)    == size (right t1)
@@ -53,7 +54,7 @@ balanced v n
     oneLess :: Int -> BST a -> BST a
 
     oneMore 0 E = T E v E
-    oneMore 1 (T E _ E) = T E v (T E v E)
+    oneMore 1 t'@(T E _ E) = T E v t'
     oneMore m (T l _ r)
         | even (m-1) = T l v (oneMore ((m-1) `div` 2) r)
         | otherwise = T (oneMore ((m-1) `div` 2) l) v r
