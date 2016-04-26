@@ -1,8 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Ch02Exercise5 where
 import Test.Hspec
-import Test.QuickCheck
-import qualified Data.IntSet as IS
 import Ch02BST
 import Control.Monad
 import Data.Maybe
@@ -141,10 +139,10 @@ main = hspec $ do
     describe "complete v d" $ do
       it "should produce 2^d-1 elements" $ do
           forM_ [0 :: Int ..10] $ \d ->
-              toAscList (complete 1 d) `shouldBe` replicate (2^d-1) 1
+              toAscList (complete 1 d) `shouldBe` replicate (2^d-1) (1 :: Int)
     describe "balanced v n" $ do
       it "should produce n elements" $ do
           forM_ [0 :: Int ..127] $ \n -> do
               let tree = balanced 1 n
-              toAscList tree `shouldBe` replicate n 1
+              toAscList tree `shouldBe` replicate n (1 :: Int)
               isBalanced tree `shouldBe` True
