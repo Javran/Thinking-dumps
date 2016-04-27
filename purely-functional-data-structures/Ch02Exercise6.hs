@@ -2,10 +2,17 @@ module Ch02Exercise6 where
 
 import Prelude hiding (lookup)
 import Data.Maybe
+
+-- the only thing we need is just the data type definition
+-- actually there are not much thing we can reuse from UnbalancedSet (a.k.a Ch02BST):
+-- it's hard to implement UnbalancedSet in terms of FiniteMap
+-- but the other way around isn't too hard.
 import Ch02BST (BST(..))
 
 type FiniteMap k v = BST (k,v)
 
+-- "member" can be implemented using "lookup" but not the
+-- other way around.
 lookup :: Ord a => a -> FiniteMap a b -> Maybe b
 lookup _ E = Nothing
 lookup x (T l (k,v) r)
