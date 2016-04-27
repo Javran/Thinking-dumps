@@ -17,6 +17,12 @@ lookup x (T l (k,v) r)
 member :: Ord a => a -> FiniteMap a b -> Bool
 member x = isJust . lookup x
 
+-- we cannot reuse "insert" from BST
+-- simply because now every element is not just a key
+-- but contains some extra data (value)
+-- if we are inserting an existing key into this finite map
+-- we will usually expect this new insertion to replace the old key-value pair
+-- which does not happen in BST's implementation
 insert :: Ord a => a -> b -> FiniteMap a b -> FiniteMap a b
 insert k v E = T E (k,v) E
 insert k v (T l e@(curK,_) r)
