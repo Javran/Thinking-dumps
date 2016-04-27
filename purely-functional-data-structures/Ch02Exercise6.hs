@@ -39,13 +39,19 @@ member x = isJust . lookup x
 -- if we are inserting an existing key into this finite map
 -- we will usually expect this new insertion to replace the old key-value pair
 -- which does not happen in BST's implementation
-insert :: Ord a => a -> b -> FiniteMap a b -> FiniteMap a b
+insert, bind :: Ord a => a -> b -> FiniteMap a b -> FiniteMap a b
+
 insert k v E = T E (k,v) E
 insert k v (T l e@(curK,_) r)
     | k < curK = T (insert k v l) e r
     | k > curK = T l e (insert k v r)
     | k == curK = T l (k,v) r
     | otherwise = error "insert: impossible"
+
+bind = insert
+
+empty :: FiniteMap a b
+empty = E
 
 fromList :: Ord a => [(a,b)] -> FiniteMap a b
 fromList = foldl' (\acc (k,v) -> insert k v acc) E
@@ -73,4 +79,3 @@ main = hspec $ do
         -- so we can get some coverage from key-missing cases
         testOnScale 150
         testOnScale 10000
-
