@@ -3,11 +3,20 @@ module Ch02Exercise6 where
 import Prelude hiding (lookup)
 import Data.Maybe
 
+import Test.Hspec
+import Control.Monad
+import Control.Monad.Random hiding (fromList)
+import Data.Foldable
+
 -- the only thing we need is just the data type definition
 -- actually there are not much thing we can reuse from UnbalancedSet (a.k.a Ch02BST):
 -- it's hard to implement UnbalancedSet in terms of FiniteMap
 -- but the other way around isn't too hard.
-import Ch02BST (BST(..))
+import Ch02BST (BST(..),toAscList)
+import qualified Data.IntMap as IM
+
+{-# ANN module "HLint: ignore Redundant do" #-}
+{-# ANN module "HLint: ignore Avoid lambda" #-}
 
 type FiniteMap k v = BST (k,v)
 
@@ -37,3 +46,31 @@ insert k v (T l e@(curK,_) r)
     | k > curK = T l e (insert k v r)
     | k == curK = T l (k,v) r
     | otherwise = error "insert: impossible"
+
+fromList :: Ord a => [(a,b)] -> FiniteMap a b
+fromList = foldl' (\acc (k,v) -> insert k v acc) E
+
+main :: IO ()
+main = hspec $ do
+    describe "FiniteMap" $ do
+        let genRandomInts count = replicateM count (getRandomR (0 :: Int,200))
+            testOnScale n = do
+                let desc = "should have the same results as IntMap when keys are Ints "
+                        ++ "(n = " ++ show n ++ ")"
+                it desc $ do
+                    pairs <- zip <$> genRandomInts n <*> genRandomInts n
+                    -- step1: test insertion
+                    let im = IM.fromList pairs
+                        result1 = IM.toAscList im
+                        fm = fromList pairs
+                        result2 = toAscList fm
+                    result2 `shouldBe` result1
+                    -- step2: test membership (dictionary lookup)
+                    let searchResults1 = map (\k -> IM.lookup k im) [0..200]
+                        searchResults2 = map (\k -> lookup k fm) [0..200]
+                    searchResults2 `shouldBe` searchResults1
+        -- intentionally insert an insufficient amount of pairs
+        -- so we can get some coverage from key-missing cases
+        testOnScale 150
+        testOnScale 10000
+
