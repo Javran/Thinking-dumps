@@ -25,3 +25,21 @@ makeT :: Ord a => a -> Heap a -> Heap a -> Heap a
 makeT x a b = if rank a >= rank b
   then T (rank b+1) x a b
   else T (rank a+1) x b a
+
+singleton :: a -> Heap a
+singleton x = T 1 x E E
+
+insert :: Ord a => a -> Heap a -> Heap a
+insert x = merge (singleton x)
+
+viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
+viewMin E = Nothing
+viewMin (T _ x a b) = Just (x, merge a b)
+
+findMin :: Ord a => Heap a -> Maybe a
+findMin = fmap fst . viewMin
+
+deleteMin :: Ord a => Heap a -> Maybe (Heap a)
+deleteMin = fmap snd . viewMin
+
+-- TODO: comments and tests to the correctness
