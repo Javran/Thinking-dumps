@@ -1,5 +1,10 @@
 module Ch03Leftist where
 
+import Test.Hspec
+import Test.QuickCheck
+import qualified Data.List as L
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 data Heap a = E | T Int a (Heap a) (Heap a)
 
 empty :: Heap a
@@ -42,8 +47,6 @@ findMin = fmap fst . viewMin
 deleteMin :: Ord a => Heap a -> Maybe (Heap a)
 deleteMin = fmap snd . viewMin
 
--- TODO: comments and tests to the correctness
-
 toAscList :: Ord a => Heap a -> [a]
 toAscList h = case viewMin h of
     Nothing -> []
@@ -51,3 +54,9 @@ toAscList h = case viewMin h of
 
 sortByHeap :: Ord a => [a] -> [a]
 sortByHeap = toAscList . foldr insert empty
+
+main :: IO ()
+main = hspec $ do
+    describe "Leftist" $ do
+      it "can sort elements" $ do
+        property $ \xs -> sortByHeap (xs :: [Int]) == L.sort xs
