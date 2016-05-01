@@ -43,3 +43,11 @@ deleteMin :: Ord a => Heap a -> Maybe (Heap a)
 deleteMin = fmap snd . viewMin
 
 -- TODO: comments and tests to the correctness
+
+toAscList :: Ord a => Heap a -> [a]
+toAscList h = case viewMin h of
+    Nothing -> []
+    Just (v,newH) -> v : toAscList newH
+
+sortByHeap :: Ord a => [a] -> [a]
+sortByHeap = toAscList . foldr insert empty
