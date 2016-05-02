@@ -1,6 +1,11 @@
 module Ch03Exercise3 where
 
-import Ch03Leftist hiding (insert, sortByHeap, main)
+import Test.Hspec
+import Test.QuickCheck
+
+import Ch03Leftist hiding (main)
+
+{-# ANN module "HLint: ignore Redundant do" #-}
 
 fromList :: Ord a => [a] -> Heap a
 fromList = iter . map singleton
@@ -15,3 +20,12 @@ fromList = iter . map singleton
     mergePairs (ha:hb:rs) = merge ha hb : mergePairs rs
     mergePairs xs@[_] = xs
     mergePairs [] = []
+
+sortByHeap2 :: Ord a => [a] -> [a]
+sortByHeap2 = toAscList . fromList
+
+main :: IO ()
+main = hspec $ do
+    describe "Leftist" $ do
+      it "fromList" $ do
+        property $ \xs -> sortByHeap (xs :: [Int]) == sortByHeap2 xs
