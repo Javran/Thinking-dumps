@@ -24,8 +24,13 @@ fromList = iter . map singleton
 sortByHeap2 :: Ord a => [a] -> [a]
 sortByHeap2 = toAscList . fromList
 
+-- TODO: prove time complexity?
+
 main :: IO ()
 main = hspec $ do
     describe "Leftist" $ do
       it "fromList" $ do
+        -- fromList should be the same as "foldr insert empty"
+        -- we verify this by using 2 implementations of sortByHeap
+        -- and compare whether the same input to them gives the same result.
         property $ \xs -> sortByHeap (xs :: [Int]) == sortByHeap2 xs
