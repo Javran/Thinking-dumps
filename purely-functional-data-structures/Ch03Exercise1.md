@@ -29,3 +29,24 @@ Thus the whole tree has $(2^k-1) + 1 + (2^k-1) = 2^{k+1}-1$ nodes.
 
 To summarize, we have shown that if the right spine of a leftist heap has $r$ nodes,
 then it contains at least $2^r-1$ nodes.
+
+With this lemma in mind, we can prove the original statement by contradiction.
+
+Assume there is a leftist heap that has $n$ elements, with its right spine containing $r'$ elements.
+Such that $r' > \lfloor \log(n+1) \rfloor$.
+
+By the lemma we have proved above, we can conclude that $n \ge 2^{r'}-1$.
+
+Notice that:
+
+* $n \ge 2^{r'}-1$
+* $n+1 \ge 2^{r'}$
+* $\log(n+1) \ge r'$
+
+Putting these two bounds on $r'$ together, we have:
+
+* $\lfloor \log(n+1) \rfloor < r' \le \log(n+1)$
+
+Because $r'$ must be an integer, there is no solution to it.
+Therefore we have shown that a leftist heap of size $n$ cannot contain
+more than $\lfloor \log(n+1) \rfloor$ elements.
