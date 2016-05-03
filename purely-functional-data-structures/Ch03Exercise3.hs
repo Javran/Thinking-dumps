@@ -45,10 +45,17 @@ sortByHeap2 = toAscList . fromList
 
 prove the time complexity of creating a leftist heap from a list.
 
-let i be the i-th pass, starting from 0:
+let i be the i-th pass, starting from 0: (with c being a constant)
 
-pass | number of elements | element tree size | right spine elements(at most)
-i    | n / 2^i            | 2^i               | floor( log(2^i+1) )
+pass | number of elements | element tree size | merge cost
+i    | n / 2^i            | 2^i               | O( log(2^i * 2) ) = (i+1)*c
+
+Total cost: sum( (i+1)*c*n/2^i , i = 0..ceil(log(n)) )
+
+we can work out sum( (i+1)/2^i, i = 0..m) for any m,
+which is:
+
+sum( (i+1)/2^i, i = 0..m) = 4-(3+m)/2^m
 
 -}
 main :: IO ()
