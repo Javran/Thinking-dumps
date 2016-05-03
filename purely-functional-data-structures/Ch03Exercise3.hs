@@ -7,6 +7,23 @@ import Ch03Leftist hiding (main)
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
+{-
+
+to show it the leftist heap creation takes ceil(log(n)) passes:
+
+let the size of the list be n, after i passes, the number of nodes in the list is:
+
+n / (2^i)
+
+so to merge this list of heaps into just one, we need to find the minimum i that satisfies:
+
+* n / (2^i) <= 1
+* n <= 2^i
+* log(n) <= i
+
+therefore it requires i = ceil(log(n)) passes
+
+-}
 fromList :: Ord a => [a] -> Heap a
 fromList = iter . map singleton
   where
