@@ -57,6 +57,16 @@ which is:
 
 sum( (i+1)/2^i, i = 0..m) = 4-(3+m)/2^m
 
+clearly ceil(log(n)) >= 1
+which means:
+
+   sum( (i+1)*c*n/2^i , i = 0..ceil(log(n)) )
+=  c*n*sum( (i+1)/2^i , i = 0..ceil(log(n)) )
+=  c*n*(4-(3+m)/2^m) (where m = ceil(log(n)))
+<= c*n*4 = log(c*n*4) = log(n)
+
+therefore the total cost is log(n)
+
 -}
 main :: IO ()
 main = hspec $ do
