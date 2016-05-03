@@ -63,9 +63,9 @@ which means:
    sum( (i+1)*c*n/2^i , i = 0..ceil(log(n)) )
 =  c*n*sum( (i+1)/2^i , i = 0..ceil(log(n)) )
 =  c*n*(4-(3+m)/2^m) (where m = ceil(log(n)))
-<= c*n*4 = log(c*n*4) = log(n)
+<= c*n*4 = O(c*n*4) = O(n)
 
-therefore the total cost is log(n)
+therefore the total cost is O(n)
 
 -}
 main :: IO ()
