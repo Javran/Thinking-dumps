@@ -41,8 +41,16 @@ fromList = iter . map singleton
 sortByHeap2 :: Ord a => [a] -> [a]
 sortByHeap2 = toAscList . fromList
 
--- TODO: prove time complexity?
+{-
 
+prove the time complexity of creating a leftist heap from a list.
+
+let i be the i-th pass, starting from 0:
+
+pass | number of elements | element tree size | right spine elements(at most)
+i    | n / 2^i            | 2^i               | floor( log(2^i+1) )
+
+-}
 main :: IO ()
 main = hspec $ do
     describe "Leftist" $ do
