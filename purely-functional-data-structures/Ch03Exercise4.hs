@@ -1,5 +1,11 @@
 module Ch03Exercise4 where
 
+import Test.Hspec
+import Test.QuickCheck
+import qualified Data.List as L
+{-# ANN module "HLint: ignore Redundant do" #-}
+
+
 -- the difference between leftist heap and
 -- weight-biased leftist heap is not too large
 
@@ -38,3 +44,30 @@ merge h1@(T _ x a1 b1) h2@(T _ y a2 b2) =
   if x <= y
     then makeT x a1 (merge b1 h2)
     else makeT y a2 (merge h1 b2)
+
+insert :: Ord a => a -> Heap a -> Heap a
+insert x = merge (singleton x)
+
+viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
+viewMin E = Nothing
+viewMin (T _ x a b) = Just (x, merge a b)
+
+findMin :: Ord a => Heap a -> Maybe a
+findMin = fmap fst . viewMin
+
+deleteMin :: Ord a => Heap a -> Maybe (Heap a)
+deleteMin = fmap snd . viewMin
+
+toAscList :: Ord a => Heap a -> [a]
+toAscList h = case viewMin h of
+    Nothing -> []
+    Just (v,newH) -> v : toAscList newH
+
+sortByHeap :: Ord a => [a] -> [a]
+sortByHeap = toAscList . foldr insert empty
+
+main :: IO ()
+main = hspec $ do
+    describe "Weight-biased Leftist" $ do
+      it "can sort elements" $ do
+        property $ \xs -> sortByHeap (xs :: [Int]) == L.sort xs
