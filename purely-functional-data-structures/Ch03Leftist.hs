@@ -26,7 +26,11 @@ rank :: Heap a -> Int
 rank E = 0
 rank (T rnk _ _ _) = rnk
 
-makeT :: Ord a => a -> Heap a -> Heap a -> Heap a
+-- it's not necessary to have constraints on "a"
+-- because the value is not checked at all.
+-- we only interested in putting one with less rank
+-- to the right.
+makeT :: a -> Heap a -> Heap a -> Heap a
 makeT x a b = if rank a >= rank b
   then T (rank b+1) x a b
   else T (rank a+1) x b a
