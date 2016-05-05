@@ -33,6 +33,9 @@ putting these two facts together we know this tree has (2^k-1)+1+(2^k-1) = 2^(k+
 
 therefore the conclusion.
 
+after this lemma is proved, everything goes exactly the same as the proof
+we have in exercise 3.1. the proof is informal so I'm not going to repeat it again.
+
 -}
 
 
