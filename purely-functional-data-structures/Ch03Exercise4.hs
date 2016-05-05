@@ -5,6 +5,36 @@ import Test.QuickCheck
 import qualified Data.List as L
 {-# ANN module "HLint: ignore Redundant do" #-}
 
+{-
+
+(a) prove that the right spine of a weighted-biased leftist heap
+    contains at most floor(log(n+1)) elements.
+
+I think the proof goes the same way as what we have done for exercise 3.1.
+
+First we can prove a lemma: if the right spine has r nodes,
+then the tree has at least 2^r-1 nodes.
+
+base case: r=1. true
+
+induction step:
+
+* assume when r=k, the tree has at least 2^k-1 nodes,
+
+* and we want to prove that when r = k+1, the tree will have at least 2^(k+1)-1 nodes:
+
+ignoring the root, and looking at both subtrees, they are both valid weight-biased
+leftist trees, and the right subtree has exactly k nodes on its right spine.
+thus right subtree has at least 2^k-1 nodes according to the assumption.
+further, according to the property of weight-biased leftist heap,
+left subtree should also has 2^k-1 nodes.
+
+putting these two facts together we know this tree has (2^k-1)+1+(2^k-1) = 2^(k+1)-1 nodes.
+
+therefore the conclusion.
+
+-}
+
 
 -- the difference between leftist heap and
 -- weight-biased leftist heap is not too large
