@@ -58,7 +58,7 @@ rank (T rnk _ _ _) = rnk
 singleton :: a -> Heap a
 singleton x = T 1 x E E
 
-makeT :: Ord a => a -> Heap a -> Heap a -> Heap a
+makeT :: a -> Heap a -> Heap a -> Heap a
 makeT x a b = if rank a >= rank b
     then T newRank x a b
     else T newRank x b a
@@ -70,13 +70,24 @@ makeT x a b = if rank a >= rank b
 
 -- seems we can keep "merge" the same
 -- as it has nothing to do with the rank we are modifying
+-- (c) implement top-down merge
 merge :: Ord a => Heap a -> Heap a -> Heap a
 merge l E = l
 merge E r = r
-merge h1@(T _ x a1 b1) h2@(T _ y a2 b2) =
+merge h1@(T sz1 x a1 b1) h2@(T sz2 y a2 b2) =
   if x <= y
-    then makeT x a1 (merge b1 h2)
-    else makeT y a2 (merge h1 b2)
+    then
+      let (l,r) = if rank a1 >= rank b1 + rank h2
+                    then (a1, merge b1 h2)
+                    else (merge b1 h2, a1)
+      in T sz x l r
+    else
+      let (l,r) = if rank a2 >= rank h1 + rank b2
+                    then (a2, merge h1 b2)
+                    else (merge h1 b2, a2)
+      in T sz y l r
+  where
+    sz = sz1 + sz2
 
 insert :: Ord a => a -> Heap a -> Heap a
 insert x = merge (singleton x)
