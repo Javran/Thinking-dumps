@@ -125,4 +125,7 @@ main = hspec $ do
     but the idea is, we only need to do it in one pass. so in a lazy environment the advantage
     might be that if we don't require a specific node, that whole subtree can be suspended.
 
+    in a concurrent environment, it might be true that the tree can have more fine-grained
+    on different parts of it. allows multiple threads to modify the same tree with as few
+    interference as possible.
 -}
