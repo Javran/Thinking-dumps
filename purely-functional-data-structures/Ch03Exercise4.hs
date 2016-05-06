@@ -120,4 +120,9 @@ main = hspec $ do
 (d) the advantage is that the top-down approach traverses the tree only once,
     once we go into a node, the shape of its parent is determined (we don't have to go back
     and switch subtrees according to the rank as we did in a leftist heap)
+
+    I'm not sure about what's important about lazy environment or concurrent environment,
+    but the idea is, we only need to do it in one pass. so in a lazy environment the advantage
+    might be that if we don't require a specific node, that whole subtree can be suspended.
+
 -}
