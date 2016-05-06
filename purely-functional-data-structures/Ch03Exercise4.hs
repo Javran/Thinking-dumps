@@ -115,3 +115,9 @@ main = hspec $ do
     describe "Weight-biased Leftist" $ do
       it "can sort elements" $ do
         property $ \xs -> sortByHeap (xs :: [Int]) == L.sort xs
+
+{-
+(d) the advantage is that the top-down approach traverses the tree only once,
+    once we go into a node, the shape of its parent is determined (we don't have to go back
+    and switch subtrees according to the rank as we did in a leftist heap)
+-}
