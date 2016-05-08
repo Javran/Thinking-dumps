@@ -57,3 +57,9 @@ viewMinTree (t:ts) = do
       then (t,ts)
       else (t',t:ts')
 viewMinTree [] = Nothing
+
+findMin :: Ord a => Heap a -> Maybe (Tree a)
+findMin x =  fst <$> viewMinTree x
+
+deleteMin :: Ord a => Heap a -> Maybe (Heap a)
+deleteMin x = snd <$> viewMinTree x
