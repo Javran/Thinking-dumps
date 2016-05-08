@@ -15,7 +15,7 @@ rank :: Tree a -> Int
 rank (Node v _ _) = v
 
 -- | "insTree" is an internal function,
--- | "insTree t ts" should only be called when rank t <= rank t'
+-- | "insTree t ts" should only be called when "ts" is empty or "rank t <= rank (head ts)"
 -- | otherwise trees of different ranks will be passed to "link"
 -- | breaking its invariant.
 insTree :: Ord a => Tree a -> Heap a -> Heap a
@@ -33,3 +33,15 @@ singleton v = Node 0 v []
 -- is found in the list of trees
 insert :: Ord a => a -> Heap a -> Heap a
 insert x ts = insTree (singleton x) ts
+
+merge :: Ord a => Heap a -> Heap a -> Heap a
+merge ts1 [] = ts1
+merge [] ts2 = ts2
+merge ts1@(t1:ts1') ts2@(t2:ts2')
+    | rank t1 < rank t2 = t1 : merge ts1' ts2
+    | rank t1 > rank t2 = t2 : merge ts1 ts2'
+    | otherwise =
+        -- on this branch we know rank r = rank t1 == rank t2
+        -- and that r+1 <= head ts1' and r+1 <= head ts2'
+        -- so the function call above is safe.
+        insTree (link t1 t2) (merge ts1' ts2')
