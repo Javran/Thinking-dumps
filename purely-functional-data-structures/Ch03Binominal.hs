@@ -49,12 +49,11 @@ merge ts1@(t1:ts1') ts2@(t2:ts2')
 root :: Tree a -> a
 root (Node _ v _) = v
 
-removeMinTree :: Ord a => Heap a -> (Tree a, Heap a)
-removeMinTree [x] = (x,[])
-removeMinTree (t:ts) =
-    if root t <= root t'
+viewMinTree :: Ord a => Heap a -> Maybe (Tree a, Heap a)
+viewMinTree [x] = Just (x,[])
+viewMinTree (t:ts) = do
+    (t',ts') <- viewMinTree ts
+    Just $ if root t <= root t'
       then (t,ts)
       else (t',t:ts')
-  where
-    (t',ts') = removeMinTree ts
-removeMinTree [] = error "removeMinTree: empty heap"
+viewMinTree [] = Nothing
