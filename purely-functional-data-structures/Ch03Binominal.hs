@@ -45,3 +45,16 @@ merge ts1@(t1:ts1') ts2@(t2:ts2')
         -- and that r+1 <= head ts1' and r+1 <= head ts2'
         -- so the function call above is safe.
         insTree (link t1 t2) (merge ts1' ts2')
+
+root :: Tree a -> a
+root (Node _ v _) = v
+
+removeMinTree :: Ord a => Heap a -> (Tree a, Heap a)
+removeMinTree [x] = (x,[])
+removeMinTree (t:ts) =
+    if root t <= root t'
+      then (t,ts)
+      else (t',t:ts')
+  where
+    (t',ts') = removeMinTree ts
+removeMinTree [] = error "removeMinTree: empty heap"
