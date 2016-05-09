@@ -1,11 +1,11 @@
-module Ch03BinominalTest where
+module Ch03BinomialTest where
 
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.List as L
 import Data.Foldable
 
-import Ch03Binominal
+import Ch03Binomial
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 

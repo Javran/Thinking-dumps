@@ -1,4 +1,4 @@
-module Ch03Binominal
+module Ch03Binomial
   ( Heap
   , root
   , rank
