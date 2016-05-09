@@ -15,7 +15,7 @@ toAscList h = case viewMin h of
     Just (v, h') -> v : toAscList h'
 
 sortByHeap :: Ord a => [a] -> [a]
-sortByHeap = toAscList . foldl' (flip insert) empty
+sortByHeap = toAscList . fromList
 
 main :: IO ()
 main = hspec $ do

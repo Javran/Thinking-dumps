@@ -12,8 +12,13 @@ module Ch03Binomial
   , deleteMin
 
   , insert
+  , fromList
+
+  , viewMinTree
 
   ) where
+
+import Data.Foldable
 
 data Tree a = Node Int a [Tree a]
 
@@ -89,3 +94,6 @@ empty = []
 
 isEmpty :: Heap a -> Bool
 isEmpty = null
+
+fromList :: Ord a => [a] -> Heap a
+fromList = foldl' (flip insert) empty
