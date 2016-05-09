@@ -2,16 +2,21 @@ module Ch03Exercise5 where
 
 import Test.Hspec
 import Test.QuickCheck
-import qualified Data.List as L
-import Data.Foldable
 
 import Ch03Binomial hiding (findMin)
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 -- exercise: define "findMin" directly rather than via a call to "viewMinTree"
 
+-- again I'm not sure what's the point of this exercise,
+-- as it's just a process of replacing terms with their definitions.
+-- but let's do this anyway.
 findMin :: Ord a => Heap a -> Maybe a
-findMin ts = fst <$> viewMin ts
+findMin [Node _ x _] = Just x
+findMin (t:ts) = do
+    v2 <- findMin ts
+    Just $ if root t <= v2 then root t else v2
+findMin [] = Nothing
 
 main :: IO ()
 main = hspec $ do

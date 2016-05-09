@@ -1,5 +1,6 @@
 module Ch03Binomial
   ( Heap
+  , Tree(..)
   , root
   , rank
   , empty
