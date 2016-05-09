@@ -1,4 +1,18 @@
-module Ch03Binominal where
+module Ch03Binominal
+  ( Heap
+  , root
+  , rank
+  , empty
+  , singleton
+  , isEmpty
+  , merge
+
+  , findMin
+  , deleteMin
+
+  , insert
+
+  ) where
 
 data Tree a = Node Int a [Tree a]
 
@@ -63,3 +77,9 @@ findMin x =  fst <$> viewMinTree x
 
 deleteMin :: Ord a => Heap a -> Maybe (Heap a)
 deleteMin x = snd <$> viewMinTree x
+
+empty :: Heap a
+empty = []
+
+isEmpty :: Heap a -> Bool
+isEmpty = null
