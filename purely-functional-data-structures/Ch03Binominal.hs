@@ -72,11 +72,13 @@ viewMinTree (t:ts) = do
       else (t',t:ts')
 viewMinTree [] = Nothing
 
-findMin :: Ord a => Heap a -> Maybe (Tree a)
-findMin x =  fst <$> viewMinTree x
+findMin :: Ord a => Heap a -> Maybe a
+findMin x = root . fst <$> viewMinTree x
 
 deleteMin :: Ord a => Heap a -> Maybe (Heap a)
-deleteMin x = snd <$> viewMinTree x
+deleteMin ts = do
+    (Node _ _ ts1, ts2) <- viewMinTree ts
+    pure (merge (reverse ts1) ts2)
 
 empty :: Heap a
 empty = []
