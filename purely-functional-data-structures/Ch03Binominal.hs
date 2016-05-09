@@ -7,6 +7,7 @@ module Ch03Binominal
   , isEmpty
   , merge
 
+  , viewMin
   , findMin
   , deleteMin
 
@@ -73,12 +74,15 @@ viewMinTree (t:ts) = do
 viewMinTree [] = Nothing
 
 findMin :: Ord a => Heap a -> Maybe a
-findMin x = root . fst <$> viewMinTree x
+findMin ts = fst <$> viewMin ts
 
 deleteMin :: Ord a => Heap a -> Maybe (Heap a)
-deleteMin ts = do
-    (Node _ _ ts1, ts2) <- viewMinTree ts
-    pure (merge (reverse ts1) ts2)
+deleteMin ts = snd <$> viewMin ts
+
+viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
+viewMin ts = do
+    (Node _ x ts1, ts2) <- viewMinTree ts
+    pure (x, merge (reverse ts1) ts2)
 
 empty :: Heap a
 empty = []
