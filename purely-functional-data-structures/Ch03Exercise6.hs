@@ -50,3 +50,23 @@ merge ts1@((_,t1):ts1') ts2@((_,t2):ts2')
         -- and that r+1 <= head ts1' and r+1 <= head ts2'
         -- so the function call above is safe.
         insTree (link t1 t2) (merge ts1' ts2')
+
+viewMinTree :: Ord a => Heap a -> Maybe (Tree a, Heap a)
+viewMinTree [(_,x)] = Just (x,[])
+viewMinTree ((_,t):ts) = do
+    (t',ts') <- viewMinTree ts
+    Just $ if root t <= root t'
+      then (t,ts)
+      else (t',(rank t,t):ts')
+viewMinTree [] = Nothing
+
+findMin :: Ord a => Heap a -> Maybe a
+findMin ts = fst <$> viewMin ts
+
+deleteMin :: Ord a => Heap a -> Maybe (Heap a)
+deleteMin ts = snd <$> viewMin ts
+
+viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
+viewMin ts = do
+    (Node x ts1, ts2) <- viewMinTree ts
+    pure (x, merge (reverse $ map (\t -> (rank t,t)) ts1) ts2)
