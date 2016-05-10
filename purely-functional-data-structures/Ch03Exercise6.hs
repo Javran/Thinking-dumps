@@ -38,3 +38,15 @@ insTree t ts@((_,t'):ts') =
 -- is found in the list of trees
 insert :: Ord a => a -> Heap a -> Heap a
 insert x ts = insTree (singleton x) ts
+
+merge :: Ord a => Heap a -> Heap a -> Heap a
+merge ts1 [] = ts1
+merge [] ts2 = ts2
+merge ts1@((_,t1):ts1') ts2@((_,t2):ts2')
+    | rank t1 < rank t2 = (rank t1, t1) : merge ts1' ts2
+    | rank t1 > rank t2 = (rank t2, t2) : merge ts1 ts2'
+    | otherwise =
+        -- on this branch we know rank r = rank t1 == rank t2
+        -- and that r+1 <= head ts1' and r+1 <= head ts2'
+        -- so the function call above is safe.
+        insTree (link t1 t2) (merge ts1' ts2')
