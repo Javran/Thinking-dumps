@@ -1,5 +1,12 @@
 module Ch03Exercise6 where
 
+import Test.Hspec
+import Test.QuickCheck
+import qualified Data.List as L
+import Data.Foldable
+
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 data Tree a = Node a [Tree a]
 
 type Heap a = [(Int, Tree a)]
@@ -70,3 +77,21 @@ viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
 viewMin ts = do
     (Node x ts1, ts2) <- viewMinTree ts
     pure (x, merge (reverse $ map (\t -> (rank t,t)) ts1) ts2)
+
+fromList :: Ord a => [a] -> Heap a
+fromList = foldl' (flip insert) empty
+
+
+toAscList :: Ord a => Heap a -> [a]
+toAscList h = case viewMin h of
+    Nothing -> []
+    Just (v, h') -> v : toAscList h'
+
+sortByHeap :: Ord a => [a] -> [a]
+sortByHeap = toAscList . fromList
+
+main :: IO ()
+main = hspec $ do
+    describe "Binomial2" $ do
+      it "can sort elements" $ do
+        property $ \xs -> sortByHeap (xs :: [Int]) == L.sort xs
