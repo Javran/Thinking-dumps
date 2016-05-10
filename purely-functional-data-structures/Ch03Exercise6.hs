@@ -9,6 +9,9 @@ import Data.Foldable
 
 data Tree a = Node a [Tree a]
 
+-- actually the paired ranks are also redundant,
+-- I'm not sure why we have to keep the top level rank numbers
+-- but let's do this anyway.
 type Heap a = [(Int, Tree a)]
 
 rank :: Tree a -> Int
