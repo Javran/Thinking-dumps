@@ -30,3 +30,7 @@ insert x s = T Black a y b
         | x > y1 = balance color a1 y1 (ins b1)
         | otherwise = s1
     (T _ a y b) = ins s
+
+toAscList :: Tree a -> [a]
+toAscList E = []
+toAscList (T _ l v r) = toAscList l ++ v : toAscList r
