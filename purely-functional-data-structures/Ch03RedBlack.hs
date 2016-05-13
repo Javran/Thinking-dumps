@@ -20,3 +20,13 @@ balance Black (T Red a x (T Red b y c)) z d = T Red (T Black a x b) y (T Black c
 balance Black a x (T Red (T Red b y c) z d) = T Red (T Black a x b) y (T Black c z d)
 balance Black a x (T Red b y (T Red c z d)) = T Red (T Black a x b) y (T Black c z d)
 balance color l v r = T color l v r
+
+insert :: Ord a => a -> Tree a -> Tree a
+insert x s = T Black a y b
+  where
+    ins E = T Red E x E
+    ins s1@(T color a1 y1 b1)
+        | x < y1 = balance color (ins a1) y1 b1
+        | x > y1 = balance color a1 y1 (ins b1)
+        | otherwise = s1
+    (T _ a y b) = ins s
