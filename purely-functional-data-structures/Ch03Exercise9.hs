@@ -1,5 +1,7 @@
 module Ch03Exercise9 where
 
+import Ch03RedBlack
+
 {-
 
 I think there are two ways of doing this (could be more)
@@ -21,10 +23,19 @@ I think there are two ways of doing this (could be more)
 
   notice that:
   - a perfect binary tree is always a valid red-black tree with all nodes colored black.
-  - a complete binary tree will always be a valid red-black tree if you color the last incompelete layer
-    of nodes red and every other nodes black.
+  - a complete binary tree will always be a valid red-black tree
+    if you color the last incompelete layer of nodes red and every other nodes black.
 
-  knowing these facts, we can build a red-black tree from sorted list by making a complete binary tree,
+  knowing these facts, we can build a red-black tree from sorted list
+  by making a complete binary tree,
   and coloring last incomplete layer red and every other nodes black.
 
 -}
+
+-- split a number n into (d, extra) such that n = (2^d-1) + extra
+-- with maximum possible d
+splitDepthExtra :: Int -> (Int, Int)
+splitDepthExtra n = (d, n - fullSize)
+  where
+    fullSize = d ^(2 :: Int) - 1
+    d = floor (logBase 2 (fromIntegral n + 1 :: Double))
