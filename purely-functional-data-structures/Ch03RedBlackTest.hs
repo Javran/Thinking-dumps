@@ -23,4 +23,6 @@ main = hspec $ do
         property $ \xs -> sortByTree (xs :: [Int]) ==
                           (IS.toAscList . IS.fromList $ xs)
       it "should satisfy property of black node depth" $ do
-        property $ \xs -> isJust . countBlackDepth .  fromList $ (xs :: [Int])
+        property $ \xs -> isJust . countBlackDepth . fromList $ (xs :: [Int])
+      it "should satisfy the color property" $ do
+        property $ \xs -> checkColorProperty . fromList $ (xs :: [Int])

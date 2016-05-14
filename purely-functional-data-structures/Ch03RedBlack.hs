@@ -1,8 +1,9 @@
 module Ch03RedBlack where
 
 import Control.Monad
+import Data.Maybe
 
-data Color = Red | Black
+data Color = Red | Black deriving (Eq)
 
 data Tree a = E | T Color (Tree a) a (Tree a)
 
@@ -52,3 +53,15 @@ countBlackDepth (T c l _ r) = do
     case c of
         Black -> pure (lDep + 1)
         Red -> pure lDep
+
+checkColorProperty' :: Tree a -> Maybe ()
+checkColorProperty' E = Just ()
+checkColorProperty' (T c l _ r) = do
+    checkColorProperty' l
+    checkColorProperty' r
+    case c of
+        Black -> pure ()
+        Red -> guard $ color l /= Red && color r /= Red
+
+checkColorProperty :: Tree a -> Bool
+checkColorProperty = isJust . checkColorProperty'
