@@ -3,9 +3,9 @@ module Ch03RedBlack where
 import Control.Monad
 import Data.Maybe
 
-data Color = Red | Black deriving (Eq)
+data Color = Red | Black deriving (Eq, Show)
 
-data Tree a = E | T Color (Tree a) a (Tree a)
+data Tree a = E | T Color (Tree a) a (Tree a) deriving (Show)
 
 empty :: Tree a
 empty = E

@@ -40,7 +40,7 @@ I think there are two ways of doing this (could be more)
 splitDepthExtra :: Int -> (Int, Int)
 splitDepthExtra n = (d, n - fullSize)
   where
-    fullSize = d ^(2 :: Int) - 1
+    fullSize = 2 ^ d - 1
     d = floor (logBase 2 (fromIntegral n + 1 :: Double))
 
 
