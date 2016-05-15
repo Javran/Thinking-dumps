@@ -43,7 +43,6 @@ splitDepthExtra n = (d, n - fullSize)
     fullSize = 2 ^ d - 1
     d = floor (logBase 2 (fromIntegral n + 1 :: Double))
 
-
 buildTree :: forall a. (Int, Int) -> State [a] (Tree a)
 buildTree (dep,extra)
     | dep == 0 = pure E
@@ -72,3 +71,8 @@ buildTree (dep,extra)
   where
     consumeOne :: State [a] a
     consumeOne = gets head <* modify tail
+
+fromOrdList :: [a] -> Tree a
+fromOrdList xs = evalState (buildTree (splitDepthExtra l)) xs
+  where
+    l = length xs
