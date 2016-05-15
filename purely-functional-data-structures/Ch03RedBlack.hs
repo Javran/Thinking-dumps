@@ -65,3 +65,7 @@ checkColorProperty' (T c l _ r) = do
 
 checkColorProperty :: Tree a -> Bool
 checkColorProperty = isJust . checkColorProperty'
+
+-- check red-black tree properties in one function
+checkRedBlackTree :: Tree a -> Bool
+checkRedBlackTree t = checkColorProperty t && isJust (countBlackDepth t)

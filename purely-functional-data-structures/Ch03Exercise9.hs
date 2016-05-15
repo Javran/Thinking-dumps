@@ -1,9 +1,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Ch03Exercise9 where
 
+import Test.Hspec
+import Test.QuickCheck
 import Ch03RedBlack
-
 import Control.Monad.State
+
+
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 
 {-
 
@@ -76,3 +81,13 @@ fromOrdList :: [a] -> Tree a
 fromOrdList xs = evalState (buildTree (splitDepthExtra l)) xs
   where
     l = length xs
+
+main :: IO ()
+main = hspec $ do
+    describe "fromOrdList" $ do
+      it "should create valid red-black trees" $ do
+        property $ do
+            -- randomly picking up a list of elements
+            n <- choose (0,1000 :: Int)
+            let t = fromOrdList [1..n]
+            pure $ checkRedBlackTree t
