@@ -1,6 +1,9 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Ch03Exercise9 where
 
 import Ch03RedBlack
+
+import Control.Monad.State
 
 {-
 
@@ -39,3 +42,33 @@ splitDepthExtra n = (d, n - fullSize)
   where
     fullSize = d ^(2 :: Int) - 1
     d = floor (logBase 2 (fromIntegral n + 1 :: Double))
+
+
+buildTree :: forall a. (Int, Int) -> State [a] (Tree a)
+buildTree (dep,extra)
+    | dep == 0 = pure E
+    | dep == 1 = case extra of
+        0 -> consumeOne >>= \x -> pure (T Black E x E)
+        1 -> do
+            l <- consumeOne
+            v <- consumeOne
+            pure (T Black (T Red E l E) v E)
+        2 -> do
+            l <- consumeOne
+            v <- consumeOne
+            r <- consumeOne
+            pure (T Black (T Red E l E) v (T Red E r E))
+        _ -> error "wrong split"
+    | dep > 1 = do
+        let fullSubCount = 2 ^ (dep-1) :: Int
+            (lSize, rSize) = if extra <= fullSubCount
+                               then (extra,0)
+                               else (fullSubCount, extra-fullSubCount)
+        lTree <- buildTree (dep-1,lSize)
+        v <- consumeOne
+        rTree <- buildTree (dep-1,rSize)
+        pure (T Black lTree v rTree)
+    | otherwise = error "wrong depth"
+  where
+    consumeOne :: State [a] a
+    consumeOne = gets head <* modify tail
