@@ -25,6 +25,7 @@ I think there are two ways of doing this (could be more)
   these 2 subtrees. But the problem is, I didn't find an obvious way to enforce the depth
   of 2 subtrees to be the same. I feel some clever way of constructing these 2 subtrees
   is needed for this idea to work.
+  (skipping this idea as I feel it's more complicated than I thought.)
 
 * another idea, comes from http://cs.stackexchange.com/a/26300 (thanks to @FrankW).
   and I think this is easier to implement.
@@ -56,10 +57,13 @@ buildTree (dep,extra)
     | dep == 0 = pure E
     | dep == 1 = case extra of
         0 -> consumeOne >>= \x -> pure (T Black E x E)
+        -- one extra, meaning it only has a left red node
         1 -> do
             l <- consumeOne
             v <- consumeOne
             pure (T Black (T Red E l E) v E)
+        -- two extra nodes, meaning it has both children
+        -- (and all of them should be in red)
         2 -> do
             l <- consumeOne
             v <- consumeOne
