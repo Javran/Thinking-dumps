@@ -48,6 +48,7 @@ splitDepthExtra n = (d, n - fullSize)
     fullSize = 2 ^ d - 1
     d = floor (logBase 2 (fromIntegral n + 1 :: Double))
 
+-- build red-black tree by consuming a sorted list of elements
 buildTree :: forall a. (Int, Int) -> State [a] (Tree a)
 buildTree (dep,extra)
     | dep == 0 = pure E
@@ -68,6 +69,7 @@ buildTree (dep,extra)
             (lSize, rSize) = if extra <= fullSubCount
                                then (extra,0)
                                else (fullSubCount, extra-fullSubCount)
+        -- build left-subtree, the node itself and right-subtree in right order
         lTree <- buildTree (dep-1,lSize)
         v <- consumeOne
         rTree <- buildTree (dep-1,rSize)
@@ -78,7 +80,8 @@ buildTree (dep,extra)
     consumeOne = gets head <* modify tail
 
 fromOrdList :: [a] -> Tree a
-fromOrdList xs = evalState (buildTree (splitDepthExtra l)) xs
+fromOrdList xs =
+    evalState (buildTree (splitDepthExtra l)) xs
   where
     l = length xs
 
