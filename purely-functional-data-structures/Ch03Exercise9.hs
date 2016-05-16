@@ -49,6 +49,8 @@ splitDepthExtra n = (d, n - fullSize)
     d = floor (logBase 2 (fromIntegral n + 1 :: Double))
 
 -- build red-black tree by consuming a sorted list of elements
+-- "dep" is the depth of the tree, "extra" indicates how many red children
+-- should this subtree have
 buildTree :: forall a. (Int, Int) -> State [a] (Tree a)
 buildTree (dep,extra)
     | dep == 0 = pure E
@@ -81,6 +83,13 @@ buildTree (dep,extra)
 
 fromOrdList :: [a] -> Tree a
 fromOrdList xs =
+    -- I feel it's tricky to build such a structure in a purely functional
+    -- setting, because we cannot just look at certain parts of the list
+    -- and build the corresponding part immediately.
+    -- so here a State is used as a source of sorted elements,
+    -- if we ignore all values,
+    -- the red-black tree can be built by just looking at numbers
+    -- then the value is taken from State one by one to put them in their right places
     evalState (buildTree (splitDepthExtra l)) xs
   where
     l = length xs
