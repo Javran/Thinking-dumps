@@ -126,4 +126,12 @@ main = hspec $ do
     (so there's only one case where the root will be colored red: when root nodes of both subtrees
     are black)
 
+    for (2), things become a little bit tricky. so we know two subtrees have different black depth.
+    but given l+1 == r, we know the depth can only differ by one.
+    if the left subtree is colored red, simply turning it into black solves the problem.
+    and then the color of root node is determined the same way as we've described above.
+
+    but for now I have no idea about what to do if l+1 == r and left subtree's root node is already colored black.
+    no proof but I suspect when subtree size differs, the left subtree's root node has to be red.
+
 -}
