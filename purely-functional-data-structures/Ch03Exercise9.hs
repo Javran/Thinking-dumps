@@ -107,3 +107,23 @@ main = hspec $ do
             n <- choose (0,1000 :: Int)
             let t = fromOrdList [1..n]
             pure $ checkRedBlackTree t
+
+{-
+    some draft about my first idea:
+
+    here we will relax red-black tree a little bit: allowing root node to be colored red,
+    this is to make it convenient to increase the depth of black node by one:
+    simply changing a red node into a black one will do.
+
+    so the basic idea is to have some small examples as base,
+    then for a larger number n, we split it into n = 1 + l + r, where either (1) l == r or (2) l+1 == r
+
+    for (1), it's easy, since l == r and we are constructing red-black trees by using only size,
+    so left subtree and right subtree will have exactly the same shape and color.
+
+    the color of root node is determined by looking at the root of both subtrees:
+    if either of them is red, we color root node black, otherwise we color it red
+    (so there's only one case where the root will be colored red: when root nodes of both subtrees
+    are black)
+
+-}
