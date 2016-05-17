@@ -133,5 +133,16 @@ main = hspec $ do
 
     but for now I have no idea about what to do if l+1 == r and left subtree's root node is already colored black.
     no proof but I suspect when subtree size differs, the left subtree's root node has to be red.
+    (TODO: impl this down and see if we can brute force to find a counterexample)
+
+    some table I have:
+    notation: (<l> <this node> <r>), _ means empty
+
+    1: R
+    2: (R B _)
+    3: (R B R)
+    4: (B R (R B _))
+    5: ((R B _) R (R B _))
+    6: ((R B _) R (R B R))
 
 -}
