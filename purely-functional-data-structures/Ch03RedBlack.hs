@@ -1,11 +1,16 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Ch03RedBlack where
 
 import Control.Monad
 import Data.Maybe
+import GHC.Generics
+import Control.DeepSeq
 
-data Color = Red | Black deriving (Eq, Show)
+data Color = Red | Black deriving (Eq, Show, Generic)
+data Tree a = E | T Color (Tree a) a (Tree a) deriving (Show, Generic)
 
-data Tree a = E | T Color (Tree a) a (Tree a) deriving (Show)
+instance NFData Color
+instance NFData a => NFData (Tree a)
 
 empty :: Tree a
 empty = E
