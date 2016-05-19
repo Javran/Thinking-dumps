@@ -6,7 +6,6 @@ import Control.DeepSeq
 buildTree :: Int -> (Int, Tree ())
 buildTree 0 = (0, E)
 buildTree 1 = (0, T Red E () E)
-buildTree 2 = (1, T Black (T Red E () E) () E)
 buildTree n = (if rootColor == Red then rH else rH+1, T rootColor lTree () rTree)
   where
     lCount = (n - 1) `div` 2

@@ -139,10 +139,10 @@ main = hspec $ do
     notation: (<l> <this node> <r>), _ means empty
 
     1: R
-    2: (R B _)
+    2: (R _ B)
     3: (R B R)
-    4: (B R (R B _))
-    5: ((R B _) R (R B _))
-    6: ((R B _) R (R B R))
+    4: (B R (R _ B))
+    5: ((R _ B) R (R _ B))
+    6: ((R _ B) B (R B R))
 
 -}
