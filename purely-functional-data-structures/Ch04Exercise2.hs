@@ -49,6 +49,26 @@ so "foo3 = 1:insert 2 []"
 
 -}
 
+{-
+
+I'm not going to give a formal proof, but the idea is:
+
+* say the list is a_1, a_2, ... a_n
+* the sorted list thunk, when not yet being evaluated, looks like:
+  "insert a_n (insert a_{n-1} (... (insert a_2 (insert a_1 []))))"
+* forcing the first element of the result causes each "insert a_i _" to make one step further:
+  moving the smallest element in front of the list but keeping rest of the computation suspended.
+  in this process, "insert a_x _" with "a_x" being the smallest element is moved out of the thunk.
+* so forcing the first element of the result causes only (n-1) comparisons to happen.
+  and similarly if we further forcing the second element of it, it will take (n-2) extra comparisons
+  ...
+* for taking first k elements, we are calculating the sum of n-1, n-2, ..., n-k plus C*k
+  where C is some constant that each round of computation has to take.
+
+  the total time: O( n*k - (k+1)*k/2 + C*k ) = O( (n+C)*k-k^2/2 - k/2 ) = O(n*k)
+
+-}
+
 insertionSort :: Ord a => [a] -> [a]
 insertionSort = foldl' (flip insert) []
 
