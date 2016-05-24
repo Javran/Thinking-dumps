@@ -1,5 +1,13 @@
 module Ch05Queue where
 
+-- a queue is a pair of lists (f, r), where:
+-- + "f" contains the front elements
+-- + "r" contains the rear elements in reversed order
+-- + so "f ++ reverse r" converts the queue to a normal list
+-- + it is designed in this way to have quick access to the first
+--   and the last element of the collection.
+-- + INVARIANT: "f" is empty only if "r" is empty.
+--   in other words, "f" is always non-empty unless the whole queue is empty.
 type Queue a = ([a], [a])
 
 empty :: Queue a
@@ -9,6 +17,11 @@ isEmpty :: Queue a -> Bool
 isEmpty ([], _) = True -- according to the invariant
 isEmpty _ = False
 
+-- maintain the invariant
+checkF :: Queue a -> Queue a
+checkF ([], r) = (reverse r, [])
+checkF v = v
+
 qHead :: Queue a -> a
 qHead (x:f, r) = x
 
@@ -17,9 +30,3 @@ qTail (x:f, r) = checkF (f,r)
 
 qSnoc :: Queue a -> a -> Queue a
 qSnoc (f,r) x = checkF (f, x:r)
-
--- maintain the invariant that "f" part is empty
--- only if "r" is also empty
-checkF :: Queue a -> Queue a
-checkF ([], r) = (reverse r, [])
-checkF v = v
