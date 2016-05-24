@@ -30,3 +30,19 @@ qTail (x:f, r) = checkF (f,r)
 
 qSnoc :: Queue a -> a -> Queue a
 qSnoc (f,r) x = checkF (f, x:r)
+
+{-
+
+"tail" and "snoc" both take O(1) amortized time.
+
+Banker's method:
+
+* when "snoc" on an non-empty list, in addition to the actual O(1) operation,
+  we assign an extra credit to that element.
+* whenever a "reverse" is triggered, that extra credit is spent to cover the cost.
+
+Physicst's method:
+
+* define the potential to be the length of the rear list
+
+-}
