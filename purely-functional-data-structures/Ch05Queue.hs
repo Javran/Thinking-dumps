@@ -1,5 +1,7 @@
 module Ch05Queue where
 
+import Data.Maybe
+
 -- a queue is a pair of lists (f, r), where:
 -- + "f" contains the front elements
 -- + "r" contains the rear elements in reversed order
@@ -22,11 +24,16 @@ checkF :: Queue a -> Queue a
 checkF ([], r) = (reverse r, [])
 checkF v = v
 
+qView :: Queue a -> Maybe (a, Queue a)
+qView q
+    | (x:f, r) <- q = Just (x, checkF (f,r))
+    | otherwise = Nothing
+
 qHead :: Queue a -> a
-qHead (x:f, r) = x
+qHead = fst . fromJust . qView
 
 qTail :: Queue a -> Queue a
-qTail (x:f, r) = checkF (f,r)
+qTail = snd . fromJust . qView
 
 qSnoc :: Queue a -> a -> Queue a
 qSnoc (f,r) x = checkF (f, x:r)
