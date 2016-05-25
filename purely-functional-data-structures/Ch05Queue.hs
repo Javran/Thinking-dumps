@@ -38,6 +38,9 @@ qTail = snd . fromJust . qView
 qSnoc :: Queue a -> a -> Queue a
 qSnoc (f,r) x = checkF (f, x:r)
 
+toList :: Queue a -> [a]
+toList (f,r) = f ++ reverse r
+
 {-
 
 "tail" and "snoc" both take O(1) amortized time.
