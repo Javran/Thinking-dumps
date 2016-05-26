@@ -12,4 +12,4 @@ main = hspec $ do
     describe "Queue" $ do
       it "inserts correctly" $ do
           property $ \ xs ->
-              Q.toList (foldl' Q.qSnoc Q.empty xs) == (xs :: [Int])
+              Q.toList (foldl' Q.snoc Q.empty xs) == (xs :: [Int])

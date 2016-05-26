@@ -1,5 +1,15 @@
-module Ch05Queue where
+module Ch05Queue
+  ( Queue
+  , empty
+  , isEmpty
+  , view
+  , head
+  , tail
+  , snoc
+  , toList
+  ) where
 
+import Prelude hiding (head,tail)
 import Data.Maybe
 
 -- a queue is a pair of lists (f, r), where:
@@ -24,19 +34,19 @@ checkF :: Queue a -> Queue a
 checkF ([], r) = (reverse r, [])
 checkF v = v
 
-qView :: Queue a -> Maybe (a, Queue a)
-qView q
+view :: Queue a -> Maybe (a, Queue a)
+view q
     | (x:f, r) <- q = Just (x, checkF (f,r))
     | otherwise = Nothing
 
-qHead :: Queue a -> a
-qHead = fst . fromJust . qView
+head :: Queue a -> a
+head = fst . fromJust . view
 
-qTail :: Queue a -> Queue a
-qTail = snd . fromJust . qView
+tail :: Queue a -> Queue a
+tail = snd . fromJust . view
 
-qSnoc :: Queue a -> a -> Queue a
-qSnoc (f,r) x = checkF (f, x:r)
+snoc :: Queue a -> a -> Queue a
+snoc (f,r) x = checkF (f, x:r)
 
 toList :: Queue a -> [a]
 toList (f,r) = f ++ reverse r
