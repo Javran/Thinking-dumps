@@ -28,3 +28,14 @@ checkDq dq = case dq of
 
 half :: [a] -> ([a],[a])
 half xs = splitAt (length xs `div` 2) xs
+
+viewHead :: Deque a -> Maybe (a, Deque a)
+viewHead ([],[]) = Nothing
+viewHead (x:f,r)= Just (x, checkDq (f,r))
+viewHead _ = error "invariant violated"
+
+viewLast :: Deque a -> Maybe (a, Deque a)
+viewLast ([],[]) = Nothing
+viewLast ([v],[]) = Just (v,empty)
+viewLast (f,x:r) = Just (x, checkDq (f,r))
+viewLast _ = error "invariant violated"
