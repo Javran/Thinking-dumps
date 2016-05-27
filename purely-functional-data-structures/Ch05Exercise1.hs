@@ -10,6 +10,8 @@ module Ch05Exercise1
   , tail
   , last
   , init
+
+  , toList
   ) where
 
 import Prelude hiding (head,tail,last,init)
@@ -72,3 +74,6 @@ cons v (f,r) = checkDq (v:f,r)
 
 snoc :: Deque a -> a -> Deque a
 snoc (f,r) v = checkDq (f,v:r)
+
+toList :: Deque a -> [a]
+toList (f,r) = f ++ reverse r
