@@ -1,5 +1,18 @@
-module Ch05Exercise1 where
+module Ch05Exercise1
+  ( Deque
+  , empty
+  , isEmpty
 
+  , cons
+  , snoc
+
+  , head
+  , tail
+  , last
+  , init
+  ) where
+
+import Prelude hiding (head,tail,last,init)
 import Data.Maybe
 
 type Deque a = ([a], [a])
