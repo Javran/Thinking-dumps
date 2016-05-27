@@ -1,5 +1,7 @@
 module Ch05Exercise1 where
 
+import Data.Maybe
+
 type Deque a = ([a], [a])
 
 empty :: Deque a
@@ -39,3 +41,21 @@ viewLast ([],[]) = Nothing
 viewLast ([v],[]) = Just (v,empty)
 viewLast (f,x:r) = Just (x, checkDq (f,r))
 viewLast _ = error "invariant violated"
+
+head :: Deque a -> a
+head = fst . fromJust . viewHead
+
+tail :: Deque a -> Deque a
+tail = snd . fromJust . viewHead
+
+last :: Deque a -> a
+last = fst . fromJust . viewLast
+
+init :: Deque a -> Deque a
+init = snd . fromJust . viewLast
+
+cons :: a -> Deque a -> Deque a
+cons v (f,r) = checkDq (v:f,r)
+
+snoc :: Deque a -> a -> Deque a
+snoc (f,r) v = checkDq (f,v:r)
