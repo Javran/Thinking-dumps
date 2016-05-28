@@ -61,8 +61,14 @@ Banker's method:
   we assign an extra credit to that element.
 * whenever a "reverse" is triggered, that extra credit is spent to cover the cost.
 
-Physicst's method:
+Physicist's method:
 
 * define the potential to be the length of the rear list
+* every "snoc" into a non-empty queue takes one actual step + increase the potential by one
+  (amortized cost: 1+1 = 2)
+* every "tail" that does not reverse the rear list takes one extra step + no potential change
+  (amortized cost: 1+0 = 1)
+* every "tail" that does reverse the rear list take m+1 steps, reseting the potential to 0
+  (amortized cost: m+1 + (0-m) = 1)
 
 -}
