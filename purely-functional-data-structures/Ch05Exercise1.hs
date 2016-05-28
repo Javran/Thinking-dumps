@@ -77,3 +77,13 @@ snoc (f,r) v = checkDq (f,v:r)
 
 toList :: Deque a -> [a]
 toList (f,r) = f ++ reverse r
+
+{-
+
+TODO
+
+I feel this is a rather weird potential function using abs(len f - len r),
+as inserting into a non-empty deque could either increase or decrease the potential.
+I'm not sure how to deal with this situation for now.
+
+-}
