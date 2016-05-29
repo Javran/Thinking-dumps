@@ -83,12 +83,24 @@ toList (f,r) = f ++ reverse r
 
 let's assume the deque is not empty:
 
-when len f >= len r,  abs(len f - len r) = len f - len r.
+when len f >= len r, abs(len f - len r) = len f - len r.
 * inserting in front of the deque increases the potential by 1.
 * because "f" is no shorter than "r" and the deque is not empty, it's safe to say that
   a split of the rear list will never happen under this case.
 * if removing one element from the beginning of the deque does not cause a split
   of the rear list, the potential decreases by 1.
+
+when len f < len r, abs(len f - len r) = len r - len f
+* inserting in front of the deque decreases the potential by 1
+* if removing one element from the beginning of the deque does not cause a split
+  of the rear list, the potential increases by 1.
+* if removing one element does cause a split, the opeartion takes "len r + len r / 2" time
+  (because we need to traverse the list to count elements and then reverse half of it.
+   but we can keep track of the list length to make it just "len r/2").
+  potential before the operation: len f - len r, where len f = 1 (the only case where
+  removing an element would cause a split)
+  potential after the operation: len r/2 - len r/2 = 0 or 1 (r might be odd, so the
+  potential is only an estimation)
 
 TODO
 
