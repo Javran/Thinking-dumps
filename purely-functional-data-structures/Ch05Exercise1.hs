@@ -101,6 +101,9 @@ when len f < len r, abs(len f - len r) = len r - len f
   removing an element would cause a split)
   potential after the operation: len r/2 - len r/2 = 0 or 1 (r might be odd, so the
   potential is only an estimation)
+  making the amortized cost: len r + len r/2 + (0 - len r) = len r/2 (looks wrong)
+  (if we keep track of list's length, we can make "length" run in O(1) time
+   to reduce the time at the cost of storing an extra length everywhere in the list)
 
 TODO
 
