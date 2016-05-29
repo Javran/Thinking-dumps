@@ -80,19 +80,20 @@ toList (f,r) = f ++ reverse r
 
 {-
 
+
+let's assume the deque is not empty:
+
+when len f >= len r,  abs(len f - len r) = len f - len r.
+* inserting in front of the deque increases the potential by 1.
+* because "f" is no shorter than "r" and the deque is not empty, it's safe to say that
+  a split of the rear list will never happen under this case.
+* if removing one element from the beginning of the deque does not cause a split
+  of the rear list, the potential decreases by 1.
+
 TODO
 
 I feel this is a rather weird potential function using abs(len f - len r),
 as inserting into a non-empty deque could either increase or decrease the potential.
 I'm not sure how to deal with this situation for now.
-
-let's assume the deque is not empty:
-
-when len f > len r:
-* inserting in front of the deque increases the potential by 1
-* if removing one element from the beginning of the deque does not cause a split
-  of the rear list, the potential decreases by 1
-* if removing one element from the beginning of the deque triggers a split of the rear list,
-  hm this seems impossible as len f > len r
 
 -}
