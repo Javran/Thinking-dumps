@@ -103,7 +103,7 @@ when len f < len r, abs(len f - len r) = len r - len f
   removing an element would cause a split)
   potential after the operation: len r/2 - len r/2 = 0 or 1 (r might be odd, so the
   potential is only an estimation)
-  making the amortized cost: len r + len r/2 + (0 - len r) = len r/2 (looks wrong)
+  making the amortized cost: len r + len r/2 + (0 - len r) = len r/2
   (if we keep track of list's length, we can make "length" run in O(1) time
    to reduce the time at the cost of storing an extra length everywhere in the list)
 
@@ -124,5 +124,10 @@ when len r < len f, abs(len f - len r) = len f - len r
   the operation takes "len f" time to calculate the length, then takes "len f/2" time to split
   the front list into two.
   making the amortized cost: len f + len f/2 + (0 - len f) = len f/2
+
+TODO: the analysis looks wrong to me: in theory we can avoid the cost of traversing
+the whole list by keeping track of list lengths. in case (1), this would have
+made the amortized cost: len r/2 + (0 - len r) = - len r/2. and assigning a negative number
+as a "cost" of some operations doesn't feel right to me.
 
 -}
