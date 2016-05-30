@@ -4,6 +4,9 @@ data Tree a
   = E
   | T (Tree a) a (Tree a)
 
+-- here I'm unclear about what "extract a bigger subtree" means
+-- need some explanation here to understand.
+
 bigger :: Ord a => a -> Tree a -> Tree a
 bigger _ E = E
 bigger pivot (T a x b) =
