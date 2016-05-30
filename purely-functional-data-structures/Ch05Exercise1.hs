@@ -83,6 +83,8 @@ toList (f,r) = f ++ reverse r
 
 let's assume the deque is not empty:
 
+(1) cases regarding insertion / deletion at the beginning of the deque
+
 when len f >= len r, abs(len f - len r) = len f - len r.
 * inserting in front of the deque increases the potential by 1.
 * because "f" is no shorter than "r" and the deque is not empty, it's safe to say that
@@ -105,10 +107,22 @@ when len f < len r, abs(len f - len r) = len r - len f
   (if we keep track of list's length, we can make "length" run in O(1) time
    to reduce the time at the cost of storing an extra length everywhere in the list)
 
-TODO
+(2) cases regarding insertion / deletion at the end of the deque
+(note: actually all things in this case are pretty similar to that of the previous one.
+ intuitively this is because the deque is almost a mirror to itself)
 
-I feel this is a rather weird potential function using abs(len f - len r),
-as inserting into a non-empty deque could either increase or decrease the potential.
-I'm not sure how to deal with this situation for now.
+when len r >= len f, abs(len f - len r) = len r - len f
+* inserting at the end of the deque increases the potential by 1
+* because "r" is not shorter than "f", removing one element from "r" won't cause a split of the front list
+* if removing one element from the end of the deque does not cause a split of the front list,
+  the potential decreases by 1
+
+when len r < len f, abs(len f - len r) = len f - len r
+* inserting at the end of the deque decreases the potential by 1
+* if removing one element (from end) does not cause a split, the potential is increased by 1
+* if removing one elmeent (from end) causes a split, then we know "len r = 1",
+  the operation takes "len f" time to calculate the length, then takes "len f/2" time to split
+  the front list into two.
+  making the amortized cost: len f + len f/2 + (0 - len f) = len f/2
 
 -}
