@@ -12,9 +12,10 @@ data Tree a
   = E
   | T (Tree a) a (Tree a)
 
--- here I'm unclear about what "extract a bigger subtree" means
--- need some explanation here to understand.
-
+-- In book the purpose of this operation is to "extract a bigger subtree",
+-- but I feel this is confusing. What this operation really does is
+-- to rebuild a subtree by collecting all elements that are bigger than the "pivot" node
+-- and "extracting" gives me the impression of returning just one node from the tree.
 bigger :: Ord a => a -> Tree a -> Tree a
 bigger _ E = E
 bigger pivot (T a x b) =
@@ -25,4 +26,7 @@ bigger pivot (T a x b) =
               T a1 y a2 ->
                   if y <= pivot
                      then T (bigger pivot a2) x b
-                     else T (bigger pivot a1) y (T a2 x b)
+                     else
+                       -- rotate nodes whenever we have followed two left branches
+                       -- this operation tends to result in a more balanced tree.
+                       T (bigger pivot a1) y (T a2 x b)
