@@ -1,5 +1,11 @@
 module Ch05Splay where
 
+-- Splay tree's properties are very similar to that of binary search tree's:
+-- + every non-leave node contains an element
+-- + all left subtree nodes are less than (or equal to) that of root's
+-- + all right subtree nodes are greater than (or equal to) that of root's
+-- (note: usually the equality is expressed as "if a <= b then something_1 else something_2",
+--  that's where the "or equal to" part comes from)
 data Tree a
   = E
   | T (Tree a) a (Tree a)
