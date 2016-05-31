@@ -6,6 +6,8 @@ module Ch05Splay where
 -- + all right subtree nodes are greater than (or equal to) that of root's
 -- (note: usually the equality is expressed as "if a <= b then something_1 else something_2",
 --  that's where the "or equal to" part comes from)
+-- (note: one difference between splay tree and binary search tree is that the former
+--  allows duplicated elements)
 data Tree a
   = E
   | T (Tree a) a (Tree a)
