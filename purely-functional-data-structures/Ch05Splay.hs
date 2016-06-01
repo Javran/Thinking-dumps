@@ -35,3 +35,11 @@ findMin :: Tree a -> Maybe a
 findMin E = Nothing
 findMin (T E x _) = Just x
 findMin (T a _ _) = findMin a
+
+deleteMin :: Tree a -> Maybe (Tree a)
+deleteMin E = Nothing
+deleteMin (T E _ b) = Just b
+deleteMin (T (T E _ b) y c) = Just (T b y c)
+deleteMin (T (T a x b) y c) = do
+    a' <- deleteMin a
+    pure (T a' x (T b y c))
