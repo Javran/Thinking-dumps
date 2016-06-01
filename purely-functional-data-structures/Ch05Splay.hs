@@ -32,14 +32,15 @@ bigger pivot (T a x b) =
                        T (bigger pivot a1) y (T a2 x b)
 
 findMin :: Tree a -> Maybe a
-findMin E = Nothing
-findMin (T E x _) = Just x
-findMin (T a _ _) = findMin a
+findMin = (fst <$>) . viewMin
 
 deleteMin :: Tree a -> Maybe (Tree a)
-deleteMin E = Nothing
-deleteMin (T E _ b) = Just b
-deleteMin (T (T E _ b) y c) = Just (T b y c)
-deleteMin (T (T a x b) y c) = do
-    a' <- deleteMin a
-    pure (T a' x (T b y c))
+deleteMin = (snd <$>) . viewMin
+
+viewMin :: Tree a -> Maybe (a, Tree a)
+viewMin E = Nothing
+viewMin (T E x b) = Just (x, b)
+viewMin (T (T E x b) y c) = Just (x, T b y c)
+viewMin (T (T a x b) y c) = do
+    (a',rest) <- viewMin a
+    pure (a', T rest x (T b y c))
