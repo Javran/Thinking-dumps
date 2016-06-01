@@ -30,3 +30,8 @@ bigger pivot (T a x b) =
                        -- rotate nodes whenever we have followed two left branches
                        -- this operation tends to result in a more balanced tree.
                        T (bigger pivot a1) y (T a2 x b)
+
+findMin :: Tree a -> Maybe a
+findMin E = Nothing
+findMin (T E x _) = Just x
+findMin (T a _ _) = findMin a
