@@ -14,6 +14,8 @@ import Ch05Exercise4
 insert :: Ord a => a -> Tree a -> Tree a
 insert x t = T (smaller' x t) x (bigger x t)
 
+-- TODO: test both smaller & smaller'
+
 -- converting a splay tree into a list
 toAscList :: Tree a -> [a]
 toAscList t = case viewMin t of
