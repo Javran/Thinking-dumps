@@ -20,4 +20,4 @@ smaller' pivot (T a x b) =
                   if y > pivot
                      then T (smaller' pivot a2) x b
                      else
-                       smaller pivot (T a x b)
+                       T (smaller' pivot a1) y (T a2 x b)

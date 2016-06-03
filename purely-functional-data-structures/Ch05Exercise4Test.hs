@@ -12,7 +12,7 @@ import Ch05Exercise4
 
 -- putting things together
 insert :: Ord a => a -> Tree a -> Tree a
-insert x t = T (smaller x t) x (bigger x t)
+insert x t = T (smaller' x t) x (bigger x t)
 
 -- converting a splay tree into a list
 toAscList :: Tree a -> [a]
