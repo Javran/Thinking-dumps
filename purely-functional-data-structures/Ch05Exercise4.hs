@@ -17,4 +17,7 @@ smaller' pivot (T a x b) =
        else case a of
               E -> T a x E
               T a1 y a2 ->
-                  smaller pivot (T a x b)
+                  if y > pivot
+                     then T (smaller' pivot a2) x b
+                     else
+                       smaller pivot (T a x b)
