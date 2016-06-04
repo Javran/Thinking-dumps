@@ -16,8 +16,6 @@ insertWith :: Ord a =>
           (forall b. Ord b => b -> Tree b -> Tree b) -> a -> Tree a -> Tree a
 insertWith smaller x t = T (smaller x t) x (bigger x t)
 
--- TODO: test both smaller & smaller'
-
 -- converting a splay tree into a list
 toAscList :: Tree a -> [a]
 toAscList t = case viewMin t of
@@ -27,9 +25,9 @@ toAscList t = case viewMin t of
 main :: IO ()
 main = hspec $ do
     describe "Splay" $ do
-      it "can sort elements (smaller1)" $
-          let insert = insertWith smaller1
-          in property $ \xs -> sort (xs :: [Int]) == toAscList (foldl' (flip insert) E xs)
-      it "can sort elements (smaller2)" $
-          let insert = insertWith smaller2
-          in property $ \xs -> sort (xs :: [Int]) == toAscList (foldl' (flip insert) E xs)
+      let testSmaller :: (forall a. Ord a => a -> Tree a -> Tree a) -> Property
+          testSmaller smaller =
+              let insert = insertWith smaller
+              in property $ \xs -> sort (xs :: [Int]) == toAscList (foldl' (flip insert) E xs)
+      it "can sort elements (smaller1)" $ testSmaller smaller1
+      it "can sort elements (smaller2)" $ testSmaller smaller2
