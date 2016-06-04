@@ -44,3 +44,33 @@ viewMin (T (T E x b) y c) = Just (x, T b y c)
 viewMin (T (T a x b) y c) = do
     (a',rest) <- viewMin a
     pure (a', T rest x (T b y c))
+
+partition :: Ord a => a -> Tree a -> (Tree a, Tree a)
+partition _ E = (E, E)
+partition pivot t@(T a x b) =
+    if x <= pivot
+      then
+        case b of
+          E -> (t,E)
+          T b1 y b2 ->
+            if y <= pivot
+              then
+                let (small,big) = partition pivot b2
+                in (T (T a x b1) y small, big)
+              else
+                let (small,big) = partition pivot b1
+                in (T a x small, T big y b2)
+      else
+        -- x > pivot
+        case a of
+          E -> (E,t)
+          T a1 y a2 ->
+            if y <= pivot
+              then
+                let (small,big) = partition pivot a2
+                in (T a1 y small, T big x b)
+              else
+                let (small,big) = partition pivot a1
+                in (small, T big y (T a2 x b))
+
+-- TODO: test partition
