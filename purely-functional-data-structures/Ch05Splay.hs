@@ -12,6 +12,13 @@ data Tree a
   = E
   | T (Tree a) a (Tree a)
 
+empty :: Tree a
+empty = E
+
+isEmpty :: Tree a -> Bool
+isEmpty E = True
+isEmpty _ = False
+
 -- In book the purpose of this operation is to "extract a bigger subtree",
 -- but I feel this is confusing. What this operation really does is
 -- to rebuild a subtree by collecting all elements that are bigger than the "pivot" node
