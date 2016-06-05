@@ -2,9 +2,9 @@ module Ch05SplayTest where
 
 import Test.Hspec
 import Test.QuickCheck
-import Data.List (sort)
 import Data.Foldable
 import Control.Monad
+import Data.Maybe
 
 import Ch05Splay
 
@@ -21,6 +21,12 @@ checkTree (T a x b) = do
         T _ ra _ -> guard $ ra <= x
     case b of
         E -> pure ()
-        T _ rb _ -> guard $ rb > x
+        T _ rb _ -> guard $ rb >= x
     checkTree a
     checkTree b
+
+main :: IO ()
+main = hspec $ do
+    describe "Splay.insert" $ do
+      it "maintains Splay tree property" $
+        property $ \xs -> isJust . checkTree . fromList $ (xs :: [Int])

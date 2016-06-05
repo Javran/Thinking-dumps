@@ -11,6 +11,7 @@ module Ch05Splay where
 data Tree a
   = E
   | T (Tree a) a (Tree a)
+    deriving (Show)
 
 empty :: Tree a
 empty = E
