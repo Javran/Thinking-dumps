@@ -73,4 +73,13 @@ partition pivot t@(T a x b) =
                 let (small,big) = partition pivot a1
                 in (small, T big y (T a2 x b))
 
--- TODO: test partition
+insert :: Ord a => a -> Tree a -> Tree a
+insert x t = T a x b
+  where
+    (a,b) = partition x t
+
+merge :: Ord a => Tree a -> Tree a -> Tree a
+merge E t = t
+merge (T a x b) t = T (merge ta a) x (merge tb b)
+  where
+    (ta,tb) = partition x t
