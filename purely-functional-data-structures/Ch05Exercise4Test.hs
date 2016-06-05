@@ -6,7 +6,7 @@ import Test.QuickCheck
 import Data.List (sort)
 import Data.Foldable
 
-import Ch05Splay
+import Ch05Splay hiding (insert)
 import Ch05Exercise4
 
 {-# ANN module "HLint: ignore Redundant do" #-}
