@@ -4,6 +4,7 @@ import Test.Hspec
 import Test.QuickCheck
 import Control.Monad
 import Data.Maybe
+import Data.List (sort)
 
 import Ch05Splay
 
@@ -26,3 +27,8 @@ main = hspec $ do
     describe "Splay.insert" $ do
       it "maintains Splay tree property" $
         property $ \xs -> isJust . checkTree . fromList $ (xs :: [Int])
+    describe "Splay.merge" $ do
+      it "can merge two splay trees" $
+        property $ \xs ys ->
+          (toAscList . fromList) (xs ++ ys :: [Int]) ==
+          toAscList (fromList xs `merge` fromList ys)
