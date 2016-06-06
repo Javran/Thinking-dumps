@@ -4,7 +4,6 @@ import Test.Hspec
 import Test.QuickCheck
 import Control.Monad
 import Data.Maybe
-import Data.List (sort)
 
 import Ch05Splay
 
