@@ -1,4 +1,4 @@
-module Ch05Execise7 where
+module Ch05Exercise7 where
 
 import Ch05Splay
 
