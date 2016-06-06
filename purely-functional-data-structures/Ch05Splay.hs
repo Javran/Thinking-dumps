@@ -1,5 +1,7 @@
 module Ch05Splay where
 
+import Data.Foldable
+
 -- Splay tree's properties are very similar to that of binary search tree's:
 -- + every non-leave node contains an element
 -- + all left subtree nodes are less than (or equal to) that of root's
@@ -91,3 +93,12 @@ merge E t = t
 merge (T a x b) t = T (merge ta a) x (merge tb b)
   where
     (ta,tb) = partition x t
+
+fromList :: Ord a => [a] -> Tree a
+fromList = foldl' (flip insert) empty
+
+-- converting a splay tree into a list
+toAscList :: Tree a -> [a]
+toAscList t = case viewMin t of
+    Nothing -> []
+    Just (v,t') -> v : toAscList t'

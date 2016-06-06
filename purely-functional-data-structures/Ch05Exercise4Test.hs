@@ -16,12 +16,6 @@ insertWith :: Ord a =>
           (forall b. Ord b => b -> Tree b -> Tree b) -> a -> Tree a -> Tree a
 insertWith smaller x t = T (smaller x t) x (bigger x t)
 
--- converting a splay tree into a list
-toAscList :: Tree a -> [a]
-toAscList t = case viewMin t of
-    Nothing -> []
-    Just (v,t') -> v : toAscList t'
-
 main :: IO ()
 main = hspec $ do
     describe "Splay" $ do

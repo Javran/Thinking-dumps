@@ -2,16 +2,12 @@ module Ch05SplayTest where
 
 import Test.Hspec
 import Test.QuickCheck
-import Data.Foldable
 import Control.Monad
 import Data.Maybe
 
 import Ch05Splay
 
 {-# ANN module "HLint: ignore Redundant do" #-}
-
-fromList :: Ord a => [a] -> Tree a
-fromList = foldl' (flip insert) empty
 
 checkTree :: Ord a => Tree a -> Maybe ()
 checkTree E = pure ()
