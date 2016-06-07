@@ -25,3 +25,18 @@ singleton v = T v []
 {-# ANN insert "HLint: ignore Eta reduce" #-}
 insert :: Ord a => a -> Heap a -> Heap a
 insert x h = merge (singleton x) h
+
+mergePairs :: Ord a => [Heap a] -> Heap a
+mergePairs [] = E
+mergePairs [h] = h
+mergePairs (h1:h2:hs) = (h1 `merge` h2) `merge` mergePairs hs
+
+viewMin :: Ord a => Heap a -> Maybe (a, Heap a)
+viewMin E = Nothing
+viewMin (T x hs) = Just (x, mergePairs hs)
+
+findMin :: Ord a => Heap a -> Maybe a
+findMin = fmap fst . viewMin
+
+deleteMin :: Ord a => Heap a -> Maybe (Heap a)
+deleteMin = fmap snd . viewMin
