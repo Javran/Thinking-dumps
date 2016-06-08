@@ -40,3 +40,8 @@ findMin = fmap fst . viewMin
 
 deleteMin :: Ord a => Heap a -> Maybe (Heap a)
 deleteMin = fmap snd . viewMin
+
+toAscList :: Ord a => Heap a -> [a]
+toAscList h = case viewMin h of
+    Nothing -> []
+    Just (a,h') -> a : toAscList h'
