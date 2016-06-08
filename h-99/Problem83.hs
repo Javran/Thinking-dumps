@@ -9,6 +9,7 @@ p83 :: FndForm Char (Edge Char)
 p83 = FndForm . map (Right . parseEdge) . words $ description
   where
     parseEdge (a:b:_) = Edge a b
+    parseEdge _ = error "bad list"
     description = "ab bc ce eh hg gf fd da de be dg"
 
 main :: IO ()
