@@ -1,5 +1,7 @@
 module Ch05PairingHeap where
 
+import Data.Foldable
+
 data Heap a
   = E
   | T a [Heap a] -- INVARIANT: all elements in this list should be non-empty
@@ -48,3 +50,6 @@ toAscList h = case viewMin h of
 
 -- TODO: we should really define Heap as a typeclass
 -- by doing so we will be able to reuse testcases to test all of them.
+
+fromList :: Ord a => [a] -> Heap a
+fromList = foldl' (flip insert) empty
