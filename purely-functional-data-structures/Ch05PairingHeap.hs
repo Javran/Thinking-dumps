@@ -45,3 +45,6 @@ toAscList :: Ord a => Heap a -> [a]
 toAscList h = case viewMin h of
     Nothing -> []
     Just (a,h') -> a : toAscList h'
+
+-- TODO: we should really define Heap as a typeclass
+-- by doing so we will be able to reuse testcases to test all of them.
