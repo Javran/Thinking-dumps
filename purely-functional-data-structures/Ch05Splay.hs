@@ -42,10 +42,10 @@ bigger pivot (T a x b) =
                        T (bigger pivot a1) y (T a2 x b)
 
 findMin :: Tree a -> Maybe a
-findMin = (fst <$>) . viewMin
+findMin = fmap fst . viewMin
 
 deleteMin :: Tree a -> Maybe (Tree a)
-deleteMin = (snd <$>) . viewMin
+deleteMin = fmap snd . viewMin
 
 viewMin :: Tree a -> Maybe (a, Tree a)
 viewMin E = Nothing
