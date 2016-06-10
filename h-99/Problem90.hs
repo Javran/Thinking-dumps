@@ -4,7 +4,8 @@ module Problem90 where
 import Control.Monad
 import Data.List
 
--- forget about compact representation, let's focus on using full coordinate first
+-- 1. forget about compact representation, let's focus on using full coordinate first
+-- 2. (TODO) given compact representation, can we do better than this?
 
 -- partial: a partial solution (no conflict)
 -- lp: length of the parital solution
@@ -20,7 +21,6 @@ queens' partial lp candidates = do
 -- try:
 -- > queens' [] 0 [1..8]
 -- > queens' [] 0 [1..9]
--- TODO: now that we need a wrapper function around it.
 
 pick :: forall a. [a] -> [(a,[a])]
 pick xs = map split (init $ zip (inits xs) (tails xs))
@@ -28,3 +28,8 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
     split :: ([a], [a]) -> (a,[a])
     split (ls,v:rs) = (v,ls++rs)
     split _ = error "cannot split empty list"
+
+queens :: Int -> [ [Int] ]
+queens n = map norm (queens' [] 0 [1..n])
+  where
+    norm = reverse . map snd
