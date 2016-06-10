@@ -1,6 +1,8 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Problem90 where
 
 import Control.Monad
+import Data.List
 
 -- forget about compact representation, let's focus on using full coordinate first
 
@@ -11,13 +13,18 @@ queens' :: [(Int,Int)] -> Int -> [Int] -> [ [(Int,Int)] ]
 queens' partial _ [] = pure partial
 queens' partial lp candidates = do
     let curCol = lp+1
-    curRow <- candidates
+    (curRow,remaining) <- pick candidates
     guard $ all (\(c,r) -> c+r /= curCol+curRow && c-r /= curCol-curRow) partial
-    -- TODO: should have better ways to split selected candidate and remaining parts
-    queens' ((curCol,curRow):partial) curCol (filter (/= curRow) candidates)
-
+    queens' ((curCol,curRow):partial) curCol remaining
 
 -- try:
 -- > queens' [] 0 [1..8]
 -- > queens' [] 0 [1..9]
 -- TODO: now that we need a wrapper function around it.
+
+pick :: forall a. [a] -> [(a,[a])]
+pick xs = map split (init $ zip (inits xs) (tails xs))
+  where
+    split :: ([a], [a]) -> (a,[a])
+    split (ls,v:rs) = (v,ls++rs)
+    split _ = error "cannot split empty list"
