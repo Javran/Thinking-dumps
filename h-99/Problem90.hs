@@ -4,8 +4,11 @@ module Problem90 where
 import Control.Monad
 import Data.List
 
+-- taking 2 steps to simplify things:
 -- 1. forget about compact representation, let's focus on using full coordinate first
--- 2. (TODO) given compact representation, can we do better than this?
+-- 2. given compact representation, can we do better than this?
+--    not much, but we can get rid of storing "col" to save some space,
+--    as they can be tracked while building up solutions.
 
 -- | internal use only: given a partial solution (no conflict) and candidates,
 --   and find a full solution.
