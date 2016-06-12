@@ -14,6 +14,15 @@ import Data.List
 -- * partial: a partial solution (no conflict)
 -- * lp: length of the parital solution
 -- * candidates (a list of row numbers not yet picked up
+queens' :: [Int] -> Int -> [Int] -> [ [Int] ]
+queens' partial _ [] = pure partial
+queens' partial lp candidates = do
+    let curCol = lp+1
+    (curRow,remaining) <- pick candidates
+    guard $ and $ zipWith (\c r -> c+r /= curCol+curRow && c-r /= curCol-curRow) [lp,lp-1 .. 1] partial
+    queens' (curRow:partial) curCol remaining
+{-
+-- original implementation
 queens' :: [(Int,Int)] -> Int -> [Int] -> [ [(Int,Int)] ]
 queens' partial _ [] = pure partial
 queens' partial lp candidates = do
@@ -21,10 +30,10 @@ queens' partial lp candidates = do
     (curRow,remaining) <- pick candidates
     guard $ all (\(c,r) -> c+r /= curCol+curRow && c-r /= curCol-curRow) partial
     queens' ((curCol,curRow):partial) curCol remaining
-
 -- try:
 -- > queens' [] 0 [1..8]
 -- > queens' [] 0 [1..9]
+-}
 
 -- | randomly picking an element from the given list,
 --   separating the selected element and all other remaining elements
@@ -38,6 +47,4 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
 
 -- | return all solutions of placing n queens on a n x n board
 queens :: Int -> [ [Int] ]
-queens n = map norm (queens' [] 0 [1..n])
-  where
-    norm = reverse . map snd
+queens n = map reverse (queens' [] 0 [1..n])
