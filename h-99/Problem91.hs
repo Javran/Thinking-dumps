@@ -22,8 +22,8 @@ search n todo visited current path
         let newVisited = S.insert current visited
         next <- jump n current
         guard $ S.notMember next newVisited
-        -- traceM (show (length path))
-        search n (S.delete next todo) newVisited next (current:path)
+        traceM (show (length path))
+        search n (S.delete current todo) newVisited next (current:path)
 -- try: (very slow, might not work)
 -- > head $ search 8 (S.delete (1,1) xs) S.empty (1,1) []
 
