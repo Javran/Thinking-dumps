@@ -16,14 +16,13 @@ jump n (x,y) = do
          && newY >= 1 && newY <= n
     pure (newX, newY)
 
-search n todo visited current path
+search n todo current path
     | S.null todo = pure $ current : path
     | otherwise = do
-        let newVisited = S.insert current visited
+        let newTodo = S.delete current todo
         next <- jump n current
-        guard $ S.notMember next newVisited
-        search n (S.delete current todo) newVisited next (current:path)
+        guard $ S.member next newTodo
+        search n newTodo next (current:path)
 -- try: (very slow, might not work)
 -- > let xs = S.fromList [(x,y) | x <- [1..5], y <- [1..5]]
 -- > head $ search 5 xs S.empty (1,1) []
-
