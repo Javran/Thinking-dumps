@@ -2,7 +2,6 @@ module Problem91 where
 
 import Control.Monad
 import qualified Data.Set as S
-import Debug.Trace
 
 type Coord = (Int, Int)
 
@@ -16,12 +15,12 @@ jump n (x,y) = do
          && newY >= 1 && newY <= n
     pure (newX, newY)
 
-search n todo current path = do
-        let newTodo = S.delete current todo
-            l = length (S.toList newTodo)
-        if S.null newTodo
-          then pure $ current : path
-          else do
-            next <- jump n current
-            guard $ S.member next newTodo
-            search n newTodo next (current:path)
+search :: Int -> S.Set Coord -> Coord -> [Coord] -> [ [Coord] ]
+search n todo current path
+    | S.null newTodo = pure (current:path)
+    | otherwise = do
+        next <- jump n current
+        guard $ S.member next newTodo
+        search n newTodo next (current:path)
+  where
+    newTodo = S.delete current todo
