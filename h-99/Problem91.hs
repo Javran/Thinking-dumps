@@ -24,3 +24,15 @@ search n todo current path
         search n newTodo next (current:path)
   where
     newTodo = S.delete current todo
+
+mkTodo :: Int -> S.Set Coord
+mkTodo n = S.fromList [(x,y) | x <- as, y <- as]
+  where
+    as = [1..n]
+
+knightsTo :: Int -> Coord -> [ [Coord] ]
+knightsTo n target = search n (mkTodo n) target []
+
+-- TODO: seems to never return. need to find out why
+main :: IO ()
+main = print (knightsTo 8 (1,1))
