@@ -5,12 +5,32 @@ import qualified Data.Set as S
 
 type Coord = (Int, Int)
 
+{-
+-- original impl, rewritten to avoid some math calculation
+-- and list overhead.
 jump :: Int -> Coord -> [Coord]
 jump n (x,y) = do
     (dx, dy) <- [ (1,2), (2,1) ]
     [sx,sy] <- replicateM 2 [1,-1]
     let newX = x + sx*dx
         newY = y + sy*dy
+    guard $ newX >= 1 && newX <= n
+         && newY >= 1 && newY <= n
+    pure (newX, newY)
+-}
+jump :: Int -> Coord -> [Coord]
+jump n (x,y) = do
+    (dx, dy) <- [ (-1,-2)
+                , (-1, 2)
+                , ( 1,-2)
+                , ( 1, 2)
+                , (-2,-1)
+                , (-2, 1)
+                , ( 2,-1)
+                , ( 2, 1)
+                ]
+    let newX = x + dx
+        newY = y + dy
     guard $ newX >= 1 && newX <= n
          && newY >= 1 && newY <= n
     pure (newX, newY)
@@ -35,4 +55,4 @@ knightsTo n target = search n (mkTodo n) target []
 
 -- TODO: seems to never return. need to find out why
 main :: IO ()
-main = print (knightsTo 8 (1,1))
+main = print (head $ knightsTo 8 (1,1))
