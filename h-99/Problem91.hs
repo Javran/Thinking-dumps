@@ -56,3 +56,14 @@ knightsTo n target = search n (mkTodo n) target []
 -- TODO: seems to never return. need to find out why
 main :: IO ()
 main = print (head $ knightsTo 8 (1,1))
+
+{-
+
+stack exec -- ghc -O2 Problem91.hs  -main-is Problem91
+
+time:
+real    7.74s
+user    7.72s
+sys     0.02s
+
+-}
