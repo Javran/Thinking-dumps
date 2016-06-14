@@ -67,3 +67,11 @@ user    7.72s
 sys     0.02s
 
 -}
+
+{-
+see: https://wiki.haskell.org/The_Knights_Tour
+
+TODO: try sorting candidates by "expandable directions", this might help
+for finding just one solution.
+
+-}
