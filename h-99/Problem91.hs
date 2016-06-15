@@ -2,6 +2,7 @@ module Problem91 where
 
 import Control.Monad
 import qualified Data.Set as S
+import Data.List
 
 type Coord = (Int, Int)
 
@@ -39,7 +40,15 @@ search :: Int -> S.Set Coord -> Coord -> [Coord] -> [ [Coord] ]
 search n todo current path
     | S.null newTodo = pure (current:path)
     | otherwise = do
-        next <- jump n current
+        let -- all possible next moves
+            nexts = jump n current
+            -- sort by the number of ways one node can be expanded in ascending order.
+            -- by doing so we make sure nodes with fewer future moves are explored first
+            -- this could improve performance by reducing branching factor.
+            sortedNexts = sortOn countMoves nexts
+            countMoves :: Coord -> Int
+            countMoves c = length (filter (`S.member` newTodo) (jump n c))
+        next <- sortedNexts
         guard $ S.member next newTodo
         search n newTodo next (current:path)
   where
