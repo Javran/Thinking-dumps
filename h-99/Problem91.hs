@@ -62,8 +62,14 @@ mkTodo n = S.fromList [(x,y) | x <- as, y <- as]
 knightsTo :: Int -> Coord -> [ [Coord] ]
 knightsTo n target = search n (mkTodo n) target []
 
-main :: IO ()
-main = print (head $ knightsTo 8 (1,1))
+closedKnights :: Int -> [ [Coord] ]
+closedKnights n =
+      map reverse
+    . filter closed
+    $ knightsTo n (1,1)
+  where
+    -- "head cs" is safe, as a solution cannot be empty
+    closed cs = head cs `elem` jump n (1,1)
 
 {-
 
