@@ -75,6 +75,8 @@ closedKnights n =
 
 see: https://wiki.haskell.org/The_Knights_Tour
 
+(Warnsdorff's Rule gives a huge boost on performance)
+
 * if the search function is implemented naively without specifying
   searching order of moves, the performance is bad, because
   it is likely that moves with more branches are explored first,
