@@ -62,25 +62,20 @@ mkTodo n = S.fromList [(x,y) | x <- as, y <- as]
 knightsTo :: Int -> Coord -> [ [Coord] ]
 knightsTo n target = search n (mkTodo n) target []
 
--- TODO: seems to never return. need to find out why
 main :: IO ()
 main = print (head $ knightsTo 8 (1,1))
 
 {-
 
-stack exec -- ghc -O2 Problem91.hs  -main-is Problem91
-
-time:
-real    7.74s
-user    7.72s
-sys     0.02s
-
--}
-
-{-
 see: https://wiki.haskell.org/The_Knights_Tour
 
-TODO: try sorting candidates by "expandable directions", this might help
-for finding just one solution.
+* if the search function is implemented naively without specifying
+  searching order of moves, the performance is bad, because
+  it is likely that moves with more branches are explored first,
+  resulting in a huge search space.
+
+* to fix the problem above, we can sort candidates by number of immediate valid moves
+  right after it and then explore candidates that have fewer immediate valid moves first.
+  by doing so the branching factor is reduced
 
 -}
