@@ -37,6 +37,10 @@ validateTour n xs =
 main :: IO ()
 main = hspec $ do
     describe "Problem91.knightsTo" $ do
+      -- when we have n = 5 and some random target cells,
+      -- the performance is not good.
+      -- so we test by first fixing target cell to be (1,1)
+      -- and then verify some fixed target cells on size 8x8
       let verifyOn n target = do
               let results = knightsTo n target
                   validate xs = validateTour n xs && last xs == target
@@ -48,3 +52,12 @@ main = hspec $ do
       it "works on some random cells (for 8x8 size)" $ do
         verifyOn 8 (2,3)
         verifyOn 8 (4,6)
+        verifyOn 8 (5,5)
+
+    describe "Problem91.closedKnights" $ do
+      it "produces closed tours" $ do
+          let n = 8
+              results = closedKnights n
+              validate xs = validateTour n xs
+                         && head xs `near` last xs
+          take 10 results `shouldSatisfy` all validate
