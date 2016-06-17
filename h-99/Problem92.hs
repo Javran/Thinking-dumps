@@ -40,6 +40,12 @@ neighbors k m = fromMaybe IS.empty $ IM.lookup k m
 uniqueInts :: [Int] -> Bool
 uniqueInts xs = length xs == IS.size (IS.fromList xs)
 
+-- t: tree, edges: all edges (cached result)
+-- assigned: current node number assignments
+-- remainings: not-yet-assigned numbers
+-- todo: nodes not visited
+-- cur: the node we are looking at
+search :: Tree -> [(Int,Int)] -> IM.IntMap Int -> [Int] -> IS.IntSet -> Int -> [IM.IntMap Int]
 search t edges assigned remainings todo cur
     | IS.null todo = pure assigned
     | otherwise = do
@@ -51,3 +57,9 @@ search t edges assigned remainings todo cur
             edgeDiffs = map (\(x,y) -> abs (find' x assigned - find' y assigned)) validEdges
         guard $ uniqueInts edgeDiffs
         search t edges newAssigned newRemainings newTodo (fst . fromJust $ IS.minView newTodo)
+
+solve :: [(Int,Int)] -> [IM.IntMap Int]
+solve es = search t (allUndirEdges t) IM.empty [1..l] (IS.fromList [1..l]) 1
+  where
+    l = length es
+    t = foldl' (flip addEdge) IM.empty es
