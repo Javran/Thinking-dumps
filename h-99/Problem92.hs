@@ -51,19 +51,22 @@ type NodeAssigns = IM.IntMap Int
 search :: Tree -> [(Int,Int)] -> NodeAssigns -> [Int] -> IS.IntSet -> Int -> [NodeAssigns]
 search t edges assigned remainings todo cur
     | IS.null todo = do
-        let edgeDiffs = map (\(x,y) -> abs $ (subtract `on` find' assigned) x y) edges
-        guard $ and $ zipWith (==) (sort edgeDiffs) [1..]
+        let edgeDiffs = mapMaybe (getDiff assigned) edges
+        guard (length edges == length edgeDiffs
+            && and (zipWith (==) (sort edgeDiffs) [1..]))
         pure assigned
     | otherwise = do
         let newTodo = IS.delete cur todo
         (newNum, newRemainings) <- pick remainings
         let newAssigned = IM.insert cur newNum assigned
-            validEdges = filter (\(x,y) -> IM.member x newAssigned && IM.member y newAssigned) edges
-            edgeDiffs = map (\(x,y) -> abs $ (subtract `on` find' newAssigned) x y) validEdges
+            edgeDiffs = mapMaybe (getDiff newAssigned) edges
         guard $ uniqueInts edgeDiffs
         search t edges newAssigned newRemainings newTodo (fst . fromJust $ IS.minView newTodo)
   where
-    find' m k = fromJust $ IM.lookup k m
+    getDiff curAssigned (x,y) = do
+        nx <- IM.lookup x curAssigned
+        ny <- IM.lookup y curAssigned
+        pure (abs (nx - ny))
 
 solve :: [(Int,Int)] -> [NodeAssigns]
 solve es = search t (allUndirEdges t) IM.empty [1..l] (IS.fromList [1..l]) 1
