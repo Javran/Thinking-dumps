@@ -47,19 +47,23 @@ uniqueInts xs = length xs == IS.size (IS.fromList xs)
 -- cur: the node we are looking at
 search :: Tree -> [(Int,Int)] -> IM.IntMap Int -> [Int] -> IS.IntSet -> Int -> [IM.IntMap Int]
 search t edges assigned remainings todo cur
-    | IS.null todo = pure assigned
+    | IS.null todo = do
+        let find' k m = fromJust $ IM.lookup k m
+            edgeDiffs = map (\(x,y) -> abs (find' x assigned - find' y assigned)) edges
+        guard $ and $ zipWith (==) (sort edgeDiffs) [1..]
+        pure assigned
     | otherwise = do
         let newTodo = IS.delete cur todo
         (newNum, newRemainings) <- pick remainings
         let newAssigned = IM.insert cur newNum assigned
-            validEdges = filter (\(x,y) -> IM.member x assigned && IM.member y assigned) edges
+            validEdges = filter (\(x,y) -> IM.member x newAssigned && IM.member y newAssigned) edges
             find' k m = fromJust $ IM.lookup k m
-            edgeDiffs = map (\(x,y) -> abs (find' x assigned - find' y assigned)) validEdges
+            edgeDiffs = map (\(x,y) -> abs (find' x newAssigned - find' y newAssigned)) validEdges
         guard $ uniqueInts edgeDiffs
         search t edges newAssigned newRemainings newTodo (fst . fromJust $ IS.minView newTodo)
 
 solve :: [(Int,Int)] -> [IM.IntMap Int]
 solve es = search t (allUndirEdges t) IM.empty [1..l] (IS.fromList [1..l]) 1
   where
-    l = length es
+    l = length es + 1
     t = foldl' (flip addEdge) IM.empty es
