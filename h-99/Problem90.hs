@@ -41,6 +41,7 @@ queens' partial lp candidates = do
 -- | randomly picking an element from the given list,
 --   separating the selected element and all other remaining elements
 --   the list order is preserved
+--   e.g. pick [1,2,3] == [(1,[2,3]),(2,[1,3]),(3,[1,2])]
 pick :: forall a. [a] -> [(a,[a])]
 pick xs = map split (init $ zip (inits xs) (tails xs))
   where
