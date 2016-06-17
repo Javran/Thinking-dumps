@@ -43,33 +43,40 @@ uniqueInts xs = length xs == IS.size (IS.fromList xs)
 
 type NodeAssigns = IM.IntMap Int
 
+-- TODO:
+-- - tests
+-- - extend Tree to cache edge list
+-- - keep a list of unchecked edges,
+--   and only check those affected by newly assigned nodes
+
 -- t: tree, edges: all edges (cached result)
 -- assigned: current node number assignments
 -- remainings: not-yet-assigned numbers
 -- todo: nodes not visited
 -- cur: the node we are looking at
-search :: Tree -> [(Int,Int)] -> NodeAssigns -> [Int] -> IS.IntSet -> Int -> [NodeAssigns]
-search t edges assigned remainings todo cur
+search :: Tree -> [(Int,Int)] -> NodeAssigns -> [Int] -> IS.IntSet -> [NodeAssigns]
+search t edges assigned remainings todo
     | IS.null todo = do
         let edgeDiffs = mapMaybe (getDiff assigned) edges
         guard (length edges == length edgeDiffs
             && and (zipWith (==) (sort edgeDiffs) [1..]))
         pure assigned
     | otherwise = do
-        let newTodo = IS.delete cur todo
+        let (cur,newTodo) = fromJust $ IS.minView todo
         (newNum, newRemainings) <- pick remainings
         let newAssigned = IM.insert cur newNum assigned
             edgeDiffs = mapMaybe (getDiff newAssigned) edges
         guard $ uniqueInts edgeDiffs
-        search t edges newAssigned newRemainings newTodo (fst . fromJust $ IS.minView newTodo)
+        search t edges newAssigned newRemainings newTodo
   where
-    getDiff curAssigned (x,y) = do
-        nx <- IM.lookup x curAssigned
-        ny <- IM.lookup y curAssigned
-        pure (abs (nx - ny))
+    getDiff curAssigned (x,y) =
+        fmap abs (subtract
+                  <$> IM.lookup x curAssigned
+                  <*> IM.lookup y curAssigned)
 
 solve :: [(Int,Int)] -> [NodeAssigns]
-solve es = search t (allUndirEdges t) IM.empty [1..l] (IS.fromList [1..l]) 1
+solve es = search t (allUndirEdges t) IM.empty nodes (IS.fromList nodes)
   where
     l = length es + 1
+    nodes = [1..l]
     t = foldl' (flip addEdge) IM.empty es
