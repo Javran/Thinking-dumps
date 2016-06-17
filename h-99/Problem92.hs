@@ -3,6 +3,7 @@ module Problem92 where
 
 import Data.List
 import Data.Maybe
+import Data.Function
 import Control.Monad
 import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
@@ -40,16 +41,17 @@ neighbors k m = fromMaybe IS.empty $ IM.lookup k m
 uniqueInts :: [Int] -> Bool
 uniqueInts xs = length xs == IS.size (IS.fromList xs)
 
+type NodeAssigns = IM.IntMap Int
+
 -- t: tree, edges: all edges (cached result)
 -- assigned: current node number assignments
 -- remainings: not-yet-assigned numbers
 -- todo: nodes not visited
 -- cur: the node we are looking at
-search :: Tree -> [(Int,Int)] -> IM.IntMap Int -> [Int] -> IS.IntSet -> Int -> [IM.IntMap Int]
+search :: Tree -> [(Int,Int)] -> NodeAssigns -> [Int] -> IS.IntSet -> Int -> [NodeAssigns]
 search t edges assigned remainings todo cur
     | IS.null todo = do
-        let find' k m = fromJust $ IM.lookup k m
-            edgeDiffs = map (\(x,y) -> abs (find' x assigned - find' y assigned)) edges
+        let edgeDiffs = map (\(x,y) -> abs $ (subtract `on` find' assigned) x y) edges
         guard $ and $ zipWith (==) (sort edgeDiffs) [1..]
         pure assigned
     | otherwise = do
@@ -57,12 +59,13 @@ search t edges assigned remainings todo cur
         (newNum, newRemainings) <- pick remainings
         let newAssigned = IM.insert cur newNum assigned
             validEdges = filter (\(x,y) -> IM.member x newAssigned && IM.member y newAssigned) edges
-            find' k m = fromJust $ IM.lookup k m
-            edgeDiffs = map (\(x,y) -> abs (find' x newAssigned - find' y newAssigned)) validEdges
+            edgeDiffs = map (\(x,y) -> abs $ (subtract `on` find' newAssigned) x y) validEdges
         guard $ uniqueInts edgeDiffs
         search t edges newAssigned newRemainings newTodo (fst . fromJust $ IS.minView newTodo)
+  where
+    find' m k = fromJust $ IM.lookup k m
 
-solve :: [(Int,Int)] -> [IM.IntMap Int]
+solve :: [(Int,Int)] -> [NodeAssigns]
 solve es = search t (allUndirEdges t) IM.empty [1..l] (IS.fromList [1..l]) 1
   where
     l = length es + 1
