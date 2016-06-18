@@ -19,14 +19,15 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
     split _ = error "cannot split empty list"
 
 type Tree = IM.IntMap IS.IntSet
+type Edge = (Int,Int)
 
-addEdge :: (Int, Int) -> Tree -> Tree
+addEdge :: Edge -> Tree -> Tree
 addEdge (a,b) = insertEdge a b . insertEdge b a
   where
     insertEdge x y = IM.alter (Just . IS.insert x . fromMaybe IS.empty) y
 
 -- all undirected edges
-allUndirEdges :: Tree -> [(Int,Int)]
+allUndirEdges :: Tree -> [Edge]
 allUndirEdges t = filter (\(x,y) -> x < y) edges
   where
     edges = do
@@ -53,7 +54,7 @@ type NodeAssigns = IM.IntMap Int
 -- remainings: not-yet-assigned numbers
 -- todo: nodes not visited
 -- cur: the node we are looking at
-search :: Tree -> [(Int,Int)] -> NodeAssigns -> [Int] -> IS.IntSet -> [NodeAssigns]
+search :: Tree -> [Edge] -> NodeAssigns -> [Int] -> IS.IntSet -> [NodeAssigns]
 search t edges assigned remainings todo
     | IS.null todo = do
         let edgeDiffs = mapMaybe (getDiff assigned) edges
@@ -73,14 +74,14 @@ search t edges assigned remainings todo
                   <$> IM.lookup x curAssigned
                   <*> IM.lookup y curAssigned)
 
-solve :: [(Int,Int)] -> [NodeAssigns]
+solve :: [Edge] -> [NodeAssigns]
 solve es = search t (allUndirEdges t) IM.empty nodes (IS.fromList nodes)
   where
     l = length es + 1
     nodes = [1..l]
     t = foldl' (flip addEdge) IM.empty es
 
-vonKoch :: [(Int,Int)] -> [ [Int] ]
+vonKoch :: [Edge] -> [ [Int] ]
 vonKoch = map convert . solve
   where
     -- convert one solution to the correct format
