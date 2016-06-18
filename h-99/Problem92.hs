@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Problem92 where
 
+import Control.Arrow
 import Data.List
 import Data.Maybe
 import Control.Monad
@@ -26,15 +27,6 @@ addEdge (a,b) = insertEdge a b . insertEdge b a
   where
     insertEdge x y = IM.alter (Just . IS.insert x . fromMaybe IS.empty) y
 
--- all undirected edges
-allUndirEdges :: Tree -> [Edge]
-allUndirEdges t = filter (\(x,y) -> x < y) edges
-  where
-    edges = do
-      (k,vs) <- IM.toList t
-      v <- IS.toList vs
-      pure (k,v)
-
 neighbors :: Int -> Tree -> IS.IntSet
 neighbors k m = fromMaybe IS.empty $ IM.lookup k m
 
@@ -44,9 +36,9 @@ uniqueInts xs = length xs == IS.size (IS.fromList xs)
 type NodeAssigns = IM.IntMap Int
 
 -- TODO:
--- - extend Tree to cache edge list
--- - keep a list of unchecked edges,
---   and only check those affected by newly assigned nodes
+-- - keep a set of not yet covered differences
+-- - keep a list of unchecked edges, remove some accordingly when
+--   new node is inserted.
 
 -- t: tree, edges: all edges (cached result)
 -- assigned: current node number assignments
@@ -73,8 +65,32 @@ search t edges assigned remainings todo
                   <$> IM.lookup x curAssigned
                   <*> IM.lookup y curAssigned)
 
+search2 :: Tree -> [Edge] -> IS.IntSet -> NodeAssigns -> [Int] -> IS.IntSet -> [NodeAssigns]
+search2 t missingEdges missingDiffs assigned remainings todo
+    | IS.null todo = do
+        guard (null missingEdges && IS.null missingDiffs)
+        pure assigned
+    | otherwise = do
+        let (cur,newTodo) = fromJust $ IS.minView todo
+        (newNum, newRemainings) <- pick remainings
+        -- assign (cur, newNum)
+        let newAssigned = IM.insert cur newNum assigned
+            isRelated (a,b)
+                | a == cur = isJust (IM.lookup b newAssigned)
+                | b == cur = isJust (IM.lookup a newAssigned)
+                | otherwise = False
+            (relatedEdges, newMissingEdges) = partition isRelated missingEdges
+            newDiffs = IS.fromList $ map (fromJust . getDiff newAssigned) relatedEdges
+        guard $ IS.null $ missingDiffs `IS.intersection` newDiffs
+        search2 t newMissingEdges (missingDiffs `IS.union` newDiffs) newAssigned newRemainings newTodo
+  where
+    getDiff curAssigned (x,y) =
+        fmap abs (subtract
+                  <$> IM.lookup x curAssigned
+                  <*> IM.lookup y curAssigned)
+
 solve :: [Edge] -> [NodeAssigns]
-solve es = search t (allUndirEdges t) IM.empty nodes (IS.fromList nodes)
+solve es = search2 t es (IS.fromList [1..l-1]) IM.empty nodes (IS.fromList nodes)
   where
     l = length es + 1
     nodes = [1..l]
