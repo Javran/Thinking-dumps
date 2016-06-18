@@ -2,11 +2,13 @@ module Problem92Test where
 
 import Test.Hspec
 import Test.QuickCheck
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random
 import Data.Maybe
 import Control.Monad
 import qualified Data.List as L
-import qualified Data.IntSet as IS
 import qualified Data.IntMap.Strict as IM
+import Criterion.Main
 
 import Problem92
 
@@ -37,8 +39,8 @@ validate es nodes =
         b <- IM.lookup y assigns
         pure (abs (a-b))
 
-main :: IO ()
-main = hspec $ do
+mainTest :: IO ()
+mainTest = hspec $ do
     describe "vonKoch" $ do
       specify "on given example" $ example $ do
           let es = [(1,6),(2,6),(3,6),(4,6),(5,6)
@@ -52,3 +54,27 @@ main = hspec $ do
               es <- genTree n
               let results = vonKoch es
               pure $ all (validate es) (take 5 results)
+
+mainBenchmark :: IO ()
+mainBenchmark = defaultMain
+    [ env setupEnv (\ ~(g1,g2,g3) ->
+        bgroup "vonKoch"
+          [ bench "small"  $ nf (map (take 1 . vonKoch)) g1
+          , bench "medium" $ nf (map (take 1 . vonKoch)) g2
+          , bench "large"  $ nf (map (take 1 . vonKoch)) g3
+          ])
+    ]
+  where
+    setupEnv = do
+        let seed = 334308585
+            genSmallTrees = replicateM 10 (genTree 10)
+            genMediumTrees = replicateM 4 (genTree 12)
+            genLargeTrees = replicateM 2 (genTree 14)
+            (MkGen genAll) = (,,) <$> genSmallTrees <*> genMediumTrees <*> genLargeTrees
+            result = genAll (mkQCGen seed) 30
+        pure result
+
+main :: IO ()
+main = do
+    mainTest
+    mainBenchmark
