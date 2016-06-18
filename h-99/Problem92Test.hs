@@ -57,22 +57,22 @@ mainTest = hspec $ do
 
 mainBenchmark :: IO ()
 mainBenchmark = defaultMain
-    [ env setupEnv (\ ~(g1,g2,g3) ->
+    [ env setupEnv (\ ~(g1,g2) ->
         bgroup "vonKoch"
           [ bench "small"  $ nf (map (take 1 . vonKoch)) g1
-          , bench "medium" $ nf (map (take 1 . vonKoch)) g2
-          , bench "large"  $ nf (map (take 1 . vonKoch)) g3
+          , bench "large"  $ nf (map (take 1 . vonKoch)) g2
           ])
     ]
   where
     setupEnv = do
         let seed = 334308585
-            genSmallTrees = replicateM 10 (genTree 10)
-            genMediumTrees = replicateM 4 (genTree 12)
-            genLargeTrees = replicateM 2 (genTree 14)
-            (MkGen genAll) = (,,) <$> genSmallTrees <*> genMediumTrees <*> genLargeTrees
+            genSmallTrees = replicateM 5 (genTree 10)
+            genLargeTrees = replicateM 2 (genTree 12)
+            (MkGen genAll) = (,) <$> genSmallTrees <*> genLargeTrees
             result = genAll (mkQCGen seed) 30
         pure result
+
+-- stack exec -- ghc Problem92Test.hs -O2 -main-is Problem92Test
 
 main :: IO ()
 main = do
