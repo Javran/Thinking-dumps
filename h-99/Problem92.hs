@@ -3,7 +3,6 @@ module Problem92 where
 
 import Data.List
 import Data.Maybe
-import Data.Function
 import Control.Monad
 import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
@@ -80,3 +79,9 @@ solve es = search t (allUndirEdges t) IM.empty nodes (IS.fromList nodes)
     l = length es + 1
     nodes = [1..l]
     t = foldl' (flip addEdge) IM.empty es
+
+vonKoch :: [(Int,Int)] -> [ [Int] ]
+vonKoch = map convert . solve
+  where
+    -- convert one solution to the correct format
+    convert = map snd . IM.toAscList
