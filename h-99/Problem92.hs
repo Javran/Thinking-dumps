@@ -44,7 +44,6 @@ uniqueInts xs = length xs == IS.size (IS.fromList xs)
 type NodeAssigns = IM.IntMap Int
 
 -- TODO:
--- - tests
 -- - extend Tree to cache edge list
 -- - keep a list of unchecked edges,
 --   and only check those affected by newly assigned nodes

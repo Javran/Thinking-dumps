@@ -12,6 +12,17 @@ import Problem92
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
+genTree :: Int -> Gen [Edge]
+genTree n = genTree' 2
+  where
+    -- cur should start from 2
+    genTree' cur
+        | cur > n = pure []
+        | otherwise = do
+            prev <- choose (1,cur-1)
+            es' <- genTree' (cur+1)
+            pure $ (prev,cur) : es'
+
 validate :: [Edge] -> [Int] -> Bool
 validate es nodes =
        lengthCheck
@@ -35,3 +46,9 @@ main = hspec $ do
                    ,(11,12),(11,13),(13,14)]
               results = vonKoch es
           take 10 results `shouldSatisfy` all (validate es)
+      specify "on random trees" $ do
+          property $ do
+              n <- choose (4,8)
+              es <- genTree n
+              let results = vonKoch es
+              pure $ all (validate es) (take 5 results)
