@@ -55,33 +55,29 @@ type NodeAssigns = IM.IntMap Int
     again, we take another view on the problem: since all unique differences
     has to be assigned to an edge, we just need to test whether all newly added edges
     has unique differences.
-
-  TODO: let todo being a list should be good enough
 -}
-search :: Tree -> [Edge] -> IS.IntSet -> NodeAssigns -> [Int] -> IS.IntSet -> [NodeAssigns]
-search t missingEdges missingDiffs assigned remainings todo
-    | IS.null todo = do
+search :: Tree -> [Edge] -> IS.IntSet -> NodeAssigns -> [Int] -> [Int] -> [NodeAssigns]
+search _ missingEdges missingDiffs assigned _ [] = do
         guard (null missingEdges && IS.null missingDiffs)
         pure assigned
-    | otherwise = do
-        let (cur,newTodo) = fromJust $ IS.minView todo
-        (newNum, newRemainings) <- pick remainings
-        -- assign (cur, newNum)
-        let newAssigned = IM.insert cur newNum assigned
-            isRelated (a,b)
-                | a == cur = isJust (IM.lookup b newAssigned)
-                | b == cur = isJust (IM.lookup a newAssigned)
-                | otherwise = False
-            find' node = fromJust $ IM.lookup node newAssigned
-            getDiff (x,y) = abs (subtract (find' x) (find' y))
-            (relatedEdges, newMissingEdges) = partition isRelated missingEdges
-            newDiffs = IS.fromList $ map getDiff relatedEdges
-            newMergedDiffs = missingDiffs `IS.union` newDiffs
-        guard $ IS.null $ missingDiffs `IS.intersection` newDiffs
-        search t newMissingEdges newMergedDiffs newAssigned newRemainings newTodo
+search t missingEdges missingDiffs assigned remainings (cur:newTodo) = do
+    (newNum, newRemainings) <- pick remainings
+    -- assign (cur, newNum)
+    let newAssigned = IM.insert cur newNum assigned
+        isRelated (a,b)
+            | a == cur = isJust (IM.lookup b newAssigned)
+            | b == cur = isJust (IM.lookup a newAssigned)
+            | otherwise = False
+        find' node = fromJust $ IM.lookup node newAssigned
+        getDiff (x,y) = abs (subtract (find' x) (find' y))
+        (relatedEdges, newMissingEdges) = partition isRelated missingEdges
+        newDiffs = IS.fromList $ map getDiff relatedEdges
+        newMergedDiffs = missingDiffs `IS.union` newDiffs
+    guard $ IS.null $ missingDiffs `IS.intersection` newDiffs
+    search t newMissingEdges newMergedDiffs newAssigned newRemainings newTodo
 
 solve :: [Edge] -> [NodeAssigns]
-solve es = search t es (IS.fromList [1..l-1]) IM.empty nodes (IS.fromList nodes)
+solve es = search t es (IS.fromList [1..l-1]) IM.empty nodes nodes
   where
     l = length es + 1
     nodes = [1..l]
