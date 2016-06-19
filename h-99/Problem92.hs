@@ -53,12 +53,10 @@ search t missingEdges missingDiffs assigned remainings todo
                 | a == cur = isJust (IM.lookup b newAssigned)
                 | b == cur = isJust (IM.lookup a newAssigned)
                 | otherwise = False
-            getDiff curAssigned (x,y) =
-                fmap abs (subtract
-                  <$> IM.lookup x curAssigned
-                  <*> IM.lookup y curAssigned)
+            find' node = fromJust $ IM.lookup node newAssigned
+            getDiff (x,y) = abs (subtract (find' x) (find' y))
             (relatedEdges, newMissingEdges) = partition isRelated missingEdges
-            newDiffs = IS.fromList $ map (fromJust . getDiff newAssigned) relatedEdges
+            newDiffs = IS.fromList $ map getDiff relatedEdges
             newMergedDiffs = missingDiffs `IS.union` newDiffs
         guard $ IS.null $ missingDiffs `IS.intersection` newDiffs
         search t newMissingEdges newMergedDiffs newAssigned newRemainings newTodo

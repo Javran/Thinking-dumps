@@ -72,8 +72,7 @@ mainBenchmark = defaultMain
             result = genAll (mkQCGen seed) 30
         pure result
 
--- stack exec -- ghc Problem92Test.hs -O2 -main-is Problem92Test
-
+-- stack exec -- ghc Problem92Test.hs -O2 -main-is Problem92Test && ./Problem92Test
 main :: IO ()
 main = do
     mainTest
