@@ -47,13 +47,13 @@ mainTest = hspec $ do
                    ,(5,7),(5,8),(8,9),(5,10),(10,11)
                    ,(11,12),(11,13),(13,14)]
               results = vonKoch es
-          take 10 results `shouldSatisfy` all (validate es)
+          take 5 results `shouldSatisfy` all (validate es)
       specify "on random trees" $ do
           property $ do
               n <- choose (4,8)
               es <- genTree n
               let results = vonKoch es
-              pure $ all (validate es) (take 5 results)
+              pure $ all (validate es) (take 2 results)
 
 mainBenchmark :: IO ()
 mainBenchmark = defaultMain
@@ -77,4 +77,4 @@ mainBenchmark = defaultMain
 main :: IO ()
 main = do
     mainTest
-    mainBenchmark
+    -- mainBenchmark
