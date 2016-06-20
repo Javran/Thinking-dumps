@@ -20,3 +20,13 @@ main = hspec $ do
             property $ \xs ->
               let result = splits (xs :: [Int])
               in all (\(as,bs) -> xs == as ++ bs) result
+    describe "take2s" $ do
+        specify "example 1" $ example $
+          take2s [1 :: Int,2,3] `shouldBe`
+            [((1,2),([],[3]))
+            ,((2,3),([1],[]))
+            ]
+        specify "can recover original list" $
+            property $ \xs ->
+              let result = take2s (xs :: [Int])
+              in all (\((a,b),(cs,ds)) -> xs == cs ++ a:b:ds) result
