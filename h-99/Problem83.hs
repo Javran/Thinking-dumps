@@ -20,7 +20,10 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
 --- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
 
 k4RawGraph :: String
-k4RawGraph = "ab bc ce eh hg gf fd da de be dg"
+-- TODO: (we need to change a name for this)
+-- k4RawGraph = "ab bc ce eh hg gf fd da de be dg"
+-- "k4" in the problem actually means the following graph:
+k4RawGraph = "ab bc cd da ac bd"
 
 k4Edges :: [Edge Char]
 k4Edges = map parseEdge . words $ k4RawGraph
@@ -31,6 +34,9 @@ k4Edges = map parseEdge . words $ k4RawGraph
 k4Vertices :: S.Set Char
 k4Vertices = S.fromList (concatMap (\(Edge a b) -> [a,b]) k4Edges)
 
+-- TODO:
+-- * pick vs pick'
+
 search :: S.Set Char -> [Edge Char] -> S.Set Char -> [ [Edge Char] ]
 search vsVisited es vsTodo
     | S.null vsTodo = pure []
@@ -38,7 +44,10 @@ search vsVisited es vsTodo
         let Just (v,rest) = S.minView vsTodo
         in search (S.singleton v) es rest
     | otherwise = do
-        let (newEsL, newEsR) = partition isCandidate es
+        let es' = filter f es
+              where
+                f (Edge a b) = a `S.notMember` vsVisited || b `S.notMember` vsVisited
+            (newEsL, newEsR) = partition isCandidate es'
               where
                 isCandidate (Edge a b) =
                     ((a `S.member` vsVisited) && (b `S.member` vsTodo))
@@ -49,7 +58,7 @@ search vsVisited es vsTodo
                 toPair _ = []
         (e@(Edge a b),newEsL') <- pick' newEsL
         let newEs = newEsL' ++ newEsR
-            newV = if (a :: Char) `S.member` vsVisited then b else a
+            newV = if a `S.member` vsVisited then b else a
             newVsVisited = S.insert newV vsVisited
             newVsTodo = S.delete newV vsTodo
         resultEs <- search newVsVisited newEs newVsTodo
