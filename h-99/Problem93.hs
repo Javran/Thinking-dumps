@@ -10,11 +10,12 @@ import qualified Data.Set as S
 
 type R = Ratio Int
 data OpTyp = Add | Sub | Mul | Div
-  deriving (Enum, Show)
+  deriving (Enum, Show, Eq, Ord)
 
 data Exp
   = N Int -- a number
   | Op OpTyp Exp Exp -- an operation
+    deriving (Eq, Ord)
 
 instance Show Exp where
     show = pprExp 0
@@ -88,8 +89,8 @@ solve _ = error "solve: list should contain at least 2 elements"
 
 puzzle :: [Int] -> [String]
 puzzle xs =
-    removeDuplicates
-  . map (\(x,y) -> show x ++ " = " ++ show y)
+    map (\(x,y) -> show x ++ " = " ++ show y)
+  . removeDuplicates
   $ solve (map N xs)
 
 removeDuplicates :: Ord a => [a] -> [a]
