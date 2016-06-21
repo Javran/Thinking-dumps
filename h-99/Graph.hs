@@ -3,7 +3,6 @@ module Graph where
 
 import Test.QuickCheck
 import Control.Arrow
-import Control.Applicative
 import Control.Monad
 import Data.Function
 import Data.List

@@ -3,6 +3,8 @@ module Problem83 where
 import Graph
 import Problem80
 
+-- TODO: incomplete
+
 -- see: http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
 --- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
 p83 :: FndForm Char (Edge Char)
