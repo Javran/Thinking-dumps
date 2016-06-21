@@ -7,6 +7,10 @@ import qualified Data.Set as S
 import Data.List
 
 -- "pick" from Problem90
+-- TODO:
+-- - implement pick without using much lib functions
+--   (as I feel there might be some performance gain
+-- - export as an util function
 pick :: forall a. [a] -> [(a,[a])]
 pick xs = map split (init $ zip (inits xs) (tails xs))
   where
