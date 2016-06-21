@@ -69,11 +69,18 @@ pprExp outerPrio (Op ot l r) =
     p = opTypPriority ot
     content = pprExp p l ++ opTypToStr ot ++ pprExp p r
 
+-- to solve this problem, we try every possible ways of combining two consecutive
+-- expressions and inserting result expression in-place.
+-- when applying this process repeatly, we will eventually get exactly 2 expressions.
+-- we then evaluate and compare the result of these expressions to determine if the
+-- requirement is satisfied.
 solve :: [Exp] -> [ (Exp,Exp) ]
 solve [l,r] = do
+    -- exactly 2 expressions, just need to compare the results of evaluating them
     guard $ eval l == eval r
     pure (l,r)
 solve xs@(_:_:_) = do
+    -- try all possible ways of combining 2 consecutive expressions into one.
     ((l,r),(as,bs)) <- take2s xs
     op <- [Add .. Div]
     solve (as ++ Op op l r : bs)
