@@ -6,6 +6,7 @@ import Data.Maybe
 import Data.Ratio
 import Data.Function
 import Control.Monad
+import qualified Data.Set as S
 
 type R = Ratio Int
 data OpTyp = Add | Sub | Mul | Div
@@ -78,10 +79,11 @@ solve xs@(_:_:_) = do
     solve (as ++ Op op l r : bs)
 solve _ = error "solve: list should contain at least 2 elements"
 
--- TODO:
--- - further simplification on parentheses?
--- - remove duplicated solutions?
 puzzle :: [Int] -> [String]
 puzzle xs =
-    map (\(x,y) -> show x ++ " = " ++ show y)
+    removeDuplicates
+  . map (\(x,y) -> show x ++ " = " ++ show y)
   $ solve (map N xs)
+
+removeDuplicates :: Ord a => [a] -> [a]
+removeDuplicates = S.toList . S.fromList
