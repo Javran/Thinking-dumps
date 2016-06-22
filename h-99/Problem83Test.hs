@@ -10,22 +10,29 @@ import Problem83
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
-k4RawGraph :: String
+-- "g1___" stands for the example graph referred to as "k4" in:
+-- https://wiki.haskell.org/99_questions/Solutions/83
+g1Raw :: String
 -- TODO: (we need to change a name for this)
--- k4RawGraph = "ab bc ce eh hg gf fd da de be dg"
--- "k4" in the problem actually means the following graph:
-k4RawGraph = "ab bc cd da ac bd"
 
-k4Edges :: [Edge Char]
-k4Edges = map parseEdge . words $ k4RawGraph
+-- "k4" in the problem actually means the following graph:
+g1Raw = "ab bc cd da ac bd"
+
+g1Edges :: [Edge Char]
+g1Edges = map parseEdge . words $ g1Raw
   where
     parseEdge (a:b:_) = Edge a b
     parseEdge _ = error "bad list"
 
-k4Vertices :: S.Set Char
-k4Vertices = S.fromList (concatMap (\(Edge a b) -> [a,b]) k4Edges)
+g1Vertices :: S.Set Char
+g1Vertices = S.fromList (concatMap (\(Edge a b) -> [a,b]) g1Edges)
 
-test = search S.empty k4Edges k4Vertices
+-- see: http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
+--- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
+g2Raw :: String
+g2Raw = "ab bc ce eh hg gf fd da de be dg"
+
+test = search S.empty g1Edges g1Vertices
 
 main = hspec $ do
     describe "random tests" $ do

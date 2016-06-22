@@ -18,8 +18,6 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
     split (ls,v:rs) = (v,ls++rs)
     split _ = error "cannot split empty list"
 
--- see: http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
---- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
 
 -- TODO:
 -- * pick vs pick'
