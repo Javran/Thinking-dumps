@@ -18,25 +18,8 @@ pick xs = map split (init $ zip (inits xs) (tails xs))
     split (ls,v:rs) = (v,ls++rs)
     split _ = error "cannot split empty list"
 
--- TODO: incomplete
-
 -- see: http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
 --- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
-
-k4RawGraph :: String
--- TODO: (we need to change a name for this)
--- k4RawGraph = "ab bc ce eh hg gf fd da de be dg"
--- "k4" in the problem actually means the following graph:
-k4RawGraph = "ab bc cd da ac bd"
-
-k4Edges :: [Edge Char]
-k4Edges = map parseEdge . words $ k4RawGraph
-  where
-    parseEdge (a:b:_) = Edge a b
-    parseEdge _ = error "bad list"
-
-k4Vertices :: S.Set Char
-k4Vertices = S.fromList (concatMap (\(Edge a b) -> [a,b]) k4Edges)
 
 -- TODO:
 -- * pick vs pick'
@@ -68,4 +51,4 @@ search vsVisited es vsTodo
         resultEs <- search newVsVisited newEs newVsTodo
         pure (e:resultEs)
 
-test = search S.empty k4Edges k4Vertices
+
