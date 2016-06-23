@@ -3,6 +3,7 @@ module Problem90 where
 
 import Control.Monad
 import Data.List
+import Utils
 
 -- taking 2 steps to simplify things:
 -- 1. forget about compact representation, let's focus on using full coordinate first
@@ -22,7 +23,11 @@ queens' partial _ [] = pure partial
 queens' partial lp candidates = do
     let curCol = lp+1
     (curRow,remaining) <- pick candidates
-    guard $ and $ zipWith (\c r -> c+r /= curCol+curRow && c-r /= curCol-curRow) [lp,lp-1 .. 1] partial
+    guard $
+      and $ zipWith
+              (\c r -> c+r /= curCol+curRow && c-r /= curCol-curRow)
+              [lp,lp-1 .. 1]
+              partial
     queens' (curRow:partial) curCol remaining
 {-
 -- original implementation
@@ -37,17 +42,6 @@ queens' partial lp candidates = do
 -- > queens' [] 0 [1..8]
 -- > queens' [] 0 [1..9]
 -}
-
--- | randomly picking an element from the given list,
---   separating the selected element and all other remaining elements
---   the list order is preserved
---   e.g. pick [1,2,3] == [(1,[2,3]),(2,[1,3]),(3,[1,2])]
-pick :: forall a. [a] -> [(a,[a])]
-pick xs = map split (init $ zip (inits xs) (tails xs))
-  where
-    split :: ([a], [a]) -> (a,[a])
-    split (ls,v:rs) = (v,ls++rs)
-    split _ = error "cannot split empty list"
 
 -- | return all solutions of placing n queens on a n x n board
 queens :: Int -> [ [Int] ]

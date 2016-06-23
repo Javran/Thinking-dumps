@@ -4,19 +4,14 @@ module Problem92 where
 import Data.List
 import Data.Maybe
 import Control.Monad
+
 import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
 
+import Utils
+
 {-# ANN module "HLint: ignore Eta reduce" #-}
 {-# ANN module "HLint: ignore Use uncurry" #-}
-
--- "pick" from Problem90
-pick :: forall a. [a] -> [(a,[a])]
-pick xs = map split (init $ zip (inits xs) (tails xs))
-  where
-    split :: ([a], [a]) -> (a,[a])
-    split (ls,v:rs) = (v,ls++rs)
-    split _ = error "cannot split empty list"
 
 type Tree = IM.IntMap IS.IntSet
 type Edge = (Int,Int)
