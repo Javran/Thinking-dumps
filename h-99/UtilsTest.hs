@@ -1,7 +1,6 @@
 module UtilsTest where
 
 import Test.Hspec
-import Test.QuickCheck
 
 import Utils
 
@@ -17,3 +16,4 @@ main = hspec $ do
           , ('c', "abd")
           , ('d', "abc")
           ]
+
