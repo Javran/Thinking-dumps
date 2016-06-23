@@ -1,6 +1,5 @@
 module Problem83Test where
 
-
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.Set as S
