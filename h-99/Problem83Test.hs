@@ -1,10 +1,15 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Problem83Test where
 
 import Test.Hspec
 import Test.QuickCheck
 import qualified Data.Set as S
+import Control.Monad
+import Control.Monad.State
+import Data.Maybe
 
 import Graph
+import DisjointSet
 import Problem83
 
 {-# ANN module "HLint: ignore Redundant do" #-}
@@ -29,6 +34,18 @@ g1 = fromRaw "ab bc cd da ac bd"
 --- http://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/p83.gif
 g2 :: GraphForm Char (Edge Char)
 g2 = fromRaw "ab bc ce eh hg gf fd da de be dg"
+
+-- check whether a list of edges forms a tree
+isATree :: forall a. Ord a => [Edge a] -> Bool
+isATree es = evalState (foldM check True es) (mkSet (S.toList vertices))
+  where
+    vertices = S.fromList (concatMap (\(Edge a b) -> [a,b]) es)
+    check False _ = pure False
+    check _ (Edge a b) = do
+        r <- inSameSetM a b
+        if r
+          then pure False
+          else unionM a b >> pure True
 
 main :: IO ()
 main = hspec $ do
