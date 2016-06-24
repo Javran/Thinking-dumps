@@ -2,6 +2,7 @@ module DisjointSet where
 
 import qualified Data.Map.Strict as M
 import Control.Monad.State
+import Data.Maybe
 
 type DisjointSet a = M.Map a a
 
@@ -17,19 +18,28 @@ getRoot v ds = do
          (r,ds1) <- getRoot parent ds
          pure (r, M.insert v r ds1)
 
+inSameSet :: Ord a => a -> a -> DisjointSet a -> Maybe (Bool, DisjointSet a)
+inSameSet x y ds = do
+    (rx, ds1) <- getRoot x ds
+    (ry, ds2) <- getRoot y ds1
+    pure (rx == ry, ds2)
+
 {-# ANN union "HLint: ignore Eta reduce" #-}
 union :: Ord a => a -> a -> DisjointSet a -> DisjointSet a
-union x y ds = M.insert x y ds
+union x y ds =
+    let Just (b, ds1) = inSameSet x y ds
+    in if b
+         then ds1
+         else M.insert x y ds1
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
 initM = put . mkSet
 
 getRootM :: Ord a => a -> State (DisjointSet a) a
-getRootM v = do
-    result <- gets (getRoot v)
-    case result of
-      Just (r,ds) -> put ds >> pure r
-      Nothing -> fail "getRootM: element not found"
+getRootM v = state (fromJust . getRoot v)
+
+inSameSetM :: Ord a => a -> a -> State (DisjointSet a) Bool
+inSameSetM x y = state (fromJust . inSameSet x y)
 
 {-# ANN unionM "HLint: ignore Use infix" #-}
 unionM :: Ord a => a -> a -> State (DisjointSet a) ()
