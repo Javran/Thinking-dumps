@@ -38,22 +38,24 @@ g2 = fromRaw "ab bc ce eh hg gf fd da de be dg"
 -- check whether a list of edges forms a tree
 isATree :: forall a. Ord a => [Edge a] -> Bool
 isATree [] = True
-isATree es = evalState (foldM check1 True es >>= check2) (mkSet vertices)
+isATree es = evalState (check1 >>= check2) (mkSet vertices)
   where
     -- "vertices" should never be empty
     vertices = S.toList $ S.fromList (concatMap (\(Edge a b) -> [a,b]) es)
-    check1 False _ = pure False
-    check1 _ (Edge a b) = do
-        r <- inSameSetM a b
-        if r
-          then pure False
-          else unionM a b >> pure True
+    check1 = foldM chk True es
+      where
+        chk False _ = pure False
+        chk _ (Edge a b) = do
+          r <- inSameSetM a b
+          if r
+            then pure False
+            else unionM a b >> pure True
     check2 False = pure False
-    check2 _ =
-        let (v1:vrest) = vertices
-            chk False _ = pure False
-            chk _ v = inSameSetM v v1
-        in foldM chk True vrest
+    check2 _ = foldM chk True vrest
+      where
+        (v1:vrest) = vertices
+        chk False _ = pure False
+        chk _ v = inSameSetM v v1
 
 main :: IO ()
 main = hspec $ do
@@ -65,7 +67,6 @@ main = hspec $ do
         specify "unique results" $ example $ do
           r1 `shouldSatisfy` isUniqueOrds
           r2 `shouldSatisfy` isUniqueOrds
-        -- TODO: verify the results are trees
     describe "isATree" $ do
         let e :: Int -> Int -> Edge Int
             e = Edge
@@ -77,3 +78,4 @@ main = hspec $ do
           isATree [e 1 2, e 3 4, e 4 2] `shouldBe` True
         specify "tree 4: loop" $ example $
           isATree [e 1 2, e 3 4, e 4 2, e 2 1] `shouldBe` False
+    -- TODO: verify the results are trees
