@@ -25,14 +25,24 @@ search vsVisited es vsTodo
         let Just (v,rest) = S.minView vsTodo
         in search (S.singleton v) es rest
     | otherwise = do
-        let es' = filter f es
+        let -- (1) first removed some edges from candidate list:
+            -- if both ends of an edge are included in "vsVisited",
+            -- adding this edge will result in a loop.
+            -- so there is no need to consider these edges.
+            es' = filter f es
               where
-                f (Edge a b) = a `S.notMember` vsVisited || b `S.notMember` vsVisited
+                f (Edge a b) = a `S.notMember` vsVisited
+                            || b `S.notMember` vsVisited
+            -- (2) break "es'" into 2 parts:
+            -- "newEsL" are edges whose one end is visited but not the other of it
+            -- "newEsR" are edges whose both ends are not visited, which means
+            -- we cannot add edges from "newEsR" immediately during this search iteration.
             (newEsL, newEsR) = partition isCandidate es'
               where
                 isCandidate (Edge a b) =
-                    ((a `S.member` vsVisited) && (b `S.member` vsTodo))
-                 || ((b `S.member` vsVisited) && (a `S.member` vsTodo))
+                    ((a `S.member` vsVisited) && (b `S.notMember` vsVisited))
+                 || ((b `S.member` vsVisited) && (a `S.notMember` vsVisited))
+
             pick' = concatMap toPair . tails
               where
                 toPair (a:as) = [(a,as)]
