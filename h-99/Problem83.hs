@@ -1,14 +1,24 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module Problem83 where
+module Problem83
+  ( spantree
+  ) where
 
 import Graph
-import Problem80
 import qualified Data.Set as S
 import Data.List
 
--- TODO:
--- * pick vs pick'
+{-
+  (INTERNAL ONLY)
+  "search vsVisited es vsTodo" finds all possible spanning trees of a graph
 
+  es: a list of edges where the spanning tree edges are picked from.
+  vsVisited: the set of visited vertices
+  vsTodo: the set of not-visited vertices
+
+  INVARIANT: vsVisited and vsTodo should be disjoin and the union of them should
+  be the full set of vertices of the graph.
+
+-}
 search :: S.Set Char -> [Edge Char] -> S.Set Char -> [ [Edge Char] ]
 search vsVisited es vsTodo
     | S.null vsTodo =
@@ -42,13 +52,20 @@ search vsVisited es vsTodo
                 isCandidate (Edge a b) =
                     ((a `S.member` vsVisited) && (b `S.notMember` vsVisited))
                  || ((b `S.member` vsVisited) && (a `S.notMember` vsVisited))
-
+            -- "pick'" returns all choices of picking one element
+            -- in addition to the element of choice, a list of remaining elements
+            -- are also returned.
+            -- e.g. pick' [1,2,3] = [ (1,[2,3]), (2,[3]), (3,[]) ]
+            -- the name is chosen to resemble "pick".
             pick' = concatMap toPair . tails
               where
                 toPair (a:as) = [(a,as)]
                 toPair _ = []
+        -- make one choice (nondeterministically)
+        -- with "e" being the choice and "newEsL'" a list of remaining elements.
         (e@(Edge a b),newEsL') <- pick' newEsL
         let newEs = newEsL' ++ newEsR
+            -- newV is the newly added vertex
             newV = if a `S.member` vsVisited then b else a
             newVsVisited = S.insert newV vsVisited
             newVsTodo = S.delete newV vsTodo
