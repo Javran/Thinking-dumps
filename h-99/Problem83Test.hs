@@ -70,6 +70,8 @@ main = hspec $ do
           isATree [e 1 2, e 3 4, e 4 2] `shouldBe` True
         specify "tree 4: loop" $ example $
           isATree [e 1 2, e 3 4, e 4 2, e 2 1] `shouldBe` False
+        specify "tree 5: star" $ example $
+          isATree [e 1 2, e 1 4, e 1 3, e 5 1] `shouldBe` True
     describe "spantree" $ do
         let r1 = spantree g1
             r2 = spantree g2
