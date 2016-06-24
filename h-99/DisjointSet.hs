@@ -47,3 +47,5 @@ inSameSetM x y = state (fromJust . inSameSet x y)
 {-# ANN unionM "HLint: ignore Use infix" #-}
 unionM :: Ord a => a -> a -> State (DisjointSet a) ()
 unionM x y = modify (union x y)
+
+-- TODO: tests

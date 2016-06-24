@@ -2,11 +2,9 @@
 module Problem83Test where
 
 import Test.Hspec
-import Test.QuickCheck
 import qualified Data.Set as S
 import Control.Monad
 import Control.Monad.State
-import Data.Maybe
 
 import Graph
 import DisjointSet
