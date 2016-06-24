@@ -59,14 +59,6 @@ isATree es = evalState (check1 >>= check2) (mkSet vertices)
 
 main :: IO ()
 main = hspec $ do
-    describe "spantree" $ do
-        let r1 = spantree g1
-            r2 = spantree g2
-        specify "g1 result length" $ example $
-          length r1 `shouldBe` 16
-        specify "unique results" $ example $ do
-          r1 `shouldSatisfy` isUniqueOrds
-          r2 `shouldSatisfy` isUniqueOrds
     describe "isATree" $ do
         let e :: Int -> Int -> Edge Int
             e = Edge
@@ -78,4 +70,14 @@ main = hspec $ do
           isATree [e 1 2, e 3 4, e 4 2] `shouldBe` True
         specify "tree 4: loop" $ example $
           isATree [e 1 2, e 3 4, e 4 2, e 2 1] `shouldBe` False
-    -- TODO: verify the results are trees
+    describe "spantree" $ do
+        let r1 = spantree g1
+            r2 = spantree g2
+        specify "g1 result length" $ example $
+          length r1 `shouldBe` 16
+        specify "unique results" $ example $ do
+          r1 `shouldSatisfy` isUniqueOrds
+          r2 `shouldSatisfy` isUniqueOrds
+        specify "results are trees" $ example $ do
+          r1 `shouldSatisfy` all isATree
+          r2 `shouldSatisfy` all isATree

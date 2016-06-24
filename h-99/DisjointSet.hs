@@ -30,7 +30,10 @@ union x y ds =
     let Just (b, ds1) = inSameSet x y ds
     in if b
          then ds1
-         else M.insert x y ds1
+         else
+           let Just (rx,ds2) = getRoot x ds1
+               Just (ry,ds3) = getRoot y ds2
+           in M.insert rx ry ds3
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
 initM = put . mkSet
