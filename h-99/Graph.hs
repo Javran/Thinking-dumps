@@ -11,6 +11,8 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
 {-
+    TODO: "every edge is unique" is a bit wrong, need to fix it somehow.
+
     for a graph we can safely assume that every edge is unique,
     and that every vertex is uniquely distinguished by its name.
     note that these assumption do allow multiple edges between two vertices:
