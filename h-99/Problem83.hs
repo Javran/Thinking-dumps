@@ -72,5 +72,5 @@ search vsVisited es vsTodo
         resultEs <- search newVsVisited newEs newVsTodo
         pure (e:resultEs)
 
-spantree :: GraphForm Char (Edge Char) -> [ [Edge Char] ]
+spantree :: Ord a => GraphForm a (Edge a) -> [ [Edge a] ]
 spantree (GraphForm vs es) = search S.empty (S.toList es) vs
