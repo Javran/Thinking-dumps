@@ -19,7 +19,7 @@ import Data.List
   be the full set of vertices of the graph.
 
 -}
-search :: S.Set Char -> [Edge Char] -> S.Set Char -> [ [Edge Char] ]
+search :: Ord a => S.Set a -> [Edge a] -> S.Set a -> [ [Edge a] ]
 search vsVisited es vsTodo
     | S.null vsTodo =
         -- trivial solution, all vertices are covered
