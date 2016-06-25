@@ -4,6 +4,15 @@ import qualified Data.Map.Strict as M
 import Control.Monad.State
 import Data.Maybe
 
+{-
+  TODO:
+
+  - test cases on DisjointSet
+  - allowing adding new element instead of having a full set
+  - what if we want to change the base monad?
+
+-}
+
 type DisjointSet a = M.Map a a
 
 mkSet :: Ord a => [a] -> DisjointSet a
