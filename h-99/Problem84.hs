@@ -4,6 +4,7 @@ module Problem84 where
 import qualified Data.Set as S
 import Data.Ord
 import Data.List
+import Data.Maybe
 import Graph
 
 type WeightedEdge a w = (Edge a, w)
@@ -46,16 +47,6 @@ search vsVisited es vsTodo
                  || ((b `S.member` vsVisited) && (a `S.notMember` vsVisited))
 
             newEsLSorted = sortBy (comparing snd) newEsL
-            -- "pick'" returns all choices of picking one element
-            -- in addition to the element of choice, a list of remaining elements
-            -- are also returned.
-            -- e.g. pick' [1,2,3] = [ (1,[2,3]), (2,[3]), (3,[]) ]
-            -- the name is chosen to resemble "pick".
-            {-
-            pick' = concatMap toPair . tails
-              where
-                toPair (a:as) = [(a,as)]
-                toPair _ = [] -}
         -- make one choice (nondeterministically)
         -- with "e" being the choice and "newEsL'" a list of remaining elements.
         case newEsLSorted of
@@ -68,3 +59,9 @@ search vsVisited es vsTodo
                 newVsTodo = S.delete newV vsTodo
             resultEs <- search newVsVisited newEs newVsTodo
             pure (e:resultEs)
+
+prim :: (Ord a, Ord w) => [a] -> [(a,a,w)] -> [(a,a,w)]
+prim vs es = fromMaybe [] (map convert <$> search S.empty es' (S.fromList vs))
+  where
+    es' = map (\(a,b,w) -> (Edge a b, w)) es
+    convert (Edge a b, w) = (a,b,w)
