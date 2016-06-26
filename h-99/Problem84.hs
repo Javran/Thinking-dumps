@@ -5,12 +5,25 @@ import qualified Data.Set as S
 import Data.Ord
 import Data.List
 import Data.Maybe
+import Control.Monad
+
 import Graph
 
 type WeightedEdge a w = (Edge a, w)
 
--- TODO: impl
--- TODO: return multiple solutions?
+{-
+  NOTE: it's totally possible to implement "search" so that
+  all solutions are returned as a list: the idea is to collect a list
+  of smallest weighted edges (could be many, which results in many minimum spanning trees)
+  so we can choose non-determistically among them.
+
+  we choose not to do so because to do it in an efficient manner (without unnecessary list
+  traversal) requires something like "list'" in Problem83.hs, and that complicates
+  the code but adding nothing significant in terms of problem solving.
+  so for now I'm good with returning at most one solution.
+
+-}
+
 search :: forall a w. (Ord a, Ord w) =>
           S.Set a -> [WeightedEdge a w] -> S.Set a -> Maybe [WeightedEdge a w]
 search vsVisited es vsTodo
@@ -45,8 +58,9 @@ search vsVisited es vsTodo
                 isCandidate (Edge a b, _) =
                     ((a `S.member` vsVisited) && (b `S.notMember` vsVisited))
                  || ((b `S.member` vsVisited) && (a `S.notMember` vsVisited))
-
             newEsLSorted = sortBy (comparing snd) newEsL
+        guard $ not (null newEsLSorted)
+        -- at this point we can confirm that "newEsLSorted" is not empty
         -- make one choice (nondeterministically)
         -- with "e" being the choice and "newEsL'" a list of remaining elements.
         case newEsLSorted of
