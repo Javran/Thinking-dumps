@@ -61,8 +61,11 @@ search vsVisited es vsTodo
               where
                 toPair (a:as) = [(a,as)]
                 toPair _ = []
-        -- make one choice (nondeterministically)
+        -- (3) make one choice (nondeterministically)
         -- with "e" being the choice and "newEsL'" a list of remaining elements.
+        -- NOTE: if we have no choice at this point, (i.e. "pick' newEsL"
+        -- results in an empty) then like Maybe monad all following computations
+        -- will abort, resulting (implicitly) in a failure.
         (e@(Edge a b),newEsL') <- pick' newEsL
         let newEs = newEsL' ++ newEsR
             -- newV is the newly added vertex
