@@ -1,5 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module Problem84 where
+module Problem84
+  ( prim
+  ) where
 
 import qualified Data.Set as S
 import Data.Ord
@@ -25,7 +27,8 @@ type WeightedEdge a w = (Edge a, w)
 -}
 
 search :: forall a w. (Ord a, Ord w) =>
-          S.Set a -> [WeightedEdge a w] -> S.Set a -> Maybe [WeightedEdge a w]
+          S.Set a -> [WeightedEdge a w] -> S.Set a ->
+          Maybe [WeightedEdge a w]
 search vsVisited es vsTodo
     | S.null vsTodo =
         -- trivial solution, all vertices are covered
