@@ -12,6 +12,9 @@ import qualified Data.Set as S
 
 {-
     TODO: "every edge is unique" is a bit wrong, need to fix it somehow.
+    TODO: currently edges only have their both ends stored as fields,
+    the extra data has to be stored somewhere, maybe "WeightedEdge a w" = (Edge a, w)"
+    is good enough, we need to update comment to show this.
 
     for a graph we can safely assume that every edge is unique,
     and that every vertex is uniquely distinguished by its name.
