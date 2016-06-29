@@ -99,7 +99,7 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
     -- now we need to check consistencies for all edges in es1L
     es2R <- fix (\ loop curEs1L curEs2 ->
       case curEs1L of
-          [] -> pure es2
+          [] -> pure curEs2
           (Edge l1 l2:es1L') -> do
               let (Just r1) = M.lookup l1 newVsMap
                   (Just r2) = M.lookup l2 newVsMap
@@ -109,3 +109,29 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
           ) es1L es2
     search (es1R,es2R) grps (v1s,v2s) newVsMap
 -- search _ _ _ _ = error "dead branch, invariant violated?"
+
+{-
+TODO: turn them into tests
+seems working, example:
+
+let g1 = mkGraph [1,2,3,4,5,6,7,8] [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
+let g2 = mkGraph  [1,2,3,4,5,6,7,8] [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
+let d1 = degreeTable g1
+let d2 = degreeTable g2
+let (Just groups) = checkDegreeTables d1 d2
+let es1 = map (uncurry Edge) [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
+let es2 = map (uncurry Edge) [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
+search (es1,es2) groups ([],[]) M.empty
+
+example2:
+
+let g1 = mkGraph  [1,2,3,4,5,6,7,8] [(1,2),(1,3),(2,3),(4,3),(5,6),(6,7),(4,5),(5,8),(4,7)]
+let g2 = mkGraph  [1,2,3,4,5,6,7,8] [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
+let d1 = degreeTable g1
+let d2 = degreeTable g2
+let (Just groups) = checkDegreeTables d1 d2
+let es1 = map (uncurry Edge) [(1,2),(1,3),(2,3),(4,3),(5,6),(6,7),(4,5),(5,8),(4,7)]
+let es2 = map (uncurry Edge) [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
+search (es1,es2) groups ([],[]) M.empty
+
+-}
