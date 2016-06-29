@@ -53,3 +53,20 @@ checkDegreeTables dt1 dt2
     | otherwise = Nothing
   where
     convert = map (second length)
+
+{-
+  we need to keep track of many things
+  it's not necessary, but let's organize them in pairs:
+
+  * es1 & es2: edges to be verified
+  * grps: remaining groups of same degrees
+  * curGp1 & curGp2: current group we are working on
+
+-}
+search :: forall a b. (Ord a, Ord b) =>
+          ([Edge a], [Edge b]) ->
+          [(Int, ([a],[b]))] ->
+          ([a],[b]) ->
+          M.Map a b ->
+          [M.Map a b]
+search (es1,es2) grps (curGp1,curGp2) vsMap = undefined
