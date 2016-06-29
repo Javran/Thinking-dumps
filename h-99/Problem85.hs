@@ -17,6 +17,8 @@ import Problem80
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Control.Arrow
+import Control.Monad
+import Data.List
 
 mkGraph :: Ord a => [a] -> [(a,a)] -> AdjForm a (Edge a)
 mkGraph vs es = graphFormToAdjForm (GraphForm vSet eSet)
@@ -69,4 +71,14 @@ search :: forall a b. (Ord a, Ord b) =>
           ([a],[b]) ->
           M.Map a b ->
           [M.Map a b]
-search (es1,es2) grps (curGp1,curGp2) vsMap = undefined
+search (es1,es2) [] ([],[]) vsMap = do
+    -- let's put it in invariant that
+    -- at the beginning of every call to search
+    -- es1 & es2 should already have all verified edges removed
+    -- so at this point we can just test emptiness of them
+    -- instead of querying vsMap for (unnecessary) verification
+    guard $ null es1 && null es2
+    pure vsMap
+search (es1,es2) grps (curGp1,curGp2) vsMap = do
+    _
+search _ _ _ _ = error "dead branch, invariant violated?"
