@@ -12,6 +12,7 @@ module Problem85 where
 
 
 import Graph
+import Utils
 import Problem80
 
 import qualified Data.Set as S
@@ -79,6 +80,23 @@ search (es1,es2) [] ([],[]) vsMap = do
     -- instead of querying vsMap for (unnecessary) verification
     guard $ null es1 && null es2
     pure vsMap
+search ess ((_,(gp1,gp2)):grps') ([],[]) vsMap =
+    -- when current group of vertices are done,
+    -- we move our focus to the next group
+    search ess grps' (gp1,gp2) vsMap
 search (es1,es2) grps (curGp1,curGp2) vsMap = do
-    _
+    (v2,v2s) <- pick curGp2
+    let (v1:v1s) = curGp1
+        newVsMap = M.insert v1 v2 vsMap
+        (es1L, es1R) = partition test es1
+          where
+            test (Edge l1 l2)
+                  -- when both ends can be found in new vsMap
+                | Just _ <- M.lookup l1 newVsMap
+                , Just _ <- M.lookup l2 newVsMap = True
+                | otherwise = False
+    -- now we need to check consistencies for all edges in es1L
+    guard $ error "TODO"
+
+    search (es1R,_es2R) grps (v1s,v2s) newVsMap
 search _ _ _ _ = error "dead branch, invariant violated?"
