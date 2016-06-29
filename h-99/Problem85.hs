@@ -17,9 +17,10 @@ import Problem80
 
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
-import Control.Arrow
+import Control.Arrow hiding (loop)
 import Control.Monad
 import Data.List
+import Data.Function
 
 mkGraph :: Ord a => [a] -> [(a,a)] -> AdjForm a (Edge a)
 mkGraph vs es = graphFormToAdjForm (GraphForm vSet eSet)
@@ -87,8 +88,8 @@ search ess ((_,(gp1,gp2)):grps') ([],[]) vsMap =
 search (es1,es2) grps (curGp1,curGp2) vsMap = do
     (v2,v2s) <- pick curGp2
     let (v1:v1s) = curGp1
-        newVsMap = M.insert v1 v2 vsMap
-        (es1L, es1R) = partition test es1
+        newVsMap = M.insert v1 v2 vsMap :: M.Map a b
+        (es1L, es1R) = partition test (es1 :: [Edge a])
           where
             test (Edge l1 l2)
                   -- when both ends can be found in new vsMap
@@ -96,7 +97,15 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
                 , Just _ <- M.lookup l2 newVsMap = True
                 | otherwise = False
     -- now we need to check consistencies for all edges in es1L
-    guard $ error "TODO"
-
-    search (es1R,_es2R) grps (v1s,v2s) newVsMap
-search _ _ _ _ = error "dead branch, invariant violated?"
+    es2R <- fix (\ loop curEs1L curEs2 ->
+      case curEs1L of
+          [] -> pure es2
+          (Edge l1 l2:es1L') -> do
+              let (Just r1) = M.lookup l1 newVsMap
+                  (Just r2) = M.lookup l2 newVsMap
+              guard $ Edge r1 r2 `elem` curEs2 || Edge r2 r1 `elem` curEs2
+              let newEs2 = delete (Edge r1 r2) $ delete (Edge r2 r1) curEs2
+              loop es1L' newEs2
+          ) es1L es2
+    search (es1R,es2R) grps (v1s,v2s) newVsMap
+-- search _ _ _ _ = error "dead branch, invariant violated?"
