@@ -11,16 +11,22 @@ module Problem85 where
 -}
 
 
-import Graph
-import Utils
-import Problem80
-
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Control.Arrow hiding (loop)
 import Control.Monad
 import Data.List
 import Data.Function
+import Data.Maybe
+
+import Graph
+import Utils
+import Problem80
+
+-- for this problem we keep not just the graph itself but the list of all edges of it.
+-- we could have inferred it from the graph itself but having the redundant info around
+-- will make things easier.
+type Graph a = (AdjForm a (Edge a), [Edge a])
 
 mkGraph :: Ord a => [a] -> [(a,a)] -> AdjForm a (Edge a)
 mkGraph vs es = graphFormToAdjForm (GraphForm vSet eSet)
@@ -67,9 +73,9 @@ checkDegreeTables dt1 dt2
   * curGp1 & curGp2: current group we are working on
 
 -}
-search :: forall a b. (Ord a, Ord b) =>
+search :: forall a b deg. (Ord a, Eq b) =>
           ([Edge a], [Edge b]) ->
-          [(Int, ([a],[b]))] ->
+          [(deg, ([a],[b]))] ->
           ([a],[b]) ->
           M.Map a b ->
           [M.Map a b]
@@ -78,7 +84,7 @@ search (es1,es2) [] ([],[]) vsMap = do
     -- at the beginning of every call to search
     -- es1 & es2 should already have all verified edges removed
     -- so at this point we can just test emptiness of them
-    -- instead of querying vsMap for (unnecessary) verification
+    -- instead of querying vsMap for (unnecessarily) verification
     guard $ null es1 && null es2
     pure vsMap
 search ess ((_,(gp1,gp2)):grps') ([],[]) vsMap =
@@ -108,7 +114,6 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
               loop es1L' newEs2
           ) es1L es2
     search (es1R,es2R) grps (v1s,v2s) newVsMap
--- search _ _ _ _ = error "dead branch, invariant violated?"
 
 {-
 TODO: turn them into tests
@@ -135,3 +140,13 @@ let es2 = map (uncurry Edge) [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1
 search (es1,es2) groups ([],[]) M.empty
 
 -}
+
+-- | find mappings between two graphs that can prove they are isomorphic
+findIsoMaps :: (Ord a, Ord b) => Graph a -> Graph b -> [M.Map a b]
+findIsoMaps (ga,eas) (gb,ebs) = do
+    let dta = degreeTable ga
+        dtb = degreeTable gb
+        dtPair = checkDegreeTables dta dtb
+    guard $ isJust dtPair
+    let dtp = fromJust dtPair
+    search (eas,ebs) dtp ([],[]) M.empty
