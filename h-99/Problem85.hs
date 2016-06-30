@@ -1,5 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module Problem85 where
+module Problem85
+  ( Graph
+  , mkGraph
+  , findIsoMaps
+  , iso
+  ) where
 
 {-
 
