@@ -67,4 +67,12 @@ main = hspec $ do
                        [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
                 result = findIsoMaps g1 g2
             result `shouldSatisfy` all (verifyIso g1 g2)
-        -- TODO: one example for non-iso
+        specify "example 3 (non-iso)" $ do
+            let g1 = mkGraph
+                       ['A'..'F']
+                       [('A','B'),('B','C'),('C','E'),('E','F'),('B','D'),('D','E')]
+                g2 = mkGraph
+                       [1 :: Int .. 6]
+                       [(5,1),(1,6),(2,3),(3,4),(1,3),(4,6)]
+                result = findIsoMaps g1 g2
+            result `shouldSatisfy` null
