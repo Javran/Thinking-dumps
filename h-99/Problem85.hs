@@ -28,11 +28,13 @@ import Problem80
 -- will make things easier.
 type Graph a = (AdjForm a (Edge a), [Edge a])
 
-mkGraph :: Ord a => [a] -> [(a,a)] -> AdjForm a (Edge a)
-mkGraph vs es = graphFormToAdjForm (GraphForm vSet eSet)
+mkGraph :: Ord a => [a] -> [(a,a)] -> Graph a
+mkGraph vs es = (graphFormToAdjForm (GraphForm vSet eSet), es')
   where
+    convert = map (uncurry Edge)
+    es' = convert es
     vSet = S.fromList vs
-    eSet = S.fromList . map (uncurry Edge) $ es
+    eSet = S.fromList es'
 
 degreeTable :: forall a b. Ord a => AdjForm a b -> [(Int,[a])]
 degreeTable (AdjForm g) =
@@ -150,3 +152,7 @@ findIsoMaps (ga,eas) (gb,ebs) = do
     guard $ isJust dtPair
     let dtp = fromJust dtPair
     search (eas,ebs) dtp ([],[]) M.empty
+
+-- | test whether two graphs are isomorphic
+iso :: (Ord a, Ord b) => Graph a -> Graph b -> Bool
+iso ga gb = not . null $ findIsoMaps ga gb
