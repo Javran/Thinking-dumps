@@ -13,32 +13,6 @@ import Graph
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
-{-
-TODO: turn them into tests
-seems working, example:
-
-let g1 = mkGraph [1,2,3,4,5,6,7,8] [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
-let g2 = mkGraph  [1,2,3,4,5,6,7,8] [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
-let d1 = degreeTable g1
-let d2 = degreeTable g2
-let (Just groups) = checkDegreeTables d1 d2
-let es1 = map (uncurry Edge) [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
-let es2 = map (uncurry Edge) [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
-search (es1,es2) groups ([],[]) M.empty
-
-example2:
-
-let g1 = mkGraph  [1,2,3,4,5,6,7,8] [(1,2),(1,3),(2,3),(4,3),(5,6),(6,7),(4,5),(5,8),(4,7)]
-let g2 = mkGraph  [1,2,3,4,5,6,7,8] [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
-let d1 = degreeTable g1
-let d2 = degreeTable g2
-let (Just groups) = checkDegreeTables d1 d2
-let es1 = map (uncurry Edge) [(1,2),(1,3),(2,3),(4,3),(5,6),(6,7),(4,5),(5,8),(4,7)]
-let es2 = map (uncurry Edge) [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
-search (es1,es2) groups ([],[]) M.empty
-
--}
-
 deleteOrFail :: Eq a => a -> [a] -> Maybe [a]
 deleteOrFail _ [] = Nothing
 deleteOrFail v (x:xs) =
@@ -93,3 +67,4 @@ main = hspec $ do
                        [(8,5),(6,4),(4,5),(5,7),(7,6),(4,2),(1,2),(3,2),(1,3)]
                 result = findIsoMaps g1 g2
             result `shouldSatisfy` all (verifyIso g1 g2)
+        -- TODO: one example for non-iso
