@@ -13,9 +13,11 @@ getDegree :: Ord a => a -> AdjForm a b -> Maybe Int
 getDegree v (AdjForm g) = S.size <$> M.lookup v g
 
 {-
-  TODO
   b. generate a list of all nodes sorted according to decreasing degree.
 -}
+
+degreeDecreasingNodes :: Ord a => AdjForm a b -> [a]
+degreeDecreasingNodes = concatMap snd . reverse . degreeTable
 
 {-
   TODO
