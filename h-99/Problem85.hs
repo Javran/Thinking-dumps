@@ -4,17 +4,15 @@ module Problem85
   , mkGraph
   , findIsoMaps
   , iso
+  , degreeTable
   ) where
 
 {-
-
-  plan:
+  NOTE:
   - search by purposing partial bijections, reject immediately
     if the iso cannot be established in the given way
   - group nodes by their degrees, by which we can reduce search space.
-
 -}
-
 
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
