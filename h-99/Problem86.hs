@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Problem86 where
 
 import Graph
@@ -5,6 +6,7 @@ import Problem85
 
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
+import Data.Maybe
 
 {-
   a. determine the degree of a given node.
@@ -32,3 +34,21 @@ degreeDecreasingNodes = concatMap snd . reverse . degreeTable
     the vertex list, coloring nodes that haven't been colored and don't have
     any adjacent vertex that has that color.
 -}
+
+colorNodes :: forall a color. (Ord a, Enum color, Eq color) =>
+              AdjForm a (Edge a) -> M.Map a color -> color -> [a] -> ([a], M.Map a color)
+colorNodes _ colorMap _ [] = ([],colorMap)
+colorNodes af@(AdjForm g) colorMap curColor (x:xs) =
+    if noConflict
+      then colorNodes af (M.insert x curColor colorMap) curColor xs
+      else let (xs',newColorMap) = colorNodes af colorMap curColor xs
+           in (x:xs',newColorMap)
+  where
+    neighbors :: [a]
+    neighbors = map get . S.toList . fromJust $ M.lookup x g
+      where
+        -- get the end other than "x" of this edge
+        get (Edge a b) = if a == x then b else a
+    noConflict = all (check . (`M.lookup` colorMap)) neighbors
+      where
+        check = maybe True (/= curColor)
