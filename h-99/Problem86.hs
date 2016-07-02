@@ -53,11 +53,11 @@ colorNodes af@(AdjForm g) colorMap curColor (x:xs) =
       where
         check = maybe True (/= curColor)
 
-graphColoring :: forall color a . (Enum color, Eq color, Ord a)=> AdjForm a (Edge a) -> color -> [a] -> M.Map a color
-graphColoring g c' = graphColoring' c' M.empty
+graphColoring :: forall color a . (Enum color, Eq color, Ord a) => AdjForm a (Edge a) -> color -> [a] -> M.Map a color
+graphColoring g initC = graphColoring' initC M.empty
   where
     graphColoring' c colorMap xs = case remained of
         [] -> colorMap'
         _ -> graphColoring' (succ c) colorMap' remained
       where
-        (remained, colorMap') = colorNodes (g :: AdjForm a (Edge a)) colorMap (c :: color) xs
+        (remained, colorMap') = colorNodes g colorMap c xs
