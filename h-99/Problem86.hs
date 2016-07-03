@@ -50,22 +50,40 @@ colorNodes (AdjForm g) cm curColor = colorNodes' cm
     colorNodes' colorMap [] = ([], colorMap)
     colorNodes' colorMap (x:xs) =
         if noConflict
-          then colorNodes' (M.insert x curColor colorMap) xs
-          else let (xs',newColorMap) = colorNodes' colorMap xs
-               in (x:xs',newColorMap)
+          then
+            -- assigning color to node "x"
+            colorNodes' (M.insert x curColor colorMap) xs
+          else
+            -- "x" does not meet the requirement,
+            -- so when rest of the task is done we put it back.
+            let (xs',newColorMap) = colorNodes' colorMap xs
+            in (x:xs',newColorMap)
       where
         neighbors :: [a]
         neighbors = map get . S.toList . fromJust $ M.lookup x g
           where
             -- get the end other than "x" of this edge
             get (Edge a b) = if a == x then b else a
+        -- check all neighborhoods of "x"
         noConflict = all (check . (`M.lookup` colorMap)) neighbors
           where
+            -- for each neighboring node, it should either not yet assigned a color
+            -- or assigned a color different than the current one.
             check = maybe True (/= curColor)
 
-graphColoring :: forall color a . (Enum color, Eq color, Ord a) => AdjForm a (Edge a) -> color -> [a] -> M.Map a color
+{-
+  "graphColoring g c" takes a graph "g" and initial color "c" to color the graph.
+  successors of "c" is used when necessary (to resolve color-conflict)
+-}
+graphColoring :: forall color a.
+                 (Enum color, Eq color, Ord a) =>
+                 AdjForm a (Edge a) -> color -> [a] -> M.Map a color
 graphColoring g initC = graphColoring' initC M.empty
   where
+    -- loop until there is no remained nodes
+    -- this process will eventually terminate as long as node list is finite,
+    -- because each time we will take a "fresh" color (by using "succ")
+    -- so there's at least one node colored during every iteration.
     graphColoring' c colorMap xs = case remained of
         [] -> colorMap'
         _ -> graphColoring' (succ c) colorMap' remained
@@ -73,7 +91,7 @@ graphColoring g initC = graphColoring' initC M.empty
         (remained, colorMap') = colorNodes g colorMap c xs
 
 {-
-
+ TODO: tests
   working example:
 
 let g = fst $ mkGraph ['a','b','c','d','e','f','g','h','i','j'] [('a','b'),('a','e'),('a','f'),('b','c'),('b','g'),('c','d'),('c','h'),('d','e'),('d','i'),('e','j'),('f','h'),('f','i'),('g','i'),('g','j'),('h','j')]
