@@ -45,21 +45,23 @@ degreeDecreasingNodes = concatMap snd . reverse . degreeTable
 -}
 colorNodes :: forall a color. (Ord a, Enum color, Eq color) =>
               AdjForm a (Edge a) -> M.Map a color -> color -> [a] -> ([a], M.Map a color)
-colorNodes _ colorMap _ [] = ([],colorMap)
-colorNodes af@(AdjForm g) colorMap curColor (x:xs) =
-    if noConflict
-      then colorNodes af (M.insert x curColor colorMap) curColor xs
-      else let (xs',newColorMap) = colorNodes af colorMap curColor xs
-           in (x:xs',newColorMap)
+colorNodes (AdjForm g) cm curColor = colorNodes' cm
   where
-    neighbors :: [a]
-    neighbors = map get . S.toList . fromJust $ M.lookup x g
+    colorNodes' colorMap [] = ([], colorMap)
+    colorNodes' colorMap (x:xs) =
+        if noConflict
+          then colorNodes' (M.insert x curColor colorMap) xs
+          else let (xs',newColorMap) = colorNodes' colorMap xs
+               in (x:xs',newColorMap)
       where
-        -- get the end other than "x" of this edge
-        get (Edge a b) = if a == x then b else a
-    noConflict = all (check . (`M.lookup` colorMap)) neighbors
-      where
-        check = maybe True (/= curColor)
+        neighbors :: [a]
+        neighbors = map get . S.toList . fromJust $ M.lookup x g
+          where
+            -- get the end other than "x" of this edge
+            get (Edge a b) = if a == x then b else a
+        noConflict = all (check . (`M.lookup` colorMap)) neighbors
+          where
+            check = maybe True (/= curColor)
 
 graphColoring :: forall color a . (Enum color, Eq color, Ord a) => AdjForm a (Edge a) -> color -> [a] -> M.Map a color
 graphColoring g initC = graphColoring' initC M.empty
