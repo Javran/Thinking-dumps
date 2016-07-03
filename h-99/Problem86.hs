@@ -69,3 +69,13 @@ graphColoring g initC = graphColoring' initC M.empty
         _ -> graphColoring' (succ c) colorMap' remained
       where
         (remained, colorMap') = colorNodes g colorMap c xs
+
+{-
+
+  working example:
+
+let g = fst $ mkGraph ['a','b','c','d','e','f','g','h','i','j'] [('a','b'),('a','e'),('a','f'),('b','c'),('b','g'),('c','d'),('c','h'),('d','e'),('d','i'),('e','j'),('f','h'),('f','i'),('g','i'),('g','j'),('h','j')]
+let ns = degreeDecreasingNodes g
+graphColoring g (1 :: Int) ns
+
+-}
