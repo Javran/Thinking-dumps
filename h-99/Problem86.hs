@@ -22,12 +22,12 @@ degreeDecreasingNodes :: Ord a => AdjForm a b -> [a]
 degreeDecreasingNodes = concatMap snd . reverse . degreeTable
 
 {-
-  TODO
   c. use Welsh-Powell's algorithm to paint the nodes of a graph
   in such a way that adjacent nodes have different colors.
-  related:
-  http://graphstream-project.org/doc/Algorithms/Welsh-Powell/
-  https://en.wikipedia.org/wiki/Graph_coloring#Greedy_coloring
+
+  Related links:
+  - http://graphstream-project.org/doc/Algorithms/Welsh-Powell/
+  - https://en.wikipedia.org/wiki/Graph_coloring#Greedy_coloring
 
   NOTE:
   - according to the algorithm, we can take iterations to pick one color and traverse
@@ -35,6 +35,14 @@ degreeDecreasingNodes = concatMap snd . reverse . degreeTable
     any adjacent vertex that has that color.
 -}
 
+{-
+  "colorNodes af colorMap color xs" traverses node list "xs" in order,
+  and use "color" to color nodes that are not color and don't have any adjacent nodes
+  with that color.
+  "colorMap" is the existing node-color mapping and "colorNodes" will extend it with the new
+  color. in addition, nodes not qualified for coloring are also returned in a list
+  with node order preserved.
+-}
 colorNodes :: forall a color. (Ord a, Enum color, Eq color) =>
               AdjForm a (Edge a) -> M.Map a color -> color -> [a] -> ([a], M.Map a color)
 colorNodes _ colorMap _ [] = ([],colorMap)
