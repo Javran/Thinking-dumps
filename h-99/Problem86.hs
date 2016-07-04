@@ -90,6 +90,12 @@ graphColoring g initC = graphColoring' initC M.empty
       where
         (remained, colorMap') = colorNodes g colorMap c xs
 
+kcolor :: Ord a => [a] -> [(a,a)] -> [(a,Int)]
+kcolor vs es = M.toAscList $ graphColoring g 1 vsSorted
+  where
+    (g, _) = mkGraph vs es
+    vsSorted = degreeDecreasingNodes g
+
 {-
  TODO: tests
   working example:
