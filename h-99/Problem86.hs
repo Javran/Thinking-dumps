@@ -95,13 +95,3 @@ kcolor vs es = M.toAscList $ graphColoring g 1 vsSorted
   where
     (g, _) = mkGraph vs es
     vsSorted = degreeDecreasingNodes g
-
-{-
- TODO: tests
-  working example:
-
-let g = fst $ mkGraph ['a','b','c','d','e','f','g','h','i','j'] [('a','b'),('a','e'),('a','f'),('b','c'),('b','g'),('c','d'),('c','h'),('d','e'),('d','i'),('e','j'),('f','h'),('f','i'),('g','i'),('g','j'),('h','j')]
-let ns = degreeDecreasingNodes g
-graphColoring g (1 :: Int) ns
-
--}
