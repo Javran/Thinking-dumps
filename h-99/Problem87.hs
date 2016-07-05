@@ -26,3 +26,6 @@ search g curV visited = case candidates of
     candidates =
         filter (`S.notMember` visited)
       $ adjacents g curV
+
+depthFirst :: Ord a => ([a], [(a,a)]) -> a -> [a]
+depthFirst (vs,es) start = search (mkGraph vs es) start S.empty
