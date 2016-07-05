@@ -15,3 +15,14 @@ adjacents :: Ord a => Graph a -> a -> [a]
 adjacents (AdjForm g) v = maybe [] (map getAdj . S.toList) (M.lookup v g)
   where
     getAdj (Edge a b) = if a == v then b else a
+
+search :: Ord a => Graph a -> a -> S.Set a -> [a]
+search g curV visited = case candidates of
+    [] -> [curV]
+    (next:_) ->
+        let result = search g next (S.insert curV visited)
+        in curV : result
+  where
+    candidates =
+        filter (`S.notMember` visited)
+      $ adjacents g curV
