@@ -12,7 +12,7 @@ mkGraph :: Ord a => [a] -> [(a,a)] -> Graph a
 mkGraph vs es = fst (P85.mkGraph vs es)
 
 adjacents :: Ord a => Graph a -> a -> [a]
-adjacents (AdjForm g) v = maybe [] (map getAdj . S.toList) (M.lookup v g)
+adjacents (AdjForm g) v = maybe [] (map getAdj . S.toAscList) (M.lookup v g)
   where
     getAdj (Edge a b) = if a == v then b else a
 
