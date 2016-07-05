@@ -12,6 +12,11 @@ type Graph a = AdjForm a (Edge a)
 mkGraph :: Ord a => [a] -> [(a,a)] -> Graph a
 mkGraph vs es = fst (P85.mkGraph vs es)
 
+{-
+  gives adjacent vertices of a specified vertex in a graph.
+  the resulting list should not have duplicates and
+  is sorted guided by the Ord instance of vertex type
+-}
 adjacents :: Ord a => Graph a -> a -> [a]
 adjacents (AdjForm g) v = maybe [] (sort . map getAdj . S.toList) (M.lookup v g)
   where
@@ -24,6 +29,7 @@ search g curV visited = case candidates of
         let result = search g next (S.insert curV visited)
         in curV : result
   where
+    -- pick a list of not-yet visited adjacent vertices
     candidates =
         filter (`S.notMember` visited)
       $ adjacents g curV
