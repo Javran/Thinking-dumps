@@ -22,22 +22,34 @@ adjacents (AdjForm g) v = maybe [] (sort . map getAdj . S.toList) (M.lookup v g)
   where
     getAdj (Edge a b) = if a == v then b else a
 
-search :: Ord a => Graph a -> a -> S.Set a -> [a]
-search g curV visited = case candidates of
-    [] -> [curV]
-    (next:_) ->
-        let result = search g next (S.insert curV visited)
-        in curV : result
+{-
+  NOTE: in previous version of "search", I made a mistake:
+  instead of traversing the whole graph, I only track one edge
+  until it's not possible. a proper algorithm needs to backtrack
+  in order to traversal nodes properly.
+  the mistake is revealed by a simple check:
+  because we aim to traverse all nodes, attention should be paid to
+  any "ignore" pattern, as it potentially ignores the possibility of
+  picking alternative nodes when a search have reached one dead end.
+-}
+search :: Ord a => Graph a -> [a] -> [a] -> [a]
+search _ [] visited = reverse visited
+search g (curV:todos) visited =
+    search g newTodos newVisited
   where
     -- pick a list of not-yet visited adjacent vertices
-    candidates =
-        filter (`S.notMember` visited)
-      $ adjacents g curV
-appendNew :: (Eq a) => [a] -> [a] -> [a]
-appendNew xs [] = xs
-appendNew xs (y:ys)
-    | y `elem` xs = appendNew xs ys
-    | otherwise = appendNew (xs ++ [y]) ys
+    adjs = filter (`notElem` visited) (adjacents g curV)
+    -- for depth-first search, we replace current node with
+    -- a list of no-yet-visited adjacent nodes in the queue
+    -- so that every node is exhaustively searched before moving to
+    -- the next candidate of same depth.
+    newTodos = removeDups $ adjs ++ todos
+    newVisited = curV : visited
+
+-- remove duplicated elements
+removeDups :: Eq a => [a] -> [a]
+removeDups [] = []
+removeDups (x:xs) = x : removeDups (filter (/= x) xs)
 
 depthFirst :: Ord a => ([a], [(a,a)]) -> a -> [a]
-depthFirst (vs,es) start = search (mkGraph vs es) start S.empty
+depthFirst (vs,es) start = search (mkGraph vs es) [start] []
