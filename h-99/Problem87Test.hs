@@ -27,4 +27,4 @@ main = hspec $ do
             depthFirst g1 7 `shouldBe` [7,6]
         specify "example 2" $ do
             depthFirst g2 1 `shouldBe` [1,7,2,6,3,4,5,8,9]
-            -- TODO: more examples after passing this one
+            depthFirst g2 2 `shouldBe` [2,6,3,7,1,8,9,4,5]
