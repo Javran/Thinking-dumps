@@ -10,7 +10,6 @@ import qualified Data.Set as S
   by doing so we can find one connected component from the graph.
   we then make this run through iterations until all vertices
   are visited (and belongs to one of the connected components)
-
 -}
 connectedComponents :: Ord a => ([a],[(a,a)]) -> [ [a] ]
 connectedComponents p@(vs,_) = connectedComponents' initTodos
