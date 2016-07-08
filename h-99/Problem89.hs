@@ -17,7 +17,7 @@ import Control.Monad
 import Data.List
 import Data.Maybe
 
-type Graph a = AdjForm a (Edge a)
+import Problem87 (Graph, mkGraph, removeDups)
 
 -- like Problem87.adjacents but in this problem there's
 -- no need for sorting nodes.
@@ -56,7 +56,9 @@ checkBipartite g es vSet (curV:todos) colorMap = do
         newTodos = removeDups $ adjs ++ todos
     checkBipartite g remainedEs newVSet newTodos colorMap2
 
--- remove duplicated elements
-removeDups :: Eq a => [a] -> [a]
-removeDups [] = []
-removeDups (x:xs) = x : removeDups (filter (/= x) xs)
+bipartite :: Ord a => ([a], [(a,a)]) -> Bool
+bipartite (vs, rawEs) = isJust (checkBipartite g es vSet [] M.empty)
+  where
+    g = mkGraph vs rawEs
+    es = map (uncurry Edge) rawEs
+    vSet = S.fromList vs
