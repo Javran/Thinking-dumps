@@ -28,7 +28,7 @@ adjacents (AdjForm g) v = maybe [] (map getAdj . S.toList) (M.lookup v g)
 
 checkBipartite :: Ord a => Graph a -> [Edge a] -> S.Set a -> [a] -> M.Map a Bool -> Maybe ()
 checkBipartite _ [] _ _ _ = pure ()
-checkBipartite g es vSet [] colorMap = case S.minView vSet of
+checkBipartite g es vSet [] _ = case S.minView vSet of
     Just (v,vSet') -> checkBipartite g es vSet' [v] M.empty
     Nothing -> pure ()
 checkBipartite g es vSet (curV:todos) colorMap = do
@@ -52,5 +52,11 @@ checkBipartite g es vSet (curV:todos) colorMap = do
                                  -> guard (va /= vb) >> loop curEs' remainedEs
                            (e:curEs') -> loop curEs' (e:remainedEs)
                        ) es []
-    checkBipartite g remainedEs _ _ colorMap2
+    let newVSet = foldl' (flip S.delete) vSet (curV:adjs)
+        newTodos = removeDups $ adjs ++ todos
+    checkBipartite g remainedEs newVSet newTodos colorMap2
 
+-- remove duplicated elements
+removeDups :: Eq a => [a] -> [a]
+removeDups [] = []
+removeDups (x:xs) = x : removeDups (filter (/= x) xs)
