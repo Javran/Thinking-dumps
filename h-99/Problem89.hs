@@ -14,7 +14,6 @@ import qualified Data.Set as S
 import qualified Data.Map.Strict as M
 import Data.Function
 import Control.Monad
-import Data.List
 import Data.Maybe
 
 import Problem87 (Graph, mkGraph, removeDups)
@@ -26,7 +25,7 @@ adjacents (AdjForm g) v = maybe [] (map getAdj . S.toList) (M.lookup v g)
   where
     getAdj (Edge a b) = if a == v then b else a
 
-checkBipartite :: Ord a => Graph a -> [Edge a] -> S.Set a -> [a] -> M.Map a Bool -> Maybe ()
+checkBipartite :: (Ord a, Show a) => Graph a -> [Edge a] -> S.Set a -> [a] -> M.Map a Bool -> Maybe ()
 checkBipartite _ [] _ _ _ = pure ()
 checkBipartite g es vSet [] _ = case S.minView vSet of
     Just (v,vSet') ->
@@ -77,13 +76,13 @@ checkBipartite g es vSet (curV:todos) colorMap = do
                                -- a color thus not yet checkable, we keep it in the pending list
                                loop curEs' (e:remainedEs)
                        ) es []
-    -- the purpose of having "vSet" is to pick one vertex to start searching and
-    -- assigning colors. therefore we just remove nodes that has been assigned a color.
-    let newVSet = foldl' (flip S.delete) vSet (curV:adjs)
-        newTodos = removeDups $ adjs ++ todos
+    -- vSet should hold elements not-yet visited.
+    -- and visited vertices should be removed from the queue
+    let newVSet = S.delete curV vSet
+        newTodos = filter (`S.member` newVSet) $ removeDups $ adjs ++ todos
     checkBipartite g remainedEs newVSet newTodos colorMap2
 
-bipartite :: Ord a => ([a], [(a,a)]) -> Bool
+bipartite :: (Ord a, Show a) => ([a], [(a,a)]) -> Bool
 bipartite (vs, rawEs) = isJust (checkBipartite g es vSet [] M.empty)
   where
     g = mkGraph vs rawEs
