@@ -29,29 +29,56 @@ adjacents (AdjForm g) v = maybe [] (map getAdj . S.toList) (M.lookup v g)
 checkBipartite :: Ord a => Graph a -> [Edge a] -> S.Set a -> [a] -> M.Map a Bool -> Maybe ()
 checkBipartite _ [] _ _ _ = pure ()
 checkBipartite g es vSet [] _ = case S.minView vSet of
-    Just (v,vSet') -> checkBipartite g es vSet' [v] M.empty
-    Nothing -> pure ()
+    Just (v,vSet') ->
+        -- dropping old colorMap because this is got to be a new connected component
+        -- so there's no need to keep old one around.
+        checkBipartite g es vSet' [v] M.empty
+    Nothing -> guard (null es)
 checkBipartite g es vSet (curV:todos) colorMap = do
+    -- colorMap1: to make sure curV is colored. as "todos" is expanded from taking
+    -- its first element and put back its adjacent nodes, the only case where "curV"
+    -- is not yet assigned a color is that when we start searching on a new connected
+    -- component of a graph.
     let (colorMap1,curColor) = case M.lookup curV colorMap of
             Nothing -> (M.insert curV False colorMap, False)
             Just c -> (colorMap, c)
+        -- Bools are used for coloring, inversing a color results in getting the other color.
         invColor = not curColor
         adjs = adjacents g curV
     -- first pass to color adjacent nodes of curV (with early failure)
     colorMap2 <- fix (\loop curAdjs curColorMap -> case curAdjs of
-                          [] -> pure curColorMap
+                          [] ->
+                              -- all adjacent nodes have been checked and colored
+                              pure curColorMap
                           (v1:vs1) -> case M.lookup v1 curColorMap of
-                              Nothing -> loop vs1 (M.insert v1 invColor curColorMap)
-                              Just c -> guard (c == invColor) >> loop vs1 curColorMap
+                              Nothing ->
+                                  -- this adjacent node has not yet assigned a color
+                                  loop vs1 (M.insert v1 invColor curColorMap)
+                              Just c ->
+                                  -- an adjacent node that has been assigned a color
+                                  -- in this case it's required to make sure that
+                                  -- its color is the intended one.
+                                  guard (c == invColor) >> loop vs1 curColorMap
                      ) adjs colorMap1
+    -- second pass to check remaining edges.
     remainedEs <- fix (\loop curEs remainedEs -> case curEs of
-                           [] -> pure remainedEs
+                           [] ->
+                               -- all edges have been checked, return the list of
+                               -- not-yet-checkable edges.
+                               pure remainedEs
                            (Edge a b:curEs')
                                | Just va <- M.lookup a colorMap2
                                , Just vb <- M.lookup b colorMap2
+                                 -- when both ends are assigned a color
                                  -> guard (va /= vb) >> loop curEs' remainedEs
-                           (e:curEs') -> loop curEs' (e:remainedEs)
+                           (e:curEs') ->
+                               -- if the pattern matching has failed,
+                               -- then one of (or both) ends are not yet assigned
+                               -- a color thus not yet checkable, we keep it in the pending list
+                               loop curEs' (e:remainedEs)
                        ) es []
+    -- the purpose of having "vSet" is to pick one vertex to start searching and
+    -- assigning colors. therefore we just remove nodes that has been assigned a color.
     let newVSet = foldl' (flip S.delete) vSet (curV:adjs)
         newTodos = removeDups $ adjs ++ todos
     checkBipartite g remainedEs newVSet newTodos colorMap2
