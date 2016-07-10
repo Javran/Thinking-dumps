@@ -44,10 +44,11 @@ genGraph k (v:vs) (AdjForm g) = do
     --    existing adjacent nodes. (TODO update comment)
     (newAdjs,_) <- pickN (k-curDeg) vs
     let g1 = foldl' (flip (addEdge v)) g newAdjs
-    -- TODO:
-    -- 3. filter "vs" to meet the invariant (this time we only need to
+        toBeRemoved = v : filter (\adj -> k == (S.size . fromJust $ M.lookup adj g1)) newAdjs
+        newVs = foldl' (flip delete) vs toBeRemoved
+    -- 3. filter "vs" to meet the invariant (we only need to
     --    investigate newly update nodes)
-    _
+    genGraph k newVs (AdjForm g1)
   where
     addEdge a b = M.adjust (S.insert e) a . M.adjust (S.insert e) b
       where
