@@ -56,9 +56,19 @@ genGraph k (v:vs) (AdjForm g) = do
       where
         e = Edge a b
 
+convertGraph :: Ord a => AdjForm a (Edge a) -> P85.Graph a
+convertGraph af@(AdjForm g) = (af, S.toList $ S.fromList $ concatMap (S.toList . snd) (M.toList g))
+
+insertIso :: Ord a => AdjForm a (Edge a) -> [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
+insertIso g xs = if all (\x -> not $ P85.iso (convertGraph g) (convertGraph x)) xs then g:xs else xs
+
+removeIsos :: Ord a => [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
+removeIsos = foldl' (flip insertIso) []
+
 {- example:
 > :set -XFlexibleContexts
 > let g1 = fndFormToGraphForm (FndForm (map Left [1 .. 6])) :: GraphForm Int (Edge Int)
 > let g2 = graphFormToAdjForm g1
-> genGraph 3 [1..6] g2
+> removeIsos $ genGraph 3 [1..6] g2
+2
 -}
