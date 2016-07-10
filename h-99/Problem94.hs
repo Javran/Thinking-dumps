@@ -2,6 +2,10 @@ module Problem94 where
 
 import Data.List
 import Control.Monad
+import Graph
+import qualified Data.Set as S
+import Data.Maybe
+import qualified Data.Map.Strict as M
 
 {-
   TODO:
@@ -28,13 +32,23 @@ pickN n xs = do
     (z,zs) <- pickN (n-1) ys
     pure (y:z,zs)
 
-genGraph _ [] partial = pure partial
-genGraph k (v:vs) partial = do
-    -- TODO:
-    -- 1. filter "vs" to only include those that still don't have sufficient
+-- TODO: we are assuming the graph is properly initialized
+-- so that every node has an entity (might point to an empty set)
+genGraph :: Ord a => Int -> [a] -> AdjForm a (Edge a) -> [AdjForm a (Edge a)]
+genGraph _ [] graph = pure graph
+genGraph k (v:vs) (AdjForm g) = do
+    -- INVARIANT "(v:vs)" should only include those that still don't have sufficient
     --    adjacent nodes.
+    let curDeg = S.size $ fromJust $ M.lookup v g
     -- 2. choose e-k edges and connect them. where "e" is the number of
-    --    existing adjacent nodes.
-    -- 3. filter "vs" again to meet the invariant (this time we only need to
+    --    existing adjacent nodes. (TODO update comment)
+    (newAdjs,_) <- pickN (k-curDeg) vs
+    let g1 = foldl' (flip (addEdge v)) g newAdjs
+    -- TODO:
+    -- 3. filter "vs" to meet the invariant (this time we only need to
     --    investigate newly update nodes)
     _
+  where
+    addEdge a b = M.adjust (S.insert e) a . M.adjust (S.insert e) b
+      where
+        e = Edge a b
