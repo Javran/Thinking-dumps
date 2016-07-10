@@ -1,6 +1,7 @@
 module Problem94 where
 
 import Data.List
+import Control.Monad
 
 {-
   TODO:
@@ -26,3 +27,14 @@ pickN n xs = do
     (y,ys) <- pickOne xs
     (z,zs) <- pickN (n-1) ys
     pure (y:z,zs)
+
+genGraph _ [] partial = pure partial
+genGraph k (v:vs) partial = do
+    -- TODO:
+    -- 1. filter "vs" to only include those that still don't have sufficient
+    --    adjacent nodes.
+    -- 2. choose e-k edges and connect them. where "e" is the number of
+    --    existing adjacent nodes.
+    -- 3. filter "vs" again to meet the invariant (this time we only need to
+    --    investigate newly update nodes)
+    _
