@@ -3,9 +3,11 @@ module Problem94 where
 import Data.List
 import Control.Monad
 import Graph
+import Problem80
 import qualified Data.Set as S
 import Data.Maybe
 import qualified Data.Map.Strict as M
+import qualified Problem85 as P85
 
 {-
   TODO:
@@ -53,3 +55,10 @@ genGraph k (v:vs) (AdjForm g) = do
     addEdge a b = M.adjust (S.insert e) a . M.adjust (S.insert e) b
       where
         e = Edge a b
+
+{- example:
+> :set -XFlexibleContexts
+> let g1 = fndFormToGraphForm (FndForm (map Left [1 .. 6])) :: GraphForm Int (Edge Int)
+> let g2 = graphFormToAdjForm g1
+> genGraph 3 [1..6] g2
+-}
