@@ -9,12 +9,6 @@ import Data.Maybe
 import qualified Data.Map.Strict as M
 import qualified Problem85 as P85
 
-{-
-  TODO:
-  - generate k-regular graph that has n nodes
-  - find ways to eliminate isomorphic cases (hope the existing answer to P85 works)
--}
-
 -- pick one element from the list with context (remained elements).
 -- unlike "Utils.pick", "pickOne" will cut all elements
 -- in front of the chosen element.
@@ -64,6 +58,12 @@ insertIso g xs = if all (\x -> not $ P85.iso (convertGraph g) (convertGraph x)) 
 
 removeIsos :: Ord a => [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
 removeIsos = foldl' (flip insertIso) []
+
+regular :: Int -> Int -> [AdjForm Int (Edge Int)]
+regular n k = removeIsos $ genGraph k [1..n] g2
+  where
+    g1 = fndFormToGraphForm (FndForm (map Left [1..n]))
+    g2 = graphFormToAdjForm g1
 
 {- example:
 > :set -XFlexibleContexts
