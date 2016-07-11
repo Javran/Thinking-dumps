@@ -67,7 +67,9 @@ type OrdVE v e = (Ord v, Ord e, VertexEdge v e)
 data Edge v = Edge v v deriving Show
 
 instance Eq v => Eq (Edge v) where
-    (Edge a b) == (Edge c d) = (a,b) == (c,d) || (a,b) == (d,c)
+    (Edge a b) == (Edge c d) =
+        (a == c && b == d) ||
+        (a == d && b == c)
 
 instance Ord v => Ord (Edge v) where
     compare = compare `on` normalize
