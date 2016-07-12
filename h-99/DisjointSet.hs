@@ -5,7 +5,6 @@ module DisjointSet where
 import qualified Data.Map.Strict as M
 import Control.Monad.State
 import Data.Foldable
-import Data.Maybe
 
 {-
   TODO:
@@ -29,40 +28,41 @@ insert v = M.alter f v
 fromList :: Ord a => [a] -> DisjointSet a
 fromList = foldl' (flip insert) empty
 
-getRoot :: Ord a => a -> DisjointSet a -> Maybe (a, DisjointSet a)
-getRoot v ds = do
-    parent <- M.lookup v ds
-    if parent == v
-       then pure (v,ds)
-       else do
-         (r,ds1) <- getRoot parent ds
-         pure (r, M.insert v r ds1)
+root :: Ord a => a -> DisjointSet a -> (a, DisjointSet a)
+root v ds = case M.lookup v ds of
+    Nothing -> (v, M.insert v v ds)
+    Just parent ->
+      if parent == v
+        then (v,ds)
+        else
+          let (r,ds1) = root parent ds
+          in (r, M.insert v r ds1)
 
-inSameSet :: Ord a => a -> a -> DisjointSet a -> Maybe (Bool, DisjointSet a)
-inSameSet x y ds = do
-    (rx, ds1) <- getRoot x ds
-    (ry, ds2) <- getRoot y ds1
-    pure (rx == ry, ds2)
+inSameSet :: Ord a => a -> a -> DisjointSet a -> (Bool, DisjointSet a)
+inSameSet x y ds = (rx == ry, ds2)
+  where
+    (rx, ds1) = root x ds
+    (ry, ds2) = root y ds1
 
 {-# ANN union "HLint: ignore Eta reduce" #-}
 union :: Ord a => a -> a -> DisjointSet a -> DisjointSet a
 union x y ds =
-    let Just (b, ds1) = inSameSet x y ds
+    let (b, ds1) = inSameSet x y ds
     in if b
          then ds1
          else
-           let Just (rx,ds2) = getRoot x ds1
-               Just (ry,ds3) = getRoot y ds2
+           let (rx,ds2) = root x ds1
+               (ry,ds3) = root y ds2
            in M.insert rx ry ds3
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
 initM = put . fromList
 
 getRootM :: Ord a => a -> State (DisjointSet a) a
-getRootM v = state (fromJust . getRoot v)
+getRootM v = state (root v)
 
 inSameSetM :: Ord a => a -> a -> State (DisjointSet a) Bool
-inSameSetM x y = state (fromJust . inSameSet x y)
+inSameSetM x y = state (inSameSet x y)
 
 {-# ANN unionM "HLint: ignore Use infix" #-}
 unionM :: Ord a => a -> a -> State (DisjointSet a) ()
