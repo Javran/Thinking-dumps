@@ -1,22 +1,33 @@
 module DisjointSet where
 
+-- without rank maintenance for simplicity
+
 import qualified Data.Map.Strict as M
 import Control.Monad.State
+import Data.Foldable
 import Data.Maybe
 
 {-
   TODO:
 
   - test cases on DisjointSet
-  - allowing adding new element instead of having a full set
   - what if we want to change the base monad?
 
 -}
 
 type DisjointSet a = M.Map a a
 
-mkSet :: Ord a => [a] -> DisjointSet a
-mkSet = M.fromList . map (\x -> (x,x))
+empty :: DisjointSet a
+empty = M.empty
+
+insert :: Ord a => a -> DisjointSet a -> DisjointSet a
+insert v = M.alter f v
+  where
+    f Nothing = Just v
+    f m@(Just _) = m
+
+fromList :: Ord a => [a] -> DisjointSet a
+fromList = foldl' (flip insert) empty
 
 getRoot :: Ord a => a -> DisjointSet a -> Maybe (a, DisjointSet a)
 getRoot v ds = do
@@ -45,7 +56,7 @@ union x y ds =
            in M.insert rx ry ds3
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
-initM = put . mkSet
+initM = put . fromList
 
 getRootM :: Ord a => a -> State (DisjointSet a) a
 getRootM v = state (fromJust . getRoot v)

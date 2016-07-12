@@ -36,7 +36,7 @@ g2 = fromRaw "ab bc ce eh hg gf fd da de be dg"
 -- check whether a list of edges forms a tree
 isATree :: forall a. Ord a => [Edge a] -> Bool
 isATree [] = True
-isATree es = evalState (check1 >>= check2) (mkSet vertices)
+isATree es = evalState (check1 >>= check2) (fromList vertices)
   where
     -- "vertices" should never be empty
     vertices = S.toList $ S.fromList (concatMap (\(Edge a b) -> [a,b]) es)
