@@ -1,9 +1,15 @@
-module DisjointSet where
+module DisjointSet
+ ( DisjointSet
+ , empty
+ , fromList
+ , insert
+ , inSameSet
+ , union
+ ) where
 
 -- without rank maintenance for simplicity
 
 import qualified Data.Map.Strict as M
-import Control.Monad.State
 import Data.Foldable
 
 {-
@@ -54,18 +60,3 @@ union x y ds =
            let (rx,ds2) = root x ds1
                (ry,ds3) = root y ds2
            in M.insert rx ry ds3
-
-initM :: Ord a => [a] -> State (DisjointSet a) ()
-initM = put . fromList
-
-getRootM :: Ord a => a -> State (DisjointSet a) a
-getRootM v = state (root v)
-
-inSameSetM :: Ord a => a -> a -> State (DisjointSet a) Bool
-inSameSetM x y = state (inSameSet x y)
-
-{-# ANN unionM "HLint: ignore Use infix" #-}
-unionM :: Ord a => a -> a -> State (DisjointSet a) ()
-unionM x y = modify (union x y)
-
--- TODO: tests

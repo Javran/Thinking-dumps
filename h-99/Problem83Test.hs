@@ -8,6 +8,7 @@ import Control.Monad.State
 
 import Graph
 import DisjointSet
+import DisjointSetState
 import Problem83
 
 {-# ANN module "HLint: ignore Redundant do" #-}
