@@ -1,13 +1,27 @@
 module Problem94 where
 
 import Data.List
-import Control.Monad
 import Graph
 import Problem80
 import qualified Data.Set as S
 import Data.Maybe
 import qualified Data.Map.Strict as M
 import qualified Problem85 as P85
+
+{-
+  TODO: profiling shows we've been spending a big amount of time
+  on checking isomorphism, that'll be our focus of optimization
+
+  for checking isomorphism, some new ideas:
+  - take one pass using disjoint set on vertices,
+    so that we can break a graph into connected components.
+    this definitely reduces the search space when a graph has many connected components.
+  - after breaking graph into components, we summarize each component using their number of vertices
+    and edges, avoiding testing isomorphism between components that doesn't have matching number of objects
+    in the first place
+  - proceed with original algorithm on each connected component
+
+-}
 
 -- pick one element from the list with context (remained elements).
 -- unlike "Utils.pick", "pickOne" will cut all elements
