@@ -15,6 +15,8 @@ import Data.Foldable
 {-
   TODO:
   - what if we want to change the base monad?
+  - hide "insert" and "fromList", it seems we don't
+    really need them
 -}
 
 {-

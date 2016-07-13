@@ -34,4 +34,22 @@ main = hspec $ do
                         IS.member k s1 == fst (DS.inSameSet 0 k s2)
                 pure (all verifyQuery [1..500])
         specify "example 1" $ example $ do
-            pending
+            -- create two small sets: [1,2,3,4] [5,6,7,8,9,10]
+            let pairs = [(1,2),(2,3),(4,3),(5,6),(10,7),(8,10),(9,7),(6,7 :: Int)]
+                s1 = foldl' (\ds (a,b) -> DS.union a b ds) DS.empty pairs
+                mkPair xs ys = [(a,b) | a <- xs, b <- ys]
+                testSameSet xs ds = all (\(a,b) -> fst $ DS.inSameSet a b ds) (mkPair xs xs)
+                testDiffSet xs ys ds = all (\(a,b) -> not $ fst $ DS.inSameSet a b ds) (mkPair xs ys)
+            -- test all possible queries
+            s1 `shouldSatisfy` testSameSet [1..4]
+            s1 `shouldSatisfy` testSameSet [5..10]
+            s1 `shouldSatisfy` testDiffSet [1..4] [5..10]
+            -- connecting any two value belonging to the 2 different sets
+            let connectedSets =
+                    [ DS.union a b s1
+                    | (a,b) <- mkPair [1..4] [5..10] ]
+                verifyDS ds = all (\(a,b) -> fst $ DS.inSameSet a b ds) (mkPair xs xs)
+                  where
+                    xs = [1..10]
+            -- now that all should be connected
+            connectedSets `shouldSatisfy` all verifyDS
