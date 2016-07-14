@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Problem94 where
 
 import Data.List
@@ -6,9 +7,9 @@ import Problem80
 import qualified Data.Set as S
 import Data.Maybe
 import qualified Data.Map.Strict as M
+
 import qualified Problem85 as P85
-
-
+import Problem85 (Graph)
 
 {-
   TODO: profiling shows we've been spending a big amount of time
@@ -46,23 +47,26 @@ pickN n xs = do
 
 -- TODO: we are assuming the graph is properly initialized
 -- so that every node has an entity (might point to an empty set)
-genGraph :: Ord a => Int -> [a] -> AdjForm a (Edge a) -> [AdjForm a (Edge a)]
+genGraph :: forall a. Ord a => Int -> [a] -> Graph a -> [Graph a]
 genGraph _ [] graph = pure graph
-genGraph k (v:vs) (AdjForm g) = do
+genGraph k (v:vs) g = do
     -- INVARIANT "(v:vs)" should only include those that still don't have sufficient
     --    adjacent nodes.
-    let curDeg = S.size $ fromJust $ M.lookup v g
+    let curDeg = S.size $ fromJust $ M.lookup v (getGraph g)
     -- 2. choose e-k edges and connect them. where "e" is the number of
     --    existing adjacent nodes. (TODO update comment)
     (newAdjs,_) <- pickN (k-curDeg) vs
     let g1 = foldl' (flip (addEdge v)) g newAdjs
-        toBeRemoved = v : filter (\adj -> k == (S.size . fromJust $ M.lookup adj g1)) newAdjs
+        toBeRemoved = v : filter (\adj -> k == (S.size . fromJust $ M.lookup adj (getGraph g1))) newAdjs
         newVs = foldl' (flip delete) vs toBeRemoved
     -- 3. filter "vs" to meet the invariant (we only need to
     --    investigate newly update nodes)
-    genGraph k newVs (AdjForm g1)
+    genGraph k newVs g1
   where
-    addEdge a b = M.adjust (S.insert e) a . M.adjust (S.insert e) b
+    getGraph (AdjForm graph,_) = graph
+    addEdge :: a -> a -> Graph a -> Graph a
+    addEdge a b (AdjForm m,es) =
+        (AdjForm . M.adjust (S.insert e) a . M.adjust (S.insert e) b $ m, e:es)
       where
         e = Edge a b
 
@@ -70,14 +74,14 @@ convertGraph :: Ord a => AdjForm a (Edge a) -> P85.Graph a
 convertGraph af@(AdjForm g) = (af, S.toList $ S.fromList $ concatMap (S.toList . snd) (M.toList g))
 
 {-# ANN insertIso "HLint: ignore Avoid lambda" #-}
-insertIso :: Ord a => AdjForm a (Edge a) -> [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
-insertIso g xs = if all (\x -> not $ P85.iso (convertGraph g) (convertGraph x)) xs then g:xs else xs
+insertIso :: Ord a => Graph a -> [Graph a] -> [Graph a]
+insertIso g xs = if all (\x -> not $ P85.iso g x) xs then g:xs else xs
 
-removeIsos :: Ord a => [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
+removeIsos :: Ord a => [Graph a] -> [Graph a]
 removeIsos = foldl' (flip insertIso) []
 
-regular :: Int -> Int -> [AdjForm Int (Edge Int)]
+regular :: Int -> Int -> [Graph Int]
 regular n k = removeIsos $ genGraph k [1..n] g2
   where
     g1 = fndFormToGraphForm (FndForm (map Left [1..n]))
-    g2 = graphFormToAdjForm g1
+    g2 = (graphFormToAdjForm g1, [])
