@@ -1,6 +1,7 @@
 module Problem94Test where
 
 import Test.Hspec
+import Criterion.Main
 
 import Problem94
 
@@ -35,5 +36,15 @@ mainTest = hspec $ do
 
         -- testRegular 9 2 4
 
+mainBenchmark :: IO ()
+mainBenchmark = defaultMain
+    [ mkBench n k
+    | n <- [5..6]
+    , k <- [2..n-1]
+    ]
+  where
+    regularCount n k = length (regular n k)
+    mkBench n k = bench (show (n,k)) $ whnf (uncurry regularCount) (n,k)
+
 main :: IO ()
-main = mainTest
+main = mainBenchmark
