@@ -8,6 +8,8 @@ import Data.Maybe
 import qualified Data.Map.Strict as M
 import qualified Problem85 as P85
 
+
+
 {-
   TODO: profiling shows we've been spending a big amount of time
   on checking isomorphism, that'll be our focus of optimization
@@ -67,6 +69,7 @@ genGraph k (v:vs) (AdjForm g) = do
 convertGraph :: Ord a => AdjForm a (Edge a) -> P85.Graph a
 convertGraph af@(AdjForm g) = (af, S.toList $ S.fromList $ concatMap (S.toList . snd) (M.toList g))
 
+{-# ANN insertIso "HLint: ignore Avoid lambda" #-}
 insertIso :: Ord a => AdjForm a (Edge a) -> [AdjForm a (Edge a)] -> [AdjForm a (Edge a)]
 insertIso g xs = if all (\x -> not $ P85.iso (convertGraph g) (convertGraph x)) xs then g:xs else xs
 
@@ -78,11 +81,3 @@ regular n k = removeIsos $ genGraph k [1..n] g2
   where
     g1 = fndFormToGraphForm (FndForm (map Left [1..n]))
     g2 = graphFormToAdjForm g1
-
-{- example:
-> :set -XFlexibleContexts
-> let g1 = fndFormToGraphForm (FndForm (map Left [1 .. 6])) :: GraphForm Int (Edge Int)
-> let g2 = graphFormToAdjForm g1
-> removeIsos $ genGraph 3 [1..6] g2
-2
--}

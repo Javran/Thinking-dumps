@@ -6,8 +6,8 @@ import Problem94
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
-main :: IO ()
-main = hspec $ do
+mainTest :: IO ()
+mainTest = hspec $ do
     describe "regular" $ do
         let testRegular n k expected =
                 specify (unwords [ "regular", show n, show k
@@ -34,3 +34,6 @@ main = hspec $ do
         testRegular 7 6 1
 
         -- testRegular 9 2 4
+
+main :: IO ()
+main = mainTest
