@@ -18,8 +18,6 @@ import Control.Monad.State
 {-
   TODO:
   - what if we want to change the base monad?
-  - hide "insert" and "fromList", it seems we don't
-    really need them
 -}
 
 {-
@@ -41,6 +39,10 @@ import Control.Monad.State
     - these 2 functions above are really optional, as trying to union
       non-existing elements has the effect of inserting them.
 
+    - the reason that we have "insert" and "fromList" is to make it more
+      convenient when dealing with graphs: it is possible for a group to have
+      vertices that don't have any edge at all. in this case simply register "union"
+      relation in the disjoint set won't cover these vertices.
 -}
 
 type DisjointSet a = M.Map a a
