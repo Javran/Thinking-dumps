@@ -4,6 +4,7 @@ module Problem85
   , mkGraph
   , findIsoMaps
   , iso
+  , bigIso
   , degreeTable
   ) where
 
@@ -167,6 +168,7 @@ findConnectedComponents (AdjForm g,es) = M.elems subgraphs2
     subgraphs0 = M.fromList (map (,emptyG) subgraphVS)
       where
         emptyG = (AdjForm M.empty, [])
+    -- insert mappings into subgraphs
     subgraphs1 :: M.Map (S.Set a) (Graph a)
     subgraphs1 = foldr update subgraphs0 (M.toList g)
       where
@@ -176,9 +178,32 @@ findConnectedComponents (AdjForm g,es) = M.elems subgraphs2
         update (v,eSet) = M.update (Just . f) (fromJust (M.lookup v vToSet))
           where
             f (AdjForm sg, subes) = (AdjForm (M.insert v eSet sg), subes)
+    -- insert edges into subgraphs
     subgraphs2 :: M.Map (S.Set a) (Graph a)
     subgraphs2 = foldr update subgraphs1 es
       where
         update e@(Edge a _) = M.update (Just . f) (fromJust (M.lookup a vToSet))
           where
             f (g', subes) = (g', e:subes)
+
+digestConnectedComponents :: [Graph a] -> M.Map (Int,Int) [Graph a]
+digestConnectedComponents = M.fromListWith (++) . map digest
+  where
+    digest m@(AdjForm g, es) = ((M.size g, length es), [m])
+
+-- TODO: test
+bigIso :: forall a b. (Ord a, Ord b) => Graph a -> Graph b -> Bool
+bigIso ga gb = isJust $ do
+    guard (M.keysSet ga' == M.keysSet gb')
+    let pairedGroups = zip (M.elems ga') (M.elems gb')
+    mapM (uncurry isoWithinGroup) pairedGroups
+  where
+    ga' = digestConnectedComponents . findConnectedComponents $ ga
+    gb' = digestConnectedComponents . findConnectedComponents $ gb
+    isoWithinGroup :: [Graph a] -> [Graph b] -> Maybe ()
+    isoWithinGroup [] [] = Just ()
+    isoWithinGroup (gl1:gls) gr@(_:_) = listToMaybe $ do
+        (gr1,grs) <- pick gr
+        guard $ iso gl1 gr1
+        maybeToList $ isoWithinGroup gls grs
+    isoWithinGroup _ _ = Nothing
