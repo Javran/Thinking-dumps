@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts, ScopedTypeVariables #-}
 module DisjointSet
  ( DisjointSet
  , empty
@@ -5,12 +6,14 @@ module DisjointSet
  , insert
  , inSameSet
  , union
+ , toGroups
  ) where
 
 -- without rank maintenance for simplicity (TODO in future?)
 
 import qualified Data.Map.Strict as M
 import Data.Foldable
+import Control.Monad.State
 
 {-
   TODO:
@@ -86,3 +89,13 @@ union x y ds =
            let (rx,ds2) = root x ds1
                (ry,ds3) = root y ds2
            in M.insert rx ry ds3
+
+toGroups :: forall a. Ord a => DisjointSet a -> [ [a] ]
+toGroups ds = M.elems (evalState (foldM updateM M.empty (M.keys ds :: [a])) ds)
+  where
+    updateM :: M.Map a [a] -> a -> State (DisjointSet a) (M.Map a [a])
+    updateM rootMap k = do
+        r <- state (root k)
+        let alt Nothing = Just [k]
+            alt (Just ks) = Just (k:ks)
+        pure (M.alter alt r rootMap)
