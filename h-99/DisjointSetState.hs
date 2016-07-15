@@ -1,6 +1,6 @@
 module DisjointSetState
   ( initM
-  , insertM
+  , includeElemM
   , inSameSetM
   , unionM
   ) where
@@ -9,7 +9,7 @@ import DisjointSet
 import Control.Monad.State
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
-initM = put . fromList
+initM = put . includeElems empty
 
 inSameSetM :: Ord a => a -> a -> State (DisjointSet a) Bool
 inSameSetM x y = state (inSameSet x y)
@@ -18,5 +18,5 @@ inSameSetM x y = state (inSameSet x y)
 unionM :: Ord a => a -> a -> State (DisjointSet a) ()
 unionM x y = modify (union x y)
 
-insertM :: Ord a => a -> State (DisjointSet a) ()
-insertM v = modify (insert v)
+includeElemM :: Ord a => a -> State (DisjointSet a) ()
+includeElemM v = modify (includeElem v)

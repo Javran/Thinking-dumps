@@ -2,8 +2,8 @@
 module DisjointSet
  ( DisjointSet
  , empty
- , fromList
- , insert
+ , includeElems
+ , includeElem
  , inSameSet
  , union
  , toGroups
@@ -29,20 +29,14 @@ import Control.Monad.State
     query whether two elements belong to the same small set
     efficiently
 
-  - some function names in this module are a bit different than
-    what they usually mean:
+  - "includeElem" "includeElems" simply registers the existence of a value
+    in the disjoint set, and every newly added elements to DisjointSet
+    is a singleton set in itself, if the same element haven't been added before.
 
-    - "insert" "fromList" simply registers the existence of a value
-      in the disjoint set, and every newly added elements to DisjointSet
-      is a singleton set in itself, if the same element haven't been added before.
-
-    - these 2 functions above are really optional, as trying to union
-      non-existing elements has the effect of inserting them.
-
-    - the reason that we have "insert" and "fromList" is to make it more
-      convenient when dealing with graphs: it is possible for a group to have
-      vertices that don't have any edge at all. in this case simply register "union"
-      relation in the disjoint set won't cover these vertices.
+  - the reason that we have "includeElem" and "includeElems" is to make it more
+    convenient when dealing with graphs: it is possible for a group to have
+    vertices that don't have any edge at all. in this case simply register "union"
+    relation in the disjoint set won't cover these vertices.
 -}
 
 type DisjointSet a = M.Map a a
@@ -52,15 +46,15 @@ empty :: DisjointSet a
 empty = M.empty
 
 -- | register the value in this DisjointSet.
-insert :: Ord a => a -> DisjointSet a -> DisjointSet a
-insert v = M.alter f v
+includeElem :: Ord a => a -> DisjointSet a -> DisjointSet a
+includeElem v = M.alter f v
   where
     f Nothing = Just v
     f m@(Just _) = m
 
 -- | create a DisjointSet with some elements registered
-fromList :: Ord a => [a] -> DisjointSet a
-fromList = foldl' (flip insert) empty
+includeElems :: Ord a => DisjointSet a -> [a] -> DisjointSet a
+includeElems = foldl' (flip includeElem)
 
 -- | (INTERNAL ONLY) get the root of current value in set
 root :: Ord a => a -> DisjointSet a -> (a, DisjointSet a)
