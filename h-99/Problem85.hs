@@ -21,7 +21,9 @@ import Control.Monad
 import Data.List
 import Data.Function
 import Data.Maybe
+import Control.Monad.State
 import qualified DisjointSet as DS
+import DisjointSetState
 
 import Graph
 import Utils
@@ -144,5 +146,10 @@ iso ga gb = not . null $ findIsoMaps ga gb
 
 -}
 -- | divide an undirected graph into its connected components.
-findConnectedComponents :: forall a. Graph a -> [Graph a]
+findConnectedComponents :: forall a. Ord a => Graph a -> [Graph a]
 findConnectedComponents (AdjForm g,es) = undefined
+  where
+    vs = M.keys g
+    subgraphVS = DS.toGroups (execState findComponents M.empty)
+      where
+        findComponents = initM vs >> mapM_ (\(Edge a b) -> unionM a b) es
