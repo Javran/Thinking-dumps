@@ -3,6 +3,7 @@ module DisjointSetTest where
 import Test.Hspec
 import Test.QuickCheck
 import Data.Foldable
+import Data.List
 import Control.Monad
 
 import qualified DisjointSet as DS
@@ -36,6 +37,9 @@ main = hspec $ do
         specify "example 1" $ example $ do
             -- create two small sets: [1,2,3,4] [5,6,7,8,9,10]
             let pairs = [(1,2),(2,3),(4,3),(5,6),(10,7),(8,10),(9,7),(6,7 :: Int)]
+                compareGroups g1 g2 = normalize g1 == normalize g2
+                    where
+                      normalize = sort . map sort
                 s1 = foldl' (\ds (a,b) -> DS.union a b ds) DS.empty pairs
                 mkPair xs ys = [(a,b) | a <- xs, b <- ys]
                 testSameSet xs ds = all (\(a,b) -> fst $ DS.inSameSet a b ds) (mkPair xs xs)
@@ -44,6 +48,7 @@ main = hspec $ do
             s1 `shouldSatisfy` testSameSet [1..4]
             s1 `shouldSatisfy` testSameSet [5..10]
             s1 `shouldSatisfy` testDiffSet [1..4] [5..10]
+            DS.toGroups s1 `shouldSatisfy` compareGroups [[1..4],[5..10]]
             -- connecting any two value belonging to the 2 different sets
             let connectedSets =
                     [ DS.union a b s1
@@ -53,3 +58,4 @@ main = hspec $ do
                     xs = [1..10]
             -- now that all should be connected
             connectedSets `shouldSatisfy` all verifyDS
+            connectedSets `shouldSatisfy` all (compareGroups [[1..10]] . DS.toGroups)
