@@ -21,6 +21,7 @@ import Control.Monad
 import Data.List
 import Data.Function
 import Data.Maybe
+import qualified DisjointSet as DS
 
 import Graph
 import Utils
@@ -134,3 +135,14 @@ findIsoMaps (ga,eas) (gb,ebs) = do
 -- | test whether two graphs are isomorphic
 iso :: (Ord a, Ord b) => Graph a -> Graph b -> Bool
 iso ga gb = not . null $ findIsoMaps ga gb
+
+{-
+  TODO:
+  - divide graph into connected components
+  - group connected components by number of edges an vertices
+  - for each group, try to find a proof of isomorphism within groups
+
+-}
+-- | divide an undirected graph into its connected components.
+findConnectedComponents :: forall a. Graph a -> [Graph a]
+findConnectedComponents (AdjForm g,es) = undefined
