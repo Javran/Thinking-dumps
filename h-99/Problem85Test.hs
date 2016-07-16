@@ -4,6 +4,7 @@ module Problem85Test where
 import Test.Hspec
 import qualified Data.Map.Strict as M
 import Data.Maybe
+import Data.List
 import Data.Function
 import Control.Monad
 import Data.Monoid
@@ -43,6 +44,15 @@ verifyIso (_,es1) (_,es2) m = isJust $
                  -- l1-l2 and r1-r2
                  loop newCurEs1 newCurEs2
          ) es1 es2
+
+mkRawCompleteGraph :: (Ord a, Enum a) => Int -> a -> ([a],[(a,a)])
+mkRawCompleteGraph n firstVal = (vs, [(a,b) | (a,rs) <- pick vs, b <- rs ])
+  where
+    pick = map (\(x:xs) -> (x,xs)) . init . tails
+    vs = take n [firstVal .. ]
+
+simpleRawGraphMerge :: Ord a => ([a],[(a,a)]) -> ([a],[(a,a)]) -> ([a],[(a,a)])
+simpleRawGraphMerge (va,ea) (vb,eb) = (va++vb,ea++eb)
 
 main :: IO ()
 main = hspec $ do
