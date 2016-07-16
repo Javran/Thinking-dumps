@@ -66,6 +66,9 @@ type OrdVE v e = (Ord v, Ord e, VertexEdge v e)
 --   also it's undirected
 data Edge v = Edge v v deriving Show
 
+withEdge :: (a -> a -> r) -> Edge a -> r
+withEdge r (Edge a b) = r a b
+
 instance Eq v => Eq (Edge v) where
     (Edge a b) == (Edge c d) =
         (a == c && b == d) ||
