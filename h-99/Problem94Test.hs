@@ -47,4 +47,4 @@ mainBenchmark = defaultMain
     mkBench n k = bench (show (n,k)) $ whnf (uncurry regularCount) (n,k)
 
 main :: IO ()
-main = mainBenchmark
+main = mainTest

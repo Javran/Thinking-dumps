@@ -76,7 +76,7 @@ convertGraph af@(AdjForm g) = (af, S.toList $ S.fromList $ concatMap (S.toList .
 
 {-# ANN insertIso "HLint: ignore Avoid lambda" #-}
 insertIso :: Ord a => Graph a -> [Graph a] -> [Graph a]
-insertIso g xs = if all (\x -> not $ P85.iso g x) xs then g:xs else xs
+insertIso g xs = if all (\x -> not $ P85.bigIso g x) xs then g:xs else xs
 
 removeIsos :: Ord a => [Graph a] -> [Graph a]
 removeIsos = foldl' (flip insertIso) []
