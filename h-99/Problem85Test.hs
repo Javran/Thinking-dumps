@@ -88,21 +88,17 @@ main = hspec $ do
             result `shouldSatisfy` null
     describe "iso & bigIso" $ do
         specify "multiple complete graphs" $ do
-            let g0p = mkRawCompleteGraph 5 0 succ
-                g1p = mkRawCompleteGraph 5 5 succ
-                g2p = mkRawCompleteGraph 5 10 succ
-                g3p = mkRawCompleteGraph 5 15 succ
-                g4p = mkRawCompleteGraph 5 20 succ
-
-                g5p = mkRawCompleteGraph 5 0 (+ 5)
-                g6p = mkRawCompleteGraph 5 1 (+ 5)
-                g7p = mkRawCompleteGraph 5 2 (+ 5)
-                g8p = mkRawCompleteGraph 5 3 (+ 5)
-                g9p = mkRawCompleteGraph 5 4 (+ 5)
-
+            let step = 10
                 gl :: Graph Int
                 gr :: Graph Int
-                gl = uncurry mkGraph $ foldl1 simpleRawGraphMerge [g0p,g1p,g2p,g3p,g4p]
-                gr = uncurry mkGraph $ foldl1 simpleRawGraphMerge [g5p,g6p,g7p,g8p,g9p]
-            iso gl gr `shouldBe` True
+                gl =
+                    uncurry mkGraph
+                  $ foldl1 simpleRawGraphMerge
+                  $ map (\x -> mkRawCompleteGraph step x succ) [0,step .. step*(step-1)]
+                gr =
+                    uncurry mkGraph
+                  $ foldl1 simpleRawGraphMerge
+                  $ map (\x -> mkRawCompleteGraph step x (+ step)) [0..step-1]
+            -- when step = 10, "iso" become significantly slower than "bigIso"
+            -- iso gl gr `shouldBe` True
             bigIso gl gr `shouldBe` True
