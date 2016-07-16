@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, TupleSections #-}
+{-# LANGUAGE ScopedTypeVariables, TupleSections, TypeFamilies #-}
 module Problem85
   ( Graph
   , mkGraph
@@ -148,7 +148,9 @@ iso ga gb = not . null $ findIsoMaps ga gb
 
 -}
 -- | divide an undirected graph into its connected components.
-findConnectedComponents :: forall a. Ord a => Graph a -> [Graph a]
+findConnectedComponents ::
+       forall a graphs. (graphs ~ M.Map (S.Set a) (Graph a),  Ord a)
+    => Graph a -> [Graph a]
 findConnectedComponents (AdjForm g,es) = M.elems subgraphs2
   where
     vs = M.keys g
@@ -158,31 +160,28 @@ findConnectedComponents (AdjForm g,es) = M.elems subgraphs2
         . DS.toGroups
         $ execState findComponents M.empty
       where
-        findComponents = initM vs >> mapM_ (\(Edge a b) -> unionM a b) es
+        findComponents = initM vs >> mapM_ (withEdge unionM) es
     vToSet :: M.Map a (S.Set a)
     vToSet = M.fromList (concatMap f subgraphVS)
       where
         f :: S.Set a -> [(a,S.Set a)]
         f s = map (,s) (S.toList s)
-    subgraphs0 :: M.Map (S.Set a) (Graph a)
+    subgraphs0 :: graphs
     subgraphs0 = M.fromList (map (,emptyG) subgraphVS)
       where
         emptyG = (AdjForm M.empty, [])
     -- insert mappings into subgraphs
-    subgraphs1 :: M.Map (S.Set a) (Graph a)
+    subgraphs1 :: graphs
     subgraphs1 = foldr update subgraphs0 (M.toList g)
       where
-        update :: (a, S.Set (Edge a))
-               -> M.Map (S.Set a) (Graph a)
-               -> M.Map (S.Set a) (Graph a)
-        update (v,eSet) = M.update (Just . f) (fromJust (M.lookup v vToSet))
+        update (v,eSet) = M.adjust f (fromJust (M.lookup v vToSet))
           where
             f (AdjForm sg, subes) = (AdjForm (M.insert v eSet sg), subes)
     -- insert edges into subgraphs
-    subgraphs2 :: M.Map (S.Set a) (Graph a)
+    subgraphs2 :: graphs
     subgraphs2 = foldr update subgraphs1 es
       where
-        update e@(Edge a _) = M.update (Just . f) (fromJust (M.lookup a vToSet))
+        update e@(Edge a _) = M.adjust f (fromJust (M.lookup a vToSet))
           where
             f (g', subes) = (g', e:subes)
 
