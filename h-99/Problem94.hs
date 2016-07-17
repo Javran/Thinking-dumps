@@ -30,23 +30,30 @@ pickN n xs = do
     (z,zs) <- pickN (n-1) ys
     pure (y:z,zs)
 
--- TODO: we are assuming the graph is properly initialized
--- so that every node has an entity (might point to an empty set)
+{-
+  (internal use only)
+  "genGraph k vs gragh" generates k-regular graphs. where "vs" is the complete
+  list of vertices and each vertex should have its corresponding entity in "graph"
+  (meaning that looking up that vertex won't fail)
+
+  INVARIANT: at the beginning of every call to this function, "vs" should only
+  contain vertices whose doesn't have sufficient degrees. so that when the list
+  becomes empty, we automatically know the graph generation is complete.
+-}
 genGraph :: forall a. Ord a => Int -> [a] -> Graph a -> [Graph a]
 genGraph _ [] graph = pure graph
 genGraph k (v:vs) g = do
-    -- INVARIANT "(v:vs)" should only include those that still don't have sufficient
-    --    adjacent nodes.
+    -- figure out how many vertices we need to connect to "v"
     let curDeg = S.size $ fromJust $ M.lookup v (getGraph g)
-    -- 2. choose e-k edges and connect them. where "e" is the number of
-    --    existing adjacent nodes. (TODO update comment)
+    -- nondeterministically picking up the right number of nodes
     (newAdjs,_) <- pickN (k-curDeg) vs
+    -- and create new edges to connect "v" and all "newAdjs"
     let g1 = foldl' (flip (addEdge v)) g newAdjs
+        -- cleanup "vs", note that we don't have to re-calculate degrees
+        -- of all pending vertices. only those we have just updated.
         toBeRemoved =
           v : filter (\adj -> k == (S.size . fromJust $ M.lookup adj (getGraph g1))) newAdjs
         newVs = foldl' (flip delete) vs toBeRemoved
-    -- 3. filter "vs" to meet the invariant (we only need to
-    --    investigate newly update nodes)
     genGraph k newVs g1
   where
     getGraph (AdjForm graph,_) = graph

@@ -34,7 +34,8 @@ mainTest = hspec $ do
         testRegular 7 5 0
         testRegular 7 6 1
 
-        -- testRegular 9 2 4
+        -- this might take some time...
+        testRegular 9 2 4
 
 mainBenchmark :: IO ()
 mainBenchmark = defaultMain
