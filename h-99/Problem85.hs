@@ -107,11 +107,7 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
         newVsMap = M.insert v1 v2 vsMap :: M.Map a b
         (es1L, es1R) = partition test (es1 :: [Edge a])
           where
-            test (Edge l1 l2)
-                  -- when both ends can be found in new vsMap
-                | Just _ <- M.lookup l1 newVsMap
-                , Just _ <- M.lookup l2 newVsMap = True
-                | otherwise = False
+            test (Edge l1 l2) = M.member l1 newVsMap && M.member l2 newVsMap
     -- now we need to check consistencies for all edges in es1L
     es2R <- fix (\ loop curEs1L curEs2 ->
       case curEs1L of
@@ -119,12 +115,13 @@ search (es1,es2) grps (curGp1,curGp2) vsMap = do
           (Edge l1 l2:es1L') -> do
               let (Just r1) = M.lookup l1 newVsMap
                   (Just r2) = M.lookup l2 newVsMap
-              guard $ Edge r1 r2 `elem` curEs2 || Edge r2 r1 `elem` curEs2
-              let newEs2 = delete (Edge r1 r2) $ delete (Edge r2 r1) curEs2
+                  -- notice that by our impl, "Edge a b == Edge b a" is True
+                  e' = Edge r1 r2
+              guard $ e' `elem` curEs2
+              let newEs2 = delete e' curEs2
               loop es1L' newEs2
           ) es1L es2
     search (es1R,es2R) grps (v1s,v2s) newVsMap
-
 
 -- | find mappings between two graphs that can prove they are isomorphic
 findIsoMaps :: (Ord a, Ord b) => Graph a -> Graph b -> [M.Map a b]
