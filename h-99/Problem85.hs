@@ -140,13 +140,7 @@ findIsoMaps (ga,eas) (gb,ebs) = do
 iso :: (Ord a, Ord b) => Graph a -> Graph b -> Bool
 iso ga gb = not . null $ findIsoMaps ga gb
 
-{-
-  TODO:
-  - divide graph into connected components
-  - group connected components by number of edges an vertices
-  - for each group, try to find a proof of isomorphism within groups
 
--}
 -- | divide an undirected graph into its connected components.
 findConnectedComponents ::
        forall a graphs. (graphs ~ M.Map (S.Set a) (Graph a),  Ord a)
@@ -190,7 +184,20 @@ digestConnectedComponents = M.fromListWith (++) . map digest
   where
     digest m@(AdjForm g, es) = ((M.size g, length es), [m])
 
--- TODO: test
+{-
+  "bigIso" does the same thing as "iso", but
+  would have better performance on graphs that consist of
+  more than one connected component and many vertices.
+
+  what it does is:
+  - first divide graph into connected components, the idea is that each
+    connected component can be checked independently.
+  - group connected components by number of edges an vertices,
+    so that we don't waste time checking two connected component that
+    doesn't have matching number of vertices and edges.
+  - for testing isomorphism on each pair of connected components,
+    "iso" is used.
+-}
 bigIso :: forall a b. (Ord a, Ord b) => Graph a -> Graph b -> Bool
 bigIso ga gb = isJust $ do
     guard (M.keysSet ga' == M.keysSet gb')
