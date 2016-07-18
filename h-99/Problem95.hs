@@ -1,6 +1,7 @@
 module Problem95 where
 
 import qualified Data.Array as Arr
+import Data.List
 
 digitToWordArr :: Arr.Array Int String
 digitToWordArr = Arr.array (0,9) (zip [0..9] digitWords)
@@ -21,3 +22,9 @@ breakDigits v = brkDigits [] v
         where
           (q,r) = x `quotRem` 10
           r' = fromInteger r
+
+fullWords :: Integer -> String
+fullWords =
+      intercalate "-"
+    . map digitToWord
+    . breakDigits
