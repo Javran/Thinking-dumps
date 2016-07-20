@@ -99,8 +99,21 @@ updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
             Right _ -> setCell curPz coord content
     hasEmpties = any IS.null (rights updatedCells)
 
+cleanupCandidates :: Puzzle -> Maybe Puzzle
+cleanupCandidates pz = do
+    newPz <- onePass pz
+    if newPz == pz
+       then pure newPz
+       else cleanupCandidates newPz
+  where
+    allNinePacks =
+           map getRowCoords ints
+        ++ map getColCoords ints
+        ++ map getBoxCoords ints
+    onePass curPz = foldM updateNinePack curPz allNinePacks
+
 mkPuzzle :: RawIntArray -> Puzzle
-mkPuzzle raw = undefined
+mkPuzzle raw = partitioned
   where
     -- parsed sudoku with coordinates
     withCoords = zip [(x,y) | x<-ints,y<-ints] (map p raw)
