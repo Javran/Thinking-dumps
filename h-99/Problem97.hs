@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Problem97 where
 
 {-
@@ -48,16 +49,18 @@ getCell (mSol, mUnsol) coord = case M.lookup coord mSol of
         -- we want to make sure it is safe reducing it to WHNF
         -- so even when the Puzzle's Unsolved part is missing
         -- we can get something out without runtime error
-        Right $ fromJust (M.lookup coord mUnsol)
+        Right $ fromMaybe
+                  (error $ "getCell: missing cell " ++ show coord)
+                  (M.lookup coord mUnsol)
 
-getRow :: Puzzle -> Int -> [CellContent]
-getRow pz r = map (\c -> getCell pz (r,c)) ints
+getRowCoords :: Int -> [Coord]
+getRowCoords r = map (r,) ints
 
-getCol :: Puzzle -> Int -> [CellContent]
-getCol pz c = map (\r -> getCell pz (r,c)) ints
+getColCoords :: Int -> [Coord]
+getColCoords c = map (,c) ints
 
-getBox :: Puzzle -> Int -> [CellContent]
-getBox pz b = map (getCell pz) [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
+getBoxCoords :: Int -> [Coord]
+getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
