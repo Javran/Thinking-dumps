@@ -22,6 +22,8 @@ import Data.Monoid
 import Data.Char
 import Data.Maybe
 import Data.Either
+import Control.Monad
+import Data.List
 
 type Coord = (Int, Int)
 
@@ -94,9 +96,10 @@ updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
     updatedPuzzle = foldl' update pz (zip updatedCells coords)
       where
         update :: Puzzle -> (CellContent, Coord) -> Puzzle
-        update curPz (content,coord) = case content of
-            Left _ -> curPz
-            Right _ -> setCell curPz coord content
+        -- a subtle issue here: some Rights are changed to Lefts
+        -- and in previous wrong version, we consider all Lefts to
+        -- be already-solved cells so update to these cells are missing
+        update curPz (content,coord) = setCell curPz coord content
     hasEmpties = any IS.null (rights updatedCells)
 
 cleanupCandidates :: Puzzle -> Maybe Puzzle
@@ -111,6 +114,15 @@ cleanupCandidates pz = do
         ++ map getColCoords ints
         ++ map getBoxCoords ints
     onePass curPz = foldM updateNinePack curPz allNinePacks
+
+pprPuzzle :: Puzzle -> String
+pprPuzzle pz = unlines (concatMap pprRow ints)
+  where
+    pprRow r = map (intercalate "|") $ transpose $ (map (\c -> pprCell $ getCell pz (r,c)) ints)
+    pprCell (Left i) = ["   ", " " ++ show i ++ " ", "   "]
+    pprCell (Right s) = (map . map) f [[1,2,3],[4,5,6],[7,8,9]]
+      where
+        f x = if IS.member x s then chr (x + ord '0') else ' '
 
 mkPuzzle :: RawIntArray -> Puzzle
 mkPuzzle raw = partitioned
