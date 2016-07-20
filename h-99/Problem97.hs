@@ -79,7 +79,7 @@ getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
 -- test:
--- let pz = mkPuzzle "907300004600008500050009000060090200004701600001080040000800070006900001100004903"
+-- let pz = mkPuzzle "000000041000700000300000000000045060700000800020010000000900200045000000601000000"
 
 -- given a pack of nine coordinates, update candidate lists of corresponding
 -- cells. the update will fail if any cell gets an empty list of candidates
@@ -104,6 +104,32 @@ updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
             Right _ -> setCell curPz coord newCtnt
     hasEmpties = any IS.null (rights updatedCells)
 
+updateNinePack2 :: Puzzle -> NinePack -> Maybe Puzzle
+updateNinePack2 pz coords = if hasEmpties then Nothing else Just updatedPuzzle
+  where
+    cells :: [CellContent]
+    cells = map (getCell pz) coords
+    solvedNums = IS.fromList $ lefts cells
+    missingNums = IS.toList $ IS.fromList ints `IS.difference` solvedNums
+
+    tryLonelyMissingNum :: Int -> [CellContent] -> [CellContent]
+    tryLonelyMissingNum n curCells = if isLonely
+        then
+             let update cell flg = if flg then Left n else cell
+             in zipWith update curCells checkPos
+        else curCells
+      where
+        checkPos = map (either (const False) (\s -> n `IS.member` s)) curCells
+        isLonely = length (filter id checkPos) == 1
+
+    updatedCells = foldl' (flip tryLonelyMissingNum) cells missingNums
+    updatedPuzzle = foldl' update pz (zip coords (zip cells updatedCells))
+      where
+        update curPz (coord,(oldCtnt,newCtnt)) = case oldCtnt of
+            Left _ -> curPz
+            Right _ -> setCell curPz coord newCtnt
+    hasEmpties = any IS.null (rights updatedCells)
+
 cleanupCandidates :: Puzzle -> Maybe Puzzle
 cleanupCandidates pz = do
     newPz <- onePass pz
@@ -115,7 +141,10 @@ cleanupCandidates pz = do
            map getRowCoords ints
         ++ map getColCoords ints
         ++ map getBoxCoords ints
-    onePass curPz = foldM updateNinePack curPz allNinePacks
+    onePass curPz = foldM combinedUpdate curPz allNinePacks
+    combinedUpdate pz' coords =
+        updateNinePack pz' coords
+        >>= \pz2 -> updateNinePack2 pz2 coords
 
 pprPuzzle :: Puzzle -> String
 pprPuzzle pz = unlines (concatMap pprRow ints)
@@ -142,3 +171,20 @@ mkPuzzle raw = partitioned
         insertCell (mSol,mUnsol) (coord,i) = case i of
             0 -> (mSol, M.insert coord allCandidates mUnsol)
             _ -> (M.insert coord i mSol, mUnsol)
+
+solvePuzzle :: Puzzle -> Maybe Puzzle
+solvePuzzle = cleanupCandidates >=> solvePuzzle'
+  where
+    solvePuzzle' (pz@(_,mUnsol))
+        | M.null mUnsol = pure pz
+        | otherwise = do
+            -- number of candidates -> coordinate set
+            let candidateMap :: M.Map Int [Coord]
+                candidateMap = M.fromListWith (++) .
+                    map (\(coord,cSet) -> (IS.size cSet, [coord])) $ M.toList mUnsol
+                curCoord = head . snd . head $ M.toAscList candidateMap
+                candidates :: [Int]
+                candidates = IS.toList . fromJust $ M.lookup curCoord mUnsol
+            listToMaybe $ do
+                i <- candidates
+                maybeToList (solvePuzzle (setCell pz curCoord (Left i)))
