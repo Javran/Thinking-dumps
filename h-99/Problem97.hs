@@ -22,6 +22,7 @@ import Data.Monoid
 import Data.Char
 import Data.Maybe
 import Data.Either
+import Control.Arrow
 import Control.Monad
 import Data.List
 
@@ -77,6 +78,9 @@ getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
+-- test:
+-- let pz = mkPuzzle "907300004600008500050009000060090200004701600001080040000800070006900001100004903"
+
 -- given a pack of nine coordinates, update candidate lists of corresponding
 -- cells. the update will fail if any cell gets an empty list of candidates
 updateNinePack :: Puzzle -> NinePack -> Maybe Puzzle
@@ -93,13 +97,11 @@ updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
             else Right s1
           where
             s1 = candSet `IS.difference` solvedNums
-    updatedPuzzle = foldl' update pz (zip updatedCells coords)
+    updatedPuzzle = foldl' update pz (zip coords (zip cells updatedCells))
       where
-        update :: Puzzle -> (CellContent, Coord) -> Puzzle
-        -- a subtle issue here: some Rights are changed to Lefts
-        -- and in previous wrong version, we consider all Lefts to
-        -- be already-solved cells so update to these cells are missing
-        update curPz (content,coord) = setCell curPz coord content
+        update curPz (coord,(oldCtnt,newCtnt)) = case oldCtnt of
+            Left _ -> curPz
+            Right _ -> setCell curPz coord newCtnt
     hasEmpties = any IS.null (rights updatedCells)
 
 cleanupCandidates :: Puzzle -> Maybe Puzzle
