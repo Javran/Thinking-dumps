@@ -21,19 +21,16 @@ import Data.Foldable
 import Data.Monoid
 import Data.Char
 import Data.Maybe
+import Data.Either
 
 type Coord = (Int, Int)
 
 type Solved = M.Map Coord Int
 type Unsolved = M.Map Coord IS.IntSet
-type NineCells = IM.IntMap IS.IntSet
 type CellContent = Either Int IS.IntSet
 
-data MissingSets = MSets
-  { msBoxes :: NineCells
-  , msRows :: NineCells
-  , msCols :: NineCells
-  }
+-- a pack of nine cells
+type NinePack = [Coord]
 
 type Puzzle = (Solved, Unsolved)
 
@@ -53,21 +50,58 @@ getCell (mSol, mUnsol) coord = case M.lookup coord mSol of
                   (error $ "getCell: missing cell " ++ show coord)
                   (M.lookup coord mUnsol)
 
-getRowCoords :: Int -> [Coord]
+setCell :: Puzzle -> Coord -> CellContent -> Puzzle
+setCell (pz@(mSol, mUnsol)) coord newCT = case getCell pz coord of
+    Left _ -> case newCT of
+        Left i -> (M.insert coord i mSol, mUnsol)
+        Right s ->
+            -- left to right
+            (M.delete coord mSol, M.insert coord s mUnsol)
+    Right _ -> case newCT of
+        Left i ->
+            -- right to left, very unlikely case.
+            (M.insert coord i mSol, M.delete coord mUnsol)
+        Right s ->
+            (mSol, M.insert coord s mUnsol)
+
+getRowCoords :: Int -> NinePack
 getRowCoords r = map (r,) ints
 
-getColCoords :: Int -> [Coord]
+getColCoords :: Int -> NinePack
 getColCoords c = map (,c) ints
 
-getBoxCoords :: Int -> [Coord]
+getBoxCoords :: Int -> NinePack
 getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
+-- given a pack of nine coordinates, update candidate lists of corresponding
+-- cells. the update will fail if any cell gets an empty list of candidates
+updateNinePack :: Puzzle -> NinePack -> Maybe Puzzle
+updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
+  where
+    cells :: [CellContent]
+    cells = map (getCell pz) coords
+    solvedNums = IS.fromList $ lefts cells
+    updatedCells :: [CellContent]
+    updatedCells = map (either Left updateCandidates) cells
+      where
+        updateCandidates candSet = if IS.size s1 == 1
+            then Left . head . IS.toList $ s1
+            else Right s1
+          where
+            s1 = candSet `IS.difference` solvedNums
+    updatedPuzzle = foldl' update pz (zip updatedCells coords)
+      where
+        update :: Puzzle -> (CellContent, Coord) -> Puzzle
+        update curPz (content,coord) = case content of
+            Left _ -> curPz
+            Right _ -> setCell curPz coord content
+    hasEmpties = any IS.null (rights updatedCells)
+
 mkPuzzle :: RawIntArray -> Puzzle
 mkPuzzle raw = undefined
   where
-    msEmpty = MSets mempty mempty mempty
     -- parsed sudoku with coordinates
     withCoords = zip [(x,y) | x<-ints,y<-ints] (map p raw)
       where
