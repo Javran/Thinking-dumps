@@ -119,7 +119,9 @@ updateNinePack2 pz coords = if hasEmpties then Nothing else Just updatedPuzzle
         else curCells
       where
         checkPos = map (either (const False) (\s -> n `IS.member` s)) curCells
-        isLonely = length (filter id checkPos) == 1
+        isLonely = case filter id checkPos of
+            [_] -> True
+            _ -> False
 
     updatedCells = foldl' (flip tryLonelyMissingNum) cells missingNums
     updatedPuzzle = foldl' update pz (zip coords (zip cells updatedCells))
