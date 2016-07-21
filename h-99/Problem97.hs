@@ -22,9 +22,11 @@ import Data.Monoid
 import Data.Char
 import Data.Maybe
 import Data.Either
+import System.Environment
 import Control.Arrow
 import Control.Monad
 import Data.List
+import Text.Printf
 
 type Coord = (Int, Int)
 
@@ -77,9 +79,6 @@ getBoxCoords :: Int -> NinePack
 getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
-
--- test:
--- let pz = mkPuzzle "000000041000700000300000000000045060700000800020010000000900200045000000601000000"
 
 -- given a pack of nine coordinates, update candidate lists of corresponding
 -- cells. the update will fail if any cell gets an empty list of candidates
@@ -188,3 +187,17 @@ solvePuzzle = cleanupCandidates >=> solvePuzzle'
             listToMaybe $ do
                 i <- candidates
                 maybeToList (solvePuzzle (setCell pz curCoord (Left i)))
+
+main :: IO ()
+main = do
+    [puzzleFile] <- getArgs
+    rawPuzzles <- lines <$> readFile puzzleFile
+    let l = length rawPuzzles
+        solveAndPrint (solvedCount, allCount) curPuzzleRaw = do
+            let newSolvedCount = case solvePuzzle (mkPuzzle curPuzzleRaw) of
+                    Just _ -> solvedCount + 1
+                    Nothing -> solvedCount
+            -- printf "%d/%d of %d\n" newSolvedCount (allCount+1) l
+            pure (newSolvedCount, allCount+1) :: IO (Int,Int)
+    result <- foldlM solveAndPrint (0,0) rawPuzzles
+    putStrLn $ "all done: " ++ show result
