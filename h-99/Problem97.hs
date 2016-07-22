@@ -110,6 +110,8 @@ npLoneMissing cells = updatedCells
             [_] -> True
             _ -> False
 
+-- TODO: chained candidate elimination might help, don't know for now.
+
 updatePuzzle :: Puzzle
              -> NinePackCoord
              -> NinePack CellContent -> NinePack CellContent
