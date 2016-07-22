@@ -20,7 +20,6 @@ import Data.Foldable
 import Data.Char
 import Data.Maybe
 import Data.Either
-import System.Environment
 import Control.Monad
 import Data.List
 
@@ -197,16 +196,3 @@ solvePuzzle = cleanupCandidates >=> solvePuzzle'
                 i <- candidates
                 maybeToList (solvePuzzle (setCell pz curCoord (Left i)))
 
-main :: IO ()
-main = do
-    [puzzleFile] <- getArgs
-    rawPuzzles <- lines <$> readFile puzzleFile
-    let -- l = length rawPuzzles
-        solveAndPrint (solvedCount, allCount) curPuzzleRaw = do
-            let newSolvedCount = case solvePuzzle (mkPuzzle curPuzzleRaw) of
-                    Just _ -> solvedCount + 1
-                    Nothing -> solvedCount
-            -- printf "%d/%d of %d\n" newSolvedCount (allCount+1) l
-            pure (newSolvedCount, allCount+1) :: IO (Int,Int)
-    result <- foldlM solveAndPrint (0,0) rawPuzzles
-    putStrLn $ "all done: " ++ show result
