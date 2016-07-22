@@ -78,15 +78,6 @@ getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
--- given a pack of nine coordinates, update candidate lists of corresponding
--- cells. the update will fail if any cell gets an empty list of candidates
-updateNinePack :: Puzzle -> NinePackCoord -> Maybe Puzzle
-updateNinePack pz coords = if hasEmpties then Nothing else Just updatedPuzzle
-  where
-    cells = map (getCell pz) coords
-    updatedCells = npRemoveSolved cells
-    updatedPuzzle = updatePuzzle pz coords cells updatedCells
-    hasEmpties = any IS.null (rights updatedCells)
 
 npRemoveSolved :: NinePack CellContent -> NinePack CellContent
 npRemoveSolved cells = updatedCells
@@ -130,11 +121,15 @@ updatePuzzle pz coords cells updatedCells =
         Left _ -> curPz
         Right _ -> setCell curPz coord newCtnt
 
-updateNinePack2 :: Puzzle -> NinePackCoord -> Maybe Puzzle
-updateNinePack2 pz coords = if hasEmpties then Nothing else Just updatedPuzzle
+-- given a pack of nine coordinates, update candidate lists of corresponding
+-- cells. the update will fail if any cell gets an empty list of candidates
+updateNinePack :: Puzzle -> NinePackCoord
+               -> (NinePack CellContent -> NinePack CellContent)
+               -> Maybe Puzzle
+updateNinePack pz coords npUpdate = if hasEmpties then Nothing else Just updatedPuzzle
   where
     cells = map (getCell pz) coords
-    updatedCells = npLoneMissing cells
+    updatedCells = npUpdate cells
     updatedPuzzle = updatePuzzle pz coords cells updatedCells
     hasEmpties = any IS.null (rights updatedCells)
 
@@ -151,8 +146,8 @@ cleanupCandidates pz = do
         ++ map getBoxCoords ints
     onePass curPz = foldM combinedUpdate curPz allNinePacks
     combinedUpdate pz' coords =
-        updateNinePack pz' coords
-        >>= \pz2 -> updateNinePack2 pz2 coords
+        updateNinePack pz' coords npRemoveSolved
+        >>= \pz2 -> updateNinePack pz2 coords npLoneMissing
 
 pprPuzzle :: Puzzle -> String
 pprPuzzle pz = unlines (concatMap pprRow ints)
