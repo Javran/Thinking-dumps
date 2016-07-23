@@ -1,6 +1,33 @@
 {-# LANGUAGE TupleSections #-}
 module Problem97 where
 
+{-
+
+  NOTE: about the design of this solver:
+
+  - as many other sudoku solvers, it uses candidate numbers.
+    that means a cell contains either a single number, or a
+    set of possible numbers, we gradually remove impossible numbers
+    until reach a single number for all cells in the puzzle
+
+  - we first go through some known strategies of eliminating candidates,
+    this includes:
+    - removing already-filled numbers from candidate list
+    - try to find "lone numbers": if one not-yet filled number
+      appears in exactly one of the NinePack cells, then
+      this "lone" number has to be put on the cell in question.
+  - then strategy is applied alternatively until we cannot get any cell updated
+    (reaching a "fixpoint")
+  - obviously we don't expect these simple strategies to work for all puzzles,
+    so in this step we apply a search with simple heuristic: we always prioritize
+    on cells that has as few candidates as possible. intuitively this reduces the
+    branching factor.
+  - after making the decision of filling one cell, we go back to the original
+    strategy-based algorithm, hoping to eliminate more candidates.
+    then the search repeats until a complete solution is found.
+
+-}
+
 import qualified Data.Map.Strict as M
 import qualified Data.IntSet as IS
 import Data.Foldable
