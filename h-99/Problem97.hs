@@ -1,19 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 module Problem97 where
 
-{-
-
-  I think a brute-force search with candidate list for each unsolved cells
-  should be enough.
-
-  - represent solved puzzle as a (Int,Int) -> Int mapping,
-    I guess array-like stuff will add some unnecessary overhead.
-
-  - unsolved puzzle represented as a (Int,Int) -> IntSet mapping,
-    with each row / col / box as its own IntSet of missing numbers.
-
--}
-
 import qualified Data.Map.Strict as M
 import qualified Data.IntSet as IS
 import Data.Foldable
@@ -52,6 +39,8 @@ getCell (mSol, mUnsol) coord = case M.lookup coord mSol of
                   (M.lookup coord mUnsol)
 
 -- TODO: normalize when putting values into the cell?
+
+-- NOTE: seems the simplified version doesn't do good to the program.
 setCell :: Puzzle -> Coord -> CellContent -> Puzzle
 setCell (pz@(mSol, mUnsol)) coord newCT = case getCell pz coord of
     Left _ -> case newCT of
@@ -110,6 +99,13 @@ npLoneMissing cells = updatedCells
             _ -> False
 
 -- TODO: chained candidate elimination might help, don't know for now.
+{-
+  TODO: new idea: every NinePack itself can be treated as a "partial sudoku",
+  we can expand every possibilities and see what's possible in a cell.
+  by doing so we should also be able to get rid of some impossible candidates.
+  (I think this should at least be as effective as detecting and removing chained
+  candidates)
+-}
 
 updatePuzzle :: Puzzle
              -> NinePackCoord
