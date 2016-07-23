@@ -4,7 +4,6 @@ import Test.Hspec
 import Test.QuickCheck
 import Data.Maybe
 import qualified Data.Array as Arr
-import System.Environment
 import Control.Monad
 
 import Problem97
@@ -22,7 +21,7 @@ loadSudoku17 = mkArr . lines <$> readFile "sudoku17"
 
 mainSpeedTest :: IO ()
 mainSpeedTest = do
-    [puzzleFile] <- getArgs
+    let puzzleFile = "sudoku17"
     rawPuzzles <- lines <$> readFile puzzleFile
     let -- l = length rawPuzzles
         solveAndPrint (solvedCount, allCount) curPuzzleRaw = do
@@ -47,3 +46,4 @@ mainHspec = do
 
 main :: IO ()
 main = mainHspec
+-- main = mainSpeedTest
