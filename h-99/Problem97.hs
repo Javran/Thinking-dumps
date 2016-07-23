@@ -20,8 +20,18 @@ type CellContent = Either Int IS.IntSet
 type NinePack = []
 type NinePackCoord = NinePack Coord
 
+-- a Puzzle is a mapping from coordinates to corresponding cell's content.
+-- there are 2 types of content: when the cell has filled with a concrete, single number,
+-- we consider this cell to be "solved", or when the cell has more than one candidate
+-- number, in which case we call it "unsolved"
+-- a Puzzle has two parts: "Solved" maps solved cells to their numbers,
+-- and "Unsolved" maps unsolved cells to the set of candidate numbers.
+-- a proper Puzzle should contain mappings for all coordinates in either
+-- of these 2 sets and every coordinate should occur exacly once.
 type Puzzle = (Solved, Unsolved)
 
+-- we consider a string of digits '0' .. '9' as "RawIntArray",
+-- where '0' represents empty cells and other represents solved cells.
 type RawIntArray = String
 
 ints :: [Int]
