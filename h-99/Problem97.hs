@@ -103,7 +103,6 @@ getBoxCoords b = [(rBase+r,cBase+c) | r<-[0..2], c<-[0..2]]
   where
     (rBase,cBase) = [(r,c) | r <- [1,4,7], c <- [1,4,7]] !! (b-1)
 
-
 npRemoveSolved :: NinePack CellContent -> NinePack CellContent
 npRemoveSolved cells = updatedCells
   where
@@ -134,6 +133,25 @@ npLoneMissing cells = updatedCells
         isLonely = case filter id checkPos of
             [_] -> True
             _ -> False
+
+npSolveNinePack :: NinePack CellContent -> NinePack CellContent
+npSolveNinePack = _
+  where
+    -- try all possibilities
+    partialUniv :: [CellContent] -> [ [Int] ]
+    partialUniv [] = pure []
+    partialUniv (Left i:xs) = (:) <$> pure i <*> partialUniv xs
+    partialUniv (Right s:xs) = do
+        i <- IS.toList s
+        let update c = case c of
+                Left _ -> pure c
+                Right s -> do
+                    let s' = IS.delete i s
+                    guard $ not . IS.null $ s'
+                    pure $ Right s'
+        xs' <- mapM update xs
+        result <- partialUniv xs'
+        pure (i : result)
 
 -- TODO: chained candidate elimination might help, don't know for now.
 {-
