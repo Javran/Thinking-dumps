@@ -134,24 +134,35 @@ npLoneMissing cells = updatedCells
             [_] -> True
             _ -> False
 
-npSolveNinePack :: NinePack CellContent -> NinePack CellContent
-npSolveNinePack = _
+-- might not be a good idea to explore in this way...
+npSolveNinePack' :: NinePack CellContent -> NinePack CellContent
+npSolveNinePack' nps = if univSize < 50 then zipWith update (transpose univ) nps else nps
   where
+    univSize = product (map f nps)
+      where
+        f (Left _) = 1
+        f (Right s) = IS.size s
+    update cans c = case c of
+        Left _ -> c
+        Right _ -> Right (IS.fromList cans)
+
     -- try all possibilities
     partialUniv :: [CellContent] -> [ [Int] ]
     partialUniv [] = pure []
     partialUniv (Left i:xs) = (:) <$> pure i <*> partialUniv xs
     partialUniv (Right s:xs) = do
         i <- IS.toList s
-        let update c = case c of
+        let upd c = case c of
                 Left _ -> pure c
-                Right s -> do
-                    let s' = IS.delete i s
+                Right s1 -> do
+                    let s' = IS.delete i s1
                     guard $ not . IS.null $ s'
                     pure $ Right s'
-        xs' <- mapM update xs
+        xs' <- mapM upd xs
         result <- partialUniv xs'
         pure (i : result)
+
+    univ = partialUniv nps
 
 -- TODO: chained candidate elimination might help, don't know for now.
 {-
@@ -200,6 +211,7 @@ cleanupCandidates pz = do
     combinedUpdate pz' coords =
         updateNinePack pz' coords npRemoveSolved
         >>= \pz2 -> updateNinePack pz2 coords npLoneMissing
+        -- >>= \pz3 -> updateNinePack pz3 coords npSolveNinePack'
 
 pprPuzzle :: Puzzle -> String
 pprPuzzle pz = unlines (concatMap pprRow ints)
