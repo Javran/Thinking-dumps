@@ -29,30 +29,40 @@ ruleView (Rule [] _) = Nothing
 ruleView (Rule [x] _) = Just (x, Rule [] 0)
 ruleView (Rule (x:xs) l) = Just (x, Rule xs (l-x-1))
 
+-- TODO: let's say to satisfy the next new rule we always fill in a "False" as the separator
+-- and caller of this function should be responsible for prepending a Nothing in front of the [CellContent]
 solveRule :: Rule -> [CellContent] -> [ [Bool] ]
 solveRule r xs = case ruleView r of
+    -- all rules have been satisfied, we fill rest of the cells with False
     Nothing -> fst <$> checkedFill False (length xs) xs
-    Just (curLen, r') -> case xs of
-        [] -> mzero
-        _:_ -> do
-            startFill <- [True, False]
-            if startFill
-              then do
-                (filled, remained) <- checkedFill True curLen xs
-                case ruleView r' of
-                    Nothing -> fst <$> checkedFill False (length remained) remained
-                    _ -> do
-                        (filled1, remained1) <- checkedFill False 1 remained
-                        result <- solveRule r' remained1
-                        pure $ filled ++ filled1 ++ result
-              else _
+    -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
+    Just (curLen, r') -> do
+        -- always begin with one "False"
+        (filled1,remained1) <- checkedFill False 1 xs
+        -- now we have 2 options, either start filling in these cells, or
+        startFill <- [True, False]
+        if startFill
+            then do
+                (filled2, remained2) <- checkedFill True curLen remained1
+                filled3 <- solveRule r' remained2
+                pure (filled1 ++ filled2 ++ filled3)
+            else _
   where
+    -- "checkedFill b count ys" tries to fill "count" number of Bool value "b"
+    -- into cells, results in failure if cell content cannot match with the indended value.
     checkedFill :: Bool -> Int -> [CellContent] -> [ ([Bool], [CellContent]) ]
     checkedFill b count ys
-        | count == 0 = pure ([], ys)
+        | count == 0 =
+            -- no need to fill in anything, done.
+            pure ([], ys)
         | otherwise = case ys of
-            [] -> mzero
-            (m : ys') -> do
+            [] ->
+                -- there's no room for filling anything, results in failure
+                mzero
+            (m:ys') -> do
+                -- if the cell has not yet been filled, there's no problem.
+                -- otherwise the already-existing value should match what
+                -- we are filling in.
                 guard (maybe True (\b2 -> b == b2) m)
                 (filled, remained) <- checkedFill b (count-1) ys'
                 pure (b:filled, remained)
