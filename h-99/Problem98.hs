@@ -15,6 +15,7 @@ data Rule = Rule
 -- Right: Col rule
 type RCRule = (Either Int Int, Rule)
 type CellContent = Maybe Bool
+data Nonogram = NG !Int !Int [RCRule]
 
 mkRule :: [Int] -> Rule
 mkRule xs = Rule xs $ sum xs + length xs - 1
