@@ -3,6 +3,9 @@ module Problem98 where
 
 import Control.Monad
 import Data.Maybe
+import Data.Foldable
+import Data.Function
+import Data.List
 
 data Rule = Rule
   { ruleLens :: [Int] -- lengths
@@ -16,6 +19,14 @@ data Rule = Rule
 type RCRule = (Either Int Int, Rule)
 type CellContent = Maybe Bool
 data Nonogram = NG !Int !Int [RCRule]
+
+minViewBy :: (a -> a -> Ordering) -> [a] -> Maybe (a,[a])
+minViewBy _ [] = Nothing
+minViewBy f xs = Just . minimumBy (f `on` fst) $ xsWithContext
+  where
+    xsWithContext = zip xs (zipWith (++)
+                              (init $ inits xs)
+                              (tail $ tails xs))
 
 mkRule :: [Int] -> Rule
 mkRule xs = Rule xs $ sum xs + length xs - 1
@@ -73,4 +84,3 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
                 guard (maybe True (\b2 -> b == b2) m)
                 (filled, remained) <- checkedFill b (count-1) ys'
                 pure (b:filled, remained)
-
