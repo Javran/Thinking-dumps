@@ -6,7 +6,6 @@ import Data.Foldable
 import Data.Function
 import Data.List
 import Data.Maybe
-import Data.Char
 import qualified Data.Array.IArray as Arr
 import qualified Data.Map.Strict as M
 
@@ -141,8 +140,8 @@ fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
     colRules' = zipWith (\rInd raw -> (Right rInd, mkRule raw)) [1..] colRules
     rules = rowRules' ++ colRules'
 
-pprSolvedNongram :: Nonogram -> Rect 'Solved -> String
-pprSolvedNongram (NG nRow nCol rules') rect = unlines (map pprRow [1..nRow] ++ pprdColRules)
+pprSolvedNonogram :: Nonogram -> Rect 'Solved -> String
+pprSolvedNonogram (NG nRow nCol rules') rect = unlines (map pprRow [1..nRow] ++ pprdColRules)
   where
     lookupRule k = M.lookup k rules
     rules = M.fromList rules'
@@ -167,3 +166,9 @@ pprSolvedNongram (NG nRow nCol rules') rect = unlines (map pprRow [1..nRow] ++ p
         cells = map (toStr . (rect Arr.!) . (rInd,)) [1..nCol]
         toStr False = "_"
         toStr True = "X"
+
+nonogram :: [[Int]] -> [[Int]] -> String
+nonogram rowRules colRules =
+    maybe "No solution.\n" (pprSolvedNonogram ng) (solveRect ng)
+  where
+    ng = fromRawNonogram rowRules colRules
