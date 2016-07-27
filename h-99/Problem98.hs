@@ -2,7 +2,6 @@
 module Problem98 where
 
 import Control.Monad
-import Data.Maybe
 import Data.Foldable
 import Data.Function
 import Data.List
@@ -44,8 +43,10 @@ ruleView (Rule (x:xs) l) = Just ((x,l), Rule xs (l-x-1))
 solveRule :: Rule -> [CellContent] -> [ [Bool] ]
 solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
   where
-    -- TODO: let's say to satisfy the next new rule we always fill in a "False" as the separator
-    -- and caller of this function should be responsible for prepending a Nothing in front of the [CellContent]
+    -- TODO: let's say to satisfy the next new rule
+    -- we always fill in a "False" as the separator
+    -- and caller of this function should be responsible
+    -- for prepending a Nothing in front of the [CellContent]
     solveRule' :: Rule -> [CellContent] -> [ [Bool] ]
     solveRule' r xs = case ruleView r of
         -- all rules have been satisfied, we fill rest of the cells with False
