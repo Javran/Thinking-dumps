@@ -6,7 +6,9 @@ import Data.Foldable
 import Data.Function
 import Data.List
 import Data.Maybe
+import Data.Char
 import qualified Data.Array.IArray as Arr
+import qualified Data.Map.Strict as M
 
 data Rule = Rule
   { ruleLens :: [Int] -- lengths
@@ -138,3 +140,22 @@ fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
     rowRules' = zipWith (\rInd raw -> (Left rInd, mkRule raw)) [1..] rowRules
     colRules' = zipWith (\rInd raw -> (Right rInd, mkRule raw)) [1..] colRules
     rules = rowRules' ++ colRules'
+
+pprSolvedNongram :: Nonogram -> Rect 'Solved -> String
+pprSolvedNongram (NG nRow nCol rules') rect = unlines ( pprdColRules)
+  where
+    lookupRule k = M.lookup k rules
+    rules = M.fromList rules'
+
+    pprdColRules :: [String]
+    pprdColRules = map (unwords . map toStr) tr
+      where
+        colRules = map (maybe [] getRawRule . lookupRule . Right) [1..nCol]
+          where
+            getRawRule (Rule rs _) = rs
+        longest = maximum (map length colRules)
+        paddedRules = map (take longest . (++ repeat 0)) colRules
+        tr = transpose paddedRules
+
+        toStr 0 = " "
+        toStr n = show n
