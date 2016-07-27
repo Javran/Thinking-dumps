@@ -23,13 +23,10 @@ data Nonogram = NG !Int !Int [RCRule]
 
 data RectElemState = Solved | Unsolved
 
-data family RectElem (a :: RectElemState)
+type family RectElem (a :: RectElemState)
 
-data instance RectElem 'Solved = RS Bool
-data instance RectElem 'Unsolved = RU (Maybe Bool)
-
-unRU :: RectElem 'Unsolved -> Maybe Bool
-unRU (RU v) = v
+type instance RectElem 'Solved = Bool
+type instance RectElem 'Unsolved = Maybe Bool
 
 type Rect a = Arr.Array (Int,Int) (RectElem a)
 
@@ -105,7 +102,7 @@ mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
   where
     vals = zip
              [(r,c) | r <- [1..nRow], c <- [1..nCol]]
-             (repeat (RU Nothing))
+             (repeat Nothing)
 
 solveRect :: Nonogram -> Maybe (Rect 'Solved)
 solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
@@ -124,16 +121,16 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
             let focusedIndices = case lr of
                     Left  rowInd -> map (rowInd,) [1..nCol]
                     Right colInd -> map (,colInd) [1..nRow]
-                extracted = map (unRU . (curRect Arr.!)) focusedIndices
+                extracted = map (curRect Arr.!) focusedIndices
             updated <- solveRule rule extracted
-            let newAssocs = zip focusedIndices (map (RU . Just) updated)
+            let newAssocs = zip focusedIndices (map Just updated)
                 newRect = Arr.accum (\_old new -> new) curRect newAssocs
             maybeToList $ solveRect' newRect rules'
 
     checkRect :: Rect 'Unsolved -> Maybe (Rect 'Solved)
     checkRect ar = do
-        guard $ all (isJust . unRU) (Arr.elems ar)
-        pure $ Arr.amap (RS . fromJust . unRU) ar
+        guard $ all isJust (Arr.elems ar)
+        pure $ Arr.amap fromJust ar
 
 fromRawNonogram :: [[Int]] -> [[Int]] -> Nonogram
 fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
