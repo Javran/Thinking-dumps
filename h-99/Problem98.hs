@@ -132,10 +132,9 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
         guard $ all isJust (Arr.elems ar)
         pure $ Arr.amap fromJust ar
 
-fromRawNonogram :: ([[Int]],[[Int]]) -> Nonogram
-fromRawNonogram (rowRules, colRules) = NG (length rowRules) (length colRules) rules
+fromRawNonogram :: [[Int]] -> [[Int]] -> Nonogram
+fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
   where
     rowRules' = zipWith (\rInd raw -> (Left rInd, mkRule raw)) [1..] rowRules
     colRules' = zipWith (\rInd raw -> (Right rInd, mkRule raw)) [1..] colRules
     rules = rowRules' ++ colRules'
-
