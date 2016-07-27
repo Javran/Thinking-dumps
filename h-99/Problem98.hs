@@ -117,15 +117,15 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
     solveRect' :: Rect 'Unsolved -> [RCRule] -> Maybe (Rect 'Solved)
     solveRect' curRect rules = case minViewBy (compare `on` flex) rules of
         Nothing -> checkRect curRect
-        Just ((lr,rule),rules') -> do
+        Just ((lr,rule),rules') -> listToMaybe $ do
             let focusedIndices = case lr of
                     Left  rowInd -> map (rowInd,) [1..nCol]
                     Right colInd -> map (,colInd) [1..nRow]
                 extracted = map (curRect Arr.!) focusedIndices
-            updated <- listToMaybe (solveRule rule extracted)
+            updated <- solveRule rule extracted
             let newAssocs = zip focusedIndices (map Just updated)
                 newRect = Arr.accum (\_old new -> new) curRect newAssocs
-            solveRect' newRect rules'
+            maybeToList $ solveRect' newRect rules'
 
     checkRect :: Rect 'Unsolved -> Maybe (Rect 'Solved)
     checkRect ar = do
