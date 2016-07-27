@@ -5,7 +5,8 @@ import Control.Monad
 import Data.Foldable
 import Data.Function
 import Data.List
-import qualified Data.Array as Arr
+import Data.Maybe
+import qualified Data.Array.IArray as Arr
 
 data Rule = Rule
   { ruleLens :: [Int] -- lengths
@@ -103,4 +104,22 @@ mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
              [(r,c) | r <- [1..nRow], c <- [1..nCol]]
              (repeat Nothing)
 
--- solveNonogram :: Nonogram -> Rect -> 
+solveRect :: Nonogram -> Maybe (Rect 'Solved)
+solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
+  where
+    -- measure "flexibility" of a rule, the less flexible a rule is,
+    -- the less solutions it can have for one certain row / col
+    flex :: RCRule -> Int
+    flex (lr, Rule _ atLeast) = case lr of
+        Left _ -> nRow - atLeast
+        Right _ -> nCol - atLeast
+
+    solveRect' :: Rect 'Unsolved -> [RCRule] -> Maybe (Rect 'Solved)
+    solveRect' curRect rules = case minViewBy (compare `on` flex) rules of
+        Nothing -> checkRect curRect
+        Just (curRule,rules') -> _
+
+    checkRect :: Rect 'Unsolved -> Maybe (Rect 'Solved)
+    checkRect ar = do
+        guard $ all isJust (Arr.elems ar)
+        pure $ Arr.amap fromJust ar
