@@ -142,20 +142,28 @@ fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
     rules = rowRules' ++ colRules'
 
 pprSolvedNongram :: Nonogram -> Rect 'Solved -> String
-pprSolvedNongram (NG nRow nCol rules') rect = unlines ( pprdColRules)
+pprSolvedNongram (NG nRow nCol rules') rect = unlines (map pprRow [1..nRow] ++ pprdColRules)
   where
     lookupRule k = M.lookup k rules
     rules = M.fromList rules'
+
+    getRawRule (Rule rs _) = rs
 
     pprdColRules :: [String]
     pprdColRules = map (unwords . map toStr) tr
       where
         colRules = map (maybe [] getRawRule . lookupRule . Right) [1..nCol]
-          where
-            getRawRule (Rule rs _) = rs
         longest = maximum (map length colRules)
         paddedRules = map (take longest . (++ repeat 0)) colRules
         tr = transpose paddedRules
 
         toStr 0 = " "
         toStr n = show n
+
+    pprRow :: Int -> String
+    pprRow rInd = '|' : intercalate "|" cells ++ "| " ++ unwords (map show rowRule)
+      where
+        rowRule = maybe [] getRawRule $ lookupRule (Left rInd)
+        cells = map (toStr . (rect Arr.!) . (rInd,)) [1..nCol]
+        toStr False = "_"
+        toStr True = "X"
