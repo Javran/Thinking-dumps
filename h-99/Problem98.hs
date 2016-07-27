@@ -1,10 +1,11 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts, TypeFamilies, DataKinds #-}
 module Problem98 where
 
 import Control.Monad
 import Data.Foldable
 import Data.Function
 import Data.List
+import qualified Data.Array as Arr
 
 data Rule = Rule
   { ruleLens :: [Int] -- lengths
@@ -18,6 +19,15 @@ data Rule = Rule
 type RCRule = (Either Int Int, Rule)
 type CellContent = Maybe Bool
 data Nonogram = NG !Int !Int [RCRule]
+
+data RectElemState = Solved | Unsolved
+
+type family RectElem (a :: RectElemState)
+
+type instance RectElem 'Solved = Bool
+type instance RectElem 'Unsolved = Maybe Bool
+
+type Rect a = Arr.Array (Int,Int) (RectElem a)
 
 minViewBy :: (a -> a -> Ordering) -> [a] -> Maybe (a,[a])
 minViewBy _ [] = Nothing
@@ -85,3 +95,12 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
                 guard (maybe True (\b2 -> b == b2) m)
                 (filled, remained) <- checkedFill b (count-1) ys'
                 pure (b:filled, remained)
+
+mkRect :: Int -> Int -> Rect 'Unsolved
+mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
+  where
+    vals = zip
+             [(r,c) | r <- [1..nRow], c <- [1..nCol]]
+             (repeat Nothing)
+
+-- solveNonogram :: Nonogram -> Rect -> 
