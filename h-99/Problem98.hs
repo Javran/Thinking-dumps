@@ -59,6 +59,8 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
     -- we always fill in a "False" as the separator
     -- and caller of this function should be responsible
     -- for prepending a Nothing in front of the [CellContent]
+    -- TODO: seems this function is producing some space leak,
+    -- we might need to investigate further.
     solveRule' :: Rule -> [CellContent] -> [ [Bool] ]
     solveRule' r xs = case ruleView r of
         -- all rules have been satisfied, we fill rest of the cells with False
