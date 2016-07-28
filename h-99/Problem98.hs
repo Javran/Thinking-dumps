@@ -128,17 +128,28 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
         Right _ -> nCol - atLeast
 
     solveRect' :: Rect 'Unsolved -> [RCRule] -> Maybe (Rect 'Solved)
-    solveRect' curRect rules = case minViewBy (compare `on` flex) rules of
+    solveRect' curRect rules = case minViewBy (compare `on` snd . snd) processedRules of
         Nothing -> checkRect curRect
-        Just ((lr,rule),rules') -> listToMaybe $ do
-            let focusedIndices = case lr of
-                    Left  rowInd -> map (rowInd,) [1..nCol]
-                    Right colInd -> map (,colInd) [1..nRow]
-                extracted = map (curRect Arr.!) focusedIndices
-            updated <- solveRule rule extracted
-            let newAssocs = zip focusedIndices (map Just updated)
+        Just (((lr,_),(solutions, _)),rules') -> listToMaybe $ do
+            let indices = getIndices lr
+            solution <- solutions
+            let newAssocs = zip indices (map Just solution)
                 newRect = Arr.accum (\_old new -> new) curRect newAssocs
-            maybeToList $ solveRect' newRect rules'
+            maybeToList $ solveRect' newRect (map fst rules')
+      where
+        getIndices lr = case lr of
+            Left  rowInd -> map (rowInd,) [1..nCol]
+            Right colInd -> map (,colInd) [1..nRow]
+        -- return type: (row/col index, (all solutions, (bounded length of solutions, flex)))
+        processRule :: RCRule -> (RCRule, ([[Bool]], (Int, Int)))
+        processRule r@(lr,rule) = (r, (solutions,(estSearchSpace, flex r)))
+          where
+            searchCap = 20 :: Int
+            indices = getIndices lr
+            extracted = map (curRect Arr.!) indices
+            solutions = solveRule rule extracted
+            estSearchSpace = length (take searchCap solutions)
+        processedRules = map processRule rules
 
     checkRect :: Rect 'Unsolved -> Maybe (Rect 'Solved)
     checkRect ar = do
@@ -185,7 +196,7 @@ nonogram rowRules colRules =
   where
     ng = fromRawNonogram rowRules colRules
 
-{-
+
 main :: IO ()
 main = putStr $ nonogram [ [2,2,1,1,2,5,1], [1,1,4,3,3,1,1,1], [1,4,6,3,2], [9,1,1,7], [3,1,3,5,6], [4,1,2,2,3,4], [2,2,2,2,1,6], [2,5,5,1], [4,3,3,2,1],
                     [4,1,4,2,3], [2,4,6,1], [10,2,1,1,1,2], [3,1,2,1,9,1], [10,7,2,1], [1,10,2,6], [3,1,13,2], [14,3,5], [1,2,5,4,1,1,3],
@@ -194,7 +205,7 @@ main = putStr $ nonogram [ [2,2,1,1,2,5,1], [1,1,4,3,3,1,1,1], [1,4,6,3,2], [9,1
                     [5,4,1,2,5,3], [7,10,2], [1,1,5,5], [1,1,1,4,2,3], [3,3,1,3,3,1], [6,5,3,2,1], [1,1,14,1], [3,2,4,1,2,1],
                     [2,3,6,4,1,2], [3,3,1,2,2,3,1], [4,2,8,5], [1,3,5,4,1,4], [2,2,5,1,4,2,1,1], [5,7,1,1,1],
                     [7,1,2,5,3], [4,5,6,1], [1,3,1,1,1,1,3,1,2]]
--}
+
 {-
 *Problem98> :set +m
 *Problem98> putStr $ nonogram [ [3,5], [8], [3,2], [1,1,1], [1,3], [3,1], [2,1], [4,1], [2,3], [2,3] ] [
