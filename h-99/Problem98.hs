@@ -105,6 +105,18 @@ mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
              [(r,c) | r <- [1..nRow], c <- [1..nCol]]
              (repeat Nothing)
 
+{-
+  TODO: for now the "flexibility" does not change throughout
+  our search, which I believe can be optimized:
+
+  - for each rule, we grab the corresponding cells, and use "solveRule" to
+    get a list of all possible solutions, more solutions mean more flexible.
+  - to prevent "solveRule" from giving too many alternatives, we can use "take"
+    to give an upper bound about this "flexibility": say the upper bound
+    is 100, then "flexibility" of a rule (row / col) cannot exceed 100.
+  - when the definition of "flexibility" results in a tie,
+    the original one (total length - min required number of cells) is compared.
+-}
 solveRect :: Nonogram -> Maybe (Rect 'Solved)
 solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
   where
