@@ -62,18 +62,18 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
     solveRule' :: Rule -> [CellContent] -> [ [Bool] ]
     solveRule' r xs = case ruleView r of
         -- all rules have been satisfied, we fill rest of the cells with False
-        Nothing -> fst <$> checkedFill False (length xs) xs
+        Nothing -> fst <$> maybeToList (checkedFill False (length xs) xs)
         -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
         Just ((curLen,leastL), r') -> do
             -- we can fail immediately here if we have insufficient number of cells.
             guard $ length xs >= leastL + 1
             -- always begin with one "False"
-            (filled1,remained1) <- checkedFill False 1 xs
+            (filled1,remained1) <- maybeToList $ checkedFill False 1 xs
             -- now we have 2 options, either start filling in these cells, or
             startFill <- [True, False]
             if startFill
                 then do
-                    (filled2, remained2) <- checkedFill True curLen remained1
+                    (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1
                     filled3 <- solveRule' r' remained2
                     pure (filled1 ++ filled2 ++ filled3)
                 else do
@@ -81,7 +81,7 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
                     pure (filled1 ++ filled2)
     -- "checkedFill b count ys" tries to fill "count" number of Bool value "b"
     -- into cells, results in failure if cell content cannot match with the indended value.
-    checkedFill :: Bool -> Int -> [CellContent] -> [ ([Bool], [CellContent]) ]
+    checkedFill :: Bool -> Int -> [CellContent] -> Maybe ([Bool], [CellContent])
     checkedFill b count ys
         | count == 0 =
             -- no need to fill in anything, done.
