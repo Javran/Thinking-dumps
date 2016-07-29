@@ -53,7 +53,7 @@ ruleView (Rule [x] l) = Just ((x,l), Rule [] 0)
 ruleView (Rule (x:xs) l) = Just ((x,l), Rule xs (l-x-1))
 
 solveRule :: Rule -> [CellContent] -> [ [Bool] ]
-solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
+solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1))
   where
     -- TODO: let's say to satisfy the next new rule
     -- we always fill in a "False" as the separator
@@ -61,10 +61,10 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
     -- for prepending a Nothing in front of the [CellContent]
     -- TODO: seems this function is producing some space leak,
     -- we might need to investigate further.
-    solveRule' :: Rule -> [CellContent] -> [ [Bool] ]
+    solveRule' :: Rule -> [CellContent] -> [ [Bool] -> [Bool] ]
     solveRule' r xs = case ruleView r of
         -- all rules have been satisfied, we fill rest of the cells with False
-        Nothing -> fst <$> maybeToList (checkedFill False (length xs) xs)
+        Nothing -> (++) . fst <$> maybeToList (checkedFill False (length xs) xs)
         -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
         Just ((curLen,leastL), r') -> do
             -- we can fail immediately here if we have insufficient number of cells.
@@ -77,10 +77,10 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
                 then do
                     (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1
                     filled3 <- solveRule' r' remained2
-                    pure (filled1 ++ filled2 ++ filled3)
+                    pure $ (filled1 ++) . (filled2 ++) . filled3
                 else do
                     filled2 <- solveRule' r remained1
-                    pure (filled1 ++ filled2)
+                    pure $ (filled1 ++) . filled2
     -- "checkedFill b count ys" tries to fill "count" number of Bool value "b"
     -- into cells, results in failure if cell content cannot match with the indended value.
     checkedFill :: Bool -> Int -> [CellContent] -> Maybe ([Bool], [CellContent])
@@ -98,7 +98,7 @@ solveRule r1 xs1 = map tail (solveRule' r1 (Nothing:xs1))
                 -- we are filling in.
                 guard (maybe True (\b2 -> b == b2) m)
                 (filled, remained) <- checkedFill b (count-1) ys'
-                pure (b:filled, remained)
+                pure (b:filled , remained)
 
 mkRect :: Int -> Int -> Rect 'Unsolved
 mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
