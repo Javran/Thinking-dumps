@@ -73,10 +73,11 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
             -- always begin with one "False"
             (filled1,remained1) <- maybeToList $ checkedFill False 1 xs []
             -- now we have 2 options, either start filling in these cells, or
-            let fillNow = do
+            let acc' = acc . (filled1 ++)
+                fillNow = do
                    (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1 []
-                   solveRule' r' remained2 $ acc . (filled1 ++) . (filled2 ++)
-                fillLater = solveRule' r remained1 $ acc . (filled1 ++)
+                   solveRule' r' remained2 $ acc' . (filled2 ++)
+                fillLater = solveRule' r remained1 acc'
             fillNow ++ fillLater
     -- "checkedFill b count ys" tries to fill "count" number of Bool value "b"
     -- into cells, results in failure if cell content cannot match with the indended value.
