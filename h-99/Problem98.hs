@@ -67,7 +67,7 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
         Nothing -> ((\zs -> acc . (zs ++)) . fst) <$>
                      maybeToList (checkedFill False (length xs) xs [])
         -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
-        Just ((curLen,leastL), r') -> {-# SCC "p2" #-} do
+        Just ((curLen,leastL), r') -> do
             -- we can fail immediately here if we have insufficient number of cells.
             guard $ length xs >= leastL + 1
             -- always begin with one "False"
@@ -84,6 +84,8 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
     checkedFill b count ys acc
         | count == 0 =
             -- no need to fill in anything, done.
+            -- there's no need reversing the list, as all values filled in
+            -- are the same.
             pure (acc, ys)
         | otherwise = case ys of
             [] ->
@@ -142,7 +144,7 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
         processRule :: RCRule -> (RCRule, ([[Bool]], (Int, Int)))
         processRule r@(lr,rule) = (r, (solutions,(estSearchSpace, flex r)))
           where
-            searchCap = 20 :: Int
+            searchCap = 10 :: Int
             indices = getIndices lr
             extracted = map (curRect Arr.!) indices
             solutions = solveRule rule extracted
