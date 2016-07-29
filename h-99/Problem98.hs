@@ -64,26 +64,27 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
     solveRule' :: Rule -> [CellContent] -> ([Bool] -> [Bool]) -> [ [Bool] -> [Bool] ]
     solveRule' r xs acc = case ruleView r of
         -- all rules have been satisfied, we fill rest of the cells with False
-        Nothing -> ((\zs -> acc . (zs ++)) . fst) <$> maybeToList (checkedFill False (length xs) xs)
+        Nothing -> ((\zs -> acc . (zs ++)) . fst) <$>
+                     maybeToList (checkedFill False (length xs) xs [])
         -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
         Just ((curLen,leastL), r') -> {-# SCC "p2" #-} do
             -- we can fail immediately here if we have insufficient number of cells.
-            guard $ {-# SCC "p21" #-} length xs >= leastL + 1
+            guard $ length xs >= leastL + 1
             -- always begin with one "False"
-            (filled1,remained1) <- maybeToList $ checkedFill False 1 xs
+            (filled1,remained1) <- maybeToList $ checkedFill False 1 xs []
             -- now we have 2 options, either start filling in these cells, or
             let fillNow = do
-                   (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1
+                   (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1 []
                    solveRule' r' remained2 $ acc . (filled1 ++) . (filled2 ++)
                 fillLater = solveRule' r remained1 $ acc . (filled1 ++)
             fillNow ++ fillLater
     -- "checkedFill b count ys" tries to fill "count" number of Bool value "b"
     -- into cells, results in failure if cell content cannot match with the indended value.
-    checkedFill :: Bool -> Int -> [CellContent] -> Maybe ([Bool], [CellContent])
-    checkedFill b count ys
+    checkedFill :: Bool -> Int -> [CellContent] -> [Bool] -> Maybe ([Bool], [CellContent])
+    checkedFill b count ys acc
         | count == 0 =
             -- no need to fill in anything, done.
-            pure ([], ys)
+            pure (acc, ys)
         | otherwise = case ys of
             [] ->
                 -- there's no room for filling anything, results in failure
@@ -93,8 +94,7 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
                 -- otherwise the already-existing value should match what
                 -- we are filling in.
                 guard (maybe True (\b2 -> b == b2) m)
-                (filled, remained) <- checkedFill b (count-1) ys'
-                pure (b:filled , remained)
+                checkedFill b (count-1) ys' (b:acc)
 
 mkRect :: Int -> Int -> Rect 'Unsolved
 mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
