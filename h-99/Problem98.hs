@@ -63,6 +63,9 @@ mkRowRule, mkColRule :: Int -> [Int] -> RCRule
 mkRowRule i xs = (Left i, mkRule xs)
 mkColRule i xs = (Right i, mkRule xs)
 
+-- a rule consists of a list of numbers, "ruleView r" destructs a rule like how
+-- "minView" destructs an (usually ordered) data structure to separate one element
+-- from rest of it.
 ruleView :: Rule -> Maybe ((Int, Int), Rule)
 ruleView (Rule [] _) = Nothing
 ruleView (Rule [x] l) = Just ((x,l), Rule [] 0)
@@ -214,32 +217,3 @@ nonogram rowRules colRules =
     maybe "No solution.\n" (pprSolvedNonogram ng) (solveRect ng)
   where
     ng = fromRawNonogram rowRules colRules
-
-
-main :: IO ()
-main = putStr $ nonogram [ [2,2,1,1,2,5,1], [1,1,4,3,3,1,1,1], [1,4,6,3,2], [9,1,1,7], [3,1,3,5,6], [4,1,2,2,3,4], [2,2,2,2,1,6], [2,5,5,1], [4,3,3,2,1],
-                    [4,1,4,2,3], [2,4,6,1], [10,2,1,1,1,2], [3,1,2,1,9,1], [10,7,2,1], [1,10,2,6], [3,1,13,2], [14,3,5], [1,2,5,4,1,1,3],
-                    [1,1,1,4,1,1,1,3], [9,2,2,1,2,3], [1,2,10,2,3], [1,2,1,1,2,4], [2,1,5,3,1,1], [2,8,6,1,1], [8,4,1,6]] [
-                    [3,2,3,1,1], [1,4,2,4,2,2,3], [8,3,1,2,4], [1,4,3,1,4,3,1], [4,2,10,2], [3,2,2,5,1,3], [2,1,2,5,1,3,2], [1,3,2,10,3],
-                    [5,4,1,2,5,3], [7,10,2], [1,1,5,5], [1,1,1,4,2,3], [3,3,1,3,3,1], [6,5,3,2,1], [1,1,14,1], [3,2,4,1,2,1],
-                    [2,3,6,4,1,2], [3,3,1,2,2,3,1], [4,2,8,5], [1,3,5,4,1,4], [2,2,5,1,4,2,1,1], [5,7,1,1,1],
-                    [7,1,2,5,3], [4,5,6,1], [1,3,1,1,1,1,3,1,2]]
-
-{-
-*Problem98> :set +m
-*Problem98> putStr $ nonogram [ [3,5], [8], [3,2], [1,1,1], [1,3], [3,1], [2,1], [4,1], [2,3], [2,3] ] [
-*Problem98|                     [3,4], [3,5], [3,1,1], [2,4], [1], [4,3], [3,2], [2,1,2], [1,1], [1,3] ]
-|_|X|X|X|_|X|X|X|X|X| 3 5
-|X|X|X|X|X|X|X|X|_|_| 8
-|X|X|X|_|_|X|X|_|_|_| 3 2
-|X|_|_|_|_|X|_|_|_|X| 1 1 1
-|_|_|_|X|_|_|_|X|X|X| 1 3
-|_|X|X|X|_|_|_|_|_|X| 3 1
-|X|X|_|X|_|_|_|_|_|_| 2 1
-|X|X|X|X|_|X|_|_|_|_| 4 1
-|X|X|_|_|_|X|X|X|_|_| 2 3
-|X|X|_|_|_|X|X|X|_|_| 2 3
- 3 3 3 2 1 4 3 2 1 1
- 4 5 1 4   3 2 1 1 3
-     1         2
--}
