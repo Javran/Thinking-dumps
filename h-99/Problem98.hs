@@ -9,28 +9,43 @@ import Data.Maybe
 import qualified Data.Array.IArray as Arr
 import qualified Data.Map.Strict as M
 
+-- TODO: plan to use some data from https://github.com/mikix/nonogram-db
+-- for testing
+
 data Rule = Rule
-  { ruleLens :: [Int] -- lengths
+  { ruleLens :: [Int] -- lengths, all numbers should be greater than 0
     -- calculated from ruleLens, the length of the most compact solution
     -- satisfying this rule.
   , ruleAtLeast :: !Int
   } deriving (Show)
 
--- Left: Row rule
--- Right: Col rule
+-- "RCRule" (Row/Col Rule) is a rule for a line with index of that line.
+-- Left index : Rule for Row "index"
+-- Right index: Rule for Col "index"
 type RCRule = (Either Int Int, Rule)
+-- cell content for an unsolved puzzle.
+-- Nothing: not yet filled of anything
+-- Just True: this cell is painted black.
+-- Just False: this cell is painted white.
 type CellContent = Maybe Bool
+-- the description of a nonogram, including # of cols and # of rows.
+-- and a complete list of rules (paired with line index)
 data Nonogram = NG !Int !Int [RCRule]
 
 data RectElemState = Solved | Unsolved
 
+-- just a fancy way of saying "Bool" and "Maybe Bool",
+-- depending on whether we are representing a solved or unsolved puzzle
 type family RectElem (a :: RectElemState)
 
 type instance RectElem 'Solved = Bool
 type instance RectElem 'Unsolved = Maybe Bool
 
+-- the "Rect a" represent a partial or complete solution of puzzle
 type Rect a = Arr.Array (Int,Int) (RectElem a)
 
+-- traverse the list, separate the minimum element with rest of the list,
+-- it's guaranteed that the ordering is preserved.
 minViewBy :: (a -> a -> Ordering) -> [a] -> Maybe (a,[a])
 minViewBy _ [] = Nothing
 minViewBy f xs = Just . minimumBy (f `on` fst) $ xsWithContext
