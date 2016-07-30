@@ -40,6 +40,7 @@ minViewBy f xs = Just . minimumBy (f `on` fst) $ xsWithContext
                               (tail $ tails xs))
 
 mkRule :: [Int] -> Rule
+mkRule [] = Rule [] 0
 mkRule xs = Rule xs $ sum xs + length xs - 1
 
 mkRowRule, mkColRule :: Int -> [Int] -> RCRule
