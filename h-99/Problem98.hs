@@ -9,8 +9,20 @@ import Data.Maybe
 import qualified Data.Array.IArray as Arr
 import qualified Data.Map.Strict as M
 
--- TODO: plan to use some data from https://github.com/mikix/nonogram-db
--- for testing
+-- this simple algorithm suffers when the puzzle becomes large.
+-- this is because our algorithm either fully fills a line (row / col)
+-- or do nothing if it finds something inconsistent. but a more efficent
+-- strategy is to just partially solve a line as much as it can.
+-- (e.g. if a line has 10 cells, and we need 8 consecutive black cells,
+-- then no matter what the 6 cells in the middle have to be painted black)
+-- and this strategy is exactly what we need in order to solve advanced puzzles.
+-- but I think I'm good with current solution as long as it can solve the example puzzle
+-- quickly (which it does).
+-- for anyone who is interested in more advanced solving technique,
+-- you might try solving puzzles in https://github.com/mikix/nonogram-db .
+-- I originally planned using few from it as testcases,
+-- but I eventually dropped this idea as most of them will take forever for my solver
+-- to work it out.
 
 data Rule = Rule
   { ruleLens :: [Int] -- lengths, all numbers should be greater than 0
@@ -71,27 +83,37 @@ ruleView (Rule [] _) = Nothing
 ruleView (Rule [x] l) = Just ((x,l), Rule [] 0)
 ruleView (Rule (x:xs) l) = Just ((x,l), Rule xs (l-x-1))
 
+-- given a line rule and corresponding contents,
+-- "solveRule" tries to give us all possible complete solutions of this line
 solveRule :: Rule -> [CellContent] -> [ [Bool] ]
 solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
   where
-    -- TODO: let's say to satisfy the next new rule
-    -- we always fill in a "False" as the separator
-    -- and caller of this function should be responsible
-    -- for prepending a Nothing in front of the [CellContent]
-    -- TODO: seems this function is producing some space leak,
-    -- we might need to investigate further.
+    -- when "solveRule'" tries to satisfy a rule, it always paint a white cell
+    -- before painting consecutive blacks. by doing so the logic can be simplified a bit.
+    -- this is why we always prepend "Nothing" and just take the "tail" of every result
+    -- when calling this function from "solveRule"
+    -- the type signature of "acc" looks a bit funny: you might expect it to be [Bool]
+    -- because it's a list of Bools, but the type is really [Bool] -> [Bool].
+    -- this is what we call difference list, and it's known to have better performance
+    -- when concatenating lists than simply using (++).
+    -- see: https://wiki.haskell.org/Difference_list for help
     solveRule' :: Rule -> [CellContent] -> ([Bool] -> [Bool]) -> [ [Bool] -> [Bool] ]
     solveRule' r xs acc = case ruleView r of
-        -- all rules have been satisfied, we fill rest of the cells with False
-        Nothing -> ((\zs -> acc . (zs ++)) . fst) <$>
-                     maybeToList (checkedFill False (length xs) xs 0)
+        Nothing ->
+            -- all rules have been satisfied, we fill rest of the cells with False
+            ((\zs -> acc . (zs ++)) . fst) <$>
+                maybeToList (checkedFill False (length xs) xs 0)
         -- now we are trying to have one or more "False" and "curLen" consecutive "True"s
         Just ((curLen,leastL), r') -> do
             -- we can fail immediately here if we have insufficient number of cells.
             guard $ length xs >= leastL + 1
             -- always begin with one "False"
             (filled1,remained1) <- maybeToList $ checkedFill False 1 xs 0
-            -- now we have 2 options, either start filling in these cells, or
+            -- now we have 2 options:
+            -- either (1) start filling in these cells immediately (fillNow)
+            -- or we just delay the filling a bit, paint next cell white
+            -- and let the recursive call handle rest of the problem.
+            -- this allows us to fill one or more white cells before painting black cells.
             let acc' = acc . (filled1 ++)
                 fillNow = do
                    (filled2, remained2) <- maybeToList $ checkedFill True curLen remained1 0
@@ -120,6 +142,8 @@ solveRule r1 xs1 = map tail (($ []) <$> solveRule' r1 (Nothing:xs1) ([] ++))
       where
         bs = repeat b
 
+-- make a Rectangle for starting working on the puzzle,
+-- all cells are initialized to Nothing
 mkRect :: Int -> Int -> Rect 'Unsolved
 mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
   where
@@ -128,9 +152,6 @@ mkRect nRow nCol = Arr.array ((1,1), (nRow,nCol)) vals
              (repeat Nothing)
 
 {-
-  TODO: for now the "flexibility" does not change throughout
-  our search, which I believe can be optimized:
-
   - for each rule, we grab the corresponding cells, and use "solveRule" to
     get a list of all possible solutions, more solutions mean more flexible.
   - to prevent "solveRule" from giving too many alternatives, we can use "take"
@@ -151,12 +172,17 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
 
     solveRect' :: Rect 'Unsolved -> [RCRule] -> Maybe (Rect 'Solved)
     solveRect' curRect rules = case minViewBy (compare `on` snd . snd) processedRules of
-        Nothing -> checkRect curRect
+        Nothing ->
+            -- all rules are considered, we now check whether the puzzle is fully solved.
+            checkRect curRect
         Just (((lr,_),(solutions, _)),rules') -> listToMaybe $ do
+            -- pick up one with minimum flexibility
             let indices = getIndices lr
+            -- pick one solution
             solution <- solutions
             let newAssocs = zip indices (map Just solution)
                 newRect = Arr.accum (\_old new -> new) curRect newAssocs
+            -- apply it to the rectangle (the puzzle)
             maybeToList $ solveRect' newRect (map fst rules')
       where
         getIndices lr = case lr of
@@ -173,6 +199,7 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
             estSearchSpace = length (take searchCap solutions)
         processedRules = map processRule rules
 
+    -- turn every cell into "solved" cells only when all cells are filled.
     checkRect :: Rect 'Unsolved -> Maybe (Rect 'Solved)
     checkRect ar = do
         guard $ all isJust (Arr.elems ar)
@@ -185,6 +212,7 @@ fromRawNonogram rowRules colRules = NG (length rowRules) (length colRules) rules
     colRules' = zipWith (\rInd raw -> (Right rInd, mkRule raw)) [1..] colRules
     rules = rowRules' ++ colRules'
 
+-- create a pretty-printing-ready string for solved nonograms
 pprSolvedNonogram :: Nonogram -> Rect 'Solved -> String
 pprSolvedNonogram (NG nRow nCol rules') rect = unlines (map pprRow [1..nRow] ++ pprdColRules)
   where
