@@ -40,7 +40,7 @@ type RCRule = (Either Int Int, Rule)
 -- Just True: this cell is painted black.
 -- Just False: this cell is painted white.
 type CellContent = Maybe Bool
--- the description of a nonogram, including # of cols and # of rows.
+-- the description of a nonogram, including # of rows and # of cols.
 -- and a complete list of rules (paired with line index)
 data Nonogram = NG !Int !Int [RCRule]
 
@@ -245,3 +245,17 @@ nonogram rowRules colRules =
     maybe "No solution.\n" (pprSolvedNonogram ng) (solveRect ng)
   where
     ng = fromRawNonogram rowRules colRules
+
+{-
+  TODO:
+  - testcases.
+  - set a threshold for merging:
+    when there are only few alternatives
+    instead of trying to completely fill in
+    one line, we get all alternatives and
+    try to find some "have to be" cells.
+    so we will have 2 thresholds: one for terminating
+    alternative enumeration, and another for merging when
+    the number of alternatives is really small (at least it should
+    be smaller than the terminating threshold.
+-}
