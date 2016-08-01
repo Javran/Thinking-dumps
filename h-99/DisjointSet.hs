@@ -16,11 +16,6 @@ import Data.Foldable
 import Control.Monad.State
 
 {-
-  TODO:
-  - what if we want to change the base monad?
--}
-
-{-
   - you can view DisjointSet as a container that might contain
     many small and disjoint regular sets (i.e. no two set can share the
     same element)

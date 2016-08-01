@@ -7,6 +7,19 @@ module DisjointSetState
 
 import DisjointSet
 import Control.Monad.State
+-- import Control.Monad.Morph
+
+{-
+  NOTE:
+  - if we want to change the base monad (Identity) to something else,
+    for example Maybe, mmorph (https://hackage.haskell.org/package/mmorph)
+    would be one that does the trick.
+    the following code type checks:
+
+> initM' :: Ord a => [a] -> StateT (DisjointSet a) Maybe ()
+> initM' = hoist generalize . initM
+
+-}
 
 initM :: Ord a => [a] -> State (DisjointSet a) ()
 initM = put . includeElems empty
