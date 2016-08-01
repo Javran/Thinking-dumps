@@ -1,11 +1,9 @@
 module Problem98Test where
 
 import Test.Hspec
-import Test.QuickCheck
 import Data.List
 
 import qualified Data.Array as Arr
-import Control.Monad
 import Problem98
 
 {-# ANN module "HLint: ignore Redundant do" #-}
@@ -19,7 +17,7 @@ puzzle1 =
     , " XXX  XX"
     , "  XXXXXX"
     , "X XXXXX "
-    , "    X  "
+    , "    X   "
     , "   XX   "
     ]
 
@@ -73,9 +71,8 @@ mkPuzzle raw = (rowRules, colRules)
   where
     raw1 = (map . map) cov raw
       where
-        cov 'X' = True
         cov ' ' = False
-        cov _ = error "wrong puzzle format"
+        cov _ = True
     raw2 = transpose raw1
 
     rowRules = map lineToRule raw1
@@ -87,3 +84,20 @@ mkPuzzle raw = (rowRules, colRules)
     lineToRule' xs
         | (trues,remained) <- span (== True) xs =
             length trues : lineToRule' (dropWhile (/= True) remained)
+
+main :: IO ()
+main = hspec $ do
+    describe "solveRect" $ do
+        let examplePuzzle rawPz = example $
+              let ng@(NG nRows nCols _) = uncurry fromRawNonogram (mkPuzzle rawPz)
+                  cov True = 'X'
+                  cov False = ' '
+                  arrToList =
+                      take nRows
+                    . unfoldr (Just . splitAt nCols)
+                    . map cov
+                    . Arr.elems
+              in solveRect ng `shouldSatisfy` maybe False ((== rawPz) . arrToList)
+        specify "puzzle 1" $ examplePuzzle puzzle1
+        specify "puzzle 2" $ examplePuzzle puzzle2
+        specify "puzzle 3" $ examplePuzzle puzzle3
