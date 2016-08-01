@@ -3,9 +3,10 @@ module Problem98 where
 
 import Control.Monad
 import Data.Foldable
-import Data.Function
 import Data.List
 import Data.Maybe
+import Data.Monoid
+import Data.Function
 import qualified Data.Array.IArray as Arr
 import qualified Data.Map.Strict as M
 
@@ -82,6 +83,24 @@ ruleView :: Rule -> Maybe ((Int, Int), Rule)
 ruleView (Rule [] _) = Nothing
 ruleView (Rule [x] l) = Just ((x,l), Rule [] 0)
 ruleView (Rule (x:xs) l) = Just ((x,l), Rule xs (l-x-1))
+
+-- given all alternatives of a line,
+-- determine if there are cells that has to be of one particular value (True/False)
+-- e.g.
+-- > mergeResult [N,N,N] [ [T,T,F], [F,T,F] ] = [N, J T, J F]
+-- > mergeResult [N,N,N] [ [T,T,F], [F,T,T] ] = [N, J T, N]
+-- the first parameter can be a list of Nothing.
+-- and the length of both parameter must be the same.
+-- when the corresponding element in first parameter is a "Just _"
+-- the merging process will be short-cutted to save some time.
+mergeResults :: [ CellContent ] -> [ [Bool] ] -> [ CellContent ]
+mergeResults =
+    zipWith
+      (\cell alts ->
+       getFirst $ ((<>) `on` First) cell (allEq alts))
+  where
+    allEq [] = Nothing
+    allEq (a:as) = guard (all (== a) as) >> Just a
 
 -- given a line rule and corresponding contents,
 -- "solveRule" tries to give us all possible complete solutions of this line
