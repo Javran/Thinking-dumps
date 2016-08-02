@@ -100,4 +100,6 @@ main = hspec $ do
               in solveRect ng `shouldSatisfy` maybe False ((== rawPz) . arrToList)
         specify "puzzle 1" $ examplePuzzle puzzle1
         specify "puzzle 2" $ examplePuzzle puzzle2
+        -- it takes a while to run puzzle 3 so make sure to get this compiled
+        -- before running the testcase.
         specify "puzzle 3" $ examplePuzzle puzzle3

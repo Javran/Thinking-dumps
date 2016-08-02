@@ -194,7 +194,7 @@ solveRect (NG nRow nCol rs) = solveRect' (mkRect nRow nCol) rs
         Nothing ->
             -- all rules are considered, we now check whether the puzzle is fully solved.
             checkRect curRect
-        Just (((lr,_),(solutions, _)),rules') -> listToMaybe $ do
+        Just (((lr,_),(solutions,_)),rules') -> listToMaybe $ do
             -- pick up one with minimum flexibility
             let indices = getIndices lr
             -- pick one solution
@@ -264,17 +264,3 @@ nonogram rowRules colRules =
     maybe "No solution.\n" (pprSolvedNonogram ng) (solveRect ng)
   where
     ng = fromRawNonogram rowRules colRules
-
-{-
-  TODO:
-  - testcases.
-  - set a threshold for merging:
-    when there are only few alternatives
-    instead of trying to completely fill in
-    one line, we get all alternatives and
-    try to find some "have to be" cells.
-    so we will have 2 thresholds: one for terminating
-    alternative enumeration, and another for merging when
-    the number of alternatives is really small (at least it should
-    be smaller than the terminating threshold.
--}
