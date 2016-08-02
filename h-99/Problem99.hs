@@ -10,4 +10,11 @@ type Framework = Arr.Array Coord Char
 
 data Crossword = CW Words Framework
 
--- fromRawContent :: String -> _
+fromWordList :: [String] -> Words
+fromWordList = foldr update IM.empty
+  where
+    update w = IM.alter ins lw
+      where
+        lw = length w
+        ins Nothing = Just [w]
+        ins (Just xs) = Just (w:xs)
