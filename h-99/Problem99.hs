@@ -15,7 +15,10 @@ data Dir = DV | DH -- vertical or horizontal
 data Site = Site Int Dir
 
 -- at most 2 sites on the same coord (one v and one h)
-type Framework = (M.Map Coord [Site], Arr.Array Coord (Maybe Char))
+data Framework = FW
+  { fwSites :: M.Map Coord [Site]
+  , fwHints :: M.Map Coord Char
+  }
 
 data Crossword = CW Words Framework
 
@@ -40,6 +43,7 @@ mkFramework xs@(y:ys)
     nCols = length y
     nRows = length xs
 
+    rect :: Arr.Array Coord Char
     rect =
         Arr.array
           ((1,1),(nRows,nCols))
