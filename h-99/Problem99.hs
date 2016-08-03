@@ -6,6 +6,7 @@ import qualified Data.Map.Strict as M
 
 import Data.Foldable
 import Data.Maybe
+import Data.Char
 import Data.Ix
 import Control.Monad
 import Control.Arrow
@@ -38,8 +39,8 @@ mkWords = foldr update IM.empty
 mkFramework :: [String] -> Framework
 mkFramework [] = error "empty input"
 mkFramework xs@(y:ys)
-    | y == [] = error "first line empty"
-    | allLengthEqual = undefined -- TODO
+    | null y = error "first line empty"
+    | allLengthEqual = FW sites hints
     | otherwise = error "inconsistent length"
   where
     allLengthEqual = all (lengthEq y) ys
@@ -83,6 +84,17 @@ mkFramework xs@(y:ys)
             DV -> (first pred, first succ)
     findSites :: Coord -> [Site]
     findSites c = mapMaybe (findDirSite c) [DH,DV]
+
+    sites =
+        M.fromList
+      . filter (not . null . snd)
+      . map (\c -> (c,findSites c))
+      $ allCoords
+    hints =
+        M.fromList
+      . filter (isAsciiUpper . snd)
+      . map (\c -> (c, rect Arr.! c))
+      $ allCoords
 
 lengthEq :: [a] -> [b] -> Bool
 lengthEq [] [] = True
