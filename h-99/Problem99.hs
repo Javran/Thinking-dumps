@@ -5,6 +5,9 @@ import qualified Data.IntMap.Strict as IM
 import qualified Data.Map.Strict as M
 
 import Data.Foldable
+import Data.Ix
+import Control.Monad
+import Control.Arrow
 
 type Words = IM.IntMap [String]
 
@@ -12,7 +15,7 @@ type Coord = (Int,Int)
 
 -- site
 data Dir = DV | DH -- vertical or horizontal
-data Site = Site Int Dir
+data Site = Site Int Coord Dir
 
 -- at most 2 sites on the same coord (one v and one h)
 data Framework = FW
@@ -43,12 +46,38 @@ mkFramework xs@(y:ys)
     nCols = length y
     nRows = length xs
 
+    allCoords = [ (r,c)
+                | r <- [1..nRows]
+                , c <- [1..nCols]]
     rect :: Arr.Array Coord Char
     rect =
         Arr.array
           ((1,1),(nRows,nCols))
-          (zip [(r,c) | r<-[1..nRows], c<-[1..nCols]]
+          (zip allCoords
                (concat xs))
+    rBounds = Arr.bounds rect
+
+    findSite :: Dir -> Coord -> Maybe Site
+    findSite dir coord@(r,c) = do
+        let prevCoord = prev coord
+        guard $
+            -- not empty cell
+            rect Arr.! coord /= ' '
+            -- previous cell out of bound or is empty
+         && (not (inRange rBounds prevCoord)
+            || rect Arr.! (r,c-1) == ' ')
+        let candidates = iterate next (next coord)
+            site = coord
+                   : takeWhile
+                       (\coord' -> rect Arr.! coord' /= ' ')
+                       candidates
+            lSite = length site
+        guard $ lSite >= 2
+        pure (Site lSite coord dir)
+      where
+        (prev, next) = case dir of
+            DH -> (second pred, second succ)
+            DV -> (first pred, first succ)
 
 lengthEq :: [a] -> [b] -> Bool
 lengthEq [] [] = True
