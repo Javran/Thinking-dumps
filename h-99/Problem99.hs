@@ -8,24 +8,34 @@ import Data.Foldable
 import Data.Maybe
 import Data.Char
 import Data.Ix
+import Data.List
 import Control.Monad
 import Control.Arrow
+import System.IO
 
 type Words = IM.IntMap [String]
-
 type Coord = (Int,Int)
 
 -- site
-data Dir = DV | DH -- vertical or horizontal
-data Site = Site Int Coord Dir
+data Dir = DV | DH deriving Show -- vertical or horizontal
+data Site = Site Int Coord Dir deriving Show
 
 -- at most 2 sites on the same coord (one v and one h)
 data Framework = FW
   { fwSites :: M.Map Coord [Site]
   , fwHints :: M.Map Coord Char
-  }
+  } deriving (Show)
 
-data Crossword = CW Words Framework
+data Crossword = CW Words Framework deriving (Show)
+
+crossWordFromFile :: FilePath -> IO Crossword
+crossWordFromFile fp = parse . lines <$> readFile fp
+  where
+    parse :: [String] -> Crossword
+    parse xs = CW (mkWords ws) (mkFramework cs)
+      where
+        (ws,_:xs1) = break null xs
+        (cs,_) = break null xs1
 
 mkWords :: [String] -> Words
 mkWords = foldr update IM.empty
