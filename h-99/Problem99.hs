@@ -4,14 +4,11 @@ import qualified Data.Array as Arr
 import qualified Data.IntMap.Strict as IM
 import qualified Data.Map.Strict as M
 
-import Data.Foldable
 import Data.Maybe
 import Data.Char
 import Data.Ix
-import Data.List
 import Control.Monad
 import Control.Arrow
-import System.IO
 
 type Words = IM.IntMap [String]
 type Coord = (Int,Int)
@@ -69,14 +66,14 @@ mkFramework xs@(y:_)
     rBounds = Arr.bounds rect
 
     findDirSite :: Coord -> Dir -> Maybe Site
-    findDirSite coord@(r,c) dir = do
+    findDirSite coord dir = do
         let prevCoord = prev coord
         guard $
             -- not empty cell
             rect Arr.! coord /= ' '
             -- previous cell out of bound or is empty
          && (not (inRange rBounds prevCoord)
-            || rect Arr.! (r,c-1) == ' ')
+            || rect Arr.! prevCoord == ' ')
         let candidates = iterate next (next coord)
             site = coord
                    : takeWhile
