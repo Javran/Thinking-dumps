@@ -5,6 +5,7 @@ import qualified Data.IntMap.Strict as IM
 import qualified Data.Map.Strict as M
 
 import Data.Foldable
+import Data.Maybe
 import Data.Ix
 import Control.Monad
 import Control.Arrow
@@ -57,8 +58,8 @@ mkFramework xs@(y:ys)
                (concat xs))
     rBounds = Arr.bounds rect
 
-    findSite :: Dir -> Coord -> Maybe Site
-    findSite dir coord@(r,c) = do
+    findDirSite :: Coord -> Dir -> Maybe Site
+    findDirSite coord@(r,c) dir = do
         let prevCoord = prev coord
         guard $
             -- not empty cell
@@ -69,7 +70,9 @@ mkFramework xs@(y:ys)
         let candidates = iterate next (next coord)
             site = coord
                    : takeWhile
-                       (\coord' -> rect Arr.! coord' /= ' ')
+                       (\coord' ->
+                           inRange rBounds coord'
+                        && rect Arr.! coord' /= ' ')
                        candidates
             lSite = length site
         guard $ lSite >= 2
@@ -78,6 +81,8 @@ mkFramework xs@(y:ys)
         (prev, next) = case dir of
             DH -> (second pred, second succ)
             DV -> (first pred, first succ)
+    findSites :: Coord -> [Site]
+    findSites c = mapMaybe (findDirSite c) [DH,DV]
 
 lengthEq :: [a] -> [b] -> Bool
 lengthEq [] [] = True
