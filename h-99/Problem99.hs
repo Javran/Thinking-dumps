@@ -48,14 +48,13 @@ mkWords = foldr update IM.empty
 
 mkFramework :: [String] -> Framework
 mkFramework [] = error "empty input"
-mkFramework xs@(y:ys)
+mkFramework xs@(y:_)
     | null y = error "first line empty"
-    | allLengthEqual = FW sites hints
-    | otherwise = error "inconsistent length"
+    | otherwise = FW sites hints
   where
-    allLengthEqual = all (lengthEq y) ys
+    paddedXs = map (take nCols . (++ repeat ' ')) xs
 
-    nCols = length y
+    nCols = maximum (map length xs)
     nRows = length xs
 
     allCoords = [ (r,c)
@@ -66,7 +65,7 @@ mkFramework xs@(y:ys)
         Arr.array
           ((1,1),(nRows,nCols))
           (zip allCoords
-               (concat xs))
+               (concat paddedXs))
     rBounds = Arr.bounds rect
 
     findDirSite :: Coord -> Dir -> Maybe Site
