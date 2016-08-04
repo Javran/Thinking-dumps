@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module Problem99 where
 
 import qualified Data.Array.IArray as Arr
@@ -9,6 +10,7 @@ import Data.Char
 import Data.Ix
 import Control.Monad
 import Control.Arrow
+import Utils
 
 type Words = IM.IntMap [String]
 type Coord = (Int,Int)
@@ -101,7 +103,8 @@ mkFramework xs@(y:_)
       $ allCoords
 
 solvePuzzle :: Crossword -> Maybe Rect
-solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) = undefined
+solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
+    solve (IM.toDescList ws) sitesByLen initRect
   where
     -- initial rectangle containing hints
     initRect :: Rect
@@ -116,3 +119,34 @@ solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) = undefined
       . IM.fromListWith (.)
       . map (\s@(Site l _ _) -> (l,(s:)) )
       $ sites
+
+    updateRect :: Rect -> String -> Site -> Maybe Rect
+    updateRect rect wds (Site l coord dir) = foldM updateCell rect (zip coords wds)
+      where
+        nextCoord = case dir of
+            DH -> second succ
+            DV -> first succ
+        coords = take l (iterate nextCoord coord)
+        updateCell curRect (curCoord,ch) = do
+            let oldVal = curRect Arr.! curCoord
+            guard $ case oldVal of
+                Nothing -> True
+                Just c -> c == ch
+            pure (curRect Arr.// [(curCoord,Just ch)])
+
+    solve curWords curSites curRect = case curWords of
+        [] -> pure curRect
+        ((l,wds):remainedWords) -> case wds of
+            [] -> solve remainedWords curSites curRect
+            (w:wds') -> listToMaybe $ do
+                -- try to find a fit place for w in curRect
+                let (Just candidateSites) = IM.lookup l curSites
+                guard $ not . null $ candidateSites
+                (site,remainedSites) <- pick candidateSites
+                newRect <- maybeToList (updateRect curRect w site)
+                let newSites = IM.update upd l curSites
+                      where
+                        upd _ = case remainedSites of
+                          [] -> Nothing
+                          _ -> Just remainedSites
+                maybeToList $ solve ((l,wds'):remainedWords) newSites newRect
