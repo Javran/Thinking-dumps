@@ -1,6 +1,6 @@
 module Problem99 where
 
-import qualified Data.Array as Arr
+import qualified Data.Array.IArray as Arr
 import qualified Data.IntMap.Strict as IM
 import qualified Data.Map.Strict as M
 
@@ -20,11 +20,13 @@ data Site = Site Int Coord Dir deriving Show
 
 -- at most 2 sites on the same coord (one v and one h)
 data Framework = FW
-  { fwSites :: [Site]
+  { fwDimension :: (Int, Int)
+  , fwSites :: [Site]
   , fwHints :: M.Map Coord Char
   } deriving (Show)
 
 data Crossword = CW Words Framework deriving (Show)
+type Rect = Arr.Array Coord (Maybe Char)
 
 crossWordFromFile :: FilePath -> IO Crossword
 crossWordFromFile fp = parse . lines <$> readFile fp
@@ -48,7 +50,7 @@ mkFramework :: [String] -> Framework
 mkFramework [] = error "empty input"
 mkFramework xs@(y:_)
     | null y = error "first line empty"
-    | otherwise = FW sites hints
+    | otherwise = FW (nRows,nCols) sites hints
   where
     paddedXs = map (take nCols . (++ repeat ' ')) xs
 
@@ -97,3 +99,20 @@ mkFramework xs@(y:_)
       . filter (isAsciiUpper . snd)
       . map (\c -> (c, rect Arr.! c))
       $ allCoords
+
+solvePuzzle :: Crossword -> Maybe Rect
+solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) = undefined
+  where
+    -- initial rectangle containing hints
+    initRect :: Rect
+    initRect =
+          Arr.accum
+            (\_ new -> Just new)
+            (Arr.listArray ((1,1),(nRows,nCols)) (repeat Nothing))
+            (M.toList hints)
+    sitesByLen :: IM.IntMap [Site]
+    sitesByLen =
+        IM.map ($ [])
+      . IM.fromListWith (.)
+      . map (\s@(Site l _ _) -> (l,(s:)) )
+      $ sites
