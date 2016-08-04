@@ -11,6 +11,7 @@ import Data.Ix
 import Control.Monad
 import Control.Arrow
 import Utils
+import System.Environment
 
 type Words = IM.IntMap [String]
 type Coord = (Int,Int)
@@ -150,3 +151,9 @@ solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
                           [] -> Nothing
                           _ -> Just remainedSites
                 maybeToList $ solve ((l,wds'):remainedWords) newSites newRect
+
+main :: IO ()
+main = do
+    [fp] <- getArgs
+    cw <- crossWordFromFile fp
+    print (solvePuzzle cw)
