@@ -15,11 +15,12 @@ type Coord = (Int,Int)
 
 -- site
 data Dir = DV | DH deriving Show -- vertical or horizontal
+-- Site <length> <starting coord> <direction>
 data Site = Site Int Coord Dir deriving Show
 
 -- at most 2 sites on the same coord (one v and one h)
 data Framework = FW
-  { fwSites :: M.Map Coord [Site]
+  { fwSites :: [Site]
   , fwHints :: M.Map Coord Char
   } deriving (Show)
 
@@ -90,19 +91,9 @@ mkFramework xs@(y:_)
             DV -> (first pred, first succ)
     findSites :: Coord -> [Site]
     findSites c = mapMaybe (findDirSite c) [DH,DV]
-
-    sites =
-        M.fromList
-      . filter (not . null . snd)
-      . map (\c -> (c,findSites c))
-      $ allCoords
+    sites = concatMap findSites allCoords
     hints =
         M.fromList
       . filter (isAsciiUpper . snd)
       . map (\c -> (c, rect Arr.! c))
       $ allCoords
-
-lengthEq :: [a] -> [b] -> Bool
-lengthEq [] [] = True
-lengthEq (_:as) (_:bs) = lengthEq as bs
-lengthEq _ _ = False
