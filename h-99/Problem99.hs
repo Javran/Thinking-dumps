@@ -122,18 +122,16 @@ solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
       $ sites
 
     updateRect :: Rect -> String -> Site -> Maybe Rect
-    updateRect rect wds (Site l coord dir) = foldM updateCell rect (zip coords wds)
+    updateRect rect wds (Site l coord dir) = if isConsistent
+        then Just (rect Arr.// zip coords (map Just wds))
+        else Nothing
       where
         nextCoord = case dir of
             DH -> second succ
             DV -> first succ
         coords = take l (iterate nextCoord coord)
-        updateCell curRect (curCoord,ch) = do
-            let oldVal = curRect Arr.! curCoord
-            guard $ case oldVal of
-                Nothing -> True
-                Just c -> c == ch
-            pure (curRect Arr.// [(curCoord,Just ch)])
+        oldVals = map (rect Arr.!) coords
+        isConsistent = and $ zipWith (\oldVal ch -> maybe True (== ch) oldVal) oldVals wds
 
     solve curWords curSites curRect = case curWords of
         [] -> pure curRect
