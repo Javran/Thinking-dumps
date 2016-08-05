@@ -121,15 +121,17 @@ solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
       . map (\s@(Site l _ _) -> (l,(s:)) )
       $ sites
 
+    -- no actual check but length must match
     updateRect :: Rect -> String -> Site -> Maybe Rect
-    updateRect rect wds (Site l coord dir) = if isConsistent
+    updateRect rect wds (Site _ coord dir) = if isConsistent
         then Just (rect Arr.// zip coords (map Just wds))
         else Nothing
       where
         nextCoord = case dir of
             DH -> second succ
             DV -> first succ
-        coords = take l (iterate nextCoord coord)
+        -- infinite list, let's rely on the length of "wds"
+        coords = iterate nextCoord coord
         oldVals = map (rect Arr.!) coords
         isConsistent = and $ zipWith (\oldVal ch -> maybe True (== ch) oldVal) oldVals wds
 
