@@ -8,6 +8,7 @@ import qualified Data.Map.Strict as M
 import Data.Maybe
 import Data.Char
 import Data.Ix
+import Data.List
 import Control.Monad
 import Control.Arrow
 import Utils
@@ -105,8 +106,10 @@ mkFramework xs@(y:_)
 
 solvePuzzle :: Crossword -> Maybe Rect
 solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
-    solve (IM.toDescList ws) sitesByLen initRect
+    solve wsSorted sitesByLen initRect
   where
+    -- 1. less candidate first 2. on tie, longer is better.
+    wsSorted = sortOn (\(l,ys) -> (length ys,-l)) (IM.toList ws)
     -- initial rectangle containing hints
     initRect :: Rect
     initRect =
