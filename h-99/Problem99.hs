@@ -165,6 +165,9 @@ pprRect rect = unlines (map pprRow [1..nRows])
         pprCell (Just ch) = ch
     (_, (nRows,nCols)) = Arr.bounds rect
 
+-- just making it easier for testing and viewing the result, give a filename
+-- and the data will be loaded and solved.
+{-
 main :: IO ()
 main = do
     [fp] <- getArgs
@@ -173,3 +176,4 @@ main = do
     case result of
         Nothing -> putStrLn "No solution."
         Just rect -> putStr (pprRect rect)
+-}
