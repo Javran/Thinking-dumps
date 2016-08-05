@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts, TupleSections #-}
 module Problem99 where
 
 import qualified Data.Array.IArray as Arr
@@ -155,8 +155,21 @@ solvePuzzle (CW ws (FW (nRows,nCols) sites hints)) =
                           _ -> Just remainedSites
                 maybeToList $ solve ((l,wds'):remainedWords) newSites newRect
 
+pprRect :: Rect -> String
+pprRect rect = unlines (map pprRow [1..nRows])
+  where
+    pprRow :: Int -> String
+    pprRow r = map (pprCell . (rect Arr.!) . (r,)) [1..nCols]
+      where
+        pprCell Nothing = ' '
+        pprCell (Just ch) = ch
+    (_, (nRows,nCols)) = Arr.bounds rect
+
 main :: IO ()
 main = do
     [fp] <- getArgs
     cw <- crossWordFromFile fp
-    print (solvePuzzle cw)
+    let result = solvePuzzle cw
+    case result of
+        Nothing -> putStrLn "No solution."
+        Just rect -> putStr (pprRect rect)
