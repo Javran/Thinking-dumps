@@ -32,8 +32,8 @@ data Framework = FW
 data Crossword = CW Words Framework deriving (Show)
 type Rect = Arr.Array Coord (Maybe Char)
 
-crossWordFromFile :: FilePath -> IO Crossword
-crossWordFromFile fp = parse . lines <$> readFile fp
+crosswordFromFile :: FilePath -> IO Crossword
+crosswordFromFile fp = parse . lines <$> readFile fp
   where
     parse :: [String] -> Crossword
     parse xs = CW (mkWords ws) (mkFramework cs)
@@ -168,7 +168,7 @@ pprRect rect = unlines (map pprRow [1..nRows])
 main :: IO ()
 main = do
     [fp] <- getArgs
-    cw <- crossWordFromFile fp
+    cw <- crosswordFromFile fp
     let result = solvePuzzle cw
     case result of
         Nothing -> putStrLn "No solution."
