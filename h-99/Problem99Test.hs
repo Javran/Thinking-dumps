@@ -3,7 +3,11 @@ module Problem99Test where
 import Test.Hspec
 
 import Problem99
+import Control.Arrow
 import Data.Maybe
+import qualified Data.Array as Arr
+import qualified Data.Set as S
+import qualified Data.Map.Strict as M
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
@@ -11,14 +15,36 @@ import Data.Maybe
 {-
   TODO: things need to be addressed:
   - for simplicity we rely on the correctness of "crosswordFromFile"
-  - shape is correct
   - pre-defined letters are in right places
   - all words are used and nothing more
   - we don't want to rely on the uniqueness of the puzzle
     so we just take some input files but no hard-coded result for comparison
 -}
+
+{-# ANN checkResult "HLint: ignore Redundant ==" #-}
 checkResult :: Crossword -> Bool -> Maybe Rect -> Bool
-checkResult cw expectJust actual = expectJust == isJust actual
+checkResult (CW ws (FW dim sites hints)) expectJust actual = case actual of
+    Nothing -> expectJust == False
+    Just rect ->
+        let areDimsMatch = ((1,1), dim) == Arr.bounds rect
+            (nRows,nCols) = dim
+            siteCoords (Site l c dir) = take l (iterate next c)
+              where
+                next = case dir of
+                    DH -> second succ
+                    DV -> first succ
+            -- all cells that are supposed to contain letters
+            letterCells = S.fromList (concatMap siteCoords sites)
+            isMatchingShape = all checkCell (Arr.assocs rect)
+              where
+                checkCell (coord,content) =
+                    isJust content == coord `S.member` letterCells
+            areHintsMatching = all checkHint (M.toList hints)
+              where
+                checkHint (c,ch) = rect Arr.! c == Just ch
+        in areDimsMatch -- 1. dimension should match
+           && isMatchingShape -- 2. in desired shape: cells are properly filled.
+           && areHintsMatching -- 3. hints should be respected
 
 main :: IO ()
 main = hspec $ do
