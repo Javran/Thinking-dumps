@@ -13,14 +13,16 @@ import qualified Data.IntMap.Strict as IM
 
 {-# ANN module "HLint: ignore Redundant do" #-}
 
--- TODO: more detailed check
 {-
-  TODO: things need to be addressed:
-  - for simplicity we rely on the correctness of "crosswordFromFile"
-  - pre-defined letters are in right places
-  - all words are used and nothing more
-  - we don't want to rely on the uniqueness of the puzzle
-    so we just take some input files but no hard-coded result for comparison
+  NOTEs:
+  - for simplicity we load the puzzle through "crosswordFromFile",
+    without testing its correctness. (hopefully it's correct when
+    the file isn't ill-formatted)
+  - we don't want to rely on the uniqueness of the puzzle, nor the uniqueness
+    of candidate words. therefore:
+    - we just take some input files but no hard-coded result for comparison
+    - we extract words from the result, sort it and compare it with the original
+      word list instead of relying on Set equality
 -}
 
 {-# ANN checkResult "HLint: ignore Redundant ==" #-}

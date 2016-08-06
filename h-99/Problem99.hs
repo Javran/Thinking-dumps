@@ -12,7 +12,7 @@ import Data.List
 import Control.Monad
 import Control.Arrow
 import Utils
-import System.Environment
+-- import System.Environment
 
 type Words = IM.IntMap [String]
 type Coord = (Int,Int)
