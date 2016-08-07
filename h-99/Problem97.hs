@@ -81,8 +81,6 @@ getCell (mSol, mUnsol) coord = case M.lookup coord mSol of
                   (error $ "getCell: missing cell " ++ show coord)
                   (M.lookup coord mUnsol)
 
--- TODO: normalize when putting values into the cell?
-
 -- NOTE: seems the simplified version doesn't do good to the program.
 setCell :: Puzzle -> Coord -> CellContent -> Puzzle
 setCell (pz@(mSol, mUnsol)) coord newCT = case getCell pz coord of
@@ -262,9 +260,14 @@ mkPuzzle raw = partitioned
 
 solvePuzzle :: Puzzle -> Maybe Puzzle
 solvePuzzle = cleanupCandidates Nothing >=> solvePuzzle'
--- the following code enables "deep clean strategy", which is to allow
+
+-- the following alternative code enables "deep clean strategy", which is to allow
 -- expensive strategy "solveNinePack" to run when all those simple
 -- strategies can't make any progress.
+-- in reality I find the fastest way is simply not using this strategy at all
+-- so the cost of this expensive strategy doesn't help much,
+-- but I leave it as a parameter anyway.
+
 -- solvePuzzle = cleanupCandidates (Just 100) >=> solvePuzzle'
   where
     solvePuzzle' (pz@(_,mUnsol))
