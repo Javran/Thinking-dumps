@@ -16,7 +16,12 @@ module Problem97 where
     - try to find "lone numbers": if one not-yet filled number
       appears in exactly one of the NinePack cells, then
       this "lone" number has to be put on the cell in question.
-    - (TODO) so now we'll try to see if this "parital sudoku solving" idea works fine
+    - consider pack of nine cells a partial sudoku, enumerate all of the outcome
+      and then figure out the real candidate for each cells.
+      (see "npSolveNinePack'" for detail)
+      note that this is a really expensive strategy so to make it more useful
+      we should only try this as the last resort, when none of the simple
+      strategies can make any progress.
   - then those strategies are applied alternatively until we cannot get any cell updated
     (reaching a "fixpoint")
   - obviously we don't expect these simple strategies to work for all puzzles,
@@ -200,12 +205,15 @@ updateNinePack pz coords npUpdate = if hasEmpties then Nothing else Just updated
     updatedPuzzle = updatePuzzle pz coords cells updatedCells
     hasEmpties = any IS.null (rights updatedCells)
 
-cleanupCandidates :: Bool -> Puzzle -> Maybe Puzzle
-cleanupCandidates goDeep pz = do
+cleanupCandidates :: Maybe Int -> Puzzle -> Maybe Puzzle
+cleanupCandidates deepClean pz = do
     newPz <- onePass pz
     if newPz == pz
-       then if goDeep then deepCleanup newPz else pure newPz
-       else cleanupCandidates goDeep newPz
+       then case deepClean of
+         Nothing -> pure newPz
+         Just threshold ->
+             deepCleanup threshold newPz
+       else cleanupCandidates deepClean newPz
   where
     allNinePacks =
            map getRowCoords ints
@@ -215,16 +223,13 @@ cleanupCandidates goDeep pz = do
     combinedUpdate pz' coords =
         updateNinePack pz' coords npRemoveSolved
         >>= \pz2 -> updateNinePack pz2 coords npLoneMissing
-        -- >>= \pz3 -> updateNinePack pz3 coords (npSolveNinePack' 50)
-    deepCleanup :: Puzzle -> Maybe Puzzle
-    deepCleanup pz' = do
+    deepCleanup threshold pz' = do
         newPz' <- foldM (\curPz coords ->
-                         updateNinePack curPz coords (npSolveNinePack' 50)) pz' allNinePacks
+                         updateNinePack curPz coords (npSolveNinePack' threshold))
+                        pz' allNinePacks
         if newPz' == pz'
            then pure newPz'
-           else cleanupCandidates goDeep newPz'
-
--- TODO: find ways to make using "npSolveNinePack'" less often
+           else cleanupCandidates deepClean newPz'
 
 pprPuzzle :: Puzzle -> String
 pprPuzzle pz = unlines (concatMap pprRow ints)
@@ -256,7 +261,11 @@ mkPuzzle raw = partitioned
             _ -> (M.insert coord i mSol, mUnsol)
 
 solvePuzzle :: Puzzle -> Maybe Puzzle
-solvePuzzle = cleanupCandidates False >=> solvePuzzle'
+solvePuzzle = cleanupCandidates Nothing >=> solvePuzzle'
+-- the following code enables "deep clean strategy", which is to allow
+-- expensive strategy "solveNinePack" to run when all those simple
+-- strategies can't make any progress.
+-- solvePuzzle = cleanupCandidates (Just 100) >=> solvePuzzle'
   where
     solvePuzzle' (pz@(_,mUnsol))
         | M.null mUnsol = pure pz
