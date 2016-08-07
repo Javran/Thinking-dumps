@@ -16,7 +16,8 @@ module Problem97 where
     - try to find "lone numbers": if one not-yet filled number
       appears in exactly one of the NinePack cells, then
       this "lone" number has to be put on the cell in question.
-  - then strategy is applied alternatively until we cannot get any cell updated
+    - (TODO) so now we'll try to see if this "parital sudoku solving" idea works fine
+  - then those strategies are applied alternatively until we cannot get any cell updated
     (reaching a "fixpoint")
   - obviously we don't expect these simple strategies to work for all puzzles,
     so in this step we apply a search with simple heuristic: we always prioritize
@@ -134,9 +135,21 @@ npLoneMissing cells = updatedCells
             [_] -> True
             _ -> False
 
--- might not be a good idea to explore in this way...
-npSolveNinePack' :: NinePack CellContent -> NinePack CellContent
-npSolveNinePack' nps = if univSize < 50 then zipWith update (transpose univ) nps else nps
+{-
+  "npSolveNinePack' szThres np" tries to solve a pack of nine cells
+  as if it was a "partial sudoku": we expand every possible combinations of cells,
+  and summarize the result to eliminate candidates that are actually impossible.
+
+  I think doing so has the effect of eliminating candidates using
+  naked/hidden pairs/triples.
+
+  However, this is a brute force approach after all and should not be used
+  too often otherwise the performance will definitely be impairred.
+-}
+npSolveNinePack' :: Int -> NinePack CellContent -> NinePack CellContent
+npSolveNinePack' sizeThres nps = if univSize <= sizeThres
+    then zipWith update (transpose univ) nps
+    else nps
   where
     univSize = product (map f nps)
       where
@@ -163,15 +176,6 @@ npSolveNinePack' nps = if univSize < 50 then zipWith update (transpose univ) nps
         pure (i : result)
 
     univ = partialUniv nps
-
--- TODO: chained candidate elimination might help, don't know for now.
-{-
-  TODO: new idea: every NinePack itself can be treated as a "partial sudoku",
-  we can expand every possibilities and see what's possible in a cell.
-  by doing so we should also be able to get rid of some impossible candidates.
-  (I think this should at least be as effective as detecting and removing chained
-  candidates)
--}
 
 updatePuzzle :: Puzzle
              -> NinePackCoord
@@ -211,7 +215,9 @@ cleanupCandidates pz = do
     combinedUpdate pz' coords =
         updateNinePack pz' coords npRemoveSolved
         >>= \pz2 -> updateNinePack pz2 coords npLoneMissing
-        -- >>= \pz3 -> updateNinePack pz3 coords npSolveNinePack'
+        -- >>= \pz3 -> updateNinePack pz3 coords (npSolveNinePack' 50)
+
+-- TODO: find ways to make using "npSolveNinePack'" less often
 
 pprPuzzle :: Puzzle -> String
 pprPuzzle pz = unlines (concatMap pprRow ints)
