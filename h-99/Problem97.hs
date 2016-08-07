@@ -200,12 +200,12 @@ updateNinePack pz coords npUpdate = if hasEmpties then Nothing else Just updated
     updatedPuzzle = updatePuzzle pz coords cells updatedCells
     hasEmpties = any IS.null (rights updatedCells)
 
-cleanupCandidates :: Puzzle -> Maybe Puzzle
-cleanupCandidates pz = do
+cleanupCandidates :: Bool -> Puzzle -> Maybe Puzzle
+cleanupCandidates goDeep pz = do
     newPz <- onePass pz
     if newPz == pz
-       then pure newPz
-       else cleanupCandidates newPz
+       then if goDeep then deepCleanup newPz else pure newPz
+       else cleanupCandidates goDeep newPz
   where
     allNinePacks =
            map getRowCoords ints
@@ -216,6 +216,13 @@ cleanupCandidates pz = do
         updateNinePack pz' coords npRemoveSolved
         >>= \pz2 -> updateNinePack pz2 coords npLoneMissing
         -- >>= \pz3 -> updateNinePack pz3 coords (npSolveNinePack' 50)
+    deepCleanup :: Puzzle -> Maybe Puzzle
+    deepCleanup pz' = do
+        newPz' <- foldM (\curPz coords ->
+                         updateNinePack curPz coords (npSolveNinePack' 50)) pz' allNinePacks
+        if newPz' == pz'
+           then pure newPz'
+           else cleanupCandidates goDeep newPz'
 
 -- TODO: find ways to make using "npSolveNinePack'" less often
 
@@ -249,7 +256,7 @@ mkPuzzle raw = partitioned
             _ -> (M.insert coord i mSol, mUnsol)
 
 solvePuzzle :: Puzzle -> Maybe Puzzle
-solvePuzzle = cleanupCandidates >=> solvePuzzle'
+solvePuzzle = cleanupCandidates False >=> solvePuzzle'
   where
     solvePuzzle' (pz@(_,mUnsol))
         | M.null mUnsol = pure pz
