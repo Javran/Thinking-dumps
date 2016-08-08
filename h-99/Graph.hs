@@ -11,16 +11,17 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
 {-
-    TODO: "every edge is unique" is a bit wrong, need to fix it somehow.
-    TODO: currently edges only have their both ends stored as fields,
-    the extra data has to be stored somewhere, maybe "WeightedEdge a w" = (Edge a, w)"
-    is good enough, we need to update comment to show this.
+    this module leaves the freedom of choosing an edge structure to the user.
+    despite of this, the module does provide undirected "Edge" structure, which
+    is isomorphic to a pair of vertices.
+    since "Edge" in this module is undirected,
+    "forall a b. Edge a b == Edge b a" holds.
 
-    for a graph we can safely assume that every edge is unique,
-    and that every vertex is uniquely distinguished by its name.
-    note that these assumption do allow multiple edges between two vertices:
-    edges can have extra data to make them different despite that whose
-    terminals might be exactly the same.
+    note that this module uses "Eq" instance of edge structure to determine
+    whether two edges are the same, this means if you are intended to have
+    multiple edges between two vertices, you need to have some extra fields
+    to make them "look different", that is,
+    to make the implementation of Eq take that extra field into account.
 -}
 
 {-
