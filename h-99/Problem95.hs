@@ -18,6 +18,8 @@ digitToWord = (digitToWordArr Arr.!)
       to this function, it should be easy for GHC to recognize them
       as CAFs and lift them out. doing a profiling with "-caf-all"
       should be able to confirm this.
+
+      see also: https://wiki.haskell.org/Constant_applicative_form
     -}
     digitToWordArr = Arr.array (0,9) (zip [0..9] digitWords)
     digitWords = words
