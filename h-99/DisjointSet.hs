@@ -34,7 +34,8 @@ import Control.Monad.State
     relation in the disjoint set won't cover these vertices.
 -}
 
-type DisjointSet a = M.Map a a
+-- see also: https://en.wikipedia.org/wiki/Disjoint-set_data_structure
+type DisjointSet a = M.Map a (a,Int)
 
 -- | an empty DisjointSet
 empty :: DisjointSet a
@@ -44,7 +45,7 @@ empty = M.empty
 includeElem :: Ord a => a -> DisjointSet a -> DisjointSet a
 includeElem v = M.alter f v
   where
-    f Nothing = Just v
+    f Nothing = Just (v,0)
     f m@(Just _) = m
 
 -- | create a DisjointSet with some elements registered
@@ -52,12 +53,12 @@ includeElems :: Ord a => DisjointSet a -> [a] -> DisjointSet a
 includeElems = foldl' (flip includeElem)
 
 -- | (INTERNAL ONLY) get the root of current value in set
-root :: Ord a => a -> DisjointSet a -> (a, DisjointSet a)
+root :: Ord a => a -> DisjointSet a -> ((a,Int), DisjointSet a)
 root v ds = case M.lookup v ds of
-    Nothing -> (v, M.insert v v ds)
-    Just parent ->
+    Nothing -> let item = (v,0) in (item, M.insert v item ds)
+    Just item@(parent,_) ->
       if parent == v
-        then (v,ds)
+        then (item,ds)
         else
           let (r,ds1) = root parent ds
           in (r, M.insert v r ds1)
@@ -77,16 +78,19 @@ union x y ds =
     in if b
          then ds1
          else
-           let (rx,ds2) = root x ds1
-               (ry,ds3) = root y ds2
-           in M.insert rx ry ds3
+           let ((rx,rnkX),ds2) = root x ds1
+               ((ry,rnkY),ds3) = root y ds2
+           in case rnkX `compare` rnkY of
+                LT -> M.insert rx (ry,rnkX) ds3
+                GT -> M.insert ry (rx,rnkY) ds3
+                EQ -> M.insert ry (rx,rnkX+1) ds3
 
 toGroups :: forall a. Ord a => DisjointSet a -> [ [a] ]
 toGroups ds = M.elems (evalState (foldM updateM M.empty (M.keys ds :: [a])) ds)
   where
     updateM :: M.Map a [a] -> a -> State (DisjointSet a) (M.Map a [a])
     updateM rootMap k = do
-        r <- state (root k)
+        (r,_) <- state (root k)
         let alt Nothing = Just [k]
             alt (Just ks) = Just (k:ks)
         pure (M.alter alt r rootMap)
