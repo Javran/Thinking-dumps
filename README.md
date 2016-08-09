@@ -58,3 +58,7 @@ Directory: [software-foundations](/software-foundations)
 Author: Chris Smith
 
 Directory: [programming-fs](/programming-fs)
+
+### H-99: Ninety-Nine Haskell Problems
+
+Directory: [h-99](/h-99)
