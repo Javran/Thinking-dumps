@@ -9,8 +9,6 @@ module DisjointSet
  , toGroups
  ) where
 
--- without rank maintenance for simplicity (TODO in future?)
-
 import qualified Data.Map.Strict as M
 import Data.Foldable
 import Control.Monad.State
