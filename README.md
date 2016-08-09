@@ -33,6 +33,10 @@ Link: [learnyounode](https://github.com/rvagg/learnyounode)
 
 Directory: [learnyounode](/learnyounode)
 
+### H-99: Ninety-Nine Haskell Problems
+
+Directory: [h-99](/h-99)
+
 ## Working
 
 ### Structure and Interpretation of Computer Programs (SICP)
@@ -58,7 +62,3 @@ Directory: [software-foundations](/software-foundations)
 Author: Chris Smith
 
 Directory: [programming-fs](/programming-fs)
-
-### H-99: Ninety-Nine Haskell Problems
-
-Directory: [h-99](/h-99)
