@@ -47,4 +47,26 @@ done
 value "rev (a # b # c # []))"
  *)
 
+datatype 'a tree
+  = Tip
+  | Node "'a tree" 'a "'a tree"
+
+primrec mirror :: "'a tree \<Rightarrow> 'a tree"
+where
+"mirror Tip = Tip" |
+"mirror (Node l v r) = Node (mirror r) v (mirror l)"
+
+lemma mirror_mirror: "mirror(mirror t) = t"
+apply(induct_tac t) apply(auto)
+done
+
+primrec flatten :: "'a tree \<Rightarrow> 'a list"
+where
+"flatten Tip = []" |
+"flatten (Node l v r) = flatten l @ (v # []) @ flatten r"
+
+lemma "flatten(mirror t) = rev(flatten t)"
+apply(induct_tac t) apply(auto)
+done
+
 end
