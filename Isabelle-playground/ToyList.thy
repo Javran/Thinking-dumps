@@ -1,3 +1,4 @@
+(* theory name must be matching up with its filename *)
 theory ToyList
 imports Main
 begin
@@ -11,9 +12,10 @@ hide_type list
 hide_const rev
 
 datatype 'a list 
-  = Nil ("[]")
+  = Nil ("[]") (* a constructor and optionally a syntax for it *)
   | Cons 'a "'a list" (infixr "#" 65)
 
+(* defining a recursive function together with "@" notation *)
 primrec app :: "'a list \<Rightarrow> 'a list \<Rightarrow> 'a list" (infixr "@" 65)
 where
 "[] @ ys = ys" |
@@ -40,6 +42,9 @@ theorem rev_rev [simp]: "rev(rev xs) = xs"
 apply(induct_tac xs) apply(auto)
 done
 
-
+(* not sure what's the best way of evaluating something in jEdit
+   but so far directly typing in "value xxxx" works
+value "rev (a # b # c # []))"
+ *)
 
 end
