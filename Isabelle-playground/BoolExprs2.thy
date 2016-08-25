@@ -1,4 +1,4 @@
-theory BoolExprs
+theory BoolExprs2
 imports Main
 begin
 
@@ -35,7 +35,7 @@ apply(induct_tac b) apply(auto)
 done
 
 primrec normif :: "ifex \<Rightarrow> ifex \<Rightarrow> ifex \<Rightarrow> ifex" where
-"normif (CIF b) t e = IF (CIF b) t e" |
+"normif (CIF b) t e = (if b then t else e)" |
 "normif (VIF x) t e = IF (VIF x) t e" |
 "normif (IF b t e) u f = normif b (normif t u f) (normif e u f)"
 
@@ -58,16 +58,13 @@ primrec normal :: "ifex \<Rightarrow> bool" where
 "normal (VIF _) = True" |
 "normal (IF b t e) = (normal t \<and> normal e \<and>
   (case b of
-    CIF b \<Rightarrow> True |
+    CIF b \<Rightarrow> False |
     VIF x \<Rightarrow> True |
     IF x y z \<Rightarrow> False))"
 
-lemma [simp]: "\<forall> t e . normal(normif b t e) = (normal t \<and> normal e)"
-apply(induct_tac b) apply(auto)
-done
 
 lemma "normal (norm b) = True"
 apply(induct_tac b) apply(auto)
-done
+oops (* what to do here? *)
 
 end
