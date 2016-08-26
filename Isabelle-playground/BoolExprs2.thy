@@ -58,10 +58,8 @@ primrec normal :: "ifex \<Rightarrow> bool" where
 "normal (VIF _) = True" |
 "normal (IF b t e) = (normal t \<and> normal e \<and>
   (case b of
-    CIF b \<Rightarrow> False |
     VIF x \<Rightarrow> True |
-    IF x y z \<Rightarrow> False))"
-
+    _ \<Rightarrow> False))"
 
 lemma "normal (norm b) = True"
 apply(induct_tac b) apply(auto)
