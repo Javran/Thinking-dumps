@@ -17,6 +17,17 @@ lemma "\<forall>m. add m n = m+n"
 apply(induct_tac n) apply(auto)
 done
 
+primrec rev :: "'a list \<Rightarrow> 'a list"
+where
+"rev [] = []" |
+"rev (x # xs) = (rev xs) @ (x # [])"
 
+primrec itrev :: "'a list \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+"itrev [] ys = ys" |
+"itrev (x#xs) ys = itrev xs (x#ys)"
+
+lemma "\<forall>ys. itrev xs ys = rev xs @ys"
+apply(induct_tac xs) apply(auto)
+done
 
 end
