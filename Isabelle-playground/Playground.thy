@@ -43,4 +43,8 @@ primrec flatten2 :: "'a tree \<Rightarrow> 'a list \<Rightarrow> 'a list" where
 "flatten2 Tip xs = xs" |
 "flatten2 (Node l v r) xs = flatten2 l (v#(flatten2 r xs))"
 
+lemma "\<forall> xs. flatten2 t xs = flatten t @ xs"
+apply(induct_tac t) apply(auto)
+done
+
 end
