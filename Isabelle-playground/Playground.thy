@@ -30,4 +30,17 @@ lemma "\<forall>ys. itrev xs ys = rev xs @ys"
 apply(induct_tac xs) apply(auto)
 done
 
+datatype 'a tree
+  = Tip
+  | Node "'a tree" 'a "'a tree"
+
+primrec flatten :: "'a tree \<Rightarrow> 'a list"
+where
+"flatten Tip = []" |
+"flatten (Node l v r) = flatten l @ (v # []) @ flatten r"
+
+primrec flatten2 :: "'a tree \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+"flatten2 Tip xs = xs" |
+"flatten2 (Node l v r) xs = flatten2 l (v#(flatten2 r xs))"
+
 end
