@@ -31,4 +31,18 @@ primrec exec :: "('a, 'v) instr list \<Rightarrow> ('a \<Rightarrow> 'v) \<Right
     | Load a \<Rightarrow> (s a)#vs
     | Apply f \<Rightarrow> (f (hd vs) (hd (tl vs)))#(tl (tl vs))
     )"
+
+primrec compile :: "('a,'v) expr \<Rightarrow> ('a,'v)instr list" where
+"compile (Cex v) = [Const v]" |
+"compile (Vex a) = [Load a]" |
+"compile (Bex f e1 e2) = (compile e2) @ (compile e1) @ [Apply f]"
+
+lemma exec_app[simp]: "\<forall>vs . exec (xs@ys) s vs = exec ys s (exec xs s vs)"
+apply(induct_tac xs, simp, simp split: instr.split) (* need to investigate what's "split" *)
+done
+
+theorem "\<forall>vs. exec (compile e) s vs = (value e s) # vs"
+apply(induct_tac e, auto)
+done
+
 end
