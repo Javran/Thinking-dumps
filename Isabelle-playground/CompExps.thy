@@ -38,7 +38,8 @@ primrec compile :: "('a,'v) expr \<Rightarrow> ('a,'v)instr list" where
 "compile (Bex f e1 e2) = (compile e2) @ (compile e1) @ [Apply f]"
 
 lemma exec_app[simp]: "\<forall>vs . exec (xs@ys) s vs = exec ys s (exec xs s vs)"
-apply(induct_tac xs, simp, simp split: instr.split) (* need to investigate what's "split" *)
+(* guide "simp" to use instr's split strategy *)
+apply(induct_tac xs, simp, simp split: instr.split)
 done
 
 theorem "\<forall>vs. exec (compile e) s vs = (value e s) # vs"
