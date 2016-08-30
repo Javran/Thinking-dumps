@@ -22,6 +22,9 @@ instance ExpSYM String where
 tf1 :: ExpSYM r => r
 tf1 = add (lit 8) (neg (add (lit 1) (lit 2)))
 
+eval :: Int -> Int
+eval = id
+
 view :: String -> String
 view = id
 
@@ -33,6 +36,15 @@ tfl1 = [lit 1, add (lit 1) (lit 2)]
 -- is to just define a new typeclass with new operations
 class MulSYM repr where
     mul :: repr -> repr -> repr
+
+-- note that clearly if we need the extended form to be evaluated or pretty-printed,
+-- we still need to get the corresponding implementation done.
+-- but implementing these additional things are not required at all.
+instance MulSYM Int where
+    mul = (*)
+
+instance MulSYM String where
+    mul e1 e2 = "(" ++ e1 ++ " * " ++ e2 ++ ")"
 
 -- the type signature can be inferred easily,
 -- here we just make it explicit and not let the compiler complaint about it.
