@@ -21,3 +21,6 @@ view e = case e of
     Lit n -> show n
     Neg e' -> "(-" ++ view e' ++ "-)"
     Add e1 e2 -> "(" ++ view e1 ++ " + " ++ view e2 ++ ")"
+
+til1 :: [Exp]
+til1 = [Lit 1, Add (Lit 1) (Lit 3)]

@@ -24,3 +24,19 @@ tf1 = add (lit 8) (neg (add (lit 1) (lit 2)))
 
 view :: String -> String
 view = id
+
+-- note that the type is paramaterized by "r" with a typeclass constraint
+tfl1 :: ExpSYM r => [r]
+tfl1 = [lit 1, add (lit 1) (lit 2)]
+
+-- to extend the existing expression form, all we have to do
+-- is to just define a new typeclass with new operations
+class MulSYM repr where
+    mul :: repr -> repr -> repr
+
+-- the type signature can be inferred easily,
+-- here we just make it explicit and not let the compiler complaint about it.
+tfm1, tfm2 :: (MulSYM repr, ExpSYM repr) => repr
+
+tfm1 = add (lit 7) (neg (mul (lit 1) (lit 2)))
+tfm2 = mul (lit 7) tf1
