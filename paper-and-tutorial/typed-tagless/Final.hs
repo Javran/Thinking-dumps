@@ -92,3 +92,16 @@ instance (ExpSYM repr, ExpSYM repr') => ExpSYM (repr,repr') where
 
 duplicate :: (ExpSYM repr, ExpSYM repr') => (repr, repr') -> (repr, repr')
 duplicate = id
+
+checkConsume :: (t -> IO ()) -> Either ErrMsg t -> IO ()
+checkConsume _ (Left e) = putStrLn $ "Error: " ++ e
+checkConsume f (Right x) = f x
+
+dupConsume :: (Show a, ExpSYM repr, ExpSYM repr')
+           => (repr -> a) -> (repr, repr') -> IO repr'
+dupConsume ev x = print (ev x1) >> return x2
+  where
+    (x1,x2) = duplicate x
+
+thrice :: (Int, (String, Tree)) -> IO ()
+thrice x = dupConsume eval x >>= dupConsume view >>= print . toTree
