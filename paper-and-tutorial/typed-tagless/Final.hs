@@ -80,3 +80,15 @@ fromTree t = case t of
     (Node "Neg" [e]) -> neg <$> fromTree e
     (Node "Add" [e1,e2]) -> add <$> fromTree e1 <*> fromTree e2
     _ -> Left $ "Invalid tree: " ++ show t
+
+-- to me it's like actually just making duplications
+-- besides there's a type-level information passing going on.
+-- the types are pretty much inferred by ghc so there's almost nothing
+-- we need to make explicit at type level
+instance (ExpSYM repr, ExpSYM repr') => ExpSYM (repr,repr') where
+    lit x = (lit x, lit x)
+    neg (e1,e2) = (neg e1, neg e2)
+    add (e11,e12) (e21,e22) = (add e11 e21, add e12 e22)
+
+duplicate :: (ExpSYM repr, ExpSYM repr') => (repr, repr') -> (repr, repr')
+duplicate = id
