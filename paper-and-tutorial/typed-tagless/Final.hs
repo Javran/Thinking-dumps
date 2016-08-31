@@ -66,3 +66,17 @@ instance ExpSYM Tree where
 
 toTree :: Tree -> Tree
 toTree = id
+
+type ErrMsg = String
+
+safeRead :: Read a => String -> Either ErrMsg a
+safeRead s = case reads s of
+    [(x,"")] -> Right x
+    _ -> Left $ "Read error: " ++ s
+
+fromTree :: ExpSYM repr => Tree -> Either ErrMsg repr
+fromTree t = case t of
+    (Node "Lit" [Leaf n]) -> lit <$> safeRead n
+    (Node "Neg" [e]) -> neg <$> fromTree e
+    (Node "Add" [e1,e2]) -> add <$> fromTree e1 <*> fromTree e2
+    _ -> Left $ "Invalid tree: " ++ show t
