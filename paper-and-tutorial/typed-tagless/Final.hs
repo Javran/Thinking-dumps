@@ -52,3 +52,17 @@ tfm1, tfm2 :: (MulSYM repr, ExpSYM repr) => repr
 
 tfm1 = add (lit 7) (neg (mul (lit 1) (lit 2)))
 tfm2 = mul (lit 7) tf1
+
+-- a tree structure that we can serialize expressions from and into.
+data Tree
+  = Leaf String
+  | Node String [Tree]
+    deriving (Eq, Read, Show)
+
+instance ExpSYM Tree where
+    lit n = Node "Lit" [Leaf $ show n]
+    neg e = Node "Neg" [e]
+    add e1 e2 = Node "Add" [e1,e2]
+
+toTree :: Tree -> Tree
+toTree = id
