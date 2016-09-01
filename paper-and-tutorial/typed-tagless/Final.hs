@@ -1,5 +1,7 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, TypeFamilies #-}
 module Final where
+
+import Data.Function
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
@@ -110,3 +112,14 @@ dupConsume ev x = print (ev x1) >> return x2
 -- with "dupConsume" we are able to do multiple things at a time
 thrice :: (Int, (String, Tree)) -> IO ()
 thrice x = dupConsume eval x >>= dupConsume view >>= print . toTree
+
+fromTreeExt :: (ExpSYM repr, func ~ (Tree -> Either ErrMsg repr))
+            => func -> func
+fromTreeExt self e = case e of
+    Node "Lit" [Leaf n] -> lit <$> safeRead n
+    Node "Neg" [e'] -> neg <$> self e'
+    Node "Add" [e1,e2] -> add <$> self e1 <*> self e2
+    _ -> Left $ "Invalid tree: " ++ show e
+
+fromTree' :: ExpSYM repr => Tree -> Either ErrMsg repr
+fromTree' = fix fromTreeExt
