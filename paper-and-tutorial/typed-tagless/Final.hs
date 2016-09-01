@@ -123,3 +123,17 @@ fromTreeExt self e = case e of
 
 fromTree' :: ExpSYM repr => Tree -> Either ErrMsg repr
 fromTree' = fix fromTreeExt
+
+instance MulSYM Tree where
+    mul e1 e2 = Node "Mul" [e1,e2]
+
+instance (MulSYM r1, MulSYM r2) => MulSYM (r1,r2) where
+    mul (e11,e12) (e21,e22) = (mul e11 e21, mul e12 e22)
+
+fromTreeExt2 :: (ExpSYM repr, MulSYM repr, func ~ (Tree -> Either ErrMsg repr))
+            => func -> func
+fromTreeExt2 self (Node "Mul" [e1,e2]) = mul <$> self e1 <*> self e2
+fromTreeExt2 self e = fromTreeExt self e -- passing unhandled cases to "fromTreeExt"
+
+fromTree2 :: (ExpSYM repr, MulSYM repr) => Tree -> Either ErrMsg repr
+fromTree2 = fix fromTreeExt2
