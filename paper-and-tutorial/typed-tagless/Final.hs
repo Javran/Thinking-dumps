@@ -90,18 +90,23 @@ instance (ExpSYM repr, ExpSYM repr') => ExpSYM (repr,repr') where
     neg (e1,e2) = (neg e1, neg e2)
     add (e11,e12) (e21,e22) = (add e11 e21, add e12 e22)
 
-duplicate :: (ExpSYM repr, ExpSYM repr') => (repr, repr') -> (repr, repr')
+-- with (repr, repr') being an instance of ExpSYM (with appropriate)
+duplicate :: (ExpSYM repr, ExpSYM repr')
+          => (repr, repr') -> (repr, repr')
 duplicate = id
 
 checkConsume :: (t -> IO ()) -> Either ErrMsg t -> IO ()
 checkConsume _ (Left e) = putStrLn $ "Error: " ++ e
 checkConsume f (Right x) = f x
 
+-- duplicate the original piece of data, apply function to it to get a result
+-- for printing but also keep a copy of the data
 dupConsume :: (Show a, ExpSYM repr, ExpSYM repr')
            => (repr -> a) -> (repr, repr') -> IO repr'
 dupConsume ev x = print (ev x1) >> return x2
   where
     (x1,x2) = duplicate x
 
+-- with "dupConsume" we are able to do multiple things at a time
 thrice :: (Int, (String, Tree)) -> IO ()
 thrice x = dupConsume eval x >>= dupConsume view >>= print . toTree
