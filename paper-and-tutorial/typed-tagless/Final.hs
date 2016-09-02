@@ -137,3 +137,13 @@ fromTreeExt2 self e = fromTreeExt self e -- passing unhandled cases to "fromTree
 
 fromTree2 :: (ExpSYM repr, MulSYM repr) => Tree -> Either ErrMsg repr
 fromTree2 = fix fromTreeExt2
+
+-- make context explicit
+data Ctx = Pos | Neg
+
+instance ExpSYM repr => ExpSYM (Ctx -> repr) where
+    lit n Pos = lit n
+    lit n Neg = neg (lit n)
+    neg e Pos = e Neg
+    neg e Neg = e Pos
+    add e1 e2 ctx = add (e1 ctx) (e2 ctx)
