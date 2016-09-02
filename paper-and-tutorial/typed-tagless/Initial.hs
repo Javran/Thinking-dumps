@@ -24,3 +24,17 @@ view e = case e of
 
 til1 :: [Exp]
 til1 = [Lit 1, Add (Lit 1) (Lit 3)]
+
+-- the inital view of doing negation pushing down
+-- is just to pattern match on expressions and deal with them accordingly.
+-- in the example above GHC should be smart enough to figure out all possible cases
+-- are covered.
+pushNeg :: Exp -> Exp
+pushNeg e = case e of
+    Lit _ -> e
+    Neg (Lit _) -> e
+    Neg (Neg e') -> pushNeg e' -- double negation cancels out
+    Neg (Add e1 e2) ->
+        -- note that this part is not structural inductive
+        Add (pushNeg (Neg e1)) (pushNeg (Neg e2))
+    Add e1 e2 -> Add (pushNeg e1) (pushNeg e2)
