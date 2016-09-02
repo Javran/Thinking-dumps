@@ -147,3 +147,14 @@ instance ExpSYM repr => ExpSYM (Ctx -> repr) where
     neg e Pos = e Neg
     neg e Neg = e Pos
     add e1 e2 ctx = add (e1 ctx) (e2 ctx)
+
+instance MulSYM repr => MulSYM (Ctx -> repr) where
+    mul e1 e2 Pos = mul (e1 Pos) (e2 Pos)
+    mul e1 e2 Neg = mul (e1 Pos) (e2 Neg) -- push negation only to the second expr
+
+-- interestingly, by type inference this function don't need to have
+-- any typeclass constraints
+-- however, as soon as any building block of the language is used (lit / neg / add)
+-- we are sure to have the corresponding typeclass constraints around.
+pushNeg :: (Ctx -> repr) -> repr
+pushNeg e = e Pos
