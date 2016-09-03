@@ -176,3 +176,18 @@ instance ExpSYM repr => ExpSYM (CtxFlat repr -> repr) where
     neg eF NonLCA = neg (eF NonLCA)
     neg eF (LCA e3) = add (neg (eF NonLCA)) e3
     add e1F e2F ctx = e1F (LCA (e2F ctx))
+
+flatten :: (CtxFlat repr -> repr) -> repr
+flatten e = e NonLCA
+
+tf3 :: ExpSYM repr => repr
+tf3 = add tf1 (neg (neg tf1))
+
+{- try:
+
+> tf3 :: String
+"((8 + (-(1 + 2))) + (-(-(8 + (-(1 + 2))))))"
+> (flatten . pushNeg) tf3 :: String
+"(8 + ((-1) + ((-2) + (8 + ((-1) + (-2))))))"
+
+-}
