@@ -38,3 +38,16 @@ pushNeg e = case e of
         -- note that this part is not structural inductive
         Add (pushNeg (Neg e1)) (pushNeg (Neg e2))
     Add e1 e2 -> Add (pushNeg e1) (pushNeg e2)
+
+flata :: Exp -> Exp
+flata e = case e of
+    Lit _ -> e
+    Neg _ -> e
+    Add (Add e1 e2) e3 -> flata (Add e1 (Add e2 e3))
+    Add e1 e2 -> Add (flata e1) (flata e2)
+
+norm :: Exp -> Exp
+norm = flata . pushNeg
+
+ti3 :: Exp
+ti3 = Add ti1 (Neg (Neg ti1))
