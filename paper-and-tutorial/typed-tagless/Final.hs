@@ -139,16 +139,17 @@ fromTree2 :: (ExpSYM repr, MulSYM repr) => Tree -> Either ErrMsg repr
 fromTree2 = fix fromTreeExt2
 
 -- make context explicit
-data Ctx = Pos | Neg
+-- adding the postfix "PN" to mean "PushNeg" context
+data CtxPN = Pos | Neg
 
-instance ExpSYM repr => ExpSYM (Ctx -> repr) where
+instance ExpSYM repr => ExpSYM (CtxPN -> repr) where
     lit n Pos = lit n
     lit n Neg = neg (lit n)
     neg e Pos = e Neg
     neg e Neg = e Pos
     add e1 e2 ctx = add (e1 ctx) (e2 ctx)
 
-instance MulSYM repr => MulSYM (Ctx -> repr) where
+instance MulSYM repr => MulSYM (CtxPN -> repr) where
     mul e1 e2 Pos = mul (e1 Pos) (e2 Pos)
     mul e1 e2 Neg = mul (e1 Pos) (e2 Neg) -- push negation only to the second expr
 
@@ -156,5 +157,5 @@ instance MulSYM repr => MulSYM (Ctx -> repr) where
 -- any typeclass constraints
 -- however, as soon as any building block of the language is used (lit / neg / add)
 -- we are sure to have the corresponding typeclass constraints around.
-pushNeg :: (Ctx -> repr) -> repr
+pushNeg :: (CtxPN -> repr) -> repr
 pushNeg e = e Pos
