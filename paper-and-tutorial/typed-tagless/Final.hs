@@ -159,3 +159,20 @@ instance MulSYM repr => MulSYM (CtxPN -> repr) where
 -- we are sure to have the corresponding typeclass constraints around.
 pushNeg :: (CtxPN -> repr) -> repr
 pushNeg e = e Pos
+
+-- LCA: left immediate child of an addition
+-- "LCA e" means "Add <hole> e" where "<hole>" is the expression we
+-- are dealing with
+-- (now I feel the hardest part is to figure out what's the implicit
+-- context in initial view that we have to make explicit)
+data CtxFlat e = LCA e | NonLCA
+
+-- if any variable in instance declaration below has a postfix "F",
+-- that just means that variable should be bound to a function
+-- I feel having this postfix will make the code a bit more clear
+instance ExpSYM repr => ExpSYM (CtxFlat repr -> repr) where
+    lit n NonLCA = lit n
+    lit n (LCA e) = add (lit n) e
+    neg eF NonLCA = neg (eF NonLCA)
+    neg eF (LCA e3) = add (neg (eF NonLCA)) e3
+    add e1F e2F ctx = e1F (LCA (e2F ctx))
