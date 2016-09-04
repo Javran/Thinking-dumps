@@ -13,3 +13,14 @@ data Var env t where
 
 ti1 :: Exp env Bool
 ti1 = A (L (V VZ)) (B True)
+
+eval :: env -> Exp env t -> t
+eval env e = case e of
+    V v -> lookp v env
+    B b -> b
+    L e' -> \x -> eval (x,env) e'
+    A e1 e2 -> eval env e1 (eval env e2)
+
+lookp :: Var env t -> env -> t
+lookp VZ (x,_) = x
+lookp (VS v) (_,env) = lookp v env
