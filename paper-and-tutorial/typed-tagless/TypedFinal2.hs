@@ -63,5 +63,12 @@ td2ov :: Int -> (Int -> Int)
 --    for the original expression to use.
 td2ov = eval (lam td2o)
 
+-- instead of modifying the original expression, we choose to provide
+-- a proper environment for the expression.
+-- operationally this is the same as "td2ov", but taking a different view
+-- of how we view things.
+td2ov' :: Int -> (Int -> Int)
+td2ov' x = unR td2o (x,())
+
 td3v  :: (Int -> Int) -> Int
 td3v = eval td3
