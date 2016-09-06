@@ -1,5 +1,10 @@
 module TypedFinal2 where
 
+{-# ANN module "HLint: ignore Eta reduce" #-}
+{-# ANN module "HLint: ignore Redundant bracket" #-}
+{-# ANN module "HLint: ignore Use fst" #-}
+{-# ANN module "HLint: ignore Collapse lambdas" #-}
+
 -- typed final embedding with Int in the language.
 class Symantics repr where
     int :: Int -> repr h Int
@@ -27,3 +32,27 @@ td2o = lam (add z (s z))
 -- 3. the lambda expects an argument of type Int -> Int, thus the type
 td3 :: Symantics repr => repr h ((Int -> Int) -> Int)
 td3 = lam (add (app z (int 1)) (int 2))
+
+newtype R h a = R { unR :: h -> a }
+
+instance Symantics R where
+    int x = R $ const x
+    add e1 e2 = R $ \h -> unR e1 h + unR e2 h
+
+    z = R $ \(x,_) -> x
+    s v = R $ \(_,h) -> unR v h
+
+    lam e = R $ \h -> \x -> unR e (x,h)
+    app e1 e2 = R $ \h -> (unR e1 h) (unR e2 h)
+
+eval :: R () a -> a
+eval e = unR e ()
+
+td1v :: Int
+td1v = eval td1
+
+td2ov :: Int -> Int
+td2ov = eval (lam (app td2o (int 10)))
+
+td3v  :: (Int -> Int) -> Int
+td3v = eval td3
