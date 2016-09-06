@@ -72,3 +72,34 @@ td2ov' x = unR td2o (x,())
 
 td3v  :: (Int -> Int) -> Int
 td3v = eval td3
+
+newtype S h a = S { unS :: Int -> String }
+
+instance Symantics S where
+    int x = S $ const $ show x
+    add e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ "+" ++ unS e2 h ++ ")"
+    z = S $ \h -> "x" ++ show (h-1)
+    s v = S $ \h -> unS v (h-1)
+    lam e = S $ \h ->
+        let x = "x" ++ show h
+        in "(\\" ++ x ++ " -> " ++ unS e (h+1) ++ ")"
+    app e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ " " ++ unS e2 h ++ ")"
+
+view :: S () a -> String
+view e = unS e 0
+
+td1v2 :: String
+td1v2 = view td1
+
+-- unlike others, "td2o" is expecting
+-- a different "shape" of the environment,
+-- so "view" would not work properly on it.
+-- instead of "0", we need "1" in order to give
+-- the correct number to variables.
+td2ov2 :: String
+td2ov2 = unS td2o 1
+
+td3v2 :: String
+td3v2 = view td3
