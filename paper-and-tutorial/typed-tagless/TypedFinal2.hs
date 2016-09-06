@@ -51,8 +51,17 @@ eval e = unR e ()
 td1v :: Int
 td1v = eval td1
 
-td2ov :: Int -> Int
-td2ov = eval (lam (app td2o (int 10)))
+td2ov :: Int -> (Int -> Int)
+-- the outter "lam" is driven by typechecker:
+-- 1. simply "eval td2o" won't do, as td2o needs proper environment
+--    but the evaluator expects an empty one.
+-- 2. picking "lam" allows us to "flatten" the environment from (a,h) to h,
+--    and we instead need to apply it to something in order to plug in that value
+-- 3. the original expression gives a value of type "Int -> Int",
+--    so putting a "lam" to wrap it inside gives us a value of "Int -> (Int -> Int)",
+--    in which the first value is used to provide the expected environment
+--    for the original expression to use.
+td2ov = eval (lam td2o)
 
 td3v  :: (Int -> Int) -> Int
 td3v = eval td3
