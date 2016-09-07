@@ -16,3 +16,15 @@ th2 = lam (\x -> add x x)
 
 th3 :: Symantics repr => repr ((Int -> Int) -> Int)
 th3 = lam (\x -> add (app x (int 1)) (int 2))
+
+newtype R a = R { unR :: a }
+
+instance Symantics R where
+    int = R
+    add e1 e2 = R (unR e1 + unR e2)
+
+    lam f = R (unR . f . R)
+    app e1 e2 = R $ unR e1 (unR e2)
+
+eval :: R a -> a
+eval = unR
