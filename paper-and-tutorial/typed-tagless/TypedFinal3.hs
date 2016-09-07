@@ -28,3 +28,22 @@ instance Symantics R where
 
 eval :: R a -> a
 eval = unR
+
+type VarCounter = Int
+newtype S a = S { unS :: VarCounter -> String }
+
+instance Symantics S where
+    int x = S $ \_ -> show x
+    add e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ "+" ++ unS e2 h ++ ")"
+
+    lam e = S $ \h ->
+        let x = "x" ++ show h
+        in "(\\" ++ x  ++ " -> " ++
+           unS (e (S $ const x {- TODO: I'm not sure of this part, need examples -}))
+               (succ h) ++ ")"
+    app e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ " " ++ unS e2 h ++ ")"
+
+view :: S a -> String
+view e = unS e 0
