@@ -47,3 +47,14 @@ instance Symantics S where
 
 view :: S a -> String
 view e = unS e 0
+
+class MulSYM repr where
+    mul :: repr Int -> repr Int -> repr Int
+
+class BoolSYM repr where
+    bool :: Bool -> repr Bool
+    leq :: repr Int -> repr Int -> repr Bool
+    if_ :: repr Bool -> repr a -> repr a -> repr a
+
+class FixSYM repr where
+    fix :: (repr a -> repr a) -> repr a
