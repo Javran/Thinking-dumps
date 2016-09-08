@@ -73,3 +73,17 @@ tpow7 = lam (\x -> (tpow `app` x) `app` int 7)
 
 tpow72 :: (Symantics repr, MulSYM repr, FixSYM repr, BoolSYM repr) => repr Int
 tpow72 = tpow7 `app` int 2
+
+instance MulSYM R where
+    mul e1 e2 = R $ unR e1 * unR e2
+
+instance BoolSYM R where
+    bool = R
+    leq e1 e2 = R $ unR e1 <= unR e2
+    if_ be et ee = if unR be then ee else et
+
+instance FixSYM R where
+    fix f = R $ fx (unR . f . R)
+      where
+        -- just like Data.Function.fix
+        fx f' = let x = f' x in x
