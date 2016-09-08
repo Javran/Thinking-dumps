@@ -67,3 +67,9 @@ tpow = lam (\x -> fix (\self -> lam (\n ->
                                        (mul
                                           x
                                           (app self (add n (int (-1))))))))
+
+tpow7 :: (Symantics repr, MulSYM repr, FixSYM repr, BoolSYM repr) => repr (Int -> Int)
+tpow7 = lam (\x -> (tpow `app` x) `app` int 7)
+
+tpow72 :: (Symantics repr, MulSYM repr, FixSYM repr, BoolSYM repr) => repr Int
+tpow72 = tpow7 `app` int 2
