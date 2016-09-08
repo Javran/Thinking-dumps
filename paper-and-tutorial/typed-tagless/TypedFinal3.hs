@@ -89,3 +89,16 @@ instance FixSYM R where
         fx f' = let x = f' x in x
 
 -- no change to the evaluator, "eval tpow72" should work as expected
+
+instance MulSYM S where
+    mul e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ " * " ++ unS e2 h ++ ")"
+
+instance BoolSYM S where
+    bool= S . const . show
+    leq e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ " <= " ++ unS e2 h ++ ")"
+    if_ be et ee = S $ \h ->
+        "if " ++ unS be h
+        ++ " then " ++ unS et h
+        ++ " else " ++ unS ee h
