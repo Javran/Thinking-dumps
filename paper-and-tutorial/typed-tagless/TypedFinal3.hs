@@ -37,10 +37,15 @@ instance Symantics S where
     add e1 e2 = S $ \h ->
         "(" ++ unS e1 h ++ "+" ++ unS e2 h ++ ")"
 
-    lam e = S $ \h ->
+    -- about "(f (S $ const x) _)" part,
+    -- recall that "f" is *not* an expression but a function,
+    -- in this final embedding, it expects an argument, in this case the argument
+    -- is just the variable name we just assigned for pretty print (the value bound to "x")
+    -- thus "S $ const x".
+    lam f = S $ \h ->
         let x = "x" ++ show h
         in "(\\" ++ x  ++ " -> " ++
-           unS (e (S $ const x {- TODO: I'm not sure of this part, need examples -}))
+           unS (f (S $ const x))
                (succ h) ++ ")"
     app e1 e2 = S $ \h ->
         "(" ++ unS e1 h ++ " " ++ unS e2 h ++ ")"
