@@ -80,10 +80,12 @@ instance MulSYM R where
 instance BoolSYM R where
     bool = R
     leq e1 e2 = R $ unR e1 <= unR e2
-    if_ be et ee = if unR be then ee else et
+    if_ be et ee = if unR be then et else ee
 
 instance FixSYM R where
     fix f = R $ fx (unR . f . R)
       where
         -- just like Data.Function.fix
         fx f' = let x = f' x in x
+
+-- no change to the evaluator, "eval tpow72" should work as expected
