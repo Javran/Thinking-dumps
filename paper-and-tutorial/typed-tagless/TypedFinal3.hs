@@ -58,3 +58,12 @@ class BoolSYM repr where
 
 class FixSYM repr where
     fix :: (repr a -> repr a) -> repr a
+
+tpow :: (Symantics repr, MulSYM repr, FixSYM repr, BoolSYM repr) => repr (Int -> Int -> Int)
+tpow = lam (\x -> fix (\self -> lam (\n ->
+                                     if_
+                                       (leq n (int 0))
+                                       (int 1)
+                                       (mul
+                                          x
+                                          (app self (add n (int (-1))))))))
