@@ -109,6 +109,10 @@ instance BoolSYM S where
         ++ " else " ++ unS ee h
 
 instance FixSYM S where
+    -- notice two things:
+    -- 1. the similarity between this and "lam" case, in both case a new variable
+    --    is introduced and the counter bumps in the same way.
+    -- 2. "fix" case has no explicit recursion.
     fix e = S $ \h ->
         let self = "self" ++ show h
         in "(fix " ++ self ++ " . " ++
