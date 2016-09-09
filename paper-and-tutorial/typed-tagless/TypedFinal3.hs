@@ -107,3 +107,9 @@ instance BoolSYM S where
         "if " ++ unS be h
         ++ " then " ++ unS et h
         ++ " else " ++ unS ee h
+
+instance FixSYM S where
+    fix e = S $ \h ->
+        let self = "self" ++ show h
+        in "(fix " ++ self ++ " . " ++
+           unS (e (S $ const self)) (succ h) ++ ")"
