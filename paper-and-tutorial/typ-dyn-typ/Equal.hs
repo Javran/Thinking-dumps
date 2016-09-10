@@ -33,3 +33,15 @@ reflex = Equal id
 trans :: Equal a b -> Equal b c -> Equal a c
 trans ab bc = case (ab,bc) of
   (Equal f, Equal g) -> Equal (g . f)
+
+{-
+   motivation: when given "Equal a b", for a type "t" we should be able to substitite
+   every occurrence of "a" in it by "b".
+   - now let "c a" be the input type "t"
+     (here we call it "ta" to distinguish from "tb", the resulting type)
+   - notice that Equal a b provides us with a function: "forall f. f a -> f b",
+     so with "c a", we should get "c b" by using this function.
+   - TODO: the paper doesn't seem to mention "c b -> tb" part, let's see about it in future.
+-}
+subst :: (ta -> c a) -> (c b -> tb) -> Equal a b -> ta -> tb
+subst = undefined
