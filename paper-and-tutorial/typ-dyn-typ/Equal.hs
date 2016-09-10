@@ -66,3 +66,9 @@ newtype FlipEqual y x = Flip { unFlip :: Equal x y }
 -- out from it!
 symm :: Equal a b -> Equal b a
 symm ab = subst Flip unFlip ab reflex
+
+-- "g (f _)" is all what we need,
+newtype Comp g f x = Comp { unComp :: g (f x) }
+
+arg :: Equal a b -> Equal (f a) (f b)
+arg ab = Equal (subst Comp unComp ab)
