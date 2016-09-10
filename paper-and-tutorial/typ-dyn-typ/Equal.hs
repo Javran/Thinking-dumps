@@ -44,4 +44,25 @@ trans ab bc = case (ab,bc) of
    - TODO: the paper doesn't seem to mention "c b -> tb" part, let's see about it in future.
 -}
 subst :: (ta -> c a) -> (c b -> tb) -> Equal a b -> ta -> tb
-subst = undefined
+subst from to (Equal ab) = to . ab . from
+
+
+{- example about how to convert from (a,a) to (b,b) knowing Equal a b,
+   basically we will need a lambda abstraction on type level to make the type
+   a "type function application" by type "a", then we'll have the chance to replace it
+   by "b"
+-}
+newtype Pair x = Pair { unPair :: (x,x) }
+
+substPair :: Equal a b -> (a,a) -> (b,b)
+substPair = subst Pair unPair
+
+-- "FlipEqual y _" is just "Equal _ y" and the hole is where
+-- we are going to play with
+newtype FlipEqual y x = Flip { unFlip :: Equal x y }
+
+-- notice that "symm" shows us why passing a function of type "forall f. f a -> f b"
+-- is enough for a type equality proof: now we can construct "forall f. f b -> f a"
+-- out from it!
+symm :: Equal a b -> Equal b a
+symm ab = subst Flip unFlip ab reflex
