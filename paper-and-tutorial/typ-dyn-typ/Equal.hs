@@ -39,9 +39,12 @@ trans ab bc = case (ab,bc) of
    every occurrence of "a" in it by "b".
    - now let "c a" be the input type "t"
      (here we call it "ta" to distinguish from "tb", the resulting type)
+     here we are using some "newtype" definitions to rewrite "t" so that
+     it end up being a "function application" on type level.
    - notice that Equal a b provides us with a function: "forall f. f a -> f b",
      so with "c a", we should get "c b" by using this function.
-   - TODO: the paper doesn't seem to mention "c b -> tb" part, let's see about it in future.
+   - for the "c b -> tb" part, we are just unwrapping whatever "newtype" we have
+     just defined to end up with the intended resulting type.
 -}
 subst :: (ta -> c a) -> (c b -> tb) -> Equal a b -> ta -> tb
 subst from to (Equal ab) = to . ab . from
