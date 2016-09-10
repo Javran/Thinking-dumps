@@ -25,3 +25,11 @@ eqList = Equal id
 
 eqFunc :: Equal (->) (->)
 eqFunc = Equal id
+
+-- "reflex" generalizes everything above.
+reflex :: Equal a a
+reflex = Equal id
+
+trans :: Equal a b -> Equal b c -> Equal a c
+trans ab bc = case (ab,bc) of
+  (Equal f, Equal g) -> Equal (g . f)
