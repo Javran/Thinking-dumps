@@ -1,5 +1,7 @@
-{-# LANGUAGE RankNTypes, PolyKinds #-}
+{-# LANGUAGE RankNTypes, PolyKinds, ExistentialQuantification #-}
 module Equal where
+
+import Data.Functor.Identity
 
 {-
    Leibnitz's law, saying if a, b are identical,
@@ -91,3 +93,24 @@ func eqFG = Equal (subst Haf unHaf eqFG)
 
 rewrite' :: Equal a b -> Equal c (f a d) -> Equal c (f b d)
 rewrite' eqAB eqCFad = trans eqCFad (func (arg eqAB))
+
+-- TODO: now that Haskell does has Kind polymorphism, but I'm not sure
+-- of this part. skipping it for now.
+
+congruence :: Equal a b -> Equal c d -> Equal (f a c) (f b d)
+congruence eqAB eqCD = rewrite eqCD (rewrite' eqAB reflex)
+
+-- now that "~" is taken, so we have to use "~~" instead
+class TypRep tpr where
+    (~~) :: tpr a -> tpr b -> Maybe (Equal a b)
+
+-- using "Identity" so that we could have "forall f. f a -> f b" become
+-- "Identity a -> Identity b", and which is exactly just the "a -> b" function
+-- we are looking for, again most stuff about "Equal _ _" are just identity functions
+-- on value level.
+{-# ANN coerce "HLint: ignore Redundant bracket" #-}
+{-# ANN coerce "HLint: ignore Eta reduce" #-}
+coerce :: Equal a b -> (a -> b)
+coerce eqAB = subst Identity runIdentity eqAB
+
+data Dynamic typeRep = forall a. a ::: typeRep a
