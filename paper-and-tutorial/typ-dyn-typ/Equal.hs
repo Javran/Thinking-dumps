@@ -75,3 +75,19 @@ newtype Comp g f x = Comp { unComp :: g (f x) }
 
 arg :: Equal a b -> Equal (f a) (f b)
 arg ab = Equal (subst Comp unComp ab)
+
+-- apply a substitution to the argument of a type constructor
+rewrite :: Equal a b -> Equal c (f a) -> Equal c (f b)
+rewrite eqAB eqCFa = trans eqCFa eqFaFb
+  where
+    eqFaFb = arg eqAB
+
+-- we need "h (_ a)" in order to replace the hole with something else
+newtype Haf h a f = Haf { unHaf :: h (f a) }
+
+-- like "arg" but acts on the function part
+func :: Equal f g -> Equal (f a) (g a)
+func eqFG = Equal (subst Haf unHaf eqFG)
+
+rewrite' :: Equal a b -> Equal c (f a d) -> Equal c (f b d)
+rewrite' eqAB eqCFad = trans eqCFad (func (arg eqAB))
