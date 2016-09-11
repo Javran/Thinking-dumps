@@ -101,7 +101,8 @@ congruence :: Equal a b -> Equal c d -> Equal (f a c) (f b d)
 congruence eqAB eqCD = rewrite eqCD (rewrite' eqAB reflex)
 
 -- now that "~" is taken, so we have to use "~~" instead
-class TypRep tpr where
+class TypeRep tpr where
+    -- TODO: for now I'm not sure what this is doing ...
     (~~) :: tpr a -> tpr b -> Maybe (Equal a b)
 
 -- using "Identity" so that we could have "forall f. f a -> f b" become
@@ -114,3 +115,33 @@ coerce :: Equal a b -> (a -> b)
 coerce eqAB = subst Identity runIdentity eqAB
 
 data Dynamic typeRep = forall a. a ::: typeRep a
+
+fromDyn :: TypeRep tpr => tpr a -> Dynamic tpr -> Maybe a
+fromDyn et (x ::: t) = case t ~~ et of
+    Just eq -> Just (coerce eq x)
+    Nothing -> Nothing
+
+-- this looks a bit confusing, but we are defining "Int" as a value constructor
+-- so it does not conflict with the type that we all know as "Int"
+-- same can be said to Bool, or you name it.
+data TpCon a
+  = Int (Equal a Int)
+  | Bool (Equal a Bool)
+
+instance TypeRep TpCon where
+    (~~) (Int x) (Int y) = Just (trans x (symm y))
+    (~~) (Bool x) (Bool y) = Just (trans x (symm y))
+    (~~) _ _ = Nothing
+
+inttp :: TpCon Int
+inttp = Int reflex
+
+booltp :: TpCon Bool
+booltp = Bool reflex
+
+-- note that "true" and "ninetythree" are of the same type
+-- and existential type hides the real type inside, with proofs constructed
+-- by "TpCon" sitting around.
+true, ninetythree :: Dynamic TpCon
+true = True ::: booltp
+ninetythree = 93 ::: inttp
