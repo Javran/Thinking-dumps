@@ -3,6 +3,8 @@ module Equal where
 
 import Data.Functor.Identity
 
+{-# ANN module "HLint: ignore Eta reduce" #-}
+
 {-
    Leibnitz's law, saying if a, b are identical,
    then they should have identical properties as well.
@@ -146,6 +148,19 @@ true, ninetythree :: Dynamic TpCon
 true = True ::: booltp
 ninetythree = 93 ::: inttp
 
+{-
+  Type representation for a Haskell type "a"
+
+  - for "TpCon", I think the purpose is to extend existing type represetations
+    so some code might be shared (instance impls for example).
+    below we are just having type "TpCon" hard-wired by defining "Type" type synonym.
+    I have not yet see any other interesting uses, yet. (TODO)
+  - for a list type representation "[] x",
+    we need a concrete type representation of "x",
+    which is what "List" constructor does
+  - similarly, for a function type represetation "x -> y",
+    we will have to have type representation for both "x" and "y"
+-}
 data TpRep tpr a
   = TpCon (tpr a)
   | forall x. List (Equal a [x]) (TpRep tpr x)
@@ -160,3 +175,9 @@ inttp' = TpCon inttp
 
 booltp' :: Type Bool
 booltp' = TpCon booltp
+
+list :: TpRep tpr a -> TpRep tpr [a]
+list tprA = List reflex tprA
+
+(.->.) :: TpRep tpr a -> TpRep tpr b -> TpRep tpr (a -> b)
+a .->. r = Func reflex a r
