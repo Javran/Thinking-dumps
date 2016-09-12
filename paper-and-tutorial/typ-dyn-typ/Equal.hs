@@ -198,6 +198,11 @@ deduce x1 x2 x3 x4 = x8
 -- the following instnace impl confirms that one purpose of "TpCon"
 -- constructor is for code-reusing.
 instance TypeRep tpr => TypeRep (TpRep tpr) where
+    -- I feel we have begin to see the boring part of this:
+    -- for every single type, one has to encode it in some type representation
+    -- and construct proofs that confirms it
+    -- also, looking at the cases for List and Func,
+    -- I don't know if there is a clever way of proof automation.
     (~~) (TpCon x) (TpCon y) = x ~~ y
     (~~) (List x t1) (List y t2) = case t1 ~~ t2 of
         Just eq -> Just (trans (rewrite eq x) (symm y))
