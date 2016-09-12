@@ -145,3 +145,18 @@ booltp = Bool reflex
 true, ninetythree :: Dynamic TpCon
 true = True ::: booltp
 ninetythree = 93 ::: inttp
+
+data TpRep tpr a
+  = TpCon (tpr a)
+  | forall x. List (Equal a [x]) (TpRep tpr x)
+  | forall x y. Func (Equal a (x -> y))
+                     (TpRep tpr x)
+                     (TpRep tpr y)
+
+type Type = TpRep TpCon
+
+inttp' :: Type Int
+inttp' = TpCon inttp
+
+booltp' :: Type Bool
+booltp' = TpCon booltp
