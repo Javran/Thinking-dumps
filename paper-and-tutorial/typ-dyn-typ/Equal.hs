@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, PolyKinds, ExistentialQuantification #-}
+{-# LANGUAGE RankNTypes, PolyKinds, ExistentialQuantification, ScopedTypeVariables #-}
 module Equal where
 
 import Data.Functor.Identity
@@ -181,3 +181,24 @@ list tprA = List reflex tprA
 
 (.->.) :: TpRep tpr a -> TpRep tpr b -> TpRep tpr (a -> b)
 a .->. r = Func reflex a r
+
+deduce :: forall x y a b c d. Equal x (a -> b) -> Equal y (c -> d)
+       -> Equal a c -> Equal b d -> Equal x y
+deduce x1 x2 x3 x4 = trans x7 x6
+  where
+    x5 = congruence x3 x4
+    x6 = symm x2
+    x7 = trans x1 x5
+
+-- the following instnace impl confirms that one purpose of "TpCon"
+-- constructor is for code-reusing.
+instance TypeRep tpr => TypeRep (TpRep tpr) where
+    (~~) (TpCon x) (TpCon y) = x ~~ y
+    (~~) (List x t1) (List y t2) = case t1 ~~ t2 of
+        Just eq -> Just (trans (rewrite eq x) (symm y))
+        Nothing -> Nothing
+    (~~) (Func x a1 r1) (Func y a2 r2) =
+        case (a1 ~~ a2, r1 ~~ r2) of
+            (Just aarg, Just res) -> Just (deduce x y aarg res)
+            _ -> Nothing
+    (~~) _ _ = Nothing
