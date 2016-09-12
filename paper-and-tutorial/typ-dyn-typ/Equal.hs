@@ -184,11 +184,16 @@ a .->. r = Func reflex a r
 
 deduce :: forall x y a b c d. Equal x (a -> b) -> Equal y (c -> d)
        -> Equal a c -> Equal b d -> Equal x y
-deduce x1 x2 x3 x4 = trans x7 x6
+deduce x1 x2 x3 x4 = x8
   where
+    x5 :: Equal (a -> b) (c -> d)
     x5 = congruence x3 x4
+    x6 :: Equal (c -> d) y
     x6 = symm x2
+    x7 :: Equal x (c -> d)
     x7 = trans x1 x5
+    x8 :: Equal x y
+    x8 = trans x7 x6
 
 -- the following instnace impl confirms that one purpose of "TpCon"
 -- constructor is for code-reusing.
