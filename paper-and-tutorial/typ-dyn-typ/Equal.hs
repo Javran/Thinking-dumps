@@ -242,7 +242,15 @@ inc = fromJust (dynApply plus one)
 {-
   and "increment" is also partial, but by casting (plus `dynApply` one)
   to "increment", one no longer needs type checking
-  (provided it's been type-checked once)
+  (provided it's been type-checked once).
+  or another option is to just live with Maybe monad and there will be no risk
+  of so.
 -}
 increment :: Int -> Int
 increment = fromJust (fromDyn (inttp' .->. inttp') inc)
+
+-- safe function in Maybe
+incrementM :: Maybe (Int -> Int)
+incrementM =
+    dynApply plus one >>=
+    fromDyn (inttp' .->. inttp')
