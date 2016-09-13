@@ -2,6 +2,7 @@
 module Equal where
 
 import Data.Functor.Identity
+import Data.Maybe
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
@@ -233,3 +234,15 @@ dynApply (f ::: ft) = case ft of
                         in Just (f' x' ::: tyRes)
             Nothing -> Nothing
     _ -> const Nothing
+
+-- beware that "inc" is really a partial function
+inc :: Dynamic Type
+inc = fromJust (dynApply plus one)
+
+{-
+  and "increment" is also partial, but by casting (plus `dynApply` one)
+  to "increment", one no longer needs type checking
+  (provided it's been type-checked once)
+-}
+increment :: Int -> Int
+increment = fromJust (fromDyn (inttp' .->. inttp') inc)
