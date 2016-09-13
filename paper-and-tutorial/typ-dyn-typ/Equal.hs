@@ -212,3 +212,24 @@ instance TypeRep tpr => TypeRep (TpRep tpr) where
             (Just aarg, Just res) -> Just (deduce x y aarg res)
             _ -> Nothing
     (~~) _ _ = Nothing
+
+plus, one :: Dynamic Type
+-- have to make it explicit so we are not relying on operator's precedence
+plus = (+) ::: (inttp' .->. (inttp' .->. inttp'))
+one = 1 ::: inttp'
+
+dynApply :: TypeRep tp
+         => Dynamic (TpRep tp)
+         -> Dynamic (TpRep tp)
+         -> Maybe (Dynamic (TpRep tp))
+dynApply (f ::: ft) = case ft of
+    -- get the first argument and branch
+    -- so if "f" is not a function we can fail immediately
+    Func eqf tyArg tyRes ->
+        let f' = coerce eqf f
+        in \ (x ::: xt) -> case xt ~~ tyArg of
+            -- make sure "x" is of the intended type that "f'" accepts
+            Just eqa -> let x' = coerce eqa x
+                        in Just (f' x' ::: tyRes)
+            Nothing -> Nothing
+    _ -> const Nothing
