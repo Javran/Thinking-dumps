@@ -47,3 +47,16 @@ newtype FS b a = FS { unFS :: EQU a b }
 -- "EQU a a" with first "a" changed to "b" by using "equ" to cast
 symm :: forall a b. EQU a b -> EQU b a
 symm equ = unFS . equCast equ . FS $ (refl :: EQU a a)
+
+-- "EQU t (_ -> b)"
+newtype F1 t b a = F1 { unF1 :: EQU t (a -> b) }
+
+-- "EQU t (a -> _)"
+newtype F2 t a b = F2 { unF2 :: EQU t (a -> b) }
+
+eqArr :: EQU a1 a2 -> EQU b1 b2 -> EQU (a1 -> b1) (a2 -> b2)
+eqArr a1a2 b1b2 = cast refl
+  where
+    cast = cast2 . cast1
+    cast1 = unF1 . equCast a1a2 . F1
+    cast2 = unF2 . equCast b1b2 . F2
