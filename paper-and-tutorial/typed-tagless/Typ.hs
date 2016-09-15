@@ -37,8 +37,8 @@ newtype EQU a b = EQU { equCast :: forall c. c a -> c b }
 refl :: EQU a a
 refl = EQU id
 
-trans :: EQU a u -> EQU u b -> EQU a b
-trans au ub = equCast ub au
+tran :: EQU a u -> EQU u b -> EQU a b
+tran au ub = equCast ub au
 -- consider turning (EQU a) u into (EQU a) b
 
 -- "EQU _ b"
@@ -74,7 +74,29 @@ asInt _ _ = Nothing
 data AsArrow a =
     forall b1 b2. AsArrow (TQ a) (Maybe ((TQ b1,TQ b2), EQU a (b1 -> b2)))
 
+-- TODO: maybe this should tell us what TQ is for?
 instance TSYM AsArrow where
     tint = AsArrow tint Nothing
     tarr (AsArrow t1 _) (AsArrow t2 _) =
         AsArrow (tarr t1 t2) $ Just ((t1,t2),refl)
+
+asArrow :: AsArrow a -> AsArrow a
+asArrow = id
+
+newtype SafeCast a = SafeCast (forall b. TQ b -> Maybe (EQU a b))
+
+instance TSYM SafeCast where
+    tint = SafeCast $ \tb ->
+        case unTQ tb of
+            AsInt eq -> fmap symm eq
+
+    tarr (SafeCast t1) (SafeCast t2) = SafeCast $ \tb -> do
+        AsArrow _ (Just ((b1,b2),equBb1b2)) <- pure (asArrow (unTQ tb))
+        equT1b1 <- t1 b1
+        equT2b2 <- t2 b2
+        pure (tran (eqArr equT1b1 equT2b2) (symm equBb1b2))
+
+safeGCast :: TQ a -> c a -> TQ b -> Maybe (c b)
+safeGCast (TQ ta) ca tb = cast ta
+  where
+    cast (SafeCast f) = maybe Nothing (\equ -> Just (equCast equ ca)) (f tb)
