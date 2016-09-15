@@ -60,3 +60,21 @@ eqArr a1a2 b1b2 = cast refl
     cast = cast2 . cast1
     cast1 = unF1 . equCast a1a2 . F1
     cast2 = unF2 . equCast b1b2 . F2
+
+data AsInt a = AsInt (Maybe (EQU a Int))
+
+instance TSYM AsInt where
+    tint = AsInt $ Just refl
+    tarr _ _ = AsInt Nothing
+
+asInt :: AsInt a -> c a -> Maybe (c Int)
+asInt (AsInt (Just equ)) r = Just $ equCast equ r
+asInt _ _ = Nothing
+
+data AsArrow a =
+    forall b1 b2. AsArrow (TQ a) (Maybe ((TQ b1,TQ b2), EQU a (b1 -> b2)))
+
+instance TSYM AsArrow where
+    tint = AsArrow tint Nothing
+    tarr (AsArrow t1 _) (AsArrow t2 _) =
+        AsArrow (tarr t1 t2) $ Just ((t1,t2),refl)
