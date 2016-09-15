@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, ExistentialQuantification #-}
+{-# LANGUAGE RankNTypes, ExistentialQuantification, NoMonomorphismRestriction, PartialTypeSignatures #-}
 module Typ where
 
 -- trying to replicate http://okmij.org/ftp/tagless-final/course/Typ.hs
@@ -100,3 +100,17 @@ safeGCast :: TQ a -> c a -> TQ b -> Maybe (c b)
 safeGCast (TQ ta) ca tb = cast ta
   where
     cast (SafeCast f) = maybe Nothing (\equ -> Just (equCast equ ca)) (f tb)
+
+data Dynamic = forall t. Dynamic (TQ t) t
+
+-- the use of "NoMonomorphismRestriction" make it possible
+-- to infer the most general type without restricting it to any concrete one.
+
+-- GHC should be able to infer the following type
+tt1 :: TSYM trepr => trepr ((Int -> Int) -> Int)
+tt1 = (tint `tarr` tint) `tarr` tint
+
+tdn1, tdn2, tdn3 :: Dynamic
+tdn1 = Dynamic tint 5
+tdn2 = Dynamic tt1 ($ 1)
+tdn3 = Dynamic (tint `tarr` (tint `tarr` tint)) (*)
