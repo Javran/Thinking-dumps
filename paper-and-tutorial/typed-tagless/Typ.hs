@@ -1,8 +1,6 @@
 {-# LANGUAGE RankNTypes, ExistentialQuantification, NoMonomorphismRestriction, PartialTypeSignatures #-}
 module Typ where
 
-import Data.Functor.Identity
-
 -- trying to replicate http://okmij.org/ftp/tagless-final/course/Typ.hs
 
 {-
@@ -111,6 +109,9 @@ data Dynamic = forall t. Dynamic (TQ t) t
 tt1 :: TSYM trepr => trepr ((Int -> Int) -> Int)
 tt1 = (tint `tarr` tint) `tarr` tint
 
+tt2 :: TSYM trepr => trepr (Int -> Int -> Int)
+tt2 = tint `tarr` (tint `tarr` tint)
+
 tdn1, tdn2, tdn3 :: Dynamic
 tdn1 = Dynamic tint 5
 tdn2 = Dynamic tt1 ($ 1)
@@ -158,3 +159,19 @@ data TCOPY trep1 trep2 a = TCOPY (trep1 a) (trep2 a)
 instance (TSYM trep1, TSYM trep2) => TSYM (TCOPY trep1 trep2) where
     tint = TCOPY tint tint
     tarr (TCOPY a1 a2) (TCOPY b1 b2) = TCOPY (a1 `tarr` b1) (a2 `tarr` b2)
+
+newtype Id a = Id a
+
+tdnEval1 :: Dynamic -> (Int -> Int) -> Maybe String
+tdnEval1 (Dynamic tr d) x = do
+    -- tt1 is basically (Int -> Int) -> Int, so we are expecting
+    -- "d" to be of type tt1, and apply "x" to it.
+    -- as we are in the Maybe monad, we'll get Nothing
+    -- if something goes wrong
+    Id f <- safeGCast tr (Id d) tt1
+    pure (show (f x))
+
+tdnEval2 :: Dynamic -> Int -> Int -> Maybe String
+tdnEval2 (Dynamic tr d) x y = do
+    Id f <- safeGCast tr (Id d) tt2
+    pure (show (f x y))
