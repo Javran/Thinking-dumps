@@ -22,10 +22,9 @@ instance TSYM ShowT where
 viewTy :: ShowT a -> String
 viewTy (ShowT s) = s
 
--- TODO: I'm not sure what this is for, seems trivial.
+-- TODO: could this be the "existential typeclass" ?
 newtype TQ t = TQ { unTQ :: forall trepr. TSYM trepr => trepr t }
 
--- TODO: seems the actual instance are hid inside TQ?
 instance TSYM TQ where
     tint = TQ tint
     tarr (TQ a) (TQ b) = TQ (tarr a b)
@@ -114,3 +113,22 @@ tdn1, tdn2, tdn3 :: Dynamic
 tdn1 = Dynamic tint 5
 tdn2 = Dynamic tt1 ($ 1)
 tdn3 = Dynamic (tint `tarr` (tint `tarr` tint)) (*)
+
+{-
+  observation:
+
+- basically doing the same thing:
+
+> viewTy tint
+"Int"
+> viewTy (unTQ tint)
+"Int"
+> viewTy (unTQ (unTQ tint))
+"Int"
+> viewTy (unTQ (unTQ (unTQ tint)))
+"Int"
+
+my guess is by doing so we are delaying the choice of instance
+until "unTQ" destruction.
+
+-}
