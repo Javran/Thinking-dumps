@@ -143,3 +143,14 @@ False
 25
 
 -}
+
+data TCOPY trep1 trep2 a = TCOPY (trep1 a) (trep2 a)
+
+{-
+  it seems "Q" in "TQ" means quantification, and now we have "TCOPY"
+  which looks like an alternative to it.
+  TODO: this does remind me some part of the paper, see if I can create some example out of this.
+-}
+instance (TSYM trep1, TSYM trep2) => TSYM (TCOPY trep1 trep2) where
+    tint = TCOPY tint tint
+    tarr (TCOPY a1 a2) (TCOPY b1 b2) = TCOPY (a1 `tarr` b1) (a2 `tarr` b2)
