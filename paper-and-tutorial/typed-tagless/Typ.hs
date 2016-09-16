@@ -1,6 +1,8 @@
 {-# LANGUAGE RankNTypes, ExistentialQuantification, NoMonomorphismRestriction, PartialTypeSignatures #-}
 module Typ where
 
+import Data.Functor.Identity
+
 -- trying to replicate http://okmij.org/ftp/tagless-final/course/Typ.hs
 
 {-
@@ -130,5 +132,14 @@ tdn3 = Dynamic (tint `tarr` (tint `tarr` tint)) (*)
 
 my guess is by doing so we are delaying the choice of instance
 until "unTQ" destruction.
+
+- trying safeGCast function:
+
+> isJust (safeGCast tint (Identity 1) (tint `tarr` tint))
+False
+> isJust (safeGCast tint [1,3,4,5] (tint `tarr` tint))
+False
+> runIdentity (fromJust (safeGCast (tint `tarr` tint) (Identity (+ 20)) (tint `tarr` tint))) 5
+25
 
 -}
