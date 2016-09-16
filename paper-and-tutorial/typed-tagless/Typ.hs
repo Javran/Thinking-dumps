@@ -149,7 +149,11 @@ data TCOPY trep1 trep2 a = TCOPY (trep1 a) (trep2 a)
 {-
   it seems "Q" in "TQ" means quantification, and now we have "TCOPY"
   which looks like an alternative to it.
-  TODO: this does remind me some part of the paper, see if I can create some example out of this.
+  I guess after all this is just a type representation,
+  unlike values that we can do all sorts of things: printing, interpreting, there are simply
+  not much we can do with types. but I do suspect this makes a difference
+  when we are trying to do multiple things with "tt1 :: TSYM trepr => trepr a",
+  which would force "trepr" be either (but not both)
 -}
 instance (TSYM trep1, TSYM trep2) => TSYM (TCOPY trep1 trep2) where
     tint = TCOPY tint tint
