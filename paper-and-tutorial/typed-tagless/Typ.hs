@@ -73,7 +73,6 @@ asInt _ _ = Nothing
 data AsArrow a =
     forall b1 b2. AsArrow (TQ a) (Maybe ((TQ b1,TQ b2), EQU a (b1 -> b2)))
 
--- TODO: maybe this should tell us what TQ is for?
 instance TSYM AsArrow where
     tint = AsArrow tint Nothing
     tarr (AsArrow t1 _) (AsArrow t2 _) =
