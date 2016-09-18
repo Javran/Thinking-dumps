@@ -48,5 +48,22 @@ typecheck (Node "Int" [Leaf str]) _ =
         [(n,[])] -> pure (DynTerm tint (int n))
         _ -> fail $ "Bad Int literal: " ++ str
 typecheck (Node "Var" [Leaf name]) gamma = findVar name gamma
--- TODO: more cases
+typecheck (Node "Lam" [Leaf name, etyp, ebody]) gamma = do
+    Typ ta <- readT etyp
+    DynTerm tbody body <- typecheck ebody (VarDesc ta name, gamma)
+    pure (DynTerm (tarr ta tbody) (lam body))
+typecheck (Node "App" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- typecheck e1 gamma
+    DynTerm (TQ t2) d2 <- typecheck e2 gamma
+    AsArrow _ arrCast <- pure $ asArrow t1
+    let errArr = fail $ "operator type is not an arrow: " ++ viewTy t1
+    ((ta,tb),equT1ab) <- maybe errArr pure arrCast
+    let df = equCast equT1ab d1
+    case safeGCast (TQ t2) d2 ta of
+        Just da -> pure (DynTerm tb (app df da))
+        _ -> fail (unwords [ "Bad types of the application:"
+                           , viewTy t1
+                           , "and"
+                           , viewTy t2
+                           ])
 typecheck e _ = fail $ "Invalid Tree: " ++ show e
