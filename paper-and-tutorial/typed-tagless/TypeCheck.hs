@@ -11,6 +11,8 @@ data Tree
   | Node String [Tree]
     deriving (Eq, Read, Show)
 
+-- DynTerm is a pair of quantified type representation, and a representation
+-- of an expression of that type
 data DynTerm repr h = forall a. DynTerm (TQ a) (repr h a)
 
 type VarName = String
@@ -46,24 +48,34 @@ typecheck (Node "Int" [Leaf str]) _ =
     case reads str of
         -- parse "str" as an Int, consuming it all.
         [(n,[])] -> pure (DynTerm tint (int n))
-        _ -> fail $ "Bad Int literal: " ++ str
-typecheck (Node "Var" [Leaf name]) gamma = findVar name gamma
+        _ -> Left $ "Bad Int literal: " ++ str
+typecheck (Node "Var" [Leaf name]) gamma =
+    -- relying on instances of "Var gamma h" to resolve this.
+    findVar name gamma
 typecheck (Node "Lam" [Leaf name, etyp, ebody]) gamma = do
+    -- lam (variable "name" of type "etyp") (expression body "ebody")
     Typ ta <- readT etyp
+    -- parse and typecheck body of the function using extended "gamma"
     DynTerm tbody body <- typecheck ebody (VarDesc ta name, gamma)
     pure (DynTerm (tarr ta tbody) (lam body))
 typecheck (Node "App" [e1, e2]) gamma = do
+    -- typecheck "d1" of type "t1", and "d2" of type "t2"
     DynTerm (TQ t1) d1 <- typecheck e1 gamma
     DynTerm (TQ t2) d2 <- typecheck e2 gamma
-    AsArrow _ arrCast <- pure $ asArrow t1
-    let errArr = fail $ "operator type is not an arrow: " ++ viewTy t1
-    ((ta,tb),equT1ab) <- maybe errArr pure arrCast
-    let df = equCast equT1ab d1
-    case safeGCast (TQ t2) d2 ta of
-        Just da -> pure (DynTerm tb (app df da))
-        _ -> fail (unwords [ "Bad types of the application:"
-                           , viewTy t1
-                           , "and"
-                           , viewTy t2
-                           ])
-typecheck e _ = fail $ "Invalid Tree: " ++ show e
+    -- destruct t1 exposing the proof of equality
+    case t1 of
+        AsArrow _ arrCast ->
+            case arrCast of
+                Nothing -> Left $ "operator type is not an arrow: " ++ viewTy t1
+                -- on successful destruction
+                Just ((ta,tb),equT1ab) ->
+                    case safeGCast (TQ t2) d2 ta of
+                        Just da ->
+                            pure $ let df = equCast equT1ab d1
+                                   in DynTerm tb (app df da)
+                        _ -> Left (unwords [ "Bad types of the application:"
+                                           , viewTy t1
+                                           , "and"
+                                           , viewTy t2
+                                           ])
+typecheck e _ = Left $ "Invalid Tree: " ++ show e
