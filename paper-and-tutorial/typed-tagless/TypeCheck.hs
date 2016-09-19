@@ -43,7 +43,7 @@ readT (Node "TArr" [e1,e2]) = do
     Typ t1 <- readT e1
     Typ t2 <- readT e2
     pure $ Typ $ tarr t1 t2
-readT tree = fail $ "Bad type expression: " ++ show tree
+readT tree = Left $ "Bad type expression: " ++ show tree
 
 typecheck :: (Semantics repr, Var gamma h) =>
              Tree -> gamma -> Either String (DynTerm repr h)
@@ -87,4 +87,21 @@ txView t = case t of
     Right (DynTerm _ t') -> view t'
     Left err -> "Error: " ++ err
 
-tx1 = typecheck (Node "Var" [Leaf "x"]) ()
+-- unbound
+tx1 =
+    typecheck
+      (Node "Var" [Leaf "x"]) ()
+
+-- should pass
+tx2 =
+    typecheck
+      (Node "Lam" [Leaf "x", Node "TInt" [],
+                   Node "Var" [Leaf "x"]]) ()
+
+-- should pass
+tx3 =
+    typecheck
+      (Node "Lam" [Leaf "x", Node "TInt" [],
+                   Node "Lam" [Leaf "y", Node "TInt" [],
+                               Node "Add" [Node "Int" [Leaf "10"],
+                                           Node "Var" [Leaf "x"]]]]) ()
