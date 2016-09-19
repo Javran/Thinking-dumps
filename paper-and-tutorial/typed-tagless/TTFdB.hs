@@ -61,3 +61,6 @@ instance Semantics S where
         in "(\\" ++ x ++ " -> " ++ unS e (h+1) ++ ")"
     app e1 e2 = S $ \h ->
         "(" ++ unS e1 h ++ " " ++ unS e2 h ++ ")"
+
+view :: S () a -> String
+view e = unS e 0
