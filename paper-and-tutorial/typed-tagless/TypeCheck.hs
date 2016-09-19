@@ -1,5 +1,5 @@
 {-# LANGUAGE ExistentialQuantification, MultiParamTypeClasses, FunctionalDependencies #-}
-{-# LANGUAGE FlexibleInstances, UndecidableInstances #-}
+{-# LANGUAGE FlexibleInstances, UndecidableInstances, NoMonomorphismRestriction #-}
 module TypeCheck where
 
 import Typ
@@ -24,7 +24,10 @@ class Var gamma h | gamma -> h where
                VarName -> gamma -> Either String (DynTerm repr h)
 
 instance Var () () where
-    findVar name _ = fail $ "Unbound variable: " ++ name
+    -- not sure why, but a use of "fail" here lead to run time exception
+    -- instead of capturing the exception inside, so I guess a "Left" will do
+    -- the right thing.
+    findVar name _ = Left $ "Unbound variable: " ++ name
 
 -- TODO: to allow this instance we need to have "UndecidableInstances",
 -- I'm wondering what does it do?
@@ -79,3 +82,9 @@ typecheck (Node "App" [e1, e2]) gamma = do
                                            , viewTy t2
                                            ])
 typecheck e _ = Left $ "Invalid Tree: " ++ show e
+
+txView t = case t of
+    Right (DynTerm _ t') -> view t'
+    Left err -> "Error: " ++ err
+
+tx1 = typecheck (Node "Var" [Leaf "x"]) ()
