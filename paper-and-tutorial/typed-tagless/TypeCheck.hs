@@ -52,6 +52,13 @@ typecheck (Node "Int" [Leaf str]) _ =
         -- parse "str" as an Int, consuming it all.
         [(n,[])] -> pure (DynTerm tint (int n))
         _ -> Left $ "Bad Int literal: " ++ str
+typecheck (Node "Add" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- typecheck e1 gamma
+    DynTerm (TQ t2) d2 <- typecheck e2 gamma
+    case (asInt t1 d1, asInt t2 d2) of
+        (Just t1', Just t2') -> pure (DynTerm tint $ add t1' t2')
+        (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
+        (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
 typecheck (Node "Var" [Leaf name]) gamma =
     -- relying on instances of "Var gamma h" to resolve this.
     findVar name gamma
@@ -83,9 +90,12 @@ typecheck (Node "App" [e1, e2]) gamma = do
                                            ])
 typecheck e _ = Left $ "Invalid Tree: " ++ show e
 
+txView :: Either String (DynTerm S ()) -> String
 txView t = case t of
     Right (DynTerm _ t') -> view t'
     Left err -> "Error: " ++ err
+
+tx1, tx2, tx3 :: Semantics repr => Either String (DynTerm repr ())
 
 -- unbound
 tx1 =
