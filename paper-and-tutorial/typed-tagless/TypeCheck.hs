@@ -136,4 +136,5 @@ tcEvalView tree = do
     -- make it explicit that this is polymorphic indeed
     let d' = unCL d :: forall repr. Semantics repr => repr () a
     -- show type and the expression itself
-    pure (showAs tr (eval d'), view d')
+    -- (the type signature is optional, just to make things more explicit to see)
+    pure (showAs tr (eval (d' :: R () a)), view (d' :: S () a))
