@@ -174,3 +174,17 @@ tdnEval2 :: Dynamic -> Int -> Int -> Maybe String
 tdnEval2 (Dynamic tr d) x y = do
     Id f <- safeGCast tr (Id d) tt2
     pure (show (f x y))
+
+data ShowAs a = ShowAs (TQ a) (a -> String)
+
+instance TSYM ShowAs where
+    tint = ShowAs tint show
+    tarr (ShowAs t1 _) (ShowAs t2 _) =
+        ShowAs t (\_ -> "<function of the type " ++
+                        viewTy (unTQ t) ++ ">")
+      where
+        t = tarr t1 t2
+
+showAs :: TQ a -> a -> String
+showAs tr a = case unTQ tr of
+    ShowAs _ f -> f a
