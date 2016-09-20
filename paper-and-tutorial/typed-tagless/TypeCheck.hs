@@ -1,5 +1,6 @@
 {-# LANGUAGE ExistentialQuantification, MultiParamTypeClasses, FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances, UndecidableInstances, NoMonomorphismRestriction #-}
+{-# LANGUAGE RankNTypes #-}
 module TypeCheck where
 
 import Typ
@@ -115,3 +116,17 @@ tx3 =
                    Node "Lam" [Leaf "y", Node "TInt" [],
                                Node "Add" [Node "Int" [Leaf "10"],
                                            Node "Var" [Leaf "x"]]]]) ()
+
+newtype CL h a = CL { unCL :: forall repr. Semantics repr => repr h a }
+
+instance Semantics CL where
+    -- TODO: seems here it's difficult to simplify
+    -- the following definition to "int = CL . int"
+    -- need to find out why
+    int x = CL (int x)
+    add e1 e2 = CL (add (unCL e1) (unCL e2))
+    z = CL z
+    s v = CL (s (unCL v))
+    lam e = CL (lam (unCL e))
+    app e1 e2 = CL (unCL e1 `app` unCL e2)
+
