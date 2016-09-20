@@ -1,6 +1,6 @@
 {-# LANGUAGE ExistentialQuantification, MultiParamTypeClasses, FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances, UndecidableInstances, NoMonomorphismRestriction #-}
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RankNTypes, ScopedTypeVariables #-}
 module TypeCheck where
 
 import Typ
@@ -130,3 +130,10 @@ instance Semantics CL where
     lam e = CL (lam (unCL e))
     app e1 e2 = CL (unCL e1 `app` unCL e2)
 
+tcEvalView :: Tree -> Either String (String, String)
+tcEvalView tree = do
+    DynTerm (tr :: TQ a) d <- typecheck tree ()
+    -- make it explicit that this is polymorphic indeed
+    let d' = unCL d :: forall repr. Semantics repr => repr () a
+    -- show type and the expression itself
+    pure (showAs tr (eval d'), view d')
