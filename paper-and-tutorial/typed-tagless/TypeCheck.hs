@@ -147,3 +147,34 @@ tcEvalView tree = do
     -- show type and the expression itself
     -- (the type signature is optional, just to make things more explicit to see)
     pure (showAs tr (eval (d' :: R () a)), view (d' :: S () a))
+
+class SemanticsMul repr where
+    mul :: repr h Int -> repr h Int -> repr h Int
+
+instance SemanticsMul R where
+    mul e1 e2 = R $ \h -> unR e1 h * unR e2 h
+
+instance SemanticsMul S where
+    mul e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ "*" ++ unS e2 h ++ ")"
+
+{-
+-- because CL has contained "Semantics repr" constraint inside of it,
+-- the following one is not going to work...
+instance SemanticsMul CL where
+    mul e1 e2 = CL (unCL e1 `mul` unCL e2)
+-}
+typecheckMulExt :: forall repr. (Semantics repr, SemanticsMul repr) =>
+                OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
+typecheckMulExt self (Node "Add" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
+    case (asInt t1 d1, asInt t2 d2) of
+        (Just t1', Just t2') -> pure (DynTerm tint $ mul t1' t2')
+        (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
+        (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
+typecheckMulExt self e gamma = typecheckExt self e gamma
+
+typecheckMul :: forall repr gamma h. (Semantics repr, SemanticsMul repr, Var gamma h)
+                => TypeCheck repr gamma h
+typecheckMul = typecheckMulExt typecheckMul
