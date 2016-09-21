@@ -1,10 +1,11 @@
 {-# LANGUAGE ExistentialQuantification, MultiParamTypeClasses, FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances, UndecidableInstances, NoMonomorphismRestriction #-}
-{-# LANGUAGE RankNTypes, ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes, ScopedTypeVariables, LiberalTypeSynonyms #-}
 module TypeCheck where
 
 import Typ
 import TTFdB
+import Data.Function
 
 -- the data structure we'll be serializing from and to.
 data Tree
@@ -46,33 +47,35 @@ readT (Node "TArr" [e1,e2]) = do
     pure $ Typ $ tarr t1 t2
 readT tree = Left $ "Bad type expression: " ++ show tree
 
-typecheck :: (Semantics repr, Var gamma h) =>
-             Tree -> gamma -> Either String (DynTerm repr h)
-typecheck (Node "Int" [Leaf str]) _ =
+
+typecheckExt :: forall repr. (Semantics repr) =>
+                (forall gamma h. Var gamma h => Tree -> gamma -> Either String (DynTerm repr h))
+                -> (forall gamma h. Var gamma h => Tree -> gamma -> Either String (DynTerm repr h))
+typecheckExt _ (Node "Int" [Leaf str]) _ =
     case reads str of
         -- parse "str" as an Int, consuming it all.
         [(n,[])] -> pure (DynTerm tint (int n))
         _ -> Left $ "Bad Int literal: " ++ str
-typecheck (Node "Add" [e1, e2]) gamma = do
-    DynTerm (TQ t1) d1 <- typecheck e1 gamma
-    DynTerm (TQ t2) d2 <- typecheck e2 gamma
+typecheckExt self (Node "Add" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
     case (asInt t1 d1, asInt t2 d2) of
         (Just t1', Just t2') -> pure (DynTerm tint $ add t1' t2')
         (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
         (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
-typecheck (Node "Var" [Leaf name]) gamma =
+typecheckExt _ (Node "Var" [Leaf name]) gamma =
     -- relying on instances of "Var gamma h" to resolve this.
     findVar name gamma
-typecheck (Node "Lam" [Leaf name, etyp, ebody]) gamma = do
+typecheckExt self (Node "Lam" [Leaf name, etyp, ebody]) gamma = do
     -- lam (variable "name" of type "etyp") (expression body "ebody")
     Typ ta <- readT etyp
     -- parse and typecheck body of the function using extended "gamma"
-    DynTerm tbody body <- typecheck ebody (VarDesc ta name, gamma)
+    DynTerm tbody body <- self ebody (VarDesc ta name, gamma)
     pure (DynTerm (tarr ta tbody) (lam body))
-typecheck (Node "App" [e1, e2]) gamma = do
+typecheckExt self (Node "App" [e1, e2]) gamma = do
     -- typecheck "d1" of type "t1", and "d2" of type "t2"
-    DynTerm (TQ t1) d1 <- typecheck e1 gamma
-    DynTerm (TQ t2) d2 <- typecheck e2 gamma
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
     -- destruct t1 exposing the proof of equality
     case t1 of
         AsArrow _ arrCast ->
@@ -89,7 +92,7 @@ typecheck (Node "App" [e1, e2]) gamma = do
                                            , "and"
                                            , viewTy t2
                                            ])
-typecheck e _ = Left $ "Invalid Tree: " ++ show e
+typecheckExt _ e _ = Left $ "Invalid Tree: " ++ show e
 
 txView :: Either String (DynTerm S ()) -> String
 txView t = case t of
