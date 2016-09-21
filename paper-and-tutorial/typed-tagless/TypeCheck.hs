@@ -5,7 +5,6 @@ module TypeCheck where
 
 import Typ
 import TTFdB
-import Data.Function
 
 -- the data structure we'll be serializing from and to.
 data Tree
@@ -47,10 +46,17 @@ readT (Node "TArr" [e1,e2]) = do
     pure $ Typ $ tarr t1 t2
 readT tree = Left $ "Bad type expression: " ++ show tree
 
+-- Data.Function.fix does not work here.
+-- not sure the exact problem, but most likely it has something to do with
+-- type quantification.
+typecheck :: forall repr gamma h. (Semantics repr, Var gamma h) => TypeCheck repr gamma h
+typecheck = typecheckExt typecheck
+
+type TypeCheck repr gamma h = Tree -> gamma -> Either String (DynTerm repr h)
+type OpenRecursive a = a -> a
 
 typecheckExt :: forall repr. (Semantics repr) =>
-                (forall gamma h. Var gamma h => Tree -> gamma -> Either String (DynTerm repr h))
-                -> (forall gamma h. Var gamma h => Tree -> gamma -> Either String (DynTerm repr h))
+                OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
 typecheckExt _ (Node "Int" [Leaf str]) _ =
     case reads str of
         -- parse "str" as an Int, consuming it all.
