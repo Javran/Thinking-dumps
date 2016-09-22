@@ -128,6 +128,13 @@ tx3 =
 
 newtype CL h a = CL { unCL :: forall repr. Semantics repr => repr h a }
 
+{-
+  for me it seems the purpose of having "CL" is to keep it polymorphic
+  so that more than one "more specific" type can match it and do things
+  accordingly. (see tcEvalView for example, in which destructing "d :: CL _ _"
+  yields "d :: forall repr. Semantics repr => repr () a" which can then
+  be matched against both "view" and "eval" and down to specific types
+-}
 instance Semantics CL where
     -- TODO: seems here it's difficult to simplify
     -- the following definition to "int = CL . int"
@@ -163,6 +170,7 @@ instance SemanticsMul S where
 -- the following one is not going to work...
 instance SemanticsMul CL where
     mul e1 e2 = CL (unCL e1 `mul` unCL e2)
+-- unless we modify the constraint inside of CL.
 -}
 typecheckMulExt :: forall repr. (Semantics repr, SemanticsMul repr) =>
                 OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
