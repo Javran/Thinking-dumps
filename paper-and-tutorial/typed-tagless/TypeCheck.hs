@@ -126,7 +126,8 @@ tx3 =
                                Node "Add" [Node "Int" [Leaf "10"],
                                            Node "Var" [Leaf "x"]]]]) ()
 
-newtype CL h a = CL { unCL :: forall repr. Semantics repr => repr h a }
+newtype CL h a = CL
+  { unCL :: forall repr. (Semantics repr, SemanticsMul repr) => repr h a }
 
 {-
   for me it seems the purpose of having "CL" is to keep it polymorphic
@@ -146,11 +147,13 @@ instance Semantics CL where
     lam e = CL (lam (unCL e))
     app e1 e2 = CL (unCL e1 `app` unCL e2)
 
+-- modified to accept "mul", this should be a superset of the existing
+-- language, and old code should work as expected
 tcEvalView :: Tree -> Either String (String, String)
 tcEvalView tree = do
-    DynTerm (tr :: TQ a) d <- typecheck tree ()
+    DynTerm (tr :: TQ a) d <- typecheckMul tree ()
     -- make it explicit that this is polymorphic indeed
-    let d' = unCL d :: forall repr. Semantics repr => repr () a
+    let d' = unCL d :: forall repr. (Semantics repr, SemanticsMul repr) => repr () a
     -- show type and the expression itself
     -- (the type signature is optional, just to make things more explicit to see)
     pure (showAs tr (eval (d' :: R () a)), view (d' :: S () a))
@@ -165,6 +168,11 @@ instance SemanticsMul S where
     mul e1 e2 = S $ \h ->
         "(" ++ unS e1 h ++ "*" ++ unS e2 h ++ ")"
 
+instance SemanticsMul CL where
+    -- it's the same as using "unCL" to destruct it
+    -- just want to try out.
+    mul (CL e1) (CL e2) = CL (e1 `mul` e2)
+
 {-
 -- because CL has contained "Semantics repr" constraint inside of it,
 -- the following one is not going to work...
@@ -174,7 +182,7 @@ instance SemanticsMul CL where
 -}
 typecheckMulExt :: forall repr. (Semantics repr, SemanticsMul repr) =>
                 OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
-typecheckMulExt self (Node "Add" [e1, e2]) gamma = do
+typecheckMulExt self (Node "Mul" [e1, e2]) gamma = do
     DynTerm (TQ t1) d1 <- self e1 gamma
     DynTerm (TQ t2) d2 <- self e2 gamma
     case (asInt t1 d1, asInt t2 d2) of
