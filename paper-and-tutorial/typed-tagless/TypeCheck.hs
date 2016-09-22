@@ -194,3 +194,40 @@ typecheckMulExt self e gamma = typecheckExt self e gamma
 typecheckMul :: forall repr gamma h. (Semantics repr, SemanticsMul repr, Var gamma h)
                 => TypeCheck repr gamma h
 typecheckMul = typecheckMulExt typecheckMul
+
+class SemanticsBool repr where
+    bool :: Bool -> repr h Bool
+    leq :: repr h Int -> repr h Int -> repr h Bool
+    bNot :: repr h Bool -> repr h Bool
+    -- implement "bNot" and at least one of "bAnd" or "bOr"
+    -- to have a full implementation
+    bAnd :: repr h Bool -> repr h Bool -> repr h Bool
+    bAnd e1 e2 = bNot $ bNot e1 `bOr` bNot e2
+    bOr :: repr h Bool -> repr h Bool -> repr h Bool
+    bOr e1 e2 = bNot $ bNot e1 `bAnd` bNot e2
+
+    if_ :: repr h Bool -> repr h a -> repr h a -> repr h a
+
+instance SemanticsBool S where
+    bool x = S $ \_ -> show x
+    leq eL eR = S $ \h ->
+        "(" ++ unS eL h ++ "<=" ++ unS eR h ++ ")"
+    bNot e = S $ \h -> "(not " ++ unS e h ++ ")"
+    bAnd e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ "&&" ++ unS e2 h ++ ")"
+    bOr e1 e2 = S $ \h ->
+        "(" ++ unS e1 h ++ "||" ++ unS e2 h ++ ")"
+    if_ eCond eThen eElse = S $ \h ->
+        "if " ++ unS eCond h ++
+        " then " ++ unS eThen h ++
+        " else " ++ unS eElse h
+
+instance SemanticsBool R where
+    bool x = R $ const x
+    leq eL eR = R $ \h -> unR eL h <= unR eR h
+    bNot e = R $ \h -> not (unR e h)
+    bAnd e1 e2 = R $ \h -> unR e1 h && unR e2 h
+    bOr e1 e2 = R $ \h -> unR e1 h || unR e2 h
+    if_ eCond eThen eElse = R $ \h ->
+        let selected = if unR eCond h then eThen else eElse
+        in unR selected h
