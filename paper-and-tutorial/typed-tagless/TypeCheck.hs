@@ -211,12 +211,12 @@ class SemanticsBool repr where
 instance SemanticsBool S where
     bool x = S $ \_ -> show x
     leq eL eR = S $ \h ->
-        "(" ++ unS eL h ++ "<=" ++ unS eR h ++ ")"
+        "(" ++ unS eL h ++ " <= " ++ unS eR h ++ ")"
     bNot e = S $ \h -> "(not " ++ unS e h ++ ")"
     bAnd e1 e2 = S $ \h ->
-        "(" ++ unS e1 h ++ "&&" ++ unS e2 h ++ ")"
+        "(" ++ unS e1 h ++ " && " ++ unS e2 h ++ ")"
     bOr e1 e2 = S $ \h ->
-        "(" ++ unS e1 h ++ "||" ++ unS e2 h ++ ")"
+        "(" ++ unS e1 h ++ " || " ++ unS e2 h ++ ")"
     if_ eCond eThen eElse = S $ \h ->
         "if " ++ unS eCond h ++
         " then " ++ unS eThen h ++
