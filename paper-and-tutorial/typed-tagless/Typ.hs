@@ -10,6 +10,7 @@ module Typ where
 -}
 class TSYM trepr where
     tint :: trepr Int
+    tbool :: trepr Bool
     tarr :: trepr a -> trepr b -> trepr (a -> b)
 
 -- "ShowT a" is for printing types out
@@ -17,6 +18,7 @@ newtype ShowT a = ShowT String
 
 instance TSYM ShowT where
     tint = ShowT "Int"
+    tbool = ShowT "Bool"
     tarr (ShowT a) (ShowT b) = ShowT $ "(" ++ a ++ "->" ++ b ++ ")"
 
 viewTy :: ShowT a -> String
@@ -27,6 +29,7 @@ newtype TQ t = TQ { unTQ :: forall trepr. TSYM trepr => trepr t }
 
 instance TSYM TQ where
     tint = TQ tint
+    tbool = TQ tbool
     tarr (TQ a) (TQ b) = TQ (tarr a b)
 
 data Typ = forall t. Typ (TQ t)
@@ -64,17 +67,30 @@ data AsInt a = AsInt (Maybe (EQU a Int))
 
 instance TSYM AsInt where
     tint = AsInt $ Just refl
+    tbool = AsInt Nothing
     tarr _ _ = AsInt Nothing
 
 asInt :: AsInt a -> c a -> Maybe (c Int)
 asInt (AsInt (Just equ)) r = Just $ equCast equ r
 asInt _ _ = Nothing
 
+data AsBool a = AsBool (Maybe (EQU a Bool))
+
+instance TSYM AsBool where
+    tint = AsBool Nothing
+    tbool = AsBool $ Just refl
+    tarr _ _ = AsBool Nothing
+
+asBool :: AsBool a -> c a -> Maybe (c Bool)
+asBool (AsBool (Just equ)) r = Just (equCast equ r)
+asBool _ _ = Nothing
+
 data AsArrow a =
     forall b1 b2. AsArrow (TQ a) (Maybe ((TQ b1,TQ b2), EQU a (b1 -> b2)))
 
 instance TSYM AsArrow where
     tint = AsArrow tint Nothing
+    tbool = AsArrow tbool Nothing
     tarr (AsArrow t1 _) (AsArrow t2 _) =
         AsArrow (tarr t1 t2) $ Just ((t1,t2),refl)
 
@@ -87,7 +103,9 @@ instance TSYM SafeCast where
     tint = SafeCast $ \tb ->
         case unTQ tb of
             AsInt eq -> fmap symm eq
-
+    tbool = SafeCast $ \tb ->
+        case unTQ tb of
+            AsBool eq -> fmap symm eq
     tarr (SafeCast t1) (SafeCast t2) = SafeCast $ \tb -> do
         AsArrow _ (Just ((b1,b2),equBb1b2)) <- pure (asArrow (unTQ tb))
         equT1b1 <- t1 b1
@@ -157,6 +175,7 @@ data TCOPY trep1 trep2 a = TCOPY (trep1 a) (trep2 a)
 -}
 instance (TSYM trep1, TSYM trep2) => TSYM (TCOPY trep1 trep2) where
     tint = TCOPY tint tint
+    tbool = TCOPY tbool tbool
     tarr (TCOPY a1 a2) (TCOPY b1 b2) = TCOPY (a1 `tarr` b1) (a2 `tarr` b2)
 
 newtype Id a = Id a
@@ -179,6 +198,7 @@ data ShowAs a = ShowAs (TQ a) (a -> String)
 
 instance TSYM ShowAs where
     tint = ShowAs tint show
+    tbool = ShowAs tbool show
     tarr (ShowAs t1 _) (ShowAs t2 _) =
         ShowAs t (\_ -> "<function of the type " ++
                         viewTy (unTQ t) ++ ">")
