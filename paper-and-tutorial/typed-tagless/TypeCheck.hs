@@ -127,7 +127,9 @@ tx3 =
                                            Node "Var" [Leaf "x"]]]]) ()
 
 newtype CL h a = CL
-  { unCL :: forall repr. (Semantics repr, SemanticsMul repr) => repr h a }
+  { unCL :: forall repr. ( Semantics repr
+                         , SemanticsMul repr
+                         , SemanticsBool repr) => repr h a }
 
 {-
   for me it seems the purpose of having "CL" is to keep it polymorphic
@@ -153,7 +155,9 @@ tcEvalView :: Tree -> Either String (String, String)
 tcEvalView tree = do
     DynTerm (tr :: TQ a) d <- typecheckMul tree ()
     -- make it explicit that this is polymorphic indeed
-    let d' = unCL d :: forall repr. (Semantics repr, SemanticsMul repr) => repr () a
+    let d' = unCL d :: forall repr. ( Semantics repr
+                                    , SemanticsMul repr
+                                    , SemanticsBool repr) => repr () a
     -- show type and the expression itself
     -- (the type signature is optional, just to make things more explicit to see)
     pure (showAs tr (eval (d' :: R () a)), view (d' :: S () a))
@@ -231,3 +235,11 @@ instance SemanticsBool R where
     if_ eCond eThen eElse = R $ \h ->
         let selected = if unR eCond h then eThen else eElse
         in unR selected h
+
+instance SemanticsBool CL where
+    bool x = CL (bool x)
+    leq (CL e1) (CL e2) = CL (e1 `leq` e2)
+    bNot (CL e) = CL (bNot e)
+    bAnd (CL e1) (CL e2) = CL (e1 `bAnd` e2)
+    bOr (CL e1) (CL e2) = CL (e1 `bOr` e2)
+    if_ (CL eC) (CL eT) (CL eE) = CL (if_ eC eT eE)
