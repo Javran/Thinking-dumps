@@ -6,6 +6,8 @@ module TypeCheck where
 import Typ
 import TTFdB
 
+{-# ANN module "HLint: ignore Eta reduce" #-}
+
 -- the data structure we'll be serializing from and to.
 data Tree
   = Leaf String
@@ -40,6 +42,7 @@ instance Var gamma h => Var (VarDesc t, gamma) (t,h) where
 
 readT :: Tree -> Either String Typ
 readT (Node "TInt" []) = pure $ Typ tint
+readT (Node "TBool" []) = pure $ Typ tbool
 readT (Node "TArr" [e1,e2]) = do
     Typ t1 <- readT e1
     Typ t2 <- readT e2
@@ -243,3 +246,11 @@ instance SemanticsBool CL where
     bAnd (CL e1) (CL e2) = CL (e1 `bAnd` e2)
     bOr (CL e1) (CL e2) = CL (e1 `bOr` e2)
     if_ (CL eC) (CL eT) (CL eE) = CL (if_ eC eT eE)
+
+typecheckBoolExt :: forall repr.
+                    ( Semantics repr
+                    , SemanticsMul repr
+                    , SemanticsBool repr ) =>
+                OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
+-- TODO: bool leq bNot bAnd bOr if_
+typecheckBoolExt self e gamma = typecheckExt self e gamma
