@@ -287,18 +287,19 @@ typecheckBoolExt self (Node "Or" [e1, e2]) gamma = do
         (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
 typecheckBoolExt self (Node "If" [eCond, eThen, eElse]) gamma = do
     DynTerm (TQ tCond) dCond <- self eCond gamma
-    DynTerm (TQ tThen) dThen <- self eThen gamma
-    DynTerm (TQ tElse) dElse <- self eElse gamma
-    -- by safeGCast dThen to get dThen'
-    -- we are persuading the type system "dThen'" and "dElse" is of the same type
-    -- (despite that "dThen"'s type might not unify
-    -- with that of "dElse" because of the quantification)
-    case safeGCast (TQ tThen) dThen (TQ tElse) of
-        Just dThen' ->
-            case asBool tCond dCond of
-                Just tC -> pure (DynTerm tElse (if_ tC dThen' dElse))
-                Nothing -> Left $ "Bad type of condition expr: " ++ viewTy tCond
-        Nothing -> Left $ "Type mismatch on 2 branches: "
-                     ++ viewTy tThen
-                     ++ " vs. " ++ viewTy tElse
+    -- eagerly make sure the condition is indeed a bool
+    case asBool tCond dCond of
+        Nothing -> Left $ "Bad type of condition expr: " ++ viewTy tCond
+        Just tC -> do
+            DynTerm (TQ tThen) dThen <- self eThen gamma
+            DynTerm (TQ tElse) dElse <- self eElse gamma
+            -- by safeGCast dThen to get dThen'
+            -- we are persuading the type system "dThen'" and "dElse" is of the same type
+            -- (despite that "dThen"'s type might not unify
+            -- with that of "dElse" because of the quantification)
+            case safeGCast (TQ tThen) dThen (TQ tElse) of
+                Just dThen' -> pure (DynTerm tElse (if_ tC dThen' dElse))
+                Nothing -> Left $ "Type mismatch on 2 branches: "
+                               ++ viewTy tThen
+                               ++ " vs. " ++ viewTy tElse
 typecheckBoolExt self e gamma = typecheckExt self e gamma
