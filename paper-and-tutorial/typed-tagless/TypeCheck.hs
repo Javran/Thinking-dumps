@@ -252,5 +252,37 @@ typecheckBoolExt :: forall repr.
                     , SemanticsMul repr
                     , SemanticsBool repr ) =>
                 OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
--- TODO: bool leq bNot bAnd bOr if_
+-- TODO: if_
+typecheckBoolExt _ (Node "Bool" [Leaf str]) _ = do
+    result <- case str of
+        "t" -> Right True
+        "f" -> Right False
+        _ -> Left "boolean literal must be one of 't' or 'f'"
+    pure (DynTerm tbool (bool result))
+typecheckBoolExt self (Node "Leq" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
+    case (asInt t1 d1, asInt t2 d2) of
+        (Just t1', Just t2') -> pure (DynTerm tbool $ leq t1' t2')
+        (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
+        (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
+typecheckBoolExt self (Node "Not" [e]) gamma = do
+    DynTerm (TQ t) d <- self e gamma
+    case asBool t d of
+        Just t' -> pure (DynTerm tbool $ bNot t')
+        Nothing -> Left $ "Bad type of the subexpression: " ++ viewTy t
+typecheckBoolExt self (Node "And" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
+    case (asBool t1 d1, asBool t2 d2) of
+        (Just t1', Just t2') -> pure (DynTerm tbool $ bAnd t1' t2')
+        (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
+        (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
+typecheckBoolExt self (Node "Or" [e1, e2]) gamma = do
+    DynTerm (TQ t1) d1 <- self e1 gamma
+    DynTerm (TQ t2) d2 <- self e2 gamma
+    case (asBool t1 d1, asBool t2 d2) of
+        (Just t1', Just t2') -> pure (DynTerm tbool $ bOr t1' t2')
+        (Nothing, _) -> Left $ "Bad type of a left summand " ++ viewTy t1
+        (_, Nothing) -> Left $ "Bad type of a right summand " ++ viewTy t2
 typecheckBoolExt self e gamma = typecheckExt self e gamma
