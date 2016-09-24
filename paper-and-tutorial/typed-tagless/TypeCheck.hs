@@ -303,3 +303,17 @@ typecheckBoolExt self (Node "If" [eCond, eThen, eElse]) gamma = do
                                ++ viewTy tThen
                                ++ " vs. " ++ viewTy tElse
 typecheckBoolExt self e gamma = typecheckExt self e gamma
+
+ttExt1, ttExt2 :: Tree
+ttExt1 =
+    Node "And" [ Node "Bool" [Leaf "t"]
+               , Node "Bool" [Leaf "f"]
+               ]
+
+ttExt2 =
+    Node "Mul" [ Node "Int" [Leaf "2"]
+               , Node "If" [ Node "Bool" [Leaf "t"]
+                           , Node "Int" [Leaf "10"]
+                           , Node "Int" [Leaf "20"]
+                           ]]
+
