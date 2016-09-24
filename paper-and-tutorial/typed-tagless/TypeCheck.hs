@@ -252,7 +252,6 @@ typecheckBoolExt :: forall repr.
                     , SemanticsMul repr
                     , SemanticsBool repr ) =>
                 OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
--- TODO: if_
 typecheckBoolExt _ (Node "Bool" [Leaf str]) _ = do
     result <- case str of
         "t" -> Right True
@@ -303,6 +302,14 @@ typecheckBoolExt self (Node "If" [eCond, eThen, eElse]) gamma = do
                                ++ viewTy tThen
                                ++ " vs. " ++ viewTy tElse
 typecheckBoolExt self e gamma = typecheckExt self e gamma
+
+typecheckBool :: forall repr gamma h.
+                 ( Semantics repr
+                 , SemanticsMul repr
+                 , SemanticsBool repr
+                 , Var gamma h)
+                => TypeCheck repr gamma h
+typecheckBool = typecheckBoolExt typecheckBool
 
 ttExt1, ttExt2 :: Tree
 ttExt1 =
