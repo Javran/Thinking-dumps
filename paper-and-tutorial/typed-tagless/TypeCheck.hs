@@ -156,7 +156,7 @@ instance Semantics CL where
 -- language, and old code should work as expected
 tcEvalView :: Tree -> Either String (String, String)
 tcEvalView tree = do
-    DynTerm (tr :: TQ a) d <- typecheckMul tree ()
+    DynTerm (tr :: TQ a) d <- typecheckBool tree ()
     -- make it explicit that this is polymorphic indeed
     let d' = unCL d :: forall repr. ( Semantics repr
                                     , SemanticsMul repr
@@ -301,7 +301,9 @@ typecheckBoolExt self (Node "If" [eCond, eThen, eElse]) gamma = do
                 Nothing -> Left $ "Type mismatch on 2 branches: "
                                ++ viewTy tThen
                                ++ " vs. " ++ viewTy tElse
-typecheckBoolExt self e gamma = typecheckExt self e gamma
+-- what we are extending is really important here, "typecheckExt" extends
+-- the original one while "typecheckMulExt" extends the previous one with "Mul"
+typecheckBoolExt self e gamma = typecheckMulExt self e gamma
 
 typecheckBool :: forall repr gamma h.
                  ( Semantics repr
