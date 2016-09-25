@@ -326,14 +326,31 @@ ttExt2 =
                            , Node "Int" [Leaf "20"]
                            ]]
 
--- for now I'm not sure whether this would work,
--- but let's find out.
 class SemanticsFix repr where
+    -- to make sense of the signature:
+    -- with "sFix" we offer a context that has "z" being something of type "a->b"
+    -- for our recursive calls, and the whole thing can still be a function of type "a->b"
+    -- in the language
     sFix :: repr (a->b,h) (a->b) -> repr h (a->b)
 
 instance SemanticsFix R where
     sFix (R f) = R $ \h -> let y x = f (y,h) x in y
 
+{-
+
+given an non-negative number "x", this returns 10 times of "x"
+
+the equivalent Haskell function is:
+
+mul10' :: OpenRecursive (Int -> Int)
+mul10' v1 v0 = if v0 <= 0 then 0 else 10 + v1 (v0 + (-1))
+
+-}
+testMul10 :: forall repr h.
+             ( Semantics repr
+             , SemanticsFix repr
+             , SemanticsBool repr)
+             => repr h (Int -> Int)
 testMul10 =
     sFix $
       lam $
