@@ -333,3 +333,11 @@ class SemanticsFix repr where
 
 instance SemanticsFix R where
     sFix (R f) = R $ \h -> let y x = f (y,h) x in y
+
+testMul10 =
+    sFix $
+      lam $
+      if_
+        (z `leq` int 0)
+        (int 0)
+        (int 10 `add` (s z `app` (z `add` int (-1))))
