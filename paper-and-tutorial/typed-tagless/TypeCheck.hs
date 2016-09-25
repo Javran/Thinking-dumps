@@ -326,3 +326,10 @@ ttExt2 =
                            , Node "Int" [Leaf "20"]
                            ]]
 
+-- for now I'm not sure whether this would work,
+-- but let's find out.
+class SemanticsFix repr where
+    sFix :: repr (a->b,h) (a->b) -> repr h (a->b)
+
+instance SemanticsFix R where
+    sFix (R f) = R $ \h -> let y x = f (y,h) x in y
