@@ -382,9 +382,11 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
     DynTerm tbody body <- self ebody (VarDesc ta name, gamma)
     let resultTy = ta `tarr` ta
     case safeGCast tbody body resultTy of
-        Just body' -> undefined
+        Just body' ->
             -- having trouble getting this to typecheck:
-            -- pure (DynTerm ta (sFix body'))
+            -- definitely something like "sFix body'" should fill the
+            -- "undefined" stuff there, but that's not typechecking.
+            pure (DynTerm ta undefined)
         Nothing -> Left "type mismatch"
     -- pure (DynTerm ta (sFix _))
 typecheckFixExt self e gamma = typecheckBoolExt self e gamma
