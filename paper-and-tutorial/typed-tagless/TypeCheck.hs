@@ -368,3 +368,24 @@ instance SemanticsFix S where
     sFix (S e) = S $ \h ->
         let x = "x" ++ show h
         in "(fix \\" ++ x ++ " -> " ++ e (h+1) ++ ")"
+
+typecheckFixExt :: forall repr.
+                    ( Semantics repr
+                    , SemanticsMul repr
+                    , SemanticsBool repr
+                    , SemanticsFix repr ) =>
+                OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
+typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
+    -- self :: <some type "ta">
+    Typ ta <- readT etyp
+    -- parse and typecheck body of the function using extended "gamma"
+    DynTerm tbody body <- self ebody (VarDesc ta name, gamma)
+    let resultTy = ta `tarr` ta
+    case safeGCast tbody body resultTy of
+        Just body' -> undefined
+            -- having trouble getting this to typecheck:
+            -- pure (DynTerm ta (sFix body'))
+        Nothing -> Left "type mismatch"
+    -- pure (DynTerm ta (sFix _))
+typecheckFixExt self e gamma = typecheckBoolExt self e gamma
+
