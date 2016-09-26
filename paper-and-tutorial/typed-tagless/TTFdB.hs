@@ -57,6 +57,10 @@ instance Semantics S where
     z = S $ \h -> "x" ++ show (h-1)
     s v = S $ \h -> unS v (h-1)
     lam e = S $ \h ->
+        -- notice the fact here that we indeed bind
+        -- the pretty-printed variable to "x",
+        -- but we are not really passing "x" to another function
+        -- therefore the context carried is just the number.
         let x = "x" ++ show h
         in "(\\" ++ x ++ " -> " ++ unS e (h+1) ++ ")"
     app e1 e2 = S $ \h ->

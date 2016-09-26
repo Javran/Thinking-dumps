@@ -358,3 +358,13 @@ testMul10 =
         (z `leq` int 0)
         (int 0)
         (int 10 `add` (s z `app` (z `add` int (-1))))
+
+instance SemanticsFix S where
+    -- keep in mind that we are really just doing de Bruijn indexing here
+    -- and the pretty impl of "sFix" is just like that of "lam"
+    -- (actually it's exactly the same):
+    -- we kind of giving it a name, but we are not passing it to any other function
+    -- and we are relying just on keeping track of numbers
+    sFix (S e) = S $ \h ->
+        let x = "x" ++ show h
+        in "(fix \\" ++ x ++ " -> " ++ e (h+1) ++ ")"
