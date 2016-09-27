@@ -338,8 +338,6 @@ instance SemanticsFix R where
 
 {-
 
-{-
-
 given an non-negative number "x", this returns 10 times of "x"
 
 the equivalent Haskell function is:
@@ -355,12 +353,13 @@ testMul10 :: forall repr h.
              => repr h (Int -> Int)
 testMul10 =
     sFix $
+      \self ->
       lam $
-      if_
-        (z `leq` int 0)
-        (int 0)
-        (int 10 `add` (s z `app` (z `add` int (-1))))
+        if_ (z `leq` int 0)
+          (int 0)
+          (int 10 `add` (s self `app` (z `add` int (-1))))
 
+{-
 instance SemanticsFix S where
     -- keep in mind that we are really just doing de Bruijn indexing here
     -- and the pretty impl of "sFix" is just like that of "lam"
