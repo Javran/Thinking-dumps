@@ -329,6 +329,7 @@ ttExt2 =
 class SemanticsFix repr where
     -- "sFix" is not limited about creating recursive functions,
     -- let's if this can be handled "more properly"
+    -- TODO: we could be having some wrong type on some "h" of the following:
     sFix :: (repr h a -> repr h a) -> repr h a
 
 instance SemanticsFix R where
@@ -383,6 +384,8 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
             -- body' :: repr (t,h) (t->t)
             -- self :: repr h t
             -- TODO
+            -- TODO: probably changing "self" to something else..
+            -- as we have multiple things called "self" at the same time
             pure (DynTerm ta (sFix $ \self -> undefined))
         Nothing -> Left "type mismatch"
     -- pure (DynTerm ta (sFix _))
