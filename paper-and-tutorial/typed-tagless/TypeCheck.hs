@@ -359,17 +359,13 @@ testMul10 =
           (int 0)
           (int 10 `add` (s self `app` (z `add` int (-1))))
 
-{-
-instance SemanticsFix S where
-    -- keep in mind that we are really just doing de Bruijn indexing here
-    -- and the pretty impl of "sFix" is just like that of "lam"
-    -- (actually it's exactly the same):
-    -- we kind of giving it a name, but we are not passing it to any other function
-    -- and we are relying just on keeping track of numbers
-    sFix (S e) = S $ \h ->
-        let x = "x" ++ show h
-        in "(fix \\" ++ x ++ " -> " ++ e (h+1) ++ ")"
 
+instance SemanticsFix S where
+    sFix e = S $ \h ->
+        let self = "self" ++ show h
+        in "(fix \\" ++ self ++ " -> " ++ unS (e (S $ const self)) (succ h) ++ ")"
+
+{-
 typecheckFixExt :: forall repr.
                     ( Semantics repr
                     , SemanticsMul repr
@@ -391,5 +387,4 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
         Nothing -> Left "type mismatch"
     -- pure (DynTerm ta (sFix _))
 typecheckFixExt self e gamma = typecheckBoolExt self e gamma
-
 -}
