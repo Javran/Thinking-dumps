@@ -17,7 +17,6 @@ class Semantics repr where
     lam :: repr (a,h) b -> repr h (a -> b)
     app :: repr h (a -> b) -> repr h a -> repr h b
 
-
 td1 :: Semantics repr => repr h Int
 -- 1 + 1
 td1 = add (int 1) (int 2)

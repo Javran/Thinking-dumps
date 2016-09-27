@@ -365,7 +365,7 @@ instance SemanticsFix S where
         let self = "self" ++ show h
         in "(fix \\" ++ self ++ " -> " ++ unS (e (S $ const self)) (succ h) ++ ")"
 
-{-
+
 typecheckFixExt :: forall repr.
                     ( Semantics repr
                     , SemanticsMul repr
@@ -378,13 +378,13 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
     -- parse and typecheck body of the function using extended "gamma"
     DynTerm tbody body <- self ebody (VarDesc ta name, gamma)
     let resultTy = ta `tarr` ta
-    case safeGCast tbody body undefined of
+    case safeGCast tbody body resultTy of
         Just body' ->
-            -- having trouble getting this to typecheck:
-            -- definitely something like "sFix body'" should fill the
-            -- "undefined" stuff there, but that's not typechecking.
-            pure (DynTerm undefined (sFix body'))
+            -- body' :: repr (t,h) (t->t)
+            -- self :: repr h t
+            -- TODO
+            pure (DynTerm ta (sFix $ \self -> undefined))
         Nothing -> Left "type mismatch"
     -- pure (DynTerm ta (sFix _))
 typecheckFixExt self e gamma = typecheckBoolExt self e gamma
--}
+
