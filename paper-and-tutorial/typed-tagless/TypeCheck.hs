@@ -377,6 +377,11 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
     -- self :: <some type "ta">
     Typ ta <- readT etyp
     -- parse and typecheck body of the function using extended "gamma"
+    -- TODO: the problem with this is that the body might not be type-checked alone,
+    -- taking a look at "testMul10", and we will notice that unlike other examples,
+    -- the "self" variable is introduced by the outer function.
+    -- there might be a solution to this, but it doesn't seem I can come up with one
+    -- so let's just skip this problem for now.
     DynTerm tbody body <- self ebody (VarDesc ta name, gamma)
     let resultTy = ta `tarr` ta
     case safeGCast tbody body resultTy of
