@@ -1,6 +1,8 @@
 module PrintScanF where
 
 import Prelude hiding ((^))
+import Data.List
+import Data.Char
 
 {-# ANN module "HLint: ignore Use const" #-}
 {-# ANN module "HLint: ignore Use fst" #-}
@@ -32,9 +34,13 @@ sprintf (FPr fmt) = fmt id
 newtype FSc a b = FSc (String -> b -> Maybe (a,String))
 
 instance FormattingSpec FSc where
-    -- TODO: few still need to be defined
-    lit str = undefined
-    int = undefined
+    lit str = FSc $ \inp f ->
+        if str `isPrefixOf` inp
+           then Just (f, drop (length str) inp)
+           else Nothing
+    int = FSc $ \inp f -> case span isDigit inp of
+        ([],_) -> Nothing
+        (raw,inp') -> Just (f (read raw), inp')
     char = FSc $ \inp f -> case inp of
         (c:inp') -> Just (f c, inp')
         "" -> Nothing
