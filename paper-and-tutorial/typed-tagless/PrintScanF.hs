@@ -27,3 +27,17 @@ instance FormattingSpec FPr where
 
 sprintf :: FPr String b -> b
 sprintf (FPr fmt) = fmt id
+
+-- "Sc" for scanning
+newtype FSc a b = FSc (String -> b -> Maybe (a,String))
+
+instance FormattingSpec FSc where
+    -- TODO: few still need to be defined
+    lit str = undefined
+    int = undefined
+    char = FSc $ \inp f -> case inp of
+        (c:inp') -> Just (f c, inp')
+        "" -> Nothing
+    (FSc a) ^ (FSc b) = FSc $ \inp f ->
+        a inp f >>= \(vb,inp') -> b inp' vb
+
