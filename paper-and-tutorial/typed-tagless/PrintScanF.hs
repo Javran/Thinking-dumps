@@ -1,7 +1,6 @@
 module PrintScanF where
 
 import Prelude hiding ((^))
-import Data.List
 import Data.Char
 import Control.Monad
 
@@ -53,3 +52,7 @@ prefix :: String -> String -> Maybe String
 prefix [] str = Just str
 prefix (pc:pr) (sc:sr) = guard (pc == sc) >> prefix pr sr
 prefix _ _ = Nothing
+
+-- remaining input string is dropped from the result.
+sscanf :: String -> FSc a b -> b -> Maybe a
+sscanf inp (FSc fmt) f = fst <$> fmt inp f
