@@ -3,6 +3,9 @@ module PrintScanF where
 import Prelude hiding ((^))
 import Data.List
 import Data.Char
+import Control.Monad
+
+-- http://okmij.org/ftp/tagless-final/course/PrintScanF.hs
 
 {-# ANN module "HLint: ignore Use const" #-}
 {-# ANN module "HLint: ignore Use fst" #-}
@@ -34,10 +37,9 @@ sprintf (FPr fmt) = fmt id
 newtype FSc a b = FSc (String -> b -> Maybe (a,String))
 
 instance FormattingSpec FSc where
-    lit str = FSc $ \inp f ->
-        if str `isPrefixOf` inp
-           then Just (f, drop (length str) inp)
-           else Nothing
+    lit str = FSc $ \inp f -> do
+        inp' <- prefix str inp
+        pure (f, inp')
     int = FSc $ \inp f -> case span isDigit inp of
         ([],_) -> Nothing
         (raw,inp') -> Just (f (read raw), inp')
@@ -47,3 +49,7 @@ instance FormattingSpec FSc where
     (FSc a) ^ (FSc b) = FSc $ \inp f ->
         a inp f >>= \(vb,inp') -> b inp' vb
 
+prefix :: String -> String -> Maybe String
+prefix [] str = Just str
+prefix (pc:pr) (sc:sr) = guard (pc == sc) >> prefix pr sr
+prefix _ _ = Nothing
