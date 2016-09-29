@@ -56,3 +56,8 @@ prefix _ _ = Nothing
 -- remaining input string is dropped from the result.
 sscanf :: String -> FSc a b -> b -> Maybe a
 sscanf inp (FSc fmt) f = fst <$> fmt inp f
+
+-- a trick of getting rid of monomorphism restriction
+-- is to define "fmt3 ()" rather than "fmt3".
+fmt3 :: FormattingSpec repr => repr a (Char -> Int -> a)
+fmt3 = lit "The value of " ^ char ^ lit " is " ^ int
