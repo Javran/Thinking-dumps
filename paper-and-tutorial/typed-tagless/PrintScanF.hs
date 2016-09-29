@@ -61,3 +61,6 @@ sscanf inp (FSc fmt) f = fst <$> fmt inp f
 -- is to define "fmt3 ()" rather than "fmt3".
 fmt3 :: FormattingSpec repr => repr a (Char -> Int -> a)
 fmt3 = lit "The value of " ^ char ^ lit " is " ^ int
+
+test1 :: Maybe (Int,Int)
+test1 = sscanf "123,456" (int ^ lit "," ^ int) (,)
