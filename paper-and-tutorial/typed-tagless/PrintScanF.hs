@@ -21,7 +21,21 @@ class FormattingSpec repr where
 
 infixl 5 ^
 
--- "Pr" for printing
+{-
+
+  "Pr" for printing
+
+  - it might look weird but think "FPr a b" like "b -> a".
+  - on the use site, "sprintf" is really just build up a function
+    accordingly, and its type "FPr String b -> b" indicates
+    that the resulting function must be of type "b".
+    and calling the resulting function with proper values will give us "a" back
+  - if you look at "FormattingSpec" carefully:
+    - "a" in "repr a b" is just being passed around,
+      allowing future continuation to return arbitrary type
+    - on the other hand "b" builds up, which is "encoding" what we want
+
+-}
 newtype FPr a b = FPr ((String -> a) -> b)
 
 instance FormattingSpec FPr where
