@@ -11,6 +11,7 @@ import Control.Monad
 {-# ANN module "HLint: ignore Collapse lambdas" #-}
 {-# ANN module "HLint: ignore Redundant bracket" #-}
 {-# ANN module "HLint: ignore Avoid lambda" #-}
+{-# ANN module "HLint: ignore Eta reduce" #-}
 
 class FormattingSpec repr where
     lit :: String -> repr a a
@@ -56,6 +57,9 @@ prefix _ _ = Nothing
 -- remaining input string is dropped from the result.
 sscanf :: String -> FSc a b -> b -> Maybe a
 sscanf inp (FSc fmt) f = fst <$> fmt inp f
+
+sscanf' :: String -> FSc a b -> b -> Maybe (a,String)
+sscanf' inp (FSc fmt) f = fmt inp f
 
 -- a trick of getting rid of monomorphism restriction
 -- is to define "fmt3 ()" rather than "fmt3".
