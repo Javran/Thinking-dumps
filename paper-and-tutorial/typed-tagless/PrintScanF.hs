@@ -25,9 +25,17 @@ infixl 5 ^
 newtype FPr a b = FPr ((String -> a) -> b)
 
 instance FormattingSpec FPr where
+    -- continuation passing style
+    -- basically every implementation begin with "FPr $ \k ->"
+    -- and it seems that we can kind of recover the original impl
+
+    -- lit' str = str
     lit str = FPr $ \k -> k str
+    -- int' x = show x
     int = FPr $ \k -> \x -> k (show x)
+    -- char' c = [c] -- or just "show c"
     char = FPr $ \k -> \x -> k [x]
+    -- (a') ^ (b') = a' ++ b'
     (FPr a) ^ (FPr b) = FPr $ \k -> a (\sa -> b (\sb -> k (sa ++ sb)))
 
 sprintf :: FPr String b -> b
