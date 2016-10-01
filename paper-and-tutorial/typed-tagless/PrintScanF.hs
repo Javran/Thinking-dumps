@@ -17,9 +17,14 @@ class FormattingSpec repr where
     lit :: String -> repr a a
     int :: repr a (Int -> a)
     char :: repr a (Char -> a)
+    fpp :: PrinterParser b -> repr a (b -> a)
     (^) :: repr b c -> repr a b -> repr a c
 
 infixl 5 ^
+
+data PrinterParser a = PrinterParser
+  (a -> String)
+  (String -> Maybe (a,String))
 
 {-
 
@@ -51,6 +56,10 @@ instance FormattingSpec FPr where
     char = FPr $ \k -> \x -> k [x]
     -- (a') ^ (b') = a' ++ b'
     (FPr a) ^ (FPr b) = FPr $ \k -> a (\sa -> b (\sb -> k (sa ++ sb)))
+    -- not mentioned in the paper, but the motivation is clear:
+    -- if we know how to print or parse for a particular type,
+    -- we can support that type by using "fpp".
+    fpp (PrinterParser pr _) = FPr $ \k -> \x -> k (pr x)
 
 sprintf :: FPr String b -> b
 sprintf (FPr fmt) = fmt id
@@ -70,6 +79,9 @@ instance FormattingSpec FSc where
         "" -> Nothing
     (FSc a) ^ (FSc b) = FSc $ \inp f ->
         a inp f >>= \(vb,inp') -> b inp' vb
+    fpp (PrinterParser _ pa) = FSc $ \inp f -> do
+        (v,s) <- pa inp
+        pure (f v, s)
 
 prefix :: String -> String -> Maybe String
 prefix [] str = Just str
