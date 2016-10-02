@@ -25,3 +25,6 @@ type instance CPSTypeTr w Falsum = Falsum
 type instance CPSTypeTr w (a -> b) = CPSTypeTr w a -> (CPSTypeTr w b -> w) -> w
 
 data Falsum
+
+newtype CPS repr w a =
+    CPS { cpsr :: repr ((CPSTypeTr w a -> w) -> w) }
