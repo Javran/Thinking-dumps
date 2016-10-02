@@ -46,6 +46,9 @@ appk (CPS e) f = app e (lam f)
 -- CPS transformation
 instance Semantics repr => Semantics (CPS repr w) where
     int x = cpsv $ int x
+    -- we can also do:
+    -- int x = cpsk $ \k -> app k (int x)
+    -- also notice the difference between "cpsv" and "cpsk"'s implementation
     add e1 e2 = cpsk $ \k ->
         appk e1 $ \v1 ->
         appk e2 $ \v2 ->
