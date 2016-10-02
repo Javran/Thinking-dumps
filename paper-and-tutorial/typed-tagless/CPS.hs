@@ -42,3 +42,16 @@ cpsk = CPS . lam
 
 appk :: Semantics repr => CPS repr w a -> (repr (CPSTypeTr w a) -> repr w) -> repr w
 appk (CPS e) f = app e (lam f)
+
+-- CPS transformation
+instance Semantics repr => Semantics (CPS repr w) where
+    int x = cpsv $ int x
+    add e1 e2 = cpsk $ \k ->
+        appk e1 $ \v1 ->
+        appk e2 $ \v2 ->
+          app k (add v1 v2)
+    lam e = cpsv $ lam (\x -> cpsr $ e (cpsv x))
+    app ef ea = cpsk $ \k ->
+        appk ef $ \vf ->
+        appk ea $ \va ->
+          app (app vf va) k
