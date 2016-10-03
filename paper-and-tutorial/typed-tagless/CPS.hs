@@ -76,11 +76,6 @@ instance Semantics repr => Semantics (CPS repr w) where
           -- and hope it will call "k" after the result is known.
           app (app vf va) k
 
-{-
-  transforming add (int 10) (int 20):
-> unS (cpsr (add (int 10) (int 20) :: CPS S w Int) `app` lam id) 0
-"((\\x0 -> ((\\x1 -> (x1 10)) (\\x1 -> ((\\x2 -> (x2 20)) (\\x2 -> (x0 (x1+x2))))))) (\\x0 -> x0))"
--}
 
 -- so called "one-pass CPS transform", not sure what exactly is
 -- administrative redices, for now I'm just getting the idea
@@ -106,3 +101,36 @@ instance Semantics repr => Semantics (CPS1 repr w) where
         cps1r ef $ \vf ->
         cps1r ea $ \va ->
           app (app vf va) (lam k)
+
+cps1 :: Semantics repr => CPS1 repr w a -> repr ((CPSTypeTr w a -> w) -> w)
+cps1 = reflect . cps1r
+
+{-
+  transforming add (int 10) (int 20):
+> unS (cpsr (add (int 10) (int 20) :: CPS S w Int) `app` lam id) 0
+"((\\x0 -> ((\\x1 -> (x1 10)) (\\x1 -> ((\\x2 -> (x2 20)) (\\x2 -> (x0 (x1+x2))))))) (\\x0 -> x0))"
+-}
+
+{-
+  examples given in the original source code:
+-}
+
+-- the "syntax tree" in final representation
+te1 = th1
+-- by using "cpsr", we make part of the type concrete (CPS)
+-- and get the interpreted (transformed) result back
+tec1 = cpsr te1
+tec1_eval = eval tec1 id
+-- 3
+tec1_view = view tec1
+-- "(\\x0 -> ((\\x1 -> (x1 1))
+--    (\\x1 -> ((\\x2 -> (x2 2)) (\\x2 -> (x0 (x1+x2)))))))"
+
+tek1 = cps1 te1
+tek1_eval = eval tek1 id
+-- 3
+tek1_view = view tek1
+-- "(\\x0 -> (x0 (1+2)))"
+
+-- TODO obviously "tek1_view" looks simpler than "tec1_view",
+-- but what exactly is "administrative redices"?
