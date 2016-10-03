@@ -55,6 +55,17 @@ class BoolSYM repr where
 class FixSYM repr where
     fix :: (repr a -> repr a) -> repr a
 
+instance MulSYM R where
+    mul e1 e2 = R $ unR e1 * unR e2
+
+instance BoolSYM R where
+    bool b    = R b
+    leq e1 e2 = R $ unR e1 <= unR e2
+    if_ be et ee = R $ if unR be then unR et else unR ee
+
+instance FixSYM R where
+    fix f = R $ fx (unR . f . R) where fx f' = f' (fx f')
+
 instance MulSYM S where
     mul (S e1) (S e2) = S $ \h ->
       "(" ++ e1 h ++ "*" ++ e2 h ++ ")"
@@ -71,3 +82,28 @@ instance FixSYM S where
        let self = "self" ++ show h
        in "(fix " ++ self ++ "." ++
             unS (e (S $ const self)) (succ h) ++ ")"
+
+-- examples:
+th1 = add (int 1) (int 2)
+th2 = lam (\x -> add x x)
+th3 = lam (\x -> add (app x (int 1)) (int 2))
+
+th1_eval = eval th1
+th2_eval = eval th2
+th2_eval' = eval th2 21
+th3_eval = eval th3
+
+th1_view = view th1
+th2_view = view th2
+th3_view = view th3
+
+tpow = lam (\x -> fix (\self -> lam (\n ->
+                                     if_ (leq n (int 0)) (int 1)
+                                     (mul x (app self (add n (int (-1))))))))
+
+tpow7 = lam (\x -> app (app tpow x) (int 7))
+tpow72 = app tpow7 (int 2)
+
+tpow_eval = eval tpow
+tpow72_eval = eval tpow72
+tpow_view = view tpow
