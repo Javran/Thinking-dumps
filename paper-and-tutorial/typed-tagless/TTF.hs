@@ -41,6 +41,9 @@ instance Semantics S where
     app (S e1) (S e2) = S $ \h ->
       "(" ++ e1 h ++ " " ++ e2 h ++ ")"
 
+view :: S a -> String
+view e = unS e 0
+
 class MulSYM repr where
     mul :: repr Int -> repr Int -> repr Int
 
