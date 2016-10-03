@@ -58,3 +58,9 @@ instance Semantics repr => Semantics (CPS repr w) where
         appk ef $ \vf ->
         appk ea $ \va ->
           app (app vf va) k
+
+{-
+  transforming add (int 10) (int 20):
+> unS (cpsr (add (int 10) (int 20) :: CPS S w Int) `app` lam id) 0
+"((\\x0 -> ((\\x1 -> (x1 10)) (\\x1 -> ((\\x2 -> (x2 20)) (\\x2 -> (x0 (x1+x2))))))) (\\x0 -> x0))"
+-}
