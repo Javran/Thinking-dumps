@@ -81,3 +81,28 @@ instance Semantics repr => Semantics (CPS repr w) where
 > unS (cpsr (add (int 10) (int 20) :: CPS S w Int) `app` lam id) 0
 "((\\x0 -> ((\\x1 -> (x1 10)) (\\x1 -> ((\\x2 -> (x2 20)) (\\x2 -> (x0 (x1+x2))))))) (\\x0 -> x0))"
 -}
+
+-- so called "one-pass CPS transform", not sure what exactly is
+-- administrative redices, for now I'm just getting the idea
+-- of using meta-language to get rid of some kinds of boilerplates
+newtype CPS1 repr w a =
+    CPS1 { cps1r :: (repr (CPSTypeTr w a) -> repr w) -> repr w }
+
+reflect :: Semantics repr =>
+           ((repr a -> repr w) -> repr w) -> repr ((a -> w) -> w)
+reflect e = lam (\k -> e (\v -> app k v))
+
+cps1v :: repr (CPSTypeTr w a) -> CPS1 repr w a
+cps1v v = CPS1 $ \k -> k v
+
+instance Semantics repr => Semantics (CPS1 repr w) where
+    int x = cps1v $ int x
+    add e1 e2 = CPS1 $ \k ->
+        cps1r e1 $ \v1 ->
+        cps1r e2 $ \v2 ->
+          k (add v1 v2)
+    lam e = cps1v $ lam $ reflect . cps1r . e . cps1v
+    app ef ea = CPS1 $ \k ->
+        cps1r ef $ \vf ->
+        cps1r ea $ \va ->
+          app (app vf va) (lam k)
