@@ -33,6 +33,9 @@ newtype CPS repr w a =
 -- it is given.
 -- note that the type of the actual representation is really what "CPSTypeTr w a" computes,
 -- but the result is of type "CPS repr w a"
+
+-- "cpsv v" creates a continuation, when called, feeds "v" as a result to whatever function
+-- that wants it.
 cpsv :: Semantics repr => repr (CPSTypeTr w a) -> CPS repr w a
 cpsv v = CPS . lam $ \k -> app k v
 
@@ -40,6 +43,8 @@ cpsv v = CPS . lam $ \k -> app k v
 cpsk :: Semantics repr => (repr (CPSTypeTr w a -> w) -> repr w) -> CPS repr w a
 cpsk = CPS . lam
 
+-- "appk e f" passes "e"'s result to "f", in which we capture the result value
+-- and continue our computation
 appk :: Semantics repr => CPS repr w a -> (repr (CPSTypeTr w a) -> repr w) -> repr w
 appk (CPS e) f = app e (lam f)
 
@@ -50,13 +55,25 @@ instance Semantics repr => Semantics (CPS repr w) where
     -- int x = cpsk $ \k -> app k (int x)
     -- also notice the difference between "cpsv" and "cpsk"'s implementation
     add e1 e2 = cpsk $ \k ->
+        -- eval "e1" and get "v1" back
         appk e1 $ \v1 ->
+        -- eval "e2" and get "v2" back
         appk e2 $ \v2 ->
+          -- call "k" with the result
           app k (add v1 v2)
     lam e = cpsv $ lam (\x -> cpsr $ e (cpsv x))
     app ef ea = cpsk $ \k ->
+        -- eval ef => vf
         appk ef $ \vf ->
+        -- eval ea => va
         appk ea $ \va ->
+          -- it's tempting to write "app k (app vf va)"
+          -- because of the similarity between this and "add" case
+          -- but that does not type check
+          -- by looking at types of "vf" and "va", we are not getting
+          -- the function type we want but continuation instead
+          -- so here the only thing to do is applying "va" to "vf"
+          -- and hope it will call "k" after the result is known.
           app (app vf va) k
 
 {-
