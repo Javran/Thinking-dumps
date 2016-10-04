@@ -132,5 +132,23 @@ tek1_eval = eval tek1 id
 tek1_view = view tek1
 -- "(\\x0 -> (x0 (1+2)))"
 
--- TODO obviously "tek1_view" looks simpler than "tec1_view",
--- but what exactly is "administrative redices"?
+{-
+  obviously "tek1_view" looks simpler than "tec1_view",
+  I'm not sure what exactly is "administrative redices",
+  but the following simplification seems to let us go from "tec1" to "tek1":
+
+  ((\x -> x a) (\y -> <expr with y>)) => <expr with y replaced by a>
+
+  in which "a" is a constant
+
+  so "tec1" is basically:
+
+  (\x -> ((\y -> y 1)
+          (\y -> ((\z -> z 2)
+                  (\z -> x (y + z))))))
+  ==>
+  (\x -> ((\y -> y 1)
+          (x (y + 2)))) (innermost first)
+  ==>
+  (\x -> (x (1 + 2))) (innermost first)
+-}
