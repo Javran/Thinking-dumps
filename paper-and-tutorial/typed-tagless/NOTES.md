@@ -11,4 +11,24 @@
 
 # 4
 
-TODO: I feel I need more paper-reading to get through this part. Let's take our time.
+## 4.1 Typed compliation
+
+Basically we need something like `Data.Typeable` to have a type representation at value level
+(as the type level is eventually "erased" when running a Haskell program). Here `Typ.hs` is the tool we use:
+
+- the type equivalence is established through a observation: "forall c. c a -> c b",
+  if we can find a function that fits this type, then that function serves both as a proof
+  and a way to convert from `a` to `b` (we can let `c ~ Identity` so it will become `Identity a -> Identity b`).
+
+- more equivalence relations can be established by composing proofs together. the we have the `newtype` trick
+  to declare "type level functions" to assist our proofs.
+
+- now that we can:
+
+    - store type info at value level (through equivalence relations)
+    - construct type info at value level
+    - safe type cast (by using the function that establishes the equivalence relation)
+
+- by using these facilities, we can write our own type-checkers.
+  it's true what we have very limited type level information, but equivalence relations
+  are on value level (as functions) to work with.
