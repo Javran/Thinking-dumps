@@ -50,6 +50,8 @@ appk (CPS e) f = app e (lam f)
 
 -- CPS transformation
 instance Semantics repr => Semantics (CPS repr w) where
+    -- "Fischer & Plotkin's CPS transformation"
+    -- call-by-value lambda calculus
     int x = cpsv $ int x
     -- we can also do:
     -- int x = cpsk $ \k -> app k (int x)
@@ -75,7 +77,6 @@ instance Semantics repr => Semantics (CPS repr w) where
           -- so here the only thing to do is applying "va" to "vf"
           -- and hope it will call "k" after the result is known.
           app (app vf va) k
-
 
 -- so called "one-pass CPS transform", not sure what exactly is
 -- administrative redices, for now I'm just getting the idea
