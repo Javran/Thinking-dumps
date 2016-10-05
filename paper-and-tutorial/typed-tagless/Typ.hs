@@ -24,7 +24,9 @@ instance TSYM ShowT where
 viewTy :: ShowT a -> String
 viewTy (ShowT s) = s
 
--- TODO: could this be the "existential typeclass" ?
+-- search for "existential typeclass", basically this is a possible way
+-- to hide instance inside and making it still polymorphic.
+-- (I could be wrong, still unsure of some concepts)
 newtype TQ t = TQ { unTQ :: forall trepr. TSYM trepr => trepr t }
 
 instance TSYM TQ where

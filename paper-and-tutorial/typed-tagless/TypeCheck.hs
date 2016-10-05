@@ -329,7 +329,8 @@ ttExt2 =
 class SemanticsFix repr where
     -- "sFix" is not limited about creating recursive functions,
     -- let's if this can be handled "more properly"
-    -- TODO: we could be having some wrong type on some "h" of the following:
+    -- NOTE: we could be having some wrong type on some "h" of the following:
+    -- not going to solve this though.
     sFix :: (repr h a -> repr h a) -> repr h a
 
 instance SemanticsFix R where
@@ -374,10 +375,9 @@ typecheckFixExt :: forall repr.
                     , SemanticsFix repr ) =>
                 OpenRecursive (forall gamma h. Var gamma h => TypeCheck repr gamma h)
 typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
-    -- self :: <some type "ta">
     Typ ta <- readT etyp
     -- parse and typecheck body of the function using extended "gamma"
-    -- TODO: the problem with this is that the body might not be type-checked alone,
+    -- the problem with this is that the body might not be type-checked alone,
     -- taking a look at "testMul10", and we will notice that unlike other examples,
     -- the "self" variable is introduced by the outer function.
     -- there might be a solution to this, but it doesn't seem I can come up with one
@@ -387,11 +387,9 @@ typecheckFixExt self (Node "Fix" [Leaf name, etyp, ebody]) gamma = do
     case safeGCast tbody body resultTy of
         Just body' ->
             -- body' :: repr (t,h) (t->t)
-            -- self :: repr h t
-            -- TODO
-            -- TODO: probably changing "self" to something else..
+            -- selfM :: repr h t
             -- as we have multiple things called "self" at the same time
-            pure (DynTerm ta (sFix $ \self -> undefined))
+            pure (DynTerm ta (sFix $ \selfM -> undefined))
         Nothing -> Left "type mismatch"
     -- pure (DynTerm ta (sFix _))
 typecheckFixExt self e gamma = typecheckBoolExt self e gamma
