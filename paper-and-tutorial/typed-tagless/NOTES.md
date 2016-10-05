@@ -52,3 +52,18 @@ TODO
 
 TODO
 
+# 4.5 Typed ordinary and one-pass CPS transforms
+
+- CPS transformation (Fischer & Plotkin, call-by-value)
+
+- CPS transformation (Danvy & Filinski)
+    - "administrative indices": to my knowledge these are structures that looks trivial
+      (e.g. `((\x -> x 1) (\y -> <...>))` is just `<...>` with `y` properly replaced by `1`)
+    - Danvy & Filinski 's version claims to remove "administrative indices"
+
+- CPS transformation can be done multiple times, this demonstrates
+  the composability of interpreters. I'm not going to dig into this
+  as I think the result itself could be over-complicated.
+
+- CPS transformation does not preserve type (just preserves "typing"),
+  and we use type family (type functions) to work around it.
