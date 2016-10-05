@@ -1,3 +1,10 @@
+## Terms
+
+- Object language: the language we are implementing
+
+- Meta language: the language that we are using to implement another languge.
+  (I think this is where the "meta-" prefix comes from)
+
 ## 3.5 Relating initial and final typed tagless encodings
 
 * if the encoding is tight, that means only well-typed objects are representable,
@@ -67,3 +74,7 @@ TODO
 
 - CPS transformation does not preserve type (just preserves "typing"),
   and we use type family (type functions) to work around it.
+
+# 4.6 Type-directed partial evaluation
+
+TODO
