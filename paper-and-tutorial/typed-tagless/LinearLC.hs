@@ -6,8 +6,16 @@
   #-}
 module LinearLC where
 
+{-# ANN module "HLint: ignore Use &&&" #-}
+
 newtype F a = F a
 data U = Used
+
+second :: (b->b') -> (a,b) -> (a,b')
+second = fmap
+
+first :: (a->a') -> (a,b) -> (a',b)
+first f ~(x,y) = (f x,y)
 
 class LSemantics repr where
     -- notice that unlike "repr h a" which is what we usually see,
@@ -28,3 +36,33 @@ class LSemantics repr where
     -- actually this case is very similar to "add": for "app <a> <b>",
     -- we first traverse "<a>" then "<b>", and finally do the application
     app :: repr hi h (a->b) -> repr h ho a -> repr hi ho b
+
+-- "lam" is separated because in this implementation "hi" and "ho" needs to present
+-- in class head.
+class LinearL repr hi ho where
+    lam :: repr (F a, hi) (U, ho) b -> repr hi ho (a->b)
+
+class HiHo hi ho where
+    hiho :: hi -> ho
+
+instance HiHo () () where
+    hiho = id
+
+instance HiHo hi ho => HiHo (F a, hi) (F a, ho) where
+    hiho = second hiho
+
+instance HiHo hi ho => HiHo (U, hi) (U, ho) where
+    hiho = second hiho
+
+instance HiHo hi ho => HiHo (F a, hi) (U, ho) where
+    hiho = second hiho . first (const Used)
+
+-- note that there isn't (and really shouldn't be) a case
+-- for "HiHo (U, hi) (F a, ho)", as it does not make sense for a linear system.
+
+newtype R hi ho a = R { unR :: hi -> (a,ho) }
+
+instance HiHo hi ho => LinearL R hi ho where
+    lam (R e) = R $ \hi -> (f hi, hiho hi)
+      where
+        f hi x | (v,_) <- e (F x, hi) = v
