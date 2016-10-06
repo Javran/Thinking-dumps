@@ -6,6 +6,8 @@
   #-}
 module LinearLC where
 
+import Prelude hiding (any)
+
 {-# ANN module "HLint: ignore Use &&&" #-}
 
 newtype F a = F a
@@ -66,3 +68,18 @@ instance HiHo hi ho => LinearL R hi ho where
     lam (R e) = R $ \hi -> (f hi, hiho hi)
       where
         f hi x | (v,_) <- e (F x, hi) = v
+
+instance LSemantics R where
+    int x = R $ \hi -> (x,hi)
+    add (R e1) (R e2) = R $ \hi ->
+        let (v1,h) = e1 hi
+            (v2,ho) = e2 h
+        in (v1+v2, ho)
+    z = R $ \(F x, h) -> (x, (Used, h))
+    s (R v) = R $ \(any, hi) ->
+        let (x,ho) = v hi
+        in (x,(any,ho))
+    app (R e1) (R e2) = R $ \hi ->
+        let (v1,h) = e1 hi
+            (v2,ho) = e2 h
+        in (v1 v2, ho)
