@@ -71,15 +71,17 @@ instance HiHo hi ho => LinearL R hi ho where
 
 instance LSemantics R where
     int x = R $ \hi -> (x,hi)
-    add (R e1) (R e2) = R $ \hi ->
-        let (v1,h) = e1 hi
-            (v2,ho) = e2 h
-        in (v1+v2, ho)
+    add = liftBinOp (+)
     z = R $ \(F x, h) -> (x, (Used, h))
     s (R v) = R $ \(any, hi) ->
         let (x,ho) = v hi
         in (x,(any,ho))
-    app (R e1) (R e2) = R $ \hi ->
-        let (v1,h) = e1 hi
-            (v2,ho) = e2 h
-        in (v1 v2, ho)
+    app = liftBinOp ($)
+
+-- to show that "add" and "app" are just the same thing parameterized by
+-- different functions.
+liftBinOp :: (a->b->c) -> R hi h a -> R h ho b -> R hi ho c
+liftBinOp f (R e1) (R e2) = R $ \hi ->
+    let (v1,h) = e1 hi
+        (v2,ho) = e2 h
+    in (v1 `f` v2, ho)
