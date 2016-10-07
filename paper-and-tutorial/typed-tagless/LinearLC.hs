@@ -136,3 +136,21 @@ tl4 :: ( LSemantics repr
        , LinearL repr (F Int,h) (U,h)
        ) => repr h h (Int -> Int -> Int)
 tl4 = lam (lam (add z (s z)))
+
+-- for non-linear lambdas
+newtype G a = G a
+
+class GenL repr hi ho where
+    glam :: repr (G a, hi) (G a, ho) b -> repr hi ho (a->b)
+
+class GZ repr where
+    gz :: repr (G a, hi) (G a, hi) a
+
+instance HiHo hi ho => GenL R hi ho where
+    glam (R e) = R $ \hi -> (f hi, hiho hi)
+      where
+        f hi x = let (v,_) = e (G x, hi)
+                 in v
+
+instance GZ R where
+    gz = R $ \p@(G x, _) -> (x, p)
