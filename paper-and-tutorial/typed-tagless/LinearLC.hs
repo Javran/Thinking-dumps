@@ -114,3 +114,25 @@ instance LinearL S hi ho where
 -- only closed terms can be viewed
 view :: S () () a -> String
 view (S e) = e []
+
+-- closed term, feeding it to "eval" causes "h ~ ()",
+-- but this term itself can still be one part of a bigger syntax tree.
+tl1 :: LSemantics repr => repr h h Int
+tl1 = add (int 1) (int 2)
+
+-- open term, which requires a Int resource (by "s z") waiting to be used.
+tl2o :: (LSemantics repr, LinearL repr (F Int, h) (U, h))
+        => repr (F Int, h) (U, h) (Int -> Int)
+tl2o = lam (add z (s z))
+
+tl3 :: (LSemantics repr, LinearL repr h h) => repr h h ((Int -> Int) -> Int)
+tl3 = lam (add (app z (int 1)) (int 2))
+
+-- ignoring the constraints, the term is closed and typed "Int -> Int -> Int".
+-- TODO: not sure if the constraint is intended, with "z" and "s z",
+-- shouldn't we have more constraints?
+tl4 :: ( LSemantics repr
+       , LinearL repr h h
+       , LinearL repr (F Int,h) (U,h)
+       ) => repr h h (Int -> Int -> Int)
+tl4 = lam (lam (add z (s z)))
