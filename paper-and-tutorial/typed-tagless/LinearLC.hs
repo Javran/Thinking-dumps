@@ -6,6 +6,8 @@
   #-}
 module LinearLC where
 
+-- http://okmij.org/ftp/tagless-final/course/LinearLC.hs
+
 import Prelude hiding (any)
 
 {-# ANN module "HLint: ignore Use &&&" #-}
@@ -85,3 +87,30 @@ liftBinOp f (R e1) (R e2) = R $ \hi ->
     let (v1,h) = e1 hi
         (v2,ho) = e2 h
     in (v1 `f` v2, ho)
+
+-- evaluator taking input env "()"
+-- while the output env can be open.
+-- I believe we can set "b ~ ()" to make the evaluator
+-- only accept closed terms
+eval :: R () b a -> a
+eval (R e) = fst $ e ()
+
+newtype S hi ho a = S { unS :: [String] -> String }
+
+instance LSemantics S where
+    int x = S $ \_ -> show x
+    add (S e1) (S e2) = S $ \h ->
+        "(" ++ e1 h ++ "+" ++ e2 h ++ ")"
+    z = S $ \(x:_) -> x
+    s (S v) = S $ \(_:h) -> v h
+    app (S e1) (S e2) = S $ \h ->
+        "(" ++ e1 h ++ " " ++ e2 h ++ ")"
+
+instance LinearL S hi ho where
+    lam (S e) = S $ \h ->
+        let x = "x" ++ show (length h)
+        in "(\\!" ++ x ++ " -> " ++ e (x:h) ++ ")"
+
+-- only closed terms can be viewed
+view :: S () () a -> String
+view (S e) = e []
