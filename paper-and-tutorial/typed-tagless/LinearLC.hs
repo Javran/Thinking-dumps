@@ -165,3 +165,19 @@ instance GenL S hi ho where
     glam (S e) = S $ \h ->
         let x = "y" ++ show (length h)
         in "(\\" ++ x ++ " -> " ++ e (x:h) ++ ")"
+
+-- "gz" is a resource (variable) that can be used more than once.
+tg2 :: (LSemantics repr, GenL repr h h, GZ repr) => repr h h (Int -> Int)
+tg2 = glam (add gz gz)
+
+-- "tgk" (the K combinator) is the constant function with ignores its first argument.
+-- it's not linear because the resource should be consumed exactly once.
+tgk :: (GenL repr h h, GenL repr (G a, h) (G a, h), GZ repr) => repr h h (a -> b -> b)
+tgk = glam (glam gz)
+
+-- another K combinator, but with its second argument being linear.
+-- semantically different than "tgk"
+tgk' :: ( LinearL repr (G a, h) (G a, h)
+        , LSemantics repr
+        , GenL repr h h) => repr h h (a -> b -> b)
+tgk' = glam (lam z)
