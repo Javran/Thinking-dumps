@@ -154,3 +154,14 @@ instance HiHo hi ho => GenL R hi ho where
 
 instance GZ R where
     gz = R $ \p@(G x, _) -> (x, p)
+
+instance HiHo hi ho => HiHo (G a, hi) (G a, ho) where
+    hiho (x,hi) = (x, hiho hi)
+
+instance GZ S where
+    gz = S $ \(x:_) -> x
+
+instance GenL S hi ho where
+    glam (S e) = S $ \h ->
+        let x = "y" ++ show (length h)
+        in "(\\" ++ x ++ " -> " ++ e (x:h) ++ ")"
