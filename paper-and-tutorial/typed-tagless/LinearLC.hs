@@ -181,3 +181,19 @@ tgk' :: ( LinearL repr (G a, h) (G a, h)
         , LSemantics repr
         , GenL repr h h) => repr h h (a -> b -> b)
 tgk' = glam (lam z)
+
+-- I think this could be helpful if we can see how the type signature involves
+-- as the expression gets more complicated
+tg51 :: ( LinearL repr h h, LSemantics repr ) => repr h h (b -> b)
+tg51 = lam z
+
+tg52 :: ( LinearL repr (G b, h) (G b, h), LSemantics repr
+        , GZ repr) => repr (G b, h) (G b, h) b
+tg52 = app tg51 gz
+
+tg5 :: ( LinearL repr (G b, h) (G b, h), LSemantics repr
+       , GZ repr
+       , GenL repr h h) => repr h h (b -> b)
+tg5 = glam tg52
+
+-- tg5 = glam (app (lam z) gz)
