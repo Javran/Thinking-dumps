@@ -82,4 +82,5 @@ TODO
 
 # 4.6 Type-directed partial evaluation
 
-TODO
+Skipping this part. I'm not sure about its motivation and
+am not persuvaded by the explanation given in code.
