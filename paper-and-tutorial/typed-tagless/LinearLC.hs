@@ -184,13 +184,25 @@ tgk' = glam (lam z)
 
 -- I think this could be helpful if we can see how the type signature involves
 -- as the expression gets more complicated
+
+{-
+  "lam" is defined for "LinearL repr h h", which exposes input and output environment
+  in the header of a constraint,
+  and all other components of a linear language comes from "LSemantics"
+
+  - tg51's type signature isn't saying much: just that we expect an environment
+    and that this expression preserves that environment.
+
+-}
 tg51 :: ( LinearL repr h h, LSemantics repr ) => repr h h (b -> b)
 tg51 = lam z
 
+-- "h" in tg51's type further refines to "(G b, h)", through the presence of "gz"
 tg52 :: ( LinearL repr (G b, h) (G b, h), LSemantics repr
         , GZ repr) => repr (G b, h) (G b, h) b
 tg52 = app tg51 gz
 
+-- "glam" "simplifies" the type by hiding the body
 tg5 :: ( LinearL repr (G b, h) (G b, h), LSemantics repr
        , GZ repr
        , GenL repr h h) => repr h h (b -> b)
