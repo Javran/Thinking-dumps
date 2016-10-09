@@ -53,7 +53,12 @@ Basically we need something like `Data.Typeable` to have a type representation a
 
 # 4.3 Linear and affine lambda-calculi
 
-TODO
+- mainly typeclass tricks for enforcing "linear" condition on variables:
+  a variable should be used exactly once.
+- can be extended so that non-linear programs are also expressible.
+- I don't get many things from this example, figuring out what each typeclass
+  means is painful but the explanation given in the original code isn't
+  having too much help.
 
 # 4.4 Call-by-name, call-by-value, call-by-need
 
