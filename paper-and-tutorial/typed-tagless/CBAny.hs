@@ -95,3 +95,21 @@ instance Monad m => SymLam (S 'CBValue m) where
 
 runValue :: S 'CBValue m a -> m a
 runValue = unS
+
+share :: MonadIO m => m a -> m (m a)
+share m = do
+    -- store unevaluated thunk "m" to "r"
+    r <- liftIO $ newIORef (False, m)
+    pure (do
+        -- read "r" and see if the result is available
+        (f,m') <- liftIO $ readIORef r
+        if f
+          -- when the result is available, we use that
+          -- instead of doing "m" again
+          then m'
+          else do
+            -- otherwise we have to evaluate "m"
+            v <- m
+            -- and store its value as a replacement for future.
+            liftIO $ writeIORef r (True, pure v)
+            pure v)
