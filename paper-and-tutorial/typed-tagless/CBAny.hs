@@ -113,3 +113,23 @@ share m = do
             -- and store its value as a replacement for future.
             liftIO $ writeIORef r (True, pure v)
             pure v)
+
+share' :: MonadIO m => m a -> m (m a)
+share' m = do
+    -- store the result as a Maybe value
+    -- we don't have to store "m" because that value
+    -- is already available to use through context (argument to "share'")
+    r <- liftIO $ newIORef Nothing
+    pure (do
+        -- read "r" and see if the result is available
+        th <- liftIO $ readIORef r
+        case th of
+            Just v ->
+                -- no computation, just retrieving
+                -- the result we have already stored
+                pure v
+            Nothing -> do
+                -- force "m" and store the value for future use
+                v <- m
+                liftIO $ writeIORef r $ Just v
+                pure v)
