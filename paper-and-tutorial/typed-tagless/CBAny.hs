@@ -1,5 +1,7 @@
 {-# LANGUAGE
     FlexibleInstances
+  , KindSignatures
+  , DataKinds
   , GeneralizedNewtypeDeriving
   #-}
 module CBAny where
@@ -7,6 +9,8 @@ module CBAny where
 import Data.IORef
 import Control.Monad
 import Control.Monad.Trans
+
+{-# ANN module "HLint: ignore Eta reduce" #-}
 
 -- the arrow (higher-order abstract syntax) type
 type Arr repr a b = repr a -> repr b
@@ -60,7 +64,10 @@ class Symantics repr where
 class SymLam repr where
     lam :: (repr a -> repr b) -> repr (Arr repr a b)
 
-newtype S l m a = S { unS :: m a }
+-- just trying to use promoted type for a more accurate type
+data EStrategy = CBValue | CBName | CBNeed
+
+newtype S (l :: EStrategy) m a = S { unS :: m a }
   deriving (Monad, Applicative, Functor, MonadIO)
 
 instance MonadIO m => Symantics (S l m) where
@@ -76,3 +83,6 @@ instance MonadIO m => Symantics (S l m) where
         liftIO $ putStrLn "Subtracting"
         pure (a-b)
     app x y = x >>= ($ y)
+
+instance Monad m => SymLam (S 'CBName m) where
+    lam f = pure f
