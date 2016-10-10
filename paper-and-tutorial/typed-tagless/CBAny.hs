@@ -20,8 +20,43 @@ class Symantics repr where
 
 -- "lam" is seperated for the reason that this is the only difference
 -- between 3 evaluation strategies: call-by-value, call-by-name, call-by-need
--- TODO: question: why the difference is in "lam"? I expected it to have something
--- to do with "app".
+
+{-
+  NOTE:
+
+  I was wondering why the difference is in "lam" rather than "app",
+  since different evaluation strategies actually specifies when
+  an argument is evaluated upon function application.
+
+  recall that:
+  - call-by-value always forces the argument fully
+  - call-by-name subsitutes the definition for the variable
+  - call-by-need creates a reference, but keeps the definition body
+    as a thunk for future evaluation and sharing
+
+  but here is a key observation: no matter what strategy we use,
+  for a function application, that function must be evaluated first (at least to WHNF
+  so that we know this is a function in the first place),
+  this explains one part of the following implementation:
+
+  app x y = x >>= ($ y)
+
+  which can be desugared to:
+
+  app x y = x >>= \f -> f y
+
+  from here we know that "x" must be evaluated earlier than "y",
+  and also in this implementation, nothing forces "y",
+  so we have the full freedom of deciding how to deal with "y"
+  in our implementation of "lam" thanks to Haskell laziness.
+
+  so here I want to have a quick conclusion saying:
+  - how to implement different strategies depends on what metalanguage
+    we are using: if we are using a strict language, by the time when
+    we get to the lambda expression, the argument would have been evaluated
+    so it would work better if we choose to share "lam" but have "app" implemented
+    separately for different evaluation strategies.
+-}
 class SymLam repr where
     lam :: (repr a -> repr b) -> repr (Arr repr a b)
 
@@ -40,7 +75,4 @@ instance MonadIO m => Symantics (S l m) where
         b <- y
         liftIO $ putStrLn "Subtracting"
         pure (a-b)
-    -- NOTE: I was wondering why "x" has to be evaluated
-    -- earlier than y, but that's actually the right thing to do
-    -- despite of evaluation strategy
     app x y = x >>= ($ y)
