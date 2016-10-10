@@ -86,3 +86,12 @@ instance MonadIO m => Symantics (S l m) where
 
 instance Monad m => SymLam (S 'CBName m) where
     lam f = pure f
+
+runName :: S 'CBName m a -> m a
+runName = unS
+
+instance Monad m => SymLam (S 'CBValue m) where
+    lam f = pure (\x -> x >>= f . pure)
+
+runValue :: S 'CBValue m a -> m a
+runValue = unS
