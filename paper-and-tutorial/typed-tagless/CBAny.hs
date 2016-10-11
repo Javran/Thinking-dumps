@@ -151,6 +151,32 @@ t0 :: (Symantics repr, SymLam repr) => repr Int
 t0 = (lam $ \x -> let_ (x `add` x)
                  $ \y -> y `add` y) `app` int 10
 -- t0 = (\x -> let y = x + x in y + y) 10
+{-
+small steps:
+
+call-by-value:
+(\x -> let y = x + x in y + y) 10
+=> let y = 10+10 in y+y (Adding)
+=> let y = 20 in y+y
+=> 20+20 (Adding)
+=> 40
+
+call-by-name:
+(\x -> let y = x + x in y + y) 10
+=> let y = 10 + 10 in y+y
+=> (10+10)+(10+10) (Adding)
+=> 20+(10+10) (Adding)
+=> 20+20 (Adding)
+=> 40
+
+call-by-need:
+(\x -> let y = x + x in y + y) 10
+=> let y = x+x in y+y [mem: x -> 10]
+=> y+y [mem: x -> 10, y -> x+x]
+=> y+y [mem: x -> 10, y -> 20] (Adding)
+=> 20+20 (Adding)
+=> 40
+-}
 
 t1 :: (Symantics repr, SymLam repr) => repr Int
 t1 = (lam $ \x -> let_ (x `add` x)
