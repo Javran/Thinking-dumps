@@ -147,10 +147,10 @@ runLazy = unS
 let_ :: (Symantics repr, SymLam repr) => repr a -> (repr a -> repr b) -> repr b
 let_ x y = lam y `app` x
 
-t :: (Symantics repr, SymLam repr) => repr Int
-t = (lam $ \x -> let_ (x `add` x)
+t0 :: (Symantics repr, SymLam repr) => repr Int
+t0 = (lam $ \x -> let_ (x `add` x)
                  $ \y -> y `add` y) `app` int 10
--- t = (\x -> let y = x + x in y + y) 10
+-- t0 = (\x -> let y = x + x in y + y) 10
 
 t1 :: (Symantics repr, SymLam repr) => repr Int
 t1 = (lam $ \x -> let_ (x `add` x)
@@ -158,4 +158,12 @@ t1 = (lam $ \x -> let_ (x `add` x)
                   z `add` (z `add` (y `add` y)))
      `app` (int 10 `sub` int 5)
      `app` (int 20 `sub` int 10)
--- t2 = (\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+-- t1 = (\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+
+-- "_z" for indicating that this variable is not used at all.
+t2 :: (Symantics repr, SymLam repr) => repr Int
+t2 = (lam $ \_z -> lam $ \x -> let_ (x `add` x)
+                      $ \y -> y `add` y)
+     `app` (int 100 `sub` int 10)
+     `app` (int 5 `add` int 5)
+-- t2 = (\z -> \x -> let y = x+x in y+y) (100-10) (5-5)
