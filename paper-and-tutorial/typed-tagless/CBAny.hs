@@ -7,10 +7,10 @@
 module CBAny where
 
 import Data.IORef
-import Control.Monad
 import Control.Monad.Trans
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
+-- http://okmij.org/ftp/tagless-final/course/CBAny.hs
 
 -- the arrow (higher-order abstract syntax) type
 type Arr repr a b = repr a -> repr b
@@ -133,3 +133,10 @@ share' m = do
                 v <- m
                 liftIO $ writeIORef r $ Just v
                 pure v)
+
+instance MonadIO m => SymLam (S 'CBNeed m) where
+    -- it should also be fine to use "share'" in place of "share"
+    lam f = pure (\x -> share x >>= f)
+
+runLazy :: S 'CBNeed m a -> m a
+runLazy = unS
