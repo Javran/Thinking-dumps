@@ -185,6 +185,50 @@ t1 = (lam $ \x -> let_ (x `add` x)
      `app` (int 10 `sub` int 5)
      `app` (int 20 `sub` int 10)
 -- t1 = (\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+{-
+small steps:
+
+call-by-value:
+(\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+=> (\x -> let y = x+x in \z -> z+(z+(y+y))) 5 (20-10) (Subtracting)
+=> (let y = 5+5 in \z -> z+(z+(y+y))) (20-10)
+=> (let y = 10 in \z -> z+(z+(y+y))) (20-10) (Adding)
+=> (\z -> z+(z+(10+10))) (20-10) (Subtracting)
+=> (\z -> z+(z+(10+10))) 10
+=> 10+(10+(10+10)) (Adding)
+=> 10+(10+20) (Adding)
+=> 10+30 (Adding)
+=> 40
+
+call-by-name:
+(\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+=> (let y = (10-5)+(10-5) in \z -> z+(z+(y+y))) (20-10)
+=> (\z -> z+(z+( ((10-5)+(10-5))+((10-5)+(10-5)) ))) (20-10)
+=> (20-10)+((20-10)+( ((10-5)+(10-5))+((10-5)+(10-5)) ))
+=> 10+((20-10)+( ((10-5)+(10-5))+((10-5)+(10-5)) )) (Subtracting)
+=> 10+(10+( ((10-5)+(10-5))+((10-5)+(10-5)) )) (Subtracting)
+=> 10+(10+( (5+(10-5))+((10-5)+(10-5)) )) (Subtracting)
+=> 10+(10+( (5+5)+((10-5)+(10-5)) )) (Subtracting)
+=> 10+(10+( 10+((10-5)+(10-5)) )) (Adding)
+=> 10+(10+( 10+(5+(10-5)) )) (Subtracting)
+=> 10+(10+( 10+(5+5) )) (Subtracting)
+=> 10+(10+( 10+10 )) (Adding)
+=> 10+(10+20) (Adding)
+=> 10+30 (Adding)
+=> 40
+
+call-by-need:
+(\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
+=> (let y = x+x in \z -> z+(z+(y+y))) (20-10) [mem: x->10-5]
+=> (\z -> z+(z+(y+y))) (20-10) [mem: x->10-5, y->x+x]
+=> z+(z+(y+y)) [mem: x->10-5, y->x+x, z->20-10] (Subtracting)
+=> z+(z+(y+y)) [mem: x->10-5, y->x+x, z->10] (Subtracting)
+=> z+(z+(y+y)) [mem: x->5, y->x+x, z->10] (Adding)
+=> z+(z+(y+y)) [mem: x->5, y->10, z->10] (Adding) (y+y)
+=> z+(z+20) [mem: x->5, y->10, z->10] (Adding) (z+20)
+=> z+30 [mem: x->5, y->10, z->10] (Adding) (z+30)
+=> 40
+-}
 
 -- "_z" for indicating that this variable is not used at all.
 t2 :: (Symantics repr, SymLam repr) => repr Int
