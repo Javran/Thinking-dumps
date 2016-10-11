@@ -1,5 +1,5 @@
 {-# LANGUAGE
-    FlexibleInstances
+    FlexibleInstances, NoMonomorphismRestriction
   , KindSignatures
   , DataKinds
   , GeneralizedNewtypeDeriving
@@ -10,6 +10,9 @@ import Data.IORef
 import Control.Monad.Trans
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
+{-# ANN module "HLint: ignore Use >=>" #-}
+{-# ANN module "HLint: ignore Move brackets to avoid $" #-}
+
 -- http://okmij.org/ftp/tagless-final/course/CBAny.hs
 
 -- the arrow (higher-order abstract syntax) type
@@ -140,3 +143,19 @@ instance MonadIO m => SymLam (S 'CBNeed m) where
 
 runLazy :: S 'CBNeed m a -> m a
 runLazy = unS
+
+let_ :: (Symantics repr, SymLam repr) => repr a -> (repr a -> repr b) -> repr b
+let_ x y = lam y `app` x
+
+t :: (Symantics repr, SymLam repr) => repr Int
+t = (lam $ \x -> let_ (x `add` x)
+                 $ \y -> y `add` y) `app` int 10
+-- t = (\x -> let y = x + x in y + y) 10
+
+t1 :: (Symantics repr, SymLam repr) => repr Int
+t1 = (lam $ \x -> let_ (x `add` x)
+                  $ \y -> lam $ \z ->
+                  z `add` (z `add` (y `add` y)))
+     `app` (int 10 `sub` int 5)
+     `app` (int 20 `sub` int 10)
+-- t2 = (\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
