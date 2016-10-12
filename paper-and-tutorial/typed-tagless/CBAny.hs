@@ -237,3 +237,38 @@ t2 = (lam $ \_z -> lam $ \x -> let_ (x `add` x)
      `app` (int 100 `sub` int 10)
      `app` (int 5 `add` int 5)
 -- t2 = (\z -> \x -> let y = x+x in y+y) (100-10) (5-5)
+{-
+small steps:
+
+call-by-value:
+(\z -> \x -> let y = x+x in y+y) (100-10) (5-5) (Subtracting)
+=> (\z -> \x -> let y = x+x in y+y) 90 (5-5)
+=> (\x -> let y = x+x in y+y) (5-5) (Subtracting)
+=> (\x -> let y = x+x in y+y) 0
+=> let y = 0+0 in y+y (Adding)
+=> 0+0 (Adding)
+=> 0
+
+call-by-name:
+(\z -> \x -> let y = x+x in y+y) (100-10) (5-5)
+=> (\x -> let y = x+x in y+y) (5-5)
+=> let y = (5-5)+(5-5) in y+y
+=> ( (5-5)+(5-5) ) + ( (5-5)+(5-5) ) (Subtracting)
+=> ( 0+(5-5) ) + ( (5-5)+(5-5) ) (Subtracting)
+=> ( 0+0 ) + ( (5-5)+(5-5) ) (Adding)
+=> 0 + ( (5-5)+(5-5) ) (Subtracting)
+=> 0 + ( 0+(5-5) ) (Subtracting)
+=> 0 + ( 0+0 ) (Adding)
+=> 0 + 0 (Adding)
+=> 0
+
+call-by-need:
+(\z -> \x -> let y = x+x in y+y) (100-10) (5-5)
+=> (\x -> let y = x+x in y+y) (5-5) [mem: z->5-5]
+=> let y = x+x in y+y [mem: z->5-5, x->5-5]
+=> y+y [mem: z->5-5, x->5-5, y->x+x] (Subtracting)
+=> y+y [mem: z->5-5, x->0, y->x+x] (Adding)
+=> y+y [mem: z->5-5, x->0, y->0] (Adding)
+=> 0
+
+-}
