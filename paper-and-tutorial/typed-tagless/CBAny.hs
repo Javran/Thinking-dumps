@@ -154,6 +154,10 @@ t0 = (lam $ \x -> let_ (x `add` x)
 {-
 small steps:
 
+note that the "(Adding)" and "(Subtracting)" mark always indicates the operation
+going to be performed immediately after that line, I made a mistake in
+t2 "call-by-name" evaluation strategy because of being unclear about this marking rule.
+
 call-by-value:
 (\x -> let y = x + x in y + y) 10
 => let y = 10+10 in y+y (Adding)
@@ -204,14 +208,14 @@ call-by-name:
 (\x -> let y = x+x in \z -> z+(z+(y+y))) (10-5) (20-10)
 => (let y = (10-5)+(10-5) in \z -> z+(z+(y+y))) (20-10)
 => (\z -> z+(z+( ((10-5)+(10-5))+((10-5)+(10-5)) ))) (20-10)
-=> (20-10)+((20-10)+( ((10-5)+(10-5))+((10-5)+(10-5)) ))
+=> (20-10)+((20-10)+( ((10-5)+(10-5))+((10-5)+(10-5)) )) (Subtracting)
 => 10+((20-10)+( ((10-5)+(10-5))+((10-5)+(10-5)) )) (Subtracting)
 => 10+(10+( ((10-5)+(10-5))+((10-5)+(10-5)) )) (Subtracting)
 => 10+(10+( (5+(10-5))+((10-5)+(10-5)) )) (Subtracting)
-=> 10+(10+( (5+5)+((10-5)+(10-5)) )) (Subtracting)
-=> 10+(10+( 10+((10-5)+(10-5)) )) (Adding)
+=> 10+(10+( (5+5)+((10-5)+(10-5)) )) (Adding)
+=> 10+(10+( 10+((10-5)+(10-5)) )) (Subtracting)
 => 10+(10+( 10+(5+(10-5)) )) (Subtracting)
-=> 10+(10+( 10+(5+5) )) (Subtracting)
+=> 10+(10+( 10+(5+5) )) (Adding)
 => 10+(10+( 10+10 )) (Adding)
 => 10+(10+20) (Adding)
 => 10+30 (Adding)
