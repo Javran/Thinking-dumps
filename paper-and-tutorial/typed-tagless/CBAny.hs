@@ -1,5 +1,5 @@
 {-# LANGUAGE
-    FlexibleInstances, NoMonomorphismRestriction
+    FlexibleInstances, NoMonomorphismRestriction, RankNTypes
   , KindSignatures
   , DataKinds
   , GeneralizedNewtypeDeriving
@@ -272,3 +272,20 @@ call-by-need:
 => 0
 
 -}
+
+newtype Dyn a = Dyn (forall repr. (Symantics repr, SymLam repr) => repr a)
+
+testExpr :: Dyn Int -> IO ()
+testExpr expr = do
+    let (Dyn e) = expr
+        runWith tag f = do
+            putStrLn (unwords ["using", tag, "strategy:"])
+            v <- f e
+            putStrLn ("result value: " ++ show v)
+
+    runWith "call-by-value" runValue
+    runWith "call-by-name" runName
+    runWith "call-by-need" runLazy
+
+main :: IO ()
+main = mapM_ testExpr [Dyn t0, Dyn t1, Dyn t2]
