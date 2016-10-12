@@ -289,3 +289,15 @@ testExpr expr = do
 
 main :: IO ()
 main = mapM_ testExpr [Dyn t0, Dyn t1, Dyn t2]
+
+{-
+  it's tempting to write it like the following:
+
+> main = mapM_ (testExpr . Dyn) [t0, t1, t2]
+
+  but this code won't typecheck, the main reason is that we are trying to
+  unify two "forall" types, which won't work, the compiler complains:
+
+  "cannot instantiate unifciation with a type involving foralls"
+
+-}
