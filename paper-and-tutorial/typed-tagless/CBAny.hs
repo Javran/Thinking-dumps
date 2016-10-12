@@ -1,5 +1,7 @@
 {-# LANGUAGE
-    FlexibleInstances, NoMonomorphismRestriction, RankNTypes
+    FlexibleInstances
+  , NoMonomorphismRestriction
+  , RankNTypes
   , KindSignatures
   , DataKinds
   , GeneralizedNewtypeDeriving
@@ -277,6 +279,8 @@ call-by-need:
 
 -}
 
+-- existential types are good for delaying instance selection, see
+-- the use of "Dyn" for an example.
 newtype Dyn a = Dyn (forall repr. (Symantics repr, SymLam repr) => repr a)
 
 testExpr :: Dyn Int -> IO ()
