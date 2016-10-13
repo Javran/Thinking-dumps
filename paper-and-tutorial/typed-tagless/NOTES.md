@@ -62,7 +62,24 @@ Basically we need something like `Data.Typeable` to have a type representation a
 
 # 4.4 Call-by-name, call-by-value, call-by-need
 
-TODO
+- 3 evaluation strategies
+- call-by-value evaluates function argument before entering function body
+- call-by-name simply replaces one variable by its definition,
+  usually takes the longest time to compute among these 3 strategies
+- call-by-need needs a heap, it keeps track of variables in heap but
+  only evaluate it as necessary, but the evalutaion happens only once:
+  after the first evaluation, the value is stored for future use.
+- these evaluation strategies share most of the interpreter code
+- think carefully which expression makes every evaluation strategy different among others:
+
+    - TODO: I'm still in doubt if this is the correct or  full answer, this problem
+      seems to have more things going on than meets the eye.
+      might go back and rethink about this in future
+    - it appears that we should do different things on function application,
+      but because our metalanguage (Haskell) is lazy by itself, by the time
+      when we get to the function body, the argument is still kept unevaluated,
+      which leaves us a chance to manipulate it for different evaluation strategies
+    - but if the metalanguage is strict, we'd better implement function application differently
 
 # 4.5 Typed ordinary and one-pass CPS transforms
 
