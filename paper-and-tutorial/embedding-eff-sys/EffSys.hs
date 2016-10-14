@@ -1,5 +1,7 @@
 {-# LANGUAGE
     DataKinds
+  , MultiParamTypeClasses
+  , FlexibleInstances
   , KindSignatures
   , TypeOperators
   , GADTs
@@ -50,8 +52,50 @@ so if the list length is n, we will have n passes applications "Pass"
 -- always be correct if Bubble's two argument list mismatch in length
 type Sort s = Bubble s s
 
+-- TODO: the purpose of having both type-level and value-level stuff?
+
+class Bubbler s s' where
+    bubble :: Set s -> Set s' -> Set (Bubble s s')
+
+instance Bubbler s '[] where
+    bubble s Empty = s
+
+instance (Bubbler s t, Passer (Bubble s t)) => Bubbler s (e ': t) where
+    bubble s (Ext _ t) = pass (bubble s t)
+
+class Passer s where
+    pass :: Set s -> Set (Pass s)
+
+instance Passer '[] where
+    pass Empty = Empty
+
+instance Passer '[e] where
+    pass (Ext e Empty) = Ext e Empty
+
+instance (Passer ((Max e f) ': s), OrdH e f) => Passer (e ': f ': s) where
+    pass (Ext e (Ext f s)) = Ext (minH e f) (pass (Ext (maxH e f) s))
+
+class OrdH e f where
+    minH :: e -> f -> Min e f
+    maxH :: e -> f -> Max e f
+
 type family Nub t where
     Nub '[] = '[]
     Nub '[e] = '[e]
     Nub (e ': e ': s) = Nub (e ': s)
     Nub (e ': f ': s) = e ': Nub (f ': s)
+
+class Nubbable t where
+    nub :: Set t -> Set (Nub t)
+
+instance Nubbable '[] where
+    nub Empty = Empty
+
+instance Nubbable '[e] where
+    nub (Ext x Empty) = Ext x Empty
+
+instance (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
+          Nubbable (f ': s)) => Nubbable (e ': f ': s) where
+    nub (Ext e (Ext f s)) = Ext e (nub (Ext f s))
+
+type AsSet s = Nub (Sort s)
