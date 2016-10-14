@@ -49,3 +49,9 @@ so if the list length is n, we will have n passes applications "Pass"
 -- the interface to bubble sort, the output won't
 -- always be correct if Bubble's two argument list mismatch in length
 type Sort s = Bubble s s
+
+type family Nub t where
+    Nub '[] = '[]
+    Nub '[e] = '[e]
+    Nub (e ': e ': s) = Nub (e ': s)
+    Nub (e ': f ': s) = e ': Nub (f ': s)
