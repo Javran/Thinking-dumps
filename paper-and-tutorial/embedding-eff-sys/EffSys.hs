@@ -126,3 +126,15 @@ type Unionable s t = (Sortable (Append s t), Nubable (Sort (Append s t)))
 
 union :: (Unionable s t) => Set s -> Set t -> Set (Union s t)
 union s t = nub (bsort (append s t))
+
+class Subset s t where
+    subset :: Set t -> Set s
+
+instance Subset '[] t where
+    subset _ = Empty
+
+instance Subset s t => Subset (x ': s) (x ': t) where
+    subset (Ext x xs) = Ext x (subset xs)
+
+instance Subset s t => Subset s (any ': t) where
+    subset (Ext _ xs) = subset xs
