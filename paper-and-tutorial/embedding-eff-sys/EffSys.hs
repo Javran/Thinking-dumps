@@ -120,3 +120,9 @@ type family Append (s :: [*]) (t :: [*]) :: [*] where
 append :: Set s -> Set t -> Set (Append s t)
 append Empty x = x
 append (Ext e xs) ys = Ext e (append xs ys)
+
+type Union s t = AsSet (Append s t)
+type Unionable s t = (Sortable (Append s t), Nubable (Sort (Append s t)))
+
+union :: (Unionable s t) => Set s -> Set t -> Set (Union s t)
+union s t = nub (bsort (append s t))
