@@ -104,8 +104,19 @@ instance (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
 
 type AsSet s = Nub (Sort s)
 
--- TODO: hm, what's bsort?
--- asSet :: (Sortable s, Nubable (Sort s)) => Set s -> (Set (AsSet s))
--- asSet x = nub (_bsort x)
+asSet :: (Sortable s, Nubable (Sort s)) => Set s -> Set (AsSet s)
+asSet x = nub (bsort x)
+
+-- TODO: not sure whether this is correct, but it type checks.
+bsort :: Bubbler s s => Set s -> Set (Sort s)
+bsort s = bubble s s
 
 type IsSet s = ((s ~ Nub (Sort s)) :: Constraint)
+
+type family Append (s :: [*]) (t :: [*]) :: [*] where
+    Append '[] t = t
+    Append (x ': xs) ys = x ': Append xs ys
+
+append :: Set s -> Set t -> Set (Append s t)
+append Empty x = x
+append (Ext e xs) ys = Ext e (append xs ys)
