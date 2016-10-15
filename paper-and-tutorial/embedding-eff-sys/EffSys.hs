@@ -1,5 +1,7 @@
 {-# LANGUAGE
     DataKinds
+  , FlexibleContexts
+  , ConstraintKinds
   , MultiParamTypeClasses
   , FlexibleInstances
   , KindSignatures
@@ -10,6 +12,8 @@
   , UndecidableInstances
   #-}
 module EffSys where
+
+import GHC.Exts
 
 data Set (n :: [*]) where
     Empty :: Set '[]
@@ -53,7 +57,7 @@ so if the list length is n, we will have n passes applications "Pass"
 type Sort s = Bubble s s
 
 -- TODO: the purpose of having both type-level and value-level stuff?
-
+type Sortable s = Bubbler s s
 class Bubbler s s' where
     bubble :: Set s -> Set s' -> Set (Bubble s s')
 
@@ -99,3 +103,9 @@ instance (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
     nub (Ext e (Ext f s)) = Ext e (nub (Ext f s))
 
 type AsSet s = Nub (Sort s)
+
+-- TODO: hm, what's bsort?
+-- asSet :: (Sortable s, Nubable (Sort s)) => Set s -> (Set (AsSet s))
+-- asSet x = nub (_bsort x)
+
+type IsSet s = ((s ~ Nub (Sort s)) :: Constraint)
