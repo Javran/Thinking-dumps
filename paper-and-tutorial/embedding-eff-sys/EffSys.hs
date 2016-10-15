@@ -85,17 +85,17 @@ type family Nub t where
     Nub (e ': e ': s) = Nub (e ': s)
     Nub (e ': f ': s) = e ': Nub (f ': s)
 
-class Nubbable t where
+class Nubable t where
     nub :: Set t -> Set (Nub t)
 
-instance Nubbable '[] where
+instance Nubable '[] where
     nub Empty = Empty
 
-instance Nubbable '[e] where
+instance Nubable '[e] where
     nub (Ext x Empty) = Ext x Empty
 
 instance (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
-          Nubbable (f ': s)) => Nubbable (e ': f ': s) where
+          Nubable (f ': s)) => Nubable (e ': f ': s) where
     nub (Ext e (Ext f s)) = Ext e (nub (Ext f s))
 
 type AsSet s = Nub (Sort s)
