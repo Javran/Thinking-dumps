@@ -148,3 +148,14 @@ instance Subset s t => Subset (x ': s) (x ': t) where
 
 instance Subset s t => Subset s (any ': t) where
     subset (Ext _ xs) = subset xs
+-- Writer monad by Effect typeclass
+data Writer w a = Writer { runWriter :: (a, Set w) }
+
+instance Effect Writer where
+    type Inv Writer s t = (IsSet s, IsSet t, Unionable s t)
+    type Unit Writer = '[]
+    type Plus Writer s t = Union s t
+    pure x = Writer (x, Empty)
+    (Writer (a,w)) >>= k =
+        let Writer (b,w') = k a
+        in Writer (b, w `union` w')
