@@ -15,6 +15,7 @@ module EffSys where
 
 import Prelude hiding (return, pure, (>>=))
 import GHC.Exts
+import GHC.TypeLits
 
 class Effect (m :: k -> * -> *) where
     type Unit m :: k
@@ -148,6 +149,10 @@ instance Subset s t => Subset (x ': s) (x ': t) where
 
 instance Subset s t => Subset s (any ': t) where
     subset (Ext _ xs) = subset xs
+
+data (v :: Symbol) :-> (t :: *) = (Var v) :-> t
+data Var (v :: Symbol) = Var
+
 -- Writer monad by Effect typeclass
 data Writer w a = Writer { runWriter :: (a, Set w) }
 
