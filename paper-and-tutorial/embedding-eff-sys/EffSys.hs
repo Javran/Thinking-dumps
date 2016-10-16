@@ -13,7 +13,16 @@
   #-}
 module EffSys where
 
+import Prelude hiding (return, pure, (>>=))
 import GHC.Exts
+
+class Effect (m :: k -> * -> *) where
+    type Unit m :: k
+    type Plus m (f :: k) (g :: k) :: k
+    type Inv m (f :: k) (g :: k) :: Constraint
+    type Inv m f g = ()
+    pure :: a -> m (Unit m) a
+    (>>=) :: Inv m f g => m f a -> (a -> m g b) -> m (Plus m f g) b
 
 data Set (n :: [*]) where
     Empty :: Set '[]
@@ -127,6 +136,7 @@ type Unionable s t = (Sortable (Append s t), Nubable (Sort (Append s t)))
 union :: (Unionable s t) => Set s -> Set t -> Set (Union s t)
 union s t = nub (bsort (append s t))
 
+-- "Subset s t" is a valid instance iff. s is a subset of t
 class Subset s t where
     subset :: Set t -> Set s
 
