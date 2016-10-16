@@ -1,5 +1,6 @@
 {-# LANGUAGE
-    DataKinds
+    DataKinds, NoMonomorphismRestriction
+  , RebindableSyntax
   , FlexibleContexts
   , ConstraintKinds
   , MultiParamTypeClasses
@@ -179,3 +180,26 @@ type instance Min (v :-> a) (w :-> b) =
     Select v w v w :-> Select v w a b
 type instance Max (v :-> a) (w :-> b) =
     Select v w w v :-> Select v w b a
+
+put :: Var v -> t -> Writer '[v :-> t] ()
+-- it's "Writer ((), Ext v x Empty)" in the paper
+-- and that doesn't type check and the arity doesn't make sense,
+-- I guess this should be the original intention:
+put v x = Writer ((), Ext (v :-> x) Empty)
+
+instance (Monoid a, Nubable ((v :-> a) ': s)) =>
+  Nubable ((v :-> a) ': (v :-> a) ': s) where
+    nub (Ext (_ :-> a) (Ext (v :-> b) s)) =
+      nub (Ext (v :-> (a `mappend` b)) s)
+
+{-
+-- something is still missing and we can't do this for now
+test =
+    put varX (42 :: Int) >>= \_ ->
+    put varY "saluton" >>= \_ ->
+    put varX (58 :: Int) >>= \_ ->
+    put varY "_mondo"
+
+varX = Var :: (Var "x")
+varY = Var :: (Var "y")
+-}
