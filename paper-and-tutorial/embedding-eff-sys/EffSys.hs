@@ -164,3 +164,18 @@ instance Effect Writer where
     (Writer (a,w)) >>= k =
         let Writer (b,w') = k a
         in Writer (b, w `union` w')
+
+-- compare type "a" and "b" (both are symbols)
+-- and return "p" when "a" is not greater or "q" otherwise
+type Select a b p q = Choose (CmpSymbol a b) p q
+
+-- "Choose _ x y" is kind of like "if _ then x else y" on a type level
+type family Choose (o :: Ordering) p q where
+    Choose 'LT p q = p
+    Choose 'EQ p q = p
+    Choose 'GT p q = q
+
+type instance Min (v :-> a) (w :-> b) =
+    Select v w v w :-> Select v w a b
+type instance Max (v :-> a) (w :-> b) =
+    Select v w w v :-> Select v w b a
