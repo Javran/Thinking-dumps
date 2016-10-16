@@ -1,5 +1,7 @@
 {-# LANGUAGE
-    DataKinds, NoMonomorphismRestriction
+    DataKinds
+  , ScopedTypeVariables
+  , RankNTypes
   , RebindableSyntax
   , FlexibleContexts
   , ConstraintKinds
@@ -17,6 +19,7 @@ module EffSys where
 import Prelude hiding (return, pure, (>>=))
 import GHC.Exts
 import GHC.TypeLits
+import Data.Proxy
 
 class Effect (m :: k -> * -> *) where
     type Unit m :: k
@@ -203,3 +206,16 @@ test =
 varX = Var :: (Var "x")
 varY = Var :: (Var "y")
 -}
+
+select :: forall j k a b. (Chooser (CmpSymbol j k)) => Var j -> Var k -> a -> b -> Select j k a b
+select _ _ = choose (Proxy :: Proxy (CmpSymbol j k))
+
+class Chooser (o :: Ordering) where
+    choose :: Proxy o -> p -> q -> Choose o p q
+instance Chooser 'LT where choose _ p _ = p
+instance Chooser 'EQ where choose _ p _ = p
+instance Chooser 'GT where choose _ _ q = q
+
+instance (Chooser (CmpSymbol u v)) => OrdH (u :-> a) (v :-> b) where
+    minH (u :-> a) (v :-> b) = Var :-> select u v a b
+    maxH (u :-> a) (v :-> b) = Var :-> select u v b a
