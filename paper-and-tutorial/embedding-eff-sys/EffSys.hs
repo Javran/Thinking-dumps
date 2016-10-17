@@ -1,5 +1,6 @@
 {-# LANGUAGE
     DataKinds
+  , NoMonomorphismRestriction
   , ScopedTypeVariables
   , RankNTypes
   , RebindableSyntax
@@ -16,7 +17,7 @@
   #-}
 module EffSys where
 
-import Prelude hiding (return, pure, (>>=))
+import Prelude hiding (return, pure, (>>=), (>>))
 import Data.Monoid (Sum(..))
 import GHC.Exts
 import GHC.TypeLits
@@ -118,6 +119,12 @@ instance Nubable '[] where
 instance Nubable '[e] where
     nub (Ext x Empty) = Ext x Empty
 
+{-
+  not mentioned in the paper, but "{-# OVERLAPS #-}" seems to does the trick:
+  OVERLAPS is both OVERLAPPABLE and OVERLAPPING.
+  - OVERLAPPABLE: allowing a instance to be overlapped by others
+  - OVERLAPPING: expect this instance to overlap others
+-}
 instance {-# OVERLAPS #-} (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
           Nubable (f ': s)) => Nubable (e ': f ': s) where
     nub (Ext e (Ext f s)) = Ext e (nub (Ext f s))
@@ -201,16 +208,16 @@ instance (Monoid a, Nubable ((v :-> a) ': s)) =>
     nub (Ext (_ :-> a) (Ext (v :-> b) s)) =
       nub (Ext (v :-> (a `mappend` b)) s)
 
-
 -- the following still does not type check because of overlapping instances
-test =
-    put varX (Sum (42 :: Int)) >>= \_ ->
-    put varY "saluton" >>= \_ ->
-    put varX (Sum (58 :: Int)) >>= \_ ->
+test = do
+    put varX (Sum (42 :: Int))
+    put varY "saluton"
+    put varX (Sum (58 :: Int))
     put varY "_mondo"
-
-varX = Var :: (Var "x")
-varY = Var :: (Var "y")
+  where
+    return = pure
+    varX = Var :: (Var "x")
+    varY = Var :: (Var "y")
 
 select :: forall j k a b. (Chooser (CmpSymbol j k)) => Var j -> Var k -> a -> b -> Select j k a b
 select _ _ = choose (Proxy :: Proxy (CmpSymbol j k))
