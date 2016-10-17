@@ -29,6 +29,9 @@ class Effect (m :: k -> * -> *) where
     pure :: a -> m (Unit m) a
     (>>=) :: Inv m f g => m f a -> (a -> m g b) -> m (Plus m f g) b
 
+    (>>) :: Inv m f g => m f a -> m g b -> m (Plus m f g) b
+    x >> y = x >>= (\_ -> y)
+
 data Set (n :: [*]) where
     Empty :: Set '[]
     Ext :: e -> Set s -> Set (e ': s)
@@ -196,7 +199,7 @@ instance (Monoid a, Nubable ((v :-> a) ': s)) =>
       nub (Ext (v :-> (a `mappend` b)) s)
 
 {-
--- something is still missing and we can't do this for now
+-- the following still does not type check because of overlapping instances
 test =
     put varX (42 :: Int) >>= \_ ->
     put varY "saluton" >>= \_ ->
