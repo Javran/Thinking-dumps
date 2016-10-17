@@ -46,8 +46,17 @@ data Set (n :: [*]) where
 type family Pass (l :: [*]) :: [*] where
     Pass '[] = '[]
     Pass '[e] = '[e]
-    -- TODO: nested pattern requires UndecidableInstances (why?),
-    -- not sure whether it is safe?
+    -- nested pattern requires UndecidableInstances:
+    -- https://downloads.haskell.org/~ghc/8.0.1-rc4/docs/html/users_guide/glasgow_exts.html#instance-declarations
+    -- basically there are few rules that GHC uses to ensure instance resolution terminates
+    -- with "UndecidableInstances", these rules will be bypassed so
+    -- now we are responsible to make sure that instance resolution does terminates
+    -- in this example the input is "(e : f : s)" and the recursive call is "(_ : s)" where
+    -- "_" is one of either "e" or "f".
+    -- so yes this does guarantee to be a "smaller problem" so this is safe.
+    -- TODO: but this is a type family definition,
+    -- how is this related to undecidable *instances* ?
+    -- "Decidability of type synonym instances" <- check out this part of the GHC doc
     Pass (e ': f ': s) = Min e f ': (Pass ((Max e f) ': s))
 
 -- Min and Max are sorting mechanism
