@@ -108,6 +108,9 @@ type family Nub t where
     Nub '[] = '[]
     Nub '[e] = '[e]
     Nub (e ': e ': s) = Nub (e ': s)
+    -- note that this case overlaps with the previous one.
+    -- (with previous one "(e ': e ': s)" being more difficult to satisfy)
+    -- only attempted when all other pattern have failed.
     Nub (e ': f ': s) = e ': Nub (f ': s)
 
 class Nubable t where
@@ -208,7 +211,8 @@ instance (Monoid a, Nubable ((v :-> a) ': s)) =>
     nub (Ext (_ :-> a) (Ext (v :-> b) s)) =
       nub (Ext (v :-> (a `mappend` b)) s)
 
--- the following still does not type check because of overlapping instances
+-- GHC should be able to infer type signature for this:
+test :: Writer '["x" :-> Sum Int, "y" :-> String] ()
 test = do
     put varX (Sum (42 :: Int))
     put varY "saluton"
