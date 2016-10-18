@@ -298,3 +298,15 @@ test' (n :: a) = do
 -- we are extending effect "x" and "y" with a "z" (with "z" having a monoid support)
 test3 :: Writer '["x" :-> Sum Int, "y" :-> String, "z" :-> Sum Int] ()
 test3 = sub (test2 test')
+
+{-
+  as a side note to 4.1: Data.Monoid.Last does exactly that:
+  this is a Monoid that always take the last non-empty value as its final result,
+  it has the behavior we are expecting:
+
+  - "mappend x (Last Nothing)" is always just "x"
+  - "mappend _ (Last (Just v))" always ignores its first argument and
+    return its second one
+
+  so Writer alone can do the job well already with just the Last Monoid
+-}
