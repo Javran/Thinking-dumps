@@ -220,18 +220,6 @@ instance (Monoid a, Nubable ((v :-> a) ': s)) =>
     nub (Ext (_ :-> a) (Ext (v :-> b) s)) =
       nub (Ext (v :-> (a `mappend` b)) s)
 
--- GHC should be able to infer type signature for this:
-test :: Writer '["x" :-> Sum Int, "y" :-> String] ()
-test = do
-    put varX (Sum (42 :: Int))
-    put varY "saluton"
-    put varX (Sum (58 :: Int))
-    put varY "_mondo"
-  where
-    return = pure
-    varX = Var :: (Var "x")
-    varY = Var :: (Var "y")
-
 select :: forall j k a b. (Chooser (CmpSymbol j k)) => Var j -> Var k -> a -> b -> Select j k a b
 select _ _ = choose (Proxy :: Proxy (CmpSymbol j k))
 
@@ -244,3 +232,29 @@ instance Chooser 'GT where choose _ _ q = q
 instance (Chooser (CmpSymbol u v)) => OrdH (u :-> a) (v :-> b) where
     minH (u :-> a) (v :-> b) = Var :-> select u v a b
     maxH (u :-> a) (v :-> b) = Var :-> select u v b a
+
+-- GHC should be able to infer type signature for this:
+test :: Writer '["x" :-> Sum Int, "y" :-> String] ()
+test = do
+    put varX (Sum (42 :: Int))
+    put varY "saluton"
+    put varX (Sum (58 :: Int))
+    put varY "_mondo"
+  where
+    return = pure
+    varX = Var :: (Var "x")
+    varY = Var :: (Var "y")
+
+-- can be infered, but the type looks messy.
+test2 :: (IsSet f, Unionable f '["y" :-> String])
+    => (Int -> Writer f t) -> Writer (Union f '["y" :-> String]) ()
+test2 f = do
+    -- run an existing effect "f" with argument 3
+    _ <- f 3
+    -- having an effect "y" :-> String on its own
+    put varY "world."
+  where
+    return = pure
+    varY = Var :: (Var "y")
+
+
