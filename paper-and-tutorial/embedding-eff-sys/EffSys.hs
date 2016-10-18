@@ -57,9 +57,16 @@ type family Pass (l :: [*]) :: [*] where
     -- in this example the input is "(e : f : s)" and the recursive call is "(_ : s)" where
     -- "_" is one of either "e" or "f".
     -- so yes this does guarantee to be a "smaller problem" so this is safe.
-    -- TODO: but this is a type family definition,
+
+    -- but this is a type family definition,
     -- how is this related to undecidable *instances* ?
-    -- "Decidability of type synonym instances" <- check out this part of the GHC doc
+    -- https://downloads.haskell.org/~ghc/8.0.1-rc4/docs/html/users_guide/glasgow_exts.html#type-family-decidability
+    -- so on the RHS of the following definition:
+    -- - (1) "(Pass ((Max e f) ': s))" is a type family application, and its argument contains
+    --   another type family constructor "Max"
+    -- - (2) also, for the same part, type variable e,f,s
+    --   is not strictly smaller than e,f,s (on the LHS)
+    -- - (3) this one is satisfied
     Pass (e ': f ': s) = Min e f ': (Pass ((Max e f) ': s))
 
 -- Min and Max are sorting mechanism
