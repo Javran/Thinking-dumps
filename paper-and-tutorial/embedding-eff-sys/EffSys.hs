@@ -24,8 +24,16 @@ import GHC.TypeLits
 import Data.Proxy
 
 class Effect (m :: k -> * -> *) where
+    -- Unit together with Plus gives us a monoid that
+    -- we have to define for each Effect instance.
+    -- this basically specifies what to do on type level
+    -- when we are composing effects together
     type Unit m :: k
     type Plus m (f :: k) (g :: k) :: k
+    -- TODO: haven't see any use of "Inv" so far, but I guess
+    -- having this thing around makes it possible to add more constraints
+    -- when we are composing effect together, the default definition is given
+    -- by "Inv m f g = ()", which does not add any constraint at all.
     type Inv m (f :: k) (g :: k) :: Constraint
     type Inv m f g = ()
     pure :: a -> m (Unit m) a
@@ -314,7 +322,8 @@ test3 = sub (test2 test')
   and later decide to replace it with something of type "String" instead.
 -}
 
--- as a GADT
+-- as a GADT, we get the freedom of storing value of
+-- whatever type possible by making the type argument to (lifted) "Maybe" abstract
 data Eff (w :: Maybe *) where
     Put :: a -> Eff ('Just a)
     NoPut :: Eff 'Nothing
@@ -322,6 +331,8 @@ data Eff (w :: Maybe *) where
 data Update w a = U { runUpdate :: (a, Eff w) }
 
 instance Effect Update where
+    -- type level effect composition:
+    -- the last non-Nothing value wins
     type Unit Update = 'Nothing
     type Plus Update s 'Nothing = s
     type Plus Update s ('Just t) = 'Just t
