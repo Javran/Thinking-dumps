@@ -34,6 +34,9 @@ class Effect (m :: k -> * -> *) where
     (>>) :: Inv m f g => m f a -> m g b -> m (Plus m f g) b
     x >> y = x >>= (\_ -> y)
 
+class Subeffect (m :: k -> * -> *) f g where
+    sub :: m f a -> m g a
+
 -- related: https://hackage.haskell.org/package/type-level-sets
 
 data Set (n :: [*]) where
@@ -257,4 +260,34 @@ test2 f = do
     return = pure
     varY = Var :: (Var "y")
 
+-- actually very similar to Subset we have defined above
+class Superset s t where
+    superset :: Set s -> Set t
 
+instance Superset '[] '[] where
+    superset _ = Empty
+
+instance (Monoid a, Superset '[] s) =>
+  Superset '[] ((v :-> a) ': s) where
+    superset _ = Ext (Var :-> mempty) (superset Empty)
+
+instance Superset s t =>
+  Superset ((v :-> a) ': s) ((v :-> a) ': t) where
+    superset (Ext x xs) = Ext x (superset xs)
+
+instance Superset s t => Subeffect Writer s t where
+    sub (Writer (a,w)) = Writer (a,superset w :: Set t)
+
+test' :: Num a => a -> Writer '["x" :-> Sum a, "y" :-> String] ()
+test' (n :: a) = do
+    put varX (Sum (42 :: a))
+    put varY "hello "
+    put varX (Sum (n :: a))
+  where
+    return = pure
+    varX = Var :: (Var "x")
+    varY = Var :: (Var "y")
+
+-- we are extending effect "x" and "y" with a "z" (with "z" having a monoid support)
+test3 :: Writer '["x" :-> Sum Int, "y" :-> String, "z" :-> Sum Int] ()
+test3 = sub (test2 test')
