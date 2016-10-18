@@ -300,13 +300,44 @@ test3 :: Writer '["x" :-> Sum Int, "y" :-> String, "z" :-> Sum Int] ()
 test3 = sub (test2 test')
 
 {-
-  as a side note to 4.1: Data.Monoid.Last does exactly that:
-  this is a Monoid that always take the last non-empty value as its final result,
+  as a side note to 4.1: Data.Monoid.Last does some thing similar:
+  it is a Monoid that always take the last non-empty value as its final result,
   it has the behavior we are expecting:
 
   - "mappend x (Last Nothing)" is always just "x"
   - "mappend _ (Last (Just v))" always ignores its first argument and
     return its second one
 
-  so Writer alone can do the job well already with just the Last Monoid
+  so Writer alone can do the job well already with just the Last Monoid,
+  but what's important about "Update" effect is that the cell doesn't
+  have to hold the value of same type: you can put in a value of "Int"
+  and later decide to replace it with something of type "String" instead.
 -}
+
+-- as a GADT
+data Eff (w :: Maybe *) where
+    Put :: a -> Eff ('Just a)
+    NoPut :: Eff 'Nothing
+
+data Update w a = U { runUpdate :: (a, Eff w) }
+
+instance Effect Update where
+    type Unit Update = 'Nothing
+    type Plus Update s 'Nothing = s
+    type Plus Update s ('Just t) = 'Just t
+
+    pure x = U (x, NoPut)
+    (U (a,w)) >>= k = U (update w (runUpdate $ k a))
+
+-- composing two effects in order, passing along whatever value
+-- the second has
+update :: Eff s -> (b, Eff t) -> (b, Eff (Plus Update s t))
+update w (b, NoPut) = (b,w)
+update _ (b, Put w') = (b, Put w')
+
+-- since we have defined another "put" in the same file
+putUpd :: a -> Update ('Just a) ()
+putUpd x = U ((), Put x)
+
+foo :: Update ('Just String) ()
+foo = putUpd (42 :: Int) >> putUpd "hello"
