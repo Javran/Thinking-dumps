@@ -30,7 +30,6 @@ class Effect (m :: k -> * -> *) where
     -- when we are composing effects together
     type Unit m :: k
     type Plus m (f :: k) (g :: k) :: k
-    -- TODO: haven't see any use of "Inv" so far, but I guess
     -- having this thing around makes it possible to add more constraints
     -- when we are composing effect together, the default definition is given
     -- by "Inv m f g = ()", which does not add any constraint at all.
@@ -204,6 +203,8 @@ data Var (v :: Symbol) = Var
 data Writer w a = Writer { runWriter :: (a, Set w) }
 
 instance Effect Writer where
+    -- constraint when composing two effects:
+    -- both effects should contain a proper set
     type Inv Writer s t = (IsSet s, IsSet t, Unionable s t)
     type Unit Writer = '[]
     type Plus Writer s t = Union s t
@@ -251,6 +252,9 @@ instance (Chooser (CmpSymbol u v)) => OrdH (u :-> a) (v :-> b) where
     minH (u :-> a) (v :-> b) = Var :-> select u v a b
     maxH (u :-> a) (v :-> b) = Var :-> select u v b a
 
+-- TODO: we eventually will cleanup the code and separate them into
+-- different module, when that's done, we can expose varX, varY whatever
+-- in the testing module I guess
 -- GHC should be able to infer type signature for this:
 test :: Writer '["x" :-> Sum Int, "y" :-> String] ()
 test = do
@@ -352,3 +356,29 @@ putUpd x = U ((), Put x)
 
 foo :: Update ('Just String) ()
 foo = putUpd (42 :: Int) >> putUpd "hello"
+
+data Reader s a = R { runReader :: Set s -> a }
+
+instance Effect Reader where
+    -- the following won't work, so there is a subtle different between
+    -- the implementation of Writer and that of Reader, see comments below
+
+    -- type Inv Reader s t = (IsSet s, IsSet t, Unionable s t)
+    type Unit Reader = '[]
+    type Plus Reader s t = Union s t
+
+    pure x = R (\_ -> x)
+
+    -- the following won't type check, the problem is that:
+    -- - as an input to run the effect, we expect a full list of things
+    --   we might read during the execution of a Reader,
+    -- - but now we are composing two Readers together and it's totally possible
+    --   that two Readers are expecting different sets of values to be read
+    -- - so despite that "st" has more than enough thing to feed both readers
+    --   we'll have to just take apart "st" and offer two readers exactly what they want.
+    -- - comparing this with that of Writer, we can see the difference is in the variance
+    --   of info we are carrying along the computation:
+    --   - Writer writes, and the info to be carried are some sort of *output* of the effect.
+    --   - Reader reads, and the info to be carried are some sort of *input* of the effect.
+
+    -- (R e) >>= k = R (\st -> (runReader $ k (e st)) st)
