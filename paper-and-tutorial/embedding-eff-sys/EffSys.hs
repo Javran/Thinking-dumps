@@ -380,5 +380,37 @@ instance Effect Reader where
     --   of info we are carrying along the computation:
     --   - Writer writes, and the info to be carried are some sort of *output* of the effect.
     --   - Reader reads, and the info to be carried are some sort of *input* of the effect.
+    -- - also I'll prefer renaming "split" to "dispatch" instead, as "split" reminds me
+    --   of spliting a set of things into *disjoint* set, which is not the case for
+    --   our implementation of Reader: in our case we look at the "things to be read"
+    --   one by one, and distribute then to two Readers as they demand.
 
     -- (R e) >>= k = R (\st -> (runReader $ k (e st)) st)
+
+-- direction: input "st", output "s" "t"
+class Split s t st where
+    split :: Set st -> (Set s, Set t)
+
+instance Split '[] '[] '[] where
+    split _ = (Empty, Empty)
+
+-- distributing an element to both
+instance (Split s t st) => Split (x ': s) (x ': t) (x ': st) where
+    split (Ext x st) = (Ext x s, Ext x t)
+      where
+        (s,t) = split st
+
+-- distributing to just "s" set
+instance (Split s t st) => Split (x ': s) t (x ': st) where
+    split (Ext x st) = (Ext x s, t)
+      where
+        (s,t) = split st
+
+-- distributing to just "t" set
+instance (Split s t st) => Split s (x ': t )(x ': st) where
+    split (Ext x st) = (s, Ext x t)
+      where
+        (s,t) = split st
+
+-- TODO: shouldn't we have something like:
+-- instance (Split s t st) => Split s t (any : st)  ?
