@@ -23,6 +23,8 @@ import GHC.Exts
 import GHC.TypeLits
 import Data.Proxy
 
+{-# ANN module "HLint: ignore Use const" #-}
+
 class Effect (m :: k -> * -> *) where
     -- Unit together with Plus gives us a monoid that
     -- we have to define for each Effect instance.
@@ -40,6 +42,9 @@ class Effect (m :: k -> * -> *) where
 
     (>>) :: Inv m f g => m f a -> m g b -> m (Plus m f g) b
     x >> y = x >>= (\_ -> y)
+
+return :: Effect m => a -> m (Unit m) a
+return = pure
 
 class Subeffect (m :: k -> * -> *) f g where
     sub :: m f a -> m g a
@@ -122,9 +127,11 @@ instance Passer '[] where
 
 instance Passer '[e] where
     pass (Ext e Empty) = Ext e Empty
+    pass _ = error "impossible"
 
 instance (Passer ((Max e f) ': s), OrdH e f) => Passer (e ': f ': s) where
     pass (Ext e (Ext f s)) = Ext (minH e f) (pass (Ext (maxH e f) s))
+    pass _ = error "impossible"
 
 class OrdH e f where
     minH :: e -> f -> Min e f
@@ -147,7 +154,7 @@ instance Nubable '[] where
 
 instance Nubable '[e] where
     nub (Ext x Empty) = Ext x Empty
-
+    nub _ = error "impossible"
 {-
   not mentioned in the paper, but "{-# OVERLAPS #-}" seems to does the trick:
   OVERLAPS is both OVERLAPPABLE and OVERLAPPING.
@@ -157,6 +164,7 @@ instance Nubable '[e] where
 instance {-# OVERLAPS #-} (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
           Nubable (f ': s)) => Nubable (e ': f ': s) where
     nub (Ext e (Ext f s)) = Ext e (nub (Ext f s))
+    nub _ = error "impossible"
 
 type AsSet s = Nub (Sort s)
 
@@ -238,6 +246,7 @@ instance (Monoid a, Nubable ((v :-> a) ': s)) =>
   Nubable ((v :-> a) ': (v :-> a) ': s) where
     nub (Ext (_ :-> a) (Ext (v :-> b) s)) =
       nub (Ext (v :-> (a `mappend` b)) s)
+    nub _ = error "impossible"
 
 select :: forall j k a b. (Chooser (CmpSymbol j k)) => Var j -> Var k -> a -> b -> Select j k a b
 select _ _ = choose (Proxy :: Proxy (CmpSymbol j k))
@@ -263,7 +272,6 @@ test = do
     put varX (Sum (58 :: Int))
     put varY "_mondo"
   where
-    return = pure
     varX = Var :: (Var "x")
     varY = Var :: (Var "y")
 
@@ -276,7 +284,6 @@ test2 f = do
     -- having an effect "y" :-> String on its own
     put varY "world."
   where
-    return = pure
     varY = Var :: (Var "y")
 
 -- actually very similar to Subset we have defined above
@@ -303,7 +310,6 @@ test' (n :: a) = do
     put varY "hello "
     put varX (Sum (n :: a))
   where
-    return = pure
     varX = Var :: (Var "x")
     varY = Var :: (Var "y")
 
@@ -441,5 +447,3 @@ fooR = do
     xs <- ask (Var :: Var "xs")
     x' <- ask (Var :: Var "x")
     pure (x:x':xs)
-  where
-    return = pure
