@@ -434,3 +434,12 @@ instance (Split s t st) => Split s (x ': t )(x ': st) where
 
 ask :: Var v -> Reader '[v :-> t] t
 ask Var = R (\ (Ext (Var :-> x) Empty) -> x)
+
+fooR :: Reader '["x" :-> a, "xs" :-> [a]] [a]
+fooR = do
+    x <- ask (Var :: Var "x")
+    xs <- ask (Var :: Var "xs")
+    x' <- ask (Var :: Var "x")
+    pure (x:x':xs)
+  where
+    return = pure
