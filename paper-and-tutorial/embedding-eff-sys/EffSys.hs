@@ -400,19 +400,19 @@ instance Split '[] '[] '[] where
     split _ = (Empty, Empty)
 
 -- distributing an element to both
-instance (Split s t st) => Split (x ': s) (x ': t) (x ': st) where
+instance {-# OVERLAPPABLE #-} (Split s t st) => Split (x ': s) (x ': t) (x ': st) where
     split (Ext x st) = (Ext x s, Ext x t)
       where
         (s,t) = split st
 
 -- distributing to just "s" set
-instance (Split s t st) => Split (x ': s) t (x ': st) where
+instance {-# OVERLAPS #-} (Split s t st) => Split (x ': s) t (x ': st) where
     split (Ext x st) = (Ext x s, t)
       where
         (s,t) = split st
 
 -- distributing to just "t" set
-instance (Split s t st) => Split s (x ': t )(x ': st) where
+instance {-# OVERLAPS #-} (Split s t st) => Split s (x ': t )(x ': st) where
     split (Ext x st) = (s, Ext x t)
       where
         (s,t) = split st
