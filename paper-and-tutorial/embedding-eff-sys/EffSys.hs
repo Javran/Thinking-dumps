@@ -364,10 +364,15 @@ instance Effect Reader where
     -- the implementation of Writer and that of Reader, see comments below
 
     -- type Inv Reader s t = (IsSet s, IsSet t, Unionable s t)
+
+    type Inv Reader s t = (IsSet s, IsSet t, Split s t (Union s t))
     type Unit Reader = '[]
     type Plus Reader s t = Union s t
 
     pure x = R (\_ -> x)
+    (R e) >>= k = R (\st ->
+        let (s,t) = split st
+        in (runReader $ k (e s)) t)
 
     -- the following won't type check, the problem is that:
     -- - as an input to run the effect, we expect a full list of things
@@ -421,4 +426,11 @@ instance (Split s t st) => Split s (x ': t )(x ': st) where
   the exact list of things we might want to read from. so that
   whenever some type appears in "st", it must be an element of either "s" or "t"
 
+  additionally, we have the following constraint when composing Readers:
+  "type Inv Reader s t = (IsSet s, IsSet t, Split s t (Union s t))"
+  which explictly specifies that
+  the set we are spliting must be the union of "s" and "t"
 -}
+
+ask :: Var v -> Reader '[v :-> t] t
+ask Var = R (\ (Ext (Var :-> x) Empty) -> x)
