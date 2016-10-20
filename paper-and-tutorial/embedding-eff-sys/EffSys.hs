@@ -412,5 +412,13 @@ instance (Split s t st) => Split s (x ': t )(x ': st) where
       where
         (s,t) = split st
 
--- TODO: shouldn't we have something like:
--- instance (Split s t st) => Split s t (any : st)  ?
+{-
+  shouldn't we have something like:
+
+  "instance (Split s t st) => Split s t (any : st)" ?
+
+  one possible way of thinking this: note that we are forced to give
+  the exact list of things we might want to read from. so that
+  whenever some type appears in "st", it must be an element of either "s" or "t"
+
+-}
