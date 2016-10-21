@@ -160,6 +160,9 @@ instance Nubable '[e] where
   OVERLAPS is both OVERLAPPABLE and OVERLAPPING.
   - OVERLAPPABLE: allowing a instance to be overlapped by others
   - OVERLAPPING: expect this instance to overlap others
+
+  TODO: details are in:
+  https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#instance-overlap
 -}
 instance {-# OVERLAPS #-} (Nub (e ': f ': s) ~ (e ': Nub (f ': s)),
           Nubable (f ': s)) => Nubable (e ': f ': s) where
