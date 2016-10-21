@@ -450,3 +450,8 @@ fooR = do
     xs <- ask (Var :: Var "xs")
     x' <- ask (Var :: Var "x")
     pure (x:x':xs)
+
+-- note that here we don't even need to specify the variable name explictly
+init1 = Ext (Var :-> 1) (Ext (Var :-> [2,3]) Empty)
+
+runFoo = runReader fooR init1
