@@ -57,5 +57,10 @@ instance Update xs '[] where
 instance Update '[e] '[e] where
     update s = s
 
-instance Update ((v :-> a :! R) ': as) as' => Update ((v :-> a :! W) ': (v :-> b :! R) ': as) as' where
-    update (Ext (v :-> (a :! _)) (Ext _ xs)) = update (Ext (v :-> (a :! (Eff::(Effect R)))) xs)
+instance Update ((v :-> a :! 'R) ': as) as' =>
+  Update (  (v :-> a :! 'W)
+         ': (v :-> b :! 'R)
+         ': as) as' where
+    update (Ext (v :-> (a :! _)) (Ext _ xs)) =
+        update (Ext (v :-> (a :! (Eff::(Effect 'R)))) xs)
+    update _ = error "impossible"
