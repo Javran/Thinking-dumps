@@ -10,13 +10,14 @@
 module State where
 
 import TypeLevelSets hiding (Nub)
-import EffSys hiding (Effect, Eff, R, Update)
+import EffSys hiding (Effect, Eff, R, Update, update)
 
 data Eff = R | W | RW
 
 data Effect (s :: Eff) = Eff
 
 data (:!) (a :: *) (s :: Eff) = a :! (Effect s)
+infixl 3 :!
 
 type family Reads t where
   Reads '[] = '[]
@@ -55,3 +56,6 @@ instance Update xs '[] where
 
 instance Update '[e] '[e] where
     update s = s
+
+instance Update ((v :-> a :! R) ': as) as' => Update ((v :-> a :! W) ': (v :-> b :! R) ': as) as' where
+    update (Ext (v :-> (a :! _)) (Ext _ xs)) = update (Ext (v :-> (a :! (Eff::(Effect R)))) xs)

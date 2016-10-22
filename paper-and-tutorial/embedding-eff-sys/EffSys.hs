@@ -52,6 +52,7 @@ class Subeffect (m :: k -> * -> *) f g where
     sub :: m f a -> m g a
 
 data (v :: Symbol) :-> (t :: *) = (Var v) :-> t
+infixl 2 :->
 data Var (v :: Symbol) = Var
 
 -- Writer monad by Effect typeclass
