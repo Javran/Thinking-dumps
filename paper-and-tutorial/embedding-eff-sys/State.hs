@@ -18,6 +18,8 @@ data Effect (s :: Eff) = Eff
 
 data (:!) (a :: *) (s :: Eff) = a :! (Effect s)
 infixl 3 :!
+-- note that ":!" binds tighter than ":->"
+-- so "v :-> a :! f" means "v :-> (a :! f)"
 
 type family Reads t where
   Reads '[] = '[]
@@ -61,6 +63,19 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
   Update (  (v :-> a :! 'W)
          ': (v :-> b :! 'R)
          ': as) as' where
+    -- for all wildcards, we've already know what it must be
+    -- so there's no point to check them again
     update (Ext (v :-> (a :! _)) (Ext _ xs)) =
-        update (Ext (v :-> (a :! (Eff::(Effect 'R)))) xs)
+        update (Ext (v :-> (a :! (Eff :: Effect 'R))) xs)
+    update _ = error "impossible"
+
+instance Update ((u :-> b :! s) ': as) as' =>
+  Update ((v :-> a :! 'W) ': (u :-> b :! s) ': as) as' where
+    update (Ext _ (Ext e xs)) = update (Ext e xs)
+    update _ = error "impossible"
+
+instance Update ((u :-> b :! s) ': as) as' =>
+  Update ((v :-> a :! 'R) ': (u :-> b :! s) ': as)
+         ((v :-> a :! 'R) ': as') where
+    update (Ext e (Ext e' xs)) = Ext e (update (Ext e' xs))
     update _ = error "impossible"
