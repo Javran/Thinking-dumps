@@ -146,7 +146,7 @@ asSet :: (Sortable s, Nubable (Sort s)) => Set s -> Set (AsSet s)
 asSet x = nub (bsort x)
 
 -- TODO: not sure whether this is correct, but it type checks.
-bsort :: Bubbler s s => Set s -> Set (Sort s)
+bsort :: Sortable s => Set s -> Set (Sort s)
 bsort s = bubble s s
 
 type IsSet s = ((s ~ Nub (Sort s)) :: Constraint)
