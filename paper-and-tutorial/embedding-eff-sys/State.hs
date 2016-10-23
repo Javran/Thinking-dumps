@@ -1,5 +1,6 @@
 {-# LANGUAGE
     KindSignatures
+  , ConstraintKinds
   , FlexibleContexts
   , FlexibleInstances
   , MultiParamTypeClasses
@@ -20,6 +21,7 @@ data (:!) (a :: *) (s :: Eff) = a :! (Effect s)
 infixl 3 :!
 -- note that ":!" binds tighter than ":->"
 -- so "v :-> a :! f" means "v :-> (a :! f)"
+-- reads "variable v has type a and effect action f"
 
 type family Reads t where
   Reads '[] = '[]
@@ -59,6 +61,20 @@ instance Update xs '[] where
 instance Update '[e] '[e] where
     update s = s
 
+{-
+  this State monad is more flexible than the State monad we usually see
+  because it allows storing value of different types under the same "var" label
+  but this is at the cost of code complexity:
+  personally I think the implementation of Update is messy and
+  it's hard to just look at the code and tell what's going on
+-}
+
+{-
+  let's denote Update like an arrow: "~~>"
+  TODO: just translation, I'm still not sure what this means
+  if [v :-> a :! R, ...] ~~> as'
+  then [v :-> a :! W, v :-> b :! R, ...] ~~> as'
+-}
 instance Update ((v :-> a :! 'R) ': as) as' =>
   Update (  (v :-> a :! 'W)
          ': (v :-> b :! 'R)
@@ -68,12 +84,19 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
     update (Ext (v :-> (a :! _)) (Ext _ xs)) =
         update (Ext (v :-> (a :! (Eff :: Effect 'R))) xs)
     update _ = error "impossible"
-
+{-
+  if [u :-> b :! s, ...] ~~> as'
+  then [v :-> a :! W, u :-> b :! s, ...] ~~> as'
+-}
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'W) ': (u :-> b :! s) ': as) as' where
     update (Ext _ (Ext e xs)) = update (Ext e xs)
     update _ = error "impossible"
 
+{-
+  if [u :-> b :! s, ...] ~~> as'
+  then [v :-> a :! R, u :-> b :! s, ...] ~~> (v :-> a :! R) : as'
+-}
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'R) ': (u :-> b :! s) ': as)
          ((v :-> a :! 'R) ': as') where
