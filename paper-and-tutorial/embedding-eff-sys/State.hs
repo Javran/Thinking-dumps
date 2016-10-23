@@ -102,3 +102,9 @@ instance Update ((u :-> b :! s) ': as) as' =>
          ((v :-> a :! 'R) ': as') where
     update (Ext e (Ext e' xs)) = Ext e (update (Ext e' xs))
     update _ = error "impossible"
+
+-- a bit more complicated than what's written in the paper
+type IntersectR s t = (Sortable (Append s t), Update (Sort (Append s t)) t)
+
+intersectR :: (Writes s ~ s, Reads t ~ t, IntersectR s t) => Set s -> Set t -> Set t
+intersectR s t = update (bsort (append s t))
