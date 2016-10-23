@@ -1,5 +1,6 @@
 {-# LANGUAGE
     KindSignatures
+  , UndecidableInstances
   , ConstraintKinds
   , FlexibleContexts
   , FlexibleInstances
@@ -12,6 +13,7 @@ module State where
 
 import TypeLevelSets hiding (Nub)
 import EffSys hiding (Effect, Eff, R, Update, update)
+import qualified EffSys (Effect)
 
 data Eff = R | W | RW
 
@@ -108,3 +110,22 @@ type IntersectR s t = (Sortable (Append s t), Update (Sort (Append s t)) t)
 
 intersectR :: (Writes s ~ s, Reads t ~ t, IntersectR s t) => Set s -> Set t -> Set t
 intersectR s t = update (bsort (append s t))
+
+-- "s" is a list of things that the computation can read and write
+-- and "Reads s" and "Writes s" break the list into two
+data State s a = State
+  { runState :: Set (Reads s) -> (a, Set (Writes s)) }
+
+{-
+-- not working as expected,
+-- we might have to change everything related to "Nub" a bit
+instance EffSys.Effect State where
+    type Unit State = '[]
+    type Plus State s t = UnionS s t
+    pure x = State (\Empty -> (x, Empty))
+    (State e) >>= k = State (\st ->
+        let (sR,tR) = split st
+            (a,sW) = e sR
+            (b,tW) = runState (k a) (sW `intersectR` tR)
+        in (b,sW `union` tW))
+-}
