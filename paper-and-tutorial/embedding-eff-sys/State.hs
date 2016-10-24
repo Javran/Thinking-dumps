@@ -8,12 +8,17 @@
   , DataKinds
   , TypeOperators
   , TypeFamilies
+  , RebindableSyntax
   #-}
 module State where
 
-import TypeLevelSets hiding (Nub, Unionable, Nubable)
+import Prelude
+import GHC.Exts
+import TypeLevelSets hiding (Nub, nub, Unionable, Nubable {-, IsSet -})
 import EffSys hiding (Effect, Eff, R, Update, update)
 import qualified EffSys (Effect)
+
+-- type IsSet s = ((s ~ Nub (Sort s)) :: Constraint)
 
 data Eff = R | W | RW
 
@@ -52,13 +57,33 @@ type family Nub t where
       Nub ((v :-> a :! 'RW) ': s)
   Nub (e ': f ': s) = e ': (Nub (f ': s))
 
+class Nubable t v where
+    nub :: Set t -> Set v
+
+instance Nubable '[] '[] where
+    nub Empty = Empty
+
+instance Nubable '[e] '[e] where
+    nub (Ext e Empty) = (Ext e Empty)
+
+instance Nubable ((k :-> b :! s) ': as) as' =>
+    Nubable ((k :-> a :! s) ': (k :-> b :! s) ': as) as' where
+    nub (Ext _ (Ext x xs)) = nub (Ext x xs)
+
+instance Nubable ((k :-> a :! RW) ': as) as' =>
+    Nubable ((k :-> a :! s) ': (k :-> a :! t) ': as) as' where
+    nub (Ext _ (Ext (k :-> (a :! _)) xs)) = nub (Ext (k :-> (a :! (Eff::(Effect RW)))) xs)
+
+instance Nubable ((j :-> b :! t) ': as) as' =>
+    Nubable ((k :-> a :! s) ': (j :-> b :! t) ': as) ((k :-> a :! s) ': as') where
+    nub (Ext (k :-> (a :! s)) (Ext (j :-> (b :! t)) xs)) =
+        Ext (k :-> (a :! s)) (nub (Ext (j :-> (b :! t)) xs))
+
 type UnionS s t = Nub (Sort (Append s t))
 type Unionable s t =
     ( Sortable (Append s t)
     , Nubable (Sort (Append s t)) (Nub (Sort (Append s t)))
     , Split s t (Union s t))
-
-
 
 class Update s t where
     update :: Set s -> Set t
@@ -91,7 +116,7 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
     -- so there's no point to check them again
     update (Ext (v :-> (a :! _)) (Ext _ xs)) =
         update (Ext (v :-> (a :! (Eff :: Effect 'R))) xs)
-    update _ = error "impossible"
+    -- update _ = error "impossible"
 {-
   if [u :-> b :! s, ...] ~~> as'
   then [v :-> a :! W, u :-> b :! s, ...] ~~> as'
@@ -99,7 +124,7 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'W) ': (u :-> b :! s) ': as) as' where
     update (Ext _ (Ext e xs)) = update (Ext e xs)
-    update _ = error "impossible"
+    -- update _ = error "impossible"
 
 {-
   if [u :-> b :! s, ...] ~~> as'
@@ -109,12 +134,13 @@ instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'R) ': (u :-> b :! s) ': as)
          ((v :-> a :! 'R) ': as') where
     update (Ext e (Ext e' xs)) = Ext e (update (Ext e' xs))
-    update _ = error "impossible"
+    -- update _ = error "impossible"
 
 -- a bit more complicated than what's written in the paper
 type IntersectR s t = (Sortable (Append s t), Update (Sort (Append s t)) t)
 
-intersectR :: (Writes s ~ s, Reads t ~ t, IntersectR s t) => Set s -> Set t -> Set t
+intersectR :: (Writes s ~ s, Reads t ~ t, IsSet s, IsSet t, IntersectR s t) =>
+              Set s -> Set t -> Set t
 intersectR s t = update (bsort (append s t))
 
 -- "s" is a list of things that the computation can read and write
@@ -122,7 +148,9 @@ intersectR s t = update (bsort (append s t))
 data State s a = State
   { runState :: Set (Reads s) -> (a, Set (Writes s)) }
 
-
+{-
+-- I think I've done everything I can think of, no clue about
+-- the error I'm getting, so I'll skip rest of this part for now.
 -- TODO: not working as expected,
 -- we might have to change everything related to "Nub" a bit?
 -- the re-definition of "Nub" might not be the problem.
@@ -139,8 +167,9 @@ instance EffSys.Effect State where
     type Unit State = '[]
     type Plus State s t = UnionS s t
     pure x = State (\Empty -> (x, Empty))
-    (State e) >>= k = State (\st ->
+    (State e) >>= k = State $ \st ->
         let (sR,tR) = split st
             (a,sW) = e sR
-            (b,tW) = runState (k a) (sW `intersectR` tR)
-        in (b,sW `union` tW))
+            (b,tW) = (runState $ k a) (sW `intersectR` tR)
+        in (b,sW `union` tW)
+-}
