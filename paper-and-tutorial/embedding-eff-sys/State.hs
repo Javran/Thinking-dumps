@@ -11,7 +11,7 @@
   #-}
 module State where
 
-import TypeLevelSets hiding (Nub)
+import TypeLevelSets hiding (Nub, Unionable, Nubable)
 import EffSys hiding (Effect, Eff, R, Update, update)
 import qualified EffSys (Effect)
 
@@ -53,6 +53,12 @@ type family Nub t where
   Nub (e ': f ': s) = e ': (Nub (f ': s))
 
 type UnionS s t = Nub (Sort (Append s t))
+type Unionable s t =
+    ( Sortable (Append s t)
+    , Nubable (Sort (Append s t)) (Nub (Sort (Append s t)))
+    , Split s t (Union s t))
+
+
 
 class Update s t where
     update :: Set s -> Set t
@@ -116,10 +122,20 @@ intersectR s t = update (bsort (append s t))
 data State s a = State
   { runState :: Set (Reads s) -> (a, Set (Writes s)) }
 
-{-
--- not working as expected,
--- we might have to change everything related to "Nub" a bit
+
+-- TODO: not working as expected,
+-- we might have to change everything related to "Nub" a bit?
+-- the re-definition of "Nub" might not be the problem.
 instance EffSys.Effect State where
+    type Inv State s t = ( IsSet s, IsSet (Reads s), IsSet (Writes s)
+                         , IsSet t, IsSet (Reads t), IsSet (Writes t)
+                         , Reads (Reads t) ~ Reads t
+                         , Writes (Writes s) ~ Writes s
+                         , Split (Reads s) (Reads t) (Reads (UnionS s t))
+                         , Unionable (Writes s) (Writes t)
+                         , IntersectR (Writes s) (Reads t)
+                         , Writes (UnionS s t) ~ UnionS (Writes s) (Writes t))
+
     type Unit State = '[]
     type Plus State s t = UnionS s t
     pure x = State (\Empty -> (x, Empty))
@@ -128,4 +144,3 @@ instance EffSys.Effect State where
             (a,sW) = e sR
             (b,tW) = runState (k a) (sW `intersectR` tR)
         in (b,sW `union` tW))
--}
