@@ -12,7 +12,7 @@
   #-}
 module State where
 
-import Prelude
+import Prelude hiding (return, pure, (>>), (>>=))
 import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union)
 import EffSys hiding (Effect, Eff, R, Update, update)
 import qualified EffSys (Effect)
@@ -173,3 +173,9 @@ instance EffSys.Effect State where
             (a,sW) = e sR
             (b,tW) = runState (k a) (sW `intersectR` tR)
         in (b,sW `union` tW))
+
+get :: Var v -> State '[v :-> a :! 'R] a
+get _ = State $ \ (Ext (_ :-> a :! _) xs) -> (a, xs)
+
+put :: Var v -> a -> State '[v :-> a :! 'W] ()
+put _ a = State $ \xs -> ((), Ext (Var :-> a :! Eff) xs)
