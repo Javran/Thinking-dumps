@@ -14,7 +14,7 @@ module State where
 
 import Prelude
 import GHC.Exts
-import TypeLevelSets hiding (Nub, nub, Unionable, Nubable {-, IsSet -})
+import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union {-, IsSet -})
 import EffSys hiding (Effect, Eff, R, Update, update)
 import qualified EffSys (Effect)
 
@@ -148,7 +148,10 @@ intersectR s t = update (bsort (append s t))
 data State s a = State
   { runState :: Set (Reads s) -> (a, Set (Writes s)) }
 
-{-
+
+union :: (Unionable s t) => Set s -> Set t -> Set (UnionS s t)
+union s t = nub (bsort (append s t))
+
 -- I think I've done everything I can think of, no clue about
 -- the error I'm getting, so I'll skip rest of this part for now.
 -- TODO: not working as expected,
@@ -172,4 +175,3 @@ instance EffSys.Effect State where
             (a,sW) = e sR
             (b,tW) = (runState $ k a) (sW `intersectR` tR)
         in (b,sW `union` tW)
--}
