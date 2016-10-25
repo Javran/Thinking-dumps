@@ -14,7 +14,7 @@ module State where
 
 import Prelude hiding (return, pure, (>>), (>>=))
 import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union)
-import EffSys hiding (Effect, Eff, R, Update, update)
+import EffSys hiding (Effect, Eff, R, Update, update, put)
 import qualified EffSys (Effect)
 
 data Eff = R | W | RW
@@ -179,3 +179,13 @@ get _ = State $ \ (Ext (_ :-> a :! _) xs) -> (a, xs)
 
 put :: Var v -> a -> State '[v :-> a :! 'W] ()
 put _ a = State $ \xs -> ((), Ext (Var :-> a :! Eff) xs)
+
+-- there is a subtle different between this one and regular "modify":
+-- the effect "RW" will be enforced even if the modifier function is just a "id"
+-- so actually the type signature would sometimes overestimate the actual effect.
+modify :: Var v -> (a -> a) -> State '[v :-> a :! 'RW] a
+modify var f = get var >>= \oldV -> put var (f oldV) >> pure oldV
+
+state :: Var v -> (s -> (a,s)) -> State '[v :-> s :! 'RW] a
+state var sf = get var >>= \oldS ->
+    let (v, newS) = sf oldS in put var newS >> pure v
