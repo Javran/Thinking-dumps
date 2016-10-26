@@ -1,5 +1,6 @@
 {-# LANGUAGE
     KindSignatures
+  , NoMonomorphismRestriction
   , UndecidableInstances
   , ConstraintKinds
   , FlexibleContexts
@@ -10,6 +11,8 @@
   , TypeFamilies
   , RebindableSyntax
   , ScopedTypeVariables
+    -- hm, this one looks evil
+  , IncoherentInstances
   #-}
 module State where
 
@@ -17,6 +20,7 @@ import Prelude hiding (return, pure, (>>), (>>=))
 import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union, AsSet)
 import EffSys hiding (Effect, Eff, R, Update, update, put)
 import qualified EffSys (Effect)
+import Data.Monoid ((<>))
 
 data Eff = R | W | RW
 
@@ -197,11 +201,22 @@ varS = Var :: Var "out"
 incC :: State '["count" :-> Int :! 'RW] ()
 incC = modify varC succ >>= \_ -> pure ()
 
-{-
 -- seems a mixture of varC and varS doesn't work?
-test1 :: State '["count" :-> Int :! 'RW, "out" :-> String :! 'RW] Int
+test1 :: State '["count" :-> Int :! 'RW, "out" :-> String :! 'W] Int
 test1 = do
     put varC (10 :: Int)
-    put varS "different type"
+    put varS "String"
     get varC
--}
+
+writeS :: [a] -> State '["out" :-> [a] :! 'RW] ()
+writeS y = do
+    x <- get varS
+    put varS (x <> y)
+
+-- the following line won't work:
+-- write :: [a] -> State '["out" :-> [a] :! 'RW, "count" :-> Int :! 'RW] ()
+-- but if we explicitly sort the it, then it will:
+-- write :: [a] -> State (Sort '["out" :-> [a] :! 'RW, "count" :-> Int :! 'RW]) ()
+
+write :: [a] -> State '["count" :-> Int :! 'RW, "out" :-> [a] :! 'RW] ()
+write x = writeS x >> incC
