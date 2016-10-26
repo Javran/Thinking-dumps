@@ -196,3 +196,12 @@ varS = Var :: Var "out"
 
 incC :: State '["count" :-> Int :! 'RW] ()
 incC = modify varC succ >>= \_ -> pure ()
+
+{-
+-- seems a mixture of varC and varS doesn't work?
+test1 :: State '["count" :-> Int :! 'RW, "out" :-> String :! 'RW] Int
+test1 = do
+    put varC (10 :: Int)
+    put varS "different type"
+    get varC
+-}
