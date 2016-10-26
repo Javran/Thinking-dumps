@@ -205,6 +205,11 @@ incC = modify varC succ >>= \_ -> pure ()
 test1 :: State '["count" :-> Int :! 'RW, "out" :-> String :! 'W] Int
 test1 = do
     put varC (10 :: Int)
+    -- the following line looks good but it actually isn't
+    -- even after changing the "out" variable with "RW" effect,
+    -- this won't type check
+    -- TODO: check if the same thing works for effect-monad?
+    -- modify varC id
     put varS "String"
     get varC
 
