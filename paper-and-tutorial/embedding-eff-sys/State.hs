@@ -9,11 +9,12 @@
   , TypeOperators
   , TypeFamilies
   , RebindableSyntax
+  , ScopedTypeVariables
   #-}
 module State where
 
 import Prelude hiding (return, pure, (>>), (>>=))
-import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union)
+import TypeLevelSets hiding (Nub, nub, Unionable, Nubable, union, AsSet)
 import EffSys hiding (Effect, Eff, R, Update, update, put)
 import qualified EffSys (Effect)
 
@@ -189,3 +190,9 @@ modify var f = get var >>= \oldV -> put var (f oldV) >> pure oldV
 state :: Var v -> (s -> (a,s)) -> State '[v :-> s :! 'RW] a
 state var sf = get var >>= \oldS ->
     let (v, newS) = sf oldS in put var newS >> pure v
+
+varC = Var :: Var "count"
+varS = Var :: Var "out"
+
+incC :: State '["count" :-> Int :! 'RW] ()
+incC = modify varC succ >>= \_ -> pure ()
