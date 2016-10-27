@@ -120,6 +120,7 @@ instance Update '[e] '[e] where
 
   TODO: see if it helps to say "Update s t"
   is an attempt to unify its 2 argument types?
+
 -}
 instance Update ((v :-> a :! 'R) ': as) as' =>
   Update (  (v :-> a :! 'W)
@@ -152,9 +153,15 @@ instance Update ((u :-> b :! s) ': as) as' =>
 -- a bit more complicated than what's written in the paper
 type IntersectR s t = (Sortable (Append s t), Update (Sort (Append s t)) t)
 
-intersectR :: (Writes s ~ s, Reads t ~ t, IsSet s, IsSet t, IntersectR s t) =>
+intersectR :: forall s t.
+              ( Writes s ~ s, Reads t ~ t
+              , IsSet s, IsSet t, IntersectR s t) =>
               Set s -> Set t -> Set t
-intersectR s t = update (bsort (append s t))
+intersectR s t =
+    -- "update"'s type does not have to be explicit,
+    -- here I just think it's helpful to write it out
+    (update :: Set (Sort (Append s t)) -> Set t)
+      (bsort (append s t))
 
 -- "s" is a list of things that the computation can read and write
 -- and "Reads s" and "Writes s" break the list into two
