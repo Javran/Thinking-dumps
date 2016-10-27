@@ -109,18 +109,23 @@ instance Update '[e] '[e] where
 -}
 
 {-
+  note that "update" function has only one use site in "intersectR"
+  in which we have "update :: Set (Sort (Append s t)) -> Set t"
+  and additionally "Writes s ~ s" and "Reads t ~ t".
+
+  asuming "Sort" is stable, we will be only dealing with either "W" or "R"
+  under same "Var". and "W" always appears before "R" (again under same "Var")
+
   let's denote Update like an arrow: "~~>"
   TODO: just translation, I'm still not sure what this means
+
   if [v :-> a :! R, ...] ~~> as'
   then [v :-> a :! W, v :-> b :! R, ...] ~~> as'
 
-  TODO: I'm not really sure whether this is the right thing to do:
-  the comparison between (v :-> a) is only by comparing on "v" part
-  so there's no guarantee about the order of R, W, RW, is there?
-
-  TODO: see if it helps to say "Update s t"
-  is an attempt to unify its 2 argument types?
-
+  interpretation: if the previous computation writes to v (i.e. "v :-> a :! W")
+  and the next computation reads from v (i.e. "v :-> b :! R")
+  then for the next computation, it should read from v (expecting type "a")
+  (I think, in other words, a ~ b)
 -}
 instance Update ((v :-> a :! 'R) ': as) as' =>
   Update (  (v :-> a :! 'W)
@@ -134,6 +139,10 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
 {-
   if [u :-> b :! s, ...] ~~> as'
   then [v :-> a :! W, u :-> b :! s, ...] ~~> as'
+
+  interpretation: note that "u" is not unifiable with "v" (otherwise the previous instance
+  would have captured it), and therefore "v :-> a :! W" is without a corresponding
+  read effect. in this case simply removing it from the list will do.
 -}
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'W) ': (u :-> b :! s) ': as) as' where
@@ -143,6 +152,10 @@ instance Update ((u :-> b :! s) ': as) as' =>
 {-
   if [u :-> b :! s, ...] ~~> as'
   then [v :-> a :! R, u :-> b :! s, ...] ~~> (v :-> a :! R) : as'
+
+  interpretation: similarly, "v :-> a :! R" does not have a corresponding write effect
+  and we keep it.
+  TODO: I guess we can rearrange "if ... then ..." stuff to make it more clear
 -}
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'R) ': (u :-> b :! s) ': as)
