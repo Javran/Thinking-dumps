@@ -113,6 +113,13 @@ instance Update '[e] '[e] where
   TODO: just translation, I'm still not sure what this means
   if [v :-> a :! R, ...] ~~> as'
   then [v :-> a :! W, v :-> b :! R, ...] ~~> as'
+
+  TODO: I'm not really sure whether this is the right thing to do:
+  the comparison between (v :-> a) is only by comparing on "v" part
+  so there's no guarantee about the order of R, W, RW, is there?
+
+  TODO: see if it helps to say "Update s t"
+  is an attempt to unify its 2 argument types?
 -}
 instance Update ((v :-> a :! 'R) ': as) as' =>
   Update (  (v :-> a :! 'W)
@@ -174,10 +181,28 @@ instance EffSys.Effect State where
     type Plus State s t = UnionS s t
     pure x = State (\Empty -> (x, Empty))
     (State e) >>= k = State (\st ->
-        let (sR,tR) = split st
+        -- the computation consists of two parts:
+        -- (1) first we need to execute "e"
+        -- (2) then "k" is executed with the result
+        --     we got from running "e".
+        let -- 2 computations to run, so "st" is splitted into 2
+            (sR,tR) = split st
+            -- run first one, get result "a" and resulting state "sW"
             (a,sW) = e sR
+            -- then we want to continue by running "k a", but note that
+            -- the resulting state "sW" should not be dropped, and we also need to
+            -- use "tR" somehow.
+
+            -- if we write "(b,tW) = runState (k a) tR"
+            -- instead of the following line, it also typechecks.
+            -- but I think doing so will cause the effect of running the first computation
+            -- be totally dropped..
+            -- maybe we have lost some safty that the type system can offer...
             (b,tW) = runState (k a) (sW `intersectR` tR)
-        in (b,sW `union` tW))
+        in
+        -- after all the computations are done, we wish to combine two resulting states
+        -- so that's what "union" does
+        (b,sW `union` tW))
 
 get :: Var v -> State '[v :-> a :! 'R] a
 get _ = State $ \ (Ext (_ :-> a :! _) xs) -> (a, xs)
