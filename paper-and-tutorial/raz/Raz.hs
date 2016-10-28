@@ -44,6 +44,15 @@ rndLevel = do
        then pure 0
        else
          let loop t r =
+                 {- analysis:
+                    - INVARIANT: t == 2^r
+                    - t is 1, 2, 4, 8, ...
+                    - x consists of 30 random bits
+                    - for the worse case, every bit of x is "1"
+                      (so there's no way of escaping the recursive call early)
+                      - x .&. t == 0 will be the case where t = 2^31 => r = 31
+                      - so rndLevel outputs a number in between 0 and 31
+                  -}
                  if x .&. t == 0
                    then r
                    else loop (t `shiftL` 1) (r+1)
