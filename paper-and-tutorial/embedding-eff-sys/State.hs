@@ -254,7 +254,7 @@ test1 = do
     -- the following line looks good but it actually isn't
     -- even after changing the "out" variable with "RW" effect,
     -- this won't type check
-    -- TODO: check if the same thing works for effect-monad?
+    -- (the following line doesn't work with effect-monad-0.7.0.0)
     -- modify varC id
     put varS "String"
     get varC
