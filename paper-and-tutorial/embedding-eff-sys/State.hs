@@ -117,10 +117,10 @@ instance Update '[e] '[e] where
   under same "Var". and "W" always appears before "R" (again under same "Var")
 
   let's denote Update like an arrow: "~~>"
-  TODO: just translation, I'm still not sure what this means
 
   if [v :-> a :! R, ...] ~~> as'
   then [v :-> a :! W, v :-> b :! R, ...] ~~> as'
+  (net effect: changing "[v :-> a :! W, v :-> b :! R]" to "[v :-> a :! R]")
 
   interpretation: if the previous computation writes to v (i.e. "v :-> a :! W")
   and the next computation reads from v (i.e. "v :-> b :! R")
@@ -139,6 +139,7 @@ instance Update ((v :-> a :! 'R) ': as) as' =>
 {-
   if [u :-> b :! s, ...] ~~> as'
   then [v :-> a :! W, u :-> b :! s, ...] ~~> as'
+  (net effect: removing "v :-> a :! W" in front)
 
   interpretation: note that "u" is not unifiable with "v" (otherwise the previous instance
   would have captured it), and therefore "v :-> a :! W" is without a corresponding
@@ -152,10 +153,10 @@ instance Update ((u :-> b :! s) ': as) as' =>
 {-
   if [u :-> b :! s, ...] ~~> as'
   then [v :-> a :! R, u :-> b :! s, ...] ~~> (v :-> a :! R) : as'
+  (net effect: "v :-> a :! R" is kept and we will recurse on rest of the list)
 
   interpretation: similarly, "v :-> a :! R" does not have a corresponding write effect
   and we keep it.
-  TODO: I guess we can rearrange "if ... then ..." stuff to make it more clear
 -}
 instance Update ((u :-> b :! s) ': as) as' =>
   Update ((v :-> a :! 'R) ': (u :-> b :! s) ': as)
