@@ -57,3 +57,22 @@ rndLevel = do
                    then r
                    else loop (t `shiftL` 1) (r+1)
          in pure (loop 1 0)
+
+empty :: MonadRandom m => a -> m (Zip a)
+empty n = (\x -> Zip (LLvl x (LCons n LNil)) n LNil) <$> rndLevel
+
+insert :: MonadRandom m => Dir -> a -> Zip a -> m (Zip a)
+insert d ne (Zip l e r) = case d of
+    L -> (\x -> Zip (LLvl x (LCons ne l)) e r) <$> rndLevel
+    R -> (\x -> Zip l e (LLvl x (LCons ne r))) <$> rndLevel
+
+remove :: Dir -> Zip a -> Zip a
+remove d (Zip l e r) = case d of
+    L -> Zip (remove' L l) e r
+    R -> Zip l e (remove' R r)
+  where
+    remove' d' s = case s of
+        LNil -> error "remove past end of seq"
+        LCons _ rest -> rest
+        LLvl _ rest -> remove' d' rest
+        LTr {} -> remove' d' (trim d' s)
