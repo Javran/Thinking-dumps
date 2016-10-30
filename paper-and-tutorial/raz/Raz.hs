@@ -81,12 +81,12 @@ viewC :: Zip a -> a
 viewC (Zip _ v _) = v
 
 view :: Dir -> Zip a -> a
-view d (Zip l e r) = case d of
-    L -> view' L l
-    R -> view' R r
+view d (Zip l _ r) = case d of
+    L -> view' l
+    R -> view' r
   where
-    view' d' s = case s of
+    view' s = case s of
         LNil -> error "view past end of seq"
-        LCons e _ -> e
-        LLvl _ rest -> view' d' rest
-        LTr {} -> view' d' (trim d' s)
+        LCons v _ -> v
+        LLvl _ rest -> view' rest
+        LTr {} -> view' (trim d s)
