@@ -76,3 +76,17 @@ remove d (Zip l e r) = case d of
         LCons _ rest -> rest
         LLvl _ rest -> remove' d' rest
         LTr {} -> remove' d' (trim d' s)
+
+viewC :: Zip a -> a
+viewC (Zip _ v _) = v
+
+view :: Dir -> Zip a -> a
+view d (Zip l e r) = case d of
+    L -> view' L l
+    R -> view' R r
+  where
+    view' d' s = case s of
+        LNil -> error "view past end of seq"
+        LCons e _ -> e
+        LLvl _ rest -> view' d' rest
+        LTr {} -> view' d' (trim d' s)
