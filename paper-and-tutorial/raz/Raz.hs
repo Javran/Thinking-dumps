@@ -90,3 +90,19 @@ view d (Zip l _ r) = case d of
         LCons v _ -> v
         LLvl _ rest -> view' rest
         LTr {} -> view' (trim d s)
+
+alterC :: a -> Zip a -> Zip a
+alterC e (Zip l _ r) = Zip l e r
+
+alter :: Dir -> a -> Zip a -> Zip a
+alter d elm (Zip l e r) = case d of
+    L -> Zip (alter' l) e r
+    R -> Zip l e (alter' r)
+  where
+    -- arguments that don't change between function calls
+    -- are removed
+    alter' s = case s of
+        LNil -> error "alter past end of seq"
+        LCons _ rest -> LCons elm rest
+        LLvl lv rest -> LLvl lv (alter' rest)
+        LTr {} -> alter' (trim d s)
