@@ -132,3 +132,18 @@ focus t p
             in if p' < c'
                  then focus' bl p' l (LLvl lv (LTr br r))
                  else focus' br (p'-c') (LLvl lv (LTr bl l)) r
+
+-- should be an order-preserving append over Tree structures
+append :: Tree a -> Tree a -> Tree a
+append t1 t2 = case (t1,t2) of
+    (Nil,_) -> t2
+    (_,Nil) -> t1
+    (Leaf _, Leaf _) -> error "full trees shouldn't be appended"
+    (Leaf _, Bin lv _ l r) -> Bin lv tot (append t1 l) r
+    (Bin lv _ l r, Leaf _) -> Bin lv tot l (append r t2)
+    (Bin lv1 _ t1l t1r, Bin lv2 _ t2l t2r) ->
+        if lv1 >= lv2
+          then Bin lv1 tot t1l (append t1r t2)
+          else Bin lv2 tot (append t1 t2l) t2r
+  where
+    tot = itemCount t1 + itemCount t2
