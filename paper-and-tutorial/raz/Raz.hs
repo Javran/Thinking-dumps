@@ -80,6 +80,8 @@ remove d (Zip l e r) = case d of
 viewC :: Zip a -> a
 viewC (Zip _ v _) = v
 
+-- the impl looks for the list in corresponding direction
+-- and view the first element of that.
 view :: Dir -> Zip a -> a
 view d (Zip l _ r) = case d of
     L -> view' l
@@ -94,6 +96,7 @@ view d (Zip l _ r) = case d of
 alterC :: a -> Zip a -> Zip a
 alterC e (Zip l _ r) = Zip l e r
 
+-- actually this is very similar to "view"
 alter :: Dir -> a -> Zip a -> Zip a
 alter d elm (Zip l e r) = case d of
     L -> Zip (alter' l) e r
@@ -106,3 +109,26 @@ alter d elm (Zip l e r) = case d of
         LCons _ rest -> LCons elm rest
         LLvl lv rest -> LLvl lv (alter' rest)
         LTr {} -> alter' (trim d s)
+
+itemCount :: Tree a -> Int
+itemCount t = case t of
+    Nil -> 0
+    Leaf {} -> 1
+    Bin _ c _ _ -> c
+
+focus :: Tree a -> Int -> Zip a
+focus t p
+    | p >= c || p < 0 = error "out of bounds"
+    | otherwise = focus' t p LNil LNil
+  where
+    c = itemCount t
+    focus' t' p' l r = case t' of
+        Nil -> error "internal Nil"
+        Leaf elm -> if p' == 0
+                      then Zip l elm r
+                      else error "assertion failed"
+        Bin lv _ bl br ->
+            let c' = itemCount bl
+            in if p' < c'
+                 then focus' bl p' l (LLvl lv (LTr br r))
+                 else focus' br (p'-c') (LLvl lv (LTr bl l)) r
