@@ -162,3 +162,17 @@ tail l = case l of
     LCons _ r -> r
     LLvl _ r -> r
     LTr _ r -> r
+
+grow :: Dir -> List a -> Tree a
+grow d t = grow' (headAsTree t) (tail t)
+  where
+    grow' h1 t1 =
+        case t1 of
+            LNil -> h1
+            _ -> let h2 = headAsTree t1
+                 in case d of
+                     L -> grow' (append h2 h1) (tail t1)
+                     R -> grow' (append h1 h2) (tail t1)
+
+unfocus :: Zip a -> Tree a
+unfocus (Zip l e r) = append (grow L l) (append (Leaf e) (grow R r))
