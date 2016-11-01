@@ -1,5 +1,6 @@
 module Raz where
 
+import Prelude hiding (tail)
 import Control.Monad.Random
 import Data.Bits
 
@@ -147,3 +148,17 @@ append t1 t2 = case (t1,t2) of
           else Bin lv2 tot (append t1 t2l) t2r
   where
     tot = itemCount t1 + itemCount t2
+
+headAsTree :: List a -> Tree a
+headAsTree l = case l of
+    LNil -> Nil
+    LCons s _ -> Leaf s
+    LLvl lv _ -> Bin lv 0 Nil Nil
+    LTr t _ -> t
+
+tail :: List a -> List a
+tail l = case l of
+    LNil -> LNil
+    LCons _ r -> r
+    LLvl _ r -> r
+    LTr _ r -> r
