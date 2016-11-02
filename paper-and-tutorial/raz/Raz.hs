@@ -1,4 +1,15 @@
-module Raz where
+module Raz
+  ( Zip()
+  , List()
+  , empty
+  , focus
+  , unfocus
+  , singleton
+  , insert
+  , remove
+  , view, viewC
+  , alter, alterC
+  ) where
 
 import Prelude hiding (tail)
 import Control.Monad.Random
