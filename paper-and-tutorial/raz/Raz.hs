@@ -80,8 +80,12 @@ rndLevel = do
                    else loop (t `shiftL` 1) (r+1)
          in pure (loop 1 0)
 
-empty :: MonadRandom m => a -> m (Zip a)
-empty n = (\x -> Zip (LLvl x (LCons n LNil)) n LNil) <$> rndLevel
+-- in the original paper "empty" takes a value considered empty
+-- in order to initialize the data structure .. the type system cannot
+-- rule out the risk of accidentally consider a "null" value as an actual one.
+-- so I think a safer thing to do is to just make the default value "Nothing".
+empty :: MonadRandom m => m (Zip (Maybe a))
+empty = (\x -> Zip (LLvl x (LCons Nothing LNil)) Nothing LNil) <$> rndLevel
 
 insert :: MonadRandom m => Dir -> a -> Zip a -> m (Zip a)
 insert d ne (Zip l e r) = case d of
