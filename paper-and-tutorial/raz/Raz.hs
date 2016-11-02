@@ -37,6 +37,11 @@ trim d tl = case tl of
                     R -> trim' l (LLvl lv (LTr r t1))
         in trim' t rest
 
+-- generates a "negative binomial distribution"
+-- + drawing the level "i" is twice as likely as drawing the level "i+1".
+-- + yields smaller numbrs much more often.
+-- + generate a uniformly distributed random number for some range (0~2^k-1)
+--   count the number of consecutive zeros in that number's least-significant bits
 rndLevel :: MonadRandom m => m Int
 rndLevel = do
     -- provide 30 bits
