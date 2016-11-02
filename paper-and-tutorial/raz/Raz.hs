@@ -10,6 +10,7 @@ module Raz
   , remove
   , view, viewC
   , alter, alterC
+  , toList
   ) where
 
 import Prelude hiding (tail)
