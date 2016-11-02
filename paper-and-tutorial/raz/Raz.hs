@@ -11,11 +11,14 @@ module Raz
   , view, viewC
   , alter, alterC
   , toList
+  , fromNonEmptyList
   ) where
 
 import Prelude hiding (tail)
+import Control.Monad
 import Control.Monad.Random
 import Data.Bits
+import qualified Data.List as L
 
 type Level = Int
 data Dir = L | R
@@ -200,5 +203,13 @@ toList x = toList' x id []
   where
     toList' t acc = case t of
         Nil -> acc
-        Leaf x -> acc . (x:)
+        Leaf v -> acc . (v:)
         Bin _ _ l r -> toList' r (toList' l acc)
+
+-- Maybe is outside because we can determine whether the list
+-- is empty immediately after the input is destructed.
+-- so there is no point constructing the "m" at all
+fromNonEmptyList :: MonadRandom m => [a] -> Maybe (m (Zip a))
+fromNonEmptyList xs = case L.uncons xs of
+    Nothing -> Nothing
+    Just (y,ys) -> Just $ foldM (flip (insert L)) (singleton y) ys
