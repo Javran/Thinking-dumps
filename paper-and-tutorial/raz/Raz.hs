@@ -1,6 +1,7 @@
 module Raz
   ( Zip()
-  , List()
+  , Tree()
+  , Dir(..)
   , empty
   , focus
   , unfocus
@@ -192,3 +193,11 @@ grow d t = grow' (headAsTree t) (tail t)
 
 unfocus :: Zip a -> Tree a
 unfocus (Zip l e r) = append (grow L l) (append (Leaf e) (grow R r))
+
+toList :: Tree a -> [a]
+toList x = toList' x id []
+  where
+    toList' t acc = case t of
+        Nil -> acc
+        Leaf x -> acc . (x:)
+        Bin _ _ l r -> toList' r (toList' l acc)
