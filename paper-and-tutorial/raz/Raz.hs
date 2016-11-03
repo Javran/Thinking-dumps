@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 module Raz
   ( Zip()
   , Tree()
@@ -20,6 +21,23 @@ import Control.Monad.Random
 import Data.Bits
 import qualified Data.List as L
 
+{-
+  NOTES:
+
+  - not truly "random access" in my opinion,
+    it's true that local accessing is fast,
+    but if the selling point is in random access,
+    "focus" and "unfocus" should also be fast,
+    which is not the case for RAZ: if we just keep doing
+    "focus" and "unfocus", the time is not going to be better
+    than any other map-like data structures
+    in terms of time complexity.
+
+  - this data structure must be non-empty. this might be due to
+    the very nature of zippers. we can always work around this kind of
+    problem, not a big issue.
+-}
+
 type Level = Int
 data Dir = L | R
 
@@ -27,14 +45,16 @@ data Tree a
   = Nil
   | Leaf a
   | Bin Level Int (Tree a) (Tree a)
+    deriving (Functor)
 
 data List a
   = LNil
   | LCons a (List a)
   | LLvl Level (List a)
   | LTr (Tree a) (List a)
+    deriving (Functor)
 
-data Zip a = Zip (List a) a (List a)
+data Zip a = Zip (List a) a (List a) deriving (Functor)
 
 singleton :: a -> Zip a
 singleton e = Zip LNil e LNil
@@ -216,4 +236,4 @@ toList x = toList' x id []
 fromNonEmptyList :: MonadRandom m => [a] -> Maybe (m (Zip a))
 fromNonEmptyList xs = case L.uncons xs of
     Nothing -> Nothing
-    Just (y,ys) -> Just $ foldM (flip (insert L)) (singleton y) ys
+    Just (y,ys) -> Just $ foldM (flip (insert R)) (singleton y) (reverse ys)
