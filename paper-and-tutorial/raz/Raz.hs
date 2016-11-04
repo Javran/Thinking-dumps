@@ -11,6 +11,7 @@ module Raz
   , remove
   , view, viewC
   , alter, alterC
+  , move
   , toList
   , fromNonEmptyList
   ) where
@@ -221,6 +222,17 @@ grow d t = grow' (headAsTree t) (tail t)
 
 unfocus :: Zip a -> Tree a
 unfocus (Zip l e r) = append (grow L l) (append (Leaf e) (grow R r))
+
+move :: Dir -> Zip a -> Zip a
+move d (Zip l e r) = case d of
+    L -> move' l (LCons e r)
+    R -> let (Zip r1 e1 l1) = move' r (LCons e l) in Zip l1 e1 r1
+  where
+    move' f s = case f of
+        LNil -> error "move past end of seq"
+        LCons elm rest -> Zip rest elm s
+        LLvl lv rest -> move' rest (LLvl lv s)
+        LTr {} -> move' (trim d f) s
 
 toList :: Tree a -> [a]
 toList x = toList' x id []
