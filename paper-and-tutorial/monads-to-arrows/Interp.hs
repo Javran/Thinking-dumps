@@ -24,3 +24,7 @@ eval (If eIf eThen eElse) =
     (eval eIf &&& arr id) >>>
     arr (\(VBl b,env) -> if b then Left env else Right env) >>>
     (eval eThen ||| eval eElse)
+
+-- (->) is an instance of Arrow, which means the following code does typecheck
+eval' :: Exp -> Env -> Val
+eval' = eval
