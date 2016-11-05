@@ -28,3 +28,15 @@ eval (If eIf eThen eElse) =
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
 eval' = eval
+
+{-
+  ArrowChoice offers us:
+
+  left :: b ~~> c -> (Either b d ~~> Either c d)
+
+  so:
+  - if the input is "Left _", it will be fed to that argument arrow.
+  - if the input is "Right _", it's left unchanged.
+
+  this is the primitive to make it possible for doing things conditionally
+-}
