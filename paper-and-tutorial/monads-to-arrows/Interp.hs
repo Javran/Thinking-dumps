@@ -20,6 +20,7 @@ eval (Var s) = arr (fromJust . lookup s)
 eval (Add e1 e2) = liftA2 add (eval e1) (eval e2)
   where
     add (VNum x) (VNum y) = VNum (x+y)
+    add _ _ = error "expecting numbers"
 eval (If eIf eThen eElse) =
     (eval eIf &&& arr id) >>>
     arr (\(VBl b,env) -> if b then Left env else Right env) >>>
@@ -40,3 +41,15 @@ eval' = eval
 
   this is the primitive to make it possible for doing things conditionally
 -}
+
+{-
+  think about: test :: (b ~~> Bool) -> (b ~~> Either b b)
+  it turns an arrow that outputs boolean values
+  into an arrow that keeps its input and encode the boolean value
+  through "Either". note that the input is kept this way
+  instead of being consumed
+-}
+test :: Arrow a => a b Bool -> a b (Either b b)
+test f =
+    (f &&& arr id) >>>
+    arr (\(b,x) -> if b then Left x else Right x)
