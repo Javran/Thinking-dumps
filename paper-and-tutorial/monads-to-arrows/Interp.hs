@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances, UndecidableInstances #-}
 module Interp where
 
 import Control.Arrow
@@ -37,8 +38,11 @@ eval (Lam x e) = arr (\env ->
                            -- then the body is evaluated
                            eval e))
 eval (App eF eA) =
-    ((eval eF >>> arr (\(VFn f) -> f)) &&&
-     eval eA) >>> undefined
+    -- 1. evaluate both function and its argument
+    (eval eF &&& eval eA) >>>
+    -- 2. extract the function from result
+    first (arr (\(VFn f) -> f)) >>>
+    undefined
 -- TODO: App case
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
@@ -68,3 +72,12 @@ test :: Arrow a => a b Bool -> a b (Either b b)
 test f =
     (f &&& arr id) >>>
     arr (\(b,x) -> if b then Left x else Right x)
+
+-- the purpose of this typeclass is to add the arrow ability of input interaction
+-- I think somehow this typeclass should be close related to ArrowApply
+class Arrow a => ArrowInteract a where
+    attachToSnd :: a (b,c) (b,(b,c))
+
+instance (Arrow a, ArrowInteract a) => ArrowApply a where
+    app = undefined
+    -- TODO
