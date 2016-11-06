@@ -22,9 +22,10 @@ eval (Add e1 e2) = liftA2 add (eval e1) (eval e2)
     add (VNum x) (VNum y) = VNum (x+y)
     add _ _ = error "expecting numbers"
 eval (If eIf eThen eElse) =
-    (eval eIf &&& arr id) >>>
-    arr (\(VBl b,env) -> if b then Left env else Right env) >>>
-    (eval eThen ||| eval eElse)
+    -- step 1: evaluate eIf and convert resulting value
+    test (eval eIf >>> arr (\(VBl b) -> b)) >>>
+    -- step 2: now we can dispatch accordingly
+    eval eThen ||| eval eElse
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
