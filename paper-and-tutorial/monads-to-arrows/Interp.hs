@@ -7,8 +7,13 @@ data Exp
   = Var String
   | Add Exp Exp
   | If Exp Exp Exp
+  | Lam String Exp
+  | App Exp Exp
 
-data Val = VNum Int | VBl Bool
+data Val
+  = VNum Int
+  | VBl Bool
+  | VFn (Val -> Val)
 
 type Env = [(String,Val)]
 
@@ -26,6 +31,15 @@ eval (If eIf eThen eElse) =
     test (eval eIf >>> arr (\(VBl b) -> b)) >>>
     -- step 2: now we can dispatch accordingly
     eval eThen ||| eval eElse
+eval (Lam x e) = arr (\env ->
+                      -- manipulate env for binding the new variable
+                      VFn (arr (\v -> (x,v) : env) >>>
+                           -- then the body is evaluated
+                           eval e))
+eval (App eF eA) =
+    ((eval eF >>> arr (\(VFn f) -> f)) &&&
+     eval eA) >>> undefined
+-- TODO: App case
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
