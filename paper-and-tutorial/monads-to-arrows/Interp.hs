@@ -6,7 +6,7 @@ import Data.Maybe
 import Data.Functor.Identity
 import qualified Control.Category as Cat
 
-newtype AId i o = AId { runAid :: i -> Identity o }
+newtype AId i o = AId { runAId :: i -> Identity o }
 
 instance Cat.Category AId where
     id = AId Identity
@@ -18,6 +18,9 @@ instance Arrow AId where
 
 instance ArrowChoice AId where
     left (AId f) = AId (Identity . left (runIdentity . f))
+
+instance ArrowApply AId where
+    app = AId (Identity . \(AId f, x) -> runIdentity (f x))
 
 data Exp
   = Var String
@@ -36,7 +39,7 @@ type Env = [(String,Val)]
 liftA2 :: Arrow a => (b -> c -> d) -> a e b -> a e c -> a e d
 liftA2 op f g = (f &&& g) >>> arr (uncurry op)
 
-eval :: (Arrow a, ArrowChoice a) => Exp -> a Env Val
+eval :: Exp -> AId Env Val
 eval (Var s) = arr (fromJust . lookup s)
 eval (Add e1 e2) = liftA2 add (eval e1) (eval e2)
   where
@@ -62,11 +65,11 @@ eval (App eF eA) =
     -- more than that it acts like an arrow, that's why we
     -- want to use "app" here. (TODO: so we have to change this)
     first (arr (\(VFn f) -> f)) >>>
-    _
+    app
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
-eval' = eval
+eval' e = runIdentity . runAId (eval e)
 
 {-
   ArrowChoice offers us:
