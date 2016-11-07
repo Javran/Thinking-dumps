@@ -14,7 +14,7 @@ data Exp
 data Val
   = VNum Int
   | VBl Bool
-  | VFn (Val -> Val)
+  | VFn (Val -> Val) -- note that "->" is too specific, we don't usually have that
 
 type Env = [(String,Val)]
 
@@ -41,8 +41,12 @@ eval (App eF eA) =
     -- 1. evaluate both function and its argument
     (eval eF &&& eval eA) >>>
     -- 2. extract the function from result
+    -- note the definition of "Val": the "VFn" case accepts
+    -- an haskell function as argument, (i.e. Val -> Val),
+    -- but this is too specific, in general we know nothing
+    -- more than that it acts like an arrow, that's why we
+    -- want to use "app" here. (TODO: so we have to change this)
     first (arr (\(VFn f) -> f)) >>>
-    -- 3. TODO: hm, why we can't just do this instead of using "app"?
     arr (\(f,x) -> f x)
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
