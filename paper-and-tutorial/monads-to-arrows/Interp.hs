@@ -3,6 +3,18 @@ module Interp where
 
 import Control.Arrow
 import Data.Maybe
+import Data.Functor.Identity
+import qualified Control.Category as Cat
+
+newtype AId i o = AId { runAid :: i -> Identity o }
+
+instance Cat.Category AId where
+    id = AId Identity
+    (AId g) . (AId f) = AId (g . runIdentity . f)
+
+instance Arrow AId where
+    arr f = AId (Identity . f)
+    first (AId f) = AId (Identity . first (runIdentity . f))
 
 data Exp
   = Var String
@@ -14,7 +26,7 @@ data Exp
 data Val
   = VNum Int
   | VBl Bool
-  | VFn (Val -> Val) -- note that "->" is too specific, we don't usually have that
+  | VFn (AId Val Val)
 
 type Env = [(String,Val)]
 
@@ -47,7 +59,7 @@ eval (App eF eA) =
     -- more than that it acts like an arrow, that's why we
     -- want to use "app" here. (TODO: so we have to change this)
     first (arr (\(VFn f) -> f)) >>>
-    arr (\(f,x) -> f x)
+    _
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
