@@ -16,6 +16,9 @@ instance Arrow AId where
     arr f = AId (Identity . f)
     first (AId f) = AId (Identity . first (runIdentity . f))
 
+instance ArrowChoice AId where
+    left (AId f) = AId (Identity . left (runIdentity . f))
+
 data Exp
   = Var String
   | Add Exp Exp
