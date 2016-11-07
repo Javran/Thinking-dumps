@@ -42,8 +42,8 @@ eval (App eF eA) =
     (eval eF &&& eval eA) >>>
     -- 2. extract the function from result
     first (arr (\(VFn f) -> f)) >>>
-    undefined
--- TODO: App case
+    -- 3. TODO: hm, why we can't just do this instead of using "app"?
+    arr (\(f,x) -> f x)
 
 -- (->) is an instance of Arrow, which means the following code does typecheck
 eval' :: Exp -> Env -> Val
@@ -73,11 +73,3 @@ test f =
     (f &&& arr id) >>>
     arr (\(b,x) -> if b then Left x else Right x)
 
--- the purpose of this typeclass is to add the arrow ability of input interaction
--- I think somehow this typeclass should be close related to ArrowApply
-class Arrow a => ArrowInteract a where
-    attachToSnd :: a (b,c) (b,(b,c))
-
-instance (Arrow a, ArrowInteract a) => ArrowApply a where
-    app = undefined
-    -- TODO
