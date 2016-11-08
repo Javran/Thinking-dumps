@@ -59,11 +59,11 @@ eval (App eF eA) =
     -- 1. evaluate both function and its argument
     (eval eF &&& eval eA) >>>
     -- 2. extract the function from result
-    -- note the definition of "Val": the "VFn" case accepts
+    -- note the definition of "Val": if the "VFn" case accepts
     -- an haskell function as argument, (i.e. Val -> Val),
     -- but this is too specific, in general we know nothing
     -- more than that it acts like an arrow, that's why we
-    -- want to use "app" here. (TODO: so we have to change this)
+    -- want to use "app" here.
     first (arr (\(VFn f) -> f)) >>>
     app
 
