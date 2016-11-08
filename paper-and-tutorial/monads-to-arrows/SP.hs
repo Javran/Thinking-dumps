@@ -45,4 +45,7 @@ combineParser
                         then p1
                         else if x `elem` starters2
                                then p2
-                               else if empty1 then p1 else p2) xs))
+                               else
+                                 -- TODO: a bit weird here, what to do on failure?
+                                 -- TODO: do we have the assumption that empty1 || empty2 == True?
+                                 if empty1 then p1 else p2) xs))
