@@ -49,3 +49,20 @@ combineParser
                                  -- TODO: a bit weird here, what to do on failure?
                                  -- TODO: do we have the assumption that empty1 || empty2 == True?
                                  if empty1 then p1 else p2) xs))
+
+{-
+  "Parser a" cannot be an instance of Monad
+  because the implementation of ">>=" will be problematic:
+  the type of this particular ">>=" will be:
+  (>>=) :: Parser s a -> (a -> Parser s b) -> Parser s b
+  note that we are combining two Parsers together, which requires
+  static info from both Parsers, but we can only get the static info
+  (from the second Parser) by apply something of type "a" to it,
+  at which point the first parser should have been executed.
+  this suggests the static info of the second Parser depends
+  on the parsing result of the first one, which is not the case.
+  (if we know the second function to "(>>=)" returns a Parser without
+  using its input "a", then it's safe to "cheat" a bit by feeding it "undefined",
+  since the value will never be used anyway. But in reality we have to face
+  an obscure function, so this strategy will not work.)
+-}
