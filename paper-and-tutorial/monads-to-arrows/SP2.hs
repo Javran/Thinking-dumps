@@ -11,14 +11,19 @@ newtype DynamicParser s a b = DP ((a,[s]) -> (b,[s]))
 
 data Parser s a b = P (StaticParser s) (DynamicParser s a b)
 
-instance Eq s => Cat.Category (Parser s) where
-    -- because of we are implementing (.) composition,
-    -- the pattern matching has to be written backwards
-    P (SP empty2 starters2) (DP p2) .
-      P (SP empty1 starters1) (DP p1) =
+composeParser :: Eq s => Parser s a b -> Parser s b c -> Parser s a c
+composeParser
+  (P (SP empty1 starters1) (DP p1))
+  (P (SP empty2 starters2) (DP p2)) =
         P (SP (empty1 && empty2)
               (starters1 `union` if empty1 then starters2 else []))
           (DP (p2 . p1))
+
+instance Eq s => Cat.Category (Parser s) where
+    -- because of we are implementing (.) composition,
+    -- the pattern matching has to be written backwards
+    (.) = flip composeParser
+    id = P (SP True []) (DP id)
 
 instance Eq s => Arrow (Parser s) where
     arr f = P (SP True []) (DP (first f))
