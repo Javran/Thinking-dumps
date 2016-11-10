@@ -11,6 +11,16 @@ newtype DynamicParser s a b = DP ((a,[s]) -> (b,[s]))
 
 data Parser s a b = P (StaticParser s) (DynamicParser s a b)
 
+{-
+  - why the parsing function is of type ((a,[s]) -> (b,[s])) ?
+    I feel the paper is not really doing a good job explaining
+    the change of the type signature. what I know is that, it now becomes
+    a function, that consumes "[s]", and turns "a" into "b" accordingly.
+    but why this captures the idea of "static properties of a parser should not
+    depend on parse-time input" is not explained at all.
+  - why (SP True []) becomes the default static info (and && for composing)?
+-}
+
 composeParser :: Eq s => Parser s a b -> Parser s b c -> Parser s a c
 composeParser
   (P (SP empty1 starters1) (DP p1))
