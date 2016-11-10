@@ -13,12 +13,24 @@ data Parser s a b = P (StaticParser s) (DynamicParser s a b)
 
 {-
   - why the parsing function is of type ((a,[s]) -> (b,[s])) ?
+
     I feel the paper is not really doing a good job explaining
     the change of the type signature. what I know is that, it now becomes
     a function, that consumes "[s]", and turns "a" into "b" accordingly.
     but why this captures the idea of "static properties of a parser should not
     depend on parse-time input" is not explained at all.
+
+    note that the original type is "([s] -> (a,[s])",
+    we can still do "(((),[s]) -> (b,[s]))" to have "Parser s () b",
+    I think I'm on the right track to say that "parse-time independency" is
+    not addressed by this type change, but to fit this into the framework
+    of Arrows, we need a Parser that takes both an input type and an output type.
+
   - why (SP True []) becomes the default static info (and && for composing)?
+
+    about "SP True []", it actually makes sense. it's a Parser that accepts
+    empty input and nothing more. "SP False []" will be one that accepts nothing
+    (so having it in the chain of arrows will surely cause failure)
 -}
 
 composeParser :: Eq s => Parser s a b -> Parser s b c -> Parser s a c
