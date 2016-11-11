@@ -62,3 +62,31 @@ instance Eq s => ArrowZero (Parser s) where
     -- universally quantified, we might just do something similar as well.
     zeroArrow = P (SP False []) (DP (error "dyn parser of zeroArrow is called"))
 
+instance Eq s => ArrowPlus (Parser s) where
+    (P (SP empty1 starters1) (DP p1)) <+>
+      (P (SP empty2 starters2) (DP p2)) =
+        P (SP (empty1 || empty2)
+           (starters1 `union` starters2))
+          (DP (\arg@(_,xs) -> case xs of
+                   [] ->
+                       (if empty1
+                        then p1
+                        else
+                          if empty2
+                          then p2
+                          else
+                            error "cannot accept empty input")
+                       arg
+                   (x:_) ->
+                       (if x `elem` starters1
+                        then p1
+                        else
+                          if x `elem` starters2
+                          then p2
+                          else (if empty1 then p1 else p2)) arg))
+
+liftA2 :: Arrow a => (b -> c -> d) -> a e b -> a e c -> a e d
+liftA2 op f g = (f &&& g) >>> arr (uncurry op)
+
+(<**>) :: Eq s => Parser s a (b -> c) -> Parser s a b -> Parser s a c
+(<**>) = liftA2 ($)
