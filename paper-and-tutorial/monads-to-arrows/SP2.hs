@@ -31,6 +31,25 @@ data Parser s a b = P (StaticParser s) (DynamicParser s a b)
     about "SP True []", it actually makes sense. it's a Parser that accepts
     empty input and nothing more. "SP False []" will be one that accepts nothing
     (so having it in the chain of arrows will surely cause failure)
+
+    it is confusing that we have multiple ways of composing parsers
+    (TODO: with this in mind, "composeParser" might be a bad name to use)
+    the trick is to look at the type signature:
+
+    for the Category instance implementation:
+
+      Parser s b c -> Parser s a b -> Parser s a c
+
+    what we want to do is to run parsers in sequence, from a to b and end up
+    with c, so every parser has to succeed.
+
+    but for the instance of ArrowPlus:
+
+      Parser s a b -> Parser s a b -> Parser s a b
+
+    what we are doing is to create a parser by using two arguments,
+    when the first parser fails, the second one is attempted.
+    so we are doing a logical "or" operation on parsers.
 -}
 
 composeParser :: Eq s => Parser s a b -> Parser s b c -> Parser s a c
