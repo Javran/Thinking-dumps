@@ -51,3 +51,14 @@ instance Eq s => Arrow (Parser s) where
     arr f = P (SP True []) (DP (first f))
     first (P sp (DP p)) =
         P sp (DP (\((b,d),s) -> let (c,s') = p (b,s) in ((c,d),s')))
+
+instance Eq s => ArrowZero (Parser s) where
+    -- the static info says this parser does not accept empty input
+    -- and don't have an accepting list. so it always fails.
+    -- the dynamic parser will never be called, so it's
+    -- safe to assign it any value (actually the dynamic parser has to be of
+    -- type (b,[s]) -> (c,[s]), we know that the only residence of "forall b c. b -> c"
+    -- is just "undefined", and if we want some arrow whose input and output is
+    -- universally quantified, we might just do something similar as well.
+    zeroArrow = P (SP False []) (DP (error "dyn parser of zeroArrow is called"))
+
