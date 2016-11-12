@@ -22,6 +22,12 @@ spArr f = sp'
     sp' = Get (\x -> Put (f x) sp')
 
 -- TODO: looks weird, need explanation
+-- I think the idea is we want push "Put" eagerly
+-- so that the stream doesn't get stuck
+-- also for a stream processor "SP a b",
+-- it accepts "a"s on input channel and outputs "b"s on output channel.
+-- they doesn't interleave in general, so there is no risk
+-- taking "Put x (Get f)" apart and perform actions separately.
 spCompose :: SP a b -> SP b c -> SP a c
 spCompose sp1 sp2 = case sp2 of
     Put c sp2' -> Put c (sp1 `spCompose` sp2')
