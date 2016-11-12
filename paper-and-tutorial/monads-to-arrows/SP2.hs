@@ -4,9 +4,12 @@ import Control.Arrow
 import Data.List
 import qualified Control.Category as Cat
 
--- TODO: not sure how does "b" affect things, but let's go ahead and try it out.
 data StaticParser s = SP Bool [s]
 
+-- think this type to be "a ~~> b" where "~~> = DynamicParser s"
+-- so this is a function like "a -> b" but might also consume some input
+-- in the process. (the type doesn't reflect the fact that the output "[s]"
+-- should be some tail part of input "[s]")
 newtype DynamicParser s a b = DP ((a,[s]) -> (b,[s]))
 
 data Parser s a b = P (StaticParser s) (DynamicParser s a b)
@@ -33,7 +36,7 @@ data Parser s a b = P (StaticParser s) (DynamicParser s a b)
     (so having it in the chain of arrows will surely cause failure)
 
     it is confusing that we have multiple ways of composing parsers
-    (TODO: with this in mind, "composeParser" might be a bad name to use)
+    (with this in mind, I admit that "composeParser" might be a confusing name to use)
     the trick is to look at the type signature:
 
     for the Category instance implementation:
