@@ -1,5 +1,8 @@
 module StreamProcessor where
 
+import qualified Control.Category as Cat
+import Control.Arrow
+
 {-
   a stream processor maps a stream of input messages
   into a stream of output messages, but is represented
@@ -55,3 +58,11 @@ bypass [] (Put c sp) = Get (\(_,d) -> Put (c,d) (bypass [] sp))
 
 spFirst :: SP a b -> SP (a,d) (b,d)
 spFirst = bypass []
+
+instance Cat.Category SP where
+    id = spArr id
+    (.) = flip spCompose
+
+instance Arrow SP where
+    arr = spArr
+    first = spFirst
