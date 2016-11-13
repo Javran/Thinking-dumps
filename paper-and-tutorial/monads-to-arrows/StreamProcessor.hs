@@ -46,3 +46,12 @@ spCompose sp1 sp2 = case sp2 of
             -- but note that "Get f2" is just "sp2" .. so let's do sharing
             -- also note that this is a case where the structure is not getting "smaller"
             Get (\a -> f1 a `spCompose` sp2)
+
+-- TODO: again we need explanation ...
+bypass :: [d] -> SP a b -> SP (a,d) (b,d)
+bypass ds (Get f) = Get (\(b,d) -> bypass (ds ++ [d]) (f b))
+bypass (d:ds) (Put c sp) = Put (c,d) (bypass ds sp)
+bypass [] (Put c sp) = Get (\(_,d) -> Put (c,d) (bypass [] sp))
+
+spFirst :: SP a b -> SP (a,d) (b,d)
+spFirst = bypass []
