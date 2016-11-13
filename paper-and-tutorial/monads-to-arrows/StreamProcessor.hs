@@ -21,8 +21,7 @@ spArr f = sp'
     -- get one value, apply "f", put it back, and repeat
     sp' = Get (\x -> Put (f x) sp')
 
--- TODO: looks weird, need explanation
--- I think the idea is we want push "Put" eagerly
+-- I think the idea is we want to execute "Put" commands eagerly
 -- so that the stream doesn't get stuck
 -- also for a stream processor "SP a b",
 -- it accepts "a"s on input channel and outputs "b"s on output channel.
@@ -30,7 +29,20 @@ spArr f = sp'
 -- taking "Put x (Get f)" apart and perform actions separately.
 spCompose :: SP a b -> SP b c -> SP a c
 spCompose sp1 sp2 = case sp2 of
-    Put c sp2' -> Put c (sp1 `spCompose` sp2')
+    Put c sp2' ->
+        -- sp1 >>> put c >>> sp2'
+        -- is the same as:
+        -- put c >>> (sp1 >>> sp2')
+        -- "c" is put to the final output stream,
+        -- so the order is always first "c" and then whatever "sp2" produces.
+        Put c (sp1 `spCompose` sp2')
     Get f2 -> case sp1 of
-        Put b sp1' -> sp1' `spCompose` f2 b
-        Get f1 -> Get (\a -> f1 a `spCompose` Get f2)
+        Put b sp1' ->
+            -- pair of Get and Put
+            sp1' `spCompose` f2 b
+        Get f1 ->
+            -- the original impl was:
+            -- "Get (\a -> f1 a `spCompose` Get f2)"
+            -- but note that "Get f2" is just "sp2" .. so let's do sharing
+            -- also note that this is a case where the structure is not getting "smaller"
+            Get (\a -> f1 a `spCompose` sp2)
