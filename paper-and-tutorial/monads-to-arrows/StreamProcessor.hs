@@ -50,14 +50,34 @@ spCompose sp1 sp2 = case sp2 of
             -- also note that this is a case where the structure is not getting "smaller"
             Get (\a -> f1 a `spCompose` sp2)
 
--- TODO: again we need explanation ...
-bypass :: [d] -> SP a b -> SP (a,d) (b,d)
-bypass ds (Get f) = Get (\(b,d) -> bypass (ds ++ [d]) (f b))
-bypass (d:ds) (Put c sp) = Put (c,d) (bypass ds sp)
-bypass [] (Put c sp) = Get (\(_,d) -> Put (c,d) (bypass [] sp))
-
+{-
+  all we want to do is to deal with "fst" part of the input and apply the arrow to it.
+  however, the input also have "snd" part which we are not interested in.
+  but still, we need to pass around that data, which is done by maintaining a buffer
+  (the first argument to "bypass")
+-}
 spFirst :: SP a b -> SP (a,d) (b,d)
 spFirst = bypass []
+  where
+    bypass :: [d] -> SP a b -> SP (a,d) (b,d)
+    bypass ds (Get f) =
+        -- doing "Get" on a "larger" structure
+        -- we might receive "d" in the process,
+        -- in which case we put that into our buffer
+        Get (\(b,d) -> bypass (ds ++ [d]) (f b))
+    bypass (d:ds) (Put c sp) =
+        -- doing "Put" on a "larger" structure
+        -- note that "f" only knows about "fst" part of the input,
+        -- we can't construct an arbitrary value oif "d" out of no where,
+        -- but we can find some on our buffer
+        Put (c,d) (bypass ds sp)
+    bypass [] (Put c sp) =
+        -- doing "Put" on a larger structure
+        -- but this time the buffer is empty.
+        -- what we do is to wait for one to come using "Get"
+        -- and then do our job.
+        -- (I'm still in doubt about why we ignore the "fst" part of the input)
+        Get (\(_,d) -> Put (c,d) (bypass [] sp))
 
 instance Cat.Category SP where
     id = spArr id
