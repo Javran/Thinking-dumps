@@ -78,7 +78,7 @@ spFirst = bypass []
         -- but this time the buffer is empty.
         -- what we do is to wait for one to come using "Get"
         -- and then do our job.
-        -- (I'm still in doubt about why we ignore the "fst" part of the input)
+        -- (TODO: I'm still in doubt about why we ignore the "fst" part of the input)
         Get (\(_,d) -> Put (c,d) (bypass [] sp))
 
 instance Cat.Category SP where
@@ -97,3 +97,18 @@ instance ArrowPlus SP where
     (Put b sp1) <+> sp2 = Put b (sp1 <+> sp2)
     sp1 <+> (Put b sp2) = Put b (sp1 <+> sp2)
     (Get f1) <+> (Get f2) = Get (\a -> f1 a <+> f2 a)
+
+fibs :: SP a Integer
+fibs = put 0 fibs'
+  where
+    fibs' = put 1 (liftA2 (+) fibs fibs')
+
+liftA2 :: Arrow a => (b -> c -> d) -> a e b -> a e c -> a e d
+liftA2 op f g = (f &&& g) >>> arr (uncurry op)
+
+runSP :: SP a b -> [a] -> [b]
+runSP ar inp = case ar of
+    Get f -> case inp of
+        [] -> error "input exhausted"
+        (x:xs) -> runSP (f x) xs
+    Put c ar' -> c : runSP ar' inp
