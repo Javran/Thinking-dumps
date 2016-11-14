@@ -3,6 +3,8 @@ module StreamProcessor where
 import qualified Control.Category as Cat
 import Control.Arrow
 
+{-# ANN module "HLint: ignore Use const" #-}
+
 {-
   a stream processor maps a stream of input messages
   into a stream of output messages, but is represented
@@ -86,3 +88,12 @@ instance Cat.Category SP where
 instance Arrow SP where
     arr = spArr
     first = spFirst
+
+instance ArrowZero SP where
+    zeroArrow = Get (\_ -> zeroArrow)
+
+instance ArrowPlus SP where
+    -- pushing "Put" out
+    (Put b sp1) <+> sp2 = Put b (sp1 <+> sp2)
+    sp1 <+> (Put b sp2) = Put b (sp1 <+> sp2)
+    (Get f1) <+> (Get f2) = Get (\a -> f1 a <+> f2 a)
