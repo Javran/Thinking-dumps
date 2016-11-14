@@ -112,3 +112,8 @@ runSP ar inp = case ar of
         [] -> error "input exhausted"
         (x:xs) -> runSP (f x) xs
     Put c ar' -> c : runSP ar' inp
+
+-- TODO: something is not quite working:
+-- try "take 10 (runSP f undefined)", as "fibs"
+-- doesn't really use any input, this should work. (but it's not working
+-- after "[0,1" is printed)
