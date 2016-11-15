@@ -133,6 +133,12 @@ runSP ar inp = case ar of
   the following doesn't work:
   - take 10 (runSP f undefined)
 
-  the correction is:
+  but the following two are working:
   - take 10 (runSP f (repeat ()))
+  - take 10 (runSP f (repeat undefined))
+
+  it seems we can say "fibs :: SP Void Integer",
+  and since it's impossible to construct one,
+  we need to use "undefined" .. some other mechanism might be required
+  to never evaluate that value.
 -}
