@@ -124,7 +124,15 @@ runSP ar inp = case ar of
         (x:xs) -> runSP (f x) xs
     Put c ar' -> c : runSP ar' inp
 
--- TODO: something is not quite working:
--- try "take 10 (runSP f undefined)", as "fibs"
--- doesn't really use any input, this should work. (but it's not working
--- after "[0,1" is printed)
+{-
+  (TODO: more explanation and why)
+  turns out in order to "drive" the stream,
+  we need a source of infinite inputs,
+  even if the input does not offer too much info:
+
+  the following doesn't work:
+  - take 10 (runSP f undefined)
+
+  the correction is:
+  - take 10 (runSP f (repeat ()))
+-}
