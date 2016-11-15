@@ -103,6 +103,15 @@ fibs = put 0 fibs'
   where
     fibs' = put 1 (liftA2 (+) fibs fibs')
 
+{-
+  repeat a value infinitely.
+  example:
+  - take 10 $ runSP (repeatS 1) []
+  - take 10 $ runSP (repeatS 1 >>> arr (+1)) []
+-}
+repeatS :: a -> SP () a
+repeatS c = put c (repeatS c)
+
 liftA2 :: Arrow a => (b -> c -> d) -> a e b -> a e c -> a e d
 liftA2 op f g = (f &&& g) >>> arr (uncurry op)
 
