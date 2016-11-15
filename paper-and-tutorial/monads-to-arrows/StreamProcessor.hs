@@ -108,6 +108,8 @@ fibs = put 0 fibs'
   example:
   - take 10 $ runSP (repeatS 1) []
   - take 10 $ runSP (repeatS 1 >>> arr (+1)) []
+  - take 10 $ runSP (repeatS (2,3) >>> first (arr (+ 1))) []
+  - take 10 $ runSP (repeatS (2,3) >>> second (arr (+ 1))) []
 -}
 repeatS :: a -> SP () a
 repeatS c = put c (repeatS c)
