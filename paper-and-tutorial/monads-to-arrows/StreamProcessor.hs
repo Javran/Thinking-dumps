@@ -152,3 +152,13 @@ runSP ar inp = case ar of
   and "Void" should not be used for purposes like this because otherwise
   function user cannot create any "legal" term of that type.
 -}
+
+spLeft :: forall a b c. SP a b -> SP (Either a c) (Either b c)
+spLeft sp = case sp of
+    Put b sp' -> Put (Left b) (left sp')
+    Get f -> Get (\(z :: Either a c) -> case z of
+                      Left a -> left (f a)
+                      Right b -> Put (Right b) (left sp))
+
+instance ArrowChoice SP where
+    left = spLeft
