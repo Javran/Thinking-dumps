@@ -125,7 +125,6 @@ runSP ar inp = case ar of
     Put c ar' -> c : runSP ar' inp
 
 {-
-  (TODO: more explanation and why)
   turns out in order to "drive" the stream,
   we need a source of infinite inputs,
   even if the input does not offer too much info:
@@ -137,8 +136,7 @@ runSP ar inp = case ar of
   - take 10 (runSP f (repeat ()))
   - take 10 (runSP f (repeat undefined))
 
-  it seems we can say "fibs :: SP Void Integer",
-  and since it's impossible to construct one,
-  we need to use "undefined" .. some other mechanism might be required
-  to never evaluate that value.
+  the first working one should be preferred for the obvious reason,
+  and the second one is just to show that the stream does not look at
+  the value itself at all (otherwise the program would evaluate to bottom)
 -}
