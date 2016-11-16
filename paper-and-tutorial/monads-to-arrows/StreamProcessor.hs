@@ -139,4 +139,10 @@ runSP ar inp = case ar of
   the first working one should be preferred for the obvious reason,
   and the second one is just to show that the stream does not look at
   the value itself at all (otherwise the program would evaluate to bottom)
+
+  relevant: http://stackoverflow.com/q/40618246/315302
+  I was thinking which of the following should be used as the input type.
+  and it turns out "forall a. a" and "()" are possible alternatives,
+  and "Void" should not be used for purposes like this because otherwise
+  function user cannot create any "legal" term of that type.
 -}
