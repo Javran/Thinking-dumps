@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module StreamProcessor where
 
 import qualified Control.Category as Cat
@@ -58,7 +59,7 @@ spCompose sp1 sp2 = case sp2 of
   but still, we need to pass around that data, which is done by maintaining a buffer
   (the first argument to "bypass")
 -}
-spFirst :: SP a b -> SP (a,d) (b,d)
+spFirst :: forall a b d . SP a b -> SP (a,d) (b,d)
 spFirst = bypass []
   where
     bypass :: [d] -> SP a b -> SP (a,d) (b,d)
@@ -67,19 +68,24 @@ spFirst = bypass []
         -- we might receive "d" in the process,
         -- in which case we put that into our buffer
         Get (\(b,d) -> bypass (ds ++ [d]) (f b))
-    bypass (d:ds) (Put c sp) =
+    bypass (d:ds) (Put b sp) =
         -- doing "Put" on a "larger" structure
         -- note that "f" only knows about "fst" part of the input,
         -- we can't construct an arbitrary value oif "d" out of no where,
         -- but we can find some on our buffer
-        Put (c,d) (bypass ds sp)
-    bypass [] (Put c sp) =
+        Put (b,d) (bypass ds sp)
+    bypass [] (Put b sp) =
         -- doing "Put" on a larger structure
         -- but this time the buffer is empty.
         -- what we do is to wait for one to come using "Get"
         -- and then do our job.
-        -- (TODO: I'm still in doubt about why we ignore the "fst" part of the input)
-        Get (\(_,d) -> Put (c,d) (bypass [] sp))
+        --
+        -- About the correctness of ignoring one part of the input:
+        -- by using scoped type variables, we can explicitly
+        -- say that we are accepting something of type (a,d) as the input
+        -- but in the output we are going to have something of type (b,d)
+        -- and that will be what we have wanted to output.
+        Get (\(_ :: a,d :: d) -> Put (b,d) (bypass [] sp))
 
 instance Cat.Category SP where
     id = spArr id
