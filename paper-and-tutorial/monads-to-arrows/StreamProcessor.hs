@@ -98,6 +98,17 @@ instance Arrow SP where
 instance ArrowZero SP where
     zeroArrow = Get (\_ -> zeroArrow)
 
+{-
+  note that even the implementation of "<+>" appears to be symmetric syntactically,
+  it is not. Imagine how "(Put v1 sp1) <+> (Put v2 sp2)" will be handled:
+  "v1" will always appear in front of "v2", because we pattern match on the first
+  argument first. so there are multiple possible implementations of "<+>" and we are
+  implementing the left-biased one.
+
+  now what "(f <+> g)" does is to copy the input and feed it to 2 processors,
+  and then interleave whatever comes out from both processors, with "Put" conflicts
+  resolved by always bias to the left one.
+-}
 instance ArrowPlus SP where
     -- pushing "Put" out
     (Put b sp1) <+> sp2 = Put b (sp1 <+> sp2)
