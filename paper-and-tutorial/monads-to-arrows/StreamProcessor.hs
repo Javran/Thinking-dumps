@@ -155,10 +155,16 @@ runSP ar inp = case ar of
 
 spLeft :: forall a b c. SP a b -> SP (Either a c) (Either b c)
 spLeft sp = case sp of
-    Put b sp' -> Put (Left b) (left sp')
-    Get f -> Get (\(z :: Either a c) -> case z of
-                      Left a -> left (f a)
-                      Right b -> Put (Right b) (left sp))
+    Put b sp' ->
+        -- trivial case, just wrap "b" around and recursively call spLeft
+        Put (Left b) (spLeft sp')
+    Get f ->
+        Get (\(z :: Either a c) -> case z of
+                 Left a -> spLeft (f a)
+                 Right c ->
+                     -- on a "Right" value, what can we do is just
+                     -- put it on output and keep getting the next one
+                     Put (Right c) (spLeft sp))
 
 instance ArrowChoice SP where
     left = spLeft
