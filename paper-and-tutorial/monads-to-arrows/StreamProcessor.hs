@@ -168,3 +168,18 @@ spLeft sp = case sp of
 
 instance ArrowChoice SP where
     left = spLeft
+
+{-
+  now we have some interpretations of some Arrow operators:
+
+  (+++) :: b `SP` c -> b' `SP` c' -> (Either b b') `SP` (Either c c')
+
+  "f +++ g" is like using one channel to implement two channels,
+  by tagging input as "Left" or "Right" and dispatching them to "f" or "g" accordingly.
+
+  (|||) :: b `SP` d -> c `SP` d -> (Either b c) `SP` d
+
+  "f ||| g" unifies "two channels" into one by removing tags.
+  the type system ensures that two channels are having compatible outputs.
+
+-}
