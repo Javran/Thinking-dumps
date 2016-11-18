@@ -1,4 +1,8 @@
-{-# LANGUAGE ScopedTypeVariables, NoMonomorphismRestriction #-}
+{-# LANGUAGE
+    ScopedTypeVariables
+  , NoMonomorphismRestriction
+  , TypeOperators
+  #-}
 module StreamProcessor where
 
 import qualified Control.Category as Cat
@@ -195,12 +199,15 @@ instance ArrowChoice SP where
 
 -}
 
--- (|&|) :: (ArrowChoice arr, ArrowPlus arr) => arr (Either 
+-- If I understand it correctly, then we are accepting
+(|&|) :: (ArrowChoice arr, ArrowPlus arr)
+      => Either (Either a any1) (Either any2 b) `arr` c
+      -> Either (Either a any1) (Either any2 b) `arr` c
+      -> Either a b `arr` c
 f |&| g = (arr Left +++ arr Right) >>> (f <+> g)
 
+justLeft :: (ArrowChoice arr, ArrowZero arr) => Either a b `arr` a
+justRight :: (ArrowChoice arr, ArrowZero arr) => Either a b `arr` b
+
 justLeft = arr id ||| zeroArrow
-
 justRight = zeroArrow ||| arr id
-
-id1 f g = (f |&| g) >>> justLeft
-id2 f g = (f |&| g) >>> justRight
