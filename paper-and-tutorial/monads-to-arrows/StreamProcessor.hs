@@ -199,7 +199,9 @@ instance ArrowChoice SP where
 
 -}
 
--- If I understand it correctly, then we are accepting
+-- TODO: this type signature is not making sense to me:
+-- where does "any1" and "any2" come from if the arguments "f" and "g"
+-- are just meant for handling one input and yielding one output?
 (|&|) :: (ArrowChoice arr, ArrowPlus arr)
       => Either (Either a any1) (Either any2 b) `arr` c
       -> Either (Either a any1) (Either any2 b) `arr` c
@@ -209,5 +211,7 @@ f |&| g = (arr Left +++ arr Right) >>> (f <+> g)
 justLeft :: (ArrowChoice arr, ArrowZero arr) => Either a b `arr` a
 justRight :: (ArrowChoice arr, ArrowZero arr) => Either a b `arr` b
 
+-- "justLeft" picks "Left _" elements and consumes/removes "Right _" elements
+-- "justRight" does a similar job.
 justLeft = arr id ||| zeroArrow
 justRight = zeroArrow ||| arr id
