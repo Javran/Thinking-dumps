@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ScopedTypeVariables, NoMonomorphismRestriction #-}
 module StreamProcessor where
 
 import qualified Control.Category as Cat
@@ -194,3 +194,13 @@ instance ArrowChoice SP where
   the type system ensures that two channels are having compatible outputs.
 
 -}
+
+-- (|&|) :: (ArrowChoice arr, ArrowPlus arr) => arr (Either 
+f |&| g = (arr Left +++ arr Right) >>> (f <+> g)
+
+justLeft = arr id ||| zeroArrow
+
+justRight = zeroArrow ||| arr id
+
+id1 f g = (f |&| g) >>> justLeft
+id2 f g = (f |&| g) >>> justRight
