@@ -215,3 +215,21 @@ justRight :: (ArrowChoice arr, ArrowZero arr) => Either a b `arr` b
 -- "justRight" does a similar job.
 justLeft = arr id ||| zeroArrow
 justRight = zeroArrow ||| arr id
+
+dyn :: SP (Either (SP a b) a) b
+dyn = dynLoop zeroArrow
+  where
+    -- dynLoop <inner processor>
+    -- TODO: it's a bit unclear about the relation between dynLoop <x> and <x>
+    -- the stream processor initially does nothing but
+    -- keep getting inputs.
+    -- the input could be of two types: "SP a b" or "a"
+    -- + when it receives "SP a b" from its input, it changes its "inner processor"
+    --   to the processor just received.
+    -- + when it receives "a", it feeds the input to its "inner processor"
+    --   which then takes over the control
+    dynLoop (Put b sp) = Put b (dynLoop sp)
+    dynLoop (Get f) = Get $ \z ->
+        case z of
+            Right a -> dynLoop (f a)
+            Left sp -> dynLoop sp
