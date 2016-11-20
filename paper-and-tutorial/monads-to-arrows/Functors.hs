@@ -50,3 +50,13 @@ instance (Arrow a, ArrowChoice a) => Arrow (MaybeFunctor a) where
     arr f = MF (arr (Just . f))
     first (MF f) = MF (first f >>>
                        arr (\(c',d) -> (,d) <$> c'))
+
+instance ArrowChoice a => ArrowZero (MaybeFunctor a) where
+    zeroArrow = MF (arr (const Nothing))
+
+instance ArrowChoice a => ArrowPlus (MaybeFunctor a) where
+    (MF f) <+> (MF g) = MF ((f &&& arr id) >>> arr dispatch >>> (arr id ||| g))
+      where
+        dispatch (c',b) = case c' of
+            Just _ -> Left c'
+            Nothing -> Right b
