@@ -1,4 +1,9 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveFunctor, TupleSections #-}
+{-# LANGUAGE
+    GeneralizedNewtypeDeriving
+  , DeriveFunctor
+  , TupleSections
+  , TypeOperators
+  #-}
 module Functors where
 
 import qualified Control.Category as Cat
@@ -68,3 +73,8 @@ instance ArrowChoice a => ArrowPlus (MaybeFunctor a) where
 -- and we are wrapping around it and making the whole thing a ArrowApply again.
 instance (ArrowChoice a, ArrowApply a) => ArrowApply (MaybeFunctor a) where
     app = MF (arr (\(MF f, b) -> (f,b)) >>> app)
+
+newtype StateFunctor s a b c = SF (a (b,s) (c,s))
+
+liftState' :: Arrow a => b `a` c -> StateFunctor s a b c
+liftState' f = SF (first f)
