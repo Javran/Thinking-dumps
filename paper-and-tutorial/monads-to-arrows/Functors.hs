@@ -97,3 +97,6 @@ instance Arrow a => Arrow (StateFunctor s a) where
         -- in other words, what we are doing is to swap in the inner state, apply
         -- a transformation on it, and recover the state to its usual "location".
         stSwap ((x,y),z) = ((x,z),y)
+
+-- TODO: I'm going to skip rest of it, as the names overlap with that of StateMT
+-- also implementations are effectively the same.
