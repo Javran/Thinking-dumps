@@ -61,5 +61,10 @@ instance ArrowChoice a => ArrowPlus (MaybeFunctor a) where
             Just _ -> Left c'
             Nothing -> Right b
 
+-- I think this also proves that "MaybeFunctor" is a monad transformer
+-- indisguise -- recall that whenever you know how to implement ArrowApply
+-- for something, that thing should be equivalent to an Monad.
+-- so here, we are given an arrow that has already supported ArrowApply
+-- and we are wrapping around it and making the whole thing a ArrowApply again.
 instance (ArrowChoice a, ArrowApply a) => ArrowApply (MaybeFunctor a) where
     app = MF (arr (\(MF f, b) -> (f,b)) >>> app)
