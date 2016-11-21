@@ -60,3 +60,6 @@ instance ArrowChoice a => ArrowPlus (MaybeFunctor a) where
         dispatch (c',b) = case c' of
             Just _ -> Left c'
             Nothing -> Right b
+
+instance (ArrowChoice a, ArrowApply a) => ArrowApply (MaybeFunctor a) where
+    app = MF (arr (\(MF f, b) -> (f,b)) >>> app)
