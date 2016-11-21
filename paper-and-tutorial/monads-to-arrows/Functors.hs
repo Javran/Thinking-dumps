@@ -74,7 +74,26 @@ instance ArrowChoice a => ArrowPlus (MaybeFunctor a) where
 instance (ArrowChoice a, ArrowApply a) => ArrowApply (MaybeFunctor a) where
     app = MF (arr (\(MF f, b) -> (f,b)) >>> app)
 
+-- image the arrow is "b -> c" and "s" is the state it carries around
 newtype StateFunctor s a b c = SF (a (b,s) (c,s))
 
 liftState' :: Arrow a => b `a` c -> StateFunctor s a b c
 liftState' f = SF (first f)
+
+instance Arrow a => Cat.Category (StateFunctor s a) where
+    id = SF (arr id)
+    (SF g) . (SF f) = SF (g <<< f)
+
+instance Arrow a => Arrow (StateFunctor s a) where
+    arr f = liftState' (arr f)
+    first (SF f) = SF ( arr stSwap >>>
+                        first f >>>
+                        arr stSwap)
+      where
+        -- this comes from the obersevation that
+        -- "\((b,d),s) -> ((b,s),d)" and "\((b,s),d) -> ((b,d),s)"
+        -- are equivalent up to variable renaming, so just doing "stSwap" will be fine.
+        -- also note that "stSwap . stSwap === id"
+        -- in other words, what we are doing is to swap in the inner state, apply
+        -- a transformation on it, and recover the state to its usual "location".
+        stSwap ((x,y),z) = ((x,z),y)
