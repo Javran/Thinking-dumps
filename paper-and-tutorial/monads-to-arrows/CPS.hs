@@ -22,3 +22,14 @@ instance ArrowApply a => Arrow (CPSFunctor r a) where
     arr f = CPSF (\k -> arr f >>> k)
     first (CPSF f) = CPSF
         (\k -> arr (\(b,d) -> (f (arr (\c->(c,d)) >>> k),b)) >>> app)
+
+-- TODO: I'm wondering if we can try to make examples for "jump" and "callcc"
+-- TODO: also figure out dynamic choice and application
+
+{-# ANN jump "HLint: ignore Use const" #-}
+jump :: ArrowApply a => CPSFunctor ans a (a c ans, c) z
+jump = CPSF (\_ -> app)
+
+-- GHC says "ArrowApply a" is a redundant constraint.
+callcc :: (a c ans -> CPSFunctor ans a b c) -> CPSFunctor ans a b c
+callcc f = CPSF (\k -> let CPSF g = f k in g k)
