@@ -14,7 +14,9 @@ liftCPS f = CPSF (f >>>)
 
 instance Cat.Category (CPSFunctor r a) where
     id = CPSF id
-    (CPSF g) . (CPSF f) = CPSF (g >>> f)
+    -- just to show that "CPSF" composes in the reversed order
+    -- we are guided by the type, so actually there's less surprise
+    (CPSF g) . (CPSF f) = CPSF (f . g)
 
 instance ArrowApply a => Arrow (CPSFunctor r a) where
     arr f = CPSF (\k -> arr f >>> k)
