@@ -17,3 +17,13 @@ composeAuto (Auto f) (Auto g) =
     Auto (\i -> let (b,f') = f i
                     (c,g') = g b
                 in (c,f' `composeAuto` g'))
+
+instance Cat.Category Auto where
+    id = arrAuto id
+    g . f = f `composeAuto` g
+
+instance Arrow Auto where
+    arr = arrAuto
+    first (Auto f) =
+        Auto (\(a,b) ->
+              let (c,f') = f a in ((c,b), first f'))
