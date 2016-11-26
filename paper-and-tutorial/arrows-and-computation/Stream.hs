@@ -16,4 +16,17 @@ composeSM :: StreamMap a b -> StreamMap b c -> StreamMap a c
 composeSM (SM f) (SM g) = SM (g . f)
 
 firstSM :: StreamMap a b -> StreamMap (a,d) (b,d)
-firstSM (SM f) = SM $ \ ~(Cons (a,d) s) -> Cons (_,d) _
+firstSM (SM f) = SM ar
+  where
+    ar ~(Cons (a,d) xs) =
+        let (SM streamFst) = arrSM fst
+            Cons y _ = f (Cons a (streamFst xs))
+        in Cons (y,d) (ar xs)
+
+instance Cat.Category StreamMap where
+    id = arrSM id
+    g . f = composeSM f g
+
+instance Arrow StreamMap where
+    arr = arrSM
+    first = firstSM
