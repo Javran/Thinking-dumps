@@ -5,7 +5,7 @@ import Control.Arrow
 
 data Stream a = Cons a (Stream a)
 
-newtype StreamMap i o = SM (Stream i -> Stream o)
+newtype StreamMap i o = SM { getSM :: Stream i -> Stream o }
 
 arrSM :: (i -> o) -> StreamMap i o
 arrSM f = SM ar
@@ -40,3 +40,12 @@ instance Cat.Category StreamMap where
 instance Arrow StreamMap where
     arr = arrSM
     first = firstSM
+
+constSM :: a -> Stream a
+constSM x = let s = Cons x s in s
+
+nats :: Integral i => Stream i
+nats = Cons 1 (getSM (arrSM succ) nats)
+
+streamToList :: Stream a -> [a]
+streamToList ~(Cons a as) = a : streamToList as
