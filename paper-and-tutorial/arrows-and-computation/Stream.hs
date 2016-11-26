@@ -15,13 +15,23 @@ arrSM f = SM ar
 composeSM :: StreamMap a b -> StreamMap b c -> StreamMap a c
 composeSM (SM f) (SM g) = SM (g . f)
 
+-- split a stream of pairs into two streams: one contains the first part,
+-- and the other the second part
+splitSM :: Stream (a,b) -> (Stream a, Stream b)
+splitSM (Cons (a,b) xs) = (Cons a as, Cons b bs)
+  where
+    (as,bs) = splitSM xs
+
+-- merge two streams into one
+mergeSM :: Stream a -> Stream b -> Stream (a,b)
+mergeSM (Cons a as) (Cons b bs) = Cons (a,b) (mergeSM as bs)
+
 firstSM :: StreamMap a b -> StreamMap (a,d) (b,d)
 firstSM (SM f) = SM ar
   where
-    ar ~(Cons (a,d) xs) =
-        let (SM streamFst) = arrSM fst
-            Cons y _ = f (Cons a (streamFst xs))
-        in Cons (y,d) (ar xs)
+    ar xs = mergeSM (f as) ds
+      where
+        (as,ds) = splitSM xs
 
 instance Cat.Category StreamMap where
     id = arrSM id
