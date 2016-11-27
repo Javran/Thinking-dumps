@@ -55,3 +55,6 @@ streamToList ~(Cons a as) = a : streamToList as
 
 tailSM :: Stream a -> Stream a
 tailSM (Cons _ xs) = xs
+
+fibs :: Integral i => Stream i
+fibs = Cons 0 (Cons 1 (mergeSMBy (+) fibs (tailSM fibs)))
