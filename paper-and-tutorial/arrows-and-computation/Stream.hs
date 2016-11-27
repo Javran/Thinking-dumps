@@ -22,9 +22,12 @@ splitSM (Cons (a,b) xs) = (Cons a as, Cons b bs)
   where
     (as,bs) = splitSM xs
 
+mergeSMBy :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+mergeSMBy f (Cons a as) (Cons b bs) = Cons (f a b) (mergeSMBy f as bs)
+
 -- merge two streams into one
 mergeSM :: Stream a -> Stream b -> Stream (a,b)
-mergeSM (Cons a as) (Cons b bs) = Cons (a,b) (mergeSM as bs)
+mergeSM = mergeSMBy (,)
 
 firstSM :: StreamMap a b -> StreamMap (a,d) (b,d)
 firstSM (SM f) = SM ar
@@ -49,3 +52,6 @@ nats = Cons 1 (getSM (arrSM succ) nats)
 
 streamToList :: Stream a -> [a]
 streamToList ~(Cons a as) = a : streamToList as
+
+tailSM :: Stream a -> Stream a
+tailSM (Cons _ xs) = xs
