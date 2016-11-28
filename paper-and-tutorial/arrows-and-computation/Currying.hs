@@ -22,3 +22,9 @@ gives us a function of type:
 (a c d -> a c d) -> a (a c d, c) d
 
 -}
+
+{-
+-- TODO: figure out how to implement uncurryA
+uncurryA :: (Arrow a, ArrowApply a) => (b -> a c d) -> a (b,c) d
+uncurryA f = arr (\(b,c) -> let x = f b in _)
+-}
