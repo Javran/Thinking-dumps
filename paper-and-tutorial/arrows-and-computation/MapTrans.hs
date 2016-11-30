@@ -19,7 +19,7 @@ instance Cat.Category (MapTrans s) where
 
 instance Arrow (MapTrans a) where
     arr = arrMT
-    first (MT f) = MT $ \k a -> let (b,d) = k a in (f (const b) a,d)
+    first (MT f) = MT (zipMap . first f . unzipMap)
 
 {-
 there is a subtle issue with "zipMap" and "unzipMap":
