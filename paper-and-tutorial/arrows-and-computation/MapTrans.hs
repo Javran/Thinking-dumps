@@ -4,6 +4,7 @@ import qualified Control.Category as Cat
 import Control.Arrow
 
 {-# ANN module "HLint: ignore Redundant bracket" #-}
+
 newtype MapTrans s i o = MT { runMT :: (s -> i) -> (s -> o) }
 
 arrMT :: (i -> o) -> MapTrans s i o
@@ -18,6 +19,18 @@ instance Cat.Category (MapTrans s) where
 
 instance Arrow (MapTrans a) where
     arr = arrMT
-    -- TODO: not sure if this is correct,
-    -- especially about the use of "const"
     first (MT f) = MT $ \k a -> let (b,d) = k a in (f (const b) a,d)
+
+{-
+there is a subtle issue with "zipMap" and "unzipMap":
+while "zipMap" dispatches its input to two functions
+"unzipMap" executes the function twice: first time for extracting "fst" part of it
+and the second time for "snd" part. if the function body is "lazy" enough
+then it's fine, but if somehow to evaluate the function requires evaluating both "fst" and "snd"
+part, then we might have some problem regarding efficiency.
+-}
+zipMap :: (s -> a, s -> b) -> (s -> (a,b))
+zipMap (f,g) s = (f s, g s)
+
+unzipMap :: (s -> (a,b)) -> (s -> a, s -> b)
+unzipMap h = (fst . h, snd . h)
