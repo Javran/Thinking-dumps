@@ -22,12 +22,16 @@ instance Arrow (MapTrans a) where
     first (MT f) = MT (zipMap . first f . unzipMap)
 
 {-
-there is a subtle issue with "zipMap" and "unzipMap":
-while "zipMap" dispatches its input to two functions
+
+At first I thought there would be a subtle issue with "zipMap" and "unzipMap":
+
+while "zipMap" dispatches its input to two functions,
 "unzipMap" executes the function twice: first time for extracting "fst" part of it
-and the second time for "snd" part. if the function body is "lazy" enough
-then it's fine, but if somehow to evaluate the function requires evaluating both "fst" and "snd"
-part, then we might have some problem regarding efficiency.
+and the second time for "snd" part.
+
+but actually this is correct: note that we are splitting a function into two,
+but each resulting function itself can be independently used and have different inputs.
+
 -}
 zipMap :: (s -> a, s -> b) -> (s -> (a,b))
 zipMap (f,g) s = (f s, g s)
