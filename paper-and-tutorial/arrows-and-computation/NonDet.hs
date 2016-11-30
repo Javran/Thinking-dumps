@@ -24,3 +24,8 @@ instance Cat.Category NonDet where
 instance Arrow NonDet where
     arr = arrS
     first = firstS
+
+instance ArrowChoice NonDet where
+    left (ND f) = ND $ \e -> case e of
+        Left b -> Left <$> f b
+        Right d -> pure (Right d)
