@@ -22,3 +22,10 @@ instance Cat.Category (State s) where
 instance Arrow (State s) where
     arr = arrS
     first = firstS
+
+instance ArrowChoice (State s) where
+    left (ST f) = ST $ \ (~(s,e)) -> case e of
+        Left b
+            | (s',c) <- f (s,b)
+            -> (s', Left c)
+        Right d -> (s, Right d)
