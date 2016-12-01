@@ -58,3 +58,16 @@ tailSM (Cons _ xs) = xs
 
 fibs :: Integral i => Stream i
 fibs = Cons 0 (Cons 1 (mergeSMBy (+) fibs (tailSM fibs)))
+
+instance ArrowChoice StreamMap where
+    left (SM f) = SM $ \ (~(Cons bd xs)) -> case bd of
+        Left _ ->
+            let bs = leftOnly (Cons bd xs)
+                Cons c _ = f bs
+            in Cons (Left c) (f' xs)
+        Right d -> Cons (Right d) (f' xs)
+      where
+        (SM f') = left (SM f)
+        leftOnly (Cons x xs) = case x of
+            Left v -> Cons v (leftOnly xs)
+            Right _ -> leftOnly xs
