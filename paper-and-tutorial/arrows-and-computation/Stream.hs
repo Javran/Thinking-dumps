@@ -2,10 +2,17 @@ module Stream where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Data.Function
 
 data Stream a = Cons a (Stream a)
 
 newtype StreamMap i o = SM { getSM :: Stream i -> Stream o }
+
+instance Functor Stream where
+    fmap f = fix $ \f' (~(Cons x xs)) -> Cons (f x) (f' xs)
+
+instance Functor (StreamMap i) where
+    fmap g (SM f) = SM $ fmap g . f
 
 arrSM :: (i -> o) -> StreamMap i o
 arrSM f = SM ar
