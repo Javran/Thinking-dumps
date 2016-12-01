@@ -25,6 +25,8 @@ instance Arrow NonDet where
     arr = arrS
     first = firstS
 
+-- this can be compared with "instance Monad m => ArrowChoice (Kleisli m)"
+-- because NonDet is just a special case of "Kleisli m a b = a -> m b" where "m ~ []"
 instance ArrowChoice NonDet where
     left (ND f) = ND $ \e -> case e of
         Left b -> Left <$> f b
