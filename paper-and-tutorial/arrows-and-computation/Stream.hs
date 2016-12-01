@@ -66,6 +66,14 @@ tailSM (Cons _ xs) = xs
 fibs :: Integral i => Stream i
 fibs = Cons 0 (Cons 1 (mergeSMBy (+) fibs (tailSM fibs)))
 
+-- split an "Either" stream into its "Left" parts and "Right" parts
+eitherSplitSM :: Stream (Either a b) -> (Stream a, Stream b)
+eitherSplitSM = fix $ \f (Cons ab xs) ->
+    let (sa,sb) = f xs in
+    case ab of
+        Left a -> (Cons a sa, sb)
+        Right b -> (sa, Cons b sb)
+
 instance ArrowChoice StreamMap where
     left (SM f) = SM $ \ (~(Cons bd xs)) -> case bd of
         Left _ ->
