@@ -29,17 +29,17 @@ splitSM (Cons (a,b) xs) = (Cons a as, Cons b bs)
   where
     (as,bs) = splitSM xs
 
-mergeSMBy :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
-mergeSMBy f (Cons a as) (Cons b bs) = Cons (f a b) (mergeSMBy f as bs)
+zipSMBy :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+zipSMBy f (Cons a as) (Cons b bs) = Cons (f a b) (zipSMBy f as bs)
 
 -- merge two streams into one
-mergeSM :: Stream a -> Stream b -> Stream (a,b)
-mergeSM = mergeSMBy (,)
+zipSM :: Stream a -> Stream b -> Stream (a,b)
+zipSM = zipSMBy (,)
 
 firstSM :: StreamMap a b -> StreamMap (a,d) (b,d)
 firstSM (SM f) = SM ar
   where
-    ar xs = mergeSM (f as) ds
+    ar xs = zipSM (f as) ds
       where
         (as,ds) = splitSM xs
 
@@ -64,7 +64,7 @@ tailSM :: Stream a -> Stream a
 tailSM (Cons _ xs) = xs
 
 fibs :: Integral i => Stream i
-fibs = Cons 0 (Cons 1 (mergeSMBy (+) fibs (tailSM fibs)))
+fibs = Cons 0 (Cons 1 (zipSMBy (+) fibs (tailSM fibs)))
 
 -- split an "Either" stream into its "Left" parts and "Right" parts
 eitherSplitSM :: Stream (Either a b) -> (Stream a, Stream b)
