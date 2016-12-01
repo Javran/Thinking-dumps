@@ -75,6 +75,13 @@ eitherSplitSM = fix $ \f (Cons ab xs) ->
         Right b -> (sa, Cons b sb)
 
 instance ArrowChoice StreamMap where
+    -- TODO: there are many possible implementations
+    -- of "left" because while there are infinite ways of interleaving results
+    -- to figure out which one is the correct one, we might have to take
+    -- a look at laws of ArrowChoice.
+    -- in this case type doesn't really capture the notion of correct stream ordering
+    -- so despite the following implementation of mine typechecks,
+    -- I cannot say for sure this is the correct impl.
     left (SM f) = SM $ \ (~(Cons bd xs)) -> case bd of
         Left _ ->
             let bs = leftOnly (Cons bd xs)
