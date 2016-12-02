@@ -103,7 +103,11 @@ assocsum (Left (Left a)) = Left a
 assocsum (Left (Right b)) = Right (Left b)
 assocsum (Right c) = Right (Right c)
 
-(basically "assocsum" just re-associate Left / Right elements around)
+(basically "assocsum" just re-associates Left / Right elements around)
+
+TODO: so all laws are just talking about the relationship between "Left" part and the
+whole thing, so we can we say that how "Left" or "Right" inputs interleave with each other
+does not matter?
 
 -}
 instance ArrowChoice StreamMap where
