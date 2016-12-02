@@ -74,6 +74,38 @@ eitherSplitSM = fix $ \f (Cons ab xs) ->
         Left a -> (Cons a sa, sb)
         Right b -> (sa, Cons b sb)
 
+{-
+Let's check laws that "left" has to satisfy:
+
+- extension: left (arr f) === arr (f +++ id)
+
+so applying a pure function "f" on "Left" values is the same as applying a function
+on the input value, where "Left" values are applied with "f" and "Right" are kept intact.
+
+- functor: left (f >>> g) === left f >>> left g
+
+this is obvious, composition can be done either way, and it doesn't change the result.
+
+- exchange: left f >>> arr (id +++ g) === arr (id +++ g) >>> left f
+
+so if "g" is a pure function that acts only on "Right" part, then
+it doesn't matter when "id +++ g" is applied before or after arrow "f" on "Left"
+
+- unit: arr Left >>> left f === f >>> arr Left
+
+apply then wrap = wrap then apply
+
+- association: left (left f) >>> arr assocsum === pure assocsum >>> left f
+
+where
+
+assocsum (Left (Left a)) = Left a
+assocsum (Left (Right b)) = Right (Left b)
+assocsum (Right c) = Right (Right c)
+
+(basically "assocsum" just re-associate Left / Right elements around)
+
+-}
 instance ArrowChoice StreamMap where
     -- TODO: there are many possible implementations
     -- of "left" because while there are infinite ways of interleaving results
