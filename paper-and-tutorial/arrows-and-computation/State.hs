@@ -2,6 +2,7 @@ module State where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Common
 
 newtype State s i o = ST { runST :: (s,i) -> (s,o) }
 
@@ -29,3 +30,6 @@ instance ArrowChoice (State s) where
             | (s',c) <- f (s,b)
             -> (s', Left c)
         Right d -> (s, Right d)
+
+instance ArrowLoop (State s) where
+    loop (ST f) = ST $ \(s,b) -> let (s',(c,d)) = f (s,(b,d)) in (s',c)
