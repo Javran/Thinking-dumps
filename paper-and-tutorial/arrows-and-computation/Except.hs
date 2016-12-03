@@ -17,3 +17,12 @@ compE (E f) (E g) = E $ f >>> right g >>> arr (\e -> case e of
 instance ArrowChoice a => Cat.Category (Except a) where
     id = arrE id
     g . f = compE f g
+
+instance ArrowChoice a => Arrow (Except a) where
+    arr = arrE
+    first (E f) = E $ (f *** arr id) >>> arr assoc
+      where
+        assoc :: (Either String x, d) -> Either String (x,d)
+        assoc (e,d) = case e of
+            Left l -> Left l
+            Right v -> Right (v,d)
