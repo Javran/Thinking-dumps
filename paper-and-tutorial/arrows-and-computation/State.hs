@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs, ScopedTypeVariables #-}
 module State where
 
 import qualified Control.Category as Cat
@@ -32,4 +33,16 @@ instance ArrowChoice (State s) where
         Right d -> (s, Right d)
 
 instance ArrowLoop (State s) where
-    loop (ST f) = ST $ \(s,b) -> let (s',(c,d)) = f (s,(b,d)) in (s',c)
+    -- note that most of the following type signatures are
+    -- not necessary, but I think it helps to write them out
+    loop :: forall b c d. State s (b,d) (c,d) -> State s b c
+    loop (ST (f :: (s,(b,d)) -> (s,(c,d)))) =
+        -- (first impl)
+        -- ST $ \(s,b) -> let (s',(c,d)) = f (s,(b,d)) in (s',c)
+        -- (alternative)
+        -- ST $ \sb -> let (sc,d) = f' (sb,d) in sc
+        -- (alternative)
+        ST $ trace f'
+      where
+        f' :: ((s,b),d) -> ((s,c),d)
+        f' = unassoc . f . assoc
