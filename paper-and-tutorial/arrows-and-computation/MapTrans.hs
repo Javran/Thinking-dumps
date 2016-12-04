@@ -4,6 +4,7 @@ import qualified Control.Category as Cat
 import Control.Arrow
 
 {-# ANN module "HLint: ignore Redundant bracket" #-}
+{-# ANN module "HLint: ignore Use const" #-}
 
 newtype MapTrans s i o = MT { runMT :: (s -> i) -> (s -> o) }
 
@@ -38,3 +39,6 @@ zipMap (f,g) s = (f s, g s)
 
 unzipMap :: (s -> (a,b)) -> (s -> a, s -> b)
 unzipMap h = (fst . h, snd . h)
+
+instance ArrowLoop (MapTrans s) where
+    loop (MT f) = MT $ \ fsb s -> let (c,d) = f (\_ -> (fsb s,d)) s in c
