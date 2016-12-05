@@ -2,6 +2,7 @@ module MapTrans where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Common
 
 {-# ANN module "HLint: ignore Redundant bracket" #-}
 {-# ANN module "HLint: ignore Use const" #-}
@@ -41,4 +42,6 @@ unzipMap :: (s -> (a,b)) -> (s -> a, s -> b)
 unzipMap h = (fst . h, snd . h)
 
 instance ArrowLoop (MapTrans s) where
-    loop (MT f) = MT $ \ fsb s -> let (c,d) = f (\_ -> (fsb s,d)) s in c
+    -- loop (MT f) = MT $ \ fsb s -> let (c,d) = f (\_ -> (fsb s,d)) s in c
+    -- TODO: given from the paper, which makes no sense to me.. for now.
+    loop (MT f) = MT $ trace $ unzipMap . f . zipMap
