@@ -45,3 +45,7 @@ instance ArrowLoop (MapTrans s) where
     -- loop (MT f) = MT $ \ fsb s -> let (c,d) = f (\_ -> (fsb s,d)) s in c
     -- TODO: given from the paper, which makes no sense to me.. for now.
     loop (MT f) = MT $ trace $ unzipMap . f . zipMap
+    -- we have:
+    -- * f            :: (s -> (b,d)) -> (s -> (c,d))
+    -- * f . zipMap   :: (s -> b, s -> d) -> (s -> (c,d))
+    -- * unzipMap . f :: (s -> (b,d)) -> (s -> c, s -> d)
