@@ -36,3 +36,13 @@ instance Arrow Auto where
     first (Auto f) =
         Auto (\(a,b) ->
               let (c,f') = f a in ((c,b), first f'))
+
+instance ArrowLoop Auto where
+    loop (Auto f) = Auto $ \ b ->
+        -- basically, we need to apply something to "f" and keep going,
+        -- so try "f (b,undefined)" first and see the resulting type,
+        -- from which we can replace "undefined" with the proper thing from function's
+        -- output.
+        -- TODO: still, I have no idea how to make sense of this,
+        -- but this strategy works for me.
+        let (~(c,d), f') = f (b,d) in (c, loop f')
