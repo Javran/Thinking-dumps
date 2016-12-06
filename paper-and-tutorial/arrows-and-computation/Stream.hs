@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Stream where
 
 import qualified Control.Category as Cat
@@ -129,3 +130,12 @@ instance ArrowChoice StreamMap where
         leftOnly (Cons x xs) = case x of
             Left v -> Cons v (leftOnly xs)
             Right _ -> leftOnly xs
+
+instance ArrowLoop StreamMap where
+    -- TODO: typechecks, but I have no idea how this could work...
+    loop (SM f) = SM $ \ sb ->
+        let sbd = zipSM sb sd
+            scd = f sbd
+            sc = fst <$> scd
+            sd = snd <$> scd
+        in sc
