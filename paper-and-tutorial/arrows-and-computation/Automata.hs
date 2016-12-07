@@ -46,3 +46,12 @@ instance ArrowLoop Auto where
         -- TODO: still, I have no idea how to make sense of this,
         -- but this strategy works for me.
         let (~(c,d), f') = f (b,d) in (c, loop f')
+
+instance ArrowChoice Auto where
+    left (Auto f) = ar
+      where
+        ar = Auto $ \ebd -> case ebd of
+                Left b ->
+                    let (c,a') = f b
+                    in (Left c, left a')
+                Right d -> (Right d, ar)
