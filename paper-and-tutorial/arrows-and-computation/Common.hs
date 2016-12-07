@@ -8,3 +8,8 @@ assoc ~(~(a,b),c) = (a,(b,c))
 
 unassoc :: (a,(b,c)) -> ((a,b),c)
 unassoc ~(a,~(b,c)) = ((a,b),c)
+
+distr :: (Either a b, c) -> Either (a,c) (b,c)
+distr ~(e,c) = case e of
+    Left a -> Left (a,c)
+    Right b -> Right (b,c)
