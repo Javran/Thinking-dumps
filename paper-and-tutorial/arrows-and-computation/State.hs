@@ -1,4 +1,4 @@
-{-# LANGUAGE InstanceSigs, ScopedTypeVariables #-}
+{-# LANGUAGE InstanceSigs, ScopedTypeVariables, Arrows #-}
 module State where
 
 import qualified Control.Category as Cat
@@ -52,3 +52,9 @@ fetch = ST $ \ (~(s,_)) -> (s,s)
 
 store :: State s s ()
 store = ST $ \ (_,s') -> (s',())
+
+genSym :: Enum e => State e () e
+genSym = proc () -> do
+    n <- fetch -< ()
+    store -< succ n
+    returnA -< n
