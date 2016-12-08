@@ -46,3 +46,9 @@ instance ArrowLoop (State s) where
       where
         f' :: ((s,b),d) -> ((s,c),d)
         f' = unassoc . f . assoc
+
+fetch :: State s () s
+fetch = ST $ \ (~(s,_)) -> (s,s)
+
+store :: State s s ()
+store = ST $ \ (_,s') -> (s',())
