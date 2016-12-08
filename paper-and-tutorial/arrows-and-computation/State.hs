@@ -53,8 +53,14 @@ fetch = ST $ \ (~(s,_)) -> (s,s)
 store :: State s s ()
 store = ST $ \ (_,s') -> (s',())
 
+-- genSym takes a unit as input and produce an enumerable value (whatever
+-- that can perform "succ" on it)
 genSym :: Enum e => State e () e
-genSym = proc () -> do
-    n <- fetch -< ()
-    store -< succ n
+genSym = proc inp -> do
+    -- note that "inp" is just "()"
+    -- because "()" is a singeton type (without considering non-termination)
+    n <- fetch -< inp
+    -- we fetch the value, bump it and keep the value we initially get
+    -- as return value.
+    _ <- store -< succ n
     returnA -< n
