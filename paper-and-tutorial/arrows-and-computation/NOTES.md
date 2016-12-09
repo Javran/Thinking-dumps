@@ -10,5 +10,7 @@
 - additionally, any arrow is capable of running arbitrary pure functions, by using `arr :: Arrow a => (i -> o) -> a i o`.
 
 - there are `first` and `second` that acts on part of an arrow's input and output. the ability
-  to ignore some part of input / keep some part of input intact is important: it allows us to
-  build up an arrow network that performs the computation we want.
+  to ignore some part of input / keep some part of input intact is important:
+  it gives us ability to dispatch different part of the input to different arrow components,
+  which can then allows us to build up large and complex arrow network from it.
+
