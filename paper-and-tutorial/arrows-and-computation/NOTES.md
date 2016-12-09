@@ -26,4 +26,8 @@
       which is the automata after accepting the input, meant to replace the old automata
       before accepting the input.
 
-    - `MapTrans`: TODO
+    - `MapTrans`: I'm not entirely sure what this does. If you ignore `newtype` wrappers,
+      you'll see this is some sort of function post-composition being seen as Arrow.
+      With `zipMap` and `unzipMap`, it becomes easier to figure out type-hole
+      guided instance implementation of this. but still, no idea what's the
+      motivation behind it...
