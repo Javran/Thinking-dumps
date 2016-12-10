@@ -31,3 +31,9 @@
       With `zipMap` and `unzipMap`, it becomes easier to figure out type-hole
       guided instance implementation of this. but still, no idea what's the
       motivation behind it...
+
+- `functor`?
+
+    There is no formal definition of what is a functor in the paper.
+    Some part of the explanation just doesn't make sense to me.
+    What exactly does it mean by saying "XX is a functor in argument YY"?
