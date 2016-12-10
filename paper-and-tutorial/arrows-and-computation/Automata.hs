@@ -55,3 +55,9 @@ instance ArrowChoice Auto where
                     let (c,a') = f b
                     in (Left c, left a')
                 Right d -> (Right d, ar)
+
+class ArrowLoop a => ArrowCircuit a where
+    delay :: b -> a b b
+
+instance ArrowCircuit Auto where
+    delay b = Auto $ \ b' -> (b, delay b')
