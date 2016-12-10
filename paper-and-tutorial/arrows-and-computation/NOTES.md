@@ -37,3 +37,14 @@
     There is no formal definition of what is a functor in the paper.
     Some part of the explanation just doesn't make sense to me.
     What exactly does it mean by saying "XX is a functor in argument YY"?
+
+# 2 Special cases
+
+- `ArrowApply`
+
+    - The interface is `app :: forall a b. arrow (arrow a b, a) b`.
+    - any valid arrow that has `ArrowApply` instance, is just a `Monad` in disguise.
+      from the type signature of `app`, we can see it has the ability applying
+      one input to another to produce a result. (For functions this is trivial,
+      the story will become interesting when talking about other ArrowApply
+      instances.)
