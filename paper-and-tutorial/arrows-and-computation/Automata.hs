@@ -63,3 +63,9 @@ class ArrowLoop a => ArrowCircuit a where
 
 instance ArrowCircuit Auto where
     delay b = Auto $ \ b' -> (b, delay b')
+
+runAuto :: Auto i o -> [i] -> [o]
+runAuto (Auto f) xs = case xs of
+    [] -> []
+    (y:ys)
+        | (o, auto') <- f y -> o : runAuto auto' ys
