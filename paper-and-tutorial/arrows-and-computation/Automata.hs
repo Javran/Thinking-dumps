@@ -1,3 +1,4 @@
+{-# LANGUAGE Arrows #-}
 module Automata where
 
 import qualified Control.Category as Cat
@@ -60,6 +61,15 @@ instance ArrowChoice Auto where
 -- we are not actually using this fact in the implementation?
 class ArrowLoop a => ArrowCircuit a where
     delay :: b -> a b b
+
+-- a generalization of the original version
+counter :: (ArrowCircuit a, Enum e) => a Bool e
+counter = proc reset -> do
+    rec output <- returnA -< if reset then zero else next
+        next <- delay zero -< succ output
+    returnA -< output
+  where
+    zero = toEnum 0
 
 instance ArrowCircuit Auto where
     delay b = Auto $ \ b' -> (b, delay b')
