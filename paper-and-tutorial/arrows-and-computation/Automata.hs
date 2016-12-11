@@ -56,6 +56,8 @@ instance ArrowChoice Auto where
                     in (Left c, left a')
                 Right d -> (Right d, ar)
 
+-- TODO: why ArrowCircuit must be ArrowLoop while
+-- we are not actually using this fact in the implementation?
 class ArrowLoop a => ArrowCircuit a where
     delay :: b -> a b b
 
