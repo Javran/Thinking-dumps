@@ -16,12 +16,13 @@ distr ~(e,c) = case e of
     Left a -> Left (a,c)
     Right b -> Right (b,c)
 
--- there must be a way to turn instance of ArrowApply into ArrowChoice.
--- if so, all we need is to try implementing the following function.
--- TODO: impl done, let's get refactor going next time.
+-- the following function is a proof that every instance of ArrowApply can be turned
+-- into an instance of ArrowChoice by using this function as "left"
+-- note that ArrowApply is just Monad in disguise,
+-- actually the implementation is very similar to that of Kleisli arrows.
 arrAppLeft :: ArrowApply arrow
-               => arrow i o
-               -> arrow (Either i a) (Either o a)
+           => arrow i o
+           -> arrow (Either i a) (Either o a)
 arrAppLeft arrow = arrFanin (arrow >>> arr Left) (arr Right)
   where
     arrPlus f g = arrAppLeft f >>> arr mirror >>> arrAppLeft g >>> arr mirror
