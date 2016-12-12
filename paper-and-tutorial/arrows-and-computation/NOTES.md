@@ -48,3 +48,13 @@
       one input to another to produce a result. (For functions this is trivial,
       the story will become interesting when talking about other ArrowApply
       instances.)
+
+- `ArrowChoice`
+
+    - The interfaces are:
+
+        - `left :: arrow i o -> arrow (Either i a) (Either o a)`
+        - `right :: arrow i o -> arrow (Either a i) (Either a o)`
+        - `(+++) :: arrow li lo -> arrow ri ro -> arrow (Either li ri) (Either lo ro)`
+
+    - Allowing applying different arrows on different kind of inputs (marked by either `Left` or `Right`)
