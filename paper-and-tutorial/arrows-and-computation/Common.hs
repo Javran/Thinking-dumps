@@ -19,16 +19,14 @@ distr ~(e,c) = case e of
 -- there must be a way to turn instance of ArrowApply into ArrowChoice.
 -- if so, all we need is to try implementing the following function.
 -- TODO: impl done, let's get refactor going next time.
-arrAppToChoice :: ArrowApply arrow
+arrAppLeft :: ArrowApply arrow
                => arrow i o
                -> arrow (Either i a) (Either o a)
-arrAppToChoice arrow = arrFanin (arrow >>> arr Left) (arr Right)
+arrAppLeft arrow = arrFanin (arrow >>> arr Left) (arr Right)
   where
-    arrPlus f g = arrAppToChoice f >>> arr mirror >>> arrAppToChoice g >>> arr mirror
+    arrPlus f g = arrAppLeft f >>> arr mirror >>> arrAppLeft g >>> arr mirror
       where
-        mirror (Left x) = Right x
-        mirror (Right x) = Left x
+        mirror = either Right Left
     arrFanin f g = arrPlus f g >>> arr untag
       where
-        untag (Left x) = x
-        untag (Right x) = x
+        untag = either id id
