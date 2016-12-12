@@ -65,3 +65,13 @@ they interact with each other?
 
     - (TODO) not sure how to make sense of these laws, the motivation is unclear to me.
 
+- `ArrowLoop`
+
+    - Interface: `loop :: arrow (i,d) (o,d) -> arrow i o`
+
+    - might have something to do with `MonadFix` for the `Kleisli` implementation, not sure.
+
+    - somehow it seems like `fix f = let x = f x in x`, but I'm not convinced: at least `f` uses its
+      argument to form a loop, but what exactly does `trace` do?
+
+    - not really making any sense to me, why anyone would do this in the first place?
