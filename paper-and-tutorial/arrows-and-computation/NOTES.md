@@ -40,6 +40,10 @@
 
 # 2 Special cases
 
+So the biggest question that the paper never seems to anwser is
+where are these laws for different kinds of Arrows come from and how
+they interact with each other?
+
 - `ArrowApply`
 
     - The interface is `app :: forall a b. arrow (arrow a b, a) b`.
@@ -58,3 +62,6 @@
         - `(+++) :: arrow li lo -> arrow ri ro -> arrow (Either li ri) (Either lo ro)`
 
     - Allowing applying different arrows on different kind of inputs (marked by either `Left` or `Right`)
+
+    - (TODO) not sure how to make sense of these laws, the motivation is unclear to me.
+
