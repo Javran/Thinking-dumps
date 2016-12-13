@@ -57,14 +57,20 @@ instance ArrowChoice Auto where
                     in (Left c, left a')
                 Right d -> (Right d, ar)
 
--- TODO: why ArrowCircuit must be ArrowLoop while
--- we are not actually using this fact in the implementation?
+-- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
+-- but this might be just for convenient concerns
 class ArrowLoop a => ArrowCircuit a where
     delay :: b -> a b b
 
 -- a generalization of the original version
-counter :: (ArrowCircuit a, Enum e) => a Bool e
+-- "ArrowLoop" constraint is reduntant because "ArrowCircuit" implies it.
+-- but we choose to write this out anyway.
+counter :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
 counter = proc reset -> do
+    -- "reset" introduced as a way to refer to the input to this circuit.
+
+    -- note that "next" is defined after the use site, and this recursive use
+    -- needs "ArrowLoop".
     rec output <- returnA -< if reset then zero else next
         next <- delay zero -< succ output
     returnA -< output
