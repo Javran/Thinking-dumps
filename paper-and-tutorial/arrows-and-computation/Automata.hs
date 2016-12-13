@@ -62,6 +62,18 @@ instance ArrowChoice Auto where
 class ArrowLoop a => ArrowCircuit a where
     delay :: b -> a b b
 
+{-
+  links that could be helpful:
+
+  - http://stackoverflow.com/q/6976944/315302
+  - http://stackoverflow.com/q/9856342/315302
+
+  think about "loop (\((),xs) -> (xs, 1:xs)) ()" ?
+  - tracking the "snd" part, we see it evolves as "xs -> 1 : xs"
+  - the knot is tied by "loop", leaving a function that takes "()" and
+    produces an infinite stream of "1"s
+-}
+
 -- a generalization of the original version
 -- "ArrowLoop" constraint is reduntant because "ArrowCircuit" implies it.
 -- but we choose to write this out anyway.
