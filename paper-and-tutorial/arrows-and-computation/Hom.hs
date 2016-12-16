@@ -42,5 +42,9 @@ arrHom f = f :&: arrHom (f *** f)
 composeHom :: Hom a b -> Hom b c -> Hom a c
 composeHom (a :&: as) (b :&: bs) = (b . a) :&: composeHom as bs
 
+instance Cat.Category Hom where
+    id = arrHom id
+    g . f = composeHom f g
+
 transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
 transpose ((a,b),(c,d)) = ((a,c),(b,d))
