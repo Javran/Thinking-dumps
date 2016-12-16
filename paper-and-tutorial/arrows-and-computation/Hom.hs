@@ -1,5 +1,8 @@
 module Hom where
 
+import qualified Control.Category as Cat
+import Control.Arrow
+
 -- homogeneous functions
 
 {-
@@ -32,3 +35,12 @@ apply :: Hom a b -> BalTree a -> BalTree b
 apply (f :&: fs) t = case t of
     Zero x -> Zero (f x)
     Succ t' -> Succ (apply fs t')
+
+arrHom :: (a -> b) -> Hom a b
+arrHom f = f :&: arrHom (f *** f)
+
+composeHom :: Hom a b -> Hom b c -> Hom a c
+composeHom (a :&: as) (b :&: bs) = (b . a) :&: composeHom as bs
+
+transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
+transpose ((a,b),(c,d)) = ((a,c),(b,d))
