@@ -46,5 +46,13 @@ instance Cat.Category Hom where
     id = arrHom id
     g . f = composeHom f g
 
-transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
-transpose ((a,b),(c,d)) = ((a,c),(b,d))
+firstHom :: Hom a b -> Hom (a,d) (b,d)
+firstHom (f :&: fs) = first f :&: (tr >>> firstHom fs >>> tr)
+  where
+    transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
+    transpose ((a,b),(c,d)) = ((a,c),(b,d))
+    tr = arrHom transpose
+
+instance Arrow Hom where
+    arr = arrHom
+    first = firstHom
