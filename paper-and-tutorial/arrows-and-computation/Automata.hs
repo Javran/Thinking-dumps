@@ -77,6 +77,7 @@ class ArrowLoop a => ArrowCircuit a where
 -- a generalization of the original version
 -- "ArrowLoop" constraint is reduntant because "ArrowCircuit" implies it.
 -- but we choose to write this out anyway.
+-- TODO: would be interesting to know how this is translated into arrow combinators
 counter :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
 counter = proc reset -> do
     -- "reset" introduced as a way to refer to the input to this circuit.
@@ -88,6 +89,13 @@ counter = proc reset -> do
     returnA -< output
   where
     zero = toEnum 0
+
+-- TODO: working on a translation, refering to: https://www.haskell.org/arrows/sugar.html
+bind :: Arrow a => a b c -> a (b,c) d -> a b d
+e `bind` f = proc b -> do
+    c <- e -< b
+    d <- f -< (b,c)
+    returnA -< d
 
 instance ArrowCircuit Auto where
     delay b = Auto $ \ b' -> (b, delay b')
