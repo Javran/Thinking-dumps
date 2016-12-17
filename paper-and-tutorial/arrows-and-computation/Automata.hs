@@ -96,6 +96,17 @@ e `bind` f = proc b -> do
     c <- e -< b
     d <- f -< (b,c)
     returnA -< d
+{- or equivalently:
+
+e `bind` f = (returnA &&& e) >>> f
+
+
+- basically "returnA" for keeping the input, and the input is also splitted
+  and fed to "e" to produce something of "c", which forms the full input for "f"
+
+- don't deny it, this is a bad idea not to write parentheses out explicitly
+
+-}
 
 instance ArrowCircuit Auto where
     delay b = Auto $ \ b' -> (b, delay b')
