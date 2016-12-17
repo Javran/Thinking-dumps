@@ -108,6 +108,15 @@ e `bind` f = (returnA &&& e) >>> f
 
 -}
 
+counter2 :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
+counter2 = returnA &&& loop (proc (reset,(output,next)) -> do {
+                                 output <- returnA -< if reset then zero else next;
+                                 next <- delay zero -< succ output;
+                                 returnA -< ((output,next),(output,next))}) >>>
+           proc (reset,(output,next)) -> do { returnA -< output }
+  where
+    zero = toEnum 0
+
 instance ArrowCircuit Auto where
     delay b = Auto $ \ b' -> (b, delay b')
 
