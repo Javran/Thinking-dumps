@@ -108,12 +108,17 @@ e `bind` f = (returnA &&& e) >>> f
 
 -}
 
+-- TODO: what to say about variable shadowing?
+-- "output" and "next" are originally introduced by "rec",
+-- but here the introduction happens in "proc",
+-- if we choose to remove "output <-" and "next <-", will it still be correct?
 counter2 :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
-counter2 = returnA &&& loop (proc (reset,(output,next)) -> do {
-                                 output <- returnA -< if reset then zero else next;
-                                 next <- delay zero -< succ output;
-                                 returnA -< ((output,next),(output,next))}) >>>
-           proc (reset,(output,next)) -> do { returnA -< output }
+counter2 = returnA &&&
+           loop (proc (reset,(output,next)) -> do {
+                     output <- returnA -< if reset then zero else next;
+                     next <- delay zero -< succ output;
+                     returnA -< (output,(output,next))}) >>>
+           proc (_,output) -> returnA -< output
   where
     zero = toEnum 0
 
