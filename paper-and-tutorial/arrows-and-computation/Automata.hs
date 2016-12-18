@@ -115,9 +115,9 @@ e `bind` f = (returnA &&& e) >>> f
 counter2 :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
 counter2 = returnA &&&
            loop (proc (reset,(output,next)) -> do {
-                     output <- returnA -< if reset then zero else next;
-                     next <- delay zero -< succ output;
-                     returnA -< (output,(output,next))}) >>>
+                     output' <- returnA -< if reset then zero else next;
+                     next' <- delay zero -< succ output;
+                     returnA -< (output',(output',next'))}) >>>
            proc (_,output) -> returnA -< output
   where
     zero = toEnum 0
