@@ -65,7 +65,23 @@ genSym = proc inp -> do
     _ <- store -< succ n
     returnA -< n
 
+-- TODO: we should be able to get rid of those "()"s
+{-
+
+f &&& g = arr (\x -> (x,x)) >>> f *** g
+
+note that f *** g === first f
+
+so:
+
+f &&& returnA = arr (\x -> (x,x)) >>> first f
+
+-}
 genSym1 :: Enum e => State e () e
-genSym1 = ((returnA >>> fetch) &&& returnA)
-    >>> ((arr (\ (n,_) -> succ n) >>> store) &&& returnA)
-    >>> arr (\(_,(n,_)) -> n)
+genSym1 =
+    fanout >>> first fetch
+    >>> fanout >>> arr (first (\(n,()) -> succ n))
+    >>> first store
+    >>> arr (\((),(n,())) -> n)
+  where
+    fanout = arr (\x -> (x,x))
