@@ -77,11 +77,13 @@ so:
 f &&& returnA = arr (\x -> (x,x)) >>> first f
 
 -}
+{-
+  after done with applying arrow laws, it might be helpful
+  to draw the graph of the arrow down and get rid of unnecessary parts
+-}
 genSym1 :: Enum e => State e () e
 genSym1 =
-    fanout >>> first fetch
-    >>> fanout >>> arr (first (\(n,()) -> succ n))
+    arr (\() -> ((),())) >>> first fetch
+    >>> arr (\(s,()) -> (s,s)) >>> arr (first succ)
     >>> first store
-    >>> arr (\((),(n,())) -> n)
-  where
-    fanout = arr (\x -> (x,x))
+    >>> arr snd
