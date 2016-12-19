@@ -68,5 +68,4 @@ genSym = proc inp -> do
 genSym1 :: Enum e => State e () e
 genSym1 = ((returnA >>> fetch) &&& returnA)
     >>> ((proc (n,_) -> store -< succ n) &&& returnA)
-    >>> proc (_,(n,_)) -> returnA -< n
-
+    >>> arr (\(_,(n,_)) -> n)
