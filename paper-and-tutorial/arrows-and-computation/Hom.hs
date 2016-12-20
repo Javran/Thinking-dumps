@@ -63,3 +63,12 @@ rsh :: forall a. a -> Hom a a
 rsh v = const v :&: proc (o :: a,e :: a) -> do
     o' <- rsh v -< e
     returnA -< (o',o)
+
+-- TODO: comment
+scan :: Num a => Hom a a
+scan = id :&: proc (o,e) -> do
+    -- pairwise scan?
+    e' <- scan -< o+e
+    -- shift to right
+    el <- rsh 0 -< e
+    returnA -< (el+o, e')
