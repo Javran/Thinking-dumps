@@ -80,10 +80,12 @@ f &&& returnA = arr (\x -> (x,x)) >>> first f
 {-
   after done with applying arrow laws, it might be helpful
   to draw the graph of the arrow down and get rid of unnecessary parts
+
+  TODO: show simplification in detail
 -}
 genSym1 :: Enum e => State e () e
 genSym1 =
-    arr (\() -> ((),())) >>> first fetch
-    >>> arr (\(s,()) -> (s,s)) >>> arr (first succ)
-    >>> first store
-    >>> arr snd
+        fetch
+    >>> arr (\s -> (succ s,s)) -- bump counter, keep original value.
+    >>> first store -- store new value
+    >>> arr snd -- get the fetched value as result
