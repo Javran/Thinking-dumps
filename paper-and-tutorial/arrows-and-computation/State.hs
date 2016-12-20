@@ -183,16 +183,78 @@ genSym1 =
     (arr (\x -> (x,x)) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
     arr (\(_,(n,())) -> n)
 
+now use the same trick before to see if we can get more "()"s in the result:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    (arr (\() -> ((),())) >>> first fetch) >>>
+    (arr (\(x,()) -> ((x,()),(x,()))) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
+    arr (\(_,(n,())) -> n)
+
+"arr (\() -> ((),())) >>> first fetch" is clearly just "fetch >>> arr (\n -> (n,()))":
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    fetch >>> arr (\n -> (n,())) >>>
+    (arr (\(x,()) -> ((x,()),(x,()))) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
+    arr (\(_,(n,())) -> n)
+
+also notice:
+
+first (arr (\(n,()) -> succ n) >>> store)
+=> first (arr (\(n,()) -> succ n)) >>> first store (property)
+=> arr (first (\(n,()) -> succ n)) >>> first store (property)
+
+we then have (removing unnecessary parentheses):
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    fetch >>> arr (\n -> (n,())) >>>
+    arr (\(x,()) -> ((x,()),(x,()))) >>> arr (first (\(n,()) -> succ n)) >>>
+    first store >>>
+    arr (\(_,(n,())) -> n)
+
+we can remove a unnecessary passing of "()":
+
+arr (\(x,()) -> ((x,()),(x,()))) >>> arr (first (\(n,()) -> succ n))
+=> arr (\(x,()) -> (x,(x,()))) >>> arr (first (\n -> succ n))
+=> arr (\(x,()) -> (x,(x,()))) >>> arr (first succ)
+=> arr ((\(x,()) -> (x,(x,()))) >>> first succ) (property)
+=> arr (\(x,()) -> (succ x,(x,())))
+
+now we end up with:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    fetch >>> arr (\n -> (n,())) >>>
+    arr (\(x,()) -> (succ x,(x,()))) >>>
+    first store >>>
+    arr (\(_,(n,())) -> n)
+
+now, clearly we are passing an "()" throughout this network for no particular reason,
+so we can get rid of it:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    fetch >>> arr (\n -> (n {- ,() -})) >>>
+    arr (\(x {- ,() -}) -> (succ x,(x{- ,() -}))) >>>
+    first store >>>
+    arr (\(_,(n{- ,() -})) -> n)
+
+this indeed works, so we can further simplify:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    fetch >>> arr id >>>
+    arr (\x -> (succ x,x)) >>>
+    first store >>>
+    arr snd
+
+so we now have the final version:
 -}
 genSym1 :: Enum e => State e () e
 genSym1 =
-    (arr (\x -> (x,x)) >>> first fetch) >>>
-    (arr (\x -> (x,x)) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
-    arr (\(_,(n,())) -> n)
-
-genSymX :: Enum e => State e () e
-genSymX =
-        fetch
-    >>> arr (\s -> (succ s,s)) -- bump counter, keep original value.
-    >>> first store -- store new value
-    >>> arr snd -- get the fetched value as result
+    fetch >>> -- fetch value from the register
+    arr (\x -> (succ x,x)) >>> -- bump counter, keep original value.
+    first store >>> -- store new value
+    arr snd -- get the fetched value as result
