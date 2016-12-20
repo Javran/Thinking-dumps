@@ -67,23 +67,6 @@ genSym = proc inp -> do
 
 {-
 
-f &&& g = arr (\x -> (x,x)) >>> f *** g
-
-note that f *** g === first f
-
-so:
-
-f &&& returnA = arr (\x -> (x,x)) >>> first f
-
--}
-{-
-  after done with applying arrow laws, it might be helpful
-  to draw the graph of the arrow down and get rid of unnecessary parts
-
-  TODO: show simplification in detail
--}
-{-
-
 first version without comment:
 
 genSym1 :: Enum e => State e () e
