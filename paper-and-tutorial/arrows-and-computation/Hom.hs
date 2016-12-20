@@ -1,3 +1,4 @@
+{-# LANGUAGE Arrows, ScopedTypeVariables #-}
 module Hom where
 
 import qualified Control.Category as Cat
@@ -56,3 +57,9 @@ firstHom (f :&: fs) = first f :&: (tr >>> firstHom fs >>> tr)
 instance Arrow Hom where
     arr = arrHom
     first = firstHom
+
+-- TODO: shifting elements?
+rsh :: forall a. a -> Hom a a
+rsh v = const v :&: proc (o :: a,e :: a) -> do
+    o' <- rsh v -< e
+    returnA -< (o',o)
