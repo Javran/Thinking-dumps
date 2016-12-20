@@ -144,12 +144,51 @@ genSym1 =
     ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
     ((arr (\(n,inp) -> succ n) >>> store) &&& returnA) >>>
     arr (\(_,(n,inp)) -> n) >>> returnA
+
+at this point ghc and HLint has been giving many suggestions,
+most of which should be obvious:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr id >>> fetch) &&& returnA) >>>
+    ((arr (\(n,()) -> succ n) >>> store) &&& returnA) >>>
+    arr (\(_,(n,())) -> n) >>> returnA
+
+notice that by using type holes, I managed to get type of both "inp" to be "()",
+which should be a clear hint that this arrow network can be more simple.
+
+now we can eliminate some "returnA", also notice "arr id" is just the definition of "returnA"
+so it can also be removed.
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    (fetch &&& returnA) >>>
+    ((arr (\(n,()) -> succ n) >>> store) &&& returnA) >>>
+    arr (\(_,(n,())) -> n)
+
+here we can find a pattern "f &&& returnA" occurs in 2 places, let figure out what it does:
+
+f &&& returnA
+=> arr (\x -> (x,x)) >>> f *** returnA (definition)
+=> arr (\x -> (x,x)) >>> first f >>> arr swap >>> second returnA >>> arr swap (definition)
+=> arr (\x -> (x,x)) >>> first f >>> arr swap >>> arr swap (property of returnA)
+=> arr (\x -> (x,x)) >>> first f >>> returnA (swap . swap === id)
+=> arr (\x -> (x,x)) >>> first f
+
+let's use this result on genSym1:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    (arr (\x -> (x,x)) >>> first fetch) >>>
+    (arr (\x -> (x,x)) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
+    arr (\(_,(n,())) -> n)
+
 -}
 genSym1 :: Enum e => State e () e
 genSym1 =
-    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
-    ((arr (\(n,inp) -> succ n) >>> store) &&& returnA) >>>
-    arr (\(_,(n,inp)) -> n) >>> returnA
+    (arr (\x -> (x,x)) >>> first fetch) >>>
+    (arr (\x -> (x,x)) >>> first (arr (\(n,()) -> succ n) >>> store)) >>>
+    arr (\(_,(n,())) -> n)
 
 genSymX :: Enum e => State e () e
 genSymX =
