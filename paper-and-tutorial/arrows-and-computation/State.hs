@@ -65,7 +65,6 @@ genSym = proc inp -> do
     _ <- store -< succ n
     returnA -< n
 
--- TODO: we should be able to get rid of those "()"s
 {-
 
 f &&& g = arr (\x -> (x,x)) >>> f *** g
@@ -83,8 +82,77 @@ f &&& returnA = arr (\x -> (x,x)) >>> first f
 
   TODO: show simplification in detail
 -}
+{-
+
+first version without comment:
+
+genSym1 :: Enum e => State e () e
+genSym1 = proc inp -> do
+    n <- fetch -< inp
+    _ <- store -< succ n
+    returnA -< n
+
+adding brackets and semicolon:
+
+genSym1 :: Enum e => State e () e
+genSym1 = proc inp -> do {
+    n <- fetch -< inp;
+    _ <- store -< succ n;
+    returnA -< n;
+    }
+
+apply translation rule, notice the first command is of the form "p' <- c; B":
+
 genSym1 :: Enum e => State e () e
 genSym1 =
+    ((proc inp -> fetch -< inp) &&& returnA) >>>
+    proc (n,inp) -> do {
+        _ <- store -< succ n;
+        returnA -< n;
+    }
+
+now apply translation rule on "proc inp -> fetch -< inp"
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
+    proc (n,inp) -> do {
+        _ <- store -< succ n;
+        returnA -< n;
+    }
+
+now focus on the remaining "proc" part, whose first command is again of the form "p' <- c; B"
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
+    ((proc (n,inp) -> store -< succ n) &&& returnA) >>>
+    proc (_,(n,inp)) -> do { returnA -< n }
+
+now translate first "proc" part:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
+    ((arr (\(n,inp) -> succ n) >>> store) &&& returnA) >>>
+    proc (_,(n,inp)) -> do { returnA -< n }
+
+and then the last "proc" part:
+
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
+    ((arr (\(n,inp) -> succ n) >>> store) &&& returnA) >>>
+    arr (\(_,(n,inp)) -> n) >>> returnA
+-}
+genSym1 :: Enum e => State e () e
+genSym1 =
+    ((arr (\inp -> inp) >>> fetch) &&& returnA) >>>
+    ((arr (\(n,inp) -> succ n) >>> store) &&& returnA) >>>
+    arr (\(_,(n,inp)) -> n) >>> returnA
+
+genSymX :: Enum e => State e () e
+genSymX =
         fetch
     >>> arr (\s -> (succ s,s)) -- bump counter, keep original value.
     >>> first store -- store new value
