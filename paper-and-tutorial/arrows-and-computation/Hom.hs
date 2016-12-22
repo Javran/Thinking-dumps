@@ -3,6 +3,7 @@ module Hom where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Control.Monad.State
 
 -- homogeneous functions
 
@@ -16,7 +17,13 @@ import Control.Arrow
   of this tree.
 -}
 
-data BalTree a = Zero a | Succ (BalTree (Pair a))
+data BalTree a = Zero a | Succ (BalTree (Pair a)) deriving Show
+
+-- use only for mering trees of the same depth
+mergeTree :: BalTree a -> BalTree a -> BalTree a
+mergeTree (Zero x) (Zero y) = Succ (Zero (x,y))
+mergeTree (Succ a) (Succ b) = Succ (mergeTree a b)
+mergeTree _ _ = error "merging two trees that have different depth"
 
 type Pair a = (a,a)
 
