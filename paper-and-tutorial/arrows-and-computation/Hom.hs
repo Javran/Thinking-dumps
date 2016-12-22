@@ -19,22 +19,24 @@ import Control.Monad.State
 
 data BalTree a = Zero a | Succ (BalTree (Pair a)) deriving Show
 
--- use only for mering trees of the same depth
-mergeTree :: BalTree a -> BalTree a -> BalTree a
-mergeTree (Zero x) (Zero y) = Succ (Zero (x,y))
-mergeTree (Succ a) (Succ b) = Succ (mergeTree a b)
-mergeTree _ _ = error "merging two trees that have different depth"
-
-makeTree :: Enum a => Int -> a -> BalTree a
-makeTree d z = evalState (mkTree d) z
+-- make a tree with given depth with elements given in the list
+-- note that callers are responsible to produce sufficient elements
+-- for creating the complete tree
+makeTree :: Int -> [a] -> BalTree a
+makeTree d = evalState (mkTree d)
   where
-    genSym = state (\s -> (s, succ s))
-    mkTree 0 = genSym >>= \v -> pure (Zero v)
-    mkTree d = do
-        let d' = d-1
-        l <- mkTree d'
-        r <- mkTree d'
-        pure (mergeTree l r)
+    next = state (\xs -> case xs of
+                      [] -> error "source exhausted"
+                      (y:ys) -> (y,ys))
+    mkTree 0 = Zero <$> next
+    mkTree dep = mergeTree <$> mkTree d' <*> mkTree d'
+      where d' = dep-1
+
+    -- use only for mering trees of the same depth
+    mergeTree :: BalTree a -> BalTree a -> BalTree a
+    mergeTree (Zero x) (Zero y) = Succ (Zero (x,y))
+    mergeTree (Succ a) (Succ b) = Succ (mergeTree a b)
+    mergeTree _ _ = error "merging two trees that have different depth"
 
 type Pair a = (a,a)
 
