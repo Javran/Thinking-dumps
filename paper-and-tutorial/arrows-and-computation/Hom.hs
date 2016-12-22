@@ -90,5 +90,12 @@ scan = id :&: proc (o,e) -> do
     -- pairwise scan?
     e' <- scan -< o+e
     -- shift to right
-    el <- rsh 0 -< e
+    el <- rsh 0 -< e'
     returnA -< (el+o, e')
+
+{-
+> makeTree 3 [1..]
+Succ (Succ (Succ (Zero (((1,2),(3,4)),((5,6),(7,8))))))
+> apply scan (makeTree 3 [1..])
+Succ (Succ (Succ (Zero (((1,3),(6,10)),((15,21),(28,36))))))
+-}
