@@ -79,10 +79,13 @@ instance Arrow Hom where
     first = firstHom
 
 -- example: apply (rsh 'x') (('a','b'),('c','d')) => (('x','a'),('b','c'))
+-- TODO: still no idea why this would work, especially what does "o' <- rsh v -< e" do?
 rsh :: forall a. a -> Hom a a
-rsh v = const v :&: proc (o :: a,e :: a) -> do
-    o' <- rsh v -< e
-    returnA -< (o',o)
+rsh v = rshArr
+  where
+    rshArr = const v :&: proc (o :: a,e :: a) -> do
+        o' <- rshArr -< e
+        returnA -< (o',o)
 
 -- TODO: comment
 scan :: Num a => Hom a a
