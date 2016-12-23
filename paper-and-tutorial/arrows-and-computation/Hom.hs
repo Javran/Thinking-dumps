@@ -78,7 +78,7 @@ instance Arrow Hom where
     arr = arrHom
     first = firstHom
 
--- TODO: shifting elements?
+-- example: apply (rsh 'x') (('a','b'),('c','d')) => (('x','a'),('b','c'))
 rsh :: forall a. a -> Hom a a
 rsh v = const v :&: proc (o :: a,e :: a) -> do
     o' <- rsh v -< e
