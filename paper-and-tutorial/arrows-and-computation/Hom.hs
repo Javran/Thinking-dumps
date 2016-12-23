@@ -87,7 +87,17 @@ rsh v = rshArr
         o' <- rshArr -< e
         returnA -< (o',o)
 
--- TODO: comment
+{-
+input: x1,x2,x3,x4,...
+want: x1,x1+x2,x1+x2+x3,x1+x2+x3+x4,...
+
+steps:
+- prepare x1+x2, x3+x4, ...
+- recursively do: (x1+x2),(x1+x2)+(x3+x4),... (1)
+- prepare: x1, x3, x5 ... and 0,x1+x2,x1+x2+x3+x4
+- pairwise adding to get: x1, x1+x2+x3, x1+x2+x3+x4+x5,... (2)
+- put two parts (1) and (2) together
+-}
 scan :: Num a => Hom a a
 scan = id :&: proc (o,e) -> do
     -- pairwise scan?
