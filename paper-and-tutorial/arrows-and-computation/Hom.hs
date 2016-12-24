@@ -112,3 +112,9 @@ Succ (Succ (Succ (Zero (((1,2),(3,4)),((5,6),(7,8))))))
 > apply scan (makeTree 3 [1..])
 Succ (Succ (Succ (Zero (((1,3),(6,10)),((15,21),(28,36))))))
 -}
+
+butterfly :: (Pair a -> Pair a) -> Hom a a
+butterfly f = id :&: proc (o,e) -> do
+    o' <- butterfly f -< o
+    e' <- butterfly f -< e
+    returnA -< f (o',e')
