@@ -4,6 +4,7 @@ module Hom where
 import qualified Control.Category as Cat
 import Control.Arrow
 import Control.Monad.State
+import Data.Tuple
 
 -- homogeneous functions
 
@@ -70,9 +71,10 @@ instance Cat.Category Hom where
 firstHom :: Hom a b -> Hom (a,d) (b,d)
 firstHom (f :&: fs) = first f :&: (tr >>> firstHom fs >>> tr)
   where
-    transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
-    transpose ((a,b),(c,d)) = ((a,c),(b,d))
     tr = arrHom transpose
+
+transpose :: ((a,b),(c,d)) -> ((a,c),(b,d))
+transpose ((a,b),(c,d)) = ((a,c),(b,d))
 
 instance Arrow Hom where
     arr = arrHom
@@ -127,3 +129,9 @@ Succ (Succ (Succ (Zero ((('h','g'),('f','e')),(('d','c'),('b','a'))))))
 > apply (butterfly (\(a,b) -> (succ b,succ a))) (makeTree 3 ['a'..]) -- succ is called 3 times?
 Succ (Succ (Succ (Zero ((('k','j'),('i','h')),(('g','f'),('e','d'))))))
 -}
+
+rev :: Hom a a
+rev = butterfly swap
+
+unriffle :: Hom (Pair a) (Pair a)
+unriffle = butterfly transpose
