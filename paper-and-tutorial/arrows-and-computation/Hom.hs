@@ -118,3 +118,12 @@ butterfly f = id :&: proc (o,e) -> do
     o' <- butterfly f -< o
     e' <- butterfly f -< e
     returnA -< f (o',e')
+
+{-
+> makeTree 3 ['a'..]
+Succ (Succ (Succ (Zero ((('a','b'),('c','d')),(('e','f'),('g','h'))))))
+> apply (butterfly (\(a,b) -> (b,a))) (makeTree 3 ['a'..])
+Succ (Succ (Succ (Zero ((('h','g'),('f','e')),(('d','c'),('b','a'))))))
+> apply (butterfly (\(a,b) -> (succ b,succ a))) (makeTree 3 ['a'..]) -- succ is called 3 times?
+Succ (Succ (Succ (Zero ((('k','j'),('i','h')),(('g','f'),('e','d'))))))
+-}
