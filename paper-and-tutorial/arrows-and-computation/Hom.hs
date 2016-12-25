@@ -144,6 +144,9 @@ bisort = butterfly cmp
         EQ -> (x,y)
         GT -> (y,x)
 
+-- TODO: unclear about what it does, probably worth
+-- reading http://www.cs.kent.edu/~batcher/sort.pdf
+
 {-
 > makeTree 3 [1,8,3,7,2,6,4,5]
 Succ (Succ (Succ (Zero (((1,8),(3,7)),((2,6),(4,5))))))
