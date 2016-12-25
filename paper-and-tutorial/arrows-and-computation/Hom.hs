@@ -135,3 +135,11 @@ rev = butterfly swap
 
 unriffle :: Hom (Pair a) (Pair a)
 unriffle = butterfly transpose
+
+bisort :: Ord a => Hom a a
+bisort = butterfly cmp
+  where
+    cmp (x,y) = case x `compare` y of
+        LT -> (x,y)
+        EQ -> (x,y)
+        GT -> (y,x)
