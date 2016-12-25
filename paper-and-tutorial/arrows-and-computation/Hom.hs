@@ -143,3 +143,10 @@ bisort = butterfly cmp
         LT -> (x,y)
         EQ -> (x,y)
         GT -> (y,x)
+
+{-
+> makeTree 3 [1,8,3,7,2,6,4,5]
+Succ (Succ (Succ (Zero (((1,8),(3,7)),((2,6),(4,5))))))
+> apply bisort (makeTree 3 [1,8,3,7,2,6,4,5])
+Succ (Succ (Succ (Zero (((1,5),(3,6)),((2,7),(4,8))))))
+-}
