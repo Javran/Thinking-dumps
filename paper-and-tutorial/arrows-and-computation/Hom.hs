@@ -89,6 +89,13 @@ rsh v = rshArr
         o' <- rshArr -< e
         returnA -< (o',o)
 
+rsh1 :: a -> Hom a a
+rsh1 v = rshArr
+  where
+    rshArr = const v :&:
+      (((arr snd >>> rshArr) &&& returnA) >>>
+       arr (\(o',(o,_)) -> (o',o)))
+
 {-
 input: x1,x2,x3,x4,...
 want: x1,x1+x2,x1+x2+x3,x1+x2+x3+x4,...
