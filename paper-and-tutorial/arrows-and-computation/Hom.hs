@@ -95,6 +95,8 @@ rsh1 v = rshArr
     rshArr =
         const v :&: (arr snd >>> (rshArr &&& returnA))
 
+-- might be super related: http://code.haskell.org/~ross/arrowp/examples/powertrees/Hom.las
+
 {-
 input: x1,x2,x3,x4,...
 want: x1,x1+x2,x1+x2+x3,x1+x2+x3+x4,...
