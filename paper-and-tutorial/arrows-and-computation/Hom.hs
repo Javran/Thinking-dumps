@@ -147,11 +147,7 @@ butterfly f = id :&: proc (o,e) -> do
 buffertly :: (Pair a -> Pair a) -> Hom a a
 buffertly f = bt
   where
-    bt = id :&:
-        (arr (\x@(a,_) -> (a,x)) >>> first bt >>>
-         arr (\(a,(_,b2)) -> (b2,a)) >>>
-         first bt >>>
-         arr (\(e',o') -> f (o',e')))
+    bt = id :&: (bt *** bt >>> arr f)
 
 {-
 > makeTree 3 ['a'..]
