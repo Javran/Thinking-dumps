@@ -39,6 +39,21 @@ makeTree d = evalState (mkTree d)
     mergeTree (Succ a) (Succ b) = Succ (mergeTree a b)
     mergeTree _ _ = error "merging two trees that have different depth"
 
+-- an example tree for ghci interactions
+treeA :: BalTree Char
+treeA = makeTree 3 ['a'..]
+
+{-
+> treeA
+Succ (Succ (Succ (Zero ((('a','b'),('c','d')),(('e','f'),('g','h'))))))
+
+"arr f" applies "f" to every elements of the tree:
+
+> apply (arr succ) treeA
+Succ (Succ (Succ (Zero ((('b','c'),('d','e')),(('f','g'),('h','i'))))))
+
+-}
+
 type Pair a = (a,a)
 
 {-
@@ -128,6 +143,14 @@ butterfly f = id :&: proc (o,e) -> do
     o' <- butterfly f -< o
     e' <- butterfly f -< e
     returnA -< f (o',e')
+
+buffertly :: (Pair a -> Pair a) -> Hom a a
+buffertly f = bt
+  where
+    bt = id :&:
+        (((arr fst >>> bt) &&& returnA) >>>
+         ((arr (\ (_,(_,e)) -> e) >>> bt) &&& returnA) >>>
+         arr (\(e',(o',_)) -> f (o',e')))
 
 {-
 > makeTree 3 ['a'..]
