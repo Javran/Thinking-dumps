@@ -180,4 +180,45 @@ bisort = butterfly cmp
 Succ (Succ (Succ (Zero (((1,8),(3,7)),((2,6),(4,5))))))
 > apply bisort (makeTree 3 [1,8,3,7,2,6,4,5])
 Succ (Succ (Succ (Zero (((1,5),(3,6)),((2,7),(4,8))))))
+
+I may have figured out what's going on:
+
+(1,8) (3,7) (2,6) (4,5)
+
+- apply "f" on every pair:
+
+(1,8) (3,7) (2,6) (4,5)
+
+- rearrange every 2 pairs, will recover later:
+
+(1,3) (8,7) (2,4) (6,5)
+
+- now apply "f" on every pair:
+
+(1,3) (7,8) (2,4) (5,6)
+
+- recover from the arrangement:
+
+(1,7) (3,8) (2,5) (4,6)
+
+- now rearrage again, on a "higher level", will recover later.
+
+(1,7) (2,5) (3,8) (4,6)
+
+- now rearrage again, on the "lower level", will recover later.
+
+(1,2) (7,5) (3,4) (8,6)
+
+- apply "f":
+
+(1,2) (5,7) (3,4) (6,8)
+
+- recover
+
+(1,5) (2,7) (3,6) (4,8)
+
+- recover
+
+(1,5) (3,6) (2,7) (4,8)
+
 -}
