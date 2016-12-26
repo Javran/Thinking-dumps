@@ -148,9 +148,10 @@ buffertly :: (Pair a -> Pair a) -> Hom a a
 buffertly f = bt
   where
     bt = id :&:
-        (((arr fst >>> bt) &&& returnA) >>>
-         ((arr (\ (_,(_,e)) -> e) >>> bt) &&& returnA) >>>
-         arr (\(e',(o',_)) -> f (o',e')))
+        (arr (\x@(a,_) -> (a,x)) >>> first bt >>>
+         arr (\(a,(_,b2)) -> (b2,a)) >>>
+         first bt >>>
+         arr (\(e',o') -> f (o',e')))
 
 {-
 > makeTree 3 ['a'..]
