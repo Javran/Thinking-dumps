@@ -92,9 +92,8 @@ rsh v = rshArr
 rsh1 :: a -> Hom a a
 rsh1 v = rshArr
   where
-    rshArr = const v :&:
-      (((arr snd >>> rshArr) &&& returnA) >>>
-       arr (\(o',(o,_)) -> (o',o)))
+    rshArr =
+        const v :&: (arr snd >>> (rshArr &&& returnA))
 
 {-
 input: x1,x2,x3,x4,...
