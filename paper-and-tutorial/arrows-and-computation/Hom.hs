@@ -176,6 +176,14 @@ bisort = butterfly cmp
 -- reading http://www.cs.kent.edu/~batcher/sort.pdf
 
 {-
+
+useful links:
+- https://en.wikipedia.org/wiki/Bitonic_sorter
+- https://en.wikipedia.org/wiki/Butterfly_network
+
+-}
+
+{-
 > makeTree 3 [1,8,3,7,2,6,4,5]
 Succ (Succ (Succ (Zero (((1,8),(3,7)),((2,6),(4,5))))))
 > apply bisort (makeTree 3 [1,8,3,7,2,6,4,5])
