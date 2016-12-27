@@ -104,6 +104,22 @@ rsh v = rshArr
         o' <- rshArr -< e
         returnA -< (o',o)
 
+{-
+
+a,b c,d e,f g,h
+
+=> arr swap
+
+b,a d,c f,e h,g
+
+(part first: b,d,f,h, second: a,c,e,g)
+
+assume "rsh v" does the right thing: b,d,f,h >- rsh v -> v,b,d,f
+
+=> first (rsh v) turns "b,a d,c f,e h,g" into "v,a b,c d,e f,g"
+
+-}
+
 rsh1 :: a -> Hom a a
 rsh1 v = rshArr
   where
