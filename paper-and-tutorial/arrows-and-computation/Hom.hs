@@ -96,7 +96,7 @@ instance Arrow Hom where
     first = firstHom
 
 -- example: apply (rsh 'x') (('a','b'),('c','d')) => (('x','a'),('b','c'))
--- TODO: still no idea why this would work, especially what does "o' <- rsh v -< e" do?
+-- see "rsh1" for a translated version
 rsh :: forall a. a -> Hom a a
 rsh v = rshArr
   where
@@ -105,6 +105,10 @@ rsh v = rshArr
         returnA -< (o',o)
 
 {-
+
+a formal proof might be overkill, but this is what roughly happened:
+
+for an input of 8 elements:
 
 a,b c,d e,f g,h
 
@@ -118,8 +122,13 @@ assume "rsh v" does the right thing: b,d,f,h >- rsh v -> v,b,d,f
 
 => first (rsh v) turns "b,a d,c f,e h,g" into "v,a b,c d,e f,g"
 
--}
+so consider every pair of (o,e) in the input: output of "even" wire comes
+directly from an "odd" wire, the correctness is easily established.
 
+for "odd" wires, we just hope "rsh v" on them does the right thing - so we
+just need to prove by induction. the base case is "x >- rsh v -> v" and so that's correct.
+
+-}
 rsh1 :: a -> Hom a a
 rsh1 v = rshArr
   where
