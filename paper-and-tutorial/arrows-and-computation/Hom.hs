@@ -288,3 +288,8 @@ sort = id :&: proc (x,y) -> do
     (bisort2 <<< unriffle) -< (x',y')
   where
     _ :&: bisort2 = bisort
+
+sort1 :: Ord a => Hom a a
+sort1 = id :&: (sort1 *** sort1 >>> second rev >>> unriffle >>> bisort2)
+  where
+    _ :&: bisort2 = bisort
