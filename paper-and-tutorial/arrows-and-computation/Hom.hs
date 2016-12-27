@@ -108,7 +108,7 @@ rsh1 :: a -> Hom a a
 rsh1 v = rshArr
   where
     rshArr =
-        const v :&: (arr snd >>> (rshArr &&& returnA))
+        const v :&: (arr swap >>> first rshArr)
 
 -- might be super related: http://code.haskell.org/~ross/arrowp/examples/powertrees/Hom.las
 
