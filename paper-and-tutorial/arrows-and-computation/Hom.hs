@@ -275,3 +275,16 @@ the effect of "butterfly cmp" on an input of 8 elements is like:
 where every vertical "x---x" thing is a "cmp" operation
 
 -}
+
+
+{-
+modified from: http://code.haskell.org/~ross/arrowp/examples/powertrees/Hom.las
+-}
+
+sort :: Ord a => Hom a a
+sort = id :&: proc (x,y) -> do
+    x' <- sort -< x
+    y' <- (rev <<< sort) -< y
+    (bisort2 <<< unriffle) -< (x',y')
+  where
+    _ :&: bisort2 = bisort
