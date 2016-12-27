@@ -221,4 +221,24 @@ I may have figured out what's going on:
 
 (1,5) (3,6) (2,7) (4,8)
 
+the effect of "butterfly cmp" on an input of 8 elements is like:
+
+1 -x--x-----x-----------
+   |  |     |
+2 -x--|--x--|--x--------
+      |  |  |  |
+3 -x--x--|--|--|--x-----
+   |     |  |  |  |
+4 -x-----x--|--|--|--x--
+            |  |  |  |
+5 -x--x-----x--|--|--|--
+   |  |        |  |  |
+6 -x--|--x-----x--|--|--
+      |  |        |  |
+7 -x--x--|--------x--|--
+   |     |           |
+8 -x-----x-----------x--
+
+where every vertical "x---x" thing is a "cmp" operation
+
 -}
