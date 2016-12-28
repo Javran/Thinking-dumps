@@ -46,7 +46,7 @@ treeA = makeTree 3 ['a'..]
 exTree :: Enum e => Int -> BalTree e
 exTree h = makeTree h (map toEnum [0..])
 
-exTree1,exTree2,exTree3,exTree4 :: Enum e => BalTree e
+exTree1,exTree2,exTree3,exTree4 :: BalTree Int
 
 exTree1 = exTree 1
 exTree2 = exTree 2
@@ -199,6 +199,15 @@ Succ (Succ (Succ (Zero ((('k','j'),('i','h')),(('g','f'),('e','d'))))))
 rev :: Hom a a
 rev = butterfly swap
 
+{-
+effect of "unriffle":
+
+> makeTree 3 (iterate (succ *** succ) (0,0))
+Succ (Succ (Succ (Zero ((((0,0),(1,1)),((2,2),(3,3))),(((4,4),(5,5)),((6,6),(7,7)))))))
+> apply unriffle $ makeTree 3 (iterate (succ *** succ) (0,0))
+Succ (Succ (Succ (Zero ((((0,1),(2,3)),((4,5),(6,7))),(((0,1),(2,3)),((4,5),(6,7)))))))
+
+-}
 unriffle :: Hom (Pair a) (Pair a)
 unriffle = butterfly transpose
 
