@@ -43,6 +43,16 @@ makeTree d = evalState (mkTree d)
 treeA :: BalTree Char
 treeA = makeTree 3 ['a'..]
 
+exTree :: Enum e => Int -> BalTree e
+exTree h = makeTree h (map toEnum [0..])
+
+exTree1,exTree2,exTree3,exTree4 :: Enum e => BalTree e
+
+exTree1 = exTree 1
+exTree2 = exTree 2
+exTree3 = exTree 3
+exTree4 = exTree 4
+
 {-
 > treeA
 Succ (Succ (Succ (Zero ((('a','b'),('c','d')),(('e','f'),('g','h'))))))
@@ -66,6 +76,9 @@ type Pair a = (a,a)
 
 -}
 data Hom a b = (a -> b) :&: Hom (Pair a) (Pair b)
+
+nextHom :: Hom a b -> Hom (Pair a) (Pair b)
+nextHom (_ :&: h) = h
 
 -- I have to say this is a smart way of keeping track
 apply :: Hom a b -> BalTree a -> BalTree b
@@ -285,11 +298,10 @@ sort :: Ord a => Hom a a
 sort = id :&: proc (x,y) -> do
     x' <- sort -< x
     y' <- (rev <<< sort) -< y
-    (bisort2 <<< unriffle) -< (x',y')
-  where
-    _ :&: bisort2 = bisort
+    (nextHom bisort <<< unriffle) -< (x',y')
 
 sort1 :: Ord a => Hom a a
-sort1 = id :&: (sort1 *** sort1 >>> second rev >>> unriffle >>> bisort2)
-  where
-    _ :&: bisort2 = bisort
+sort1 = id :&: (sort1 *** sort1 >>>
+                second rev >>>
+                unriffle >>>
+                nextHom bisort)
