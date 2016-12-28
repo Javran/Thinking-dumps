@@ -9,6 +9,17 @@ import Data.Tuple
 -- homogeneous functions
 
 {-
+some links that might be helpful:
+(for the rest of this file, reference can take the form of "[x]",
+and that means a link in the following list.)
+
+[1] https://en.wikipedia.org/wiki/Bitonic_sorter
+[2] https://en.wikipedia.org/wiki/Butterfly_network
+[3] http://code.haskell.org/~ross/arrowp/examples/powertrees/Hom.las
+
+-}
+
+{-
   "BalTree" is a collection of 2^n elements:
 
   - "Zero _" contains 1 = 2^0 element
@@ -73,6 +84,11 @@ type Pair a = (a,a)
   <=> (a -> b) :&: Hom (Pair a) (Pair b)
   <=> (a -> b) :&: (Pair a -> Pair b) :&: Hom (Pair (Pair a)) (Pair (Pair b))
   ...
+
+  also notices that effectively "nextHom" and "apply" are accessors of Hom:
+
+  nextHom :: Hom a b -> Hom (Pair a) (Pair b)
+  apply :: Hom a b -> (BalTree a -> BalTree b)
 
 -}
 data Hom a b = (a -> b) :&: Hom (Pair a) (Pair b)
@@ -219,16 +235,6 @@ bisort = butterfly cmp
         EQ -> (x,y)
         GT -> (y,x)
 
--- TODO: unclear about what it does, probably worth
--- reading http://www.cs.kent.edu/~batcher/sort.pdf
-
-{-
-
-useful links:
-- https://en.wikipedia.org/wiki/Bitonic_sorter
-- https://en.wikipedia.org/wiki/Butterfly_network
-
--}
 
 {-
 > makeTree 3 [1,8,3,7,2,6,4,5]
@@ -300,15 +306,17 @@ where every vertical "x---x" thing is a "cmp" operation
 
 
 {-
-modified from: http://code.haskell.org/~ross/arrowp/examples/powertrees/Hom.las
+  modified from: [3]
 -}
-
 sort :: Ord a => Hom a a
 sort = id :&: proc (x,y) -> do
     x' <- sort -< x
     y' <- (rev <<< sort) -< y
     (nextHom bisort <<< unriffle) -< (x',y')
 
+{-
+  the non-arrow-notation version of "sort"
+-}
 sort1 :: Ord a => Hom a a
 sort1 = id :&: (sort1 *** sort1 >>>
                 second rev >>>
