@@ -14,3 +14,9 @@ compStateT (ST f) (ST g) = ST (f >>> g)
 instance Arrow arr => Cat.Category (StateT s arr) where
     id = arrStateT id
     g . f = compStateT f g
+
+firstStateT :: Arrow arr => StateT s arr a b -> StateT s arr (a,d) (b,d)
+firstStateT (ST f) = ST (arr assoc >>> first f >>> arr unassoc)
+  where
+    assoc (s,(a,d)) = ((s,a),d)
+    unassoc ((s,a),d) = (s,(a,d))
