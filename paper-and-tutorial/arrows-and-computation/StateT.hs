@@ -20,3 +20,7 @@ firstStateT (ST f) = ST (arr assoc >>> first f >>> arr unassoc)
   where
     assoc (s,(a,d)) = ((s,a),d)
     unassoc ((s,a),d) = (s,(a,d))
+
+instance Arrow arr => Arrow (StateT s arr) where
+    arr = arrStateT
+    first = firstStateT
