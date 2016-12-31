@@ -3,6 +3,13 @@ module StateT where
 import qualified Control.Category as Cat
 import Control.Arrow
 
+{-
+
+turns out implementing StateT without arrow notation is exactly
+what we are asked to do for exercise 18. so we have done it!
+
+-}
+
 newtype StateT s arr i o = ST (arr (s,i) (s,o))
 
 arrStateT :: Arrow arr => (i -> o) -> StateT s arr i o
