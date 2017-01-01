@@ -1,3 +1,4 @@
+{-# LANGUAGE Arrows #-}
 module AutoFunctor where
 
 import qualified Control.Category as Cat
@@ -30,3 +31,7 @@ instance Arrow ar => Arrow (AutoFunctor ar) where
     first = firstAF
 
 -- TODO: arrow notation version?
+firstAF' :: Arrow ar => AutoFunctor ar a b -> AutoFunctor ar (a,d) (b,d)
+firstAF' (AF f) = AF (proc (a,d) -> do
+                          (b, ar') <- f -< a
+                          returnA -< ((b,d), firstAF' ar'))
