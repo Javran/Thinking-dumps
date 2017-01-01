@@ -19,3 +19,8 @@ compAF (AF g) (AF f) =
 instance Arrow ar => Cat.Category (AutoFunctor ar) where
     id = arrAF id
     (.) = compAF
+
+firstAF :: Arrow ar => AutoFunctor ar a b -> AutoFunctor ar (a,d) (b,d)
+firstAF (AF f) = AF (first f >>> arr assoc >>> second (arr firstAF))
+  where
+    assoc ((a,b),c) = ((a,c),b)
