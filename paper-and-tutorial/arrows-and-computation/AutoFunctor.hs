@@ -24,3 +24,9 @@ firstAF :: Arrow ar => AutoFunctor ar a b -> AutoFunctor ar (a,d) (b,d)
 firstAF (AF f) = AF (first f >>> arr assoc >>> second (arr firstAF))
   where
     assoc ((a,b),c) = ((a,c),b)
+
+instance Arrow ar => Arrow (AutoFunctor ar) where
+    arr = arrAF
+    first = firstAF
+
+-- TODO: arrow notation version?
