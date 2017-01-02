@@ -30,7 +30,7 @@ instance Arrow ar => Arrow (AutoFunctor ar) where
     arr = arrAF
     first = firstAF
 
--- TODO: arrow notation version?
+-- same as "firstAF", using arrow notation.
 firstAF' :: Arrow ar => AutoFunctor ar a b -> AutoFunctor ar (a,d) (b,d)
 firstAF' (AF f) = AF (proc (a,d) -> do
                           (b, ar') <- f -< a
