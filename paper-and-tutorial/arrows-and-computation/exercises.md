@@ -1,8 +1,16 @@
 # Exercise 1
 
+Arrow instances for `Reader` and `Writer`.
+
+See `Reader.hs` and `Writer.hs`
+
 # Exercise 2
 
 # Exercise 3
+
+Arrow instance of `Stream`
+
+See `Stream.hs`
 
 # Exercise 4
 
@@ -12,9 +20,17 @@
 
 # Exercise 7
 
+`ArrowChoice` instance for `NonDet`, `State` and `StreamMap`.
+
+See `NonDet.hs`, `State.hs` and `StreamMap.hs`.
+
 # Exercise 8
 
 # Exercise 9
+
+Implement instance `ArrowChoice a => Arrow (Except a)`.
+
+See `Except.hs`
 
 # Exercise 10
 
@@ -23,6 +39,10 @@
 # Exercise 12
 
 # Exercise 13
+
+Translate `genSym`.
+
+See `genSym1` and its comments of `State.hs`
 
 # Exercise 14
 
