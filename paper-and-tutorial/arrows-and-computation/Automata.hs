@@ -3,6 +3,7 @@ module Automata where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Data.Function
 
 -- an automaton accepts an input, gives an output
 -- and changes its own state (returns a changed instance of itself)
@@ -12,9 +13,7 @@ import Control.Arrow
 newtype Auto i o = Auto (i -> (o, Auto i o))
 
 arrAuto :: (i -> o) -> Auto i o
-arrAuto f = auto
-  where
-    auto = Auto (\i -> (f i, auto))
+arrAuto f = fix $ \auto -> Auto (\i -> (f i, auto))
 
 -- composing two automata, this is achieved by threading the input
 -- through two argument automata.
