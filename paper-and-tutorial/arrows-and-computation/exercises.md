@@ -34,6 +34,28 @@ app >>> h
 => \(f,c) -> (h . f) c
 ```
 
+Reduction:
+
+With arrow being `->`, we have:
+
+```
+mkPair b = arr (\c -> (b,c))
+=> mkPair b = \c -> (b,c)
+=> mkPair b c = (b,c)
+=> mkPair = (,)
+```
+
+Now:
+
+```
+arr (cross mkPair id) >>> app
+=> cross mkPair id >>> app
+=> \(x,y) -> (mkPair x,y) >>> \(x,y) -> x y
+=> \(x,y) -> (mkPair x) y
+=> \(x,y) -> (x,y)
+=> id === arr id
+```
+
 
 # Exercise 6
 
