@@ -56,6 +56,14 @@ arr (cross mkPair id) >>> app
 => id === arr id
 ```
 
+Extensionality:
+
+```
+mkPair f >>> app
+=> \x -> (f,x) >>> \(x,y) -> x y
+=> \x -> f x
+=> f
+```
 
 # Exercise 6
 
