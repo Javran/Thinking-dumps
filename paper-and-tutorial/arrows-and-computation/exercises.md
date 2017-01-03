@@ -18,6 +18,23 @@ See `Exercise4.hs`.
 
 # Exercise 5
 
+Composition:
+
+```
+arr (cross (>>> h) id) >>> app
+=> (cross (>>> h) id) >>> app
+=> first (h .) >>> \(f,c) -> f c
+=> \(f',c) -> (h . f') c
+```
+
+```
+app >>> h
+=> \(f,c) -> f c >>> h
+=> \(f,c) -> h (f c)
+=> \(f,c) -> (h . f) c
+```
+
+
 # Exercise 6
 
 # Exercise 7
