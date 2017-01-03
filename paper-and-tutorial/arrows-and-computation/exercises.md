@@ -67,6 +67,10 @@ mkPair f >>> app
 
 # Exercise 6
 
+Show that extensionality axiom fails for the given definition on Auto.
+
+See `Automata.hs`.
+
 # Exercise 7
 
 `ArrowChoice` instance for `NonDet`, `State` and `StreamMap`.

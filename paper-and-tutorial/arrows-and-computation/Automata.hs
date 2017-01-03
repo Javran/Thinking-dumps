@@ -4,6 +4,7 @@ module Automata where
 import qualified Control.Category as Cat
 import Control.Arrow
 import Data.Function
+import Common
 
 -- an automaton accepts an input, gives an output
 -- and changes its own state (returns a changed instance of itself)
@@ -129,3 +130,59 @@ runAuto (Auto f) xs = case xs of
     [] -> []
     (y:ys)
         | (o, auto') <- f y -> o : runAuto auto' ys
+
+{-
+exercise 6: show extensionality axiom fails for the definition of ArrowApply in the paper:
+
+instance ArrowApply Auto where
+    app = arr (\(Auto f, x) -> fst (f x))
+
+LHS:
+
+mkPair f >>> app
+=> arr (\c -> (f,c)) >>> arr (\(Auto g, x) -> fst (g x))
+=> arr (\c -> let (Auto g, x) = (f,c) in fst (g x))
+=> arr (\c -> let Auto g = f in fst (g c)) (now let f = Auto g)
+=> arr (\c -> fst (g c)) (now let f = Auto g)
+=> arr (fst . g)
+=> fix $ \auto -> Auto (\i -> ((fst . g) i, auto))
+
+RHS:
+f
+=> Auto g (f = Auto g)
+=> Auto (\i -> let v = g i in (fst v, snd v))
+
+now that on LHS we have "auto" whereas "snd (g i)" on RHS,
+and it all depends on "g" (or "f") to determine whether LHS and RHS are equal.
+
+-}
+
+{-
+
+the following example is just for showing that extensionality axiom fails
+and should never be used anywhere else:
+
+-}
+
+instance ArrowApply Auto where
+    app = arr (\(Auto f, x) -> fst (f x))
+
+testF :: Auto Int Int
+testF = Auto (\i -> (succ i, fix $ \auto -> Auto (\i' -> (i',auto))))
+
+test1 :: Auto Int Int
+test1 = mkPair testF >>> app
+
+test2 :: Auto Int Int
+test2 = testF
+
+{-
+
+this is a clear example that extensionality fails:
+
+> runAuto test1 [0..4]
+[1,2,3,4,5]
+> runAuto test2 [0..4]
+[1,1,2,3,4]
+
+-}

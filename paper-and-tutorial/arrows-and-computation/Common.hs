@@ -2,6 +2,9 @@ module Common where
 
 import Control.Arrow
 
+mkPair :: Arrow ar => b -> ar c (b,c)
+mkPair b = arr (\c -> (b,c))
+
 trace :: ((a,s) -> (b,s)) -> a -> b
 trace f a = let (b,s) = f (a,s) in b
 
