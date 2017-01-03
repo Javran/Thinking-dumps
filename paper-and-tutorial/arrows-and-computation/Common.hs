@@ -31,3 +31,6 @@ arrAppLeft arrow = arrFanin (arrow >>> arr Left) (arr Right)
     arrFanin f g = arrPlus f g >>> arr untag
       where
         untag = either id id
+
+cross :: (a1 -> a2) -> (b1 -> b2) -> (a1,b1) -> (a2,b2)
+cross f g ~(a,b) = (f a, g b)
