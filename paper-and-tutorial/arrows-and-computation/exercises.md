@@ -14,6 +14,8 @@ See `Stream.hs`
 
 # Exercise 4
 
+See `Exercise4.hs`.
+
 # Exercise 5
 
 # Exercise 6
