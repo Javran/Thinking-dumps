@@ -49,13 +49,12 @@ instance ArrowLoop Auto where
         let (~(c,d), f') = f (b,d) in (c, loop f')
 
 instance ArrowChoice Auto where
-    left (Auto f) = ar
-      where
-        ar = Auto $ \ebd -> case ebd of
-                Left b ->
-                    let (c,a') = f b
-                    in (Left c, left a')
-                Right d -> (Right d, ar)
+    left (Auto f) = fix $ \ar ->
+        Auto $ \ebd -> case ebd of
+            Left b ->
+                let (c,a') = f b
+                in (Left c, left a')
+            Right d -> (Right d, ar)
 
 -- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
 -- but this might be just for convenient concerns
