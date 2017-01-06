@@ -56,10 +56,14 @@ instance ArrowChoice Auto where
                 in (Left c, left a')
             Right d -> (Right d, ar)
 
+    (Auto l) +++ (Auto r) = Auto $ \v -> case v of
+        Left x -> let (y,a) = l x in (Left y, a +++ Auto r)
+        Right x -> let (y,a) = r x in (Right y, Auto l +++ a)
+
 {-
 exercise 8:
 -}
-testLHS h = arr untag >>> h
+testLHS h = composeAuto (arr untag) h
   where
     untag (Left x) = x
     untag (Right y) = y
