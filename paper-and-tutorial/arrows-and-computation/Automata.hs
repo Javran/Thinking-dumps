@@ -58,77 +58,11 @@ instance ArrowChoice Auto where
 
 {-
 exercise 8:
-- I'm trying to expand "|||" as far as possible and see if it helps for
-  verifying the equation.
-
-
-autoFanin is just (|||) for Auto, we'll try to expand it and see what happens:
-
-autoFanin f g = f ||| g
-
-first expand the definition:
-
-autoFanin :: Auto a c -> Auto b c -> Auto (Either a b) c
-autoFanin f g = f +++ g >>> arr untag
-  where
-    untag (Left x) = x
-    untag (Right y) = y
-
-further, we can expand "+++":
-
-autoFanin :: Auto a c -> Auto b c -> Auto (Either a b) c
-autoFanin f g = left f >>> right g >>> arr untag
-  where
-    untag (Left x) = x
-    untag (Right y) = y
-
-and then "right":
-
-autoFanin :: Auto a c -> Auto b c -> Auto (Either a b) c
-autoFanin f g = left f >>> arr mirror >>> left g >>> arr mirror >>> arr untag
-  where
-    untag (Left x) = x
-    untag (Right y) = y
-
-    mirror (Left x) = Right x
-    mirror (Right y) = Left y
-
-because we know:
-
-arr mirror >>> arr untag
-=> arr (mirror >>> untag)
-=> arr untag
-
-we have:
-
-autoFanin f g = left f >>> arr mirror >>> left g >>> arr untag
-  where
-    untag (Left x) = x
-    untag (Right y) = y
-
-    mirror (Left x) = Right x
-    mirror (Right y) = Left y
-
-now LHS of the equation:
-
-(autoFanin f g) >>> h
-=> left f >>> arr mirror >>> left g >>> arr untag >>> h
-
-RHS of the equation:
-
-autoFanin (f >>> h) (g >>> h)
-=> left (f >>> h) >>> arr mirror >>> left (g >>> h) >>> arr untag
-=> left f >>> left h >>> arr mirror >>> left g >>> left h >>> arr untag
-
 -}
-autoFanin :: Auto a c -> Auto b c -> Auto (Either a b) c
-autoFanin f g = left f >>> arr mirror >>> left g >>> arr untag
+testLHS h = arr untag >>> h
   where
     untag (Left x) = x
     untag (Right y) = y
-
-    mirror (Left x) = Right x
-    mirror (Right y) = Left y
 
 -- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
 -- but this might be just for convenient concerns

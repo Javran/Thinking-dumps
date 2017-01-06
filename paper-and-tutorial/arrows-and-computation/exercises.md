@@ -79,6 +79,34 @@ See `NonDet.hs`, `State.hs` and `StreamMap.hs`.
 
 # Exercise 8
 
+(TODO)
+
+Let's try expanding both side of the equation first:
+
+```
+LHS:
+(f ||| g) >>> h
+=> (f +++ g) >>> arr untag >>> h
+=> left f >>> right g >>> arr untag >>> h
+```
+
+```
+RHS:
+(f >>> h) ||| (g >>> h)
+=> ((f >>> h) +++ (g >>> h)) >>> arr untag
+=> left (f >>> h) >>> right (g >>> h) >>> arr untag
+```
+
+Now let's say `f = g = id`, so:
+```
+LHS:
+=> arr untag >>> h
+RHS:
+=> left h >>> right h >>> arr untag
+```
+
+See if we can find some clue by expanding this further for `Auto` and `StreamMap`.o
+
 # Exercise 9
 
 Implement instance `ArrowChoice a => Arrow (Except a)`.
