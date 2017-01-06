@@ -60,13 +60,16 @@ instance ArrowChoice Auto where
         Left x -> let (y,a) = l x in (Left y, a +++ Auto r)
         Right x -> let (y,a) = r x in (Right y, Auto l +++ a)
 
+
+untag :: Either a a -> a
+untag (Left x) = x
+untag (Right y) = y
+
 {-
 exercise 8:
 -}
 testLHS h = composeAuto (arr untag) h
-  where
-    untag (Left x) = x
-    untag (Right y) = y
+testRHS h = composeAuto (h +++ h) (arr untag)
 
 -- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
 -- but this might be just for convenient concerns
