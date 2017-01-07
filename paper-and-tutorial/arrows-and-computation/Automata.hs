@@ -55,7 +55,6 @@ instance ArrowChoice Auto where
                 let (c,a') = f b
                 in (Left c, left a')
             Right d -> (Right d, ar)
-
     (Auto l) +++ (Auto r) = Auto $ \v -> case v of
         Left x -> let (y,a) = l x in (Left y, a +++ Auto r)
         Right x -> let (y,a) = r x in (Right y, Auto l +++ a)
@@ -71,10 +70,29 @@ untag (Left x) = x
 untag (Right y) = y
 
 {-
-exercise 8:
+exercise 8 (1):
+
+example that shows (f ||| g) >>> h =/= (f >>> h) ||| (g >>> h)
 -}
-testLHS h = composeAuto (arr untag) h
-testRHS h = composeAuto (h +++ h) (arr untag)
+testF1, testF2, testH :: Auto Int Int
+testF1 = arr (+ 1)
+testF2 = arr (* 2)
+testH = accumulate (+) 0
+
+testInp :: [Either Int Int]
+testInp = concatMap (\i -> [Left i, Right i]) [1..]
+
+result1, result2 :: [Int]
+result1 = runAuto ((testF1 ||| testF2) >>> testH) (take 10 testInp)
+result2 = runAuto ((testF1 >>> testH) ||| (testF2 >>> testH)) (take 10 testInp)
+
+{-
+> result1
+[2,4,7,11,15,21,26,34,40,50]
+> result2
+[2,2,5,6,9,12,14,20,20,30]
+-}
+
 
 -- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
 -- but this might be just for convenient concerns
