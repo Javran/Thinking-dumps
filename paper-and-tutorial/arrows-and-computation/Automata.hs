@@ -4,7 +4,6 @@ module Automata where
 import qualified Control.Category as Cat
 import Control.Arrow
 import Data.Function
-import Data.Monoid
 import Common
 
 -- an automaton accepts an input, gives an output
@@ -61,10 +60,11 @@ instance ArrowChoice Auto where
         Left x -> let (y,a) = l x in (Left y, a +++ Auto r)
         Right x -> let (y,a) = r x in (Right y, Auto l +++ a)
 
-accumulate :: Monoid m => m -> Auto m m
-accumulate v = Auto $ \x ->
-    let y = v <> x
-    in (y, accumulate y)
+accumulate :: (a -> a -> a) -> a -> Auto a a
+accumulate combine = fix $ \auto v ->
+    Auto $ \x ->
+        let y = v `combine` x
+        in (y, auto y)
 
 untag :: Either a a -> a
 untag (Left x) = x
