@@ -65,10 +65,6 @@ accumulate combine = fix $ \auto v ->
         let y = v `combine` x
         in (y, auto y)
 
-untag :: Either a a -> a
-untag (Left x) = x
-untag (Right y) = y
-
 {-
 exercise 8 (1):
 
@@ -92,7 +88,6 @@ result2 = runAuto ((testF1 >>> testH) ||| (testF2 >>> testH)) (take 10 testInp)
 > result2
 [2,2,5,6,9,12,14,20,20,30]
 -}
-
 
 -- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
 -- but this might be just for convenient concerns

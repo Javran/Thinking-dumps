@@ -79,6 +79,12 @@ See `NonDet.hs`, `State.hs` and `StreamMap.hs`.
 
 # Exercise 8
 
+Show that the equation `(f ||| g) >>> h = (f >>> h) ||| (g >>> h)` fails
+for `Auto` and `StreamMap`.
+
+For `Auto`: See `result1` and `result2` of `Automata.hs`, which gives an example
+that LHS and RHS of the equation is different.
+
 (TODO)
 
 Let's try expanding both side of the equation first:
