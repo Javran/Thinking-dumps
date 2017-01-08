@@ -113,7 +113,7 @@ does not matter?
 -}
 instance ArrowChoice StreamMap where
     -- TODO: there are many possible implementations
-    -- of "left" because while there are infinite ways of interleaving results
+    -- of "left" because while there are infinite ways of interleaving results.
     -- to figure out which one is the correct one, we might have to take
     -- a look at laws of ArrowChoice.
     -- in this case type doesn't really capture the notion of correct stream ordering

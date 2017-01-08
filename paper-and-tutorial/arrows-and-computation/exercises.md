@@ -85,33 +85,8 @@ for `Auto` and `StreamMap`.
 For `Auto`: See `result1` and `result2` of `Automata.hs`, which gives an example
 that LHS and RHS of the equation is different.
 
-(TODO)
-
-Let's try expanding both side of the equation first:
-
-```
-LHS:
-(f ||| g) >>> h
-=> (f +++ g) >>> arr untag >>> h
-=> left f >>> right g >>> arr untag >>> h
-```
-
-```
-RHS:
-(f >>> h) ||| (g >>> h)
-=> ((f >>> h) +++ (g >>> h)) >>> arr untag
-=> left (f >>> h) >>> right (g >>> h) >>> arr untag
-```
-
-Now let's say `f = g = id`, so:
-```
-LHS:
-=> arr untag >>> h
-RHS:
-=> left h >>> right h >>> arr untag
-```
-
-See if we can find some clue by expanding this further for `Auto` and `StreamMap`.o
+For `StreamMap`, it depends on the implementation of `ArrowChoice`.
+See comments in `instance ArrowChoice StreamMap`.
 
 # Exercise 9
 
