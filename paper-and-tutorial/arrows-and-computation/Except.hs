@@ -33,4 +33,10 @@ functor axiom: first (f >>> g) = first f >>> first g
 -}
 
 rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
-rhs f g = compE (first f) (first g)
+rhs (E f) (E g) = E $ (first f >>> arr h) >>> right (first g >>> arr h) >>> arr collapse
+  where
+    h = either (Left . fst) Right . distr
+    collapse e = case e of
+        Left m -> Left m
+        Right (Left m) -> Left m
+        Right (Right v) -> Right v
