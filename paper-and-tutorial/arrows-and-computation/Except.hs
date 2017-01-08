@@ -2,6 +2,8 @@ module Except where
 
 import qualified Control.Category as Cat
 import Control.Arrow
+import Common
+import Data.Either
 
 newtype Except a b c = E (a b (Either String c))
 
@@ -22,9 +24,13 @@ instance ArrowChoice a => Cat.Category (Except a) where
 
 instance ArrowChoice a => Arrow (Except a) where
     arr = arrE
-    first (E f) = E $ (f *** arr id) >>> arr assoc
-      where
-        assoc :: (Either String x, d) -> Either String (x,d)
-        assoc (e,d) = case e of
-            Left l -> Left l
-            Right v -> Right (v,d)
+    first (E f) = E $ first f >>> arr (either (Left . fst) Right . distr)
+
+{-
+
+functor axiom: first (f >>> g) = first f >>> first g
+
+-}
+
+rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
+rhs f g = compE (first f) (first g)
