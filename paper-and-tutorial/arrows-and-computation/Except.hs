@@ -10,13 +10,14 @@ newtype Except a b c = E (a b (Either String c))
 arrE :: Arrow a => (i -> o) -> Except a i o
 arrE f = E (arr (Right . f))
 
+collapse :: Either a (Either a b) -> Either a b
+collapse e = case e of
+    Left m -> Left m
+    Right (Left m) -> Left m
+    Right (Right v) -> Right v
+
 compE :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr a c
 compE (E f) (E g) = E $ f >>> right g >>> arr collapse
-  where
-    collapse e = case e of
-        Left m -> Left m
-        Right (Left m) -> Left m
-        Right (Right v) -> Right v
 
 instance ArrowChoice a => Cat.Category (Except a) where
     id = arrE id
@@ -33,13 +34,12 @@ functor axiom: first (f >>> g) = first f >>> first g
 -}
 
 rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
-rhs (E f) (E g) = E $ first f >>> arr distr >>> arr h >>> arr mirror
-                  >>> left (first g >>> arr distr >>> arr h) >>> arr mirror >>> arr collapse
+rhs (E f) (E g) = E $ first f >>> arr (distr >>> h)
+                  >>> right (first g >>> arr (distr >>> h)) >>> arr collapse
   where
     h = either (Left . fst) Right
-    collapse e = case e of
-        Left m -> Left m
-        Right (Left m) -> Left m
-        Right (Right v) -> Right v
-    mirror (Left x) = Right x
-    mirror (Right y) = Left y
+
+lhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
+lhs (E f) (E g) = E $ first (f >>> right g >>> arr collapse) >>> arr (distr >>> h)
+  where
+    h = either (Left . fst) Right
