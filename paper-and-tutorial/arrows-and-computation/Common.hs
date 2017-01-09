@@ -19,6 +19,10 @@ distr ~(e,c) = case e of
     Left a -> Left (a,c)
     Right b -> Right (b,c)
 
+mirror :: Either a b -> Either b a
+mirror (Left x) = Right x
+mirror (Right y) = Left y
+
 -- the following function is a proof that every instance of ArrowApply can be turned
 -- into an instance of ArrowChoice by using this function as "left"
 -- note that ArrowApply is just Monad in disguise,
