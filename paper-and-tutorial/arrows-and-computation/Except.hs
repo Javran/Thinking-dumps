@@ -57,12 +57,8 @@ first (right f) >>> arr distr
 -}
 
 rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
-rhs (E f) (E g) = E $ first f >>> arr (distr >>> h)
-                  >>> right (first g >>> arr (distr >>> h)) >>> arr collapse
-  where
-    h = either (Left . fst) Right
+rhs (E f) (E g) = E $ first f >>> arr (distr >>> left fst)
+                  >>> right (first g >>> arr (distr >>> left fst)) >>> arr collapse
 
 lhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
-lhs (E f) (E g) = E $ first (f >>> right g >>> arr collapse) >>> arr (distr >>> h)
-  where
-    h = either (Left . fst) Right
+lhs (E f) (E g) = E $ first (f >>> right g >>> arr collapse) >>> arr (distr >>> left fst)
