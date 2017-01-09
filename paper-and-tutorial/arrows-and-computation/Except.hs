@@ -31,6 +31,29 @@ instance ArrowChoice a => Arrow (Except a) where
 
 functor axiom: first (f >>> g) = first f >>> first g
 
+distribution:
+
+first (left f) >>> arr distr = arr distr >>> left (first f)
+
+note that:
+- first mirror >>> distr :: (Either a b, c) -> Either (b, c) (a, c)
+- distr >>> mirror :: (Either a b, c) -> Either (b, c) (a, c)
+
+we can conclude that: first mirror >>> distr = distr >>> mirror
+
+and therefore the following is true:
+first (right f) >>> arr distr = arr distr >>> right (first f)
+
+LHS:
+first (right f) >>> arr distr
+=> first (arr mirror) >>> first (left f) >>> first (arr mirror) >>> arr distr
+=> first mirror >>> first (left f) >>> first mirror >>> distr
+=> first mirror >>> first (left f) >>> distr >>> mirror
+=> first mirror >>> distr >>> left (first f) >>> mirror
+=> distr >>> mirror >>> left (first f) >>> mirror
+=> distr >>> right (first f)
+=> arr distr >>> right (first f) = RHS
+
 -}
 
 rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
