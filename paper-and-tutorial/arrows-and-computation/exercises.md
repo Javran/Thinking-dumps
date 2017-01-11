@@ -100,6 +100,49 @@ See `Except.hs`
 
 # Exercise 12
 
+Prove that `loop (first f) = f`.
+
+Left tightening says:
+
+```
+loop (first h) >>> f = h >>> loop f
+```
+
+when `f = arr id`, this becomes:
+
+```
+loop (first h) = h >>> loop (arr id)
+```
+
+Now that according to extension law:
+
+```
+loop (arr f) = arr (trace f)
+```
+
+We know:
+
+```
+loop (first h) = h >>> loop (arr id)
+=> loop (first h) = h >>> arr (trace id)
+```
+
+```
+trace id = \b -> let (c,d) = (b,d) in c
+=> trace id = \b -> let (c,d) = (b,d) in b
+=> trace id = \b -> b
+```
+
+Therefore:
+
+```
+loop (first h) = h >>> arr (trace id)
+=> loop (first h) = h >>> arr id
+=> loop (first h) = h
+```
+
+And this is exactly what we are trying to prove.
+
 # Exercise 13
 
 Translate `genSym`.
