@@ -54,6 +54,8 @@ first (right f) >>> arr distr
 => distr >>> right (first f)
 => arr distr >>> right (first f) = RHS
 
+(TODO) getting bored, too much time on this, skipping it for now.
+
 -}
 
 rhs :: ArrowChoice arr => Except arr a b -> Except arr b c -> Except arr (a,d) (c,d)
