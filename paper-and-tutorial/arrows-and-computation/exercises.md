@@ -98,6 +98,13 @@ See `Except.hs`
 
 # Exercise 11
 
+Define `ArrowLoop` for `StreamMap`.
+
+(TODO)
+
+See `Stream.hs`. The implementation is done but we need something to
+confirm that it works.
+
 # Exercise 12
 
 Prove that `loop (first f) = f`.
