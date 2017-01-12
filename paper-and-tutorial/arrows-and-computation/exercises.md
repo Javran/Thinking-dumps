@@ -183,6 +183,42 @@ and this is the conclusion we are looking for.
 
 # Exercise 15
 
+Suggest a translation for the form:
+
+```
+if <exp> then <cmd> else <cmd>
+```
+
+Answer:
+
+Let's also name the input pattern:
+
+```
+proc p -> if exp then cmd1 else cmd2
+```
+
+And to make use of `ArrowChoice` instance, we might consider tagging things differently
+depending on `exp`:
+
+```
+arr (\p -> if exp then Left ?1 else Right ?2) >>> (?3 ||| ?4)
+```
+
+Now for `?1` and `?2`, the best we can do to just pass the whole pattern
+so `cmd1` and `cmd2` will have full access to it:
+
+```
+arr (\p -> (if exp then Left else Right) p) >>> (?3 ||| ?4)
+```
+
+Therefore for `?3` and `?4`, we just run the command:
+
+```
+arr (\p -> (if exp then Left else Right) p) >>> (proc p -> cmd1 ||| proc p -> cmd2)
+```
+
+And this is the translation we end up with.
+
 # Exercise 16
 
 # Exercise 17
