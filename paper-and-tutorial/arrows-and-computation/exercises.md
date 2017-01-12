@@ -219,6 +219,11 @@ arr (\p -> (if exp then Left else Right) p) >>> (proc p -> cmd1 ||| proc p -> cm
 
 And this is the translation we end up with.
 
+About `case` expression translation: basically `ArrowChoice` is built on top of pairs, and
+if there are more than 2 cases to consider, we turn them into nested pairs.
+I'm not sure whether there is a similar way of translating `case` expressions
+without tons of machinery for turning each case from or to some nested pair structures.
+
 # Exercise 16
 
 # Exercise 17
