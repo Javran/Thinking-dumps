@@ -158,6 +158,29 @@ See `genSym1` and its comments of `State.hs`
 
 # Exercise 14
 
+Prove that when both translations of `proc p -> f -< a` are possible,
+they are equal:
+
+- `proc p -> f -< a => arr (\p -> a) >>> f` (when p and f does not have common free variables)
+- `proc p -> f -< a => arr (\p -> (f,a)) >>> app`
+
+Answer:
+
+Because both translations are possible, `p` and `f` must not have common free variables.
+So we can deal with them independently.
+
+By extensionality of `ArrowApply`:
+
+```
+arr (\p -> a) >>> f
+=> arr (\p -> a) >>> mkPair f >>> app
+=> arr (\p -> a) >>> arr (\c -> (f,c)) >>> app
+=> arr ((\p -> a) >>> (\c -> (f,c)) >>> app
+=> arr (\p -> (f,a)) >>> app
+```
+
+and this is the conclusion we are looking for.
+
 # Exercise 15
 
 # Exercise 16
