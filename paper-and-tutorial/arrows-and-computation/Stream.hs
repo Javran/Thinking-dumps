@@ -4,6 +4,7 @@ module Stream where
 import qualified Control.Category as Cat
 import Control.Arrow
 import Data.Function
+import Common
 
 data Stream a = Cons a (Stream a)
 
@@ -139,3 +140,10 @@ instance ArrowLoop StreamMap where
             sc = fst <$> scd
             sd = snd <$> scd
         in sc
+
+instance ArrowCircuit StreamMap where
+    -- TODO: to be verified
+    -- using the implementation of Auto as a reference,
+    -- however I'm never clear about why ArrowLoop must be a constraint on this
+    -- as "delay" uses none of the functions ArrowLoop has declared.
+    delay v = SM $ \(Cons x xs) -> Cons v (getSM (delay x) xs)

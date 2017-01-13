@@ -226,6 +226,11 @@ without tons of machinery for turning each case from or to some nested pair stru
 
 # Exercise 16
 
+Implement `ArrowCircuit` for `StreamMap`.
+
+See `Stream.hs`. (TODO: not verified yet, the implementation can
+just typecheck but it could go wrong)
+
 # Exercise 17
 
 Sorting using `bisort`.

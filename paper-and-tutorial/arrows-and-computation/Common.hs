@@ -44,4 +44,3 @@ cross f g ~(a,b) = (f a, g b)
 -- but this might be just for convenient concerns
 class ArrowLoop a => ArrowCircuit a where
     delay :: b -> a b b
-
