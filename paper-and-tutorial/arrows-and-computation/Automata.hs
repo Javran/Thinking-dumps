@@ -89,11 +89,6 @@ result2 = runAuto ((testF1 >>> testH) ||| (testF2 >>> testH)) (take 10 testInp)
 [2,2,5,6,9,12,14,20,20,30]
 -}
 
--- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
--- but this might be just for convenient concerns
-class ArrowLoop a => ArrowCircuit a where
-    delay :: b -> a b b
-
 {-
   links that could be helpful:
 

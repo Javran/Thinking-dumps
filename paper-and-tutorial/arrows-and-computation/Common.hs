@@ -41,3 +41,9 @@ arrAppLeft arrow = arrFanin (arrow >>> arr Left) (arr Right)
 
 cross :: (a1 -> a2) -> (b1 -> b2) -> (a1,b1) -> (a2,b2)
 cross f g ~(a,b) = (f a, g b)
+
+-- I'm not entirely sure why ArrowCircuit has to imply ArrowLoop,
+-- but this might be just for convenient concerns
+class ArrowLoop a => ArrowCircuit a where
+    delay :: b -> a b b
+
