@@ -6,6 +6,10 @@ See `Reader.hs` and `Writer.hs`
 
 # Exercise 2
 
+Why `ListMap` is not an arrow?
+
+See `ListMap.hs` (TODO)
+
 # Exercise 3
 
 Arrow instance of `Stream`
@@ -95,6 +99,10 @@ Implement instance `ArrowChoice a => Arrow (Except a)`.
 See `Except.hs`
 
 # Exercise 10
+
+Prove the functor axiom for `first` of `Except` arrow.
+
+(TODO)
 
 # Exercise 11
 
