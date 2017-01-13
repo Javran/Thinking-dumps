@@ -33,8 +33,6 @@ arrAppLeft :: ArrowApply arrow
 arrAppLeft arrow = arrFanin (arrow >>> arr Left) (arr Right)
   where
     arrPlus f g = arrAppLeft f >>> arr mirror >>> arrAppLeft g >>> arr mirror
-      where
-        mirror = either Right Left
     arrFanin f g = arrPlus f g >>> arr untag
       where
         untag = either id id
