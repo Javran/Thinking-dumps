@@ -23,8 +23,5 @@ gives us a function of type:
 
 -}
 
-{-
--- TODO: figure out how to implement uncurryA
 uncurryA :: (Arrow a, ArrowApply a) => (b -> a c d) -> a (b,c) d
-uncurryA f = arr (\(b,c) -> let x = f b in _)
--}
+uncurryA f = arr (first f) >>> app

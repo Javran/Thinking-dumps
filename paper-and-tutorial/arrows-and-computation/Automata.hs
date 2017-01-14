@@ -117,7 +117,7 @@ counter = proc reset -> do
   where
     zero = toEnum 0
 
--- TODO: working on a translation, refering to: https://www.haskell.org/arrows/sugar.html
+-- reference: https://www.haskell.org/arrows/sugar.html
 bind :: Arrow a => a b c -> a (b,c) d -> a b d
 e `bind` f = proc b -> do
     c <- e -< b
