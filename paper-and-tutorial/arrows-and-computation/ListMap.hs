@@ -22,15 +22,23 @@ instance Cat.Category ListMap where
 {-
   however, ListMap is not an instance of Arrow:
   the problem comes when we are trying to write an impl
-  for "first", while its argument allows us to transform
-  a list of type "[i]" into some list of type "[o]",
-  we don't really know how to transform from an arbitrary "[(i,b)]" into "[(o,b)]"!
-  (TODO) for now I'm not sure how to persuade myself of this,
-  but the intuition is: ListMap is just a general function of transforming
-  one list into another, so we are not supposed to perform element-wise operations.
-  however, since we need to implement "first" for ListMap to become a valid Arrow,
-  we have to element-wise-ly detach and attach extra data so that keeps intact,
-  which is impossible with a general function
+  for "first":
+
+  First notice that  ListMap is just a general function of transforming
+  a list of type `[i]` into another one of type `[o]`,
+  (in other words, it's just a function of type `[i] -> [o]` in disguise).
+
+  So if we are given as argument a `ListMap i o`, we are supposed to construct
+  `ListMap (i,b) (o,b)`, which is just a function of type `[(i,b)] -> [(o,b)]`.
+  And the only sensible route I can think of is to first turn `[(i,b)]` into `[i]`,
+  which allows the argument function to be applied on it to get `[o]`, and then somehow
+  recover `[(o,b)]` from it.
+
+  However, a function `[i] -> [o]` is a general transformation,
+  which does not allow us to perform element-wise operations on it.
+  This means while we can always turn `[(i,b)]` into `[i]` because lists are functors,
+  we cannot find a way to recover the information kept by `[(_,b)]` part.
+
 -}
 
 {-
