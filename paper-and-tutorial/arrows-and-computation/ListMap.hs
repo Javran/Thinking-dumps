@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module ListMap where
 
 import qualified Control.Category as Cat
@@ -41,7 +42,16 @@ instance Cat.Category ListMap where
 
 -}
 
+
 {-
-firstLM :: ListMap i o -> ListMap (i,d) (o,d)
-firstLM (LM f) = LM $ \xs -> _
+  In the following attempted implemnentation, the hole is exactly the place
+  we can't find a way to fill: while we can get rid of "(,b)" parts for "f"
+  to be applicable, we cannot recover it afterwards:
 -}
+firstLM :: forall i o b. ListMap i o -> ListMap (i,b) (o,b)
+firstLM (LM f) = LM $ \(xs :: [(i,b)]) ->
+    let xs' :: [i]
+        xs' = fst <$> xs
+        ys' :: [o]
+        ys' = f xs'
+    in (_ ys' :: [(o,b)])

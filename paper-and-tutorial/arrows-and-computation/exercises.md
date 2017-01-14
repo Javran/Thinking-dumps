@@ -2,19 +2,19 @@
 
 Arrow instances for `Reader` and `Writer`.
 
-See `Reader.hs` and `Writer.hs`
+See `Reader.hs` and `Writer.hs`.
 
 # Exercise 2
 
 Why `ListMap` is not an arrow?
 
-See `ListMap.hs` (TODO)
+See `ListMap.hs`.
 
 # Exercise 3
 
-Arrow instance of `Stream`
+Arrow instance of `Stream`.
 
-See `Stream.hs`
+See `Stream.hs`.
 
 # Exercise 4
 
