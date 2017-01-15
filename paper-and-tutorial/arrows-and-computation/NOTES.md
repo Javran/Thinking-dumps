@@ -96,3 +96,20 @@ while the actual code uses just part of it, and unnecessary pipelines accumulate
 whole arrow network getting more complicated. Optimization can be done manually if
 we know exactly what the arrow network is doing and rule out those unnecessaries.
 Or automatically if using more sophisticated rules.
+
+# 4 Examples
+
+## 4.1 Synchronous circuits
+
+(TODO)
+
+## 4.2 Homogeneous functions
+
+(TODO)
+
+## 4.3 Combining arrows
+
+I see no big problems from this part, arrow transformer reminds me of
+monad transformers, in which we do something on certain level while
+keep some other parts intact. In some sense arrow transformers are
+doing something similar.
