@@ -44,6 +44,9 @@ So the biggest question that the paper never seems to anwser is
 where are these laws for different kinds of Arrows come from and how
 they interact with each other?
 
+Also, I don't know how this laws can be useful except for maybe constructing proofs or refactoring codes.
+Perhaps we shouldn't worry too much about these laws if we haven't seen the need of it...
+
 - `ArrowApply`
 
     - The interface is `app :: forall a b. arrow (arrow a b, a) b`.
@@ -61,9 +64,9 @@ they interact with each other?
         - `right :: arrow i o -> arrow (Either a i) (Either a o)`
         - `(+++) :: arrow li lo -> arrow ri ro -> arrow (Either li ri) (Either lo ro)`
 
-    - Allowing applying different arrows on different kind of inputs (marked by either `Left` or `Right`)
-
-    - (TODO) not sure how to make sense of these laws, the motivation is unclear to me.
+    - Allowing applying different arrows on different kind of inputs (marked by either `Left` or `Right`).
+      Think about the usually semantics of `if` expression / statement in common languages:
+      one branch of expression / statement is never touched.
 
 - `ArrowLoop`
 
@@ -74,4 +77,4 @@ they interact with each other?
     - somehow it seems like `fix f = let x = f x in x`, but I'm not convinced: at least `f` uses its
       argument to form a loop, but what exactly does `trace` do?
 
-    - not really making any sense to me, why anyone would do this in the first place?
+    - See comments right above `counter` of `Automata.hs`.
