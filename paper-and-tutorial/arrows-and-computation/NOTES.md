@@ -78,3 +78,21 @@ Perhaps we shouldn't worry too much about these laws if we haven't seen the need
       argument to form a loop, but what exactly does `trace` do?
 
     - See comments right above `counter` of `Automata.hs`.
+
+# 3 Arrow notation
+
+This part is basically talking about GHC support for arrow notations
+and how they can be translated into normal Haskell code.
+
+My thoughts on this: it might not be a good thing to include arrow notation as
+one part of GHC: I feel this translation is more like compilation: the semantics
+is preserved while he translated code looks far less like the original one,
+and there are oppotunities of optimization - and all of this complication
+have very little to do with Haskell itself.
+
+The exercise of this part asks us to do some translation manually using rules presented.
+But the result is never perfect: the translation rules want to be safe and keeps everything
+while the actual code uses just part of it, and unnecessary pipelines accumulate as the
+whole arrow network getting more complicated. Optimization can be done manually if
+we know exactly what the arrow network is doing and rule out those unnecessaries.
+Or automatically if using more sophisticated rules.
