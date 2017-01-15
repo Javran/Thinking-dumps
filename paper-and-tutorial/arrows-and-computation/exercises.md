@@ -162,7 +162,7 @@ And this is exactly what we are trying to prove.
 
 Translate `genSym`.
 
-See `genSym1` and its comments of `State.hs`
+See `genSym1` and its comments of `State.hs`.
 
 # Exercise 14
 

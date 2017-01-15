@@ -104,7 +104,6 @@ result2 = runAuto ((testF1 >>> testH) ||| (testF2 >>> testH)) (take 10 testInp)
 -- a generalization of the original version
 -- "ArrowLoop" constraint is reduntant because "ArrowCircuit" implies it.
 -- but we choose to write this out anyway.
--- TODO: would be interesting to know how this is translated into arrow combinators
 counter :: (ArrowLoop a, ArrowCircuit a, Enum e) => a Bool e
 counter = proc reset -> do
     -- "reset" introduced as a way to refer to the input to this circuit.
