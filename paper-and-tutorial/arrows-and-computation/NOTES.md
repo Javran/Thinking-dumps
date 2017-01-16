@@ -101,7 +101,17 @@ Or automatically if using more sophisticated rules.
 
 ## 4.1 Synchronous circuits
 
-(TODO)
+It's possible to represent circuits using arrows.
+
+- a circuit produces outputs when inputs are given. To make things more controllable,
+  the concept of ticks is introduced: the output for a given tick may depend on the input
+  for that tick as well as previous input.
+
+- For the example given in the material, `Auto` is used, and inputs are simulated by a list
+  (each element of the list may represent the input of one tick)
+
+- two related instances: `ArrowLoop` and `ArrowCircuit`.
+
 
 ## 4.2 Homogeneous functions
 
