@@ -126,8 +126,15 @@ It's possible to represent circuits using arrows.
 
 This part is basically a myth unless we can know more about the butterfly network.
 
-- `BalTree` is a cool structure that enforces the size of a structure, and then `Hom` can
-  be applied to it.
+- `BalTree` is a cool structure that enforces the size of a structure
+
+    - This structure outermost head is either `Succ` or `Zero`, and goes all the way down to `Zero`.
+    - This `Succ (Succ (... (Zero x)))` structure encodes the depth of the tree. And `x` represents
+      the tree (the sequence) itself, structured by symmetric pairs.
+
+- `Hom` itself is a family of functions: `Hom a b = a -> b :&: Hom (Pair a) (Pair b)`, while `Hom` contains
+  a regular function `a -> b`, it also knows how to deal with `Pair a -> Pair b` if every element of the original structure
+  is replaced by a pair of some other element.
 
 - we see homogeneous functions as arrows, and combining basic `Hom` using arrow notation
   to form more complicated ones, and we eventually get something powerful enough to
