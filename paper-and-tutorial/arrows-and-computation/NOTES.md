@@ -124,7 +124,14 @@ It's possible to represent circuits using arrows.
 
 ## 4.2 Homogeneous functions
 
-(TODO)
+This part is basically a myth unless we can know more about the butterfly network.
+
+- `BalTree` is a cool structure that enforces the size of a structure, and then `Hom` can
+  be applied to it.
+
+- we see homogeneous functions as arrows, and combining basic `Hom` using arrow notation
+  to form more complicated ones, and we eventually get something powerful enough to
+  do sorting and perhaps many other things.
 
 ## 4.3 Combining arrows
 
