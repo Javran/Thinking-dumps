@@ -198,6 +198,28 @@ butterfly f = id :&: proc (o,e) -> do
     e' <- butterfly f -< e
     returnA -< f (o',e')
 
+{-
+  translated "butterfly".
+
+  one way of translating it is through applying rules, however, there is a simple approach:
+  notice this part:
+
+```
+proc (o,e) -> do
+o' <- butterfly f -< o
+e' <- butterfly f -< e
+...
+```
+
+so this is a `butterfly f *** butterfly f`.
+
+we then further feed `o'` and `e'` directly to `f`, which is a `arr f`.
+
+so putting these two things together:
+
+butterfly f = (butterfly f *** butterfly f) >>> arr f
+
+-}
 buffertly :: (Pair a -> Pair a) -> Hom a a
 buffertly f = bt
   where
