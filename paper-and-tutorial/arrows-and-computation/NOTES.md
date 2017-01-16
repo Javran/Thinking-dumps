@@ -140,6 +140,24 @@ This part is basically a myth unless we can know more about the butterfly networ
   to form more complicated ones, and we eventually get something powerful enough to
   do sorting and perhaps many other things.
 
+### Scan
+
+Given an associative operation `+`, and a sequence `x_1,x_2,x_3,...x_{2^n}`,
+we want to compute another sequence: `x_1,x_1+x_2,x_1+x_2+x_3,...,x_1+x_2+...+x_{2^n}`.
+
+A fast way of doing so is achieved by following steps:
+
+- first we combine elements pairwise: `x_1+x_2,x_3+x_4,...`
+
+- then we then perform the whole operation recursively, which means given `x_1+x_2,x_3+x_4,...`,
+  we produce `(x_1+x_2),(x_1+x_2)+(x_3+x_4),...`
+
+- now what we are missing, compared with the desired output sequence is:
+  `x_1,(x_1+x_2)+x_3,(x_1+x_2+x_3+x_4)+x_5`.
+  Note that `(x_1+x_2),(x_1+x_2)+(x_3+x_4),...` can be used to produce that,
+  and all we need is to add `0,` in front of it and
+  zip the resulting sequence with `x_1,x_3,x_5,...` by using `+`.
+
 ## 4.3 Combining arrows
 
 I see no big problems from this part, arrow transformer reminds me of
