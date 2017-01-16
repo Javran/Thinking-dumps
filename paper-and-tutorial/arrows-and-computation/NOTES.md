@@ -112,6 +112,15 @@ It's possible to represent circuits using arrows.
 
 - two related instances: `ArrowLoop` and `ArrowCircuit`.
 
+    - The article seems to suggest that `ArrowLoop` of `Auto` actually corresponds to
+      the physical circuit loop, which is far from obvious to me...
+
+    - of course having a circuit whose input depends on the current tick of its output might
+      not make sense, and `ArrowCircuit` together with its interface `delay` is introduced.
+
+    - for some reason `ArrowCircuit` instances need to be `ArrowLoop` in the first place
+      while some implementation of `ArrowCircuit` is not using `loop` anywhere.
+      Not sure about the reason behind this.
 
 ## 4.2 Homogeneous functions
 
