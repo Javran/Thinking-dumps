@@ -1,5 +1,7 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GADTs, LambdaCase #-}
 module Free where
+
+import Data.Function
 
 -- http://okmij.org/ftp/Computation/free-monad.html
 
@@ -29,3 +31,14 @@ eta f = Impure (Pure <$> f)
 -}
 eta :: Functor f => f a -> Free f a
 eta = Impure . fmap Pure
+
+instance Functor f => Functor (Free f) where
+    fmap f = fix $ \ff -> \case
+        Pure x -> Pure (f x)
+        Impure m -> Impure (fmap ff m)
+
+instance Functor f => Applicative (Free f) where
+    pure = Pure
+    ff <*> m = case ff of
+        Pure v -> fmap v m
+        Impure f -> Impure (fmap (<*> m) f)
