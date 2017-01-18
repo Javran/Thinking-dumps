@@ -42,3 +42,8 @@ instance Functor f => Applicative (Free f) where
     ff <*> m = case ff of
         Pure v -> fmap v m
         Impure f -> Impure (fmap (<*> m) f)
+
+instance Functor f => Monad (Free f) where
+    ff >>= m = case ff of
+        Pure v -> m v
+        Impure f -> Impure (fmap (>>= m) f)
