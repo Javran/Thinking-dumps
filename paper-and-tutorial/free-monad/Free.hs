@@ -47,3 +47,12 @@ instance Functor f => Monad (Free f) where
     ff >>= m = case ff of
         Pure v -> m v
         Impure f -> Impure (fmap (>>= m) f)
+
+newtype State s a = State { unState :: s -> (a,s) }
+
+get :: State s s
+get = State $ \s -> (s,s)
+
+{-# ANN put "HLint: ignore Use const" #-}
+put :: s -> State s ()
+put s = State $ \_ -> ((), s)
