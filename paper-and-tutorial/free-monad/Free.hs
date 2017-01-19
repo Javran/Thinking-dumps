@@ -74,3 +74,19 @@ runFState (Impure m) s = runFState m' s'
   where
     (State f) = m
     (m',s') = f s
+
+-- modify old state, using a function, and return the old one
+modFState :: (s -> s) -> FState s s
+modFState f = do
+    x <- getF
+    putF (f x)
+    pure x
+
+testFState :: FState Int Int
+testFState = do
+    putF 10
+    modFState (+ 20)
+{-
+> runFState testFState undefined
+(10,30)
+-}
