@@ -56,3 +56,21 @@ get = State $ \s -> (s,s)
 {-# ANN put "HLint: ignore Use const" #-}
 put :: s -> State s ()
 put s = State $ \_ -> ((), s)
+
+type FState s = Free (State s)
+
+instance Functor (State s) where
+    fmap f (State m) = State $ \s -> let (a,s') = m s in (f a,s')
+
+getF :: FState s s
+getF = eta get
+
+putF :: s -> FState s ()
+putF = eta . put
+
+runFState :: FState s a -> s -> (a,s)
+runFState (Pure x) s = (x,s)
+runFState (Impure m) s = runFState m' s'
+  where
+    (State f) = m
+    (m',s') = f s
