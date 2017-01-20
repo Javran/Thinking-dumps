@@ -68,6 +68,7 @@ getF = eta get
 putF :: s -> FState s ()
 putF = eta . put
 
+-- the actual work of `bind` is actually implemented by runFState
 runFState :: FState s a -> s -> (a,s)
 runFState (Pure x) s = (x,s)
 runFState (Impure m) s = runFState m' s'
@@ -90,3 +91,6 @@ testFState = do
 > runFState testFState undefined
 (10,30)
 -}
+
+joinFState :: State s (State s a) -> State s a
+joinFState (State f) = State $ \s -> let (State m,s') = f s in m s'
