@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, LambdaCase #-}
+{-# LANGUAGE GADTs, LambdaCase, ScopedTypeVariables #-}
 module Free where
 
 import Data.Function
@@ -94,3 +94,14 @@ testFState = do
 
 joinFState :: State s (State s a) -> State s a
 joinFState (State f) = State $ \s -> let (State m,s') = f s in m s'
+
+data Lan g a where
+    Lan :: g x -> (x -> a) -> Lan g a
+
+instance Functor (Lan g) where
+    -- note that: "gx" is passed around but never touched,
+    -- and whatever "fab" is gets attached to the second part of "Lan"
+    fmap fab (Lan gx fxa) = Lan gx (fab . fxa)
+
+lan :: g a -> Lan g a
+lan ga = Lan ga id
