@@ -105,3 +105,14 @@ instance Functor (Lan g) where
 
 lan :: g a -> Lan g a
 lan ga = Lan ga id
+
+data FList a = FNil | FCons a (FList a) deriving Show
+
+test :: Lan FList Int
+test = fmap (* 10) (lan (FCons 1 (FCons 2 (FCons (3 :: Int) FNil))))
+
+-- and to extract things out we still need to implement something like "fmap"
+getFList :: Lan FList a -> FList a
+getFList (Lan lstX fxa) = case lstX of
+    FNil -> FNil
+    FCons x xs -> FCons (fxa x) (getFList (Lan xs fxa))
