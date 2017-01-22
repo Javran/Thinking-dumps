@@ -116,3 +116,33 @@ getFList :: Lan FList a -> FList a
 getFList (Lan lstX fxa) = case lstX of
     FNil -> FNil
     FCons x xs -> FCons (fxa x) (getFList (Lan xs fxa))
+
+-- Freer monad
+data FFree g a where
+    FPure :: a -> FFree g a
+    FImpure :: g x -> (x -> FFree g a) -> FFree g a
+
+{-
+
+Recall the definition of Free and Lan:
+
+data Free f a where
+    Pure   :: a -> Free f a
+    Impure :: f (Free f a) -> Free f a
+
+data Lan g a where
+    Lan :: g x -> (x -> a) -> Lan g a
+
+and "Free (Lan g)" should be a freer monad, we plugin (f = Lan g) on "Free":
+
+data Free f a where
+    Pure   :: a -> Free f a
+
+    Impure :: f (Free f a) -> Free f a
+    ===> (f = Lan g)
+    Impure :: Lan g (Free f a) -> Free f a
+    ===> destruct "Lan"
+    Impure :: g x -> (x -> Free f a) -> Free f a
+
+and this is exactly "FFree"
+-}
