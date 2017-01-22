@@ -146,3 +146,15 @@ data Free f a where
 
 and this is exactly "FFree"
 -}
+
+instance Functor (FFree g) where
+    fmap f = fix $ \ff m ->
+        case m of
+            FPure x -> FPure (f x)
+            FImpure gx q -> FImpure gx (ff . q)
+
+instance Applicative (FFree g) where
+    pure = FPure
+    ma <*> mb = case ma of
+        FPure f -> fmap f mb
+        FImpure gx q -> FImpure gx ((<*> mb) . q)
