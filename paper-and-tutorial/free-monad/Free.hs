@@ -158,3 +158,8 @@ instance Applicative (FFree g) where
     ma <*> mb = case ma of
         FPure f -> fmap f mb
         FImpure gx q -> FImpure gx ((<*> mb) . q)
+
+instance Monad (FFree g) where
+    m >>= g = case m of
+        FPure f -> g f
+        FImpure gx q -> FImpure gx ((>>= g) . q)
