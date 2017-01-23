@@ -170,3 +170,19 @@ which is an instance of Monad
 -}
 etaF :: g a -> FFree g a
 etaF ga = FImpure ga FPure
+
+{-
+the full version should be:
+
+type FFState s a = FFree (State s) a
+
+-}
+type FFState s = FFree (State s)
+
+runFFState :: FFState s a -> s -> (a,s)
+runFFState m s = case m of
+    FPure a -> (a,s)
+    FImpure (State f) q ->
+        let (x,s') = f s
+            m' = q x
+        in runFFState m' s'
