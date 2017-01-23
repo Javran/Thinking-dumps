@@ -163,3 +163,10 @@ instance Monad (FFree g) where
     m >>= g = case m of
         FPure f -> g f
         FImpure gx q -> FImpure gx ((>>= g) . q)
+
+{-
+no Functor constraint, any "g a" structure is turned into "FFree g a",
+which is an instance of Monad
+-}
+etaF :: g a -> FFree g a
+etaF ga = FImpure ga FPure
