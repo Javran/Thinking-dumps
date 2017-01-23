@@ -186,3 +186,6 @@ runFFState m s = case m of
         let (x,s') = f s
             m' = q x
         in runFFState m' s'
+
+-- TODO: definitional interpreters for effects
+-- TODO: extensible: http://okmij.org/ftp/Haskell/extensible/
