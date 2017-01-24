@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 module StateEff where
 
-import Free
+import Free hiding (FFState)
 
 -- the definition of StateEff alone does not do anything,
 -- but it still make (FFree (StateEff s)) a monad.
@@ -10,10 +10,12 @@ data StateEff s x where
     Get :: StateEff s s
     Put :: s -> StateEff s ()
 
-getEff :: FFree (StateEff s) s
+type FFState s = FFree (StateEff s)
+
+getEff :: FFState s s
 getEff = etaF Get
 
-putEff :: s -> FFree (StateEff s) ()
+putEff :: s -> FFState s ()
 putEff = etaF . Put
 
 {-
@@ -21,13 +23,13 @@ redoing modFState and testFState.
 this time we don't even need to have a instance of Functor.
 -}
 
-modFFState :: (s -> s) -> FFree (StateEff s) s
+modFFState :: (s -> s) -> FFState s s
 modFFState f = do
     x <- getEff
     putEff (f x)
     pure x
 
-testFFState :: FFree (StateEff Int) Int
+testFFState :: FFState Int Int
 testFFState = do
     putEff 10
     modFFState (+ 20)
