@@ -20,7 +20,13 @@ tellEff = etaF . Tell
 
 {-
 this implementation builds up the Monoid in right-associated way:
-- tell a >> tell b >> tell c ===> (a <> (b <> c))
+
+- tell a >> tell b >> tell c
+
+===> (a <> ?)
+===> (a <> (b <> ?))
+===> (a <> (b <> c))
+
 but monoid property ensures that this shall be the same as ((a <> b) <> c)
 despite that the performance might differ.
 -}
@@ -31,6 +37,29 @@ runWriter (FImpure gx q) = case gx of
                     in (a',w <> w')
     Tell w -> let (a',w') = runWriter (q ())
               in (a',w <> w')
+
+{-
+same as "runWriter", but this time it associates to left:
+
+- tell a >> tell b >> tell c
+
+===> mempty
+===> mempty <> a (= a)
+===> a
+===> a <> b
+===> (a <> b) <> c
+
+so now we have seen some advantages of Freer monad: we can have multiple
+interpreters of the same monad and get different ways of computing things
+
+-}
+runWriterL :: Monoid w => FFWriter w a -> (a,w)
+runWriterL = runWriterL' mempty
+  where
+    runWriterL' acc (FPure v) = (v, acc)
+    runWriterL' acc (FImpure gx q) = case gx of
+        Writer (a,w) -> runWriterL' (acc <> w) (q a)
+        Tell w -> runWriterL' (acc <> w) (q ())
 
 writeNats :: Int -> FFWriter [Int] ()
 writeNats from = writerEff ((),[from]) >> writeNats (succ from)
