@@ -18,13 +18,19 @@ writerEff = etaF . Writer
 tellEff :: w -> FFWriter w ()
 tellEff = etaF . Tell
 
+{-
+this implementation builds up the Monoid in right-associated way:
+- tell a >> tell b >> tell c ===> (a <> (b <> c))
+but monoid property ensures that this shall be the same as ((a <> b) <> c)
+despite that the performance might differ.
+-}
 runWriter :: Monoid w => FFWriter w a -> (a,w)
 runWriter (FPure v) = (v, mempty)
 runWriter (FImpure gx q) = case gx of
     Writer (a,w) -> let (a',w') = runWriter (q a)
-                    in (a',w `mappend` w')
+                    in (a',w <> w')
     Tell w -> let (a',w') = runWriter (q ())
-              in (a',w `mappend` w')
+              in (a',w <> w')
 
 writeNats :: Int -> FFWriter [Int] ()
 writeNats from = writerEff ((),[from]) >> writeNats (succ from)
