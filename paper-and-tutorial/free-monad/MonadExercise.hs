@@ -68,7 +68,7 @@ writeNats from = writerEff ((),[from]) >> writeNats (succ from)
 
 could be related, turns out list monad cannot be implemented this way:
 
-https://mail.haskell.org/pipermail/haskell-cafe/2017-January/126026.html
+http://stackoverflow.com/q/14641864/315302
 
 note that Freer monads are just Free monads with left Kan-extension so that we get Functor
 for free. if list monad cannot be implemented in terms of Free monad, Freer monad won't work either.
