@@ -15,6 +15,17 @@ instance (Functor s, Functor t) => Functor (s :> t) where
     fmap f (T x) = T (fmap f x)
 
 -- probably we can use promoted types here..
+{-
+
+TODO: could we use GHC.TypeLits for this?
+
+- https://hackage.haskell.org/package/base-4.9.1.0/docs/GHC-TypeLits.html
+- http://ponies.io/posts/2014-07-30-typelits.html
+
+I think this can eliminate the need for TEQ
+
+-}
+
 data Z
 data S n
 data HTrue
@@ -25,3 +36,4 @@ class Includes e s where
     inj :: e w -> s w
     -- projection
     prj :: s w -> Maybe (e w)
+
