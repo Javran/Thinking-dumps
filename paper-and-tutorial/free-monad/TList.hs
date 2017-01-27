@@ -4,10 +4,12 @@
   , KindSignatures
   , TypeFamilies
   , FlexibleInstances
+  , DataKinds
   #-}
 module TList where
 
 import Data.Void
+import Data.Proxy
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
@@ -36,8 +38,6 @@ I think this can eliminate the need for TEQ
 
 data Z
 data S n
-data HTrue
-data HFalse
 
 {-
 to be TCode seems to be a way of converting a type into a natural number
@@ -62,12 +62,12 @@ class Includes e s where
 "b" is a controller for allowing type level boolean to be computed
 and used on making value-level decisions (by instances)
 -}
-class Includes' b e e1 s where
-    inj' :: b -> e w -> (e1 :> s) w
-    prj' :: b -> (e1 :> s) w -> Maybe (e w)
+class Includes' (b :: Bool) e e1 s where
+    inj' :: Proxy b -> e w -> (e1 :> s) w
+    prj' :: Proxy b -> (e1 :> s) w -> Maybe (e w)
 
 -- when e is the same type as e1
-instance (e ~ e1) => Includes' HTrue e e1 t where
+instance (e ~ e1) => Includes' 'True e e1 t where
     -- injection, always safe.
     inj' _ e = H e
     -- projection, if the test "e ~ e1" passes,
@@ -77,14 +77,14 @@ instance (e ~ e1) => Includes' HTrue e e1 t where
     prj' _ (T _) = Nothing
 
 -- when e is not the same type as e1, let's choose the other branch
-instance Includes e t => Includes' HFalse e e1 t where
+instance Includes e t => Includes' 'False e e1 t where
     inj' _ e = T (inj e)
     prj' _ (H _) = Nothing
     prj' _ (T e) = prj e
 
 -- TEQ :: Nat -> Nat -> Bool
-type family TEQ n1 n2 :: *
-type instance TEQ Z Z           = HTrue
-type instance TEQ (S n) Z       = HFalse
-type instance TEQ Z (S n)       = HFalse
+type family TEQ n1 n2 :: Bool
+type instance TEQ Z Z           = 'True
+type instance TEQ (S n) Z       = 'False
+type instance TEQ Z (S n)       = 'False
 type instance TEQ (S n1) (S n2) = TEQ n1 n2
