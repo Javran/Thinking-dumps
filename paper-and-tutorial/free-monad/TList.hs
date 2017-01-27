@@ -1,9 +1,17 @@
-{-# LANGUAGE TypeOperators, MultiParamTypeClasses, KindSignatures, TypeFamilies #-}
+{-# LANGUAGE
+    TypeOperators
+  , MultiParamTypeClasses
+  , KindSignatures
+  , TypeFamilies
+  , FlexibleInstances
+  #-}
 module TList where
 
--- http://okmij.org/ftp/Haskell/extensible/TList.hs
-
 import Data.Void
+
+{-# ANN module "HLint: ignore Eta reduce" #-}
+
+-- http://okmij.org/ftp/Haskell/extensible/TList.hs
 
 infixr 1 :>
 
@@ -57,6 +65,22 @@ and used on making value-level decisions (by instances)
 class Includes' b e e1 s where
     inj' :: b -> e w -> (e1 :> s) w
     prj' :: b -> (e1 :> s) w -> Maybe (e w)
+
+-- when e is the same type as e1
+instance (e ~ e1) => Includes' HTrue e e1 t where
+    -- injection, always safe.
+    inj' _ e = H e
+    -- projection, if the test "e ~ e1" passes,
+    -- we will have just enough info to safely cast it
+    -- yep, sounds like Typeable
+    prj' _ (H e) = Just e
+    prj' _ (T _) = Nothing
+
+-- when e is not the same type as e1, let's choose the other branch
+instance Includes e t => Includes' HFalse e e1 t where
+    inj' _ e = T (inj e)
+    prj' _ (H _) = Nothing
+    prj' _ (T e) = prj e
 
 -- TEQ :: Nat -> Nat -> Bool
 type family TEQ n1 n2 :: *
