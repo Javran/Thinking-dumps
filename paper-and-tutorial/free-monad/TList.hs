@@ -36,15 +36,14 @@ I think this can eliminate the need for TEQ
 
 -}
 
-data Z
-data S n
+data Nat = Z | S Nat
 
 {-
 to be TCode seems to be a way of converting a type into a natural number
 so it can be distinguished from other types
 -}
 -- TCode :: * -> Nat
-type family TCode (n :: * -> *) :: *
+type family TCode (n :: * -> *) :: Nat
 
 {-
 a relation that "e" is one member of "s".
@@ -83,8 +82,8 @@ instance Includes e t => Includes' 'False e e1 t where
     prj' _ (T e) = prj e
 
 -- TEQ :: Nat -> Nat -> Bool
-type family TEQ n1 n2 :: Bool
-type instance TEQ Z Z           = 'True
-type instance TEQ (S n) Z       = 'False
-type instance TEQ Z (S n)       = 'False
-type instance TEQ (S n1) (S n2) = TEQ n1 n2
+type family TEQ (n1 :: Nat) (n2 :: Nat) :: Bool
+type instance TEQ 'Z 'Z           = 'True
+type instance TEQ ('S _) 'Z       = 'False
+type instance TEQ 'Z ('S _)       = 'False
+type instance TEQ ('S n1) ('S n2) = TEQ n1 n2
