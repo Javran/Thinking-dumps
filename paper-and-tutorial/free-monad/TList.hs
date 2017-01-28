@@ -82,11 +82,14 @@ instance Includes e t => Includes' 'False e e1 t where
     prj' _ (H _) = Nothing
     prj' _ (T e) = prj e
 
+{-
+-- we don't need this any more because of OrdToEq and CmpNat from GHC.TypeLits
 type family TEQ (n1 :: Nat) (n2 :: Nat) :: Bool
 type instance TEQ 'Z 'Z           = 'True
 type instance TEQ ('S _) 'Z       = 'False
 type instance TEQ 'Z ('S _)       = 'False
 type instance TEQ ('S n1) ('S n2) = TEQ n1 n2
+-}
 
 {-
 
