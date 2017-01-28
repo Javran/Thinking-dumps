@@ -87,3 +87,15 @@ type instance TEQ 'Z 'Z           = 'True
 type instance TEQ ('S _) 'Z       = 'False
 type instance TEQ 'Z ('S _)       = 'False
 type instance TEQ ('S n1) ('S n2) = TEQ n1 n2
+
+{-
+
+try using OrdToEq this way:
+- (CmpNat n1 n2 ~ ord, OrdToEq ord ~ True) => _
+- (CmpNat n1 n2 ~ ord, OrdToEq ord ~ False) => _
+
+-}
+type family OrdToEq (o :: Ordering) :: Bool where
+    OrdToEq 'EQ = 'True
+    OrdToEq 'LT = 'False
+    OrdToEq 'GT = 'False
