@@ -1,5 +1,5 @@
 {-# LANGUAGE
-    TypeOperators
+    TypeOperators, UndecidableInstances
   , FlexibleContexts
   , MultiParamTypeClasses
   , KindSignatures
@@ -60,13 +60,14 @@ class Includes e s where
     -- projection
     prj :: s w -> Maybe (e w)
 
-{-
--- TODO
-instance (b ~ TEQ (TCode e) (TCode e1), Includes' b e e1 t)
-    => Includes e (e1 :> t)
+
+instance (CmpNat (TCode e) (TCode e1) ~ 'EQ
+         , Includes' 'True e e1 t) =>
+   Includes e (e1 :> t)
  where
- inj = inj' (undefined::b)
--}
+   inj = inj' (Proxy :: Proxy 'True)
+   prj = prj' (Proxy :: Proxy 'True)
+
 {-
 "b" is a controller for allowing type level boolean to be computed
 and used on making value-level decisions (by instances)
@@ -123,3 +124,5 @@ type instance TCode (State Int) = 3
 test1 :: Includes Identity t => t Int
 test1 = inj (Identity 10)
 
+-- test2 :: Test Int
+-- test2 = test1
