@@ -1,5 +1,6 @@
 {-# LANGUAGE
     TypeOperators
+  , FlexibleContexts
   , MultiParamTypeClasses
   , KindSignatures
   , TypeFamilies
@@ -9,9 +10,10 @@
 module TList where
 
 import Data.Proxy
-import Data.Functor.Identity (Identity)
+import Data.Functor.Identity (Identity(..))
 import Control.Monad.Trans.State (State)
 import Control.Monad.Trans.Reader (Reader)
+import GHC.TypeLits
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
@@ -39,8 +41,6 @@ if we get 'EQ as the result, n1 and n2 are the same, otherwise they are not.
 
 -}
 
-data Nat = Z | S Nat
-
 {-
 to be TCode seems to be a way of converting a type into a natural number
 so every type (that TCode can encode) can be distinguished from other types
@@ -60,6 +60,13 @@ class Includes e s where
     -- projection
     prj :: s w -> Maybe (e w)
 
+{-
+-- TODO
+instance (b ~ TEQ (TCode e) (TCode e1), Includes' b e e1 t)
+    => Includes e (e1 :> t)
+ where
+ inj = inj' (undefined::b)
+-}
 {-
 "b" is a controller for allowing type level boolean to be computed
 and used on making value-level decisions (by instances)
@@ -108,6 +115,11 @@ type family OrdToEq (o :: Ordering) :: Bool where
 -- examples
 type Test = State Char :> Reader Int :> Identity
 
-type instance TCode Identity = 'Z
-type instance TCode (Reader Int) = 'S 'Z
-type instance TCode (State Char) = 'S ('S 'Z)
+type instance TCode Identity = 0
+type instance TCode (Reader Int) = 1
+type instance TCode (State Char) = 2
+type instance TCode (State Int) = 3
+
+test1 :: Includes Identity t => t Int
+test1 = inj (Identity 10)
+
