@@ -8,8 +8,10 @@
   #-}
 module TList where
 
-import Data.Void
 import Data.Proxy
+import Data.Functor.Identity (Identity)
+import Control.Monad.Trans.State (State)
+import Control.Monad.Trans.Reader (Reader)
 
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
@@ -102,3 +104,10 @@ type family OrdToEq (o :: Ordering) :: Bool where
     OrdToEq 'EQ = 'True
     OrdToEq 'LT = 'False
     OrdToEq 'GT = 'False
+
+-- examples
+type Test = State Char :> Reader Int :> Identity
+
+type instance TCode Identity = 'Z
+type instance TCode (Reader Int) = 'S 'Z
+type instance TCode (State Char) = 'S ('S 'Z)
