@@ -31,8 +31,6 @@ instance (Functor s, Functor t) => Functor (s :> t) where
 -- probably we can use promoted types here..
 {-
 
-TODO: could we use GHC.TypeLits for this?
-
 - https://hackage.haskell.org/package/base-4.9.1.0/docs/GHC-TypeLits.html
 - http://ponies.io/posts/2014-07-30-typelits.html
 
@@ -59,7 +57,6 @@ class Includes e s where
     inj :: e w -> s w
     -- projection
     prj :: s w -> Maybe (e w)
-
 
 instance (CmpNat (TCode e) (TCode e1) ~ 'EQ
          , Includes' 'True e e1 t) =>
