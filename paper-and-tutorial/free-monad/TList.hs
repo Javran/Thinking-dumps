@@ -61,7 +61,18 @@ class Includes e s where
     -- projection
     prj :: s w -> Maybe (e w)
 
-instance (OrdToEq (CmpNat (TCode e) (TCode e1)) ~ b
+{-
+it's *incorrect* to have:
+
+> OrdToEq (CmpNat (TCode e) (TCode e1)) ~ 'True
+
+as oppose to the following one.
+
+here we need "b" which works like a selector that guides instance finding
+system to the correct branch.
+
+-}
+instance ( OrdToEq (CmpNat (TCode e) (TCode e1)) ~ b
          , Includes' b e e1 t) =>
    Includes e (e1 :> t)
  where
