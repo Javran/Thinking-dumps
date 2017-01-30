@@ -11,6 +11,7 @@
   #-}
 module TList where
 
+-- import Data.Void
 import Data.Proxy
 import Data.Functor.Identity (Identity(..))
 import Control.Monad.Trans.State (State)
@@ -114,6 +115,7 @@ type family OrdToEq (o :: Ordering) :: Bool where
 
 -- examples
 type Test = State Char :> Reader Int :> Identity
+type Test2 = State Char :> Identity :> Reader Int
 
 type instance TCode Identity = 0
 type instance TCode (Reader Int) = 1
@@ -123,5 +125,14 @@ type instance TCode (State Int) = 3
 test1 :: Includes Identity t => t Int
 test1 = inj (Identity 10)
 
--- test2 :: Test Int
--- test2 = test1
+{-
+-- this cannot typecheck
+-- GHC complains "No instance for (Includes Identity Identity)"
+-- so it seems that for the long chain of ":>", instance finding won't find the rightmost one..
+test2 :: Test Int
+test2 = test1
+-}
+
+-- but the following one does typecheck
+test3 :: Test2 Int
+test3 = test1
