@@ -11,7 +11,6 @@
   #-}
 module TList where
 
--- import Data.Void
 import Data.Proxy
 import Data.Functor.Identity (Identity(..))
 import Control.Monad.Trans.State (State)
@@ -21,6 +20,11 @@ import GHC.TypeLits
 {-# ANN module "HLint: ignore Eta reduce" #-}
 
 -- http://okmij.org/ftp/Haskell/extensible/TList.hs
+
+-- note that this is just normal Data.Void because this one
+-- has a type parameter so its kind becomes * -> *, while
+-- Data.Void has kind of *
+data Void w
 
 infixr 1 :>
 
