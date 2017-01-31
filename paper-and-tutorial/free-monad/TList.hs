@@ -128,9 +128,11 @@ type family OrdToEq (o :: Ordering) :: Bool where
     OrdToEq 'LT = 'False
     OrdToEq 'GT = 'False
 
--- examples
-type Test = State Char :> Reader Int :> Identity
-type Test2 = State Char :> Identity :> Reader Int
+-- examples.
+-- make sure the rightmost one is "Void"
+type Test = State Char :> Reader Int :> Identity :> Void
+type Test2 = State Char :> Identity :> Reader Int :> Void
+type Test3 = State Char :> State Int :> Reader Int :> Void
 
 type instance TCode Identity = 0
 type instance TCode (Reader Int) = 1
@@ -141,13 +143,19 @@ test1 :: Includes Identity t => t Int
 test1 = inj (Identity 10)
 
 {-
--- this cannot typecheck
--- GHC complains "No instance for (Includes Identity Identity)"
--- so it seems that for the long chain of ":>", instance finding won't find the rightmost one..
+this would not typecheck if the rightmost one is not "Void".
+GHC would complain "No instance for (Includes Identity Identity)"
+so it seems that for the long chain of ":>", instance finding won't find the rightmost one..
+-}
 test2 :: Test Int
 test2 = test1
--}
 
 -- but the following one does typecheck
 test3 :: Test2 Int
 test3 = test1
+
+{-
+-- this will never typecheck because it simply doesn't have "Identity" in set.
+test4 :: Test3 Int
+test4 = test1
+-}
