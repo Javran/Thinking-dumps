@@ -40,3 +40,11 @@ inj x = Union (Id x)
 prj :: (Functor t, Typeable t, Member t r) => Union r v -> Maybe (t v)
 prj (Union v) | Just (Id (x :: t v)) <- gcast1 v = Just x
 prj _ = Nothing
+
+-- TODO: inj <=> weaken, prj <=> decomp?
+weaken :: (Typeable t, Functor t) => Union r w -> Union (t :> r) w
+weaken (Union x) = Union x
+
+decomp :: Typeable t => Union (t :> r) v -> Either (Union r v) (t v)
+decomp (Union v) | Just (Id x) <- gcast1 v = Right x
+decomp (Union v) = Left (Union v)
