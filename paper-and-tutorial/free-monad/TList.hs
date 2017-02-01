@@ -24,6 +24,7 @@ import GHC.TypeLits
 -- note that this is just normal Data.Void because this one
 -- has a type parameter so its kind becomes * -> *, while
 -- Data.Void has kind of *
+-- and this is not Data.Proxy either, as Proxy is inhabited.
 data Void w
 
 infixr 1 :>
