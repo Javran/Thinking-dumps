@@ -10,3 +10,8 @@ test1 = inj [1]
 
 test2 :: Member (State Int) r => Union r Int
 test2 = inj (get :: State Int Int)
+
+{-
+-- not sure what is the correct use of "prj"
+test3 = prj (inj (get :: State Int Int))
+-}
