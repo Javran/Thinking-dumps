@@ -6,7 +6,13 @@
   , ScopedTypeVariables
   , TypeOperators
   #-}
-module OpenUnion1 where
+module OpenUnion1
+  ( Union
+  , inj, prj
+  , decomp, weaken
+  , (:>)
+  , Member
+  ) where
 
 -- http://okmij.org/ftp/Haskell/extensible/OpenUnion1.hs
 
