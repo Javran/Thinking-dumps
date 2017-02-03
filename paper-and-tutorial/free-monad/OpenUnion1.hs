@@ -16,6 +16,10 @@ module OpenUnion1
 
 -- http://okmij.org/ftp/Haskell/extensible/OpenUnion1.hs
 
+-- "open union" seems to be a concept close to "polymorphic variants" as in OCaml
+
+-- see "POLYMORPHIC VARIANTS" section of https://realworldocaml.org/v1/en/html/variants.html
+
 import Data.Typeable
 
 -- TODO: why this is necessary?
