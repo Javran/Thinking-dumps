@@ -12,7 +12,11 @@
   , TypeFamilies
   , UndecidableInstances
   #-}
-module OpenUnion5 where
+module OpenUnion5
+  ( Union
+  , inj, prj, decomp, weaken
+  , Member, MemberU2
+  ) where
 
 -- http://okmij.org/ftp/Haskell/extensible/OpenUnion5.hs
 
