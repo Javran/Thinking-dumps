@@ -54,3 +54,15 @@ class (KnownNat (FindElem t r)) => Member (t :: * -> *) r where
 instance (KnownNat n, FindElem t r ~ n) => Member t r where
     inj = inj' (fromInteger (natVal (Proxy :: Proxy n)))
     prj = prj' (fromInteger (natVal (Proxy :: Proxy n)))
+
+weaken :: Union r w -> Union (any ': r) w
+weaken (Union n v) = Union (succ n) v
+
+decomp :: Union (t ': r) v -> Either (Union r v) (t v)
+decomp (Union ind v)
+    | ind == 0 =
+        -- but how can we persuade the type system?
+        -- by using typed hole, here "v :: t1 v"
+        -- so we are trying to unify "t1 v ~ t v" for some "t1"
+        Right (unsafeCoerce v)
+    | otherwise = Left (Union (pred ind) v)
