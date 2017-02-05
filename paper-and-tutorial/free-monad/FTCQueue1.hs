@@ -1,5 +1,11 @@
 {-# LANGUAGE GADTs #-}
-module FTCQueue1 where
+module FTCQueue1
+  ( FTCQueue
+    , tsingleton
+    , (|>), (><)
+    , ViewL(..)
+    , tviewl
+  ) where
 
 data FTCQueue m a b where
     Leaf :: (a -> m b) -> FTCQueue m a b
@@ -28,6 +34,7 @@ tviewl (Node t1 t2) = go t1 t2
     -- as we go deeper into the tree, more and more elements are pushed to right
     go (Node tl1 tl2) tr = go tl1 (Node tl2 tr)
 
+{-
 plusPrint :: Int -> IO Int
 plusPrint n = print n >> pure (succ n)
 
@@ -41,3 +48,4 @@ test2 = test1 |> plusPrint
 -- and merging two
 test3 :: FTCQueue IO Int Int
 test3 = test2 >< test2
+-}
