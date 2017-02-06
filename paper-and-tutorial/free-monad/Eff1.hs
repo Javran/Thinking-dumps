@@ -43,3 +43,9 @@ qComp g h = \a -> h (qApp g a)
 -- the difference between "Arrs" and "Arr" eventually
 qComps :: Arrs r a b -> (Eff r b -> Eff r' c) -> Arrs r' a c
 qComps g h = tsingleton (qComp g h)
+
+instance Functor (Eff r) where
+    fmap f (Val x) = Val (f x)
+    -- sounds like we are not actually doing the mapping if we have not yet come to a value
+    -- in this case "f" is not even touch: it's simply carried around
+    fmap f (E u q) = E u (q |> (Val . f))
