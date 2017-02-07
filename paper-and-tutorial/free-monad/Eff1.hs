@@ -49,3 +49,16 @@ instance Functor (Eff r) where
     -- sounds like we are not actually doing the mapping if we have not yet come to a value
     -- in this case "f" is not even touch: it's simply carried around
     fmap f (E u q) = E u (q |> (Val . f))
+
+instance Applicative (Eff r) where
+    pure = Val
+    mf <*> mx = case mf of
+        Val f -> case mx of
+            Val x -> Val (f x)
+            E ux qx ->
+                -- basically we never touch already existing parts,
+                -- and append "things to be done" to the list
+                E ux (qx |> (Val . f))
+        E uf qf -> case mx of
+            Val x -> E uf (qf |> (Val . ($ x)))
+            m -> E uf (qf |> (<$> m))
