@@ -1,4 +1,4 @@
-{-# LANGUAGE ExistentialQuantification, ScopedTypeVariables #-}
+{-# LANGUAGE ExistentialQuantification, ScopedTypeVariables, DataKinds #-}
 module Eff1 where
 
 import OpenUnion5
@@ -67,3 +67,17 @@ instance Monad (Eff r) where
     mx >>= mf = case mx of
         Val x -> mf x
         E ux qx -> E ux (qx |> mf)
+
+-- request computation "t" of return value "v", and wrap the result
+send :: Member t r => t v -> Eff r v
+send t = E (inj t) (tsingleton Val)
+
+{-
+note that "Union [] a" cannot be constructed:
+the only thing that constructs a Union is through "inj", which requires you
+to give it something.
+therefore the case for "E _ _" is unreachable.
+-}
+run :: Eff '[] w -> w
+run (Val x) = x
+run (E _ _) = error "run: unreachable code"
