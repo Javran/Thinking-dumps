@@ -62,3 +62,8 @@ instance Applicative (Eff r) where
         E uf qf -> case mx of
             Val x -> E uf (qf |> (Val . ($ x)))
             m -> E uf (qf |> (<$> m))
+
+instance Monad (Eff r) where
+    mx >>= mf = case mx of
+        Val x -> mf x
+        E ux qx -> E ux (qx |> mf)
