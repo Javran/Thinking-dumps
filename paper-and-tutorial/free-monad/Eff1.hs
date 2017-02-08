@@ -1,9 +1,12 @@
 {-# LANGUAGE
     ExistentialQuantification
+  , NoMonomorphismRestriction
+  , FlexibleContexts
   , ScopedTypeVariables
   , DataKinds
   , TypeOperators
   , RankNTypes
+  , GADTs
   #-}
 module Eff1 where
 
@@ -104,3 +107,13 @@ handleOrRelay ret h m = loop m
         -- or the desired effect is missing, in which case the type is "refined" (to "u'")
         -- to exclude that effect, and the request is relayed
         Left u' -> E u' (tsingleton (q `qComp` loop))
+
+data Reader e v where
+    Reader :: Reader e e
+
+-- this type signature can be inferred when NoMonomorphismRestriction is on
+ask :: (Member (Reader e) r) => Eff r e
+ask = send Reader
+
+runReader :: Eff (Reader e ': r) w -> e -> Eff r w
+runReader m e = handleOrRelay pure (\Reader k -> k e) m
