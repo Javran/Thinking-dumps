@@ -115,5 +115,12 @@ data Reader e v where
 ask :: (Member (Reader e) r) => Eff r e
 ask = send Reader
 
+{-
+notice the "\Reader k -> k e",
+this is *not* "\(Reader k) -> k e": as the latter is an invalid destruction because
+"Reader" has no fields. but the former is a function that takes 2 arguments:
+a "Reader" that does nothing on value level, but guides type inference as GADT
+holds the information that "e ~ v"
+-}
 runReader :: Eff (Reader e ': r) w -> e -> Eff r w
-runReader m e = handleOrRelay pure (\Reader k -> k e) m
+runReader m e = handleOrRelay pure (\(Reader :: Reader e v) k -> k e) m
