@@ -108,6 +108,18 @@ handleOrRelay ret h m = loop m
         -- to exclude that effect, and the request is relayed
         Left u' -> E u' (tsingleton (q `qComp` loop))
 
+{-# ANN interpose "HLint: ignore Eta reduce" #-}
+interpose :: Member t r
+          => (a -> Eff r w) -- return
+          -> (forall v. t v -> Arr r v w -> Eff r w) -- handle
+          -> Eff r a -> Eff r w
+interpose ret h m = loop m
+  where
+    loop (Val x) = ret x
+    loop (E u q) = case prj u of
+        Just x -> h x (q `qComp` loop)
+        Nothing -> E u (tsingleton (q `qComp` loop))
+
 data Reader e v where
     Reader :: Reader e e
 
