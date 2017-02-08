@@ -1,4 +1,10 @@
-{-# LANGUAGE ExistentialQuantification, ScopedTypeVariables, DataKinds #-}
+{-# LANGUAGE
+    ExistentialQuantification
+  , ScopedTypeVariables
+  , DataKinds
+  , TypeOperators
+  , RankNTypes
+  #-}
 module Eff1 where
 
 import OpenUnion5
@@ -81,3 +87,16 @@ therefore the case for "E _ _" is unreachable.
 run :: Eff '[] w -> w
 run (Val x) = x
 run (E _ _) = error "run: unreachable code"
+
+{-# ANN handleOrRelay "HLint: ignore Eta reduce" #-}
+handleOrRelay :: (a -> Eff r w)
+              -> (forall v. t v -> Arr r v w -> Eff r w)
+              -> Eff (t ': r) a -> Eff r w
+handleOrRelay ret h m = loop m
+  where
+    loop (Val x) = ret x
+    loop (E u q) = case decomp u of
+        Right x -> h x k
+        Left u' -> E u' (tsingleton k)
+      where
+        k = qComp q loop
