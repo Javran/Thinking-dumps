@@ -89,14 +89,18 @@ run (Val x) = x
 run (E _ _) = error "run: unreachable code"
 
 {-# ANN handleOrRelay "HLint: ignore Eta reduce" #-}
-handleOrRelay :: (a -> Eff r w)
-              -> (forall v. t v -> Arr r v w -> Eff r w)
-              -> Eff (t ': r) a -> Eff r w
+handleOrRelay :: (a -> Eff r w) -- return
+              -> (forall v. t v -> Arr r v w -> Eff r w) -- handle
+              -> Eff (t ': r) a -- input Eff
+              -> Eff r w -- output Eff, notice that "t" is removed
 handleOrRelay ret h m = loop m
   where
+    -- a value is simply returned by passing it to "ret"
     loop (Val x) = ret x
+    -- there are 2 outcomes of destructing the "effect set":
     loop (E u q) = case decomp u of
-        Right x -> h x k
-        Left u' -> E u' (tsingleton k)
-      where
-        k = qComp q loop
+        -- either we can find the desired effect, in which case we handle it
+        Right x -> h x (q `qComp` loop)
+        -- or the desired effect is missing, in which case the type is "refined" (to "u'")
+        -- to exclude that effect, and the request is relayed
+        Left u' -> E u' (tsingleton (q `qComp` loop))
