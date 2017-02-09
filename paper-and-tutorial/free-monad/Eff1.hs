@@ -136,3 +136,13 @@ holds the information that "e ~ v"
 -}
 runReader :: Eff (Reader e ': r) w -> e -> Eff r w
 runReader m e = handleOrRelay pure (\(Reader :: Reader e v) k -> k e) m
+
+-- run computation within a modified environment.
+local :: forall e a r . Member (Reader e) r =>
+         (e -> e) -> Eff r a -> Eff r a
+local f m = do
+    e0 <- ask
+    let e = f e0
+    let h :: Reader e v -> Arr r v a -> Eff r a
+        h Reader g = g e
+    interpose pure h m
