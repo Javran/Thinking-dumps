@@ -13,6 +13,8 @@ module Eff1 where
 import OpenUnion5
 import FTCQueue1
 
+import Control.Monad
+
 -- http://okmij.org/ftp/Haskell/extensible/Eff1.hs
 -- built on top of OpenUnion5 & FTCQueue1
 
@@ -141,6 +143,9 @@ this is *not* "\(Reader k) -> k e": as the latter is an invalid destruction beca
 "Reader" has no fields. but the former is a function that takes 2 arguments:
 a "Reader" that does nothing on value level, but guides type inference as GADT
 holds the information that "e ~ v"
+
+also notice that the Eff changes from "Eff (Reader e ': r) w" to "Eff r w"
+so one outermost layer of the effect is handled and removed from the effect list.
 -}
 runReader :: Eff (Reader e ': r) w -> e -> Eff r w
 runReader m e = handleOrRelay pure (\(Reader :: Reader e v) k -> k e) m
@@ -153,3 +158,10 @@ local f m = do
     let h :: Reader e v -> Arr r v a -> Eff r a
         h Reader g = g e
     interpose pure h m
+
+-- type can be inferred.
+t1 :: Member (Reader Int) r => Eff r Int
+t1 = (+) <$> ask <*> pure (1 :: Int)
+
+t1r :: Int
+t1r = run (runReader t1 (20 :: Int))
