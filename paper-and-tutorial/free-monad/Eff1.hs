@@ -108,11 +108,19 @@ handleOrRelay ret h m = loop m
         -- to exclude that effect, and the request is relayed
         Left u' -> E u' (tsingleton (q `qComp` loop))
 
+{-
+
+notice the difference between "handleOrRelay" and "interpose".
+one uses "decomp" and another uses "prj" ..
+(TODO) I'm not sure what exactly does "interpose" mean ..
+-}
+
 {-# ANN interpose "HLint: ignore Eta reduce" #-}
 interpose :: Member t r
           => (a -> Eff r w) -- return
           -> (forall v. t v -> Arr r v w -> Eff r w) -- handle
-          -> Eff r a -> Eff r w
+          -> Eff r a -- input Eff
+          -> Eff r w
 interpose ret h m = loop m
   where
     loop (Val x) = ret x
@@ -138,11 +146,10 @@ runReader :: Eff (Reader e ': r) w -> e -> Eff r w
 runReader m e = handleOrRelay pure (\(Reader :: Reader e v) k -> k e) m
 
 -- run computation within a modified environment.
-local :: forall e a r . Member (Reader e) r =>
+local :: forall e a r. Member (Reader e) r =>
          (e -> e) -> Eff r a -> Eff r a
 local f m = do
-    e0 <- ask
-    let e = f e0
+    e <- f <$> ask
     let h :: Reader e v -> Arr r v a -> Eff r a
         h Reader g = g e
     interpose pure h m
