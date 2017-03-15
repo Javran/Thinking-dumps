@@ -30,5 +30,17 @@ ex3 = mconcat $ do
   where
     step = tau/30
 
+vTriangle :: V2 Double -> V2 Double -> Diagram B
+vTriangle va vb = fromOffsets [va, negated va ^+^ vb , negated vb]
+
+parallelogram :: V2 Double -> V2 Double -> Diagram B
+parallelogram v1 v2 = mconcat
+    [ fromOffsets [v1] # lc blue
+    , fromOffsets [v1] # lc blue # translate v2 # dashingG [0.1,0.1] 0
+    , fromOffsets [v2] # lc red
+    , fromOffsets [v2] # lc red # translate v1 # dashingG [0.1,0.1] 0
+    , fromOffsets [v1 ^+^ v2] # lc purple
+    ]
+
 main :: IO ()
-main = mainWith ex2
+main = mainWith (parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
