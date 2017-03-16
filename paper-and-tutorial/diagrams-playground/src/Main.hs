@@ -34,12 +34,15 @@ vTriangle va vb = fromOffsets [va, negated va ^+^ vb , negated vb]
 
 parallelogram :: V2 Double -> V2 Double -> Diagram B
 parallelogram v1 v2 = mconcat
-    [ fromOffsets [v1] # lc blue
-    , fromOffsets [v1] # lc blue # translate v2 # dashingG [0.1,0.1] 0
-    , fromOffsets [v2] # lc red
-    , fromOffsets [v2] # lc red # translate v1 # dashingG [0.1,0.1] 0
-    , fromOffsets [v1 ^+^ v2] # lc purple
+    [ drawV v1 # lc blue
+    , drawV v1 # lc blue # translate v2 # dashing'
+    , drawV v2 # lc red
+    , drawV v2 # lc red # translate v1 # dashing'
+    , drawV (v1 ^+^ v2) # lc purple
     ]
+  where
+    drawV v = fromOffsets [v]
+    dashing' = dashingG [0.1,0.1] 0
 
 main :: IO ()
 main = mainWith ex2 -- (parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
