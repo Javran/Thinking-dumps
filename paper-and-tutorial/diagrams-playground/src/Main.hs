@@ -44,5 +44,23 @@ parallelogram v1 v2 = mconcat
     drawV v = fromOffsets [v]
     dashing' = dashingG [0.1,0.1] 0
 
+circleGrid :: Diagram B
+circleGrid = mconcat $ do
+    x <- [-15 .. 15 :: Int]
+    y <- [-15 .. 15]
+    let p = p2 (x,y)
+        (xD,yD) = (fromIntegral x, fromIntegral y)
+        pCenter = origin
+        qDist = qd p pCenter
+        cir = circle 1 # fc (if qDist <= 15*15 then yellow else purple)
+    pure (cir # translate (r2 (xD+xD,yD+yD)))
+
 main :: IO ()
-main = mainWith ex2 -- (parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
+main = mainWith
+    [ ("ex1", ex1)
+    , ("ex2", ex2)
+    , ("ex3", ex3)
+    , ("vTriangle", vTriangle unitX (unitX # rotateBy (1/8)))
+    , ("parallelogram", parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
+    , ("circlegrid", circleGrid)
+    ]
