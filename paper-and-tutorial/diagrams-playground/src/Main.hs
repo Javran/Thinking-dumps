@@ -10,6 +10,10 @@ module Main where
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
 import Diagrams.TwoD.Vector (e)
+import Data.Foldable
+import Data.List
+import Data.Ord
+import qualified Data.Set as S
 
 ex1 :: Diagram B
 ex1 = fromOffsets (concat (replicate 5 [V2 1 1, V2 1 (-1)]))
@@ -64,3 +68,40 @@ main = mainWith
     , ("parallelogram", parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
     , ("circlegrid", circleGrid)
     ]
+
+{-
+TODO:
+
+- impl Graham scan
+- generate random points for testing
+- render diagram
+- extend to record steps
+- render diagram (with steps)
+
+-}
+
+grahamScan :: S.Set (P2 Int) -> [P2 Int]
+grahamScan pSet
+    | S.size pSet < 3 = error "insufficient points"
+    | otherwise = reverse $ go [startPoint2,startPoint] visitList
+  where
+    startPoint = minimumBy cmp' pSet
+    toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
+    cmp' pa pb =
+        let ((xa,ya),(xb,yb)) = (unp2 pa, unp2 pb)
+        in (ya `compare` yb) <> (xa `compare` xb)
+    visitList :: [P2 Int]
+    (startPoint2 : visitList) =
+          sortBy (comparing (\p -> signedAngleBetween (toDbl p .-. toDbl startPoint) unitX))
+        . S.toList
+        $ S.delete startPoint pSet
+    go :: [P2 Int] {- current set of convex points -}
+       -> [P2 Int] {- a list to be visited -}
+       -> [P2 Int]
+    go vs [] = vs
+    go vs@(pt2:pt1:vs') vList@(ptCur:vList') =
+        let va = pt2 .-. pt1
+            vb = ptCur .-. pt2
+        in if leftTurn va vb
+             then go (ptCur:vs) vList'
+             else go (pt1:vs') vList
