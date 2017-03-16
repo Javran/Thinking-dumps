@@ -11,6 +11,7 @@ import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
 import Diagrams.TwoD.Vector (e)
 import Data.Foldable
+import Control.Monad.Random
 import Data.List
 import Data.Ord
 import qualified Data.Set as S
@@ -60,14 +61,18 @@ circleGrid = mconcat $ do
     pure (cir # translate (r2 (xD+xD,yD+yD)))
 
 main :: IO ()
-main = mainWith
-    [ ("ex1", ex1)
-    , ("ex2", ex2)
-    , ("ex3", ex3)
-    , ("vTriangle", vTriangle unitX (unitX # rotateBy (1/8)))
-    , ("parallelogram", parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
-    , ("circlegrid", circleGrid)
-    ]
+main = do
+    pts <- replicateM 400 ((,) <$> getRandomR (-20,20) <*> getRandomR (-20,20))
+    let pts' = S.fromList . map p2 $ pts
+    mainWith
+        [ ("ex1", ex1)
+        , ("ex2", ex2)
+        , ("ex3", ex3)
+        , ("vTriangle", vTriangle unitX (unitX # rotateBy (1/8)))
+        , ("parallelogram", parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
+        , ("circlegrid", circleGrid)
+        , ("grahamscan", renderedGrahamScan pts')
+        ]
 
 {-
 TODO:
@@ -102,6 +107,24 @@ grahamScan pSet
     go vs@(pt2:pt1:vs') vList@(ptCur:vList') =
         let va = pt2 .-. pt1
             vb = ptCur .-. pt2
-        in if leftTurn va vb
+        in -- we are not testing just left turn, but non-right turns, straight line counts.
+           if leftTurn va vb || not (leftTurn vb va)
              then go (ptCur:vs) vList'
              else go (pt1:vs') vList
+    go [] _ = error "unreachable (empty)"
+    go [_] _ = error "unreachable (singleton)"
+
+renderedGrahamScan :: S.Set (P2 Int) -> Diagram B
+renderedGrahamScan pSet = allVertices <> allEdges
+  where
+    toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
+    vertexDg = circle 0.1
+    allVertices = foldMap (\pt -> vertexDg # translate (pt .-. origin)) (S.map toDbl pSet)
+    allEdges = foldMap (\(pt1,pt2) ->
+                        let pt1' = toDbl pt1
+                            pt2' = toDbl pt2
+                        in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)) edges
+    convexPts = grahamScan pSet
+    edges =
+        (last convexPts, head convexPts)
+        : zip convexPts (tail convexPts)
