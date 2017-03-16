@@ -75,11 +75,13 @@ main = do
         ]
 
 {-
-TODO:
 
 - impl Graham scan
 - generate random points for testing
 - render diagram
+
+TODO:
+
 - extend to record steps
 - render diagram (with steps)
 
@@ -111,6 +113,14 @@ grahamScan pSet
            if leftTurn va vb || not (leftTurn vb va)
              then go (ptCur:vs) vList'
              else go (pt1:vs') vList
+    {-
+      the following two cases are unreachable:
+      - the guard at the beginning (i.e. "S.size pSet < 3") should have ensured that we
+        have sufficient number of points
+      - we have gave two initial points in "vs", so the only way that the size of "vs"
+        ever goes down is through failing the "non-right turn" test, but since the list
+        is sorted by ascending angles, this could never happen.
+     -}
     go [] _ = error "unreachable (empty)"
     go [_] _ = error "unreachable (singleton)"
 
