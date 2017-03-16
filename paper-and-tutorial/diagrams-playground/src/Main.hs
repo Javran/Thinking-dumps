@@ -15,10 +15,9 @@ ex1 :: Diagram B
 ex1 = fromOffsets (concat (replicate 5 [V2 1 1, V2 1 (-1)]))
 
 ex2 :: Diagram B
-ex2 = atPoints points (repeat node)
+ex2 = foldMap (\vec -> node # translate vec) vecs
   where
-    points :: [Point V2 Double]
-    points = [ origin .+^ (5 *^ e (r @@ rad)) | r <- take 7 [tau/4, tau/4-step ..] ]
+    vecs = [ 5 *^ e (r @@ rad) | r <- take 7 [tau/4, tau/4-step ..] ]
     step = tau / 2 / 6
     node = circle 1 # fc blue
 
@@ -43,4 +42,4 @@ parallelogram v1 v2 = mconcat
     ]
 
 main :: IO ()
-main = mainWith (parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
+main = mainWith ex2 -- (parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
