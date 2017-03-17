@@ -21,9 +21,12 @@ import Control.Monad.Random
 import Data.Ord
 import qualified Data.Set as S
 import System.IO.Unsafe
+import qualified Data.DList as DL
+import Control.Arrow
 
 import qualified Data.Vector as V
 import qualified Data.Vector.Algorithms.Merge as V
+import Control.Monad.Writer hiding ((<>))
 
 -- has to be stable
 sortViaVector :: Ord a => [a] -> [a]
@@ -99,15 +102,18 @@ main = mainWith . Actioned $
       , pure $ parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
     , ("circlegrid", pure circleGrid)
     , ("grahamscan",
-        let gen :: IO (S.Set (P2 Int))
-            gen = do
-                ptCount <- getRandomR (20,50)
-                (S.fromList . map p2)
-                    <$> replicateM ptCount
-                            ((,)
-                             <$> getRandomR (-20,20)
-                             <*> getRandomR (-20,20))
-        in renderedGrahamScan <$> gen)
+       do
+           let gen :: IO (S.Set (P2 Int))
+               gen = do
+                   ptCount <- getRandomR (20,50)
+                   (S.fromList . map p2)
+                       <$> replicateM ptCount
+                       ((,)
+                        <$> getRandomR (-20,20)
+                        <*> getRandomR (-20,20))
+           (dg, gLog) <- renderedGrahamScan <$> gen
+           mapM_ print gLog
+           pure dg)
     ]
 
 {-
@@ -115,18 +121,42 @@ main = mainWith . Actioned $
 - impl Graham scan
 - generate random points for testing
 - render diagram
+- extend to record steps
 
 TODO:
 
-- extend to record steps
 - render diagram (with steps)
 
 -}
 
-grahamScan :: S.Set (P2 Int) -> [P2 Int]
-grahamScan pSet
+renderedGrahamScan :: S.Set (P2 Int) -> (Diagram B, [GrahamAction (P2 Int)])
+renderedGrahamScan pSet = (allVertices <> allEdges, gsLog)
+  where
+    toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
+    vertexDg = circle 0.1
+    allVertices = foldMap (\pt -> vertexDg # translate (pt .-. origin)) (S.map toDbl pSet)
+    allEdges = foldMap (\(pt1,pt2) ->
+                        let pt1' = toDbl pt1
+                            pt2' = toDbl pt2
+                        in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)) edges
+    convexPts :: [P2 Int]
+    (convexPts, gsLog) = second toList $ runWriter (grahamScanW pSet)
+    edges =
+        (last convexPts, head convexPts)
+        : zip convexPts (tail convexPts)
+
+data GrahamAction a
+  = GAPick a
+  | GADrop a
+    deriving (Show)
+
+grahamScanW :: S.Set (P2 Int) -> Writer (DL.DList (GrahamAction (P2 Int))) [P2 Int]
+grahamScanW pSet
     | S.size pSet < 3 = error "insufficient points"
-    | otherwise = reverse $ go [startPoint2,startPoint] visitList
+    | otherwise = reverse <$> do
+        tell (DL.singleton (GAPick startPoint))
+        tell (DL.singleton (GAPick startPoint2))
+        go [startPoint2,startPoint] visitList
   where
     startPoint = minimumBy cmp' pSet
     toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
@@ -135,20 +165,21 @@ grahamScan pSet
         in (ya `compare` yb) <> (xa `compare` xb)
     visitList :: [P2 Int]
     (startPoint2 : visitList) =
-          sortByViaVector (comparing (\p -> signedAngleBetween (toDbl p .-. toDbl startPoint) unitX))
+          sortByViaVector
+            (comparing (\p -> signedAngleBetween (toDbl p .-. toDbl startPoint) unitX))
         . S.toList
         $ S.delete startPoint pSet
     go :: [P2 Int] {- current set of convex points -}
        -> [P2 Int] {- a list to be visited -}
-       -> [P2 Int]
-    go vs [] = vs
+       -> Writer (DL.DList (GrahamAction (P2 Int))) [P2 Int]
+    go vs [] = pure vs
     go vs@(pt2:pt1:vs') vList@(ptCur:vList') =
         let va = pt2 .-. pt1
             vb = ptCur .-. pt2
         in -- we are not testing just left turn, but non-right turns, straight line counts.
            if leftTurn va vb || not (leftTurn vb va)
-             then go (ptCur:vs) vList'
-             else go (pt1:vs') vList
+             then tell (DL.singleton (GAPick ptCur)) >> go (ptCur:vs) vList'
+             else tell (DL.singleton (GADrop ptCur)) >> go (pt1:vs') vList
     {-
       the following two cases are unreachable:
       - the guard at the beginning (i.e. "S.size pSet < 3") should have ensured that we
@@ -159,18 +190,3 @@ grahamScan pSet
      -}
     go [] _ = error "unreachable (empty)"
     go [_] _ = error "unreachable (singleton)"
-
-renderedGrahamScan :: S.Set (P2 Int) -> Diagram B
-renderedGrahamScan pSet = allVertices <> allEdges
-  where
-    toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
-    vertexDg = circle 0.1
-    allVertices = foldMap (\pt -> vertexDg # translate (pt .-. origin)) (S.map toDbl pSet)
-    allEdges = foldMap (\(pt1,pt2) ->
-                        let pt1' = toDbl pt1
-                            pt2' = toDbl pt2
-                        in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)) edges
-    convexPts = grahamScan pSet
-    edges =
-        (last convexPts, head convexPts)
-        : zip convexPts (tail convexPts)
