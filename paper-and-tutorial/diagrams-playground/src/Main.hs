@@ -1,7 +1,9 @@
 {-# LANGUAGE
     NoMonomorphismRestriction
   , FlexibleContexts
+  , FlexibleInstances
   , TypeFamilies
+  , TupleSections
 #-}
 module Main where
 
@@ -9,12 +11,31 @@ module Main where
 
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.SVG
+import Diagrams.Backend.CmdLine
 import Diagrams.TwoD.Vector (e)
 import Data.Foldable
 import Control.Monad.Random
-import Data.List
+-- import Data.List
 import Data.Ord
 import qualified Data.Set as S
+import System.IO.Unsafe
+
+import qualified Data.Vector as V
+import qualified Data.Vector.Algorithms.Merge as V
+
+-- has to be stable
+sortViaVector :: Ord a => [a] -> [a]
+sortViaVector xs = unsafePerformIO $ do
+    vec <- V.unsafeThaw (V.fromList xs)
+    V.sort vec
+    V.toList <$> V.unsafeFreeze vec
+
+sortByViaVector :: (a -> a -> Ordering) -> [a] -> [a]
+sortByViaVector f xs = unsafePerformIO $ do
+    vec <- V.unsafeThaw (V.fromList xs)
+    V.sortBy f vec
+    V.toList <$> V.unsafeFreeze vec
 
 ex1 :: Diagram B
 ex1 = fromOffsets (concat (replicate 5 [V2 1 1, V2 1 (-1)]))
@@ -99,7 +120,7 @@ grahamScan pSet
         in (ya `compare` yb) <> (xa `compare` xb)
     visitList :: [P2 Int]
     (startPoint2 : visitList) =
-          sortBy (comparing (\p -> signedAngleBetween (toDbl p .-. toDbl startPoint) unitX))
+          sortByViaVector (comparing (\p -> signedAngleBetween (toDbl p .-. toDbl startPoint) unitX))
         . S.toList
         $ S.delete startPoint pSet
     go :: [P2 Int] {- current set of convex points -}

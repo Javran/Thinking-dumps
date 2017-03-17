@@ -23,6 +23,7 @@ executable dg-render
                      , diagrams-svg
                      , containers
                      , vector
+                     , vector-algorithms
                      , MonadRandom
   default-language:    Haskell2010
 
