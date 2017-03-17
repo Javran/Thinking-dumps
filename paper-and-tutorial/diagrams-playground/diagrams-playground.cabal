@@ -27,6 +27,7 @@ executable dg-render
                      , MonadRandom
                      , dlist
                      , mtl
+                     , split
   default-language:    Haskell2010
 
 source-repository head

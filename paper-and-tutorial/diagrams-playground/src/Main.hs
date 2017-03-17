@@ -10,6 +10,7 @@ module Main where
 
 -- http://projects.haskell.org/diagrams/doc/vector.html
 
+import Data.List.Split (chunksOf)
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
 import Diagrams.Backend.SVG
@@ -105,14 +106,15 @@ main = mainWith . Actioned $
        do
            let gen :: IO (S.Set (P2 Int))
                gen = do
-                   ptCount <- getRandomR (20,50)
+                   ptCount <- getRandomR (10,30)
                    (S.fromList . map p2)
                        <$> replicateM ptCount
                        ((,)
                         <$> getRandomR (-20,20)
                         <*> getRandomR (-20,20))
-           (dg, gLog) <- renderedGrahamScan <$> gen
-           mapM_ print gLog
+           wm <- renderedGrahamScanSteps <$> gen
+           let dg = mkGrids (toList (execWriter wm))
+           -- mapM_ print gLog
            pure dg)
     ]
 
@@ -122,23 +124,51 @@ main = mainWith . Actioned $
 - generate random points for testing
 - render diagram
 - extend to record steps
+- render diagram (with steps)
 
 TODO:
 
-- render diagram (with steps)
+- collect edges without actually merging Diagrams together
+  by doing so we can have a chance of keeping at most one red line
+  (current removing one) in the diagram
 
 -}
 
-renderedGrahamScan :: S.Set (P2 Int) -> (Diagram B, [GrahamAction (P2 Int)])
-renderedGrahamScan pSet = (allVertices <> allEdges, gsLog)
+renderedGrahamScanSteps :: S.Set (P2 Int) -> Writer (DL.DList (Diagram B)) ()
+renderedGrahamScanSteps pSet = do
+    let addDiagram = tell . DL.singleton
+        (GAPick startPoint1:GAPick startPoint2:gsLogRemained) = gsLog
+    addDiagram allVertices
+    let lineBetween pt1 pt2 =
+            let pt1' = toDbl pt1
+                pt2' = toDbl pt2
+            in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
+        diagram1 = lineBetween startPoint1 startPoint2  # lc blue `atop` allVertices
+    addDiagram diagram1
+    finalDiagram <- fix (\self prevDiagram prevStack curLog -> case curLog of
+             [] -> pure prevDiagram
+             (action:remainedLog) -> case action of
+                 GAPick nextPt -> do
+                     let curDiagram = lineBetween (head prevStack) nextPt # lc blue
+                           `atop` prevDiagram
+                     addDiagram curDiagram
+                     self curDiagram (nextPt:prevStack) remainedLog
+                 GADrop -> do
+                     let (pt2:pt1:_) = prevStack
+                         curDiagram = lineBetween pt1 pt2 # lc red
+                           `atop` prevDiagram
+                     addDiagram curDiagram
+                     self curDiagram (tail prevStack) remainedLog
+        ) diagram1 [startPoint2,startPoint1] gsLogRemained
+
+    let (hdPt1, hdPt2) = head edges
+    addDiagram (lineBetween hdPt1 hdPt2 # lc blue `atop` finalDiagram)
+    pure ()
   where
     toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
-    vertexDg = circle 0.1
+    vertexDg = circle 0.1 # fc black
+    allVertices :: Diagram B
     allVertices = foldMap (\pt -> vertexDg # translate (pt .-. origin)) (S.map toDbl pSet)
-    allEdges = foldMap (\(pt1,pt2) ->
-                        let pt1' = toDbl pt1
-                            pt2' = toDbl pt2
-                        in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)) edges
     convexPts :: [P2 Int]
     (convexPts, gsLog) = second toList $ runWriter (grahamScanW pSet)
     edges =
@@ -147,7 +177,7 @@ renderedGrahamScan pSet = (allVertices <> allEdges, gsLog)
 
 data GrahamAction a
   = GAPick a
-  | GADrop a
+  | GADrop
     deriving (Show)
 
 grahamScanW :: S.Set (P2 Int) -> Writer (DL.DList (GrahamAction (P2 Int))) [P2 Int]
@@ -179,7 +209,7 @@ grahamScanW pSet
         in -- we are not testing just left turn, but non-right turns, straight line counts.
            if leftTurn va vb || not (leftTurn vb va)
              then tell (DL.singleton (GAPick ptCur)) >> go (ptCur:vs) vList'
-             else tell (DL.singleton (GADrop ptCur)) >> go (pt1:vs') vList
+             else tell (DL.singleton GADrop) >> go (pt1:vs') vList
     {-
       the following two cases are unreachable:
       - the guard at the beginning (i.e. "S.size pSet < 3") should have ensured that we
@@ -190,3 +220,10 @@ grahamScanW pSet
      -}
     go [] _ = error "unreachable (empty)"
     go [_] _ = error "unreachable (singleton)"
+
+mkGrids :: [Diagram B] -> Diagram B
+mkGrids xs = vsep 10 (map (hsep 10) ys)
+  where
+    ys = chunksOf w xs
+    l = length xs
+    w = ceiling (sqrt (fromIntegral l) :: Double) :: Int
