@@ -4,6 +4,7 @@
   , FlexibleInstances
   , TypeFamilies
   , TupleSections
+  , UndecidableInstances
 #-}
 module Main where
 
@@ -81,14 +82,15 @@ circleGrid = mconcat $ do
         cir = circle 1 # fc (if qDist <= 15*15 then yellow else purple)
     pure (cir # translate (r2 (xD+xD,yD+yD)))
 
-
-instance SVGFloat n => Mainable [(String,IO (QDiagram SVG V2 n Any))] where
-    type MainOpts [(String,IO (QDiagram SVG V2 n Any))]
+instance SVGFloat n => Mainable (Actioned n) where
+    type MainOpts (Actioned n)
         = (MainOpts (QDiagram SVG V2 n Any), DiagramMultiOpts)
-    mainRender = defaultMultiMainRender
+    mainRender x (Actioned y) = defaultMultiMainRender x y
+
+newtype Actioned n = Actioned [(String,IO (QDiagram SVG V2 n Any))]
 
 main :: IO ()
-main = mainWith
+main = mainWith . Actioned $
     [ ("ex1", pure ex1)
     , ("ex2", pure ex2)
     , ("ex3", pure ex3)
