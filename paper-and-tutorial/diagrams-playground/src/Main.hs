@@ -98,6 +98,7 @@ main = mainWith . Actioned $
     [ ("ex1", pure ex1)
     , ("ex2", pure ex2)
     , ("ex3", pure ex3)
+    , ("test", pure (circle 10 # fc red # fc green)) -- how can I apply a color twice??
     , ("vTriangle", pure $ vTriangle unitX (unitX # rotateBy (1/8)))
     , ( "parallelogram"
       , pure $ parallelogram (unitX # rotateBy (1/120)) (unitX # rotateBy (1/8)))
