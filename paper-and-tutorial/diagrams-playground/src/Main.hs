@@ -113,8 +113,8 @@ main = mainWith . Actioned $
                         <$> getRandomR (-20,20)
                         <*> getRandomR (-20,20))
            wm <- renderedGrahamScanSteps <$> gen
-           let dg = mkGrids (toList (execWriter wm))
-           -- mapM_ print gLog
+           let (baseDg, accumulated) = runWriter wm
+               dg = mkGrids . toList . fmap (\es -> mconcat es `atop` baseDg) $ accumulated
            pure dg)
     ]
 
@@ -134,39 +134,46 @@ TODO:
 
 -}
 
-renderedGrahamScanSteps :: S.Set (P2 Int) -> Writer (DL.DList (Diagram B)) ()
+renderedGrahamScanSteps
+    :: S.Set (P2 Int)
+    -> Writer (DL.DList [Diagram B] {- a list of edges, which would be merged later -}) (Diagram B)
 renderedGrahamScanSteps pSet = do
     let addDiagram = tell . DL.singleton
         (GAPick startPoint1:GAPick startPoint2:gsLogRemained) = gsLog
-    addDiagram allVertices
+    -- first diagram containing nothing but vertices
+    addDiagram []
     let lineBetween pt1 pt2 =
             let pt1' = toDbl pt1
                 pt2' = toDbl pt2
             in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
-        diagram1 = lineBetween startPoint1 startPoint2  # lc blue `atop` allVertices
-    addDiagram diagram1
-    finalDiagram <- fix (\self prevDiagram prevStack curLog -> case curLog of
-             [] -> pure prevDiagram
+        diagram1 = lineBetween startPoint1 startPoint2  # lc blue
+        initEdgeDiagramList = [diagram1]
+    addDiagram initEdgeDiagramList -- adding first edge
+    finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of
+             [] -> pure prevEdgeDiagramList
              (action:remainedLog) -> case action of
                  GAPick nextPt -> do
-                     let curDiagram = lineBetween (head prevStack) nextPt # lc blue
-                           `atop` prevDiagram
-                     addDiagram curDiagram
-                     self curDiagram (nextPt:prevStack) remainedLog
+                     let es' = (head prevEdgeDiagramList # lc green) : tail prevEdgeDiagramList
+                         curEdgeDiagram = lineBetween (head prevStack) nextPt # lc blue
+                         curEdgeDiagramList = curEdgeDiagram : es'
+                     addDiagram curEdgeDiagramList
+                     self curEdgeDiagramList (nextPt:prevStack) remainedLog
                  GADrop -> do
                      let (pt2:pt1:_) = prevStack
-                         curDiagram = lineBetween pt1 pt2 # lc red
-                           `atop` prevDiagram
-                     addDiagram curDiagram
-                     self curDiagram (tail prevStack) remainedLog
-        ) diagram1 [startPoint2,startPoint1] gsLogRemained
+                         es' = (head prevEdgeDiagramList # lc red) : tail prevEdgeDiagramList
+                     -- curDiagram = lineBetween pt1 pt2 # lc red
+                     --  `atop` prevDiagram
+                     addDiagram es'
+                     self (tail prevEdgeDiagramList) (tail prevStack) remainedLog
+        ) initEdgeDiagramList [startPoint2,startPoint1] gsLogRemained
 
     let (hdPt1, hdPt2) = head edges
-    addDiagram (lineBetween hdPt1 hdPt2 # lc blue `atop` finalDiagram)
-    pure ()
+    -- TODO: addDiagram (lineBetween hdPt1 hdPt2 # lc blue `atop` finalDiagram)
+    pure allVertices
   where
     toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
     vertexDg = circle 0.1 # fc black
+    -- a diagram with only all vertices
     allVertices :: Diagram B
     allVertices = foldMap (\pt -> vertexDg # translate (pt .-. origin)) (S.map toDbl pSet)
     convexPts :: [P2 Int]
