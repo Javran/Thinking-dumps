@@ -12,8 +12,8 @@ module Main where
 
 import Data.List.Split (chunksOf)
 import Diagrams.Prelude
-import Diagrams.Backend.SVG.CmdLine
-import Diagrams.Backend.SVG
+import Diagrams.Backend.Cairo.CmdLine
+import Diagrams.Backend.Cairo
 import Diagrams.Backend.CmdLine
 import Diagrams.TwoD.Vector (e)
 import Data.Foldable
@@ -86,15 +86,15 @@ circleGrid = mconcat $ do
         cir = circle 1 # fc (if qDist <= 15*15 then yellow else purple)
     pure (cir # translate (r2 (xD+xD,yD+yD)))
 
-instance SVGFloat n => Mainable (Actioned n) where
-    type MainOpts (Actioned n)
-        = (MainOpts (QDiagram SVG V2 n Any), DiagramMultiOpts)
+instance Mainable (Actioned Double) where
+    type MainOpts (Actioned Double)
+        = (MainOpts (QDiagram Cairo V2 Double Any), DiagramMultiOpts)
     mainRender x (Actioned y) = defaultMultiMainRender x y
 
-newtype Actioned n = Actioned [(String,IO (QDiagram SVG V2 n Any))]
+newtype Actioned n = Actioned [(String,IO (QDiagram Cairo V2 n Any))]
 
-main :: IO ()
-main = mainWith . Actioned $
+main1 :: IO ()
+main1 = mainWith . Actioned $
     [ ("ex1", pure ex1)
     , ("ex2", pure ex2)
     , ("ex3", pure ex3)
@@ -118,6 +118,9 @@ main = mainWith . Actioned $
                dg = mkGrids . toList . fmap (\es -> mconcat es `atop` baseDg) $ accumulated
            pure dg)
     ]
+
+main :: IO ()
+main = mainWith (circle 1 # fc red # fc green :: Diagram B)
 
 {-
 
@@ -147,7 +150,7 @@ renderedGrahamScanSteps pSet = do
             let pt1' = toDbl pt1
                 pt2' = toDbl pt2
             in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
-        diagram1 = lineBetween startPoint1 startPoint2  # lc blue
+        diagram1 = lineBetween startPoint1 startPoint2  # lc blue # lc yellow
         initEdgeDiagramList = [diagram1]
     addDiagram initEdgeDiagramList -- adding first edge
     finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of

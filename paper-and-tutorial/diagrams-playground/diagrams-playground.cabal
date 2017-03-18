@@ -21,6 +21,7 @@ executable dg-render
                      , diagrams
                      , diagrams-lib
                      , diagrams-svg
+                     , diagrams-cairo
                      , containers
                      , vector
                      , vector-algorithms
