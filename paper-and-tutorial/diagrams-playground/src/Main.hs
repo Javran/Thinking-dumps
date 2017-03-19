@@ -93,8 +93,8 @@ instance Mainable (Actioned Double) where
 
 newtype Actioned n = Actioned [(String,IO (QDiagram Cairo V2 n Any))]
 
-main1 :: IO ()
-main1 = mainWith . Actioned $
+main :: IO ()
+main = mainWith . Actioned $
     [ ("ex1", pure ex1)
     , ("ex2", pure ex2)
     , ("ex3", pure ex3)
@@ -115,12 +115,9 @@ main1 = mainWith . Actioned $
                         <*> getRandomR (-20,20))
            wm <- renderedGrahamScanSteps <$> gen
            let (baseDg, accumulated) = runWriter wm
-               dg = mkGrids . toList . fmap (\es -> mconcat es `atop` baseDg) $ accumulated
+               dg = mkGrids . toList . fmap (\es -> mconcat (fmap (\(x,c) -> x # lc c) es) `atop` baseDg) $ accumulated
            pure dg)
     ]
-
-main :: IO ()
-main = mainWith (circle 1 # fc red # fc green :: Diagram B)
 
 {-
 
@@ -140,7 +137,7 @@ TODO:
 
 renderedGrahamScanSteps
     :: S.Set (P2 Int)
-    -> Writer (DL.DList [Diagram B] {- a list of edges, which would be merged later -}) (Diagram B)
+    -> Writer (DL.DList [(Diagram B, Colour Double)] {- a list of edges, which would be merged later -}) (Diagram B)
 renderedGrahamScanSteps pSet = do
     let addDiagram = tell . DL.singleton
         (GAPick startPoint1:GAPick startPoint2:gsLogRemained) = gsLog
@@ -150,21 +147,23 @@ renderedGrahamScanSteps pSet = do
             let pt1' = toDbl pt1
                 pt2' = toDbl pt2
             in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
-        diagram1 = lineBetween startPoint1 startPoint2  # lc blue # lc yellow
-        initEdgeDiagramList = [diagram1]
+        diagram1 = lineBetween startPoint1 startPoint2
+        initEdgeDiagramList = [(diagram1, blue)]
     addDiagram initEdgeDiagramList -- adding first edge
     finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of
              [] -> pure prevEdgeDiagramList
              (action:remainedLog) -> case action of
                  GAPick nextPt -> do
-                     let es' = (head prevEdgeDiagramList # lc green) : tail prevEdgeDiagramList
+                     let (hd, _)= head prevEdgeDiagramList
+                         es' = (hd, green) : tail prevEdgeDiagramList
                          curEdgeDiagram = lineBetween (head prevStack) nextPt # lc blue
-                         curEdgeDiagramList = curEdgeDiagram : es'
+                         curEdgeDiagramList = (curEdgeDiagram, blue) : es'
                      addDiagram curEdgeDiagramList
                      self curEdgeDiagramList (nextPt:prevStack) remainedLog
                  GADrop -> do
                      let (pt2:pt1:_) = prevStack
-                         es' = (head prevEdgeDiagramList # lc red) : tail prevEdgeDiagramList
+                         (hd,_) = head prevEdgeDiagramList
+                         es' = (hd,red) : tail prevEdgeDiagramList
                      -- curDiagram = lineBetween pt1 pt2 # lc red
                      --  `atop` prevDiagram
                      addDiagram es'
