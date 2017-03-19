@@ -13,7 +13,6 @@ module Main where
 import Data.List.Split (chunksOf)
 import Diagrams.Prelude
 import Diagrams.Backend.Cairo.CmdLine
-import Diagrams.Backend.Cairo
 import Diagrams.Backend.CmdLine
 import Diagrams.TwoD.Vector (e)
 import Data.Foldable
@@ -113,15 +112,41 @@ main = mainWith . Actioned $
                        ((,)
                         <$> getRandomR (-20,20)
                         <*> getRandomR (-20,20))
-           wm <- renderedGrahamScanSteps <$> gen
-           let (baseDg, accumulated) = runWriter wm
-               dg = mkGrids . toList . fmap (\es -> mconcat (fmap (\(x,c) -> x # lc c) es) `atop` baseDg) $ accumulated
-           pure dg)
+           dgs <- renderGrahamScanSteps <$> gen
+           pure (mkGrids dgs))
     ]
 
+renderGrahamScanSteps
+    :: S.Set (P2 Int)
+    -> [Diagram B]
+renderGrahamScanSteps pSet =
+    -- from DList
+      toList
+    . fmap (\es -> foldMap applyColor es `atop` baseDg)
+    $ accumulated
+  where
+    applyColor (x,c) = x # lc c
+    (baseDg, accumulated) = runWriter (renderedGrahamScanSteps pSet)
+
+{-
+
+performs most of the job for rendering steps of Graham scan.
+
+- taking a set of points just like grahamScanW
+- results in a Writer that your can run:
+
+    - computation result will be just a diagram with all vertices rendered
+    - every element (i.e. values of type "[(Diagram B, Colour Double)]") of the carried monoid
+      is a list of rendered (colorless) edges paired with their colors.
+      for each edges, because in diagrams there's no simple way (for now)
+      to change a color once it's set,
+      we choose to instead pair a color with the render diagram of the edge.
+
+(TODO: maybe let's just wrap it again so we don't have to explain internals)
+-}
 renderedGrahamScanSteps
     :: S.Set (P2 Int)
-    -> Writer (DL.DList [(Diagram B, Colour Double)] {- a list of edges, which would be merged later -}) (Diagram B)
+    -> Writer (DL.DList [(Diagram B, Colour Double)]) (Diagram B)
 renderedGrahamScanSteps pSet = do
     let addDiagram = tell . DL.singleton
         (GAPick startPoint1:GAPick startPoint2:gsLogRemained) = gsLog
@@ -135,16 +160,17 @@ renderedGrahamScanSteps pSet = do
         initEdgeDiagramList = [(diagram1, green)]
     addDiagram initEdgeDiagramList -- adding first edge
     finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of
-             [] -> pure prevEdgeDiagramList
-             (action:remainedLog) -> case action of
-                 GAPick nextPt -> do
-                     let curEdgeDiagram = lineBetween (head prevStack) nextPt
-                         curEdgeDiagramList = (curEdgeDiagram, green) : markPrevDone prevEdgeDiagramList
-                     addDiagram curEdgeDiagramList
-                     self curEdgeDiagramList (nextPt:prevStack) remainedLog
-                 GADrop -> do
-                     addDiagram (changePrevColor red prevEdgeDiagramList)
-                     self (tail prevEdgeDiagramList) (tail prevStack) remainedLog
+        [] -> pure prevEdgeDiagramList
+        (action:remainedLog) -> case action of
+            GAPick nextPt -> do
+                let curEdgeDiagram = lineBetween (head prevStack) nextPt
+                    curEdgeDiagramList =
+                        (curEdgeDiagram, green) : markPrevDone prevEdgeDiagramList
+                addDiagram curEdgeDiagramList
+                self curEdgeDiagramList (nextPt:prevStack) remainedLog
+            GADrop -> do
+                addDiagram (changePrevColor red prevEdgeDiagramList)
+                self (tail prevEdgeDiagramList) (tail prevStack) remainedLog
         ) initEdgeDiagramList [startPoint2,startPoint1] gsLogRemained
     let (hdPt1, hdPt2) = head edges
         finalDiagram1 = (lineBetween hdPt1 hdPt2, green) : markPrevDone finalEdgeDiagramList
@@ -166,12 +192,38 @@ renderedGrahamScanSteps pSet = do
         (last convexPts, head convexPts)
         : zip convexPts (tail convexPts)
 
+{-
+
+for keeping track of how Graham scan picks or removes vertices
+as its iteration goes.
+
+there are only two kinds of actions that we care:
+
+- GAPick is picking a new vertex into the set
+- GADrop is removing the last one picked
+
+-}
+
 data GrahamAction a
   = GAPick a
   | GADrop
     deriving (Show)
 
-grahamScanW :: S.Set (P2 Int) -> Writer (DL.DList (GrahamAction (P2 Int))) [P2 Int]
+{-
+
+impl of Graham scan,
+- takes a set of unique points and return a list of them
+  representing the convex.
+- the result is a list, vertices are picked in that order
+  to form the convex
+- what Writer monad has recorded is the history of adding and removing
+  vertices as Graham scan goes, with this we can recover the exact step
+  and visualize it.
+
+-}
+grahamScanW
+    :: S.Set (P2 Int)
+    -> Writer (DL.DList (GrahamAction (P2 Int))) [P2 Int]
 grahamScanW pSet
     | S.size pSet < 3 = error "insufficient points"
     | otherwise = reverse <$> do
