@@ -148,32 +148,30 @@ renderedGrahamScanSteps pSet = do
                 pt2' = toDbl pt2
             in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
         diagram1 = lineBetween startPoint1 startPoint2
-        initEdgeDiagramList = [(diagram1, blue)]
+        initEdgeDiagramList = [(diagram1, green)]
     addDiagram initEdgeDiagramList -- adding first edge
     finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of
              [] -> pure prevEdgeDiagramList
              (action:remainedLog) -> case action of
                  GAPick nextPt -> do
-                     let (hd, _)= head prevEdgeDiagramList
-                         es' = (hd, green) : tail prevEdgeDiagramList
-                         curEdgeDiagram = lineBetween (head prevStack) nextPt # lc blue
-                         curEdgeDiagramList = (curEdgeDiagram, blue) : es'
+                     let curEdgeDiagram = lineBetween (head prevStack) nextPt
+                         curEdgeDiagramList = (curEdgeDiagram, green) : markPrevDone prevEdgeDiagramList
                      addDiagram curEdgeDiagramList
                      self curEdgeDiagramList (nextPt:prevStack) remainedLog
                  GADrop -> do
-                     let (pt2:pt1:_) = prevStack
-                         (hd,_) = head prevEdgeDiagramList
-                         es' = (hd,red) : tail prevEdgeDiagramList
-                     -- curDiagram = lineBetween pt1 pt2 # lc red
-                     --  `atop` prevDiagram
+                     let es' = changePrevColor red prevEdgeDiagramList
                      addDiagram es'
                      self (tail prevEdgeDiagramList) (tail prevStack) remainedLog
         ) initEdgeDiagramList [startPoint2,startPoint1] gsLogRemained
-
     let (hdPt1, hdPt2) = head edges
-    -- TODO: addDiagram (lineBetween hdPt1 hdPt2 # lc blue `atop` finalDiagram)
+        finalDiagram1 = (lineBetween hdPt1 hdPt2, green) : markPrevDone finalEdgeDiagramList
+        finalDiagram2 = markPrevDone finalDiagram1
+    addDiagram finalDiagram1
+    addDiagram finalDiagram2
     pure allVertices
   where
+    changePrevColor c ((hd,_) : xs) = (hd,c) : xs
+    markPrevDone = changePrevColor blue
     toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
     vertexDg = circle 0.1 # fc black
     -- a diagram with only all vertices
