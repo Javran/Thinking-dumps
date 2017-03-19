@@ -119,22 +119,6 @@ main = mainWith . Actioned $
            pure dg)
     ]
 
-{-
-
-- impl Graham scan
-- generate random points for testing
-- render diagram
-- extend to record steps
-- render diagram (with steps)
-
-TODO:
-
-- collect edges without actually merging Diagrams together
-  by doing so we can have a chance of keeping at most one red line
-  (current removing one) in the diagram
-
--}
-
 renderedGrahamScanSteps
     :: S.Set (P2 Int)
     -> Writer (DL.DList [(Diagram B, Colour Double)] {- a list of edges, which would be merged later -}) (Diagram B)
@@ -159,18 +143,17 @@ renderedGrahamScanSteps pSet = do
                      addDiagram curEdgeDiagramList
                      self curEdgeDiagramList (nextPt:prevStack) remainedLog
                  GADrop -> do
-                     let es' = changePrevColor red prevEdgeDiagramList
-                     addDiagram es'
+                     addDiagram (changePrevColor red prevEdgeDiagramList)
                      self (tail prevEdgeDiagramList) (tail prevStack) remainedLog
         ) initEdgeDiagramList [startPoint2,startPoint1] gsLogRemained
     let (hdPt1, hdPt2) = head edges
         finalDiagram1 = (lineBetween hdPt1 hdPt2, green) : markPrevDone finalEdgeDiagramList
-        finalDiagram2 = markPrevDone finalDiagram1
     addDiagram finalDiagram1
-    addDiagram finalDiagram2
+    addDiagram (markPrevDone finalDiagram1)
     pure allVertices
   where
     changePrevColor c ((hd,_) : xs) = (hd,c) : xs
+    changePrevColor _ [] = []
     markPrevDone = changePrevColor blue
     toDbl p = let (x,y) = unp2 p in p2 (fromIntegral x, fromIntegral y :: Double)
     vertexDg = circle 0.1 # fc black
