@@ -130,35 +130,45 @@ renderGrahamScanSteps pSet =
 
 {-
 
-performs most of the job for rendering steps of Graham scan.
+For internal use only. please call "renderGrahamScanSteps"
 
-- taking a set of points just like grahamScanW
-- results in a Writer that your can run:
-
-    - computation result will be just a diagram with all vertices rendered
-    - every element (i.e. values of type "[(Diagram B, Colour Double)]") of the carried monoid
-      is a list of rendered (colorless) edges paired with their colors.
-      for each edges, because in diagrams there's no simple way (for now)
-      to change a color once it's set,
-      we choose to instead pair a color with the render diagram of the edge.
-
-(TODO: maybe let's just wrap it again so we don't have to explain internals)
 -}
 renderedGrahamScanSteps
     :: S.Set (P2 Int)
     -> Writer (DL.DList [(Diagram B, Colour Double)]) (Diagram B)
 renderedGrahamScanSteps pSet = do
+    {-
+
+    every "addDiagram" writes down a list of edges that have just enough info
+    to construct the edge part of the diagram.
+    for this list of edges, each element is a (color-less) diagram paired with a color
+    because how "diagrams" handles attributes, "<some diagram> # lc <color1> # lc <color2>"
+    will always result in "color1" being used, which is not what we want, so
+    we workaround this by keeping track of the color info outside of diagram
+    and apply it only when we actually start rendering.
+
+    -}
+
+    {-
+
+    for color representation, a newly added one would have color green,
+    and when we are removing an edge, the edge in question is colored red,
+    otherwise blue is used for those edges currently in set (not newly added)
+
+    -}
     let addDiagram = tell . DL.singleton
         (GAPick startPoint1:GAPick startPoint2:gsLogRemained) = gsLog
     -- first diagram containing nothing but vertices
     addDiagram []
-    let lineBetween pt1 pt2 =
+    let -- creates a line between pt1 and pt2
+        lineBetween pt1 pt2 =
             let pt1' = toDbl pt1
                 pt2' = toDbl pt2
             in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
         diagram1 = lineBetween startPoint1 startPoint2
         initEdgeDiagramList = [(diagram1, green)]
     addDiagram initEdgeDiagramList -- adding first edge
+    -- scan the log and recover steps that Graham scan has actually done
     finalEdgeDiagramList <- fix (\self prevEdgeDiagramList prevStack curLog -> case curLog of
         [] -> pure prevEdgeDiagramList
         (action:remainedLog) -> case action of
