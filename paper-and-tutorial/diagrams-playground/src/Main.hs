@@ -161,10 +161,7 @@ renderedGrahamScanSteps pSet = do
     -- first diagram containing nothing but vertices
     addDiagram []
     let -- creates a line between pt1 and pt2
-        lineBetween pt1 pt2 =
-            let pt1' = toDbl pt1
-                pt2' = toDbl pt2
-            in fromOffsets [pt2' .-. pt1'] # translate (pt1' .-. origin)
+        lineBetween pt1 pt2 = toDbl pt1 ~~ toDbl pt2
         diagram1 = lineBetween startPoint1 startPoint2
         initEdgeDiagramList = [(diagram1, green)]
     addDiagram initEdgeDiagramList -- adding first edge
