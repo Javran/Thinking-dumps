@@ -114,6 +114,7 @@ main = mainWith . Actioned $
                         <*> getRandomR (-20,20))
            dgs <- renderGrahamScanSteps <$> gen
            pure (mkGrids dgs))
+    , ("tFromOffsets", pure trailExFromOffsets)
     ]
 
 renderGrahamScanSteps
@@ -277,3 +278,6 @@ mkGrids xs = vsep 10 (map (hsep 10) ys)
     ys = chunksOf w xs
     l = length xs
     w = ceiling (sqrt (fromIntegral l) :: Double) :: Int
+
+trailExFromOffsets :: Diagram B
+trailExFromOffsets = fromOffsets [unitX, scale 2 unitY, scale 2 unitX]
