@@ -7,31 +7,12 @@
 #-}
 module Main where
 
-import Diagrams.Prelude
-
 import Types
 import qualified VectorsAndPoints as VAP
+import qualified TrailsAndPaths as TAP
 
 main :: IO ()
-main = mainWith $
-    VAP.vapBundle <>
-    Actioned
-    [ ("trailEx1", pure trailEx1)
-    , ("trailEx2", pure trailEx2)
+main = mainWith $ mconcat
+    [ VAP.vapBundle
+    , TAP.tapBundle
     ]
-
--- this can actually work without "strokeLine"
-trailEx1 :: Diagram B
-trailEx1 = strokeLine (fromOffsets [unitX, scale 2 unitY, scale 2 unitX])
-
-trailEx2 :: Diagram B
-trailEx2 = trailEx1 # rotate (negated ang)
-  where
-    -- not sure why, but I have to put type annotations for this to work..
-    ang = angleBetweenDirs dir dirX
-    trail :: Trail' Line V2 Double
-    trail = fromOffsets [unitX, scale 2 unitY, scale 2 unitX]
-    dir :: Direction V2 Double
-    dir = direction (lineOffset trail)
-    dirX :: Direction V2 Double
-    dirX = direction unitX

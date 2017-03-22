@@ -19,6 +19,7 @@ executable dg-render
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   other-modules:       Types
                      , VectorsAndPoints
+                     , TrailsAndPaths
   build-depends:       base
                      , diagrams
                      , diagrams-lib
