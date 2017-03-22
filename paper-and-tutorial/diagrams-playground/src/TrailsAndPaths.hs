@@ -8,20 +8,22 @@
 module TrailsAndPaths where
 
 import Diagrams.Prelude
+import Control.Arrow
 import Types
 
 tapBundle :: Actioned Double
 tapBundle = nest "tap" $ Actioned
-    [ ("trailEx1", pure trailEx1)
-    , ("trailEx2", pure trailEx2)
+    [ ("ex1", pure ex1)
+    , ("ex2", pure ex2)
+    , ("ex3", pure ex3)
     ]
 
 -- this can actually work without "strokeLine"
-trailEx1 :: Diagram B
-trailEx1 = strokeLine (fromOffsets [unitX, scale 2 unitY, scale 2 unitX])
+ex1 :: Diagram B
+ex1 = strokeLine (fromOffsets [unitX, scale 2 unitY, scale 2 unitX])
 
-trailEx2 :: Diagram B
-trailEx2 = trailEx1 # rotate (negated ang)
+ex2 :: Diagram B
+ex2 = ex1 # rotate (negated ang)
   where
     -- not sure why, but I have to put type annotations for this to work..
     ang = angleBetweenDirs dir dirX
@@ -31,3 +33,8 @@ trailEx2 = trailEx1 # rotate (negated ang)
     dir = direction (lineOffset trail)
     dirX :: Direction V2 Double
     dirX = direction unitX
+
+ex3 :: Diagram B
+ex3 = fromVertices (origin : take 9 (map p2 coords'))
+  where
+    coords' = (0,1) : (1,0) : (map . first) succ coords'
