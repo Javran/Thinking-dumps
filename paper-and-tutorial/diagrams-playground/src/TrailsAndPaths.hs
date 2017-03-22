@@ -43,4 +43,4 @@ ex3 = fromVertices (origin : take 9 (map p2 coords'))
 ex4 :: Diagram B
 ex4 = fromOffsets (take 5 xs)
   where
-    xs = unitX : map (\x -> x # rotateBy (1/5)) xs
+    xs = unitX : map (rotateBy (1/5)) xs
