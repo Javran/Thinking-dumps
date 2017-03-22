@@ -16,6 +16,7 @@ tapBundle = nest "tap" $ Actioned
     [ ("ex1", pure ex1)
     , ("ex2", pure ex2)
     , ("ex3", pure ex3)
+    , ("ex4", pure ex4)
     ]
 
 -- this can actually work without "strokeLine"
@@ -38,3 +39,8 @@ ex3 :: Diagram B
 ex3 = fromVertices (origin : take 9 (map p2 coords'))
   where
     coords' = (0,1) : (1,0) : (map . first) succ coords'
+
+ex4 :: Diagram B
+ex4 = fromOffsets (take 5 xs)
+  where
+    xs = unitX : map (\x -> x # rotateBy (1/5)) xs
