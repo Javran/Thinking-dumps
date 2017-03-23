@@ -24,6 +24,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex1_5", pure ex1_5)
     , ("ex2_1", pure ex2_1)
     , ("ex2_2", pure ex2_2)
+    , ("ex2_3", pure ex2_3)
     ]
 
 -- this can actually work without "strokeLine"
@@ -74,3 +75,18 @@ ex2_2 :: Diagram B
 ex2_2 = strokeLine $ mconcat $ iterateN 5 (rotateBy (1/5)) dg
   where
     dg = onLineSegments init (pentagon 1)
+
+ex2_3 :: Diagram B
+ex2_3 = strokeLine $ dg3 <> reverseLine (reflectX dg3)
+  where
+    dg1 = fromOffsets [unitX, unitY # rotateBy (1/12), unitX # rotateBy (1/6) ^* 2]
+    dg2 = dg1 <> reverseLine (reflectX dg1)
+    dg3 = dg2
+          <> fromOffsets [unitX]
+          <> rotateBy (-1/3) (reverseLine dg2)
+          <> fromOffsets [rotateBy (1/12) unitY]
+          <> rotateBy (1/3) dg2
+          <> fromOffsets [unitX # rotateBy (1/6)]
+          <> rotateBy (-1/3) (reverseLine dg2)
+          <> fromOffsets [unitX # rotateBy (1/6)]
+          <> dg1
