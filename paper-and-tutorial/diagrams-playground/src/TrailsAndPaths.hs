@@ -23,6 +23,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex1_4alt", pure ex1_4Alt)
     , ("ex1_5", pure ex1_5)
     , ("ex2_1", pure ex2_1)
+    , ("ex2_2", pure ex2_2)
     ]
 
 -- this can actually work without "strokeLine"
@@ -66,5 +67,10 @@ ex1_5 = strokeLine $ onLineSegments tail (pentagon 1)
 
 ex2_1 :: Diagram B
 ex2_1 = strokeLine $ dg `mappend` dg
+  where
+    dg = onLineSegments init (pentagon 1)
+
+ex2_2 :: Diagram B
+ex2_2 = strokeLine $ mconcat $ iterateN 5 (rotateBy (1/5)) dg
   where
     dg = onLineSegments init (pentagon 1)
