@@ -26,6 +26,8 @@ tapBundle = nest "tap" $ Actioned
     , ("ex2_2", pure ex2_2)
     , ("ex2_3", pure ex2_3)
     , ("ex2_3alt", pure ex2_3Alt)
+    , ("ex3_1", pure ex3_1)
+    , ("ex3_2", pure ex3_2)
     ]
 
 -- this can actually work without "strokeLine"
@@ -92,6 +94,7 @@ ex2_3 = strokeLine $ dg3 <> reverseLine (reflectX dg3)
           <> fromOffsets [unitX # rotateBy (1/6)]
           <> dg1
 
+-- TODO: this is not quite working...
 ex2_3Alt :: Diagram B
 ex2_3Alt = strokeLine (mkLines (fromOffsets [unitX]))
   where
@@ -101,3 +104,10 @@ ex2_3Alt = strokeLine (mkLines (fromOffsets [unitX]))
         dg' = reflectY basicDg
         dg1' = rotateBy (-1/6) dg'
         f x = x <> reverseLine (reflectX x)
+
+ex3_1 :: Diagram B
+ex3_1 = strokeLoop (pentagon 1) # fc blue
+
+-- should be just lines with no color filled
+ex3_2 :: Diagram B
+ex3_2 = strokeLine (pentagon 1) # fc blue
