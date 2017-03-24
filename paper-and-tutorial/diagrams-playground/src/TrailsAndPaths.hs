@@ -23,11 +23,12 @@ tapBundle = nest "tap" $ Actioned
     , ("ex1_4alt", pure ex1_4Alt)
     , ("ex1_5", pure ex1_5)
     , ("ex2_1", pure ex2_1)
-    , ("ex2_2", pure ex2_2)
+    , ("ex2_2", pure (strokeLine ex2_2))
     , ("ex2_3", pure ex2_3)
     , ("ex2_3alt", pure ex2_3Alt)
     , ("ex3_1", pure ex3_1)
     , ("ex3_2", pure ex3_2)
+    , ("ex3_3", pure ex3_3)
     ]
 
 -- this can actually work without "strokeLine"
@@ -74,8 +75,8 @@ ex2_1 = strokeLine $ dg `mappend` dg
   where
     dg = onLineSegments init (pentagon 1)
 
-ex2_2 :: Diagram B
-ex2_2 = strokeLine $ mconcat $ iterateN 5 (rotateBy (1/5)) dg
+-- ex2_2 :: Diagram B
+ex2_2 = mconcat $ iterateN 5 (rotateBy (1/5)) dg
   where
     dg = onLineSegments init (pentagon 1)
 
@@ -111,3 +112,6 @@ ex3_1 = strokeLoop (pentagon 1) # fc blue
 -- should be just lines with no color filled
 ex3_2 :: Diagram B
 ex3_2 = strokeLine (pentagon 1) # fc blue
+
+ex3_3 :: Diagram B
+ex3_3 = strokeLoop (glueLine ex2_2) # fc green
