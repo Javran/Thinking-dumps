@@ -25,6 +25,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex2_1", pure ex2_1)
     , ("ex2_2", pure ex2_2)
     , ("ex2_3", pure ex2_3)
+    , ("ex2_3alt", pure ex2_3Alt)
     ]
 
 -- this can actually work without "strokeLine"
@@ -90,3 +91,13 @@ ex2_3 = strokeLine $ dg3 <> reverseLine (reflectX dg3)
           <> rotateBy (-1/3) (reverseLine dg2)
           <> fromOffsets [unitX # rotateBy (1/6)]
           <> dg1
+
+ex2_3Alt :: Diagram B
+ex2_3Alt = strokeLine (mkLines (fromOffsets [unitX]))
+  where
+    dg1 = fromOffsets [unitX, unitY # rotateBy (1/12), unitX # rotateBy (1/6) ^* 2] # rotateBy (-1/6) # reflectY
+    mkLines basicDg = f $ basicDg <> reverseLine dg1' <> rotateBy (1/6) dg'
+      where
+        dg' = reflectY basicDg
+        dg1' = rotateBy (-1/6) dg'
+        f x = x <> reverseLine (reflectX x)
