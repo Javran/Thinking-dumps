@@ -28,7 +28,8 @@ tapBundle = nest "tap" $ Actioned
     , ("ex2_3alt", pure ex2_3Alt)
     , ("ex3_1", pure ex3_1)
     , ("ex3_2", pure ex3_2)
-    , ("ex3_3", pure ex3_3)
+    , ("ex4_1", pure ex4_1)
+    , ("ex4_2", pure ex4_2)
     ]
 
 -- this can actually work without "strokeLine"
@@ -113,5 +114,10 @@ ex3_1 = strokeLoop (pentagon 1) # fc blue
 ex3_2 :: Diagram B
 ex3_2 = strokeLine (pentagon 1) # fc blue
 
-ex3_3 :: Diagram B
-ex3_3 = strokeLoop (glueLine ex2_2) # fc green
+ex4_1 :: Diagram B
+ex4_1 = strokeLoop (glueLine ex2_2) # fc green
+
+ex4_2 :: Diagram B
+ex4_2 = strokeLoop (glueLine l) # fc red
+  where
+    l = fromOffsets (concat (replicate 5 [unitY,unitX]) ++ [unit_Y ^* 5, unit_X ^* 5])
