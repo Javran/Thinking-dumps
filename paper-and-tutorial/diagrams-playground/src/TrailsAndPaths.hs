@@ -125,9 +125,9 @@ ex4_2 = strokeLoop (glueLine l) # fc red
     l = fromOffsets (concat (replicate 5 [unitY,unitX]) ++ [unit_Y ^* 5, unit_X ^* 5])
 
 ex4_3 :: Diagram B
-ex4_3 = strokeLine (mconcat (take 5 (iterate (rotateBy (-1/5)) dg)))
+ex4_3 = strokeLoop (glueLine (mconcat (take 5 (iterate (rotateBy (-1/5)) dg)))) # fc blue
   where
     dg = fromOffsets [unitY]
         <> arc (dir unit_X) ((-1/2) @@ turn)
         <> fromOffsets [unit_Y]
-        <> arc (dir unit_X) ((1/3) @@ turn)
+        <> arc (dir unit_X) (0.31 @@ turn)
