@@ -127,7 +127,8 @@ ex4_2 = strokeLoop (glueLine l) # fc red
 ex4_3 :: Diagram B
 ex4_3 = strokeLoop (glueLine (mconcat (take 5 (iterate (rotateBy (-1/5)) dg)))) # fc blue
   where
+    -- some work on paper can mathematically show that it's 0.3 (turn)
     dg = fromOffsets [unitY]
         <> arc (dir unit_X) ((-1/2) @@ turn)
         <> fromOffsets [unit_Y]
-        <> arc (dir unit_X) (0.31 @@ turn)
+        <> arc (dir unit_X) (0.3 @@ turn)
