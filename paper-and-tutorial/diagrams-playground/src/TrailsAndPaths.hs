@@ -10,6 +10,7 @@ module TrailsAndPaths where
 -- http://projects.haskell.org/diagrams/doc/paths.html
 
 import Diagrams.Prelude
+import Diagrams.Direction
 import Control.Arrow
 import Types
 
@@ -30,6 +31,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex3_2", pure ex3_2)
     , ("ex4_1", pure ex4_1)
     , ("ex4_2", pure ex4_2)
+    , ("ex4_3", pure ex4_3)
     ]
 
 -- this can actually work without "strokeLine"
@@ -121,3 +123,11 @@ ex4_2 :: Diagram B
 ex4_2 = strokeLoop (glueLine l) # fc red
   where
     l = fromOffsets (concat (replicate 5 [unitY,unitX]) ++ [unit_Y ^* 5, unit_X ^* 5])
+
+ex4_3 :: Diagram B
+ex4_3 = strokeLine (mconcat (take 5 (iterate (rotateBy (-1/5)) dg)))
+  where
+    dg = fromOffsets [unitY]
+        <> arc (dir unit_X) ((-1/2) @@ turn)
+        <> fromOffsets [unit_Y]
+        <> arc (dir unit_X) ((1/3) @@ turn)
