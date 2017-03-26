@@ -33,6 +33,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex4_2", pure ex4_2)
     , ("ex4_3", pure ex4_3)
     , ("ex5_1", pure ex5_1)
+    , ("ex5_2", pure ex5_2)
     ]
 
 -- this can actually work without "strokeLine"
@@ -135,4 +136,10 @@ ex4_3 = strokeLoop (glueLine (mconcat (take 5 (iterate (rotateBy (-1/5)) dg)))) 
         <> arc (dir unit_X) (0.3 @@ turn)
 
 ex5_1 :: Diagram B
-ex5_1 = strokeLoop $ closeLine (fromOffsets [r2 (1,3),unitX ^* 3, r2(1,-3)])
+ex5_1 = strokeLoop (closeLine (fromOffsets [r2 (1,3),unitX ^* 3, r2(1,-3)]))
+
+ex5_2 :: Diagram B
+ex5_2 = strokeLoop (closeLine $ l1 <> stimes (10 :: Int) (l1 <> l2) <> l2) # fc yellow
+  where
+    l1 = fromOffsets [r2 (1,5)]
+    l2 = fromOffsets [r2 (1,-5)]
