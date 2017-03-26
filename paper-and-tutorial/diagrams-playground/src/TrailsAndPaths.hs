@@ -34,6 +34,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex4_3", pure ex4_3)
     , ("ex5_1", pure ex5_1)
     , ("ex5_2", pure ex5_2)
+    , ("ex6_1", pure ex6_1)
     ]
 
 -- this can actually work without "strokeLine"
@@ -143,3 +144,9 @@ ex5_2 = strokeLoop (closeLine $ l1 <> stimes (10 :: Int) (l1 <> l2) <> l2) # fc 
   where
     l1 = fromOffsets [r2 (1,5)]
     l2 = fromOffsets [r2 (1,-5)]
+
+-- TODO: not working yet
+ex6_1 :: Diagram B
+ex6_1 = mconcat (map (rotateBy (1/24) . strokeLine) $ explodeTrail c)
+  where
+    c = heptagon 1 `at` origin
