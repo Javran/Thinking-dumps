@@ -146,14 +146,10 @@ ex5_2 = strokeLoop (closeLine $ l1 <> stimes (10 :: Int) (l1 <> l2) <> l2) # fc 
     l1 = fromOffsets [r2 (1,5)]
     l2 = fromOffsets [r2 (1,-5)]
 
--- TODO: not working yet
--- TODO: it turns out that "rotate" still rotates the diagram
--- around origin, and in our case we'd better let each line (diagram) have their own
--- point to rotate about
 ex6_1 :: Diagram B
-ex6_1 = mconcat (map (rotateLine . strokeLocLine) ts)
+ex6_1 = mconcat (map strokeLocTrail ts')
   where
-    rotateLine l = rotateAround p (1/24 @@ turn) l
-      where
-        p = head (trailPoints l)
+    ts' :: [Located (Trail V2 Double)]
+    ts' = map (mapLoc (rotateBy (1/24))) ts
+    ts :: [Located (Trail V2 Double)]
     ts = explodeTrail (heptagon 1)
