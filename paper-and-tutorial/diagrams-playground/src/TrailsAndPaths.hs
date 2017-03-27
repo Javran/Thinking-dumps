@@ -11,6 +11,7 @@ module TrailsAndPaths where
 
 import Diagrams.Prelude
 import Diagrams.Direction
+import Diagrams.Trail
 import Control.Arrow
 import Types
 
@@ -146,7 +147,13 @@ ex5_2 = strokeLoop (closeLine $ l1 <> stimes (10 :: Int) (l1 <> l2) <> l2) # fc 
     l2 = fromOffsets [r2 (1,-5)]
 
 -- TODO: not working yet
+-- TODO: it turns out that "rotate" still rotates the diagram
+-- around origin, and in our case we'd better let each line (diagram) have their own
+-- point to rotate about
 ex6_1 :: Diagram B
-ex6_1 = mconcat (map (rotateBy (1/24) . strokeLine) $ explodeTrail c)
+ex6_1 = mconcat (map (rotateLine . strokeLocLine) ts)
   where
-    c = heptagon 1 `at` origin
+    rotateLine l = rotateAround p (1/24 @@ turn) l
+      where
+        p = head (trailPoints l)
+    ts = explodeTrail (heptagon 1)
