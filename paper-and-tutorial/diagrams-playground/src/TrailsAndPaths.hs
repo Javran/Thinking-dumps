@@ -149,6 +149,10 @@ ex5_2 = strokeLoop (closeLine $ l1 <> stimes (10 :: Int) (l1 <> l2) <> l2) # fc 
 ex6_1 :: Diagram B
 ex6_1 = mconcat (map strokeLocTrail ts')
   where
+    -- without "mapLoc" we will rotate the line about an universal origin,
+    -- which leads to the effect of rotating whole picture.
+    -- not very sure about how "mapLoc" works, but I think this ensures
+    -- that a located trail is rotated about a point relative to itself.
     ts' :: [Located (Trail V2 Double)]
     ts' = map (mapLoc (rotateBy (1/24))) ts
     ts :: [Located (Trail V2 Double)]
