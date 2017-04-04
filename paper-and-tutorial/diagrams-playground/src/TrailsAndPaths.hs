@@ -36,6 +36,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex5_1", pure ex5_1)
     , ("ex5_2", pure ex5_2)
     , ("ex6_1", pure ex6_1)
+    , ("ex6_2", pure ex6_2)
     ]
 
 -- this can actually work without "strokeLine"
@@ -157,3 +158,19 @@ ex6_1 = mconcat (map strokeLocTrail ts')
     ts' = map (mapLoc (rotateBy (1/24))) ts
     ts :: [Located (Trail V2 Double)]
     ts = explodeTrail (heptagon 1)
+
+ex6_2 :: Diagram B
+ex6_2 = notWorking
+  where
+    notWorking :: Diagram B
+    notWorking = mconcat sqs
+    -- debug by changing the phase of this
+    mod = lc red : lc green : lc blue : mod
+    -- TODO: not working.
+    -- it seems that "explodeTrail" also makes the segment located,
+    -- so replicating a segment 4 times results in 4 segment all sitting on the same place.
+    -- for me I personally won't bother solving this problem because I can alternatively
+    -- just draw those lines myself and get rid of "explodeTrail", which is the place that every
+    -- trouble comes in.
+    sqs :: [Diagram B]
+    sqs = zipWith ($) mod (concatMap (replicate 4) $ explodeTrail (square 1))
