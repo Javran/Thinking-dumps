@@ -37,6 +37,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex5_2", pure ex5_2)
     , ("ex6_1", pure ex6_1)
     , ("ex6_2", pure ex6_2)
+    , ("ex6_3", pure ex6_3)
     ]
 
 -- this can actually work without "strokeLine"
@@ -171,3 +172,16 @@ ex6_2 = mconcat (zipWith (\v f -> strokeLocTrail v # f # lw 20) sqs' m)
     -- we use type to explicitly exclude location info
     sqs :: Trail V2 Double
     sqs = mconcat (concatMap (replicate 4) $ explodeTrail (square 1))
+
+ex6_3 :: Diagram B
+ex6_3 = strokePath d1
+  where
+    -- from the looks of it:
+    -- + we should obtain points through `regPoly`
+    -- + connect them using `star`,
+    -- + `pathTrails` will take things apart
+    -- + then each part can be colored individually
+    points :: [Point V2 Double]
+    points = regPoly (5 * 6) 1
+
+    d1 = star (StarSkip 5) points
