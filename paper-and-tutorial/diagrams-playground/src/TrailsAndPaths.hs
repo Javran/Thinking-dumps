@@ -174,7 +174,7 @@ ex6_2 = mconcat (zipWith (\v f -> strokeLocTrail v # f # lw 20) sqs' m)
     sqs = mconcat (concatMap (replicate 4) $ explodeTrail (square 1))
 
 ex6_3 :: Diagram B
-ex6_3 = strokePath d1
+ex6_3 = mconcat paths # lw 20
   where
     -- from the looks of it:
     -- + we should obtain points through `regPoly`
@@ -185,3 +185,7 @@ ex6_3 = strokePath d1
     points = regPoly (5 * 6) 1
 
     d1 = star (StarSkip 5) points
+
+    colors = red : orange : yellow : blue : green : colors
+    paths :: [Diagram B]
+    paths = zipWith (\d c -> strokeLocTrail d # lc c) (pathTrails d1) colors
