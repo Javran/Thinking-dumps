@@ -192,7 +192,9 @@ ex6_3 = mconcat paths # lw 20
     paths = zipWith (\d c -> strokeLocTrail d # lc c) (pathTrails d1) colors
 
 ex6_4 :: Diagram B
-ex6_4 = atPoints pts (repeat (circle 1))
+ex6_4 = strokePath path # fillRule EvenOdd # fc blue
   where
+    path :: Path V2 Double
+    path = atPoints pts (circle 3 : repeat (circle 1))
     pts :: [Point V2 Double]
-    pts = origin : regPoly 6 1
+    pts = origin : origin : regPoly 6 2
