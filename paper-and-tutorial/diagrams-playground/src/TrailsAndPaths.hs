@@ -38,6 +38,7 @@ tapBundle = nest "tap" $ Actioned
     , ("ex6_1", pure ex6_1)
     , ("ex6_2", pure ex6_2)
     , ("ex6_3", pure ex6_3)
+    , ("ex6_4", pure ex6_4)
     ]
 
 -- this can actually work without "strokeLine"
@@ -189,3 +190,9 @@ ex6_3 = mconcat paths # lw 20
     colors = red : orange : yellow : blue : green : colors
     paths :: [Diagram B]
     paths = zipWith (\d c -> strokeLocTrail d # lc c) (pathTrails d1) colors
+
+ex6_4 :: Diagram B
+ex6_4 = atPoints pts (repeat (circle 1))
+  where
+    pts :: [Point V2 Double]
+    pts = origin : regPoly 6 1
