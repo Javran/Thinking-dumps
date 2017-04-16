@@ -50,7 +50,7 @@ ex2_1 = genEx2 arrOpt
     arrOpt = with
          & headLength .~ veryLarge
          & arrowHead .~ noHead
-         & arrowTail .~ spike
+         & arrowTail .~ spike'
 
 ex2_2 :: Diagram B
 ex2_2 = genEx2 arrOpt
@@ -59,7 +59,7 @@ ex2_2 = genEx2 arrOpt
     arrOpt = with
          & arrowShaft .~ shaft
          & arrowHead .~ tri
-         & arrowTail .~ tri
+         & arrowTail .~ tri'
 
 ex2_3 :: Diagram B
 ex2_3 = genEx2 arrOpt
@@ -68,4 +68,4 @@ ex2_3 = genEx2 arrOpt
     arrOpt = with
          & arrowShaft .~ shaft
          & arrowHead .~ tri
-         & arrowTail .~ tri
+         & arrowTail .~ tri'
