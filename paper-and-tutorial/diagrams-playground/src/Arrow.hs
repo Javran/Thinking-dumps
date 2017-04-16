@@ -16,6 +16,7 @@ arrBundle = nest "arr" $ Actioned
     [ ("ex1_1", pure ex1_1)
     , ("ex2_1", pure ex2_1)
     , ("ex2_2", pure ex2_2)
+    , ("ex2_3", pure ex2_3)
     ]
 
 ex1_1 :: Diagram B
@@ -55,6 +56,15 @@ ex2_2 :: Diagram B
 ex2_2 = genEx2 arrOpt
   where
     shaft =  arc xDir (-1/4 @@ turn)
+    arrOpt = with
+         & arrowShaft .~ shaft
+         & arrowHead .~ tri
+         & arrowTail .~ tri
+
+ex2_3 :: Diagram B
+ex2_3 = genEx2 arrOpt
+  where
+    shaft =  arc xDir (1/4 @@ turn)
     arrOpt = with
          & arrowShaft .~ shaft
          & arrowHead .~ tri
