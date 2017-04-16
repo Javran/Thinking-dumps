@@ -15,6 +15,7 @@ arrBundle :: Actioned Double
 arrBundle = nest "arr" $ Actioned
     [ ("ex1_1", pure ex1_1)
     , ("ex2_1", pure ex2_1)
+    , ("ex2_2", pure ex2_2)
     ]
 
 ex1_1 :: Diagram B
@@ -45,3 +46,23 @@ ex2_1 = (sDot <> eDot <> xArr <> sq) # centerXY # pad 1.1
          & headLength .~ veryLarge
          & arrowHead .~ noHead
          & arrowTail .~ spike) sPt ePt
+
+ex2_2 :: Diagram B
+ex2_2 = (sDot <> eDot <> xArr <> sq) # centerXY # pad 1.1
+  where
+    -- square by default has its origin at center
+    -- we can do "moveTo (p2 (2,2))" to move it so that
+    -- its bottom left corner becomes the origin.
+    -- there's a more elegant and descriptive way: using alignBL
+    sq = square 4 # alignBL
+    spot = circle 0.02 # lw none
+    sDot = spot # fc blue # moveTo sPt
+    eDot = spot # fc red # moveTo ePt
+    sPt = p2 (1,1)
+    ePt = p2 (3,3)
+    shaft =  arc xDir (-1/4 @@ turn)
+    xArr = arrowBetween'
+        (with
+         & arrowShaft .~ shaft
+         & arrowHead .~ tri
+         & arrowTail .~ tri) sPt ePt
