@@ -28,8 +28,13 @@ ex1_1 = (sDot <> eDot <> xArr <> circle 1) # centerXY # pad 1.1
     xArr = arrowBetween' (with & headLength .~ veryLarge) ptStart ptEnd
 
 ex2_1 :: Diagram B
-ex2_1 = (sDot <> eDot <> xArr) # centerXY # pad 1.1
+ex2_1 = (sDot <> eDot <> xArr <> sq) # centerXY # pad 1.1
   where
+    -- square by default has its origin at center
+    -- we can do "moveTo (p2 (2,2))" to move it so that
+    -- its bottom left corner becomes the origin.
+    -- there's a more elegant and descriptive way: using alignBL
+    sq = square 4 # alignBL
     spot = circle 0.02 # lw none
     sDot = spot # fc blue # moveTo sPt
     eDot = spot # fc red # moveTo ePt
