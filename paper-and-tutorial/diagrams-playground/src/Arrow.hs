@@ -108,3 +108,11 @@ ex3_1 = (field # centerXY)
     -- create a list of points where the vectors will be place.
     points = map p2 locs
     field = position $ zip points (repeat (circle 0.01))
+    -- this is assuming there is a big mess right at the origin
+    -- TODO: making force vectors, rescale and render it.
+    coordToForce (x,y) = if dist == 0 then Nothing else Just g
+      where
+        dist = sqrt (x*x + y*y)
+        m2 = 1000
+        c = 1.0
+        g = c*m2 / dist
