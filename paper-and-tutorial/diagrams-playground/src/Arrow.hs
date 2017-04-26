@@ -94,3 +94,7 @@ arrowsExample = ( field # translateY 0.05
         sL   = 0.01 + 0.1 * m
         opts = (with & arrowHead .~ tri & headLength .~ global hs & shaftStyle %~ lwG sW)
     field   = position $ zip points arrows
+
+-- TODO: perhaps visualize gravitational field, with multiple object of large mass in it.
+-- the formula is F = G*m_1*m_2/r^2, let's fix m_1, and make G*m_1=c a constant, making it F = c*m_2 / r^2
+-- first we start with just one large mass object, and then adjust to support multiple of them.
