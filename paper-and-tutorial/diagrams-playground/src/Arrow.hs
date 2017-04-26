@@ -18,6 +18,7 @@ arrBundle = nest "arr" $ Actioned
     , ("ex2_2", pure ex2_2)
     , ("ex2_3", pure ex2_3)
     , ("example", pure arrowsExample)
+    , ("ex3_1", pure ex3_1)
     ]
 
 ex1_1 :: Diagram B
@@ -98,3 +99,12 @@ arrowsExample = ( field # translateY 0.05
 -- TODO: perhaps visualize gravitational field, with multiple object of large mass in it.
 -- the formula is F = G*m_1*m_2/r^2, let's fix m_1, and make G*m_1=c a constant, making it F = c*m_2 / r^2
 -- first we start with just one large mass object, and then adjust to support multiple of them.
+ex3_1 :: Diagram B
+ex3_1 = (field # centerXY)
+        <> (square 12 # fc whitesmoke # lwG 0.02)
+  where
+    coords1D = [-5,-5+0.5 .. 5]
+    locs = (,) <$> coords1D <*> coords1D
+    -- create a list of points where the vectors will be place.
+    points = map p2 locs
+    field = position $ zip points (repeat (circle 0.01))
