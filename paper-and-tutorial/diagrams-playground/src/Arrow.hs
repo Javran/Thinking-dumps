@@ -17,6 +17,7 @@ arrBundle = nest "arr" $ Actioned
     , ("ex2_1", pure ex2_1)
     , ("ex2_2", pure ex2_2)
     , ("ex2_3", pure ex2_3)
+    , ("example", pure arrowsExample)
     ]
 
 ex1_1 :: Diagram B
@@ -69,3 +70,27 @@ ex2_3 = genEx2 arrOpt
          & arrowShaft .~ shaft
          & arrowHead .~ tri
          & arrowTail .~ tri'
+
+
+arrowsExample :: Diagram B
+arrowsExample = ( field # translateY 0.05
+                  <> ( square 3.5 # fc whitesmoke # lwG 0.02 # alignBL))
+                # scaleX 2
+  where
+    locs = [(x, y) | x <- [0.1, 0.3 .. 3.25], y <- [0.1, 0.3 .. 3.25]]
+    -- create a list of points where the vectors will be place.
+    points = map p2 locs
+    -- The function to use to create the vector field.
+    vectorField (x, y) = r2 (sin (y + 1), sin (x + 1))
+    arrows = map arrowAtPoint locs
+    arrowAtPoint (x, y) = arrowAt' opts (p2 (x, y)) (sL *^ vf) # alignTL
+      where
+        vf   = vectorField (x, y)
+        m    = norm $ vectorField (x, y)
+        -- Head size is a function of the length of the vector
+        -- as are tail size and shaft length.
+        hs   = 0.08 * m
+        sW   = 0.015 * m
+        sL   = 0.01 + 0.1 * m
+        opts = (with & arrowHead .~ tri & headLength .~ global hs & shaftStyle %~ lwG sW)
+    field   = position $ zip points arrows
