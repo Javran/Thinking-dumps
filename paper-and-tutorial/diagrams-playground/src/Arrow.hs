@@ -107,11 +107,19 @@ ex3_1 = (field # centerXY)
     locs = (,) <$> coords1D <*> coords1D
     -- create a list of points where the vectors will be place.
     points = map p2 locs
-    field = position $ zip points (repeat (circle 0.01))
+    field = position $ zipWith
+              (\pos (x,y) -> case coordToForce (x,y) of
+                   Nothing -> (pos, mempty)
+                   Just vv -> (pos, arrowV vv)) points locs -- zip points (repeat (circle 0.01))
     -- this is assuming there is a big mess right at the origin
     -- TODO: making force vectors, rescale and render it.
-    coordToForce (x,y) = if dist == 0 then Nothing else Just g
+    coordToForce :: (Double, Double) -> Maybe (V2 Double)
+    coordToForce (x,y) = if dist == 0 then Nothing else Just (angleV ang)
       where
+        ang :: Angle Double
+        ang = angleBetweenDirs vDir xDir
+        vDir :: Direction V2 Double
+        vDir = direction (r2 (-x,-y))
         dist = sqrt (x*x + y*y)
         m2 = 1000
         c = 1.0
