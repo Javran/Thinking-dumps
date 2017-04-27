@@ -7,7 +7,7 @@
 module Arrow where
 
 -- http://projects.haskell.org/diagrams/doc/arrow.html
-
+import Data.Maybe
 import Diagrams.Prelude
 import Diagrams.TwoD.Vector
 import Types
@@ -109,16 +109,22 @@ ex3_1 = (field # centerXY)
     -- create a list of points where the vectors will be place.
     points = map p2 locs
     field = position $ zipWith
-              (\pos (x,y) -> case coordToForce (x,y) of
+              (\pos mVV -> case mVV of
                    Nothing -> (pos, mempty)
-                   Just vv -> (pos, arrowV vv)) points locs -- zip points (repeat (circle 0.01))
+                   Just vv -> (pos, arrowV vv)) points forceField
     -- this is assuming there is a big mess right at the origin
     -- TODO: making force vectors, rescale and render it.
     coordToForce :: (Double, Double) -> Maybe (V2 Double)
-    coordToForce (x,y) = if dist == 0 then Nothing else Just (vv ^/ dist)
+    coordToForce (x,y) = if dist == 0 then Nothing else Just (g *^ (vv ^/ dist))
       where
         vv = r2 (-x,-y)
         dist = sqrt (x*x + y*y)
         m2 = 1000
         c = 1.0
         g = c*m2 / dist
+
+    forceField = (fmap . fmap) (^/ maxDist) forceField1
+      where
+        forceField1 = map coordToForce locs
+        calcDist v = v ^. _r
+        maxDist = maximum (catMaybes (fmap (fmap calcDist) forceField1))
