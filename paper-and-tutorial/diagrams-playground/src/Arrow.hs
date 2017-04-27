@@ -9,6 +9,7 @@ module Arrow where
 -- http://projects.haskell.org/diagrams/doc/arrow.html
 
 import Diagrams.Prelude
+import Diagrams.TwoD.Vector
 import Types
 
 arrBundle :: Actioned Double
@@ -114,12 +115,9 @@ ex3_1 = (field # centerXY)
     -- this is assuming there is a big mess right at the origin
     -- TODO: making force vectors, rescale and render it.
     coordToForce :: (Double, Double) -> Maybe (V2 Double)
-    coordToForce (x,y) = if dist == 0 then Nothing else Just (angleV ang)
+    coordToForce (x,y) = if dist == 0 then Nothing else Just (vv ^/ dist)
       where
-        ang :: Angle Double
-        ang = angleBetweenDirs vDir xDir
-        vDir :: Direction V2 Double
-        vDir = direction (r2 (-x,-y))
+        vv = r2 (-x,-y)
         dist = sqrt (x*x + y*y)
         m2 = 1000
         c = 1.0
