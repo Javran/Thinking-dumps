@@ -857,7 +857,9 @@ Proof.
 Theorem plus_id_exercise : forall n m o : nat,
   n = m -> m = o -> n + m = m + o.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m o Hmn Hmo.
+  rewrite -> Hmn. rewrite <- Hmo.
+  reflexivity. Qed.
 (** [] *)
 
 (** The [Admitted] command tells Coq that we want to skip trying
@@ -889,7 +891,8 @@ Theorem mult_S_1 : forall n m : nat,
   m = S n ->
   m * (1 + n) = m * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H. rewrite -> plus_1_l. rewrite <- H.
+  reflexivity. Qed.
 
   (* (N.b. This proof can actually be completed without using [rewrite],
      but please do use [rewrite] for the sake of the exercise.) *)
@@ -1103,14 +1106,22 @@ Qed.
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c H. destruct c.
+  - reflexivity.
+  - destruct b.
+    + rewrite <- H. reflexivity.
+    + rewrite <- H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (zero_nbeq_plus_1)  *)
 Theorem zero_nbeq_plus_1 : forall n : nat,
   beq_nat 0 (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [|n'].
+  - reflexivity.
+  - reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -1206,13 +1217,26 @@ Theorem identity_fn_applied_twice :
   (forall (x : bool), f x = x) ->
   forall (b : bool), f (f b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f H1 b.
+  destruct b.
+  - rewrite H1. rewrite H1. reflexivity.
+  - rewrite H1. rewrite H1. reflexivity.
+Qed.
 
 (** Now state and prove a theorem [negation_fn_applied_twice] similar
     to the previous one but where the second hypothesis says that the
     function [f] has the property that [f x = negb x].*)
 
-(* FILL IN HERE *)
+Theorem negation_fn_applied_twice :
+  forall (f : bool -> bool),
+  (forall (x : bool), f x = negb x) ->
+  forall (b : bool), f (f b) = b.
+Proof.
+  intros f H1 b.
+  destruct b.
+  - rewrite H1. rewrite H1. reflexivity.
+  - rewrite H1. rewrite H1. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (andb_eq_orb)  *)
@@ -1226,8 +1250,10 @@ Theorem andb_eq_orb :
   (andb b c = orb b c) ->
   b = c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros [].
+  - intros c. simpl. intro H. rewrite H. reflexivity.
+  - intros c. simpl. intro H. rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (binary)  *)
@@ -1268,8 +1294,39 @@ Proof.
         then converting it to unary should yield the same result as
         first converting it to unary and then incrementing. *)
 
-(* FILL IN HERE *)
+Inductive binary : Type :=
+  | BZ : binary
+  | BT : binary -> binary
+  | BTP1 : binary -> binary.
+
+Fixpoint incr (b : binary) : binary :=
+  match b with
+  | BZ => BTP1 BZ
+  | BT b' => BTP1 b'
+  | BTP1 b' => BT (incr b')
+  end.
+
+Fixpoint bin_to_nat (b : binary) : nat :=
+  match b with
+  | BZ => 0
+  | BT b' => (bin_to_nat b') * 2
+  | BTP1 b' => (bin_to_nat b') * 2 + 1
+  end.
 (** [] *)
 
-(** $Date: 2017-09-05 11:51:58 -0400 (Tue, 05 Sep 2017) $ *)
+Example test_bin_incr1: bin_to_nat (incr BZ) = 1.
+Proof. reflexivity. Qed.
 
+Example test_bin_incr2: bin_to_nat (incr (BTP1 BZ)) = 2.
+Proof. reflexivity. Qed.
+
+Example test_bin_incr3: bin_to_nat (incr (BT (BTP1 BZ))) = 3.
+Proof. reflexivity. Qed.
+
+Example test_bin_incr4: bin_to_nat (incr (incr (incr (incr (incr BZ))))) = 5.
+Proof. reflexivity. Qed.
+
+Example test_bin_incr5: bin_to_nat (incr (BTP1 (BTP1 BZ))) = 4.
+Proof. reflexivity. Qed.
+
+(** $Date: 2017-09-05 11:51:58 -0400 (Tue, 05 Sep 2017) $ *)
