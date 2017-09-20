@@ -7,3 +7,5 @@ there has been many solutions around and I don't think it can do any more damage
 But if it does hurt, please let me know. I'll probably swtich to a private repo or something.
 
 - Directory `lf` is for Volume 1 "Logical Foundations" as of `Version 5.3 (06 Sep 2017, Coq 8.6)`
+
+- Progress: working on `Basics.v`
