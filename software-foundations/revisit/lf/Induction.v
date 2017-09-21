@@ -137,23 +137,39 @@ Proof.
 Theorem mult_0_r : forall n:nat,
   n * 0 = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' IHn'].
+  - reflexivity.
+  - simpl. rewrite IHn'. reflexivity.
+Qed.
 
 Theorem plus_n_Sm : forall n m : nat,
   S (n + m) = n + (S m).
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros n m.
+  (*
+     otherwise "forall m" would make the assumption not useful, for now.
+   *)
+  induction n as [|n' IHn'].
+  - reflexivity.
+  - simpl. rewrite IHn'. reflexivity.
+Qed.
 
 Theorem plus_comm : forall n m : nat,
   n + m = m + n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m. induction n as [|n' IHn'].
+  - rewrite <- plus_n_O. reflexivity.
+  - rewrite <- plus_n_Sm. simpl. rewrite IHn'. reflexivity.
+Qed.
 
 Theorem plus_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  induction n as [|n' IHn'].
+  - reflexivity.
+  - simpl. rewrite IHn'. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars (double_plus)  *)
@@ -169,7 +185,10 @@ Fixpoint double (n:nat) :=
 
 Lemma double_plus : forall n, double n = n + n .
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' IHn'].
+  - reflexivity.
+  - simpl. rewrite IHn'. rewrite plus_n_Sm. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (evenb_S)  *)
@@ -183,14 +202,26 @@ Proof.
 Theorem evenb_S : forall n : nat,
   evenb (S n) = negb (evenb n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' IHn'].
+  - reflexivity.
+  - rewrite IHn'. simpl. destruct (evenb n').
+    + reflexivity. + reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics [destruct]
     and [induction].
 
-(* FILL IN HERE *)
+(*
+  I think [induction] can basically do everything [destruct] can do.
+  Additionally, [induction] makes available some hypothesis about "smaller"
+  structure which can then be used to assist the proof.
+
+  This is not to say [destruct] is not useful at all - when we just need
+  a simple case analysis to get things done, we don't really need the extra
+  power provided by [induction].
+ *)
 *)
 (** [] *)
 
@@ -413,7 +444,11 @@ Proof.
 Theorem plus_swap : forall n m p : nat,
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  rewrite plus_assoc. rewrite plus_assoc.
+  assert (H: n + m = m + n). { rewrite plus_comm. reflexivity. }
+  rewrite H. reflexivity.
+Qed.
 
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
@@ -423,6 +458,10 @@ Proof.
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
+  intros m n.
+  induction n as [|n' IHn'].
+  - simpl. rewrite mult_0_r. reflexivity.
+  - simpl. rewrite <- IHn'.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
