@@ -1202,7 +1202,18 @@ Fixpoint plus' (n : nat) (m : nat) : nat :=
     _does_ terminate on all inputs, but that Coq will reject because
     of this restriction. *)
 
-(* FILL IN HERE *)
+(** the trick is to make n increase for some cases while
+   we make sure the defintion does terminate.
+[[
+Fixpoint a_loop (n : nat) : nat :=
+  match n with
+    | O => a_loop (S n)
+    | _ => O
+  end.
+]]
+*)
+
+
 (** [] *)
 
 (* ################################################################# *)
