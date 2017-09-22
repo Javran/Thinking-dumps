@@ -1049,17 +1049,20 @@ Definition option_elim (d : nat) (o : natoption) : nat :=
 (** Using the same idea, fix the [hd] function from earlier so we don't
     have to pass a default element for the [nil] case.  *)
 
-Definition hd_error (l : natlist) : natoption
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition hd_error (l : natlist) : natoption :=
+  match l with
+  | nil => None
+  | h :: _ => Some h
+  end.
 
 Example test_hd_error1 : hd_error [] = None.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_error2 : hd_error [1] = Some 1.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_error3 : hd_error [5;6] = Some 5.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, optional (option_elim_hd)  *)
@@ -1068,7 +1071,10 @@ Example test_hd_error3 : hd_error [5;6] = Some 5.
 Theorem option_elim_hd : forall (l:natlist) (default:nat),
   hd default l = option_elim default (hd_error l).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l default. induction l as [|h t IHl].
+  - reflexivity.
+  - reflexivity.
+Qed.
 (** [] *)
 
 End NatList.
@@ -1102,14 +1108,15 @@ Definition beq_id (x1 x2 : id) :=
 (** **** Exercise: 1 star (beq_id_refl)  *)
 Theorem beq_id_refl : forall x, true = beq_id x x.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction x. simpl. rewrite <- beq_nat_refl. reflexivity.
+Qed.
 (** [] *)
 
 (** Now we define the type of partial maps: *)
 
 Module PartialMap.
 Export NatList.
-  
+
 Inductive partial_map : Type :=
   | empty  : partial_map
   | record : id -> nat -> partial_map -> partial_map.
@@ -1149,7 +1156,9 @@ Theorem update_eq :
   forall (d : partial_map) (x : id) (v: nat),
     find x (update d x v) = Some v.
 Proof.
- (* FILL IN HERE *) Admitted.
+  simpl. intros d x.
+  rewrite <- beq_id_refl. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (update_neq)  *)
@@ -1157,7 +1166,8 @@ Theorem update_neq :
   forall (d : partial_map) (x y : id) (o: nat),
     beq_id x y = false -> find x (update d y o) = find x d.
 Proof.
- (* FILL IN HERE *) Admitted.
+  intros d x y o H. simpl. rewrite H. reflexivity.
+Qed.
 (** [] *)
 End PartialMap.
 
@@ -1171,7 +1181,7 @@ Inductive baz : Type :=
 (** How _many_ elements does the type [baz] have?  (Answer in English
     or the natural language of your choice.)
 
-(* FILL IN HERE *)
+  "baz" has no element, because there isn't any "base constructor" availble.
 *)
 (** [] *)
 
