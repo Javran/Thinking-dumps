@@ -11,4 +11,4 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
 - Progress:
 
     - `Basics.v`: completed
-    - 
+    - `Induction.v`: everything except informal proofs.

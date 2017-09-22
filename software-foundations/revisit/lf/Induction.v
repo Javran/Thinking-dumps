@@ -640,7 +640,36 @@ Qed.
     definitions to make the property easier to prove, feel free to
     do so! *)
 
-(* FILL IN HERE *)
+Inductive binary : Type :=
+  | BZ : binary
+  | BT : binary -> binary
+  | BTP1 : binary -> binary.
+
+Fixpoint incr (b : binary) : binary :=
+  match b with
+  | BZ => BTP1 BZ
+  | BT b' => BTP1 b'
+  | BTP1 b' => BT (incr b')
+  end.
+
+Fixpoint bin_to_nat (b : binary) : nat :=
+  match b with
+  | BZ => 0
+  | BT b' => (bin_to_nat b') * 2
+  | BTP1 b' => (bin_to_nat b') * 2 + 1
+  end.
+
+Theorem bin_to_nat_pres_incr : forall b : binary,
+  S (bin_to_nat b) = bin_to_nat (incr b).
+Proof.
+  induction b as [|b1'|b2' IHb2].
+  - reflexivity.
+  - simpl. rewrite plus_comm. reflexivity.
+  - simpl. rewrite <- IHb2.
+    replace (S (bin_to_nat b2')) with (1 + bin_to_nat b2').
+    { simpl. rewrite plus_comm. reflexivity. }
+    reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 5 stars, advanced (binary_inverse)  *)
@@ -669,8 +698,54 @@ Qed.
     Again, feel free to change your earlier definitions if this helps
     here. *)
 
-(* FILL IN HERE *)
-(** [] *)
+Fixpoint nat_to_bin (n : nat) : binary :=
+  match n with
+  | O => BZ
+  | S n' => incr (nat_to_bin n')
+  end.
 
+Theorem nat_to_bin_to_nat_pres : forall n : nat,
+  n = bin_to_nat (nat_to_bin n).
+Proof.
+  induction n as [|n' IHn].
+  - reflexivity.
+  - simpl. rewrite <- bin_to_nat_pres_incr. rewrite <- IHn. reflexivity.
+Qed.
+
+(*
+
+  For binaries we have the following 3 representations:
+
+  - 0
+  - 2x
+  - 2x+1
+
+  while it's impossible to solve formula 0 = 2x+1, 2x = 2y+1
+  for some integer x, y. 0 = 2x has one solution.
+  This means that representations for 0 is not unique:
+
+  - 0 = BZ = BT BZ = BT (BT BZ) ...
+
+  so our normalization should make sure that only BZ is used when representing 0.
+
+  But actually we have a very easy way of doing normalization:
+  just convert it to nat and then convert back.
+  Because nat has unique representation for each natural number,
+  and we have a deterministic algorithm nat_to_bin, we will have a unique
+  binary as the result.
+
+ *)
+Definition normalize (b : binary) : binary :=
+  nat_to_bin (bin_to_nat b).
+
+Theorem norm_bin_to_nat_to_bin_pres : forall b : binary,
+  normalize b = nat_to_bin (bin_to_nat (normalize b)).
+Proof.
+  intros b.
+  assert (H : forall b : binary,
+    normalize b = nat_to_bin (bin_to_nat b)). { reflexivity. }
+  rewrite H. rewrite <- nat_to_bin_to_nat_pres. reflexivity.
+Qed.
+(** [] *)
 
 (** $Date: 2017-09-06 10:45:52 -0400 (Wed, 06 Sep 2017) $ *)
