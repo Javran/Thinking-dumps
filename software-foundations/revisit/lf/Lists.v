@@ -319,15 +319,11 @@ Proof. reflexivity. Qed.
     both lists at the same time.  (One possible solution requires
     defining a new kind of pairs, but this is not the only way.)  *)
 
-(*
-   because the very limited defintion of (,) has been replaced the general one
-   we'll have to use (,,) for a more elegant code.
- *)
 Fixpoint alternate (l1 l2 : natlist) : natlist :=
-  match (l1,l2,0) with
-  | (nil, _, _) => l2
-  | (_, nil, _) => l1
-  | (h1 :: t1, h2 :: t2, _) => h1 :: h2 :: alternate t1 t2
+  match l1,l2 with
+  | nil, _ => l2
+  | _, nil => l1
+  | h1 :: t1, h2 :: t2 => h1 :: h2 :: alternate t1 t2
   end.
 
 Example test_alternate1:
@@ -875,10 +871,10 @@ Qed.
     yields [true] for every list [l]. *)
 
 Fixpoint beq_natlist (l1 l2 : natlist) : bool :=
-  match (l1,l2,0) with
-  | (nil,nil,_) => true
-  | (h1 :: t1, h2 :: t2, _) => beq_nat h1 h2 && beq_natlist t1 t2
-  | _ => false
+  match l1,l2 with
+  | nil,nil => true
+  | (h1 :: t1), (h2 :: t2) => beq_nat h1 h2 && beq_natlist t1 t2
+  | _,_ => false
   end.
 
 Example test_beq_natlist1 :
