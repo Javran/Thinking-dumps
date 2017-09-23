@@ -13,3 +13,16 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Basics.v`: completed
     - `Induction.v`: everything except informal proofs.
     - `Lists.v`: completed
+    - `Poly.v`
+    - `Tactics.v`
+    - `Logic.v`
+    - `IndProp.v`
+    - `Maps.v`
+    - `ProofObjects.v`
+    - `IndPrinciples.v`
+    - `Rel.v`
+    - `Imp.v`
+    - `ImpParser.v`
+    - `ImpCEvalFun.v`
+    - `Extraction.v`
+    - `Auto.v`
