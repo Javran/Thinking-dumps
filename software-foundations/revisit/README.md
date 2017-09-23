@@ -13,7 +13,7 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Basics.v`: completed
     - `Induction.v`: everything except informal proofs.
     - `Lists.v`: completed
-    - `Poly.v`
+    - `Poly.v`: mostly completed.
     - `Tactics.v`
     - `Logic.v`
     - `IndProp.v`
