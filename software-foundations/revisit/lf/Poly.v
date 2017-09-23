@@ -994,6 +994,7 @@ Proof.
   - reflexivity.
   - simpl. rewrite IH. reflexivity.
 Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (currying)  *)
@@ -1019,8 +1020,8 @@ Definition prod_curry {X Y Z : Type}
     the theorems below to show that the two are inverses. *)
 
 Definition prod_uncurry {X Y Z : Type}
-  (f : X -> Y -> Z) (p : X * Y) : Z
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  (f : X -> Y -> Z) (p : X * Y) : Z :=
+  let (x,y) := p in f x y.
 
 (** As a (trivial) example of the usefulness of currying, we can use it
     to shorten one of the examples that we saw above: *)
@@ -1039,13 +1040,21 @@ Theorem uncurry_curry : forall (X Y Z : Type)
                         x y,
   prod_curry (prod_uncurry f) x y = f x y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y Z f x y.
+  replace (f x y) with (prod_uncurry f (x,y)).
+  reflexivity.
+  reflexivity.
+Qed.
 
 Theorem curry_uncurry : forall (X Y Z : Type)
                         (f : (X * Y) -> Z) (p : X * Y),
   prod_uncurry (prod_curry f) p = f p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y Z f p. destruct p as [x y].
+  replace (f (x,y)) with (prod_curry f x y).
+  reflexivity.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (nth_error_informal)  *)
