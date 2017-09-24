@@ -538,8 +538,13 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
-(* my helper theorem *)
-Theorem mult_n_O : forall n : nat,
+
+(* my helper theorem
+  (turns out there is one with exactly
+  same but lhs and rhs flipped, so I have to name this one a bit different)
+ *)
+
+Theorem my_mult_n_O : forall n : nat,
     n * 0 = 0.
 Proof.
   induction n as [|n' IHn].
@@ -551,7 +556,7 @@ Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
   intros n m p. induction p as [|p' IHp].
-  - rewrite !mult_n_O. reflexivity.
+  - rewrite <- !mult_n_O. reflexivity.
   - rewrite !mult_n_Sm. rewrite IHp. rewrite !plus_assoc.
     assert (H1 : n + m + n * p' + m * p' = n + (m + n * p' + m * p')).
       { rewrite !plus_assoc. reflexivity. }
@@ -569,7 +574,7 @@ Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
   intros n m p. induction m as [|m' IHm].
-  - simpl. rewrite mult_n_O. reflexivity.
+  - simpl. rewrite <- mult_n_O. reflexivity.
   - simpl. rewrite mult_n_Sm, mult_plus_distr_r. rewrite <- IHm.
     rewrite mult_comm, mult_plus_distr_r.
     assert (H1 : p * n = n * p).
