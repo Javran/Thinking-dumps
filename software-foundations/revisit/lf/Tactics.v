@@ -965,7 +965,16 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b. destruct (f b) eqn:Heq1.
+  - destruct b eqn:Heq2.
+    + rewrite Heq1. apply Heq1.
+    + destruct (f true) eqn:Heq3.
+      { apply Heq3. } { apply Heq1. }
+  - destruct b eqn:Heq2.
+    + destruct (f false) eqn:Heq3.
+      { apply Heq1. } { apply Heq3. }
+    + rewrite !Heq1. reflexivity.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -1038,7 +1047,12 @@ Proof.
 Theorem beq_nat_sym : forall (n m : nat),
   beq_nat n m = beq_nat m n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [|n' IHn].
+  - intros m. destruct m as [|m'].
+    { reflexivity. } { reflexivity. }
+  - intros m. destruct m as [|m'].
+    { reflexivity. } { apply IHn. }
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced? (beq_nat_sym_informal)  *)
@@ -1058,7 +1072,10 @@ Theorem beq_nat_trans : forall n m p,
   beq_nat m p = true ->
   beq_nat n p = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p H1 H2.
+  apply beq_nat_true in H1. apply beq_nat_true in H2.
+  rewrite H1, H2. symmetry. apply beq_nat_refl.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (split_combine)  *)
@@ -1074,16 +1091,36 @@ Proof.
     things than necessary.  Hint: what property do you need of [l1]
     and [l2] for [split] [combine l1 l2 = (l1,l2)] to be true?) *)
 
-Definition split_combine_statement : Prop
-  (* ("[: Prop]" means that we are giving a name to a
-     logical proposition here.) *)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition split_combine_statement : Prop :=
+  forall X Y (l : list (X * Y)) l1 l2,
+    length l1 = length l2 ->
+    combine l1 l2 = l -> split l = (l1, l2).
 
 Theorem split_combine : split_combine_statement.
 Proof.
-(* FILL IN HERE *) Admitted.
-
-
+  intros X Y. induction l as [|h t IHl].
+  - intros l1 l2 Heql.
+    destruct l1 as [|h1 t1].
+    { simpl. destruct l2 as [|h2 t2].
+      - reflexivity. - inversion Heql. }
+    { destruct l2 as [|h2 t2].
+      - inversion Heql. - intros H. inversion H. }
+  - intros l1 l2 Heql H1. destruct (combine l1 l2) eqn:Heq1.
+    + inversion H1.
+    + destruct l1 as [|h1 t1].
+      { simpl in Heq1. inversion Heq1. }
+      { destruct l2 as [|h2 t2].
+        - simpl in Heq1. inversion Heq1.
+        - inversion H1. destruct h as [x y]. simpl.
+          destruct (split t) as [tx ty].
+          assert (Heq2 : (tx, ty) = (t1, t2)).
+          { apply IHl. inversion Heql. reflexivity.
+            simpl in Heq1. inversion Heq1. rewrite H4. apply H2.
+          }
+          inversion Heq2. simpl in Heq1. inversion Heq1.
+          rewrite H0 in H5. inversion H5. reflexivity.
+      }
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (filter_exercise)  *)
@@ -1095,7 +1132,12 @@ Theorem filter_exercise : forall (X : Type) (test : X -> bool)
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X test x. generalize dependent x. induction l as [|h t].
+  - simpl. intros lf H. inversion H.
+  - simpl. destruct (test h) eqn:Heq1.
+    + intros lf H. inversion H. rewrite <- H1. apply Heq1.
+    + intros lf H. generalize dependent lf. apply IHt.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, recommended (forall_exists_challenge)  *)

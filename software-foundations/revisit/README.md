@@ -14,7 +14,7 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Induction.v`: everything except informal proofs.
     - `Lists.v`: completed
     - `Poly.v`: mostly completed.
-    - `Tactics.v`
+    - `Tactics.v`: mostly completed.
     - `Logic.v`
     - `IndProp.v`
     - `Maps.v`
