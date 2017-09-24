@@ -156,7 +156,12 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H. split.
+  destruct n as [|n'] eqn:H1.
+  { reflexivity. } { simpl in H. inversion H. }
+  destruct m as [|m'].
+  { reflexivity. } { simpl in H. rewrite <- plus_n_Sm in H. inversion H. }
+Qed.
 (** [] *)
 
 (** So much for proving conjunctive statements.  To go in the other
@@ -230,7 +235,8 @@ Proof.
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q [HP HQ]. apply HQ.
+Qed.
 (** [] *)
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
@@ -257,7 +263,10 @@ Theorem and_assoc : forall P Q R : Prop,
   P /\ (Q /\ R) -> (P /\ Q) /\ R.
 Proof.
   intros P Q R [HP [HQ HR]].
-  (* FILL IN HERE *) Admitted.
+  split.
+  - split. apply HP. apply HQ.
+  - apply HR.
+Qed.
 (** [] *)
 
 (** By the way, the infix notation [/\] is actually just syntactic
@@ -320,14 +329,22 @@ Qed.
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H. destruct n as [|n'].
+  - left. reflexivity.
+  - destruct m as [|m'].
+    + right. reflexivity.
+    + left. simpl in H. inversion H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (or_commut)  *)
 Theorem or_commut : forall P Q : Prop,
   P \/ Q  -> Q \/ P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q [HP | HQ].
+  - right. apply HP.
+  - left. apply HQ.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -383,7 +400,8 @@ Proof.
 Fact not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Hn Q HP. destruct Hn. apply HP.
+Qed.
 (** [] *)
 
 (** This is how we use [not] to state that [0] and [1] are different
@@ -442,14 +460,18 @@ Proof.
 Theorem contrapositive : forall (P Q : Prop),
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q H1 H2. unfold not. unfold not in H2. intros HP.
+  apply H2. apply H1. apply HP.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (not_both_true_and_false)  *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. unfold not. intros [HP HNP].
+  apply HNP. apply HP.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)  *)
@@ -555,19 +577,32 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. split.
+  - intros HP. apply HP.
+  - intros HP. apply HP.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R [HPQ HQP] [HQR HRQ]. split.
+  - intros HP. apply HQR. apply HPQ. apply HP.
+  - intros HR. apply HQP. apply HRQ. apply HR.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R. split.
+  - intros [HP|[HQ HR]].
+    + split. { left. apply HP. } { left. apply HP. }
+    + split. { right. apply HQ. } { right. apply HR. }
+  - intros [[HP|HQ] [HP'|HR]].
+    + left. apply HP. + left. apply HP.
+    + left. apply HP'. + right. split. apply HQ. apply HR.
+Qed.
 (** [] *)
 
 (** Some of Coq's tactics treat [iff] statements specially, avoiding
@@ -667,7 +702,9 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X P H. unfold not. intros [x H2].
+  apply H2. apply H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
@@ -677,7 +714,14 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros X P Q. split.
+  - intros [x [HPx|HQx]].
+    { left. exists x. apply HPx. }
+    { right. exists x. apply HQx. }
+  - intros [[x HPx]|[x HQx]].
+    { exists x. left. apply HPx. }
+    { exists x. right. apply HQx. }
+Qed.
 (** [] *)
 
 (* ################################################################# *)
