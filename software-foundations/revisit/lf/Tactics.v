@@ -181,7 +181,9 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m o p eq1 eq2. apply trans_eq with m.
+  apply eq2. apply eq1.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -258,7 +260,9 @@ Example inversion_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   y :: l = x :: j ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j eq1 eq2.
+  inversion eq2. reflexivity.
+Qed.
 (** [] *)
 
 (** When used on a hypothesis involving an equality between
@@ -322,7 +326,8 @@ Example inversion_ex6 : forall (X : Type)
   y :: l = z :: j ->
   x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j contra. inversion contra.
+Qed.
 (** [] *)
 
 (** To summarize this discussion, suppose [H] is a hypothesis in the
@@ -413,7 +418,13 @@ Theorem plus_n_n_injective : forall n m,
      n = m.
 Proof.
   intros n. induction n as [| n'].
-    (* FILL IN HERE *) Admitted.
+  - intros m H. simpl in H. destruct m as [|m'].
+    + reflexivity. + inversion H.
+  - intros m H. destruct m as [|m'].
+    + inversion H.
+    + rewrite <- !plus_n_Sm in H. simpl in H. inversion H.
+      apply IHn' in H1. rewrite H1. reflexivity.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -569,7 +580,14 @@ Proof.
 Theorem beq_nat_true : forall n m,
     beq_nat n m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' IHn].
+  - intros m H. destruct m as [|m'].
+    + reflexivity.
+    + inversion H.
+  - intros m H. destruct m as [|m'].
+    + inversion H.
+    + simpl in H. apply IHn in H. rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (beq_nat_true_informal)  *)
@@ -694,7 +712,13 @@ Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n X l. generalize dependent n.
+  induction l as [|h t IH].
+  - reflexivity.
+  - destruct n as [|n'].
+    + intros H. inversion H.
+    + simpl. intros H. inversion H. apply IH. reflexivity.
+Qed.
 (** [] *)
 
 
@@ -862,7 +886,15 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y. induction l as [|h t IHl].
+  - simpl. intros l1 l2 H. inversion H. reflexivity.
+  - simpl. intros l1 l2 H.
+    destruct h as [x y]. destruct (split t) as [tx ty].
+    inversion H. simpl.
+    assert (Heq : combine tx ty = t).
+    { apply IHl. reflexivity. }
+    rewrite Heq. reflexivity.
+Qed.
 (** [] *)
 
 (** However, [destruct]ing compound expressions requires a bit of
