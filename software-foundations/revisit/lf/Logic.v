@@ -804,7 +804,26 @@ Lemma In_map_iff :
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros A B f l y. split.
+  - induction l as [|h t IHl].
+    { simpl. intros []. }
+    { intros [H1|H1].
+      - exists h. split.
+        + apply H1.
+        + left. reflexivity.
+      - apply IHl in H1. inversion H1. inversion H.
+        exists x. split.
+        + apply H0. + simpl. right. apply H2.
+    }
+  - induction l as [|h t IHl].
+    { simpl. intros [x [_ []]]. }
+    { intros [x [H1 H2]]. simpl in H2.
+      inversion H2.
+      - simpl. left. rewrite H. apply H1.
+      - simpl. right. apply IHl. exists x.
+        + split. apply H1. apply H.
+    }
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars (in_app_iff)  *)
