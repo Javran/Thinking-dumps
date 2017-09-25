@@ -830,7 +830,29 @@ Qed.
 Lemma in_app_iff : forall A l l' (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros A l l' a. split.
+  - (* In a (l++l') -> In a l \/ In a l' *)
+    intros H. induction l as [|h t IHl].
+    + simpl in H. right. apply H.
+    + simpl in H. inversion H.
+      { rewrite H0. simpl. left. left. reflexivity. }
+      { apply IHl in H0. inversion H0.
+        { simpl. left. right. apply H1. }
+        { right. apply H1. }
+      }
+  - (* In a l \/ In a l' -> In a (l++l') *)
+    intros [Hel|Hel'].
+    { induction l as [|h t IHl].
+      - simpl. simpl in Hel. exfalso. apply Hel.
+      - simpl. simpl in Hel. inversion Hel as [H1|H2].
+        + left. apply H1.
+        + right. apply IHl. apply H2.
+    }
+    { induction l as [|h t IHl].
+      - simpl. apply Hel'.
+      - simpl. right. apply IHl.
+    }
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, recommended (All)  *)
@@ -844,15 +866,32 @@ Proof.
     lemma below.  (Of course, your definition should _not_ just
     restate the left-hand side of [All_In].) *)
 
-Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop :=
+  match l with
+  | nil => True
+  | h :: t => P h /\ All P t
+  end.
 
 Lemma All_In :
   forall T (P : T -> Prop) (l : list T),
     (forall x, In x l -> P x) <->
     All P l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T P l. split.
+  - (* _ -> All P l *)
+    induction l as [|h t IHl].
+    + simpl. intros _. apply I.
+    + simpl. intros H. split.
+      { apply H. left. reflexivity. }
+      { apply IHl. intros x H1.
+        apply H. right. apply H1. }
+  - (* All P l -> _ *)
+    induction l as [|h t IHl].
+    + simpl. intros _ x [].
+    + simpl. intros [H1 H2] x. intros [H3|H3].
+      { rewrite <- H3. apply H1. }
+      { apply IHl. apply H2. apply H3. }
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (combine_odd_even)  *)
@@ -862,8 +901,12 @@ Proof.
     equivalent to [Podd n] when [n] is odd and equivalent to [Peven n]
     otherwise. *)
 
-Definition combine_odd_even (Podd Peven : nat -> Prop) : nat -> Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition combine_odd_even (Podd Peven : nat -> Prop) : nat -> Prop :=
+  fun n =>
+    match oddb n with
+    | true => Podd n
+    | false => Peven n
+    end.
 
 (** To test your definition, prove the following facts: *)
 
@@ -873,7 +916,11 @@ Theorem combine_odd_even_intro :
     (oddb n = false -> Peven n) ->
     combine_odd_even Podd Peven n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n Ht Hf. unfold combine_odd_even.
+  destruct (oddb n).
+  - apply Ht. reflexivity.
+  - apply Hf. reflexivity.
+Qed.
 
 Theorem combine_odd_even_elim_odd :
   forall (Podd Peven : nat -> Prop) (n : nat),
@@ -881,7 +928,11 @@ Theorem combine_odd_even_elim_odd :
     oddb n = true ->
     Podd n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n H1 H2. unfold combine_odd_even in H1.
+  destruct (oddb n).
+  - apply H1.
+  - inversion H2.
+Qed.
 
 Theorem combine_odd_even_elim_even :
   forall (Podd Peven : nat -> Prop) (n : nat),
@@ -889,7 +940,10 @@ Theorem combine_odd_even_elim_even :
     oddb n = false ->
     Peven n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n H1 H2. unfold combine_odd_even in H1.
+  destruct (oddb n).
+  - inversion H2. - apply H1.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
