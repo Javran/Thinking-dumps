@@ -15,7 +15,7 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Lists.v`: completed
     - `Poly.v`: mostly completed.
     - `Tactics.v`: mostly completed.
-    - `Logic.v`
+    - `Logic.v`: mostly completed. (except optionals)
     - `IndProp.v`
     - `Maps.v`
     - `ProofObjects.v`
