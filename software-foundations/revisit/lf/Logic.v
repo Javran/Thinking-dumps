@@ -1433,15 +1433,37 @@ Qed.
     definition is correct, prove the lemma [beq_list_true_iff]. *)
 
 Fixpoint beq_list {A : Type} (beq : A -> A -> bool)
-                  (l1 l2 : list A) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+                  (l1 l2 : list A) : bool :=
+  match l1,l2 with
+  | nil, nil => true
+  | h1 :: t1, h2 :: t2 => beq h1 h2 && beq_list beq t1 t2
+  | _, _ => false
+  end.
 
 Lemma beq_list_true_iff :
   forall A (beq : A -> A -> bool),
     (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
     forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros A beq H. intros l1 l2. generalize dependent l2.
+  induction l1 as [|h1 t1].
+  - destruct l2 as [|h2 t2].
+    + split. reflexivity. reflexivity.
+    + simpl. split. { intros H1. inversion H1. } { intros H1. inversion H1. }
+  - destruct l2 as [|h2 t2].
+    + simpl. split. { intros H1. inversion H1. } { intros H1. inversion H1. }
+    + simpl. destruct (beq h1 h2) eqn:He.
+      { simpl. rewrite IHt1. rewrite H in He.
+        split.
+        { intros He2. rewrite He, He2. reflexivity. }
+        { intros H1. inversion H1. reflexivity. }
+      }
+      { simpl. split.
+        { intros H1. inversion H1. }
+        { intros H1. inversion H1. rewrite <- H in H2. rewrite H2 in He.
+          inversion He. }
+      }
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
@@ -1460,7 +1482,19 @@ Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
 Theorem forallb_true_iff : forall X test (l : list X),
    forallb test l = true <-> All (fun x => test x = true) l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X test l.
+  induction l as [|h t IHl].
+  - simpl. split.
+    { intros _. apply I. } { reflexivity. }
+  - simpl. split.
+    { intros H. rewrite andb_true_iff in H.
+      destruct H as [H1 H2]. split.
+      { apply H1. } { rewrite IHl in H2. apply H2. }
+    }
+    { intros [H1 H2]. rewrite <- IHl in H2.
+      rewrite H1, H2. reflexivity.
+    }
+Qed.
 
 (** Are there any important properties of the function [forallb] which
     are not captured by this specification? *)
@@ -1593,7 +1627,10 @@ Qed.
 Theorem excluded_middle_irrefutable:  forall (P:Prop),
   ~ ~ (P \/ ~ P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold not. intros P H. apply H.
+  right. intros H2. apply H.
+  left. apply H2.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (not_exists_dist)  *)
@@ -1613,7 +1650,11 @@ Theorem not_exists_dist :
   forall (X:Type) (P : X -> Prop),
     ~ (exists x, ~ P x) -> (forall x, P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Hem X P H x. assert (H1 : P x \/ ~(P x)). { apply Hem. }
+  destruct H1 as [H2|H2].
+  - apply H2.
+  - destruct H. exists x. intros H3. apply H2. apply H3.
+Qed.
 (** [] *)
 
 (** **** Exercise: 5 stars, optional (classical_axioms)  *)
@@ -1638,6 +1679,16 @@ Definition de_morgan_not_and_not := forall P Q:Prop,
 
 Definition implies_to_or := forall P Q:Prop,
   (P->Q) -> (~P\/Q).
+
+Theorem peirce_eqv_excluded_middle :
+  peirce <-> excluded_middle.
+Proof.
+  unfold peirce. unfold excluded_middle.
+  split.
+  - intros Hp. intros P. left.
+    apply (Hp P True). intros H.
+    destruct H. Admitted.
+
 
 (* FILL IN HERE *)
 (** [] *)
