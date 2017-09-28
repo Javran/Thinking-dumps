@@ -1172,14 +1172,28 @@ Fixpoint rev_append {X} (l1 l2 : list X) : list X :=
 Definition tr_rev {X} (l : list X) : list X :=
   rev_append l [].
 
+Lemma tr_rev_helper : forall X (l1 l2 : list X),
+  rev_append l1 l2 = rev l1 ++ l2.
+Proof.
+  intros X l1. induction l1 as [|h1 t1 IHl1].
+  - reflexivity.
+  - simpl. intros l2. rewrite <- app_assoc. apply IHl1.
+Qed.
+
 (** This version is said to be _tail-recursive_, because the recursive
     call to the function is the last operation that needs to be
     performed (i.e., we don't have to execute [++] after the recursive
     call); a decent compiler will generate very efficient code in this
     case.  Prove that the two definitions are indeed equivalent. *)
-
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
-(* FILL IN HERE *) Admitted.
+Proof.
+  intros X. apply functional_extensionality.
+  induction x as [|h t IHl].
+  - reflexivity.
+  - simpl. rewrite <- IHl. unfold tr_rev.
+    rewrite tr_rev_helper. simpl. rewrite <- IHl.
+    rewrite app_nil_r. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
