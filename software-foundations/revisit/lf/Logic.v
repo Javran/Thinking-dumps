@@ -1225,8 +1225,13 @@ Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
                 else S (double k).
 Proof.
-  (* Hint: Use the [evenb_S] lemma from [Induction.v]. *)
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' Hn].
+  - exists 0. reflexivity.
+  - rewrite evenb_S. destruct Hn as [x Hx].
+    destruct (evenb n').
+    + exists x. rewrite Hx. reflexivity.
+    + exists (S x). rewrite Hx. reflexivity.
+Qed.
 (** [] *)
 
 Theorem even_bool_prop : forall n,
@@ -1339,12 +1344,51 @@ Proof. apply even_bool_prop. reflexivity. Qed.
 Lemma andb_true_iff : forall b1 b2:bool,
   b1 && b2 = true <-> b1 = true /\ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  destruct b1.
+  + destruct b2.
+    { simpl. split.
+      + intros _. split. reflexivity. reflexivity.
+      + intros _. reflexivity.
+    }
+    { simpl. split.
+      + intros H. inversion H.
+      + intros [_ H]. inversion H.
+    }
+  + destruct b2.
+    { simpl. split.
+      + intros H. inversion H.
+      + intros [H _]. inversion H.
+    }
+    { simpl. split.
+      + intros H. inversion H.
+      + intros [H _]. inversion H.
+    }
+Qed.
 
 Lemma orb_true_iff : forall b1 b2,
   b1 || b2 = true <-> b1 = true \/ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  destruct b1.
+  + destruct b2.
+    { simpl. split.
+      + intros _. left. reflexivity.
+      + intros _. reflexivity.
+    }
+    { simpl. split.
+      + intros _. left. reflexivity.
+      + intros _. reflexivity.
+    }
+  + destruct b2.
+    { simpl. split.
+      + intros _. right. reflexivity.
+      + intros _. reflexivity.
+    }
+    { simpl. split.
+      + intros H. inversion H.
+      + intros [H|H].
+        - inversion H. - inversion H.
+    }
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (beq_nat_false_iff)  *)
@@ -1355,7 +1399,30 @@ Proof.
 Theorem beq_nat_false_iff : forall x y : nat,
   beq_nat x y = false <-> x <> y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  { destruct x.
+    - destruct y.
+      { simpl. intros H. inversion H. }
+      { simpl. intros _ H. inversion H. }
+    - destruct y.
+      { simpl. intros _ H. inversion H. }
+      { simpl. intros H1 H2. inversion H2.
+        rewrite H0 in H1. rewrite <- beq_nat_refl in H1.
+        inversion H1. }
+  }
+  { intros H. destruct x.
+    + destruct y.
+      { destruct H. reflexivity. }
+      { simpl. reflexivity. }
+    + destruct y.
+      { reflexivity. }
+      { simpl. destruct (beq_nat x y) eqn:He.
+        - rewrite beq_nat_true_iff in He.
+          rewrite He in H. destruct H. reflexivity.
+        - reflexivity.
+      }
+  }
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (beq_list)  *)
