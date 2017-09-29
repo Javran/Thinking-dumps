@@ -16,7 +16,7 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Poly.v`: mostly completed.
     - `Tactics.v`: mostly completed.
     - `Logic.v`: mostly completed. (except optionals)
-    - `IndProp.v`
+    - `IndProp.v`: WIP
     - `Maps.v`
     - `ProofObjects.v`
     - `IndPrinciples.v`
