@@ -1018,13 +1018,18 @@ Qed.
 Lemma empty_is_empty : forall T (s : list T),
   ~ (s =~ EmptySet).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T s H. inversion H.
+Qed.
 
 Lemma MUnion' : forall T (s : list T) (re1 re2 : @reg_exp T),
   s =~ re1 \/ s =~ re2 ->
   s =~ Union re1 re2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T s re1 re2 HU.
+  destruct HU as [HL|HR].
+  { apply MUnionL. apply HL. }
+  { apply MUnionR. apply HR. }
+Qed.
 
 (** The next lemma is stated in terms of the [fold] function from the
     [Poly] chapter: If [ss : list (list T)] represents a sequence of
@@ -1035,7 +1040,13 @@ Lemma MStar' : forall T (ss : list (list T)) (re : reg_exp),
   (forall s, In s ss -> s =~ re) ->
   fold app ss [] =~ Star re.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T ss re HAll. induction ss as [|h t IH].
+  - apply MStar0.
+  - apply MStarApp.
+    { apply HAll. left. reflexivity. }
+    { apply IH. intros s H1. apply HAll.
+      right. apply H1. }
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars (reg_exp_of_list)  *)
@@ -1046,7 +1057,29 @@ Proof.
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T s1. induction s1 as [|h1 t1 IH].
+  { destruct s2.
+    - simpl. split.
+      + reflexivity. + intros _. apply MEmpty.
+    - simpl. split.
+      + intros H. inversion H. inversion H3. rewrite <- H5 in H0.
+        simpl in H0. inversion H0.
+      + intros H. inversion H.
+  }
+  { destruct s2.
+    + simpl. split.
+      - intros H. inversion H. - intros H. inversion H.
+    + simpl. split.
+      - intros H. inversion H. inversion H3. simpl.
+        replace s0 with s2. reflexivity.
+        { rewrite <- H5 in H0. simpl in H0. inversion H0.
+          rewrite H9 in H4. rewrite IH in H4. symmetry. apply H4.
+        }
+      - intros H. inversion H. apply (MApp [t] _ s2 _).
+        { apply MChar. }
+        { rewrite <- H2. apply IH. reflexivity. }
+  }
+Qed.
 (** [] *)
 
 (** Since the definition of [exp_match] has a recursive
