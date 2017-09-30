@@ -1680,6 +1680,16 @@ Definition de_morgan_not_and_not := forall P Q:Prop,
 Definition implies_to_or := forall P Q:Prop,
   (P->Q) -> (~P\/Q).
 
+Theorem excluded_middle_implies_peirce :
+  excluded_middle -> peirce.
+Proof.
+  intros Hem. intros P.
+  assert (H : P \/ ~P). { apply Hem. }
+  intros Q. destruct H as [H1|H1].
+  { intros _. apply H1. }
+  { intros H2. apply H2. intros H3. exfalso. apply H1. apply H3. }
+Qed.
+
 (* FILL IN HERE *)
 (** [] *)
 
