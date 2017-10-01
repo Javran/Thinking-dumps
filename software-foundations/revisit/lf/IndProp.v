@@ -1163,17 +1163,49 @@ Qed.
 Fixpoint re_not_empty {T : Type} (re : @reg_exp T) : bool :=
   match re with
   | EmptySet => false
-  | EmptyStr => false
+  | EmptyStr => true
   | Char _ => true
   | App re1 re2 => re_not_empty re1 && re_not_empty re2
   | Union re1 re2 => re_not_empty re1 || re_not_empty re2
-  | Star re' => re_not_empty re'
+  | Star _ => true
   end.
 
 Lemma re_not_empty_correct : forall T (re : @reg_exp T),
   (exists s, s =~ re) <-> re_not_empty re = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T re. split.
+  { intros H. induction re.
+    - (* EmptySet *) inversion H. inversion H0.
+    - (* EmptyStr *) reflexivity.
+    - (* Char _ *) reflexivity.
+    - (* App _ _ *) inversion H. inversion H0. simpl.
+      assert (He1 : re_not_empty re1 = true).
+      { apply IHre1. exists s1. apply H4. } rewrite He1.
+      assert (He2 : re_not_empty re2 = true).
+      { apply IHre2. exists s2. apply H5. } rewrite He2. reflexivity.
+    - (* Union _ _ *) simpl. inversion H. inversion H0.
+      assert (He1 : re_not_empty re1 = true).
+      { apply IHre1. exists x. apply H3. } rewrite He1. reflexivity.
+      assert (He2 : re_not_empty re2 = true).
+      { apply IHre2. exists x. apply H3. } rewrite He2.
+      destruct (re_not_empty re1). + reflexivity. + reflexivity.
+    - (* Star _ *) reflexivity.
+  }
+  { intros H. induction re.
+    - (* EmptySet *) inversion H.
+    - (* EmptyStr *) exists []. apply MEmpty.
+    - (* Char _ *) exists [t]. apply MChar.
+    - (* App _ _ *) simpl in H. rewrite andb_true_iff in H. destruct H as [Hre1_true Hre2_true].
+      apply IHre1 in Hre1_true. inversion Hre1_true as [s1].
+      apply IHre2 in Hre2_true. inversion Hre2_true as [s2].
+      exists (s1 ++ s2). apply MApp. apply H. apply H0.
+    - (* Union _ _ *) simpl in H. rewrite orb_true_iff in H.
+      destruct H as [Hl|Hr].
+      { apply IHre1 in Hl. inversion Hl. exists x. apply MUnionL. apply H. }
+      { apply IHre2 in Hr. inversion Hr. exists x. apply MUnionR. apply H. }
+    - (* Star _ *) exists []. apply MStar0.
+  }
+Qed.
 (** [] *)
 
 (* ================================================================= *)
