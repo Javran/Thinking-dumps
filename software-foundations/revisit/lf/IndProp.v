@@ -1427,6 +1427,15 @@ Proof.
        | re | s1 s2 re Hmatch1 IH1 Hmatch2 IH2 ].
   - (* MEmpty *)
     simpl. omega.
+  - (* MChar *) simpl. omega.
+  - (* MApp *) intros H.
+    (* unless we can somehow show that:
+
+       pumping_constant (App re1 re2) <= length s1 + length s2 ->
+       pumping_constant re1 <= length s1 /\ pumping_constant re2 <= length s2
+
+       otherwise I don't know how to proceed.
+     *)
   (* FILL IN HERE *) Admitted.
 
 End Pumping.
