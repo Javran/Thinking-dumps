@@ -1589,7 +1589,7 @@ Proof.
       { rewrite H3 in H. apply H. reflexivity. }
       { apply IHl. rewrite H2. reflexivity. apply H3. }
 Qed.
-(** [] *)
+
 
 (** Here, this technique gives us a fairly small gain in convenience
     for the proofs we've seen, but using [reflect] consistently often
@@ -1620,8 +1620,11 @@ Qed.
     stutter.) *)
 
 Inductive nostutter {X:Type} : list X -> Prop :=
- (* FILL IN HERE *)
+  | NSEmpty : nostutter []
+  | NSCons : forall (h : X) (t : list X),
+      nostutter t /\ hd_error t <> Some h -> nostutter (h :: t)
 .
+
 (** Make sure each of these tests succeeds, but feel free to change
     the suggested proof (in comments) if the given one doesn't work
     for you.  Your definition might be different from ours and still
