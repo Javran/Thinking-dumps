@@ -186,7 +186,8 @@ Proof. reflexivity. Qed.
 
 Lemma t_apply_empty:  forall A x v, @t_empty A v x = v.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold t_empty. intros A _ v. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (t_update_eq)  *)
@@ -197,7 +198,9 @@ Proof.
 Lemma t_update_eq : forall A (m: total_map A) x v,
   (t_update m x v) x = v.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold t_update. intros A m x v.
+  rewrite <- beq_id_refl. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (t_update_neq)  *)
@@ -210,7 +213,11 @@ Theorem t_update_neq : forall (X:Type) v x1 x2
   x1 <> x2 ->
   (t_update m x1 v) x2 = m x2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X v x1 x2 m Hneq.
+  unfold t_update. destruct (beq_id x1 x2) eqn:HE.
+  - rewrite beq_id_true_iff in HE. exfalso. apply Hneq. apply HE.
+  - reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (t_update_shadow)  *)
@@ -224,7 +231,10 @@ Lemma t_update_shadow : forall A (m: total_map A) v1 v2 x,
     t_update (t_update m x v1) x v2
   = t_update m x v2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros A m v1 v2 x. apply functional_extensionality. intros x'. unfold t_update.
+  destruct (beq_id x x').
+  - reflexivity. - reflexivity.
+Qed.
 (** [] *)
 
 (** For the final two lemmas about total maps, it's convenient to use
@@ -238,7 +248,13 @@ Proof.
 
 Lemma beq_idP : forall x y, reflect (x = y) (beq_id x y).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros x y. apply iff_reflect. destruct (beq_id x y) eqn:HE.
+  - rewrite beq_id_true_iff in HE. split.
+    + reflexivity. + intros _. apply HE.
+  - rewrite beq_id_false_iff in HE. split.
+    + intros H. exfalso. apply HE. apply H.
+    + intros H. inversion H.
+Qed.
 (** [] *)
 
 (** Now, given [id]s [x1] and [x2], we can use the [destruct (beq_idP
@@ -255,7 +271,10 @@ Proof.
 Theorem t_update_same : forall X x (m : total_map X),
   t_update m x (m x) = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x m. apply functional_extensionality. intro x'. unfold t_update.
+  destruct (beq_idP x x').
+  - rewrite e. reflexivity. - reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, recommended (t_update_permute)  *)
@@ -269,7 +288,16 @@ Theorem t_update_permute : forall (X:Type) v1 v2 x1 x2
     (t_update (t_update m x2 v2) x1 v1)
   = (t_update (t_update m x1 v1) x2 v2).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X v1 v2 x1 x2 m Hneq.
+  apply functional_extensionality. intro x. unfold t_update.
+  destruct (beq_idP x1 x).
+  - destruct (beq_idP x2 x).
+    + exfalso. apply Hneq. rewrite e,e0. reflexivity.
+    + reflexivity.
+  - destruct (beq_idP x2 x).
+    + reflexivity.
+    + reflexivity.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
