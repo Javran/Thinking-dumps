@@ -176,10 +176,11 @@ Print ev_4'''.
 
 Theorem ev_8 : ev 8.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply ev_SS. apply ev_SS. apply ev_SS. apply ev_SS. apply ev_0.
+Qed.
 
-Definition ev_8' : ev 8 
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition ev_8' : ev 8 :=
+  ev_SS 6 (ev_SS 4 (ev_SS 2 (ev_SS 0 ev_0))).
 (** [] *)
 
 (* ################################################################# *)
