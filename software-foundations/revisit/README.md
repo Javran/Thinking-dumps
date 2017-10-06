@@ -18,8 +18,8 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Logic.v`: mostly completed. (except optionals)
     - `IndProp.v`: WIP
     - `Maps.v`: completed.
-    - `ProofObjects.v`: WIP
-    - `IndPrinciples.v`
+    - `ProofObjects.v`: completed.
+    - `IndPrinciples.v`: WIP
     - `Rel.v`
     - `Imp.v`
     - `ImpParser.v`
