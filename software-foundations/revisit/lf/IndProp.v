@@ -562,15 +562,15 @@ Inductive next_even : nat -> nat -> Prop :=
 (** **** Exercise: 2 stars, optional (total_relation)  *)
 (** Define an inductive binary relation [total_relation] that holds
     between every pair of natural numbers. *)
-
-(* FILL IN HERE *)
+Inductive total_relation : nat -> nat -> Prop :=
+  | total_relation_c : forall m n, (m >= n \/ n >= m) -> total_relation m n.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (empty_relation)  *)
 (** Define an inductive binary relation [empty_relation] (on numbers)
     that never holds. *)
-
-(* FILL IN HERE *)
+Inductive empty_relation : nat -> nat -> Prop :=
+  | empty_relation_c : forall m n, (m >= n /\ n >= m) -> empty_relation m n.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (le_exercises)  *)
