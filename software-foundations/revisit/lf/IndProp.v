@@ -570,7 +570,7 @@ Inductive total_relation : nat -> nat -> Prop :=
 (** Define an inductive binary relation [empty_relation] (on numbers)
     that never holds. *)
 Inductive empty_relation : nat -> nat -> Prop :=
-  | empty_relation_c : forall m n, (m >= n /\ n >= m) -> empty_relation m n.
+  | empty_relation_c : forall m n, (m = 0 /\ S n = m) -> empty_relation m n.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (le_exercises)  *)
