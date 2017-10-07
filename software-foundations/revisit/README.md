@@ -20,7 +20,7 @@ But if it does hurt, please let me know. I'll probably swtich to a private repo 
     - `Maps.v`: completed.
     - `ProofObjects.v`: completed.
     - `IndPrinciples.v`: WIP
-    - `Rel.v`: WIP
+    - `Rel.v`: completed.
     - `Imp.v`
     - `ImpParser.v`
     - `ImpCEvalFun.v`

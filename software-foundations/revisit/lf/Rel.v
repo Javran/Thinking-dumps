@@ -415,7 +415,13 @@ Lemma rsc_trans :
       clos_refl_trans_1n R y z ->
       clos_refl_trans_1n R x z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X R x y z Hxy Hyz. induction Hxy.
+  - apply Hyz.
+  - apply rt1n_trans with y. apply IHHxy in Hyz. inversion Hyz.
+    + rewrite <- H0. apply H.
+    + apply H.
+    + apply IHHxy. apply Hyz.
+Qed.
 (** [] *)
 
 (** Then we use these facts to prove that the two definitions of
@@ -427,7 +433,18 @@ Theorem rtc_rsc_coincide :
          forall (X:Type) (R: relation X) (x y : X),
   clos_refl_trans R x y <-> clos_refl_trans_1n R x y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X R x y. split.
+  { intros H. induction H.
+    - apply rt1n_trans with y. apply H. apply rt1n_refl.
+    - apply rt1n_refl.
+    - apply rsc_trans with (x := x) (y := y).
+      apply IHclos_refl_trans1. apply IHclos_refl_trans2. }
+  { intros H. induction H.
+    - apply rt_refl.
+    - apply rt_trans with y.
+      + apply rt_step. apply H.
+      + apply IHclos_refl_trans_1n. }
+Qed.
 (** [] *)
 
 (** $Date: 2017-09-06 10:45:52 -0400 (Wed, 06 Sep 2017) $ *)
