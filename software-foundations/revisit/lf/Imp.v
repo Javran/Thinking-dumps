@@ -454,7 +454,15 @@ Fixpoint optimize_0plus_b (b : bexp) : bexp :=
 Theorem optimize_0plus_b_sound : forall b,
   beval (optimize_0plus_b b) = beval b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction b;
+    try (
+        simpl;
+        repeat (rewrite optimize_0plus_sound);
+        repeat (rewrite IHb);
+        reflexivity
+      ).
+  simpl. rewrite IHb1. rewrite IHb2. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, optional (optimizer)  *)
