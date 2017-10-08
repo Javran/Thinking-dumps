@@ -473,9 +473,32 @@ Qed.
     find it easiest to start small -- add just a single, simple
     optimization and prove it correct -- and build up to something
     more interesting incrementially.)
-
-(* FILL IN HERE *)
 *)
+
+Fixpoint optimize_0mult (a:aexp) : aexp :=
+  match a with
+  | AMult (ANum 0) e2 => ANum 0
+  | ANum n =>
+      ANum n
+  | APlus e1 e2 =>
+      APlus (optimize_0mult e1) (optimize_0mult e2)
+  | AMinus e1 e2 =>
+      AMinus (optimize_0mult e1) (optimize_0mult e2)
+  | AMult e1 e2 =>
+      AMult (optimize_0mult e1) (optimize_0mult e2)
+  end.
+
+Theorem optimize_0mult_a_sound : forall a,
+  aeval (optimize_0mult a) = aeval a.
+Proof.
+  induction a;
+    try (simpl; repeat (simpl in IHa1; rewrite IHa1; rewrite IHa2); reflexivity).
+  { destruct a1;
+    try (simpl; simpl in IHa1; rewrite IHa1; rewrite IHa2; reflexivity).
+    { destruct n.
+      + reflexivity. + simpl. rewrite IHa2. reflexivity. }
+  }
+Qed.
 (** [] *)
 
 (* ================================================================= *)
