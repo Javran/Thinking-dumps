@@ -519,9 +519,10 @@ Theorem optimize_0mult_b_sound : forall b,
   beval (optimize_0mult_b b) = beval b.
 Proof.
   induction b;
-    try (simpl; repeat (rewrite optimize_0mult_a_sound); reflexivity).
-  simpl. rewrite IHb. reflexivity.
-  simpl. rewrite IHb1. rewrite IHb2. reflexivity.
+    try (
+        simpl;
+        try (rewrite IHb); try (rewrite IHb1); try (rewrite IHb2);
+        repeat (rewrite optimize_0mult_a_sound); reflexivity).
 Qed.
 (** [] *)
 
