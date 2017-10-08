@@ -492,11 +492,11 @@ Theorem optimize_0mult_a_sound : forall a,
   aeval (optimize_0mult a) = aeval a.
 Proof.
   induction a;
-    try (simpl; repeat (simpl in IHa1; rewrite IHa1; rewrite IHa2); reflexivity).
+    try (simpl; repeat (rewrite IHa1; rewrite IHa2); reflexivity).
   { destruct a1;
-    try (simpl; simpl in IHa1; rewrite IHa1; rewrite IHa2; reflexivity).
-    { destruct n.
-      + reflexivity. + simpl. rewrite IHa2. reflexivity. }
+      try (simpl; simpl in IHa1; rewrite IHa1; rewrite IHa2; reflexivity).
+    destruct n;
+      try (repeat (simpl; rewrite IHa2); reflexivity).
   }
 Qed.
 (** [] *)
