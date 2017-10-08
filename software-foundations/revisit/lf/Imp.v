@@ -499,6 +499,30 @@ Proof.
       try (repeat (simpl; rewrite IHa2); reflexivity).
   }
 Qed.
+
+(* NOTE: For some reason "optimize : aexp -> aexp" cannot be directly
+   be passed as an argument to make an optmization available for aexp
+   also avaiable for bexp. I think this is definitely possible,
+   just that for now we have to take the long way.
+ *)
+Fixpoint optimize_0mult_b (b : bexp) : bexp :=
+  match b with
+  | BTrue => BTrue
+  | BFalse => BFalse
+  | BEq a1 a2 => BEq (optimize_0mult a1) (optimize_0mult a2)
+  | BLe a1 a2 => BLe (optimize_0mult a1) (optimize_0mult a2)
+  | BNot b1 => BNot (optimize_0mult_b b1)
+  | BAnd b1 b2 => BAnd (optimize_0mult_b b1) (optimize_0mult_b b2)
+  end.
+
+Theorem optimize_0mult_b_sound : forall b,
+  beval (optimize_0mult_b b) = beval b.
+Proof.
+  induction b;
+    try (simpl; repeat (rewrite optimize_0mult_a_sound); reflexivity).
+  simpl. rewrite IHb. reflexivity.
+  simpl. rewrite IHb1. rewrite IHb2. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
