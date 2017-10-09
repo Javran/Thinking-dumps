@@ -812,7 +812,19 @@ Qed.
     [aevalR], and prove that it is equivalent to [beval].*)
 
 Inductive bevalR: bexp -> bool -> Prop :=
-(* FILL IN HERE *)
+  | E_BTrue : bevalR BTrue true
+  | E_BFalse : bevalR BFalse false
+  | E_BEq : forall (e1 e2 : aexp) (n1 n2 : nat),
+      e1 \\ n1 -> e2 \\ n2 ->
+      bevalR (BEq e1 e2) (beq_nat n1 n2)
+  | E_BLe : forall (e1 e2 : aexp) (n1 n2 : nat),
+      e1 \\ n1 -> e2 \\ n2 ->
+      bevalR (BLe e1 e2) (leb n1 n2)
+  | E_BNot : forall (e1 : bexp) (b1 : bool),
+      bevalR e1 b1 -> bevalR (BNot e1) (negb b1)
+  | E_BAnd : forall (e1 e2 : bexp) (b1 b2 : bool),
+      bevalR e1 b1 -> bevalR e2 b2 ->
+      bevalR (BAnd e1 e2) (andb b1 b2)
 .
 
 Lemma beval_iff_bevalR : forall b bv,
