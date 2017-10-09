@@ -1400,28 +1400,22 @@ Theorem pup_to_2_ceval :
     t_update (t_update (t_update (t_update (t_update (t_update empty_state
       X 2) Y 0) Y 2) X 1) Y 3) X 0.
 Proof.
-  apply E_Seq with (t_update (t_update empty_state X 2) Y 0).
-  apply E_Ass. reflexivity.
-  apply E_WhileTrue with
-      (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1).
-  reflexivity.
+  remember (t_update (t_update empty_state X 2) Y 0) as s1.
+  apply E_Seq with (st' := s1).
+  subst. apply E_Ass. reflexivity.
+  remember (t_update s1 Y 2) as s2. remember (t_update s2 X 1) as s3.
+  apply E_WhileTrue with (st' := s3). subst. reflexivity.
   apply E_Seq with
-      (st := t_update (t_update empty_state X 2) Y 0)
-      (st' := t_update (t_update (t_update empty_state X 2) Y 0) Y 2).
-  apply E_Ass. reflexivity. apply E_Ass. reflexivity.
-  apply E_WhileTrue with
-      (t_update
-         (t_update
-            (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1)
-            Y 3) X 0). reflexivity.
-  apply E_Seq with
-      (st' :=
-         t_update (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1) Y 3).
-  apply E_Ass. simpl.
-  assert (H : t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1 X = 1).
-  apply t_update_eq. rewrite H. reflexivity.
-  apply E_Ass. reflexivity.
-  apply E_WhileFalse. reflexivity.
+      (st' := s2).
+  subst. apply E_Ass. reflexivity.
+  subst. apply E_Ass. reflexivity.
+  remember (t_update s3 Y 3) as s4. remember (t_update s4 X 0) as s5.
+  apply E_WhileTrue with (st' := s5). subst. reflexivity.
+  apply E_Seq with (st' := s4).
+  subst. apply E_Ass. simpl.
+  rewrite t_update_eq. reflexivity.
+  subst. apply E_Ass. reflexivity.
+  subst. apply E_WhileFalse. reflexivity.
 Qed.
 (** [] *)
 
