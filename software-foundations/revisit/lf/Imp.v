@@ -1364,7 +1364,10 @@ Example ceval_example2:
     (X ::= ANum 0;; Y ::= ANum 1;; Z ::= ANum 2) / empty_state \\
     (t_update (t_update (t_update empty_state X 0) Y 1) Z 2).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply E_Seq with (t_update empty_state X 0). apply E_Ass. reflexivity.
+  apply E_Seq with (t_update (t_update empty_state X 0) Y 1). apply E_Ass. reflexivity.
+  apply E_Ass. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (pup_to_n)  *)
@@ -1373,15 +1376,53 @@ Proof.
    Prove that this program executes as intended for [X] = [2]
    (this is trickier than you might expect). *)
 
-Definition pup_to_n : com
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+(*
+   NOTE: it might not be a good idea using Z as tmp variable,
+   because "pup_to_2_ceval" does not use Z and decreases X instead,
+   which means we have to to exactly the same.
+ *)
+Definition pup_to_n_firsttry : com :=
+  (Z ::= ANum 1;;
+   WHILE (BLe (AId X) (AId Z)) DO
+   ( Y ::= APlus (AId Y) (AId Z);;
+     Z ::= APlus (AId Z) (ANum 1)
+   ) END).
+
+Definition pup_to_n : com :=
+  (Y ::= ANum 0;;
+   WHILE (BLe (ANum 1) (AId X)) DO
+   ( Y ::= APlus (AId Y) (AId X);;
+     X ::= AMinus (AId X) (ANum 1)
+   ) END).
 
 Theorem pup_to_2_ceval :
   pup_to_n / (t_update empty_state X 2) \\
     t_update (t_update (t_update (t_update (t_update (t_update empty_state
       X 2) Y 0) Y 2) X 1) Y 3) X 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply E_Seq with (t_update (t_update empty_state X 2) Y 0).
+  apply E_Ass. reflexivity.
+  apply E_WhileTrue with
+      (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1).
+  reflexivity.
+  apply E_Seq with
+      (st := t_update (t_update empty_state X 2) Y 0)
+      (st' := t_update (t_update (t_update empty_state X 2) Y 0) Y 2).
+  apply E_Ass. reflexivity. apply E_Ass. reflexivity.
+  apply E_WhileTrue with
+      (t_update
+         (t_update
+            (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1)
+            Y 3) X 0). reflexivity.
+  apply E_Seq with
+      (st' :=
+         t_update (t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1) Y 3).
+  apply E_Ass. simpl.
+  assert (H : t_update (t_update (t_update (t_update empty_state X 2) Y 0) Y 2) X 1 X = 1).
+  apply t_update_eq. rewrite H. reflexivity.
+  apply E_Ass. reflexivity.
+  apply E_WhileFalse. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
