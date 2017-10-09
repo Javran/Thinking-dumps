@@ -830,7 +830,24 @@ Inductive bevalR: bexp -> bool -> Prop :=
 Lemma beval_iff_bevalR : forall b bv,
   bevalR b bv <-> beval b = bv.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  { intros H.
+    induction H;
+    try (simpl;
+         try (rewrite aeval_iff_aevalR in H);
+         try (rewrite aeval_iff_aevalR in H0);
+         subst;
+         reflexivity).
+  }
+  { generalize dependent bv.
+    induction b;
+      try (simpl; intros; subst; constructor);
+      try (rewrite aeval_iff_aevalR; reflexivity).
+    apply IHb; reflexivity.
+    apply IHb1; reflexivity.
+    apply IHb2; reflexivity.
+  }
+Qed.
 (** [] *)
 
 End AExp.
