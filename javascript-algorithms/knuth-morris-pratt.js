@@ -4,27 +4,27 @@
 
 // as indicated in wikipedia
 const KMP1 = (str, pat) => {
-  const T = new Array(pat.length)
+  const pi = new Int32Array(pat.length+1)
   let pos = 1
   let cnd = 0
-  T[0] = -1
+  pi[0] = -1
   for (
     /* NOOP */;
     pos < pat.length;
     ++pos, ++cnd
   ) {
-    // determine T[pos]
+    // determine pi[pos]
     if (pat.codePointAt(pos) === pat.codePointAt(cnd)) {
-      T[pos] = T[cnd]
+      pi[pos] = pi[cnd]
     } else {
-      T[pos] = cnd
-      cnd = T[cnd]
+      pi[pos] = cnd
+      cnd = pi[cnd]
       while (cnd >= 0 && pat.codePointAt(pos) !== pat.codePointAt(cnd)) {
-        cnd = T[cnd]
+        cnd = pi[cnd]
       }
     }
   }
-  T[pos] = cnd
+  pi[pos] = cnd
   let j = 0
   let k = 0
   const ans = []
@@ -34,10 +34,10 @@ const KMP1 = (str, pat) => {
       if (k === pat.length) {
         // found
         ans.push(j - k)
-        k = T[k]
+        k = pi[k]
       }
     } else {
-      k = T[k]
+      k = pi[k]
       if (k < 0) {
         ++k, ++j
       }
@@ -48,7 +48,7 @@ const KMP1 = (str, pat) => {
 
 // from geeksforgeeks
 const KMP2 = (str, pat) => {
-  const T = new Array(pat.length)
+  const T = new Int32Array(pat.length + 1)
   let len = 0
   T[0] = 0
   for (
@@ -96,7 +96,7 @@ const KMP2 = (str, pat) => {
 
 // modified from CS 97SI Stanford University By Jaehyun Park
 const KMP3 = (str, pat) => {
-  const pi = new Array(pat.length + 1)
+  const pi = new Int32Array(pat.length + 1)
   pi[0] = -1
   let k = -1
   for (let i = 1; i <= pat.length; ++i) {
@@ -160,3 +160,5 @@ const test = () => {
 }
 
 test()
+
+// KMP1('', 'ABCDABD')
