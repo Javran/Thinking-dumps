@@ -1,3 +1,14 @@
+/*
+   since JS does not come with priority queue,
+   implementing a heap to serve this purpose seems reasonable.
+
+   core operations are `siftUp` and `siftDown` for maintaining
+   data structure invariants.
+
+   for practical concerns `elemToKey` is implemented
+   to allow every element to project a key for sorting.
+ */
+
 function BinHeap(elemToKey) {
   this.size = 0
   this.container = []
@@ -65,6 +76,13 @@ BinHeap.prototype.extractMin = function() {
   return ret
 }
 
+/*
+   run a test by using it to sort a random generated array
+   and compare the result with Array.prototype.sort.
+
+   indeed we can do heapify much better than inserting elements one by one,
+   but here we just view it as a priority queue and sees only `size`, `extractMin`, `insert`.
+ */
 const test = () => {
   const xs = []
   const hp = new BinHeap(x => x)
