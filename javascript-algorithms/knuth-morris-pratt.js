@@ -145,7 +145,9 @@ const test = () => {
   ;[KMP1, KMP2, KMP3].forEach(KMPImpl => {
     const caseName = String(KMPImpl.name)
     console.time(caseName)
-    const actual = KMPImpl(str, pat)
+    let actual
+    for (let i = 0; i < 10; ++i)
+      actual = KMPImpl(str, pat)
     console.timeEnd(caseName)
     console.assert(actual.length === ans.length, 'len')
     console.assert(actual.every((x,i) => x === ans[i]))
