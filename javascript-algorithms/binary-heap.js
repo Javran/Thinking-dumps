@@ -108,4 +108,5 @@ const test = () => {
   console.log(`${xs.length} elements sorted, test ok`)
 }
 
-test()
+// test()
+exports.BinHeap = BinHeap
