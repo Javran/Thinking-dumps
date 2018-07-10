@@ -68,19 +68,23 @@ BinHeap.prototype.extractMin = function() {
 const test = () => {
   const xs = []
   const hp = new BinHeap(x => x)
-  for (let i = 0; i < 40000; ++i) {
+  const l = (1 << 16) + Math.floor(Math.random() * (1 << 16))
+  for (let i = 0; i < l; ++i) {
     const val = Math.floor(Math.random() * (1 << 30))
     xs.push(val)
     hp.insert(val)
   }
-  console.time('stock')
-  xs.sort((x, y) => x - y)
-  console.timeEnd('stock')
+
   const ys = []
   console.time('min heap')
   while (hp.size > 0)
     ys.push(hp.extractMin())
   console.timeEnd('min heap')
+
+  console.time('stock')
+  xs.sort((x, y) => x - y)
+  console.timeEnd('stock')
+
   for (let i = 0; i < xs.length; ++i)
     console.assert(xs[i] === ys[i])
   console.log(`${xs.length} elements sorted, test ok`)
