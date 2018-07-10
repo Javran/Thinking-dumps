@@ -14,13 +14,12 @@ const KMP1 = (str, pat) => {
     ++pos, ++cnd
   ) {
     // determine T[pos]
-    const isMatch = pat.codePointAt(pos) === pat.codePointAt(cnd)
-    if (isMatch) {
+    if (pat.codePointAt(pos) === pat.codePointAt(cnd)) {
       T[pos] = T[cnd]
     } else {
       T[pos] = cnd
       cnd = T[cnd]
-      while (cnd >= 0 && !isMatch) {
+      while (cnd >= 0 && pat.codePointAt(pos) !== pat.codePointAt(cnd)) {
         cnd = T[cnd]
       }
     }
@@ -74,14 +73,17 @@ const KMP2 = (str, pat) => {
   let i = 0, j = 0
   const ans = []
   while (i < str.length) {
-    const isMatch = pat.codePointAt(j) === str.codePointAt(i)
-    if (isMatch) {
+    if (
+      pat.codePointAt(j) === str.codePointAt(i)
+    ) {
       ++j, ++i
     }
     if (j === pat.length) {
       ans.push(i-j)
       j = T[j-1]
-    } else if (i < str.length && !isMatch) {
+    } else if (
+      i < str.length && pat.codePointAt(j) !== str.codePointAt(i)
+    ) {
       if (j != 0) {
         j = T[j-1]
       } else {
