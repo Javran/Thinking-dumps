@@ -26,7 +26,6 @@ const KMP1 = (str, pat) => {
     }
   }
   T[pos] = cnd
-
   let j = 0
   let k = 0
   const ans = []
@@ -117,7 +116,7 @@ const KMP3 = (str, pat) => {
   return ans
 }
 
-const test = () => {
+const mkStr = (() => {
   // construct a str..
   const min = 0, max = 3
   const range = max - min + 1
@@ -131,6 +130,10 @@ const test = () => {
       preStr.push(rndCodePoint())
     return preStr.map(x => String.fromCodePoint(x)).join('')
   }
+  return mkStr
+})()
+
+const test = () => {
   const str = mkStr(1 << 20), pat = mkStr(1 << 3)
   const ans = []
   let i = 0
