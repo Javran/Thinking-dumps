@@ -14,12 +14,13 @@ const KMP1 = (str, pat) => {
     ++pos, ++cnd
   ) {
     // determine T[pos]
-    if (pat.codePointAt(pos) === pat.codePointAt(cnd)) {
+    const isMatch = pat.codePointAt(pos) === pat.codePointAt(cnd)
+    if (isMatch) {
       T[pos] = T[cnd]
     } else {
       T[pos] = cnd
       cnd = T[cnd]
-      while (cnd >= 0 && pat.codePointAt(pos) !== pat.codePointAt(cnd)) {
+      while (cnd >= 0 && !isMatch) {
         cnd = T[cnd]
       }
     }
@@ -116,6 +117,39 @@ const KMP3 = (str, pat) => {
   return ans
 }
 
-[KMP1, KMP2, KMP3].forEach(KMPImpl => {
-  console.log(KMPImpl('ABCABCABABCABABCABABABC', 'ABABC'))
-})
+const test = () => {
+  // construct a str..
+  const min = 0, max = 3
+  const range = max - min + 1
+  const rndCodePoint = () => {
+    const ind = Math.floor(Math.random() * range) + min
+    return 65+ind
+  }
+  const mkStr = size => {
+    const preStr = []
+    for (let i = 0; i < size; ++i)
+      preStr.push(rndCodePoint())
+    return preStr.map(x => String.fromCodePoint(x)).join('')
+  }
+  const str = mkStr(1 << 20), pat = mkStr(1 << 3)
+  const ans = []
+  let i = 0
+  do {
+    i = str.indexOf(pat, i)
+    if (i !== -1) {
+      ans.push(i)
+      ++i
+    }
+  } while (i !== -1)
+
+  ;[KMP1, KMP2, KMP3].forEach(KMPImpl => {
+    const caseName = String(KMPImpl.name)
+    console.time(caseName)
+    const actual = KMPImpl(str, pat)
+    console.timeEnd(caseName)
+    console.assert(actual.length === ans.length, 'len')
+    console.assert(actual.every((x,i) => x === ans[i]))
+  })
+}
+
+test()
