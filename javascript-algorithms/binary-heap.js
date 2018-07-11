@@ -7,6 +7,11 @@
 
    for practical concerns `elemToKey` is implemented
    to allow every element to project a key for sorting.
+
+   note about absence of decreaseKey: it's not necessary to implement it
+   for applications like Dijkstra's algorithm: we can insert the same
+   node as many times as we want and ignore the old value (as the newest
+   value will float to the front faster than the old one)
  */
 
 function BinHeap(elemToKey) {
