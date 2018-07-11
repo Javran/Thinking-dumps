@@ -4,6 +4,14 @@
 
 // as indicated in wikipedia
 const KMP1 = (str, pat) => {
+  /*
+     pi[i] is the length of the longest possible proper prefix of pat
+     and also a suffix ending at i-1.
+
+     well actually the algorithm no longer matches this definition
+     because it takes the librety of jumping backward more aggresively
+     to avoid unnecessary checks.
+   */
   const pi = new Int32Array(pat.length+1)
   let pos = 1
   let cnd = 0
@@ -15,9 +23,25 @@ const KMP1 = (str, pat) => {
   ) {
     // determine pi[pos]
     if (pat.codePointAt(pos) === pat.codePointAt(cnd)) {
+      /*
+         the different bit.
+         we could have done:
+         `pi[pos] = cnd`
+
+         but note that since pat[pos] === pat[cnd],
+         we can take a step further since
+         when matching against pat[pos] fails, pat[cnd] will also fail anyway.
+
+       */
       pi[pos] = pi[cnd]
     } else {
       pi[pos] = cnd
+      /*
+         note that since in this branch we have established that:
+         `pat.codePointAt(pos) === pat.codePointAt(cnd)` is false,
+         there is no need of verifying this fact again,
+         therefore we skip a bit.
+       */
       cnd = pi[cnd]
       while (cnd >= 0 && pat.codePointAt(pos) !== pat.codePointAt(cnd)) {
         cnd = pi[cnd]
@@ -166,6 +190,7 @@ const test = () => {
   })
 }
 
-test()
+// test()
 
 // KMP1('', 'ABCDABD')
+KMP1('', 'PARTICIPATE IN PARACHUTE')
