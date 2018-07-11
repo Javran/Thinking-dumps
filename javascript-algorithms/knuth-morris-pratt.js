@@ -25,20 +25,27 @@ const KMP1 = (str, pat) => {
     }
   }
   pi[pos] = cnd
+  // j scans through the string and k the pattern
   let j = 0
   let k = 0
   const ans = []
   while (j < str.length) {
     if (pat.codePointAt(k) === str.codePointAt(j)) {
+      // upon successful match
       ++k, ++j
       if (k === pat.length) {
         // found
         ans.push(j - k)
+        /*
+           pretend it's mismatch, jump back.
+           note that since k = pat.length, pi[k] cannot be -1
+         */
         k = pi[k]
       }
     } else {
       k = pi[k]
       if (k < 0) {
+        // cannot match, jumping ahead on str
         ++k, ++j
       }
     }
