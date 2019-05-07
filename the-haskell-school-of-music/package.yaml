@@ -1,0 +1,18 @@
+name:                the-haskell-school-of-music
+version:             0.1.0.0
+github:              "Javran/the-haskell-school-of-music"
+license:             BSD3
+author:              "Javran Cheng"
+maintainer:          "javran.c@gmail.com"
+copyright:           "Copyright: (c) 2019 Javran Cheng"
+
+description:         description
+
+dependencies:
+- base
+- Euterpea
+
+library:
+  source-dirs: src
+  exposed-modules:
+    Ch02Demo
