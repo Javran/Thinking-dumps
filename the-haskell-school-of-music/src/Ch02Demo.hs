@@ -27,6 +27,14 @@ twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
     -- A major triad is represented by the integer notation {0, 4, 7}.
     majorChord p = [p, trans 4 p, trans 7 p]
     pal = foldr1 (:=:)
-    dMinor = pal $ note dz <$> minorChord (D,4) -- TODO: relate pz
-    gMajor = pal $ note dz <$> majorChord (G,4) -- TODO: relate pz
+    {-
+     TODO: through trial and error we know the half steps to go:
+
+     (D,4) = trans 2 (C,4)
+     (G,4) = trans 7 (C,4)
+
+     but still I don't understand where does these "2" and "7" come from?
+     -}
+    dMinor = pal $ note dz <$> minorChord (trans 2 pz)
+    gMajor = pal $ note dz <$> majorChord (trans 7 pz)
     cMajor = pal $ note ddz <$> majorChord pz
