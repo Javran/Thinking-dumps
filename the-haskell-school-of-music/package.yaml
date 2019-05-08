@@ -11,6 +11,7 @@ description:         description
 dependencies:
 - base
 - Euterpea
+- HSoM
 
 library:
   source-dirs: src
