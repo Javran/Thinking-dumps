@@ -15,4 +15,5 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
-    Ch02Demo
+  - Ch01Demo
+  - Ch02Demo
