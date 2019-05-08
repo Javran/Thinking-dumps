@@ -28,12 +28,18 @@ twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
     majorChord p = [p, trans 4 p, trans 7 p]
     pal = foldr1 (:=:)
     {-
-     TODO: through trial and error we know the half steps to go:
+      through trial and error we know the half steps to go:
+      (actually it's just looking at `take _ $ iterate (trans 1) (C,4)`)
 
-     (D,4) = trans 2 (C,4)
-     (G,4) = trans 7 (C,4)
+       (D,4) = trans 2 (C,4)
+       (G,4) = trans 7 (C,4)
 
-     but still I don't understand where does these "2" and "7" come from?
+      for the magic number 2,7, consider 12-tone equal temperament scale:
+
+        0: C, 1: C#, 2: D, 3: D#, 4: E,
+        5: F, 6: F#, 7: G, 8: G#, 9: A, 10: A#, 11: B
+
+      there we go.
      -}
     dMinor = pal $ note dz <$> minorChord (trans 2 pz)
     gMajor = pal $ note dz <$> majorChord (trans 7 pz)
