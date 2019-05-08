@@ -12,6 +12,8 @@ this should provide the MIDI output device for Euterpea.
 
 ```bash
 fluidsynth --server -a pulseaudio -m alsa_seq -l -i /usr/share/sounds/sf2/FluidR3_GM.sf2
+# or, equivalently run following script if you are at project root of HSoM:
+./start-midi.sh
 ```
 
 If run into permission issues, make sure you are in `audio` group and retry.
