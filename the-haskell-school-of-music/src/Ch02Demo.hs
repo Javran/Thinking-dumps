@@ -50,6 +50,7 @@ twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
     gMajor = pal $ note dz <$> majorChord (trans 7 pz)
     cMajor = pal $ note ddz <$> majorChord pz
 
+{- Ex 2.2 for Blues pitch -}
 data BluesPitchClass = Ro | MT | Fo | Fi | MS
 type BluesPitch = (BluesPitchClass, Octave)
 
@@ -72,3 +73,20 @@ fromBlues = fmap convert
 
 bluesSample :: Music BluesPitch
 bluesSample = foldr (\i r -> note wn (i, 4) :+: r) (rest 0) [Ro, MT, Fo, Fi, MS]
+
+{-
+  Ex 2.3 & 2.4:
+
+  note that AbsPitch is just Int, so Ex 2.3 is actually saying:
+
+    + pitch . absPitch == id
+    + absPitch . pitch == id
+
+  (I'm not going to prove this, because it's intentional that
+   pitch and absPitch should be consistent, so that Pitch can
+   be manipuated in a way as if it's Int)
+
+  this allows us to see "trans" is just an addition acting on Int <-> Pitch,
+  so Ex 2.4 holds.
+
+ -}
