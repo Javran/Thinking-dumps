@@ -9,6 +9,9 @@ import Euterpea
   - Pitch: perceptual, allows sounds' ordering on a frequency-related scale.
   - Pitch Class: "The pitch class C stands for all possible Cs, in whatever octave position."
   - Note: Pitch + Duration
+  - Triad: a set of three notes called the "root", the "third", the "fifth" from
+    lowest to highest pitch.
+    + the third can be a "minor third" (three semitones) or a "major third" (four semitones)
  -}
 
 t251 :: Music Pitch
