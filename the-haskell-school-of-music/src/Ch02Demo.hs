@@ -69,3 +69,6 @@ fromBlues = fmap convert
       Fo -> F
       Fi -> G
       MS -> Bf
+
+bluesSample :: Music BluesPitch
+bluesSample = foldr (\i r -> note wn (i, 4) :+: r) (rest 0) [Ro, MT, Fo, Fi, MS]
