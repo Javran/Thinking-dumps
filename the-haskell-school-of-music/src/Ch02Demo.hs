@@ -1,4 +1,4 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TupleSections, LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch02Demo where
 
@@ -90,3 +90,8 @@ bluesSample = foldr (\i r -> note wn (i, 4) :+: r) (rest 0) [Ro, MT, Fo, Fi, MS]
   so Ex 2.4 holds.
 
  -}
+
+{- Ex 2.5 -}
+transM :: AbsPitch -> Music Pitch -> Music Pitch
+transM ap = fmap (trans ap)
+
