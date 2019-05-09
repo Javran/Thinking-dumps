@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch02Demo where
 
 import Euterpea
@@ -47,3 +49,23 @@ twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
     dMinor = pal $ note dz <$> minorChord (trans 2 pz)
     gMajor = pal $ note dz <$> majorChord (trans 7 pz)
     cMajor = pal $ note ddz <$> majorChord pz
+
+data BluesPitchClass = Ro | MT | Fo | Fi | MS
+type BluesPitch = (BluesPitchClass, Octave)
+
+ro, mt, fo, fi, ms :: Octave -> Dur -> Music BluesPitch
+ro o d = note d (Ro, o)
+mt o d = note d (MT, o)
+fo o d = note d (Fo, o)
+fi o d = note d (Fi, o)
+ms o d = note d (MS, o)
+
+fromBlues :: Functor f => f BluesPitch -> f Pitch
+fromBlues = fmap convert
+  where
+    convert (pc,o) = (,o) $ case pc of
+      Ro -> C
+      MT -> Ef
+      Fo -> F
+      Fi -> G
+      MS -> Bf
