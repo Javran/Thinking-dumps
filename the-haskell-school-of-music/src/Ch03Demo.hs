@@ -1,7 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch03Demo where
 
+import Data.Monoid
+import Data.Coerce
 import Euterpea
+
 import qualified Ch02Demo
 
 {- Ex 3.1 -}
@@ -66,3 +69,19 @@ applyAll xs z = foldr ($) z xs
   and we already know right-associativity is more efficient in such cases.
  -}
 
+{- Ex 3.7 -}
+myLength :: Foldable f => f a -> Int
+myLength = getSum . foldMap (const 1)
+
+{- Ex 3.8 -}
+doubleEach :: (Functor f, Num n) => f n -> f n
+doubleEach = fmap (*2)
+
+pairAndOne :: (Functor f, Enum n) => f n -> f (n,n)
+pairAndOne = fmap (\x -> (x, succ x))
+
+addEachPair :: (Functor f, Num n) => f (n,n) -> f n
+addEachPair = fmap (uncurry (+))
+
+addPairsPointwise :: (Foldable f, Num m, Num n) => f (m,n) -> (m,n)
+addPairsPointwise = (getSum *** getSum) . foldMap coerce
