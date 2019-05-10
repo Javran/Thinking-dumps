@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch03Demo where
 
+import Control.Applicative
 import Data.Monoid
 import Data.Coerce
 import Euterpea
@@ -85,3 +86,37 @@ addEachPair = fmap (uncurry (+))
 
 addPairsPointwise :: (Foldable f, Num m, Num n) => f (m,n) -> (m,n)
 addPairsPointwise = (getSum *** getSum) . foldMap coerce
+
+{-
+  Ex 3.9
+
+  note that this impl doesn't produce error when length mismatches.
+ -}
+fuse, fuseErr :: [Dur] -> [Dur -> Music a] -> [Music a]
+fuse xs ys = getZipList $ flip ($) <$> ZipList xs <*> ZipList ys
+
+fuseErr [] [] = []
+fuseErr (x:xs) (y:ys) = y x : fuseErr xs ys
+fuseErr _ _ = error "list length mismatches"
+
+{- Ex 3.10 -}
+{- HLINT ignore maxAbsPitchRec "Use foldl" -}
+maxAbsPitchRec, maxAbsPitchNonRec :: [AbsPitch] -> AbsPitch
+maxAbsPitchRec [] = error "empty list"
+maxAbsPitchRec (x:xs) = maxAux x xs
+  where
+    maxAux nowMax [] = nowMax
+    maxAux nowMax (y:ys) =
+      maxAux (if y > nowMax then y else nowMax) ys
+
+maxAbsPitchNonRec = maximum
+
+{- Ex 3.11 -}
+chrom :: Pitch -> Pitch -> Music Pitch
+chrom p1 p2 = case compare a1 a2 of
+    EQ -> note qn p1
+    LT -> line1 $ note qn . pitch <$> [a1..a2]
+    GT -> line1 $ note qn . pitch <$> [a1,a1-1..a2]
+  where
+    a1 = absPitch p1
+    a2 = absPitch p2
