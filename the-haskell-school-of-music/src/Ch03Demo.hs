@@ -1,7 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch03Demo where
 
-import Control.Applicative
 import Data.Monoid
 import Data.Coerce
 import Euterpea
@@ -93,7 +92,7 @@ addPairsPointwise = (getSum *** getSum) . foldMap coerce
   note that this impl doesn't produce error when length mismatches.
  -}
 fuse, fuseErr :: [Dur] -> [Dur -> Music a] -> [Music a]
-fuse xs ys = getZipList $ flip ($) <$> ZipList xs <*> ZipList ys
+fuse = zipWith (flip ($))
 
 fuseErr [] [] = []
 fuseErr (x:xs) (y:ys) = y x : fuseErr xs ys
