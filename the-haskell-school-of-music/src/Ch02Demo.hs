@@ -92,6 +92,5 @@ bluesSample = foldr (\i r -> note wn (i, 4) :+: r) (rest 0) [Ro, MT, Fo, Fi, MS]
  -}
 
 {- Ex 2.5 -}
-transM :: AbsPitch -> Music Pitch -> Music Pitch
+transM :: Functor f => AbsPitch -> f Pitch -> f Pitch
 transM ap = fmap (trans ap)
-
