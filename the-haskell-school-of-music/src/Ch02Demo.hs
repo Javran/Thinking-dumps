@@ -1,4 +1,4 @@
-{-# LANGUAGE TupleSections, LambdaCase #-}
+{-# LANGUAGE TupleSections #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch02Demo where
 

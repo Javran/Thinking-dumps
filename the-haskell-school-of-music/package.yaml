@@ -18,3 +18,4 @@ library:
   exposed-modules:
   - Ch01Demo
   - Ch02Demo
+  - Ch03Demo
