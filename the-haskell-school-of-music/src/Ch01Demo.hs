@@ -3,6 +3,9 @@ module Ch01Demo where
 
 import Euterpea
 
+simple :: Num n => n -> n -> n -> n
+simple x y z = x * (y + z)
+
 {- Ex 1.4 for adding interval as argument -}
 
 hNote :: Int -> Dur -> Pitch -> Music Pitch
