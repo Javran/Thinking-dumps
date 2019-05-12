@@ -6,7 +6,7 @@ author:              "Javran Cheng"
 maintainer:          "javran.c@gmail.com"
 copyright:           "Copyright: (c) 2019 Javran Cheng"
 
-description:         description
+description:         "Javran's code & notes for The Haskell School of Music"
 
 dependencies:
 - base
@@ -16,6 +16,6 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
-  - Ch01Demo
-  - Ch02Demo
-  - Ch03Demo
+  - Ch01
+  - Ch02
+  - Ch03

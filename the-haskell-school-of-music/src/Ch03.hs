@@ -1,16 +1,16 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
-module Ch03Demo where
+module Ch03 where
 
 import Data.Bits
 import Data.Coerce
 import Data.Monoid
 import Euterpea
 
-import qualified Ch02Demo
+import qualified Ch02
 
 {- Ex 3.1 -}
 f1 :: Int -> [Pitch] -> [Pitch]
-f1 = Ch02Demo.transM
+f1 = Ch02.transM
 
 f2 :: [Dur] -> [Music a]
 f2 = fmap rest

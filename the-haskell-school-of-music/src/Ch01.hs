@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
-module Ch01Demo where
+module Ch01 where
 
 import Euterpea
 
