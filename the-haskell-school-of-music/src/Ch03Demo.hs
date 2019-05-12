@@ -1,8 +1,9 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch03Demo where
 
-import Data.Monoid
+import Data.Bits
 import Data.Coerce
+import Data.Monoid
 import Euterpea
 
 import qualified Ch02Demo
@@ -110,7 +111,14 @@ maxAbsPitchRec (x:xs) = maxAux x xs
 
 maxAbsPitchNonRec = maximum
 
-{- Ex 3.11 -}
+{-
+   Ex 3.11
+
+   I'm skipping the recursive definition
+   as it'll get verbose and less efficient unless proper bookkeeping is done
+   (so that we don't need to compare every single recursive call)
+
+ -}
 chrom :: Pitch -> Pitch -> Music Pitch
 chrom p1 p2 = case compare a1 a2 of
     EQ -> note qn p1
@@ -119,3 +127,41 @@ chrom p1 p2 = case compare a1 a2 of
   where
     a1 = absPitch p1
     a2 = absPitch p2
+
+{- Ex 3.12 -}
+mkScale :: Pitch -> [Int] -> Music Pitch
+mkScale p = line1 . (note qn <$>) . scanl (\a i -> pitch $ absPitch a + i) p
+
+{- Ex 3.13 -}
+data MyScale
+  = MyIonian
+  | MyDorian
+  | MyPhrygian
+  | MyLydian
+  | MyMixolydian
+  | MyAeolian
+  | MyLocrian
+
+genScale :: MyScale -> Pitch -> Music Pitch
+genScale s p = mkScale p $ case s of
+  MyIonian -> [2,2,1,2,2,2,1]
+  MyDorian -> [2,1,2,2,2,1,2]
+  MyPhrygian -> [1,2,2,2,1,2,2]
+  MyLydian -> [2,2,2,1,2,2,1]
+  MyMixolydian -> [2,2,1,2,2,1,2]
+  MyAeolian -> [2,1,2,2,1,2,2]
+  MyLocrian -> [1,2,2,1,2,2,2]
+
+{- Ex 3.14: TODO -}
+
+{- Ex 3.15 -}
+encrypt :: Char -> Int
+encrypt = (0xFF .&.) . succ . fromEnum
+
+decrypt :: Int -> Char
+decrypt = toEnum . (0xFF .&.) . (+ 255)
+
+checkEncryptDecrypt :: Bool
+checkEncryptDecrypt = and $
+  [x == x' | x <- toEnum <$> [0..255], let x' = decrypt . encrypt $ x]
+  <> [y == y'| y <- [0..255], let y' = encrypt . decrypt $ y]
