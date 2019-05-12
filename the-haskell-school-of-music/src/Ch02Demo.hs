@@ -24,14 +24,13 @@ t251 = dMinor :+: gMajor :+: cMajor
     cMajor = c 4 bn :=: e 4 bn :=: g 4 bn
 
 twoFiveOne :: Pitch -> Dur -> Music Pitch
-twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
+twoFiveOne pz dz = line1 [dMinor, gMajor, cMajor]
   where
     ddz = 2 * dz
     -- A minor triad can be represented by the integer notation {0, 3, 7}.
     minorChord p = [p, trans 3 p, trans 7 p]
     -- A major triad is represented by the integer notation {0, 4, 7}.
     majorChord p = [p, trans 4 p, trans 7 p]
-    pal = foldr1 (:=:)
     {-
       through trial and error we know the half steps to go:
       (actually it's just looking at `take _ $ iterate (trans 1) (C,4)`)
@@ -46,9 +45,9 @@ twoFiveOne pz dz = dMinor :+: gMajor :+: cMajor
 
       there we go.
      -}
-    dMinor = pal $ note dz <$> minorChord (trans 2 pz)
-    gMajor = pal $ note dz <$> majorChord (trans 7 pz)
-    cMajor = pal $ note ddz <$> majorChord pz
+    dMinor = chord1 $ note dz <$> minorChord (trans 2 pz)
+    gMajor = chord1 $ note dz <$> majorChord (trans 7 pz)
+    cMajor = chord1 $ note ddz <$> majorChord pz
 
 {- Ex 2.2 for Blues pitch -}
 data BluesPitchClass = Ro | MT | Fo | Fi | MS
