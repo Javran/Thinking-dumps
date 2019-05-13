@@ -31,3 +31,11 @@ bassLine = times 3 b1 :+: times 2 b2 :+: times 4 b3 :+: times 5 b1
     b1 = addDur dqn [b 3, fs 4, g 4, fs 4]
     b2 = addDur dqn [b 3, es 4, fs 4, es 4]
     b3 = addDur dqn [as 3, fs 4, g 4, fs 4]
+
+{-
+  transforms a primitive note into a specific interpretation of grace note.
+ -}
+graceNote :: Int -> Music Pitch -> Music Pitch
+graceNote n (Prim (Note d p)) =
+  note (d/8) (trans n p) :+: note (7 * d/8) p
+graceNote _ _ = error "non-primitives are not supported"
