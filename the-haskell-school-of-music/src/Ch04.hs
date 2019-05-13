@@ -21,3 +21,13 @@ times n m
       (n',0) -> let half = times n' m in half :+: half
       (n',1) -> let half = times n' m in m :+: half :+: half
       _ -> error "unreachable"
+
+addDur :: Dur -> [Dur -> Music a] -> Music a
+addDur d = line . map ($ d)
+
+bassLine :: Music Pitch
+bassLine = times 3 b1 :+: times 2 b2 :+: times 4 b3 :+: times 5 b1
+  where
+    b1 = addDur dqn [b 3, fs 4, g 4, fs 4]
+    b2 = addDur dqn [b 3, es 4, fs 4, es 4]
+    b3 = addDur dqn [as 3, fs 4, g 4, fs 4]
