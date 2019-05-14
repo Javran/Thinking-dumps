@@ -12,10 +12,12 @@ dependencies:
 - base
 - Euterpea
 - HSoM
+- deepseq
 
 library:
   source-dirs: src
   exposed-modules:
+  - Util
   - Ch01
   - Ch02
   - Ch03

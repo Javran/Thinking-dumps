@@ -3,6 +3,9 @@ module Ch05 where
 
 import Data.Function
 import Data.Semigroup
+import Euterpea
+
+import qualified Ch01
 
 {- Ex 5.1 -}
 twice :: (a -> a) -> (a -> a)
