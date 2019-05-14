@@ -47,5 +47,4 @@ remainder' = fix $ \f a b -> if a < b then a else f (a-b) b
 
 remaindersAgree :: Bool
 remaindersAgree = and
-  [ remainder a b == remainder' a b
-  | a <- [1..10], b <- [1..10]]
+  [ remainder a b == remainder' a b | a <- [1..10], b <- [1..10] ]
