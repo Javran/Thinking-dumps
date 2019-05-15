@@ -152,7 +152,14 @@ genScale s p = mkScale p $ case s of
   MyAeolian -> [2,1,2,2,1,2,2]
   MyLocrian -> [1,2,2,1,2,2,2]
 
-{- Ex 3.14: TODO -}
+{-
+  Ex 3.14:
+
+  frereJacques is the original version
+  with no four-round or customed instruments,
+
+  frereJacques' is the one with those extras.
+ -}
 line1Map :: (a -> Music b) -> [a] -> Music b
 line1Map f = line1 . map f
 
@@ -170,6 +177,7 @@ frereJacques' :: Music Pitch
 frereJacques' =
     cut (wn * 8)
     . chord1
+    . zipWith (Modify . Instrument) [Piccolo, Violin, Viola, Cello]
     . take 4
     $ iterate prependRest frereJacques
   where
