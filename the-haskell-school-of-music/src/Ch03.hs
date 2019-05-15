@@ -153,16 +153,27 @@ genScale s p = mkScale p $ case s of
   MyLocrian -> [1,2,2,1,2,2,2]
 
 {- Ex 3.14: TODO -}
+line1Map :: (a -> Music b) -> [a] -> Music b
+line1Map f = line1 . map f
+
 frereJacques :: Music Pitch
 frereJacques = line1Map (\m -> m :+: m) [l1,l2,l3,l4]
   where
-    line1Map f = line1 . map f
     l1 = line1Map n [(G,4),(A,4),(B,4),(G,4)]
     l2 = line1Map n [(B,4),(C,5),(D,5)] :+: rest qn
     l3 = line1Map e [(D,5),(E,5),(D,5),(C,5)] :+: line1Map n [(B,4),(G,4)]
     l4 = line1Map n [(G,4),(D,4),(G,4)] :+: rest qn
     e = note en
     n = note qn
+
+frereJacques' :: Music Pitch
+frereJacques' =
+    cut (wn * 8)
+    . chord1
+    . take 4
+    $ iterate prependRest frereJacques
+  where
+    prependRest = (rest wn :+:)
 
 {- Ex 3.15 -}
 encrypt :: Char -> Int
