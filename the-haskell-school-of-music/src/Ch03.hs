@@ -154,12 +154,13 @@ genScale s p = mkScale p $ case s of
 
 {- Ex 3.14: TODO -}
 frereJacques :: Music Pitch
-frereJacques = l1 :+: l1 :+: l2 :+: l2 :+: l3 :+: l3 :+: l4 :+: l4
+frereJacques = line1Map (\m -> m :+: m) [l1,l2,l3,l4]
   where
-    l1 = line1 (map n [(G,4),(A,4),(B,4),(G,4)])
-    l2 = line1 (map n [(B,4),(C,5),(D,5)]) :+: rest qn
-    l3 = line1 (map e [(D,5),(E,5),(D,5),(C,5)]) :+: line1 (map n [(B,4),(G,4)])
-    l4 = line1 (map n [(G,4),(D,4),(G,4)]) :+: rest qn
+    line1Map f = line1 . map f
+    l1 = line1Map n [(G,4),(A,4),(B,4),(G,4)]
+    l2 = line1Map n [(B,4),(C,5),(D,5)] :+: rest qn
+    l3 = line1Map e [(D,5),(E,5),(D,5),(C,5)] :+: line1Map n [(B,4),(G,4)]
+    l4 = line1Map n [(G,4),(D,4),(G,4)] :+: rest qn
     e = note en
     n = note qn
 
