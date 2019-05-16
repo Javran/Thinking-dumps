@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Ch04 where
 
+import Data.List (inits)
 import Euterpea hiding (times)
 
 twinkle :: Music Pitch
@@ -66,3 +67,17 @@ childSong6 :: Music Pitch
 childSong6 = instrument RhodesPiano (tempo t (bassLine :=: mainVoice))
   where
     t = (dhn / qn) * (69 / 120)
+
+prefixes :: [a] -> [[a]]
+prefixes = tail . inits
+
+prefix :: [Music a] -> Music a
+prefix mel = m :+: transpose 5 m :+: m
+  where
+    m1 = line (concat (prefixes mel))
+    m2 = transpose 12 (line (concat (prefixes (reverse mel))))
+    m = instrument Flute m1 :=: instrument VoiceOohs m2
+
+mel1, mel2 :: [Music Pitch]
+mel1 = [c 5 en, e 5 sn, g 5 en, b 5 sn, a 5 en, f 5 sn, d 5 en, b 4 sn, c 5 en]
+mel2 = [c 5 sn, e 5 sn, g 5 sn, b 5 sn, a 5 sn, f 5 sn, d 5 sn, b 4 sn, c 5 sn]
