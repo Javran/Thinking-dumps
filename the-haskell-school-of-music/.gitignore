@@ -1,3 +1,6 @@
 .stack-work/
 the-haskell-school-of-music.cabal
 *~
+
+stack.yaml.lock
+dist*
