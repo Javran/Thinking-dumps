@@ -1,0 +1,480 @@
+$ ghc -fhpc Cov.hs test.hs -ddump-simpl -fforce-recomp
+[1 of 2] Compiling Cov              ( Cov.hs, Cov.o )
+
+==================== Tidy Core ====================
+Result size of Tidy Core
+  = {terms: 164, types: 182, coercions: 78, joins: 0/0}
+
+-- RHS size: {terms: 11, types: 15, coercions: 5, joins: 0/0}
+$cfmap_r5o8 :: forall a b. (a -> b) -> G a -> G b
+[GblId, Arity=2, Caf=NoCafRefs, Unf=OtherCon []]
+$cfmap_r5o8
+  = \ (@ a_a5mJ)
+      (@ b_a5mK)
+      (f_a1ay :: a_a5mJ -> b_a5mK)
+      (ds_d5oj :: G a_a5mJ) ->
+      hpc<Cov,9>
+      case ds_d5oj
+           `cast` (Cov.N:G[0] <a_a5mJ>_N :: G a_a5mJ ~R# (Int, a_a5mJ))
+      of
+      { (a1_a1az, b1_a1aA) ->
+      (hpc<Cov,8>
+       hpc<Cov,7>
+       (hpc<Cov,4> a1_a1az, hpc<Cov,6> f_a1ay (hpc<Cov,5> b1_a1aA)))
+      `cast` (Sym (Cov.N:G[0]) <b_a5mK>_N :: (Int, b_a5mK) ~R# G b_a5mK)
+      }
+
+Rec {
+-- RHS size: {terms: 3, types: 1, coercions: 0, joins: 0/0}
+Cov.$fFunctorG [InlPrag=NOUSERINLINE CONLIKE] :: Functor G
+[GblId[DFunId]]
+Cov.$fFunctorG = GHC.Base.C:Functor @ G $cfmap_r5o8 $c<$_r5oS
+
+-- RHS size: {terms: 4, types: 7, coercions: 0, joins: 0/0}
+$c<$_r5oS :: forall a b. a -> G b -> G a
+[GblId]
+$c<$_r5oS
+  = \ (@ a_a5mT) (@ b_a5mU) ->
+      GHC.Base.$dm<$ @ G Cov.$fFunctorG @ a_a5mT @ b_a5mU
+end Rec }
+
+-- RHS size: {terms: 5, types: 6, coercions: 0, joins: 0/0}
+$crnf_r5oT :: forall a. NFData a => NFData (Int, a)
+[GblId, Arity=1, Unf=OtherCon []]
+$crnf_r5oT
+  = \ (@ a_a5mh) ($dNFData_a5mi :: NFData a_a5mh) ->
+      hpc<Cov,3>
+      Control.DeepSeq.$fNFData(,)
+        @ Int @ a_a5mh Control.DeepSeq.$fNFDataInt $dNFData_a5mi
+
+-- RHS size: {terms: 1, types: 0, coercions: 21, joins: 0/0}
+Cov.$fNFDataG [InlPrag=INLINE (sat-args=0)]
+  :: forall a. NFData a => NFData (G a)
+[GblId[DFunId(nt)], Arity=1, Unf=OtherCon []]
+Cov.$fNFDataG
+  = $crnf_r5oT
+    `cast` (forall (a :: <*>_N).
+            <NFData a>_R
+            ->_R Control.DeepSeq.N:NFData[0]
+                     <(Int, a)>_N ; ((Sym (Cov.N:G[0]) <a>_N
+                                      ->_R <()>_R) ; Sym (Control.DeepSeq.N:NFData[0] <G a>_N))
+            :: (forall a. NFData a => NFData (Int, a))
+               ~R# (forall a. NFData a => NFData (G a)))
+
+-- RHS size: {terms: 5, types: 6, coercions: 0, joins: 0/0}
+$crnf1_r5oU :: forall a. NFData a => NFData (Int, a)
+[GblId, Arity=1, Unf=OtherCon []]
+$crnf1_r5oU
+  = \ (@ a_a5lS) ($dNFData_a5lT :: NFData a_a5lS) ->
+      hpc<Cov,2>
+      Control.DeepSeq.$fNFData(,)
+        @ Int @ a_a5lS Control.DeepSeq.$fNFDataInt $dNFData_a5lT
+
+-- RHS size: {terms: 1, types: 0, coercions: 21, joins: 0/0}
+Cov.$fNFDataF [InlPrag=INLINE (sat-args=0)]
+  :: forall a. NFData a => NFData (F a)
+[GblId[DFunId(nt)], Arity=1, Unf=OtherCon []]
+Cov.$fNFDataF
+  = $crnf1_r5oU
+    `cast` (forall (a :: <*>_N).
+            <NFData a>_R
+            ->_R Control.DeepSeq.N:NFData[0]
+                     <(Int, a)>_N ; ((Sym (Cov.N:F[0]) <a>_N
+                                      ->_R <()>_R) ; Sym (Control.DeepSeq.N:NFData[0] <F a>_N))
+            :: (forall a. NFData a => NFData (Int, a))
+               ~R# (forall a. NFData a => NFData (F a)))
+
+-- RHS size: {terms: 4, types: 9, coercions: 0, joins: 0/0}
+$c<$1_r5oV :: forall b a. a -> (Int, b) -> (Int, a)
+[GblId]
+$c<$1_r5oV
+  = \ (@ b_a5l5) (@ a_a5l4) ->
+      (hpc<Cov,1> <$ @ ((,) Int) (GHC.Base.$fFunctor(,) @ Int))
+        @ a_a5l4 @ b_a5l5
+
+-- RHS size: {terms: 4, types: 9, coercions: 0, joins: 0/0}
+$cfmap1_r5oW :: forall b a. (a -> b) -> (Int, a) -> (Int, b)
+[GblId]
+$cfmap1_r5oW
+  = \ (@ b_a5ka) (@ a_a5k9) ->
+      (hpc<Cov,0> fmap @ ((,) Int) (GHC.Base.$fFunctor(,) @ Int))
+        @ a_a5k9 @ b_a5ka
+
+-- RHS size: {terms: 7, types: 13, coercions: 31, joins: 0/0}
+Cov.$fFunctorF [InlPrag=NOUSERINLINE CONLIKE] :: Functor F
+[GblId[DFunId]]
+Cov.$fFunctorF
+  = GHC.Base.C:Functor
+      @ F
+      ((\ (@ a_a5k9) (@ b_a5ka) -> $cfmap1_r5oW @ b_a5ka @ a_a5k9)
+       `cast` (forall (a :: <*>_N) (b :: <*>_N).
+               <a -> b>_R ->_R Sym (Cov.N:F[0]) <a>_N ->_R Sym (Cov.N:F[0]) <b>_N
+               :: (forall a b. (a -> b) -> (Int, a) -> (Int, b))
+                  ~R# (forall a b. (a -> b) -> F a -> F b)))
+      ((\ (@ a_a5l4) (@ b_a5l5) -> $c<$1_r5oV @ b_a5l5 @ a_a5l4)
+       `cast` (forall (a :: <*>_N) (b :: <*>_N).
+               <a>_R ->_R Sym (Cov.N:F[0]) <b>_N ->_R Sym (Cov.N:F[0]) <a>_N
+               :: (forall a b. a -> (Int, b) -> (Int, a))
+                  ~R# (forall a b. a -> F b -> F a)))
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule1_r5oX :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule1_r5oX = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule2_r5oY :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule2_r5oY = GHC.Types.TrNameS $trModule1_r5oX
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule3_r5oZ :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule3_r5oZ = "Cov"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule4_r5p0 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule4_r5p0 = GHC.Types.TrNameS $trModule3_r5oZ
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Cov.$trModule :: GHC.Types.Module
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+Cov.$trModule = GHC.Types.Module $trModule2_r5oY $trModule4_r5p0
+
+-- RHS size: {terms: 3, types: 1, coercions: 0, joins: 0/0}
+$krep_r5p1 :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep_r5p1
+  = GHC.Types.KindRepTyConApp
+      GHC.Types.$tcInt (GHC.Types.[] @ GHC.Types.KindRep)
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$krep1_r5p2 :: GHC.Types.KindRep
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep1_r5p2 = GHC.Types.KindRepVar 0#
+
+-- RHS size: {terms: 3, types: 2, coercions: 0, joins: 0/0}
+$krep2_r5p3 :: [GHC.Types.KindRep]
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep2_r5p3
+  = GHC.Types.:
+      @ GHC.Types.KindRep $krep1_r5p2 (GHC.Types.[] @ GHC.Types.KindRep)
+
+-- RHS size: {terms: 3, types: 1, coercions: 0, joins: 0/0}
+$krep3_r5p4 :: [GHC.Types.KindRep]
+[GblId, Unf=OtherCon []]
+$krep3_r5p4
+  = GHC.Types.: @ GHC.Types.KindRep $krep_r5p1 $krep2_r5p3
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep4_r5p5 :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep4_r5p5
+  = GHC.Types.KindRepTyConApp GHC.Tuple.$tc(,) $krep3_r5p4
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tcF1_r5p6 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcF1_r5p6 = "F"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tcF2_r5p7 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcF2_r5p7 = GHC.Types.TrNameS $tcF1_r5p6
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tcF :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tcF
+  = GHC.Types.TyCon
+      7056789655807296349##
+      11446319743014670766##
+      Cov.$trModule
+      $tcF2_r5p7
+      0#
+      GHC.Types.krep$*Arr*
+
+-- RHS size: {terms: 3, types: 2, coercions: 0, joins: 0/0}
+$krep5_r5p8 :: [GHC.Types.KindRep]
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep5_r5p8
+  = GHC.Types.:
+      @ GHC.Types.KindRep $krep1_r5p2 (GHC.Types.[] @ GHC.Types.KindRep)
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep6_r5p9 :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep6_r5p9 = GHC.Types.KindRepTyConApp Cov.$tcF $krep5_r5p8
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep7_r5pa :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep7_r5pa = GHC.Types.KindRepFun $krep4_r5p5 $krep6_r5p9
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tc'F1_r5pb :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'F1_r5pb = "'F"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tc'F2_r5pc :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'F2_r5pc = GHC.Types.TrNameS $tc'F1_r5pb
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tc'F :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tc'F
+  = GHC.Types.TyCon
+      4049900882884592868##
+      13539954443511031486##
+      Cov.$trModule
+      $tc'F2_r5pc
+      1#
+      $krep7_r5pa
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tcG1_r5pd :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcG1_r5pd = "G"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tcG2_r5pe :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcG2_r5pe = GHC.Types.TrNameS $tcG1_r5pd
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tcG :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tcG
+  = GHC.Types.TyCon
+      13308529517337168584##
+      11809294885087747413##
+      Cov.$trModule
+      $tcG2_r5pe
+      0#
+      GHC.Types.krep$*Arr*
+
+-- RHS size: {terms: 3, types: 2, coercions: 0, joins: 0/0}
+$krep8_r5pf :: [GHC.Types.KindRep]
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep8_r5pf
+  = GHC.Types.:
+      @ GHC.Types.KindRep $krep1_r5p2 (GHC.Types.[] @ GHC.Types.KindRep)
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep9_r5pg :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep9_r5pg = GHC.Types.KindRepTyConApp Cov.$tcG $krep8_r5pf
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep10_r5ph :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep10_r5ph = GHC.Types.KindRepFun $krep4_r5p5 $krep9_r5pg
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tc'G1_r5pi :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'G1_r5pi = "'G"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tc'G2_r5pj :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'G2_r5pj = GHC.Types.TrNameS $tc'G1_r5pi
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tc'G :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tc'G
+  = GHC.Types.TyCon
+      3192302564254256499##
+      17154336383991186988##
+      Cov.$trModule
+      $tc'G2_r5pj
+      1#
+      $krep10_r5ph
+
+
+
+[2 of 2] Compiling Main             ( test.hs, test.o )
+
+==================== Tidy Core ====================
+Result size of Tidy Core
+  = {terms: 127, types: 95, coercions: 10, joins: 2/5}
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule1_r6OO :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule1_r6OO = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule2_r6Q3 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule2_r6Q3 = GHC.Types.TrNameS $trModule1_r6OO
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule3_r6Q4 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule3_r6Q4 = "Main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule4_r6Q5 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule4_r6Q5 = GHC.Types.TrNameS $trModule3_r6Q4
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule :: GHC.Types.Module
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+Main.$trModule = GHC.Types.Module $trModule2_r6Q3 $trModule4_r6Q5
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+$dShow_r6Q6 :: Show [Char]
+[GblId]
+$dShow_r6Q6 = GHC.Show.$fShow[] @ Char GHC.Show.$fShowChar
+
+-- RHS size: {terms: 16, types: 13, coercions: 3, joins: 0/1}
+f_r6Q7 :: F Int
+[GblId]
+f_r6Q7
+  = hpc<Main,8>
+    hpc<Main,7>
+    $ @ 'GHC.Types.LiftedRep
+      @ (F Int)
+      @ (F Int)
+      (hpc<Main,2>
+       fmap
+         @ F
+         Cov.$fFunctorF
+         @ Int
+         @ Int
+         (let {
+            ds_d6Py :: Int
+            [LclId]
+            ds_d6Py = hpc<Main,0> GHC.Types.I# 3# } in
+          hpc<Main,1>
+          \ (ds1_d6Px :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d6Px ds_d6Py))
+      ((hpc<Main,6>
+        hpc<Main,5>
+        (hpc<Main,3> GHC.Types.I# 1#, hpc<Main,4> GHC.Types.I# 2#))
+       `cast` (Sym (Cov.N:F[0]) <Int>_N :: (Int, Int) ~R# F Int))
+
+-- RHS size: {terms: 89, types: 66, coercions: 7, joins: 2/4}
+main :: IO ()
+[GblId]
+main
+  = hpc<Main,35>
+    hpc<Main,34>
+    >>
+      @ IO
+      GHC.Base.$fMonadIO
+      @ ()
+      @ ()
+      (hpc<Main,16>
+       deepseq
+         @ (F Int)
+         @ (IO ())
+         (Cov.$fNFDataF @ Int Control.DeepSeq.$fNFDataInt)
+         (hpc<Main,9> f_r6Q7)
+         (join {
+            fail_d6Pc :: GHC.Prim.Void# -> IO ()
+            [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+            fail_d6Pc _ [Occ=Dead, OS=OneShot]
+              = hpc<Main,14>
+                print
+                  @ [Char]
+                  $dShow_r6Q6
+                  (hpc<Main,13> GHC.CString.unpackCString# "F Failure"#) } in
+          hpc<Main,15>
+          hpc<Main,10>
+          case f_r6Q7 `cast` (Cov.N:F[0] <Int>_N :: F Int ~R# (Int, Int)) of
+          { (ds_d6P8, ds1_d6P9) ->
+          case ds_d6P8 of { GHC.Types.I# ds2_d6Pa ->
+          case ds2_d6Pa of {
+            __DEFAULT -> jump fail_d6Pc GHC.Prim.void#;
+            1# ->
+              case ds1_d6P9 of { GHC.Types.I# ds4_d6Pb ->
+              case ds4_d6Pb of {
+                __DEFAULT -> jump fail_d6Pc GHC.Prim.void#;
+                5# ->
+                  hpc<Main,12>
+                  print
+                    @ [Char]
+                    $dShow_r6Q6
+                    (hpc<Main,11> GHC.CString.unpackCString# "F Success"#)
+              }
+              }
+          }
+          }
+          }))
+      (let {
+         g_a5xV :: G Int
+         [LclId]
+         g_a5xV
+           = hpc<Main,25>
+             hpc<Main,24>
+             $ @ 'GHC.Types.LiftedRep
+               @ (G Int)
+               @ (G Int)
+               (hpc<Main,19>
+                fmap
+                  @ G
+                  Cov.$fFunctorG
+                  @ Int
+                  @ Int
+                  (let {
+                     ds_d6Pv :: Int
+                     [LclId]
+                     ds_d6Pv = hpc<Main,17> GHC.Types.I# 3# } in
+                   hpc<Main,18>
+                   \ (ds1_d6Pu :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d6Pu ds_d6Pv))
+               ((hpc<Main,23>
+                 hpc<Main,22>
+                 (hpc<Main,20> GHC.Types.I# 1#, hpc<Main,21> GHC.Types.I# 2#))
+                `cast` (Sym (Cov.N:G[0]) <Int>_N :: (Int, Int) ~R# G Int)) } in
+       hpc<Main,33>
+       deepseq
+         @ (G Int)
+         @ (IO ())
+         (Cov.$fNFDataG @ Int Control.DeepSeq.$fNFDataInt)
+         (hpc<Main,26> g_a5xV)
+         (join {
+            fail_d6Ps :: GHC.Prim.Void# -> IO ()
+            [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+            fail_d6Ps _ [Occ=Dead, OS=OneShot]
+              = hpc<Main,31>
+                print
+                  @ [Char]
+                  $dShow_r6Q6
+                  (hpc<Main,30> GHC.CString.unpackCString# "G Failure"#) } in
+          hpc<Main,32>
+          hpc<Main,27>
+          case g_a5xV `cast` (Cov.N:G[0] <Int>_N :: G Int ~R# (Int, Int)) of
+          { (ds_d6Po, ds1_d6Pp) ->
+          case ds_d6Po of { GHC.Types.I# ds2_d6Pq ->
+          case ds2_d6Pq of {
+            __DEFAULT -> jump fail_d6Ps GHC.Prim.void#;
+            1# ->
+              case ds1_d6Pp of { GHC.Types.I# ds4_d6Pr ->
+              case ds4_d6Pr of {
+                __DEFAULT -> jump fail_d6Ps GHC.Prim.void#;
+                5# ->
+                  hpc<Main,29>
+                  print
+                    @ [Char]
+                    $dShow_r6Q6
+                    (hpc<Main,28> GHC.CString.unpackCString# "G Success"#)
+              }
+              }
+          }
+          }
+          }))
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+:Main.main :: IO ()
+[GblId]
+:Main.main = GHC.TopHandler.runMainIO @ () main
+
+
+
+Linking test ...

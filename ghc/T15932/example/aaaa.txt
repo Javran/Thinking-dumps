@@ -1,0 +1,317 @@
+[2 of 2] Compiling Main             ( test.hs, test.o )
+
+==================== Tidy Core ====================
+Result size of Tidy Core
+  = {terms: 127, types: 95, coercions: 10, joins: 2/5}
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule1_r2ZK :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule1_r2ZK = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule2_r30Z :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule2_r30Z = GHC.Types.TrNameS $trModule1_r2ZK
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule3_r310 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule3_r310 = "Main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule4_r311 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule4_r311 = GHC.Types.TrNameS $trModule3_r310
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule :: GHC.Types.Module
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+Main.$trModule = GHC.Types.Module $trModule2_r30Z $trModule4_r311
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+$dShow_r312 :: Show [Char]
+[GblId]
+$dShow_r312 = GHC.Show.$fShow[] @ Char GHC.Show.$fShowChar
+
+-- RHS size: {terms: 16, types: 13, coercions: 3, joins: 0/1}
+f_r313 :: F Int
+[GblId]
+f_r313
+  = $ @ 'GHC.Types.LiftedRep
+      @ (F Int)
+      @ (F Int)
+      (fmap
+         @ F
+         Cov.$fFunctorF
+         @ Int
+         @ Int
+         (let {
+            ds_d30u :: Int
+            [LclId, Unf=OtherCon []]
+            ds_d30u = GHC.Types.I# 3# } in
+          \ (ds1_d30t :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d30t ds_d30u))
+      ((GHC.Types.I# 1#, GHC.Types.I# 2#)
+       `cast` (Sym (Cov.N:F[0]) <Int>_N :: (Int, Int) ~R# F Int))
+
+-- RHS size: {terms: 89, types: 66, coercions: 7, joins: 2/4}
+main :: IO ()
+[GblId]
+main
+  = >>
+      @ IO
+      GHC.Base.$fMonadIO
+      @ ()
+      @ ()
+      (deepseq
+         @ (F Int)
+         @ (IO ())
+         (Cov.$fNFDataF @ Int Control.DeepSeq.$fNFDataInt)
+         f_r313
+         (join {
+            fail_d308 :: GHC.Prim.Void# -> IO ()
+            [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+            fail_d308 _ [Occ=Dead, OS=OneShot]
+              = print
+                  @ [Char] $dShow_r312 (GHC.CString.unpackCString# "F Failure"#) } in
+          case f_r313 `cast` (Cov.N:F[0] <Int>_N :: F Int ~R# (Int, Int)) of
+          { (ds_d304, ds1_d305) ->
+          case ds_d304 of { GHC.Types.I# ds2_d306 ->
+          case ds2_d306 of {
+            __DEFAULT -> jump fail_d308 GHC.Prim.void#;
+            1# ->
+              case ds1_d305 of { GHC.Types.I# ds4_d307 ->
+              case ds4_d307 of {
+                __DEFAULT -> jump fail_d308 GHC.Prim.void#;
+                5# ->
+                  print
+                    @ [Char] $dShow_r312 (GHC.CString.unpackCString# "F Success"#)
+              }
+              }
+          }
+          }
+          }))
+      (let {
+         g_a1ho :: G Int
+         [LclId]
+         g_a1ho
+           = $ @ 'GHC.Types.LiftedRep
+               @ (G Int)
+               @ (G Int)
+               (fmap
+                  @ G
+                  Cov.$fFunctorG
+                  @ Int
+                  @ Int
+                  (let {
+                     ds_d30r :: Int
+                     [LclId, Unf=OtherCon []]
+                     ds_d30r = GHC.Types.I# 3# } in
+                   \ (ds1_d30q :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d30q ds_d30r))
+               ((GHC.Types.I# 1#, GHC.Types.I# 2#)
+                `cast` (Sym (Cov.N:G[0]) <Int>_N :: (Int, Int) ~R# G Int)) } in
+       deepseq
+         @ (G Int)
+         @ (IO ())
+         (Cov.$fNFDataG @ Int Control.DeepSeq.$fNFDataInt)
+         g_a1ho
+         (join {
+            fail_d30o :: GHC.Prim.Void# -> IO ()
+            [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+            fail_d30o _ [Occ=Dead, OS=OneShot]
+              = print
+                  @ [Char] $dShow_r312 (GHC.CString.unpackCString# "G Failure"#) } in
+          case g_a1ho `cast` (Cov.N:G[0] <Int>_N :: G Int ~R# (Int, Int)) of
+          { (ds_d30k, ds1_d30l) ->
+          case ds_d30k of { GHC.Types.I# ds2_d30m ->
+          case ds2_d30m of {
+            __DEFAULT -> jump fail_d30o GHC.Prim.void#;
+            1# ->
+              case ds1_d30l of { GHC.Types.I# ds4_d30n ->
+              case ds4_d30n of {
+                __DEFAULT -> jump fail_d30o GHC.Prim.void#;
+                5# ->
+                  print
+                    @ [Char] $dShow_r312 (GHC.CString.unpackCString# "G Success"#)
+              }
+              }
+          }
+          }
+          }))
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+:Main.main :: IO ()
+[GblId]
+:Main.main = GHC.TopHandler.runMainIO @ () main
+
+
+
+Linking test ...
+$ ghc -ddump-simpl test.hs
+[2 of 2] Compiling Main             ( test.hs, test.o )
+
+==================== Tidy Core ====================
+Result size of Tidy Core
+  = {terms: 143, types: 108, coercions: 15, joins: 2/5}
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule1_r308 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule1_r308 = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule2_r31u :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule2_r31u = GHC.Types.TrNameS $trModule1_r308
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule3_r31v :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule3_r31v = "Main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule4_r31w :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule4_r31w = GHC.Types.TrNameS $trModule3_r31v
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule :: GHC.Types.Module
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+Main.$trModule = GHC.Types.Module $trModule2_r31u $trModule4_r31w
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+$dShow_r31x :: Show [Char]
+[GblId]
+$dShow_r31x = GHC.Show.$fShow[] @ Char GHC.Show.$fShowChar
+
+-- RHS size: {terms: 16, types: 13, coercions: 3, joins: 0/1}
+f_r31y :: F Int
+[GblId]
+f_r31y
+  = $ @ 'GHC.Types.LiftedRep
+      @ (F Int)
+      @ (F Int)
+      (fmap
+         @ F
+         Cov.$fFunctorF
+         @ Int
+         @ Int
+         (let {
+            ds_d30T :: Int
+            [LclId, Unf=OtherCon []]
+            ds_d30T = GHC.Types.I# 3# } in
+          \ (ds1_d30S :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d30S ds_d30T))
+      ((GHC.Types.I# 1#, GHC.Types.I# 2#)
+       `cast` (Sym (Cov.N:F[0]) <Int>_N :: (Int, Int) ~R# F Int))
+
+-- RHS size: {terms: 105, types: 79, coercions: 12, joins: 2/4}
+main :: IO ()
+[GblId]
+main
+  = >>
+      @ IO
+      GHC.Base.$fMonadIO
+      @ ()
+      @ ()
+      (case (<$
+               @ F
+               Cov.$fFunctorF
+               @ Int
+               @ Int
+               (GHC.Types.I# 2#)
+               ((GHC.Types.I# 1#, GHC.Types.I# 2#)
+                `cast` (Sym (Cov.N:F[0]) <Int>_N :: (Int, Int) ~R# F Int)))
+            `cast` (Cov.N:F[0] <Int>_N :: F Int ~R# (Int, Int))
+       of
+       { (ipv_s314, ipv1_s315) ->
+       putStrLn (GHC.CString.unpackCString# "Hi"#)
+       })
+      (>>
+         @ IO
+         GHC.Base.$fMonadIO
+         @ ()
+         @ ()
+         (deepseq
+            @ (F Int)
+            @ (IO ())
+            (Cov.$fNFDataF @ Int Control.DeepSeq.$fNFDataInt)
+            f_r31y
+            (join {
+               fail_d30x :: GHC.Prim.Void# -> IO ()
+               [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+               fail_d30x _ [Occ=Dead, OS=OneShot]
+                 = print
+                     @ [Char] $dShow_r31x (GHC.CString.unpackCString# "F Failure"#) } in
+             case f_r31y `cast` (Cov.N:F[0] <Int>_N :: F Int ~R# (Int, Int)) of
+             { (ds_d30t, ds1_d30u) ->
+             case ds_d30t of { GHC.Types.I# ds2_d30v ->
+             case ds2_d30v of {
+               __DEFAULT -> jump fail_d30x GHC.Prim.void#;
+               1# ->
+                 case ds1_d30u of { GHC.Types.I# ds4_d30w ->
+                 case ds4_d30w of {
+                   __DEFAULT -> jump fail_d30x GHC.Prim.void#;
+                   5# ->
+                     print
+                       @ [Char] $dShow_r31x (GHC.CString.unpackCString# "F Success"#)
+                 }
+                 }
+             }
+             }
+             }))
+         (let {
+            g_a1ho :: G Int
+            [LclId]
+            g_a1ho
+              = $ @ 'GHC.Types.LiftedRep
+                  @ (G Int)
+                  @ (G Int)
+                  (fmap
+                     @ G
+                     Cov.$fFunctorG
+                     @ Int
+                     @ Int
+                     (let {
+                        ds_d30Q :: Int
+                        [LclId, Unf=OtherCon []]
+                        ds_d30Q = GHC.Types.I# 3# } in
+                      \ (ds1_d30P :: Int) -> + @ Int GHC.Num.$fNumInt ds1_d30P ds_d30Q))
+                  ((GHC.Types.I# 1#, GHC.Types.I# 2#)
+                   `cast` (Sym (Cov.N:G[0]) <Int>_N :: (Int, Int) ~R# G Int)) } in
+          deepseq
+            @ (G Int)
+            @ (IO ())
+            (Cov.$fNFDataG @ Int Control.DeepSeq.$fNFDataInt)
+            g_a1ho
+            (join {
+               fail_d30N :: GHC.Prim.Void# -> IO ()
+               [LclId[JoinId(1)], Arity=1, Unf=OtherCon []]
+               fail_d30N _ [Occ=Dead, OS=OneShot]
+                 = print
+                     @ [Char] $dShow_r31x (GHC.CString.unpackCString# "G Failure"#) } in
+             case g_a1ho `cast` (Cov.N:G[0] <Int>_N :: G Int ~R# (Int, Int)) of
+             { (ds_d30J, ds1_d30K) ->
+             case ds_d30J of { GHC.Types.I# ds2_d30L ->
+             case ds2_d30L of {
+               __DEFAULT -> jump fail_d30N GHC.Prim.void#;
+               1# ->
+                 case ds1_d30K of { GHC.Types.I# ds4_d30M ->
+                 case ds4_d30M of {
+                   __DEFAULT -> jump fail_d30N GHC.Prim.void#;
+                   5# ->
+                     print
+                       @ [Char] $dShow_r31x (GHC.CString.unpackCString# "G Success"#)
+                 }
+                 }
+             }
+             }
+             })))
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+:Main.main :: IO ()
+[GblId]
+:Main.main = GHC.TopHandler.runMainIO @ () main
+
+
+
+Linking test ...
