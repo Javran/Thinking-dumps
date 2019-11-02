@@ -1,0 +1,135 @@
+The command line was: ghc TestDF.hs -fhpc -ddump-simpl -fforce-recomp >TestDF.output.txt
+
+[1 of 1] Compiling Cov              ( TestDF.hs, TestDF.o )
+
+==================== Tidy Core ====================
+Result size of Tidy Core
+  = {terms: 72, types: 53, coercions: 31, joins: 0/0}
+
+-- RHS size: {terms: 5, types: 7, coercions: 0, joins: 0/0}
+$c<$_rXD :: forall a b. a -> F b -> a
+[GblId, Arity=2, Caf=NoCafRefs, Unf=OtherCon []]
+$c<$_rXD
+  = \ (@ a_asT) (@ b_asU) (z_asC :: a_asT) _ [Occ=Dead] ->
+      hpc<Cov,1> z_asC
+
+-- RHS size: {terms: 6, types: 8, coercions: 2, joins: 0/0}
+$cfmap_rXZ :: forall a b. (a -> b) -> F a -> b
+[GblId, Arity=2, Caf=NoCafRefs, Unf=OtherCon []]
+$cfmap_rXZ
+  = \ (@ a_asK)
+      (@ b_asL)
+      (f_asA :: a_asK -> b_asL)
+      (ds_dXK :: F a_asK) ->
+      hpc<Cov,0>
+      f_asA (ds_dXK `cast` (Cov.N:F[0] <a_asK>_R :: F a_asK ~R# a_asK))
+
+-- RHS size: {terms: 3, types: 1, coercions: 29, joins: 0/0}
+Cov.$fFunctorF [InlPrag=NOUSERINLINE CONLIKE] :: Functor F
+[GblId[DFunId], Caf=NoCafRefs]
+Cov.$fFunctorF
+  = GHC.Base.C:Functor
+      @ F
+      ($cfmap_rXZ
+       `cast` (forall (a :: <*>_N) (b :: <*>_N).
+               <a -> b>_R ->_R <F a>_R ->_R Sym (Cov.N:F[0] <b>_R)
+               :: (forall a b. (a -> b) -> F a -> b)
+                  ~R# (forall a b. (a -> b) -> F a -> F b)))
+      ($c<$_rXD
+       `cast` (forall (a :: <*>_N) (b :: <*>_N).
+               <a>_R ->_R <F b>_R ->_R Sym (Cov.N:F[0] <a>_R)
+               :: (forall a b. a -> F b -> a) ~R# (forall a b. a -> F b -> F a)))
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule1_rY0 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule1_rY0 = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule2_rY1 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule2_rY1 = GHC.Types.TrNameS $trModule1_rY0
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$trModule3_rY2 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule3_rY2 = "Cov"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$trModule4_rY3 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$trModule4_rY3 = GHC.Types.TrNameS $trModule3_rY2
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Cov.$trModule :: GHC.Types.Module
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+Cov.$trModule = GHC.Types.Module $trModule2_rY1 $trModule4_rY3
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$krep_rY4 :: GHC.Types.KindRep
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep_rY4 = GHC.Types.KindRepVar 0#
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tcF1_rY5 :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcF1_rY5 = "F"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tcF2_rY6 :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tcF2_rY6 = GHC.Types.TrNameS $tcF1_rY5
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tcF :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tcF
+  = GHC.Types.TyCon
+      7056789655807296349##
+      11446319743014670766##
+      Cov.$trModule
+      $tcF2_rY6
+      0#
+      GHC.Types.krep$*Arr*
+
+-- RHS size: {terms: 3, types: 2, coercions: 0, joins: 0/0}
+$krep1_rY7 :: [GHC.Types.KindRep]
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$krep1_rY7
+  = GHC.Types.:
+      @ GHC.Types.KindRep $krep_rY4 (GHC.Types.[] @ GHC.Types.KindRep)
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep2_rY8 :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep2_rY8 = GHC.Types.KindRepTyConApp Cov.$tcF $krep1_rY7
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+$krep3_rY9 :: GHC.Types.KindRep
+[GblId, Unf=OtherCon []]
+$krep3_rY9 = GHC.Types.KindRepFun $krep_rY4 $krep2_rY8
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+$tc'F1_rYa :: GHC.Prim.Addr#
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'F1_rYa = "'F"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+$tc'F2_rYb :: GHC.Types.TrName
+[GblId, Caf=NoCafRefs, Unf=OtherCon []]
+$tc'F2_rYb = GHC.Types.TrNameS $tc'F1_rYa
+
+-- RHS size: {terms: 7, types: 0, coercions: 0, joins: 0/0}
+Cov.$tc'F :: GHC.Types.TyCon
+[GblId, Unf=OtherCon []]
+Cov.$tc'F
+  = GHC.Types.TyCon
+      4049900882884592868##
+      13539954443511031486##
+      Cov.$trModule
+      $tc'F2_rYb
+      1#
+      $krep3_rY9
+
+
+

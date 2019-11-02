@@ -1,5 +1,9 @@
 Ticket: https://gitlab.haskell.org/ghc/ghc/issues/15932
 
+For simplicity let's first begin with investigating `DeriveFunctor`.
+
+
+
 GHC message: https://gist.github.com/Javran/947e853895bfc360ff837a217d076425#file-gistfile1-txt
 
 In short, stuff like
