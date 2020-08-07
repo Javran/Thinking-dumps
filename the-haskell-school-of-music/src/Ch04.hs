@@ -105,5 +105,7 @@ russia =
     chunk1 =
       e 5 qn :+: pat0 (d 5) (c 5) :+: d 5 qn :+: b 4 en :+: g 4 en
       :+: c 5 qn :+: pat0 (b 4) (a 4) :+: b 4 qn :+: e 4 en :+: e 4 en
+      :+: a 4 qn :+: pat0 (g 4) (f 4) :+: g 4 qn :+: pat0 (c 4) (c 4)
+      :+: c 5 qn :+: pat0 (b 4) (a 4) :+: g 4 en :+: b 4 en :+: c 5 en :+: d 5 en
     -- a common pattern
     pat0 x y = x (en + sn) :+: y sn
