@@ -82,4 +82,21 @@ mel1, mel2 :: [Music Pitch]
 mel1 = [c 5 en, e 5 sn, g 5 en, b 5 sn, a 5 en, f 5 sn, d 5 en, b 4 sn, c 5 en]
 mel2 = [c 5 sn, e 5 sn, g 5 sn, b 5 sn, a 5 sn, f 5 sn, d 5 sn, b 4 sn, c 5 sn]
 
-{- TODO: Ex 4.1 4.2 4.3 -}
+{-
+  TODO:
+
+  Ex 4.1
+  try https://toplayalong.com/sheet-music/national-anthem-of-russia-recorder/ ?
+
+  EX 4.2 4.3 (TODO)
+
+ -}
+
+russia :: Music Pitch
+russia =
+  g 4 qn
+  :+: c 5 qn :+: g 4 (en + sn) :+: a 4 sn :+: b 4 qn :+: e 4 en :+: e 4 en
+  :+: a 4 qn :+: g 4 (en + sn) :+: f 4 sn :+: g 4 qn :+: c 4 en :+: c 4 en
+  :+: d 4 qn :+: d 4 en :+: e 4 en :+: f 4 qn :+: f 4 en :+: g 4 en
+  :+: a 4 qn :+: b 4 en :+: c 5 en :+: d 5 qn
+
