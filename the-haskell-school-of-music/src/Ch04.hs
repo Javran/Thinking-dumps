@@ -94,9 +94,16 @@ mel2 = [c 5 sn, e 5 sn, g 5 sn, b 5 sn, a 5 sn, f 5 sn, d 5 sn, b 4 sn, c 5 sn]
 
 russia :: Music Pitch
 russia =
-  g 4 qn
-  :+: c 5 qn :+: g 4 (en + sn) :+: a 4 sn :+: b 4 qn :+: e 4 en :+: e 4 en
-  :+: a 4 qn :+: g 4 (en + sn) :+: f 4 sn :+: g 4 qn :+: c 4 en :+: c 4 en
-  :+: d 4 qn :+: d 4 en :+: e 4 en :+: f 4 qn :+: f 4 en :+: g 4 en
-  :+: a 4 qn :+: b 4 en :+: c 5 en :+: d 5 qn
-
+    chunk0 :+: chunk1
+  where
+    chunk0 =
+      g 4 qn
+      :+: c 5 qn :+: pat0 (g 4) (a 4) :+: b 4 qn :+: e 4 en :+: e 4 en
+      :+: a 4 qn :+: pat0 (g 4) (f 4) :+: g 4 qn :+: c 4 en :+: c 4 en
+      :+: d 4 qn :+: d 4 en :+: e 4 en :+: f 4 qn :+: f 4 en :+: g 4 en
+      :+: a 4 qn :+: b 4 en :+: c 5 en :+: d 5 hn
+    chunk1 =
+      e 5 qn :+: pat0 (d 5) (c 5) :+: d 5 qn :+: b 4 en :+: g 4 en
+      :+: c 5 qn :+: pat0 (b 4) (a 4) :+: b 4 qn :+: e 4 en :+: e 4 en
+    -- a common pattern
+    pat0 x y = x (en + sn) :+: y sn
