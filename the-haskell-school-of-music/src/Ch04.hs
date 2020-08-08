@@ -83,15 +83,12 @@ mel1 = [c 5 en, e 5 sn, g 5 en, b 5 sn, a 5 en, f 5 sn, d 5 en, b 4 sn, c 5 en]
 mel2 = [c 5 sn, e 5 sn, g 5 sn, b 5 sn, a 5 sn, f 5 sn, d 5 sn, b 4 sn, c 5 sn]
 
 {-
-  TODO:
-
   Ex 4.1
-  try https://toplayalong.com/sheet-music/national-anthem-of-russia-recorder/ ?
 
-  EX 4.2 4.3 (TODO)
+  This is a simplified version of National Anthem of Russia transcribed from:
+  https://toplayalong.com/sheet-music/national-anthem-of-russia-recorder/
 
  -}
-
 russia :: Music Pitch
 russia =
     chunk0 :+: chunk1 :+: chunk2 :+: chunk3 :+: chunk4fst
@@ -134,3 +131,16 @@ russia =
       :+: g 4 qn :+: a 4 en :+: b 4 en :+: c 5 hn
     -- a common pattern
     pat0 x y = x (en + sn) :+: y sn
+
+russia' :: Music Pitch
+russia' = foldl1 (:=:) $ fmap f [AcousticGrandPiano, Violin, Bagpipe]
+  where
+    f i = Modify (Instrument i) russia
+
+{-
+  TODO:
+
+
+  EX 4.2 4.3 (TODO)
+
+ -}
