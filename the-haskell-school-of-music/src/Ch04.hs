@@ -135,17 +135,8 @@ russia =
     pat0 x y = x (en + sn) :+: y sn
 
 russia' :: Music Pitch
-russia' = foldl1 (:=:) $ fmap f [AcousticGrandPiano, Violin, Bagpipe]
-  where
-    f i = Modify (Instrument i) russia
-
-{-
-  TODO:
-
-
-  ex 4.3 (TODO)
-
- -}
+russia' =
+  foldl1 (:=:) $ fmap (\i -> instrument i russia) [AcousticGrandPiano, Violin, Bagpipe]
 
 -- ex 4.2, the original melody is too long so here we only use a part of it.
 myMel :: [Music Pitch]
@@ -157,3 +148,17 @@ myMel =
 
 myMelPref :: Music Pitch
 myMelPref = prefix myMel
+
+{-
+  ex 4.3: honestly I'll say this exercise is kinda boring without a clear instruction about what to do,
+  and `prefix` is a very boring function that creates a long melody but doesn't really have anything intersting...
+  so yeah let's just do some random things...
+ -}
+myMel2 :: Music Pitch
+myMel2 = prefix' myMel
+  where
+    prefix' :: [Music a] -> Music a
+    prefix' mel = m :=: transpose 5 m
+      where
+        m1 = line mel
+        m = instrument Violin m1 :=: instrument Cello m1
