@@ -69,7 +69,9 @@ childSong6 = instrument RhodesPiano (tempo t (bassLine :=: mainVoice))
     t = (dhn / qn) * (69 / 120)
 
 prefixes :: [a] -> [[a]]
-prefixes = tail . inits
+prefixes =
+  -- This should be equivalent to the original definition.
+  tail . inits
 
 prefix :: [Music a] -> Music a
 prefix mel = m :+: transpose 5 m :+: m
@@ -141,6 +143,17 @@ russia' = foldl1 (:=:) $ fmap f [AcousticGrandPiano, Violin, Bagpipe]
   TODO:
 
 
-  EX 4.2 4.3 (TODO)
+  ex 4.3 (TODO)
 
  -}
+
+-- ex 4.2, the original melody is too long so here we only use a part of it.
+myMel :: [Music Pitch]
+myMel =
+  [ g 4 en, c 5 qn, g 4 (en + sn), a 4 sn , b 4 qn , e 4 en , e 4 en
+  , a 4 qn , g 4 (en + sn), f 4 sn , g 4 qn , c 4 en , c 4 en
+  , d 4 qn , d 4 en , e 4 en , f 4 qn , f 4 en , g 4 en , a 4 qn , b 4 en , c 5 en , d 5 hn
+  ]
+
+myMelPref :: Music Pitch
+myMelPref = prefix myMel
