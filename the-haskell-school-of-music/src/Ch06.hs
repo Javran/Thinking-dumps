@@ -29,7 +29,12 @@ properRow = checkProper . (extractPc =<<) . lineToList
         [pc | d /= 0]
       Rest _ -> []
     extractPc (Modify _ m) = extractPc m -- not necessary, just best effort.
-    extractPc _ = []
+    extractPc (m0 :+: m1) = extractPc m0 <> extractPc m1
+    extractPc (_ :=: _) =
+      -- I guess what exercise meant is that we can assume this construction does not appear
+      -- as an input value to this function. So here :=: is marked explicitly as empty to say
+      -- that this is unexpected.
+      []
 
     checkProper xs =
       -- has exactly 12 notes
