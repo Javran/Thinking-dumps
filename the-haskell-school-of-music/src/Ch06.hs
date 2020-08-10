@@ -42,3 +42,23 @@ properRow = checkProper . (extractPc =<<) . lineToList
         &&
         -- each unique pitch class used exactly once
         length (nub xs) == 12
+
+isPalindrome :: Eq a => [a] -> Bool
+isPalindrome xs = and $ zipWith (==) (take half xs) (reverse xs)
+  where
+    half = l `quot` 2
+    l = length xs
+
+{- Ex 6.3 -}
+palin :: Music Pitch -> Bool
+palin = isPalindrome . concatMap extractNote . lineToList
+  where
+    extractNote (Prim prim) = case prim of
+      Note _ (pc, _) -> [pc]
+      Rest {} -> []
+    extractNote (Modify _ m) = extractNote m
+    extractNote (m0 :+: m1) = extractNote m0 <> extractNote m1
+    extractNote (_ :=: _) =
+      -- this is possible to implement,
+      -- just that it'll be a bit complicated and not really required by this exercise.
+      []
