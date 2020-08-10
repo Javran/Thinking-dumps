@@ -11,14 +11,14 @@ import qualified Ch01
 twice :: (a -> a) -> (a -> a)
 twice f = f . f
 
-{-
-  Ex 5.2
-
-  TODO: define something useful by power.
-
- -}
+{- Ex 5.2 -}
 power :: (a -> a) -> Int -> (a -> a)
 power f n = appEndo $ stimesMonoid n (Endo f)
+
+-- I'll actually prefer just make (\m -> m :+: transpose _ m) a function,
+-- which works better in terms of composability.
+ex5_2 :: Int -> Int -> Music Pitch -> Music Pitch
+ex5_2 times pr = power (\m -> m :+: transpose pr m) times
 
 {-
   Ex 5.3
