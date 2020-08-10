@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+
 module Ch06 where
 
 import Data.List (nub)
@@ -28,6 +29,7 @@ properRow = checkProper . (extractPc =<<) . lineToList
 
     checkProper xs =
       -- has exactly 12 notes
-      length xs == 12 &&
-      -- each unique pitch class used exactly once
-      length (nub xs) == 12
+      length xs == 12
+        &&
+        -- each unique pitch class used exactly once
+        length (nub xs) == 12
