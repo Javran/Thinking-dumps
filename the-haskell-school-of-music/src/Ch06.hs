@@ -23,7 +23,11 @@ import Euterpea
 properRow :: Music Pitch -> Bool
 properRow = checkProper . (extractPc =<<) . lineToList
   where
-    extractPc (Prim (Note _ (pc, _))) = [pc]
+    extractPc (Prim prim) = case prim of
+      Note d (pc, _) ->
+        -- rest are allowed, therefore we should ignore notes that have no time length.
+        [pc | d /= 0]
+      Rest _ -> []
     extractPc (Modify _ m) = extractPc m -- not necessary, just best effort.
     extractPc _ = []
 
