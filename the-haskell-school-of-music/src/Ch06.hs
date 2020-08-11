@@ -82,11 +82,13 @@ pairPrim (d, m) = case m of
   Nothing -> Rest d
   Just v -> Note d v
 
-{- Ex 6.4: TODO -}
+{- Ex 6.4 -}
 retroPitches :: Music Pitch -> Music Pitch
 retroPitches =
-    line . _z . unzip . traverseLined (pure . unpairPrim)
-  where
-    _z = undefined
-      -- this is not quite working - as traverseLined destroys the structure,
-      -- we have no way of re-constructing it back.
+  -- note that this implementation does not try to reconstruct the original structure and
+  -- does not work on Music that has :=: in it. But for the use case this is simple and good enough.
+  line
+    . uncurry (zipWith (\a b -> Prim $ pairPrim (a, b)))
+    . (\(xs, ys) -> (xs, reverse ys))
+    . unzip
+    . traverseLined (pure . unpairPrim)
