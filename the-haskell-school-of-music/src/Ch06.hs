@@ -33,20 +33,14 @@ traverseLined f mp = case mp of
 
 {- Ex 6.2 -}
 properRow :: Music Pitch -> Bool
-properRow = checkProper . (extractPc =<<) . lineToList
+properRow = checkProper . traverseLined extractPc
   where
-    extractPc (Prim prim) = case prim of
-      Note d (pc, _) ->
-        -- rest are allowed, therefore we should ignore notes that have no time length.
-        [pc | d /= 0]
-      Rest _ -> []
-    extractPc (Modify _ m) = extractPc m -- not necessary, just best effort.
-    extractPc (m0 :+: m1) = extractPc m0 <> extractPc m1
-    extractPc (_ :=: _) =
-      -- I guess what exercise meant is that we can assume this construction does not appear
-      -- as an input value to this function. So here :=: is marked explicitly as empty to say
-      -- that this is unexpected.
-      []
+    extractPc prim =
+      case prim of
+        Note d (pc, _) ->
+          -- rest are allowed, therefore we should ignore notes that have no time length.
+          [pc | d /= 0]
+        Rest _ -> []
 
     checkProper xs =
       -- has exactly 12 notes
@@ -63,14 +57,8 @@ isPalindrome xs = and $ zipWith (==) (take half xs) (reverse xs)
 
 {- Ex 6.3 -}
 palin :: Music Pitch -> Bool
-palin = isPalindrome . concatMap extractNote . lineToList
+palin = isPalindrome . traverseLined extractNote
   where
-    extractNote (Prim prim) = case prim of
+    extractNote prim = case prim of
       Note _ (pc, _) -> [pc]
       Rest {} -> []
-    extractNote (Modify _ m) = extractNote m
-    extractNote (m0 :+: m1) = extractNote m0 <> extractNote m1
-    extractNote (_ :=: _) =
-      -- this is possible to implement,
-      -- just that it'll be a bit complicated and not really required by this exercise.
-      []
