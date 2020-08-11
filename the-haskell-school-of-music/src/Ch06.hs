@@ -19,6 +19,18 @@ import Euterpea
 
  -}
 
+-- traverse a Music structure, by a function on Primitive, and concatenate results.
+-- it is assumed that this Music is composed from a `line` function and does not consist of (:=:).
+traverseLined :: (Primitive a -> [b]) -> Music a -> [b]
+traverseLined f mp = case mp of
+  Prim prim -> f prim
+  Modify _ m -> traverseLined f m
+  m0 :+: m1 -> traverseLined f m0 <> traverseLined f m1
+  _ :=: _ ->
+    -- I believe in some cases it is not impossible to implement this for :=: case,
+    -- but I can imagine it being complicated and exercise does not require us to implement this anyway.
+    []
+
 {- Ex 6.2 -}
 properRow :: Music Pitch -> Bool
 properRow = checkProper . (extractPc =<<) . lineToList
