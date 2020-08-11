@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 module Ch06 where
@@ -62,3 +63,30 @@ palin = isPalindrome . traverseLined extractNote
     extractNote prim = case prim of
       Note _ (pc, _) -> [pc]
       Rest {} -> []
+
+{-
+  TODO:
+
+  - we'll definitely need some testing.
+
+ -}
+
+{- not really useful for now, but an isomorphism can be observed here. -}
+unpairPrim :: Primitive a -> (Dur, Maybe a)
+unpairPrim = \case
+  Note d v -> (d, Just v)
+  Rest d -> (d, Nothing)
+
+pairPrim :: (Dur, Maybe a) -> Primitive a
+pairPrim (d, m) = case m of
+  Nothing -> Rest d
+  Just v -> Note d v
+
+{- Ex 6.4: TODO -}
+retroPitches :: Music Pitch -> Music Pitch
+retroPitches =
+    line . _z . unzip . traverseLined (pure . unpairPrim)
+  where
+    _z = undefined
+      -- this is not quite working - as traverseLined destroys the structure,
+      -- we have no way of re-constructing it back.
