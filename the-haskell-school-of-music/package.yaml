@@ -16,7 +16,8 @@ dependencies:
 
 library:
   source-dirs: src
-  ghc-options: -Wall -O2
+  ghc-options:
+    - -Wall
 
 tests:
   hspec:
@@ -29,6 +30,7 @@ tests:
       - hspec
     ghc-options:
       - -threaded
+      - -Wall
       - -O2
       - -rtsopts
       - -with-rtsopts=-N

@@ -64,13 +64,6 @@ palin = isPalindrome . traverseLined extractNote
       Note _ (pc, _) -> [pc]
       Rest {} -> []
 
-{-
-  TODO:
-
-  - we'll definitely need some testing.
-
- -}
-
 {- not really useful for now, but an isomorphism can be observed here. -}
 unpairPrim :: Primitive a -> (Dur, Maybe a)
 unpairPrim = \case
@@ -91,4 +84,9 @@ retroPitches =
     . uncurry (zipWith (\a b -> Prim $ pairPrim (a, b)))
     . (\(xs, ys) -> (xs, reverse ys))
     . unzip
-    . traverseLined (pure . unpairPrim)
+    . traverseLined (removeZeroDur . unpairPrim)
+  where
+    -- line function might add a zero duration rest in the end so
+    -- we want to remove it by dropping pitches that has non-positive durations.
+    -- TODO: maybe we should have a "normalize" function that just remove unnecessary things from a Music structure?
+    removeZeroDur v@(dur, _) = [v | dur > 0]
