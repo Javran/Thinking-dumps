@@ -34,7 +34,7 @@ traverseLined f mp = case mp of
 
 {- Ex 6.2 -}
 properRow :: Music Pitch -> Bool
-properRow = checkProper . traverseLined extractPc
+properRow = checkProper . traverseLined extractPc . removeZeros
   where
     extractPc prim =
       case prim of
@@ -58,7 +58,7 @@ isPalindrome xs = and $ zipWith (==) (take half xs) (reverse xs)
 
 {- Ex 6.3 -}
 palin :: Music Pitch -> Bool
-palin = isPalindrome . traverseLined extractNote
+palin = isPalindrome . traverseLined extractNote . removeZeros
   where
     extractNote prim = case prim of
       Note _ (pc, _) -> [pc]
@@ -84,9 +84,7 @@ retroPitches =
     . uncurry (zipWith (\a b -> Prim $ pairPrim (a, b)))
     . (\(xs, ys) -> (xs, reverse ys))
     . unzip
-    . traverseLined (removeZeroDur . unpairPrim)
-  where
+    . traverseLined (pure . unpairPrim)
     -- line function might add a zero duration rest in the end so
     -- we want to remove it by dropping pitches that has non-positive durations.
-    -- TODO: maybe we should have a "normalize" function that just remove unnecessary things from a Music structure?
-    removeZeroDur v@(dur, _) = [v | dur > 0]
+    . removeZeros
