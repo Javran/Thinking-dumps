@@ -1,12 +1,12 @@
-name:                the-haskell-school-of-music
-version:             0.1.0.0
-github:              "Javran/the-haskell-school-of-music"
-license:             BSD3
-author:              "Javran Cheng"
-maintainer:          "javran.c@gmail.com"
-copyright:           "Copyright: (c) 2019 Javran Cheng"
+name: the-haskell-school-of-music
+version: 0.1.0.0
+github: Javran/the-haskell-school-of-music
+license: BSD3
+author: Javran Cheng
+maintainer: javran.c@gmail.com
+copyright: "Copyright: (c) 2019 Javran Cheng"
 
-description:         "Javran's code & notes for The Haskell School of Music"
+description: "Javran's code & notes for The Haskell School of Music"
 
 dependencies:
 - base
@@ -16,11 +16,3 @@ dependencies:
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Util
-  - Ch01
-  - Ch02
-  - Ch03
-  - Ch04
-  - Ch05
-  - Ch06
