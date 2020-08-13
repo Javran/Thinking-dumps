@@ -16,3 +16,20 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options: -Wall -O2
+
+tests:
+  hspec:
+    source-dirs:
+      - test
+    main: Spec.hs
+    dependencies:
+      - the-haskell-school-of-music
+      - QuickCheck
+      - hspec
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -main-is Spec
