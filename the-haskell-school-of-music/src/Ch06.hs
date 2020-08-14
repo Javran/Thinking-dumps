@@ -91,4 +91,6 @@ retroPitches =
     . removeZeros
 
 ex6_5 :: Music Pitch
-ex6_5 = forever (line mel1) /=: rest (wn * 4)
+ex6_5 = cut 2 (m /=: m)
+  where
+    m = forever (line mel1)
