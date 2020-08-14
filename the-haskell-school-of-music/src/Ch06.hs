@@ -3,6 +3,7 @@
 
 module Ch06 where
 
+import Ch04 (mel1)
 import Data.List (nub)
 import Euterpea
 
@@ -88,3 +89,6 @@ retroPitches =
     -- line function might add a zero duration rest in the end so
     -- we want to remove it by dropping pitches that has non-positive durations.
     . removeZeros
+
+ex6_5 :: Music Pitch
+ex6_5 = forever (line mel1) /=: rest (wn * 4)
