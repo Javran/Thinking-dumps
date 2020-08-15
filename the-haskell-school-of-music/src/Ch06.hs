@@ -33,6 +33,9 @@ traverseLined f mp = case mp of
     -- but I can imagine it being complicated and exercise does not require us to implement this anyway.
     []
 
+melProper :: [Music Pitch]
+melProper = fmap (\p -> note sn (p, 4)) [C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B]
+
 {- Ex 6.2 -}
 properRow :: Music Pitch -> Bool
 properRow = checkProper . traverseLined extractPc . removeZeros
