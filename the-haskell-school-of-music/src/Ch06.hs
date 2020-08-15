@@ -44,6 +44,8 @@ properRow = checkProper . traverseLined extractPc . removeZeros
           [pc | d /= 0]
         Rest _ -> []
 
+    -- TODO: simply checking whether we have exactly 12 notes is not quite right.
+    -- check https://en.wikipedia.org/wiki/Pitch_class for details.
     checkProper xs =
       -- has exactly 12 notes
       length xs == 12
