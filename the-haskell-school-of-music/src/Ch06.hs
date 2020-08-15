@@ -4,7 +4,7 @@
 module Ch06 where
 
 import Ch04 (mel1)
-import Data.List (nub)
+import qualified Data.Set as S
 import Euterpea
 
 {-
@@ -37,6 +37,8 @@ traverseLined f mp = case mp of
 properRow :: Music Pitch -> Bool
 properRow = checkProper . traverseLined extractPc . removeZeros
   where
+    -- this list is obtained from definition of `pitch` function:
+    properPitchSet = S.fromList [C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B]
     extractPc prim =
       case prim of
         Note d (pc, _) ->
@@ -44,14 +46,15 @@ properRow = checkProper . traverseLined extractPc . removeZeros
           [pc | d /= 0]
         Rest _ -> []
 
-    -- TODO: simply checking whether we have exactly 12 notes is not quite right.
+    -- Note that simply checking whether we have exactly 12 notes is not quite right.
     -- check https://en.wikipedia.org/wiki/Pitch_class for details.
     checkProper xs =
       -- has exactly 12 notes
-      length xs == 12
-        &&
-        -- each unique pitch class used exactly once
-        length (nub xs) == 12
+      length xs == S.size properPitchSet &&
+      -- has the same set of pitches.
+      curPitchSet == properPitchSet
+      where
+        curPitchSet = S.fromList xs
 
 isPalindrome :: Eq a => [a] -> Bool
 isPalindrome xs = and $ zipWith (==) (take half xs) (reverse xs)
