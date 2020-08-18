@@ -53,9 +53,10 @@ properRow = checkProper . traverseLined extractPc . removeZeros
     -- check https://en.wikipedia.org/wiki/Pitch_class for details.
     checkProper xs =
       -- has exactly 12 notes
-      length xs == S.size properPitchSet &&
-      -- has the same set of pitches.
-      curPitchSet == properPitchSet
+      length xs == S.size properPitchSet
+        &&
+        -- has the same set of pitches.
+        curPitchSet == properPitchSet
       where
         curPitchSet = S.fromList xs
 
@@ -102,3 +103,11 @@ ex6_5 :: Music Pitch
 ex6_5 = cut 2 (m /=: m)
   where
     m = forever (line mel1)
+
+{-
+  Reference: https://en.wikipedia.org/wiki/Ornament_(music)
+ -}
+upperMordent :: Music Pitch -> Music Pitch
+upperMordent (Prim (Note t p)) = line [note (t / 4) p, note (t / 4) (trans 1 p), note (t / 2) p]
+upperMordent (Modify t m) = Modify t (upperMordent m)
+upperMordent _ = error "Expect single note."
