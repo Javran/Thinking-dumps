@@ -120,3 +120,10 @@ upperMordent = mordent 1
 
 lowerMordent :: Music Pitch -> Music Pitch
 lowerMordent = mordent (-1)
+
+turn :: Music Pitch -> Music Pitch
+turn (Prim (Note t p)) = line $ fmap q [trans 1 p, p, trans (-1) p, p]
+  where
+    q = note (t/4)
+turn (Modify t m) = Modify t (turn m)
+turn _ = error "Expect single note."
