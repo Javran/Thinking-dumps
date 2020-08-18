@@ -107,7 +107,16 @@ ex6_5 = cut 2 (m /=: m)
 {-
   Reference: https://en.wikipedia.org/wiki/Ornament_(music)
  -}
+mordent :: Int -> Music Pitch -> Music Pitch
+mordent dp = transNote
+  where
+    transNote :: Music Pitch -> Music Pitch
+    transNote (Prim (Note t p)) = line [note (t / 4) p, note (t / 4) (trans dp p), note (t / 2) p]
+    transNote (Modify t m) = Modify t (transNote m)
+    transNote _ = error "Expect single note."
+
 upperMordent :: Music Pitch -> Music Pitch
-upperMordent (Prim (Note t p)) = line [note (t / 4) p, note (t / 4) (trans 1 p), note (t / 2) p]
-upperMordent (Modify t m) = Modify t (upperMordent m)
-upperMordent _ = error "Expect single note."
+upperMordent = mordent 1
+
+lowerMordent :: Music Pitch -> Music Pitch
+lowerMordent = mordent (-1)
