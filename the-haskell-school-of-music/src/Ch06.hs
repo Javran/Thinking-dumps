@@ -3,7 +3,7 @@
 
 module Ch06 where
 
-import Ch04 (mel1)
+import Ch04 (mel1, twinkle)
 import qualified Data.Set as S
 import Euterpea
 
@@ -140,3 +140,18 @@ appoggiatura i = expectSingleNote $
   \t p ->
     let t' = t / 2
      in line [note t' (trans i p), note t' p]
+
+ex6_7 :: Music Pitch
+ex6_7 = line ((\ps -> perc ps en) <$> allPercSounds)
+  where
+    allPercSounds =
+      -- I guess it is expected to use fromEnum, but this also works,
+      -- and actually is simpler.
+      [AcousticBassDrum .. OpenTriangle]
+
+ex6_8 :: Music Pitch
+ex6_8 = cut 4 $ forever drumBeatBase :=: twinkle
+  where
+    -- just some random drum beats
+    drumBeatBase = line [p qn, p sn, p en, p sn, p en, p sn, p sn, p sn, p sn, p en]
+    p = perc AcousticSnare
