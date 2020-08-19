@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -ddump-to-file -ddump-ds -fhpc #-}
 module Main where
 
 import Cov
