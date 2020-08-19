@@ -105,6 +105,8 @@ ex6_5 = cut 2 (m /=: m)
     m = forever (line mel1)
 
 {-
+  Ex 6.6: realize mordent, turn and appoggiatura
+
   Reference: https://en.wikipedia.org/wiki/Ornament_(music)
  -}
 expectSingleNote :: (Dur -> Pitch -> Music Pitch) -> Music Pitch -> Music Pitch
@@ -129,3 +131,12 @@ turn = expectSingleNote $
   \t p ->
     let q = note (t / 4)
      in line $ fmap q [trans 1 p, p, trans (-1) p, p]
+
+-- the interpretation on this one is a bit ambiguous,
+-- so here I'm going to take the liberty and say let's divide
+-- the principle note by half and trans on first half.
+appoggiatura :: Int -> Music Pitch -> Music Pitch
+appoggiatura i = expectSingleNote $
+  \t p ->
+    let t' = t / 2
+     in line [note t' (trans i p), note t' p]
