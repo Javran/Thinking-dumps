@@ -192,3 +192,12 @@ retro' =
       where
         d1 = dur m1'
         d2 = dur m2'
+
+{-
+  ex 6.10
+  TODO: for now just the function and nothing else.
+ -}
+insideOut :: Music a -> Music a
+insideOut =
+  -- for this one to work we simply just need to switch two constructors around.
+  mFold Prim (:=:) (:+:) Modify
