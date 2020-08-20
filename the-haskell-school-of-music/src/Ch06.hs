@@ -159,3 +159,32 @@ ex6_8 = cut 4 $ forever drumBeatBase :=: twinkle
 -- ex 6.9
 scaleVolume :: Rational -> Music (Pitch, Volume) -> Music (Pitch, Volume)
 scaleVolume s = fmap (\(p, v) -> (p, round $ s * fromIntegral v))
+
+-- ex 6.10
+retro' :: Music a -> Music a
+retro' =
+  mFold
+    -- Prims are kept as it is.
+    Prim
+    -- sequential constructor are reversed
+    (flip (:+:))
+    retroParallel
+    -- controls are kept unchanged as well
+    Modify
+  where
+    {-
+      TODO: to be verified
+      this is actually the tricky part.
+      note that there is no recursive call in the function body
+      this is because "sub-trees" are already folded when passing to this function
+      (in other words, mFold does the recursive work for us)
+      it is intentional that variables are called m1' and m2',
+      just to be clear that those subtrees are folded results.
+     -}
+    retroParallel m1' m2' =
+        if d1 > d2
+          then m1' :=: (rest (d1-d2) :+: m2')
+          else (rest (d2-d1) :+: m1') :=: m2'
+      where
+        d1 = dur m1'
+        d2 = dur m2'
