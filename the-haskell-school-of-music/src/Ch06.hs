@@ -155,3 +155,7 @@ ex6_8 = cut 4 $ forever drumBeatBase :=: twinkle
     -- just some random drum beats
     drumBeatBase = line [p qn, p sn, p en, p sn, p en, p sn, p sn, p sn, p sn, p en]
     p = perc AcousticSnare
+
+-- ex 6.9
+scaleVolume :: Rational -> Music (Pitch, Volume) -> Music (Pitch, Volume)
+scaleVolume s = fmap (\(p, v) -> (p, round $ s * fromIntegral v))
