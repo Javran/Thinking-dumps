@@ -173,13 +173,17 @@ retro' =
     Modify
   where
     {-
-      TODO: to be verified
       this is actually the tricky part.
       note that there is no recursive call in the function body
       this is because "sub-trees" are already folded when passing to this function
       (in other words, mFold does the recursive work for us)
       it is intentional that variables are called m1' and m2',
       just to be clear that those subtrees are folded results.
+
+      correctness is partially verified by an example in GHCi:
+
+      >  retro' childSong6 == retro childSong6
+      True
      -}
     retroParallel m1' m2' =
         if d1 > d2
