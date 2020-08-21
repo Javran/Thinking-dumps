@@ -194,7 +194,7 @@ retro' =
         d2 = dur m2'
 
 {-
-  ex 6.10
+  ex 6.11
 
   for this `insideOut` to work we simply just need to switch two constructors around.
   see implementation below.
@@ -213,3 +213,20 @@ retro' =
  -}
 insideOut :: Music a -> Music a
 insideOut = mFold Prim (:=:) (:+:) Modify
+
+{-
+  Create a Music value m out of 3 values (assumed to be of the same duration),
+  that satisfies `insideOut m == m`
+ -}
+mkInsideOutId :: Music a -> Music a -> Music a -> Music a
+mkInsideOutId vA vB vD = (vA :+: vB) :=: (vB :+: vD)
+
+{-
+  We are using two "layers" of mkInsideOutId here to give a bit more complexity.
+ -}
+ex6_11_a :: Music Pitch
+ex6_11_a = mkInsideOutId vA vB vD
+  where
+    vA = mkInsideOutId (d 5 qn) (e 5 qn) (c 5 qn)
+    vB = mkInsideOutId (b 4 qn) (c 5 qn) (a 4 qn)
+    vD = mkInsideOutId (g 4 qn) (a 4 qn) (f 4 qn)
