@@ -230,3 +230,7 @@ ex6_11_a = mkInsideOutId vA vB vD
     vA = mkInsideOutId (d 5 qn) (e 5 qn) (c 5 qn)
     vB = mkInsideOutId (b 4 qn) (c 5 qn) (a 4 qn)
     vD = mkInsideOutId (g 4 qn) (a 4 qn) (f 4 qn)
+
+{-
+  Instruction not clear, skipping 6.11 (b)
+ -}
