@@ -195,9 +195,21 @@ retro' =
 
 {-
   ex 6.10
-  TODO: for now just the function and nothing else.
+
+  for this `insideOut` to work we simply just need to switch two constructors around.
+  see implementation below.
+
+  (a) I'm not sure what does "non-trivial" mean, but I guess anything
+      with a "composite" constructor is non-trivial, which excludes primitive-only values.
+
+  Let's try some example:
+
+  (vA :+: vB) :=: (vC :+: vD) ~ (vA :=: vB) :+: (vC :=: vD)
+
+  note that if dur of all vA,vB,vC,vD is the same and vB == vC, we'll have:
+
+  (vA :+: vB) :=: (vB :+: vD) ~ (vA :=: vB) :+: (vB :=: vD)
+
  -}
 insideOut :: Music a -> Music a
-insideOut =
-  -- for this one to work we simply just need to switch two constructors around.
-  mFold Prim (:=:) (:+:) Modify
+insideOut = mFold Prim (:=:) (:+:) Modify
