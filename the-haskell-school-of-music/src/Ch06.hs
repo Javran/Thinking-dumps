@@ -186,9 +186,9 @@ retro' =
       True
      -}
     retroParallel m1' m2' =
-        if d1 > d2
-          then m1' :=: (rest (d1-d2) :+: m2')
-          else (rest (d2-d1) :+: m1') :=: m2'
+      if d1 > d2
+        then m1' :=: (rest (d1 - d2) :+: m2')
+        else (rest (d2 - d1) :+: m1') :=: m2'
       where
         d1 = dur m1'
         d2 = dur m2'
@@ -234,3 +234,16 @@ ex6_11_a = mkInsideOutId vA vB vD
 {-
   Instruction not clear, skipping 6.11 (b)
  -}
+
+x1 :: Music Pitch
+x1 = g 4 qn :=: (c 4 en :+: d 4 en :+: e 4 en)
+
+x2 :: Music Pitch
+x2 = g 4 qn :=: tempo (3 / 2) (c 4 en :+: d 4 en :+: e 4 en)
+
+phase1, phase2, phase3 :: Music Pitch
+[phase1, phase2, phase3] = (\v -> phaseIt v tk) <$> [1.5, 1.1, 1.01]
+  where
+    tk = times 4 twinkle
+    phaseIt factor m = m :=: tempo factor m
+
