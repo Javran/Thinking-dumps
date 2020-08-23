@@ -293,3 +293,14 @@ getHeads = mapMaybe get
 -- ex 6.12 (c)
 intervalClosure :: Num a => [a] -> [a]
 intervalClosure = reverse . getHeads . toIntervals
+
+{-
+  ex 6.12 (d)
+
+  I'm not sure what this exercise is asking about,
+  but it makes some sense to take the input list as "seed" ic0 and
+  build intervalClosure ic1, then ic2, and so on.
+  so let's do just that.
+ -}
+intervalClosures :: Num a => [a] -> [[a]]
+intervalClosures = iterate intervalClosure
