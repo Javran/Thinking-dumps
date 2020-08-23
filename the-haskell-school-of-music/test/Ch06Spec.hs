@@ -26,3 +26,16 @@ spec = do
     specify "examples" $
       retroPitches (line [c 4 en, d 4 qn])
         `shouldBe` line [d 4 en, c 4 qn]
+
+  describe "toIntervals" $
+    specify "examples" $
+      toIntervals [1 :: Int, 5, 3, 6, 5, 0, 1, 1]
+        `shouldBe` [ [1, 5, 3, 6, 5, 0, 1, 1]
+                   , [-4, 2, -3, 1, 5, -1, 0]
+                   , [-6, 5, -4, -4, 6, -1]
+                   , [-11, 9, 0, -10, 7]
+                   , [-20, 9, 10, -17]
+                   , [-29, -1, 27]
+                   , [-28, -28]
+                   , [0]
+                   ]

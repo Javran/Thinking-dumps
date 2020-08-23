@@ -4,6 +4,7 @@
 module Ch06 where
 
 import Ch04 (mel1, twinkle)
+import Data.List (unfoldr)
 import qualified Data.Set as S
 import Euterpea
 
@@ -249,17 +250,31 @@ phase1, phase2, phase3 :: Music Pitch
 
 rep :: (Music a -> Music a) -> (Music a -> Music a) -> Int -> Music a -> Music a
 rep _ _ 0 _ = rest 0
-rep f g n m = m :=: g (rep f g (n-1) (f m))
+rep f g n m = m :=: g (rep f g (n -1) (f m))
 
 repRun, repCascade, repCascades, repFinal :: Music Pitch
+
 repRun', repCascade', repCascades', repFinal' :: Music Pitch
 
 repRun = rep (transpose 5) (offset tn) 8 (c 4 tn)
+
 repCascade = rep (transpose 4) (offset en) 8 repRun
+
 repCascades = rep id (offset sn) 2 repCascade
+
 repFinal = repCascades :+: retro repCascades
 
 repRun' = rep (offset tn) (transpose 5) 8 (c 4 tn)
+
 repCascade' = rep (offset en) (transpose 4) 8 repRun'
+
 repCascades' = rep (offset sn) id 2 repCascade'
+
 repFinal' = repCascades' :+: retro repCascades'
+
+toIntervals :: Num a => [a] -> [] [a]
+toIntervals = unfoldr go
+  where
+    go ys = do
+      _ : ys' <- pure ys
+      pure (ys, zipWith (-) ys ys')
