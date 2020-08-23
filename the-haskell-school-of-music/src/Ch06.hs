@@ -5,6 +5,7 @@ module Ch06 where
 
 import Ch04 (mel1, twinkle)
 import Data.List (unfoldr)
+import Data.Maybe
 import qualified Data.Set as S
 import Euterpea
 
@@ -272,9 +273,23 @@ repCascades' = rep (offset sn) id 2 repCascade'
 
 repFinal' = repCascades' :+: retro repCascades'
 
+-- ex 6.12 (a)
 toIntervals :: Num a => [a] -> [] [a]
 toIntervals = unfoldr go
   where
     go ys = do
       _ : ys' <- pure ys
-      pure (ys, zipWith (-) ys ys')
+      pure (ys, zipWith (-) ys' ys)
+
+-- ex 6.12 (b)
+getHeads :: [[a]] -> [a]
+getHeads = mapMaybe get
+  where
+    -- it doesn't sound necessary to handle the empty case,
+    -- so this case is best effort (as it is the input value that breaks the contract)
+    get [] = Nothing
+    get (x : _) = Just x
+
+-- ex 6.12 (c)
+intervalClosure :: Num a => [a] -> [a]
+intervalClosure = reverse . getHeads . toIntervals
