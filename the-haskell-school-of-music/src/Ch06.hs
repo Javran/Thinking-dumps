@@ -307,13 +307,20 @@ intervalClosures = iterate intervalClosure
 
 {-
   (WIP) ex 6.13
+
+  test: cut _ shepardTone
  -}
-shepardTone = line $ zipWith addVolume vols descendingNotes
+shepardTone :: Music (Pitch, Volume)
+shepardTone = line descendingPitches :=: (rest (hn * 4) :+: shepardTone)
   where
     len = 12 * 4
+    descendingPitches = zipWith addVolume vols descendingNotes
     descendingNotes = fmap (note sn . pitch) (take len [60, 59 ..])
-    fadingSteps = 10
+    fadingSteps = 10 -- steps spent in fading in or out.
     fadeInVol :: [Volume]
-    fadeInVol = [round $ fromIntegral (i * 127) / (10 :: Double) | i <- [1 :: Int .. fadingSteps]]
+    fadeInVol =
+      [ round $ fromIntegral (i * 127) / (10 :: Double)
+      | i <- [1 :: Int .. fadingSteps]
+      ]
     fadeOutVol = reverse fadeInVol
     vols = fadeInVol <> replicate (len - fadingSteps - fadingSteps) 127 <> fadeOutVol
