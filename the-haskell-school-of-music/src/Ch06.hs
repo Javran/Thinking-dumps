@@ -309,6 +309,13 @@ intervalClosures = iterate intervalClosure
   (WIP) ex 6.13
 
   test: cut _ shepardTone
+
+  for now it's still obvious when it "restarts",
+  this is probably due to the lack of variety, which is what we are going to address next.
+  This can be done by parametrizing on:
+  - fading speed
+  - start time (of next line)
+  - instrument used to play
  -}
 shepardTone :: Music (Pitch, Volume)
 shepardTone = line descendingPitches :=: (rest (hn * 4) :+: shepardTone)
