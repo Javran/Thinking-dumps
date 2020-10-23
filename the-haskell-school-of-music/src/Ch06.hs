@@ -304,3 +304,9 @@ intervalClosure = reverse . getHeads . toIntervals
  -}
 intervalClosures :: Num a => [a] -> [[a]]
 intervalClosures = iterate intervalClosure
+
+{-
+  (WIP) ex 6.13
+ -}
+shepardTone :: Music Pitch
+shepardTone = line $ fmap (note sn . pitch) (take 24 [60, 59 ..])
