@@ -309,7 +309,7 @@ intervalClosures = iterate intervalClosure
 {-
   (WIP) ex 6.13
 
-  test: cut _ shepardTone
+  test: shepardTone <duration>
 
   for now it's still obvious when it "restarts",
   this is probably due to the lack of variety, which is what we are going to address next.
@@ -318,19 +318,15 @@ intervalClosures = iterate intervalClosure
   - start time (of next line)
   - instrument used to play
  -}
-shepardTone :: Music (Pitch, Volume)
-shepardTone =
+shepardTone :: Dur -> Music (Pitch, Volume)
+shepardTone dEnd =
   chord $
-    -- this `take` call is a clear indication that this is not the best solution to alternate
-    -- between instruments. We have to do this because `zipWith` is dealing with two infinite lists,
-    -- so that `chord` will never be able to make progress.
-    take 20 $
-      zipWith
-        (\dur instr -> rest dur :+: instrument instr (line descendingPitches))
-        [0, hn * 4 ..]
-        (cycle [AcousticGrandPiano, Violin, Bagpipe, Cello])
+    zipWith
+      (\dur instr -> rest dur :+: instrument instr (line descendingPitches))
+      [0, hn * 47 / 48 .. dEnd]
+      (cycle [AcousticGrandPiano, Violin, Cello])
   where
-    descendingPitches = mkDescendingPitches 7 30
+    descendingPitches = mkDescendingPitches 6 10
     {-
       oCount: count of octaves to be included.
       fadingSteps: steps spent in fading in or out.
