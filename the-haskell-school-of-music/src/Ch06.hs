@@ -321,14 +321,27 @@ intervalClosures = iterate intervalClosure
 shepardTone :: Music (Pitch, Volume)
 shepardTone = line descendingPitches :=: (rest (hn * 4) :+: shepardTone)
   where
-    len = 12 * 6
-    descendingPitches = zipWith addVolume vols descendingNotes
-    descendingNotes = fmap (note sn . pitch) (take len [60, 59 ..])
-    fadingSteps = 20 -- steps spent in fading in or out.
-    fadeInVol :: [Volume]
-    fadeInVol =
-      [ round @Double $ fromIntegral (i * 127) / fromIntegral fadingSteps
-      | i <- [1 :: Int .. fadingSteps]
-      ]
-    fadeOutVol = reverse fadeInVol
-    vols = fadeInVol <> replicate (len - fadingSteps - fadingSteps) 127 <> fadeOutVol
+    descendingPitches = mkDescendingPitches 7 30
+    {-
+      oCount: count of octaves to be included.
+      fadingSteps: steps spent in fading in or out.
+     -}
+    mkDescendingPitches oCount fadingSteps =
+      {-
+        sanity check that we don't spend too long fading in or out, which,
+        in current implementation, will misalign volume and notes.
+       -}
+      if stableVolLen < 0
+        then error "fading steps are too long"
+        else zipWith addVolume vols dNotes
+      where
+        len = 12 * oCount
+        dNotes = fmap (note sn . pitch) (take len [60, 59 ..])
+        fadeInVol :: [Volume]
+        fadeInVol =
+          [ round @Double $ fromIntegral (i * 127) / fromIntegral fadingSteps
+          | i <- [1 :: Int .. fadingSteps]
+          ]
+        fadeOutVol = reverse fadeInVol
+        stableVolLen = len - fadingSteps - fadingSteps
+        vols = fadeInVol <> replicate stableVolLen 127 <> fadeOutVol
