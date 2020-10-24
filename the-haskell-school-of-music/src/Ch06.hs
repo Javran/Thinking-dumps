@@ -319,7 +319,16 @@ intervalClosures = iterate intervalClosure
   - instrument used to play
  -}
 shepardTone :: Music (Pitch, Volume)
-shepardTone = line descendingPitches :=: (rest (hn * 4) :+: shepardTone)
+shepardTone =
+  chord $
+    -- this `take` call is a clear indication that this is not the best solution to alternate
+    -- between instruments. We have to do this because `zipWith` is dealing with two infinite lists,
+    -- so that `chord` will never be able to make progress.
+    take 20 $
+      zipWith
+        (\dur instr -> rest dur :+: instrument instr (line descendingPitches))
+        [0, hn * 4 ..]
+        (cycle [AcousticGrandPiano, Violin, Bagpipe, Cello])
   where
     descendingPitches = mkDescendingPitches 7 30
     {-
