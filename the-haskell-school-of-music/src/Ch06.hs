@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TypeApplications #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 module Ch06 where
@@ -320,13 +321,13 @@ intervalClosures = iterate intervalClosure
 shepardTone :: Music (Pitch, Volume)
 shepardTone = line descendingPitches :=: (rest (hn * 4) :+: shepardTone)
   where
-    len = 12 * 4
+    len = 12 * 6
     descendingPitches = zipWith addVolume vols descendingNotes
     descendingNotes = fmap (note sn . pitch) (take len [60, 59 ..])
-    fadingSteps = 10 -- steps spent in fading in or out.
+    fadingSteps = 20 -- steps spent in fading in or out.
     fadeInVol :: [Volume]
     fadeInVol =
-      [ round $ fromIntegral (i * 127) / (10 :: Double)
+      [ round @Double $ fromIntegral (i * 127) / fromIntegral fadingSteps
       | i <- [1 :: Int .. fadingSteps]
       ]
     fadeOutVol = reverse fadeInVol
