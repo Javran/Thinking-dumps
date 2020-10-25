@@ -1,6 +1,7 @@
 module Ch07 where
 
 import Data.Function
+import Euterpea hiding (d)
 
 {-
   ex 7.1.
@@ -45,3 +46,26 @@ instance Enum MyColor where
 
 instance Ord MyColor where
   compare = compare `on` fromEnum
+
+{-
+  ex 7.3 Temporal and instances for `Primitive a` and `Music a`.
+ -}
+class Temporal a where
+  durT :: a -> Dur
+  cutT :: Dur -> a -> a
+  removeT :: Dur -> a -> a
+
+instance Temporal (Primitive a) where
+  durT (Note d _) = d
+  durT (Rest d) = d
+
+  cutT d (Note d' p) = Note (min d' d) p
+  cutT d (Rest d') = Rest (min d' d)
+
+  removeT d (Note d' p) = Note (max (d' - d) 0) p
+  removeT d (Rest d') = Rest (max (d' - d) 0)
+
+instance Temporal (Music a) where
+  durT = dur
+  cutT = cut
+  removeT = remove
