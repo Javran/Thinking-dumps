@@ -307,10 +307,16 @@ intervalClosures :: Num a => [a] -> [[a]]
 intervalClosures = iterate intervalClosure
 
 {-
-  (WIP) ex 6.13
+  ex 6.13
 
-  test: shepardTone <duration>
+  for testing this, play `shepardTone <dur>`, which `<dur>` is the duration that
+  this music should last.
 
+  TODO: this is sort of working - I've followed the instructions for implementing this,
+  but it seems getting this illusions will take some tuning and for me
+  it's a shot in the dark so I decided to move on and come back later.
+
+  TODO:
   for now it's still obvious when it "restarts",
   this is probably due to the lack of variety, which is what we are going to address next.
   This can be done by parametrizing on:
@@ -350,3 +356,8 @@ shepardTone dEnd =
         fadeOutVol = reverse fadeInVol
         stableVolLen = len - fadingSteps - fadingSteps
         vols = fadeInVol <> replicate stableVolLen 127 <> fadeOutVol
+
+{-
+  ex 6.14
+  instruction unclear, skipping this exercise.
+ -}
