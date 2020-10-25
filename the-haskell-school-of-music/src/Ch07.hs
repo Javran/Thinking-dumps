@@ -1,7 +1,7 @@
 module Ch07 where
 
 import Data.Function
-import Euterpea hiding (d)
+import Euterpea hiding (d, f, g)
 
 {-
   ex 7.1.
@@ -69,3 +69,10 @@ instance Temporal (Music a) where
   durT = dur
   cutT = cut
   removeT = remove
+
+{- Define a different type for ex 7.4 rather than messing with existing function type. -}
+newtype Fn a b = Fn (a -> b)
+
+instance (Enum a, Bounded a, Eq b) => Eq (Fn a b) where
+  (Fn f) == (Fn g) =
+    all (\v -> f v == g v) [minBound, maxBound]
