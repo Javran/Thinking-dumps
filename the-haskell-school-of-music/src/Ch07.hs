@@ -1,5 +1,7 @@
 module Ch07 where
 
+import Data.Function
+
 {-
   ex 7.1.
 
@@ -19,3 +21,27 @@ module Ch07 where
    that their `Ord` instance satisfy the law.
 
  -}
+
+{-
+  ADT for ex 7.2
+ -}
+data MyColor = MyRed | MyGreen | MyBlue
+
+instance Eq MyColor where
+  MyRed == MyRed = True
+  MyGreen == MyGreen = True
+  MyBlue == MyBlue = True
+  _ == _ = False
+
+instance Enum MyColor where
+  fromEnum MyRed = 0
+  fromEnum MyGreen = 1
+  fromEnum MyBlue = 2
+
+  toEnum 0 = MyRed
+  toEnum 1 = MyGreen
+  toEnum 2 = MyBlue
+  toEnum _ = error "invalid number"
+
+instance Ord MyColor where
+  compare = compare `on` fromEnum
