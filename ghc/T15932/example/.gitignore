@@ -1,0 +1,7 @@
+test
+
+*.dump-*
+
+*.html
+
+*.tix

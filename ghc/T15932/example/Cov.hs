@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# OPTIONS_GHC -ddump-to-file -ddump-ds -fhpc #-}
 module Cov where
 
 -- F has Functor instance using deriving mechanism
