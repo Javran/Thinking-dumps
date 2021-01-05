@@ -8,16 +8,12 @@ func Proverb(rhyme []string) []string {
 	if len(rhyme) == 0 {
 		return nil
 	}
-
 	// Note: the exercise and its tests are not specific about the use of indefinite articles,
 	// here I choose to stick with "a" to keep it simple.
-	var results []string
+	var results = make([]string, len(rhyme))
 	for i := 1; i < len(rhyme); i += 1 {
-		results = append(
-			results,
-			fmt.Sprintf("For want of a %s the %s was lost.", rhyme[i-1], rhyme[i]))
+		results[i-1] = fmt.Sprintf("For want of a %s the %s was lost.", rhyme[i-1], rhyme[i])
 	}
-
-	results = append(results, fmt.Sprintf("And all for the want of a %s.", rhyme[0]))
+	results[len(rhyme)-1] = fmt.Sprintf("And all for the want of a %s.", rhyme[0])
 	return results
 }
