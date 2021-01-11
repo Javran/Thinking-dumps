@@ -3,17 +3,19 @@ package hamming
 
 import "errors"
 
-// Distance computes Hamming distance between two ASCII-encoded strings.
+// Distance computes Hamming distance between two strings.
 // Two strings must have the same length, an error will occur otherwise.
 func Distance(a, b string) (int, error) {
-	if len(a) != len(b) {
+	// reinterpret as slices of runes
+	// as this is intended for code point comparision.
+	ar, br := []rune(a), []rune(b)
+	if len(ar) != len(br) {
 		return 0, errors.New("two input strings must have the same length")
 	}
 
 	distance := 0
-	// Visiting by byte. Should not affect correctness assuming ASCII encoding.
-	for i := 0; i < len(a); i++ {
-		if a[i] != b[i] {
+	for i := 0; i < len(ar); i++ {
+		if ar[i] != br[i] {
 			distance++
 		}
 	}
