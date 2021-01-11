@@ -1,9 +1,9 @@
-// This package contains function and type determining the type of a triangle.
+// Package triangle contains function and type determining the type of a triangle.
 package triangle
 
 import "math"
 
-// Notice KindFromSides() returns this type. Pick a suitable data type.
+// Kind represents return type of KindFromSides().
 type Kind = string
 
 const (
