@@ -5,7 +5,6 @@ import (
 	"strconv"
 )
 
-
 // Convert converts an int to raindrops string.
 func Convert(x int) string {
 	// condValue tests whether fac is a factor of x and returns trueVal
@@ -18,7 +17,7 @@ func Convert(x int) string {
 	}
 
 	result := condValue(3, "Pling") + condValue(5, "Plang") + condValue(7, "Plong")
-	if len(result) == 0 {
+	if result == "" {
 		result = strconv.Itoa(x)
 	}
 	return result
