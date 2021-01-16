@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var alphaTest = regexp.MustCompile(`(?i)[a-z]`)
+var hasAlpha = regexp.MustCompile(`(?i)[a-z]`).MatchString
 
 // Hey mimics Bob's response to a sentence.
 func Hey(remark string) string {
@@ -18,8 +18,7 @@ func Hey(remark string) string {
 	question := remark[len(remark)-1] == '?'
 	// test cases imply that a sentence is not consider in all caps if
 	// it does not contain any alphabet.
-	hasAlpha := alphaTest.Find([]byte(remark)) != nil
-	allCap := hasAlpha && remark == strings.ToUpper(remark)
+	allCap := hasAlpha(remark) && remark == strings.ToUpper(remark)
 
 	switch {
 		case question && !allCap:
