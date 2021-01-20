@@ -50,12 +50,16 @@ func ToRomanNumeral(val int) (string, error) {
 		return "", errors.New("input out of representable range")
 	}
 
-	var result []rune
+	result := singleDigit(oneRep, val%10)
 
-	result = append(result, singleDigit(thousandRep, val/1000)...)
-	result = append(result, singleDigit(hundredRep, (val/100)%10)...)
-	result = append(result, singleDigit(tenRep, (val/10)%10)...)
-	result = append(result, singleDigit(oneRep, val%10)...)
+	val /= 10
+	result = append(singleDigit(tenRep, val%10), result...)
+
+	val /= 10
+	result = append(singleDigit(hundredRep, val%10), result...)
+
+	val /= 10
+	result = append(singleDigit(thousandRep, val%10), result...)
 
 	return string(result), nil
 }
