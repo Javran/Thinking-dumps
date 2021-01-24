@@ -6,13 +6,17 @@ import (
 	"unicode"
 )
 
+// sanitizeInput returns the input string without ' ' or '-'.
+var sanitizeInput func(string) string = strings.NewReplacer(
+	" ", "",
+	"-", "",
+).Replace
+
 // IsIsogram tests whether a word or phase is an isogram
 // note that hyphens and spaces are allowed to appear multiple times.
 func IsIsogram(input string) bool {
 	exist := make(map[rune]struct{})
-	input = strings.ReplaceAll(input, " ", "")
-	input = strings.ReplaceAll(input, "-", "")
-	for _, ch := range input {
+	for _, ch := range sanitizeInput(input) {
 		upper := unicode.ToUpper(ch)
 		_, ok := exist[upper]
 		if ok {
