@@ -4,6 +4,17 @@ package isogram
 // Commit: 74869e8 isogram: Add test case for dupe after non-letter (fixes #1390)
 // Problem Specifications Version: 1.7.0
 
+var longString string
+
+func init() {
+	l := 0xFFFF
+	var tmp = make([]rune, l)
+	for i := 0; i < l; i++ {
+		tmp[i] = rune(i)
+	}
+	longString = string(tmp)
+}
+
 var testCases = []struct {
 	description string
 	input       string
@@ -73,5 +84,10 @@ var testCases = []struct {
 		description: "same first and last characters",
 		input:       "angola",
 		expected:    false,
+	},
+	{
+		description: "long",
+		input: longString,
+		expected: true,
 	},
 }
