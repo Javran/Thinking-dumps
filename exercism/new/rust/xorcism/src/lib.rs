@@ -14,7 +14,7 @@ impl<'a> Xorcism<'a> {
     ///
     /// Should accept anything which has a cheap conversion to a byte slice.
     pub fn new<Key: IntoIterator<Item=u8>>(key: &Key) -> Xorcism<'a> {
-        let xs: Vec<u8> = *key.into_iter().collect();
+        let xs = key.into_iter().collect::<Vec<u8>>().as_slice();
         // Xorcism{key: ), pos: 0}
         unimplemented!();
     }
