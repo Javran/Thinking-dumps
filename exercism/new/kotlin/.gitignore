@@ -64,3 +64,4 @@ distTmp/
 outTmp/
 
 gradle/
+.idea/
