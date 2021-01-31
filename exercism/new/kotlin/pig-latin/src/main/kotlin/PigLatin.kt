@@ -27,19 +27,19 @@ object PigLatin {
 
     fun translateWord(word: String): String {
         val (head, headIsVowel, tail) = splitFirstCluster(word)
-        when {
+        return when {
             headIsVowel ->
                 // Rule 1
-                return word + "ay"
+                word + "ay"
             tail.startsWith("y") ->
                 // Rule 4
-                return tail + head + "ay"
+                tail + head + "ay"
             tail.startsWith("qu") ->
                 // Rule 3
-                return tail.substring(2) + head + "quay"
+                tail.substring(2) + head + "quay"
             else ->
                 // Rule 2
-                return tail + head + "ay"
+                tail + head + "ay"
         }
     }
 
