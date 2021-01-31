@@ -1,30 +1,32 @@
 object PigLatin {
-
-    val vowels: List<String> = listOf(
-        "xr", "yt",
-        "a", "e", "i", "o", "u"
+    // List of char sequence that should be considered a single cluster of vowel / consonant.
+    // Longer elements must appear first.
+    val clusters: List<Pair<String, Boolean>> = listOf(
+        "sch" to false, "thr" to false,
+        "xr" to true, "yt" to true,
+        "ch" to false , "qu" to false, "th" to false, "rh" to false,
+        "a" to true, "e" to true, "i" to true, "o" to true, "u" to true,
+        "y" to false
     )
 
-    val consonantClusters: List<String> = listOf(
-        "sch", "thr",
-        "ch", "qu", "th", "rh",
-        "y"
+    data class SplitResult (
+        val head: String,
+        val headIsVovel: Boolean,
+        val tail: String
     )
 
-    fun splitFirstCluster(word: String): Triple<String, Boolean, String> {
-        for (prev in vowels) {
-            if (word.startsWith(prev)) {
-                return Triple(prev, true, word.substring(prev.length))
+    // Splits a non-empty word by first vowel / consonant cluster.
+    // INVARIANT: head + tail == <input word>, where head and tail are from SplitResult.
+    fun splitFirstCluster(word: String): SplitResult {
+        for ((prefix, prefixIsVowel) in clusters) {
+            if (word.startsWith(prefix)) {
+                return SplitResult(prefix, prefixIsVowel, word.substring(prefix.length))
             }
         }
-        for (prev in consonantClusters) {
-            if (word.startsWith(prev)) {
-                return Triple(prev, false, word.substring(prev.length))
-            }
-        }
-        return Triple(word.substring(0,1), false, word.substring(1))
+        return SplitResult(word.substring(0,1), false, word.substring(1))
     }
 
+    // Translates a single word into Pig Latin. It is assumed that the word is not empty.
     fun translateWord(word: String): String {
         val (head, headIsVowel, tail) = splitFirstCluster(word)
         return when {
