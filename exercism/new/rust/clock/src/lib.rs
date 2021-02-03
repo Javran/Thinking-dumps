@@ -7,29 +7,16 @@ const MINS_PER_DAY: i32 = 24 * 60;
 #[derive(PartialEq, Debug)]
 pub struct Clock(i32);
 
-/// Performs division and wraps the result `r` so that `0 <= r && r < divisor`.
-///
-/// It is required that both `divisor` and `-divisor` are representable in `i32`,
-/// but this condition is unchecked.
-fn div_nonneg(val: i32, divisor: i32) -> i32 {
-    let result: i32 = val % divisor;
-    if result < 0 {
-        divisor + result
-    } else {
-        result
-    }
-}
-
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let hh = div_nonneg(hours, 24);
-        let mm = div_nonneg(minutes, MINS_PER_DAY);
+        let hh = hours.rem_euclid(24);
+        let mm = minutes.rem_euclid(MINS_PER_DAY);
         // INVARIANT: hh >= 0 && hh < 24 && mm >= 0 && mm < MINS_PER_DAY
         Clock((hh * 60 + mm) % MINS_PER_DAY)
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        Clock::new(0, self.0 + div_nonneg(minutes, MINS_PER_DAY))
+        Clock::new(0, self.0 + minutes.rem_euclid(MINS_PER_DAY))
     }
 }
 
