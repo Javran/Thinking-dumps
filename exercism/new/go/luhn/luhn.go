@@ -14,31 +14,24 @@ func Valid(input string) bool {
 		return false
 	}
 
-	// padding '0' in front of a string of odd length,
-	// this allows us to compute Luhn checksum from front of the string
-	// while preserving original sum.
-	if len(input)%2 == 1 {
-		input = "0" + input
-	}
-	// INVARIANT: len(input) is even.
-
-	sum := 0
+	sum, isSecondDigit := 0, len(input)%2 == 0
 	// INVARIANT of the following loop:
 	// scanned part of the string can only have '0' - '9'.
-	for i, ch := range input {
+	for _, ch := range input {
 		if !unicode.IsDigit(ch) {
 			return false
 		}
 		val := int(ch - '0')
 		// check if we want to do the digit transformation
 		// on the current digit.
-		if i%2 == 0 {
+		if isSecondDigit {
 			val *= 2
-			if val >= 10 {
+			if val > 9 {
 				val -= 9
 			}
 		}
 		sum += val
+		isSecondDigit = !isSecondDigit
 	}
 	// at this point the string is both checked to contain '0' - '9' only
 	// and summed thanks to the loop invariant.
