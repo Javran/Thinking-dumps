@@ -14,6 +14,8 @@ func Valid(input string) bool {
 		return false
 	}
 
+	// isSecondDigit keeps track of whether the current digit is
+	// considered a second digit, starting from **right** side of the string.
 	sum, isSecondDigit := 0, len(input)%2 == 0
 	// INVARIANT of the following loop:
 	// scanned part of the string can only have '0' - '9'.
