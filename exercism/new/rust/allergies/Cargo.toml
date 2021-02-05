@@ -1,0 +1,9 @@
+[package]
+edition = "2018"
+name = "allergies"
+version = "1.1.0"
+
+
+[dependencies]
+strum = "0.20"
+strum_macros = "0.20"
