@@ -9,13 +9,13 @@ import (
 // No other character except '0' - '9' and space are allowed.
 func Valid(input string) bool {
 	input = strings.ReplaceAll(input, " ", "")
-	if len(input) <= 1 {
+	if len(input) < 2 {
 		// input string is less than 2 bytes, which cannot be a valid Luhn string.
 		return false
 	}
 
 	// isSecondDigit keeps track of whether the current digit is
-	// considered a second digit, starting from **right** side of the string.
+	// considered a second digit, counting from **right** side of the string.
 	sum, isSecondDigit := 0, len(input)%2 == 0
 	// INVARIANT of the following loop:
 	// scanned part of the string can only have '0' - '9'.

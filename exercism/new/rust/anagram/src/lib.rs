@@ -20,6 +20,6 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
             // - but not the same sequence of values, achieved by comparing them over lowered strings.
             cur_word_norm == word_norm && cur_word_lower != word_lower
         })
-        .cloned()
+        .copied()
         .collect()
 }
