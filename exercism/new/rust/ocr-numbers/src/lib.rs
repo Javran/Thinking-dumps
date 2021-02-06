@@ -10,8 +10,8 @@ pub enum Error {
     ColumnCountInconsistent,
 }
 
-/// A Grid is a Vec of 4 elements,
-/// each of them is a string with 3 characters.
+/// A Grid is a Vec of GRID_ROWS elements,
+/// each of them is a string with GRID_COLS characters.
 #[derive(PartialEq)]
 struct Grid(Vec<String>);
 
