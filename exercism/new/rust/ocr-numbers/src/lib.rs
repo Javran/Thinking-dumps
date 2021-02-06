@@ -5,14 +5,17 @@ const GRID_COLS: usize = 3;
 pub enum Error {
     InvalidRowCount(usize),
     InvalidColumnCount(usize),
+    // New error category to indicate that
+    // the input string does not form a rectangle.
     ColumnCountInconsistent,
 }
 
-// A Grid is a Vec of 4 elements,
-// each of them is a string with 3 characters.
+/// A Grid is a Vec of 4 elements,
+/// each of them is a string with 3 characters.
 #[derive(PartialEq)]
 struct Grid(Vec<String>);
 
+/// Splits a raw input string into 2D Vec of Grids.
 fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
     let raw_lines: Vec<&str> = input.lines().collect();
     let raw_rows = raw_lines.len();
@@ -33,32 +36,37 @@ fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
     Ok(raw_lines
         .chunks(GRID_ROWS)
         .into_iter()
-        .map(|digits_line: &[&str]| -> Vec<Grid> {
-            // turn digits_line into a Vec of Grids
-            (0..raw_cols)
-                .step_by(GRID_COLS)
-                .map(|i| {
-                    Grid(
-                        digits_line
-                            .into_iter()
-                            .map(|l: &&str| l[i..i + GRID_COLS].to_string())
-                            .collect(),
-                    )
-                })
-                .collect()
-        })
+        .map(
+            // process one "logical line",
+            // which are GRID_ROWS lines of raw_lines
+            |digits_line: &[&str]| -> Vec<Grid> {
+                // separate one logical line into Grids.
+                (0..raw_cols)
+                    .step_by(GRID_COLS)
+                    .map(|i| {
+                        Grid(
+                            digits_line
+                                .iter()
+                                .map(|l: &&str| l[i..i + GRID_COLS].to_string())
+                                .collect::<Vec<String>>(),
+                        )
+                    })
+                    .collect()
+            },
+        )
         .collect())
 }
 
 struct GridSample {
-    pub grid: Grid,
-    pub digit: char,
+    grid: Grid,
+    digit: char,
 }
 
 struct GridRecognition(Vec<GridSample>);
 
 impl GridRecognition {
     fn new() -> Self {
+        // zipping through predefined samples in preparation of doing recognization.
         #[rustfmt::skip]
         let raw_samples =
               "    _  _     _  _  _  _  _  _ \n".to_string()
@@ -66,23 +74,26 @@ impl GridRecognition {
             + "  ||_  _|  | _||_|  ||_| _||_|\n"
             + "                              ";
         let digits = "1234567890";
-        let mut grids2d = split_to_grids(&raw_samples).unwrap();
-        assert_eq!(
-            grids2d.len(),
-            1,
-            "raw sample should contain a single digit line."
-        );
-        assert_eq!(
-            grids2d[0].len(),
-            digits.len(),
-            "sample length matches digit length."
-        );
-        let grids = grids2d.remove(0);
+        let grids = {
+            let mut grids2d = split_to_grids(&raw_samples).unwrap();
+            assert_eq!(
+                grids2d.len(),
+                1,
+                "raw sample should contain a single digit line."
+            );
+            assert_eq!(
+                grids2d[0].len(),
+                digits.len(),
+                "sample length matches digit length."
+            );
+            grids2d.remove(0)
+        };
+
         GridRecognition(
             grids
                 .into_iter()
                 .zip(digits.chars())
-                .map(|(g, d)| GridSample { grid: g, digit: d })
+                .map(|(grid, digit)| GridSample { grid, digit })
                 .collect(),
         )
     }
