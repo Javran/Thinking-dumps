@@ -1,5 +1,3 @@
-use std::slice::Chunks;
-
 const GRID_ROWS: usize = 4;
 const GRID_COLS: usize = 3;
 
@@ -12,6 +10,7 @@ pub enum Error {
 
 // A Grid is a Vec of 4 elements,
 // each of them is a string with 3 characters.
+#[derive(PartialEq)]
 struct Grid(Vec<String>);
 
 fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
@@ -42,10 +41,8 @@ fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
                     Grid(
                         digits_line
                             .into_iter()
-                            .map(|l: &&str| -> String {
-                                l[i.. i + GRID_COLS].to_string()
-                            })
-                            .collect()
+                            .map(|l: &&str| l[i..i + GRID_COLS].to_string())
+                            .collect(),
                     )
                 })
                 .collect()
@@ -53,7 +50,63 @@ fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
         .collect())
 }
 
+struct GridSample {
+    pub grid: Grid,
+    pub digit: char,
+}
+
+struct GridRecognition(Vec<GridSample>);
+
+impl GridRecognition {
+    fn new() -> Self {
+        #[rustfmt::skip]
+        let raw_samples =
+              "    _  _     _  _  _  _  _  _ \n".to_string()
+            + "  | _| _||_||_ |_   ||_||_|| |\n"
+            + "  ||_  _|  | _||_|  ||_| _||_|\n"
+            + "                              ";
+        let digits = "1234567890";
+        let mut grids2d = split_to_grids(&raw_samples).unwrap();
+        assert_eq!(
+            grids2d.len(),
+            1,
+            "raw sample should contain a single digit line."
+        );
+        assert_eq!(
+            grids2d[0].len(),
+            digits.len(),
+            "sample length matches digit length."
+        );
+        let grids = grids2d.remove(0);
+        GridRecognition(
+            grids
+                .into_iter()
+                .zip(digits.chars())
+                .map(|(g, d)| GridSample { grid: g, digit: d })
+                .collect(),
+        )
+    }
+
+    pub fn recognize(&self, grid: &Grid) -> Option<char> {
+        self.0
+            .iter()
+            .filter(|s| &s.grid == grid)
+            .map(|s| s.digit)
+            .next()
+    }
+}
+
 pub fn convert(input: &str) -> Result<String, Error> {
-    let v = split_to_grids(input)?;
-    unimplemented!("Convert the input '{}' to a string", input);
+    let gr = GridRecognition::new();
+    let grids: Vec<Vec<Grid>> = split_to_grids(input)?;
+    Ok(grids
+        .into_iter()
+        .map(|digit_line| {
+            digit_line
+                .into_iter()
+                .map(|g| gr.recognize(&g).unwrap_or('?'))
+                .collect::<String>()
+        })
+        .collect::<Vec<String>>()
+        .join(","))
 }
