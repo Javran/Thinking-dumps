@@ -13,7 +13,7 @@ pub enum Error {
 /// A Grid is a Vec of GRID_ROWS elements,
 /// each of them is a string with GRID_COLS characters.
 #[derive(PartialEq)]
-struct Grid(Vec<String>);
+struct Grid<'a>(Vec<&'a str>);
 
 /// Splits a raw input string into 2D Vec of Grids.
 fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
@@ -47,8 +47,8 @@ fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
                         Grid(
                             digits_line
                                 .iter()
-                                .map(|l: &&str| l[i..i + GRID_COLS].to_string())
-                                .collect::<Vec<String>>(),
+                                .map(|l: &&str| &l[i..i + GRID_COLS])
+                                .collect::<Vec<&str>>(),
                         )
                     })
                     .collect()
@@ -57,22 +57,22 @@ fn split_to_grids(input: &str) -> Result<Vec<Vec<Grid>>, Error> {
         .collect())
 }
 
-struct GridSample {
-    grid: Grid,
+struct GridSample<'a> {
+    grid: Grid<'a>,
     digit: char,
 }
 
-struct GridRecognition(Vec<GridSample>);
+struct GridRecognition<'a>(Vec<GridSample<'a>>);
 
-impl GridRecognition {
+impl<'a> GridRecognition<'a> {
     fn new() -> Self {
         // zipping through predefined samples in preparation of doing recognization.
         #[rustfmt::skip]
-        let raw_samples =
-              "    _  _     _  _  _  _  _  _ \n".to_string()
-            + "  | _| _||_||_ |_   ||_||_|| |\n"
-            + "  ||_  _|  | _||_|  ||_| _||_|\n"
-            + "                              ";
+        let raw_samples = concat!(
+            "    _  _     _  _  _  _  _  _ \n",
+            "  | _| _||_||_ |_   ||_||_|| |\n",
+            "  ||_  _|  | _||_|  ||_| _||_|\n",
+            "                              ");
         let digits = "1234567890";
         let grids = {
             let mut grids2d = split_to_grids(&raw_samples).unwrap();
