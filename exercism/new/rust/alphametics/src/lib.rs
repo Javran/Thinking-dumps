@@ -6,19 +6,33 @@ use std::collections::HashSet;
 type SymbolNum = Vec<char>;
 
 /// Parsed puzzle representation.
+/// all members except `ordered_symbols` should be of the same len(),
+/// which is equal to the length of rhs.
+/// and elements are always arrange so the least significant position is the first one.
 #[derive(Debug)]
 struct Puzzle {
+    /// Each element represents a freqency count of symbols for that digit.
     lhs_accumulated: Vec<HashMap<char, u8>>,
-    rhs: Vec<char>,
+    /// Right Hand Side of the equation
+    rhs: SymbolNum,
+    /// Each element represents a set of symbols so that when all of those symbols
+    /// are assigned, that digit position is fully assigned.
     symbol_sets: Vec<HashSet<char>>,
+    /// Represents search order, and each `search(_, _, depth, _)` call
+    /// assigns a possible value to symbol in `ordered_symbols[depth]`.
     ordered_symbols: Vec<char>,
 }
 
 /// A partial solution to the corresponding puzzle.
 #[derive(Debug)]
 struct PartialSolution {
+    /// All not-yet-assigned digits in 0..9.
     unassigned_digits: HashSet<u8>,
+    /// Mapping between a symbol to all its possible values.
+    /// Note that this collection could be spurious and `unassigned_digits` should always
+    /// be checked to see if a value is really available.
     partial_assigns: HashMap<char, HashSet<u8>>,
+    /// All already fixed assignments.
     solved_assigns: HashMap<char, u8>,
 }
 
@@ -118,18 +132,28 @@ fn parse_and_prepare(input: &str) -> Option<(Puzzle, PartialSolution)> {
     Some((puzzle, solution))
 }
 
+/// A context for `verify()` function so that
+/// already verified parts don't have to be checked again
+/// during a search.
 struct VerificationContext {
+    /// First unverified index in range 0..=rhs.len().
+    /// if this value is rhs.len(), the verification is completed.
     i: usize,
+    /// Digits carried over from previous digit position.
     carry: u64,
 }
 
-fn verify(puzzle: &Puzzle, sol: &PartialSolution, vc: &VerificationContext) -> Option<VerificationContext> {
+fn verify(
+    puzzle: &Puzzle,
+    sol: &PartialSolution,
+    vc: &VerificationContext,
+) -> Option<VerificationContext> {
     let mut carry: u64 = vc.carry;
     // from least significant to most.
     for i in vc.i..puzzle.rhs.len() {
         let symbols = &puzzle.symbol_sets[i];
         if symbols.iter().all(|s| sol.solved_assigns.contains_key(s)) {
-            // we have all necessary symbols assigned for this position.
+            // we now have all necessary symbols assigned for this position.
             let lhs_cur = carry
                 + puzzle.lhs_accumulated[i]
                     .iter()
@@ -138,28 +162,37 @@ fn verify(puzzle: &Puzzle, sol: &PartialSolution, vc: &VerificationContext) -> O
                     })
                     .sum::<u64>();
             let rhs_cur = sol.solved_assigns.get(&puzzle.rhs[i]).unwrap();
+            // check whether this digit position matches and update carry value.
             if lhs_cur % 10 != (*rhs_cur as u64) {
                 return None;
             }
             carry = lhs_cur / 10;
         } else {
-            return Some(VerificationContext{i, carry});
+            return Some(VerificationContext { i, carry });
         }
     }
     if carry == 0 {
-        Some(VerificationContext{i: puzzle.rhs.len(), carry: 0})
+        Some(VerificationContext {
+            i: puzzle.rhs.len(),
+            carry: 0,
+        })
     } else {
         None
     }
 }
 
-fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize, vc: &VerificationContext) -> bool {
+/// Depth-first search respecting searching order defined in `Puzzle.ordered_symbols`.
+fn search(
+    puzzle: &Puzzle,
+    sol: &mut PartialSolution,
+    depth: usize,
+    vc: &VerificationContext,
+) -> bool {
     if depth == puzzle.ordered_symbols.len() {
         return true;
     }
     // choose a value for next symbol.
     let ch: char = puzzle.ordered_symbols[depth];
-    // let mut partial_assigns = &mut sol.partial_assigns;
     let alts: HashSet<u8> = sol.partial_assigns.remove(&ch).unwrap();
 
     for v in alts.iter() {
@@ -168,16 +201,13 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize, vc: &Verific
             sol.unassigned_digits.remove(&v);
             sol.solved_assigns.insert(ch, *v);
 
-            match verify(puzzle, sol, vc) {
-                Some(vc_new) => {
-                    if search(puzzle, sol, depth + 1, &vc_new) {
-                        return true;
-                    }
-                },
-                None => {}
+            if let Some(vc_new) = verify(puzzle, sol, vc) {
+                if search(puzzle, sol, depth + 1, &vc_new) {
+                    return true;
+                }
             }
 
-            // recover
+            // restore sol.
             sol.solved_assigns.remove(&ch);
             sol.unassigned_digits.insert(*v);
         }
@@ -188,7 +218,12 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize, vc: &Verific
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     let (puzzle, mut sol) = parse_and_prepare(input)?;
-    if search(&puzzle, &mut sol, 0, &VerificationContext{i: 0, carry: 0}) {
+    if search(
+        &puzzle,
+        &mut sol,
+        0,
+        &VerificationContext { i: 0, carry: 0 },
+    ) {
         Some(sol.solved_assigns)
     } else {
         None
