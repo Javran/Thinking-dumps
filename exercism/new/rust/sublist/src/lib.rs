@@ -1,4 +1,3 @@
-use kmp::kmp_find;
 use std::cmp::Ordering;
 
 #[derive(Debug, PartialEq)]
@@ -9,10 +8,12 @@ pub enum Comparison {
     Unequal,
 }
 
-/// Tests whether `ws` is a (consecutive) sublist of `ys`.
-/// `ws` for "word string" and `ts` for "text string".
-fn is_sublist_of<T: PartialEq>(ws: &[T], ts: &[T]) -> bool {
-    kmp_find(ws, ts).is_some()
+/// Tests whether `needle` is a (consecutive) sublist of `haystack`.
+fn is_sublist_of<T: PartialEq>(needle: &[T], haystack: &[T]) -> bool {
+    if needle.is_empty() {
+        return true;
+    }
+    haystack.windows(needle.len()).any(|chunk| needle == chunk)
 }
 
 pub fn sublist<T: PartialEq>(xs: &[T], ys: &[T]) -> Comparison {
