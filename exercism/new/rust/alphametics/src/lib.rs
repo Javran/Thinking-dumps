@@ -10,6 +10,7 @@ type SymbolNum = String;
 #[derive(Debug)]
 struct Puzzle {
     lhs: Vec<SymbolNum>,
+    lhs_accumulated: Vec<HashMap<char, u8>>,
     rhs: SymbolNum,
 }
 
@@ -21,12 +22,24 @@ struct PartialSolution {
     solved_assigns: HashMap<char, u8>,
 }
 
-fn parse_input(input: &str) -> Puzzle {
+fn parse_and_prepare(input: &str) -> Puzzle {
     let sides: Vec<&str> = input.split(" == ").collect();
     assert_eq!(sides.len(), 2, "Unexpected LHS or RHS");
     let to_sym_num = |xs: &str| xs.chars().rev().collect();
+    let lhs: Vec<SymbolNum> = sides[0].split(" + ").map(to_sym_num).collect();
+    assert!(!lhs.is_empty(), "LHS is empty");
+    let vlen = lhs.iter().fold(0, |acc, x| acc.max(x.len()));
+    let mut lhs_accumulated = vec![HashMap::new(); vlen];
+    lhs.iter().for_each( |num: &SymbolNum| {
+        num.char_indices().for_each( |(i, ch)| {
+            lhs_accumulated[i].entry(ch)
+                .and_modify( | e| { *e += 1 })
+                .or_insert(1);
+        })
+    });
     Puzzle {
-        lhs: sides[0].split(" + ").map(to_sym_num).collect(),
+        lhs,
+        lhs_accumulated,
         rhs: to_sym_num(sides[1]),
     }
 }
@@ -81,8 +94,12 @@ fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
             acc * 10 + (*sol.solved_assigns.get(&ch).unwrap() as u64)
         })
     };
-
-    puzzle.lhs.iter().map(to_num).sum::<u64>() == to_num(&puzzle.rhs)
+    let lhs_sum = puzzle.lhs_accumulated.iter().map( | m: &HashMap<char, u8> | {
+        m.iter().map( |(ch, count)| {
+            (*sol.solved_assigns.get(&ch).unwrap() as u64) * (*count as u64)
+        } ).sum::<u64>()
+    }).rev().fold(0, |acc, x| acc*10 + (x  as u64));
+    lhs_sum == to_num(&puzzle.rhs)
 }
 
 fn search(puzzle: &Puzzle, sol: &mut PartialSolution) -> bool {
@@ -114,7 +131,7 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution) -> bool {
 }
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
-    let puzzle = parse_input(input);
+    let puzzle = parse_and_prepare(input);
     let mut sol = init_solution(&puzzle);
     if search(&puzzle, &mut sol) {
         Some(sol.solved_assigns)
