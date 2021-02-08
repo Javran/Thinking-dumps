@@ -8,7 +8,6 @@ type SymbolNum = Vec<char>;
 /// Parsed puzzle representation.
 #[derive(Debug)]
 struct Puzzle {
-    lhs: Vec<SymbolNum>,
     lhs_accumulated: Vec<HashMap<char, u8>>,
     rhs: Vec<char>,
     symbol_sets: Vec<HashSet<char>>,
@@ -24,7 +23,7 @@ struct PartialSolution {
 }
 
 /// Parse input puzzle and preprocess some info for solving algorithm.
-fn parse_and_prepare(input: &str) -> Option<Puzzle> {
+fn parse_and_prepare(input: &str) -> Option<(Puzzle, PartialSolution)> {
     let sides: Vec<&str> = input.split(" == ").collect();
     if sides.len() != 2 {
         return None;
@@ -75,47 +74,48 @@ fn parse_and_prepare(input: &str) -> Option<Puzzle> {
         });
         vs
     };
-    Some(Puzzle {
-        lhs,
+    let puzzle = Puzzle {
         lhs_accumulated,
         rhs,
         symbol_sets,
         ordered_symbols,
-    })
-}
+    };
 
-fn init_solution(puzzle: &Puzzle) -> PartialSolution {
-    let mut non_zeros: HashMap<char, bool> = HashMap::new();
-    let mut process_sym = |n: &SymbolNum| {
-        for (i, ch) in n.iter().enumerate() {
-            let e = non_zeros.entry(*ch).or_insert(false);
-            if !*e {
-                *e = n.len() - 1 == i;
+    let solution = {
+        let mut non_zeros: HashMap<char, bool> = HashMap::new();
+        let mut process_sym = |n: &SymbolNum| {
+            for (i, ch) in n.iter().enumerate() {
+                let e = non_zeros.entry(*ch).or_insert(false);
+                if !*e {
+                    *e = n.len() - 1 == i;
+                }
             }
+        };
+
+        for n in lhs.iter() {
+            process_sym(&n);
+        }
+        process_sym(&puzzle.rhs);
+        PartialSolution {
+            unassigned_digits: (0..=9).collect(),
+            partial_assigns: non_zeros
+                .into_iter()
+                .map(|(k, non_zero)| {
+                    (
+                        k,
+                        if non_zero {
+                            (1..=9).collect()
+                        } else {
+                            (0..=9).collect()
+                        },
+                    )
+                })
+                .collect(),
+            solved_assigns: HashMap::new(),
         }
     };
 
-    for n in puzzle.lhs.iter() {
-        process_sym(&n);
-    }
-    process_sym(&puzzle.rhs);
-    PartialSolution {
-        unassigned_digits: (0..=9).collect(),
-        partial_assigns: non_zeros
-            .into_iter()
-            .map(|(k, non_zero)| {
-                (
-                    k,
-                    if non_zero {
-                        (1..=9).collect()
-                    } else {
-                        (0..=9).collect()
-                    },
-                )
-            })
-            .collect(),
-        solved_assigns: HashMap::new(),
-    }
+    Some((puzzle, solution))
 }
 
 fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
@@ -173,8 +173,7 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
 }
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
-    let puzzle = parse_and_prepare(input)?;
-    let mut sol = init_solution(&puzzle);
+    let (puzzle, mut sol) = parse_and_prepare(input)?;
     if search(&puzzle, &mut sol, 0) {
         Some(sol.solved_assigns)
     } else {
