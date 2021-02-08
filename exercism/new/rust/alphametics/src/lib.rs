@@ -118,10 +118,15 @@ fn parse_and_prepare(input: &str) -> Option<(Puzzle, PartialSolution)> {
     Some((puzzle, solution))
 }
 
-fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
-    let mut carry: u64 = 0;
+struct VerificationContext {
+    i: usize,
+    carry: u64,
+}
+
+fn verify(puzzle: &Puzzle, sol: &PartialSolution, vc: &VerificationContext) -> Option<VerificationContext> {
+    let mut carry: u64 = vc.carry;
     // from least significant to most.
-    for i in 0..puzzle.rhs.len() {
+    for i in vc.i..puzzle.rhs.len() {
         let symbols = &puzzle.symbol_sets[i];
         if symbols.iter().all(|s| sol.solved_assigns.contains_key(s)) {
             // we have all necessary symbols assigned for this position.
@@ -134,17 +139,21 @@ fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
                     .sum::<u64>();
             let rhs_cur = sol.solved_assigns.get(&puzzle.rhs[i]).unwrap();
             if lhs_cur % 10 != (*rhs_cur as u64) {
-                return false;
+                return None;
             }
             carry = lhs_cur / 10;
         } else {
-            return true;
+            return Some(VerificationContext{i, carry});
         }
     }
-    carry == 0
+    if carry == 0 {
+        Some(VerificationContext{i: puzzle.rhs.len(), carry: 0})
+    } else {
+        None
+    }
 }
 
-fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
+fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize, vc: &VerificationContext) -> bool {
     if depth == puzzle.ordered_symbols.len() {
         return true;
     }
@@ -159,8 +168,13 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
             sol.unassigned_digits.remove(&v);
             sol.solved_assigns.insert(ch, *v);
 
-            if verify(puzzle, sol) && search(puzzle, sol, depth + 1) {
-                return true;
+            match verify(puzzle, sol, vc) {
+                Some(vc_new) => {
+                    if search(puzzle, sol, depth + 1, &vc_new) {
+                        return true;
+                    }
+                },
+                None => {}
             }
 
             // recover
@@ -174,7 +188,7 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     let (puzzle, mut sol) = parse_and_prepare(input)?;
-    if search(&puzzle, &mut sol, 0) {
+    if search(&puzzle, &mut sol, 0, &VerificationContext{i: 0, carry: 0}) {
         Some(sol.solved_assigns)
     } else {
         None
