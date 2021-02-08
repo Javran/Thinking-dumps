@@ -14,8 +14,11 @@ func Valid(input string) bool {
 		return false
 	}
 
+	// The algorithm calls for applying digit transformation every second digit
+	// starting from last rune of the string to the first.
 	// isSecondDigit keeps track of whether the current digit is
-	// considered a second digit, counting from **right** side of the string.
+	// considered a second digit in that regard,
+	// despite we iterate from first one.
 	sum, isSecondDigit := 0, len(input)%2 == 0
 	// INVARIANT of the following loop:
 	// scanned part of the string can only have '0' - '9'.
