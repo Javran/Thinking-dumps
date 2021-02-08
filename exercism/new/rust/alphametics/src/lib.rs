@@ -4,14 +4,16 @@ use std::collections::HashSet;
 /// Represents a unknown number represented by a sequence of symbols
 /// with least significant digit first.
 /// so if it's "ABCD" in the original puzzle, it's represented "DCBA" here.
-type SymbolNum = String;
+type SymbolNum = Vec<char>;
 
 /// Parsed puzzle representation.
 #[derive(Debug)]
 struct Puzzle {
     lhs: Vec<SymbolNum>,
     lhs_accumulated: Vec<HashMap<char, u8>>,
-    rhs: SymbolNum,
+    rhs: Vec<char>,
+    symbol_sets: Vec<HashSet<char>>,
+    ordered_symbols: Vec<char>,
 }
 
 /// A partial solution to the corresponding puzzle.
@@ -22,33 +24,71 @@ struct PartialSolution {
     solved_assigns: HashMap<char, u8>,
 }
 
-fn parse_and_prepare(input: &str) -> Puzzle {
+fn parse_and_prepare(input: &str) -> Option<Puzzle> {
     let sides: Vec<&str> = input.split(" == ").collect();
-    assert_eq!(sides.len(), 2, "Unexpected LHS or RHS");
+    if sides.len() != 2 {
+        return None;
+    }
     let to_sym_num = |xs: &str| xs.chars().rev().collect();
     let lhs: Vec<SymbolNum> = sides[0].split(" + ").map(to_sym_num).collect();
-    assert!(!lhs.is_empty(), "LHS is empty");
+    if lhs.is_empty() {
+        return None;
+    }
     let vlen = lhs.iter().fold(0, |acc, x| acc.max(x.len()));
-    let mut lhs_accumulated = vec![HashMap::new(); vlen];
-    lhs.iter().for_each( |num: &SymbolNum| {
-        num.char_indices().for_each( |(i, ch)| {
-            lhs_accumulated[i].entry(ch)
-                .and_modify( | e| { *e += 1 })
+    let rhs = to_sym_num(sides[1]);
+    if vlen > rhs.len() {
+        return None;
+    }
+    let mut lhs_accumulated = vec![HashMap::new(); rhs.len()];
+    lhs.iter().for_each(|num: &SymbolNum| {
+        num.iter().enumerate().for_each(|(i, ch)| {
+            lhs_accumulated[i]
+                .entry(*ch)
+                .and_modify(|e| *e += 1)
                 .or_insert(1);
         })
     });
-    Puzzle {
+
+    let mut symbol_sets: Vec<HashSet<char>> = rhs
+        .iter()
+        .map(|ch| {
+            let mut s = HashSet::new();
+            s.insert(*ch);
+            s
+        })
+        .collect();
+    lhs.iter().for_each(|num| {
+        num.iter().enumerate().for_each(|(i, ch)| {
+            symbol_sets[i].insert(*ch);
+        })
+    });
+    let ordered_symbols = {
+        let mut seen: HashSet<char> = HashSet::new();
+        let mut vs: Vec<char> = Vec::new();
+        symbol_sets.iter().for_each(|set| {
+            set.iter().for_each(|ch| {
+                if !seen.contains(ch) {
+                    vs.push(*ch);
+                    seen.insert(*ch);
+                }
+            })
+        });
+        vs
+    };
+    Some(Puzzle {
         lhs,
         lhs_accumulated,
-        rhs: to_sym_num(sides[1]),
-    }
+        rhs,
+        symbol_sets,
+        ordered_symbols,
+    })
 }
 
 fn init_solution(puzzle: &Puzzle) -> PartialSolution {
     let mut non_zeros: HashMap<char, bool> = HashMap::new();
     let mut process_sym = |n: &SymbolNum| {
-        for (i, ch) in n.char_indices() {
-            match non_zeros.entry(ch) {
+        for (i, ch) in n.iter().enumerate() {
+            match non_zeros.entry(*ch) {
                 Entry::Occupied(mut oe) => {
                     if !*oe.get() {
                         oe.insert(i == n.len() - 1);
@@ -85,29 +125,37 @@ fn init_solution(puzzle: &Puzzle) -> PartialSolution {
 }
 
 fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
-    if !sol.partial_assigns.is_empty() {
-        return true;
+    let mut carry: u64 = 0;
+    // from least significant to most.
+    for i in 0..puzzle.rhs.len() {
+        let symbols = &puzzle.symbol_sets[i];
+        if symbols.iter().all(|s| sol.solved_assigns.contains_key(s)) {
+            // we have all necessary symbols assigned for this position.
+            let lhs_cur = carry
+                + puzzle.lhs_accumulated[i]
+                    .iter()
+                    .map(|(ch, count)| {
+                        (*sol.solved_assigns.get(&ch).unwrap() as u64) * (*count as u64)
+                    })
+                    .sum::<u64>();
+            let rhs_cur = sol.solved_assigns.get(&puzzle.rhs[i]).unwrap();
+            if lhs_cur % 10 != (*rhs_cur as u64) {
+                return false;
+            }
+            carry = lhs_cur / 10;
+        } else {
+            return true;
+        }
     }
-
-    let to_num = |n: &SymbolNum| -> u64 {
-        n.chars().rev().fold(0, |acc, ch| {
-            acc * 10 + (*sol.solved_assigns.get(&ch).unwrap() as u64)
-        })
-    };
-    let lhs_sum = puzzle.lhs_accumulated.iter().map( | m: &HashMap<char, u8> | {
-        m.iter().map( |(ch, count)| {
-            (*sol.solved_assigns.get(&ch).unwrap() as u64) * (*count as u64)
-        } ).sum::<u64>()
-    }).rev().fold(0, |acc, x| acc*10 + (x  as u64));
-    lhs_sum == to_num(&puzzle.rhs)
+    return carry == 0;
 }
 
-fn search(puzzle: &Puzzle, sol: &mut PartialSolution) -> bool {
-    if sol.partial_assigns.is_empty() {
+fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
+    if depth == puzzle.ordered_symbols.len() {
         return true;
     }
-    // pick a random unassigned char and try to assign a value to it.
-    let ch: char = *sol.partial_assigns.iter().next().unwrap().0;
+    // choose a value for next symbol.
+    let ch: char = puzzle.ordered_symbols[depth];
     // let mut partial_assigns = &mut sol.partial_assigns;
     let alts: HashSet<u8> = sol.partial_assigns.remove(&ch).unwrap();
 
@@ -117,7 +165,7 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution) -> bool {
             sol.unassigned_digits.remove(&v);
             sol.solved_assigns.insert(ch, *v);
 
-            if verify(puzzle, sol) && search(puzzle, sol) {
+            if verify(puzzle, sol) && search(puzzle, sol, depth + 1) {
                 return true;
             }
 
@@ -131,9 +179,12 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution) -> bool {
 }
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
-    let puzzle = parse_and_prepare(input);
+    let puzzle = match parse_and_prepare(input) {
+        None => return None,
+        Some(v) => v,
+    };
     let mut sol = init_solution(&puzzle);
-    if search(&puzzle, &mut sol) {
+    if search(&puzzle, &mut sol, 0) {
         Some(sol.solved_assigns)
     } else {
         None
