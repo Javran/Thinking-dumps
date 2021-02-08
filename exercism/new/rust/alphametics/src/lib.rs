@@ -1,4 +1,3 @@
-use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::collections::HashSet;
 /// Represents a unknown number represented by a sequence of symbols
@@ -24,6 +23,7 @@ struct PartialSolution {
     solved_assigns: HashMap<char, u8>,
 }
 
+/// Parse input puzzle and preprocess some info for solving algorithm.
 fn parse_and_prepare(input: &str) -> Option<Puzzle> {
     let sides: Vec<&str> = input.split(" == ").collect();
     if sides.len() != 2 {
@@ -88,15 +88,9 @@ fn init_solution(puzzle: &Puzzle) -> PartialSolution {
     let mut non_zeros: HashMap<char, bool> = HashMap::new();
     let mut process_sym = |n: &SymbolNum| {
         for (i, ch) in n.iter().enumerate() {
-            match non_zeros.entry(*ch) {
-                Entry::Occupied(mut oe) => {
-                    if !*oe.get() {
-                        oe.insert(i == n.len() - 1);
-                    }
-                }
-                Entry::Vacant(ve) => {
-                    ve.insert(i == n.len() - 1);
-                }
+            let e = non_zeros.entry(*ch).or_insert(false);
+            if !*e {
+                *e = n.len() - 1 == i;
             }
         }
     };
@@ -147,7 +141,7 @@ fn verify(puzzle: &Puzzle, sol: &PartialSolution) -> bool {
             return true;
         }
     }
-    return carry == 0;
+    carry == 0
 }
 
 fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
@@ -179,10 +173,7 @@ fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize) -> bool {
 }
 
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
-    let puzzle = match parse_and_prepare(input) {
-        None => return None,
-        Some(v) => v,
-    };
+    let puzzle = parse_and_prepare(input)?;
     let mut sol = init_solution(&puzzle);
     if search(&puzzle, &mut sol, 0) {
         Some(sol.solved_assigns)
