@@ -13,20 +13,25 @@ object Dominoes {
                     yield(path)
                 }
             } else {
-                val catDominos: List<Pair<Boolean, Domino>> = dominos.map { d ->
-                    when {
-                        d.left == current -> Pair(true, d)
-                        d.right == current -> Pair(true, d.flip())
-                        else -> Pair(false, d)
+                val (nextAltDominos, nextUnusedDominos) = run {
+                    // split and transform current list of dominos into two parts:
+                    // - the "left" part are all dominos usable as next domino
+                    //   (might be flipped so that it.left == current)
+                    // - the "right" part are all dominos unusable as next domino.
+                    val catDominos: List<Pair<Boolean, Domino>> = dominos.map { d ->
+                        when {
+                            d.left == current -> true to d
+                            d.right == current -> true to d.flip()
+                            else -> false to d
+                        }
                     }
+                    val (left, right) = catDominos.partition { it.first }
+                    left.map { it.second } to right.map { it.second }
                 }
 
-                val dPair = catDominos.partition { it.first }
-                val nextAltDominos = dPair.first.map { it.second }
-                val nextUnusedDominos = dPair.second.map { it.second }
-                for (x in nextAltDominos.withIndex()) {
-                    val newDominos = nextAltDominos - x.value + nextUnusedDominos
-                    yieldAll(search(x.value.right, newDominos, path + x.value))
+                for (d in nextAltDominos) {
+                    val newDominos = nextAltDominos - d + nextUnusedDominos
+                    yieldAll(search(d.right, newDominos, path + d))
                 }
             }
         }
