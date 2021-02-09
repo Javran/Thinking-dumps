@@ -75,11 +75,6 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
     } = parse(minefield);
     let counts = count_mines(&mines);
 
-    // No, this doesn't have to be so complicated
-    // if it isn't Rust preventing me adding int to char
-    // or using anything related to `assoc_char_funcs`. 🤷
-    let digits: Vec<char> = ('0'..'9').collect();
-
     (0..rows as i32)
         .map(|r| {
             (0..cols as i32)
@@ -90,7 +85,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
                     }
                     match counts.get(&coord) {
                         None => ' ',
-                        Some(c) => digits[*c as usize],
+                        Some(x) => char::from(b'0' + *x as u8),
                     }
                 })
                 .collect::<String>()
