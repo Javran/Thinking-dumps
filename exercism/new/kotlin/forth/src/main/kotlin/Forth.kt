@@ -38,17 +38,16 @@ class Forth {
     }
 
     // Runtime actions bound to defined words.
-    sealed class Action {
-        // This apply() is more powerful than necessary as it operations on Machine rather than just Store,
+    sealed class Action: (Machine) -> Machine {
+        // The invoke() here is more powerful than necessary as it operations on Machine rather than just Store,
         // which opens the possiblity to support nested word definitions.
-        abstract fun apply(m: Machine): Machine
 
         class Prim(val exec: (Machine) -> Machine) : Action() {
-            override fun apply(m: Machine): Machine = exec(m)
+            override operator fun invoke(m: Machine): Machine = exec(m)
         }
 
         class Closure(val env: Env, val body: List<Instr>) : Action() {
-            override fun apply(m: Machine): Machine = m.let { (menv, st) ->
+            override operator fun invoke(m: Machine): Machine = m.let { (menv, st) ->
                 interpret(env to st, body).let { (_, st1) ->
                     // recover machine environment but keep global state after body is executed.
                     menv to st1
@@ -150,7 +149,7 @@ class Forth {
                 is Instr.Num -> env to st + instr.v
                 is Instr.Op -> when (val clo = env[instr.name]) {
                     null -> throw Exception("undefined operation")
-                    else -> clo.apply(m)
+                    else -> clo(m)
                 }
                 is Instr.WordDef -> run {
                     val newEnv = env + (instr.name to Action.Closure(env, instr.body))
