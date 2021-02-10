@@ -1,3 +1,5 @@
+use std::slice::Iter;
+
 /// A munger which XORs a key with some data
 #[derive(Clone)]
 pub struct Xorcism<'a> {
@@ -51,4 +53,9 @@ impl<'a> Xorcism<'a> {
         // () doesn't implement ExactSizeIterator
         std::iter::empty()
     }
+}
+
+// TODO: we need a way to convert both u8 slice and u8 iterator to iterator.
+trait MungeSource {
+    fn iter(&self) -> dyn Iterator<Item = u8>;
 }
