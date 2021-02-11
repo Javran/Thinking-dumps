@@ -1,3 +1,5 @@
+// TODO: get rid of all the clones.
+
 pub mod graph {
     use std::collections::HashMap;
     // What is the purpose of having this unnecessarily nested module structure???
@@ -37,8 +39,8 @@ pub mod graph {
             self
         }
 
-        pub fn get_node<T>(self, _node: T) -> Option<Node> {
-            unimplemented!()
+        pub fn get_node(self, node_name: &str) -> Option<Node> {
+            self.nodes.iter().filter(|n| n.name == node_name ).next().cloned()
         }
     }
 
@@ -96,8 +98,11 @@ pub mod graph {
                     self
                 }
 
-                pub fn get_attr<T>(&self, _key: T) -> Option<&str> {
-                    unimplemented!()
+                pub fn get_attr(&self, key: &str) -> Option<&str> {
+                    match self.attrs.get(key) {
+                        None => None,
+                        Some(v) => Some(&v)
+                    }
                 }
             }
         }
