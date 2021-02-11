@@ -28,7 +28,6 @@ fn test_graph_with_one_node() {
 }
 
 #[test]
-#[ignore]
 fn test_graph_with_one_node_with_keywords() {
     let nodes = vec![Node::new("a").with_attrs(&[("color", "green")])];
 
