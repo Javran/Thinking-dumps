@@ -19,15 +19,16 @@ pub mod graph {
             }
         }
 
-        pub fn with_nodes<T>(&mut self, _nodes: T) -> Self {
+        pub fn with_nodes(mut self, nodes: &Vec<Node>) -> Self {
+            self.nodes = nodes.iter().cloned().collect();
+            self
+        }
+
+        pub fn with_edges<T>(mut self, _edges: T) -> Self {
             unimplemented!()
         }
 
-        pub fn with_edges<T>(&mut self, _edges: T) -> Self {
-            unimplemented!()
-        }
-
-        pub fn with_attrs<T>(&mut self, _attrs: T) -> Self {
+        pub fn with_attrs<T>(mut self, _attrs: T) -> Self {
             unimplemented!()
         }
 
