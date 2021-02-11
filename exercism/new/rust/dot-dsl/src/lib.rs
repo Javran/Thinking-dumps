@@ -21,13 +21,13 @@ pub mod graph {
             }
         }
 
-        pub fn with_nodes(mut self, nodes: &Vec<Node>) -> Self {
-            self.nodes = nodes.iter().cloned().collect();
+        pub fn with_nodes(mut self, nodes: &[Node]) -> Self {
+            self.nodes = nodes.to_vec();
             self
         }
 
-        pub fn with_edges(mut self, edges: &Vec<Edge>) -> Self {
-            self.edges = edges.iter().cloned().collect();
+        pub fn with_edges(mut self, edges: &[Edge]) -> Self {
+            self.edges = edges.to_vec();
             self
         }
 
@@ -40,7 +40,7 @@ pub mod graph {
         }
 
         pub fn get_node(self, node_name: &str) -> Option<Node> {
-            self.nodes.iter().filter(|n| n.name == node_name ).next().cloned()
+            self.nodes.iter().find(|n| n.name == node_name ).cloned()
         }
     }
 
