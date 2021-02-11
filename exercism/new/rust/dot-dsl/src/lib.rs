@@ -24,12 +24,17 @@ pub mod graph {
             self
         }
 
-        pub fn with_edges<T>(mut self, _edges: T) -> Self {
-            unimplemented!()
+        pub fn with_edges(mut self, edges: &Vec<Edge>) -> Self {
+            self.edges = edges.iter().cloned().collect();
+            self
         }
 
-        pub fn with_attrs<T>(mut self, _attrs: T) -> Self {
-            unimplemented!()
+        pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
+            self.attrs = attrs
+                .iter()
+                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .collect();
+            self
         }
 
         pub fn get_node<T>(self, _node: T) -> Option<Node> {
@@ -39,10 +44,12 @@ pub mod graph {
 
     pub mod graph_items {
         pub mod edge {
-            #[derive(PartialEq, Debug)]
+            use std::collections::HashMap;
+            #[derive(PartialEq, Debug, Clone)]
             pub struct Edge {
                 pub src: String,
                 pub dst: String,
+                pub attrs: HashMap<String, String>,
             }
 
             impl Edge {
@@ -50,11 +57,16 @@ pub mod graph {
                     Edge {
                         src: src.to_string(),
                         dst: dst.to_string(),
+                        attrs: HashMap::new(),
                     }
                 }
 
-                pub fn with_attrs<T>(&mut self, _attrs: T) -> Self {
-                    unimplemented!()
+                pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
+                    self.attrs = attrs
+                        .iter()
+                        .map(|(k, v)| (k.to_string(), v.to_string()))
+                        .collect();
+                    self
                 }
             }
         }
