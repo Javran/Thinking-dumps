@@ -1,5 +1,3 @@
-// TODO: get rid of all the clones.
-
 pub mod graph {
     use std::collections::HashMap;
     // What is the purpose of having this unnecessarily nested module structure???
