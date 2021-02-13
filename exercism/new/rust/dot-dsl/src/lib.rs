@@ -4,6 +4,7 @@ pub mod graph {
     use graph_items::edge::Edge;
     use graph_items::node::Node;
 
+    #[derive(Default)]
     pub struct Graph {
         pub nodes: Vec<Node>,
         pub edges: Vec<Edge>,
@@ -12,11 +13,7 @@ pub mod graph {
 
     impl Graph {
         pub fn new() -> Self {
-            Graph {
-                nodes: vec![],
-                edges: vec![],
-                attrs: HashMap::new(),
-            }
+            Self::default()
         }
 
         pub fn with_nodes(mut self, nodes: &[Node]) -> Self {
@@ -43,7 +40,8 @@ pub mod graph {
     pub mod graph_items {
         pub mod edge {
             use std::collections::HashMap;
-            #[derive(PartialEq, Debug, Clone)]
+
+            #[derive(PartialEq, Debug, Clone, Default)]
             pub struct Edge {
                 pub src: String,
                 pub dst: String,
@@ -91,10 +89,7 @@ pub mod graph {
                 }
 
                 pub fn get_attr(&self, key: &str) -> Option<&str> {
-                    match self.attrs.get(key) {
-                        None => None,
-                        Some(v) => Some(&v),
-                    }
+                    self.attrs.get(key).map(|v| v.as_str())
                 }
             }
         }
