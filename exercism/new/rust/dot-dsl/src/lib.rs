@@ -20,25 +20,23 @@ pub mod graph {
         }
 
         pub fn with_nodes(mut self, nodes: &[Node]) -> Self {
-            self.nodes = nodes.to_vec();
+            self.nodes.append(&mut nodes.to_vec());
             self
         }
 
         pub fn with_edges(mut self, edges: &[Edge]) -> Self {
-            self.edges = edges.to_vec();
+            self.edges.append(&mut edges.to_vec());
             self
         }
 
         pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
-            self.attrs = attrs
-                .iter()
-                .map(|(k, v)| (k.to_string(), v.to_string()))
-                .collect();
+            self.attrs
+                .extend(attrs.iter().map(|(k, v)| (k.to_string(), v.to_string())));
             self
         }
 
         pub fn get_node(self, node_name: &str) -> Option<Node> {
-            self.nodes.iter().find(|n| n.name == node_name ).cloned()
+            self.nodes.iter().find(|n| n.name == node_name).cloned()
         }
     }
 
@@ -62,10 +60,8 @@ pub mod graph {
                 }
 
                 pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
-                    self.attrs = attrs
-                        .iter()
-                        .map(|(k, v)| (k.to_string(), v.to_string()))
-                        .collect();
+                    self.attrs
+                        .extend(attrs.iter().map(|(k, v)| (k.to_string(), v.to_string())));
                     self
                 }
             }
@@ -89,17 +85,15 @@ pub mod graph {
                 }
 
                 pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
-                    self.attrs = attrs
-                        .iter()
-                        .map(|(k, v)| (k.to_string(), v.to_string()))
-                        .collect();
+                    self.attrs
+                        .extend(attrs.iter().map(|(k, v)| (k.to_string(), v.to_string())));
                     self
                 }
 
                 pub fn get_attr(&self, key: &str) -> Option<&str> {
                     match self.attrs.get(key) {
                         None => None,
-                        Some(v) => Some(&v)
+                        Some(v) => Some(&v),
                     }
                 }
             }
