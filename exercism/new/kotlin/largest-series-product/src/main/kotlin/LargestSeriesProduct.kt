@@ -16,17 +16,15 @@ class Series(private val input: String) {
             else ->
                 input
                     .windowed(span)
-                    .flatMap {
-                        if ('0' !in it) {
-                            listOf(Companion.seriesProductOf(it))
-                        } else {
-                            emptyList()
-                        }
-                    }.max() ?: 0
+                    .map { Companion.seriesProductOf(it) }.max() ?: 0
         }
 
     companion object {
         fun seriesProductOf(s: String): Long =
-            s.map { it - '0' }.fold(1, Long::times)
+            if ('0' in s) {
+                0
+            } else {
+                s.map { it - '0' }.fold(1, Long::times)
+            }
     }
 }
