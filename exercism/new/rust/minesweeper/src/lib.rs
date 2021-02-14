@@ -1,25 +1,15 @@
-// The design choice here is to either:
-// (1) store the minefield as it is with consecutive memory
-// (2) or just store mine coordinates and minefield dimensions.
-// I'll do (2) as it scales better when minefield becomes larger.
-
-use std::collections::HashMap;
-use std::collections::HashSet;
-
-type Coord = (i32, i32);
-
-struct Minefield {
+struct Minefield<'a> {
     // Dimension of the minefield, represented as `(rows, cols)`
     dimension: (usize, usize),
-    mines: HashSet<Coord>,
+    field: Vec<&'a [u8]>,
 }
 
-fn parse(input: &[&str]) -> Minefield {
+fn parse<'a>(input: &'a [&'a str]) -> Minefield<'a> {
     let rows = {
         if input.is_empty() {
             return Minefield {
                 dimension: (0, 0),
-                mines: HashSet::new(),
+                field: vec![],
             };
         }
         input.len()
@@ -32,60 +22,42 @@ fn parse(input: &[&str]) -> Minefield {
         );
         c
     };
-    let mines = input
-        .iter()
-        .enumerate()
-        .flat_map(|(r, row): (usize, &&str)| {
-            row.char_indices().filter_map(move |(c, ch)| {
-                if ch == '*' {
-                    Some((r as i32, c as i32))
-                } else {
-                    None
-                }
-            })
-        })
-        .collect::<HashSet<Coord>>();
+    let mines = input.iter().map(|s: &&str| s.as_bytes()).collect();
     Minefield {
         dimension: (rows, cols),
-        mines,
+        field: mines,
     }
-}
-
-fn count_mines(mines: &HashSet<Coord>) -> HashMap<Coord, u32> {
-    let mut counts = HashMap::new();
-    mines.iter().for_each(|(row, col)| {
-        (row - 1..=row + 1).for_each(|r| {
-            (col - 1..=col + 1).for_each(|c| {
-                // Each mine contributes to the 3x3 area around it.
-                // note that this is conditionless so mine coordinates itself
-                // and out-of-bound coordinates receive counts too.
-                // This is fine because struct Minefield stores sufficient info
-                // to tell whether a count is spurious.
-                counts.entry((r, c)).and_modify(|e| *e += 1).or_insert(1);
-            })
-        })
-    });
-    counts
 }
 
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
     let Minefield {
         dimension: (rows, cols),
-        mines,
+        field,
     } = parse(minefield);
-    let counts = count_mines(&mines);
 
     (0..rows as i32)
-        .map(|r| {
+        .map(|row| {
             (0..cols as i32)
-                .map(|c| {
-                    let coord = (r, c);
-                    if mines.contains(&coord) {
+                .map(|col| {
+                    if field[row as usize][col as usize] == b'*' {
                         return '*';
                     }
-                    match counts.get(&coord) {
-                        None => ' ',
-                        Some(x) => char::from(b'0' + *x as u8),
+                    let mut count = 0;
+                    (row - 1..=row + 1).for_each(|r| {
+                        if let Some(row_vec) = field.get(r as usize) {
+                            (col - 1..=col + 1).for_each(|c| {
+                                if let Some(ch) = row_vec.get(c as usize) {
+                                    if *ch == b'*' {
+                                        count += 1;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    if count == 0 {
+                        ' '
+                    } else {
+                        std::char::from_digit(count, 10).unwrap()
                     }
                 })
                 .collect::<String>()
