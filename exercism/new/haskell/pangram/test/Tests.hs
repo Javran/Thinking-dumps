@@ -83,12 +83,12 @@ cases =
       , input = "abcdefghijklmnopqrstuvwxyzÃ"
       , expected = True
       }
-
-      -- The following test can be enabled for String-based solutions:
-      , Case { description = "with termination as soon as all letters have occurred"
-             , input       = "abcdefghijklmnopqrstuvwxyz" ++ [undefined]
-             , expected    = True
-             }
+  , -- The following test can be enabled for String-based solutions:
+    Case
+      { description = "with termination as soon as all letters have occurred"
+      , input = "abcdefghijklmnopqrstuvwxyz" ++ [undefined]
+      , expected = True
+      }
   ]
 
 -- 73e37723b154f0c741d227c43af09d23dc7e5e44
