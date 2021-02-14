@@ -43,17 +43,17 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
                         return '*';
                     }
                     let mut count = 0;
-                    (row - 1..=row + 1).for_each(|r| {
+                    for r in row - 1..=row + 1 {
                         if let Some(row_vec) = field.get(r as usize) {
-                            (col - 1..=col + 1).for_each(|c| {
+                            for c in col - 1..=col + 1 {
                                 if let Some(ch) = row_vec.get(c as usize) {
                                     if *ch == b'*' {
                                         count += 1;
                                     }
                                 }
-                            });
+                            }
                         }
-                    });
+                    }
                     if count == 0 {
                         ' '
                     } else {
