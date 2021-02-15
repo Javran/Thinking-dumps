@@ -28,17 +28,17 @@ pub fn frequency(input: &[&str], mut worker_count: usize) -> HashMap<char, usize
         worker_count = len;
     }
 
-    let chunk_sz: usize = (len as f64 / worker_count as f64).ceil() as usize;
+    let len_per_worker: usize = (len as f64 / worker_count as f64).ceil() as usize;
     let shared: Arc<Vec<String>> = Arc::new(input.iter().map(|s| s.to_string()).collect());
     let (tx, rx) = mpsc::channel();
     let mut todo = 0;
-    for i in (0..shared.len()).step_by(chunk_sz) {
+    for i in (0..shared.len()).step_by(len_per_worker) {
         let cur = Arc::clone(&shared);
         let tx_cur = tx.clone();
         todo += 1;
         thread::spawn(move || {
             let result: HashMap<char, usize> =
-                frequency_single_worker(&cur[i..(i + chunk_sz).min(len)]);
+                frequency_single_worker(&cur[i..(i + len_per_worker).min(len)]);
             tx_cur.send(result).unwrap();
         });
     }
