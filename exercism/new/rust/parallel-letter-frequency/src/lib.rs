@@ -1,6 +1,7 @@
-use std::thread;
 use std::collections::HashMap;
+use std::sync::mpsc;
 use std::sync::Arc;
+use std::thread;
 
 pub fn frequency_single_worker(input: &[String]) -> HashMap<char, usize> {
     let mut freq = HashMap::new();
@@ -15,34 +16,44 @@ pub fn frequency_single_worker(input: &[String]) -> HashMap<char, usize> {
 }
 
 pub fn frequency(input: &[&str], mut worker_count: usize) -> HashMap<char, usize> {
-    if input.len() < worker_count {
-        worker_count = input.len();
+    if worker_count == 0 {
+        panic!("Expected non-zero number of workers.");
+    }
+    let len = input.len();
+    if len == 0 {
+        return HashMap::new();
+    }
+    if len < worker_count {
+        // make sure every worker has non-zero amount of tasks to do.
+        worker_count = len;
     }
 
-    let chunk_sz: usize = (input.len() as f64 / worker_count as f64).ceil() as usize;
-    let input2: Vec<String> = input.iter().map(|s| s.to_string()).collect();
-    let l = input2.len();
-    let shared = Arc::new(input2);
-
-    let mut threads = vec![];
-    for i in (0..l).step_by(chunk_sz) {
+    let chunk_sz: usize = (len as f64 / worker_count as f64).ceil() as usize;
+    let shared: Arc<Vec<String>> = Arc::new(input.iter().map(|s| s.to_string()).collect());
+    let (tx, rx) = mpsc::channel();
+    let mut todo = 0;
+    for i in (0..shared.len()).step_by(chunk_sz) {
         let cur = Arc::clone(&shared);
-        // let tx_cur = tx.clone();
-        threads.push(
-            thread::spawn(move || {
-                let result: HashMap<char, usize> = frequency_single_worker(&cur[i..(i+chunk_sz).min(l)]);
-                result
-            }));
+        let tx_cur = tx.clone();
+        todo += 1;
+        thread::spawn(move || {
+            let result: HashMap<char, usize> =
+                frequency_single_worker(&cur[i..(i + chunk_sz).min(len)]);
+            tx_cur.send(result).unwrap();
+        });
     }
 
     let mut result = HashMap::new();
-    for t in threads.into_iter() {
-        let r = t.join().unwrap();
+    for r in rx {
         for (ch, count) in r.into_iter() {
             result
                 .entry(ch)
                 .and_modify(|e| *e += count)
                 .or_insert(count);
+        }
+        todo -= 1;
+        if todo == 0 {
+            break;
         }
     }
 
