@@ -13,8 +13,7 @@ alphabet :: S.Set Char
 alphabet = S.fromDistinctAscList ['A' .. 'Z']
 
 isPangram :: String -> Bool
-isPangram = notNull . dropWhile notNull . scanl go alphabet
+isPangram xs = foldr go (const False) xs alphabet
   where
-    notNull = not . null
-    go missingChars (toUpper -> ch) =
-      S.delete ch missingChars
+    go (toUpper -> ch) acc (S.delete ch -> missingChars) =
+      null missingChars || acc missingChars
