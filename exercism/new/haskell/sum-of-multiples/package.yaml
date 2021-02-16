@@ -1,0 +1,19 @@
+name: sum-of-multiples
+version: 1.5.0.10
+
+dependencies:
+  - base
+  - data-ordlist
+
+library:
+  exposed-modules: SumOfMultiples
+  source-dirs: src
+  ghc-options: -Wall
+
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - sum-of-multiples
+      - hspec
