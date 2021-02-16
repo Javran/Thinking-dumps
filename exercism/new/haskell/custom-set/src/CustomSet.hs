@@ -1,58 +1,76 @@
+{-# LANGUAGE TypeSynonymInstances #-}
 module CustomSet
-  ( delete
-  , difference
+  ( CustomSet
   , empty
-  , fromList
-  , insert
-  , intersection
+  , delete
+  , difference
   , isDisjointFrom
-  , isSubsetOf
-  , member
   , null
+  , intersection
+  , member
+  , insert
   , size
+  , isSubsetOf
+  , fromList
   , toList
   , union
   ) where
 
-import Prelude hiding (null)
+-- not having too much good idea, let's begin with a sorted list
+type CustomSet a = [a]
 
-data CustomSet a = Dummy deriving (Eq, Show)
-
-delete :: a -> CustomSet a -> CustomSet a
-delete x set = error "You need to implement this function."
-
-difference :: CustomSet a -> CustomSet a -> CustomSet a
-difference setA setB = error "You need to implement this function."
+-- TODO: a custom Show instance .. do we have to use newtype?
 
 empty :: CustomSet a
-empty = error "You need to implement this function."
+empty = []
 
-fromList :: [a] -> CustomSet a
-fromList xs = error "You need to implement this function."
-
-insert :: a -> CustomSet a -> CustomSet a
-insert x set = error "You need to implement this function."
-
-intersection :: CustomSet a -> CustomSet a -> CustomSet a
-intersection setA setB = error "You need to implement this function."
-
-isDisjointFrom :: CustomSet a -> CustomSet a -> Bool
-isDisjointFrom setA setB = error "You need to implement this function."
-
-isSubsetOf :: CustomSet a -> CustomSet a -> Bool
-isSubsetOf setA setB = error "You need to implement this function."
-
-member :: a -> CustomSet a -> Bool
-member x set = error "You need to implement this function."
-
-null :: CustomSet a -> Bool
-null set = error "You need to implement this function."
-
-size :: CustomSet a -> Int
-size set = error "You need to implement this function."
+delete :: Ord a => a -> CustomSet a -> CustomSet a
+delete _ [] = []
+delete v ls@(x:xs) = case compare v x of
+    LT -> ls
+    EQ -> xs
+    GT -> x : delete v xs
 
 toList :: CustomSet a -> [a]
-toList set = error "You need to implement this function."
+toList = id
 
-union :: CustomSet a -> CustomSet a -> CustomSet a
-union setA setB = error "You need to implement this function."
+fromList :: Ord a => [a] -> CustomSet a
+fromList = foldr insert []
+
+member :: Ord a => a -> CustomSet a -> Bool
+member _ [] = False
+member v (x:xs) = case compare v x of
+    LT -> False
+    EQ -> True
+    GT -> member v xs
+
+insert :: Ord a => a -> CustomSet a -> CustomSet a
+insert v [] = [v]
+insert v ls@(x:xs) = case compare v x of
+    LT -> v:ls
+    EQ -> ls
+    GT -> x : insert v xs
+
+size :: CustomSet a -> Int
+size = length
+
+union :: Ord a => CustomSet a -> CustomSet a -> CustomSet a
+union = foldr insert
+
+-- TODO: there are more efficient impl
+difference :: Ord a => CustomSet a -> CustomSet a -> CustomSet a
+difference = foldr delete
+
+isDisjointFrom :: Ord a => CustomSet a -> CustomSet a -> Bool
+isDisjointFrom xs ys = length xs + length ys == length (xs `union` ys)
+
+intersection :: Ord a => CustomSet a -> CustomSet a -> CustomSet a
+intersection [] _ = []
+intersection _ [] = []
+intersection as@(x:xs) bs@(y:ys) = case compare x y of
+    LT -> intersection xs bs
+    EQ -> x : intersection xs ys
+    GT -> intersection as ys
+
+isSubsetOf :: Ord a => CustomSet a -> CustomSet a -> Bool
+isSubsetOf xs ys = null (xs `difference` ys)
