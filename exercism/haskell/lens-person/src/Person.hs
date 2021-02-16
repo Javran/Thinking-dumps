@@ -1,12 +1,13 @@
 {-# LANGUAGE TemplateHaskell #-}
+
 module Person where
 
-import Data.Time.Calendar
 import Control.Lens
+import Data.Time.Calendar
 
 data Name = Name
   { _foreNames :: String -- Space separated
-  , _surName   :: String
+  , _surName :: String
   }
 
 data Address = Address
@@ -54,9 +55,10 @@ setBirthMonth bm = (& (born . bornOn) %~ modifyMonth bm)
     modifyMonth :: Int -> Day -> Day
     modifyMonth newM d = fromGregorian yyyy newM dd
       where
-        (yyyy,_,dd) = toGregorian d
+        (yyyy, _, dd) = toGregorian d
 
 -- | Transform both birth and current street names.
 renameStreets :: (String -> String) -> Person -> Person
-renameStreets renamer = (& (born . bornAt . street) %~ renamer)
-                      . (& address . street %~ renamer)
+renameStreets renamer =
+  (& (born . bornAt . street) %~ renamer)
+    . (& address . street %~ renamer)

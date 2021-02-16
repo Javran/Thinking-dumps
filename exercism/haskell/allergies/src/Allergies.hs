@@ -1,8 +1,9 @@
 module Allergies
-  ( Allergen(..)
+  ( Allergen (..)
   , isAllergicTo
   , allergies
-  ) where
+  )
+where
 
 import Data.Bits
 
@@ -15,7 +16,7 @@ data Allergen
   | Chocolate
   | Pollen
   | Cats
-    deriving (Enum, Bounded, Eq, Show)
+  deriving (Enum, Bounded, Eq, Show)
 
 toBit :: Allergen -> Int
 toBit = fromEnum

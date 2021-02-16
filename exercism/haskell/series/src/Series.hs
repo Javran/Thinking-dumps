@@ -1,6 +1,7 @@
 module Series
   ( slices
-  ) where
+  )
+where
 
 import Data.Char
 import Data.List

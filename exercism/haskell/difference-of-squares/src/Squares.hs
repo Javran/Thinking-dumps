@@ -1,17 +1,18 @@
 module Squares
   ( sumOfSquares
-  , squareOfSums
+  , squareOfSum
   , difference
-  ) where
+  )
+where
 
 square :: Integral a => a -> a
-square x = x*x
+square x = x * x
 
 sumOfSquares :: Integral a => a -> a
 sumOfSquares = sum . map square . enumFromTo 1
 
-squareOfSums :: Integral a => a -> a
-squareOfSums = square . sum . enumFromTo 1
+squareOfSum :: Integral a => a -> a
+squareOfSum = square . sum . enumFromTo 1
 
 difference :: Integral a => a -> a
-difference x = abs (sumOfSquares x - squareOfSums x)
+difference x = abs (sumOfSquares x - squareOfSum x)

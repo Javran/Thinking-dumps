@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeSynonymInstances #-}
+
 module CustomSet
   ( CustomSet
   , empty
@@ -14,7 +15,8 @@ module CustomSet
   , fromList
   , toList
   , union
-  ) where
+  )
+where
 
 -- not having too much good idea, let's begin with a sorted list
 type CustomSet a = [a]
@@ -26,10 +28,10 @@ empty = []
 
 delete :: Ord a => a -> CustomSet a -> CustomSet a
 delete _ [] = []
-delete v ls@(x:xs) = case compare v x of
-    LT -> ls
-    EQ -> xs
-    GT -> x : delete v xs
+delete v ls@(x : xs) = case compare v x of
+  LT -> ls
+  EQ -> xs
+  GT -> x : delete v xs
 
 toList :: CustomSet a -> [a]
 toList = id
@@ -39,17 +41,17 @@ fromList = foldr insert []
 
 member :: Ord a => a -> CustomSet a -> Bool
 member _ [] = False
-member v (x:xs) = case compare v x of
-    LT -> False
-    EQ -> True
-    GT -> member v xs
+member v (x : xs) = case compare v x of
+  LT -> False
+  EQ -> True
+  GT -> member v xs
 
 insert :: Ord a => a -> CustomSet a -> CustomSet a
 insert v [] = [v]
-insert v ls@(x:xs) = case compare v x of
-    LT -> v:ls
-    EQ -> ls
-    GT -> x : insert v xs
+insert v ls@(x : xs) = case compare v x of
+  LT -> v : ls
+  EQ -> ls
+  GT -> x : insert v xs
 
 size :: CustomSet a -> Int
 size = length
@@ -67,10 +69,10 @@ isDisjointFrom xs ys = length xs + length ys == length (xs `union` ys)
 intersection :: Ord a => CustomSet a -> CustomSet a -> CustomSet a
 intersection [] _ = []
 intersection _ [] = []
-intersection as@(x:xs) bs@(y:ys) = case compare x y of
-    LT -> intersection xs bs
-    EQ -> x : intersection xs ys
-    GT -> intersection as ys
+intersection as@(x : xs) bs@(y : ys) = case compare x y of
+  LT -> intersection xs bs
+  EQ -> x : intersection xs ys
+  GT -> intersection as ys
 
 isSubsetOf :: Ord a => CustomSet a -> CustomSet a -> Bool
 isSubsetOf xs ys = null (xs `difference` ys)

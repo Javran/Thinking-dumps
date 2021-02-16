@@ -1,6 +1,4 @@
-module Accumulate
-    (accumulate)
-where
+module Accumulate (accumulate) where
 
 accumulate :: (a -> b) -> [a] -> [b]
-accumulate f = foldr (\i acc -> f i:acc) []
+accumulate f = foldr (\i acc -> f i : acc) []

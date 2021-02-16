@@ -1,11 +1,10 @@
 module Robot
-    ( robotName
-    , mkRobot
-    , resetName)
+  ( robotName
+  , mkRobot
+  , resetName
+  )
 where
 
-import System.Random
-import Control.Applicative
 import Control.Monad.Random
 import Data.IORef
 
@@ -18,10 +17,10 @@ robotName = readIORef
 -- | randomly generate a robot name
 robotNameAp :: (MonadRandom m, Applicative m) => m String
 robotNameAp = mapM getRandomR (rep' ch ++ rep' nu)
-    where
-        rep' = uncurry replicate
-        ch = (2,('A','Z'))
-        nu = (3,('0','9'))
+  where
+    rep' = uncurry replicate
+    ch = (2, ('A', 'Z'))
+    nu = (3, ('0', '9'))
 
 -- | make a new robot
 mkRobot :: IO RHandler

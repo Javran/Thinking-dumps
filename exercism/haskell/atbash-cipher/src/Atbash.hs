@@ -1,6 +1,7 @@
 module Atbash
   ( encode
-  ) where
+  )
+where
 
 import Data.Char
 import Data.List.Split
@@ -10,7 +11,7 @@ import Data.List.Split
 --   @normalizeInput xs@
 encodeNChar :: Char -> Char
 encodeNChar x
-    | isDigit x = x
+  | isDigit x = x
 encodeNChar x = chr (ord 'a' + j)
   where
     i = ord x - ord 'a'
@@ -23,14 +24,16 @@ normalizeInput = map toLower . filter isValid
   where
     -- from testcases, we guess the only valid inputs
     -- are A-Za-z0-9
-    isValid x = isDigit x
-             || isAsciiLower x
-             || isAsciiUpper x
+    isValid x =
+      isDigit x
+        || isAsciiLower x
+        || isAsciiUpper x
 
 formatOutput :: String -> String
 formatOutput = unwords . chunksOf 5
 
 encode :: String -> String
-encode = formatOutput
-       . map encodeNChar
-       . normalizeInput
+encode =
+  formatOutput
+    . map encodeNChar
+    . normalizeInput

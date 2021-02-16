@@ -2,20 +2,21 @@ module Garden
   ( garden
   , defaultGarden
   , lookupPlants
-  , Plant(..)
-  ) where
+  , Plant (..)
+  )
+where
 
-import Data.Maybe
-import Data.List.Split
 import Data.List
+import Data.List.Split
 import qualified Data.Map.Strict as M
+import Data.Maybe
 
 data Plant
   = Grass
   | Clover
   | Radishes
   | Violets
-    deriving (Eq, Show)
+  deriving (Eq, Show)
 
 type Name = String
 
@@ -23,11 +24,11 @@ type Garden = M.Map Name [Plant]
 
 toPlant :: Char -> Plant
 toPlant c = case c of
-    'G' -> Grass
-    'C' -> Clover
-    'R' -> Radishes
-    'V' -> Violets
-    _ -> error "unknown plant type"
+  'G' -> Grass
+  'C' -> Clover
+  'R' -> Radishes
+  'V' -> Violets
+  _ -> error "unknown plant type"
 
 garden :: [Name] -> String -> Garden
 garden ns raw = M.fromList (zip (sort ns) twoCols)
@@ -51,13 +52,15 @@ garden ns raw = M.fromList (zip (sort ns) twoCols)
     -- , [C,D,G,H]
     -- ]
     twoCols :: [[Plant]]
-    twoCols = map concat -- step 3
-            . transpose -- step 2
-            . map (chunksOf 2) -- step 1
-            $ rows
+    twoCols =
+      map concat -- step 3
+        . transpose -- step 2
+        . map (chunksOf 2) -- step 1
+        $ rows
 
 defaultNames :: [Name]
-defaultNames = words
+defaultNames =
+  words
     "Alice Bob Charlie David \
     \Eve Fred Ginny Harriet \
     \Ileana Joseph Kincaid Larry "

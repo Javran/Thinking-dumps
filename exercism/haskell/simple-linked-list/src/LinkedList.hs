@@ -1,23 +1,24 @@
 {-# LANGUAGE DeriveFoldable #-}
+
 module LinkedList
-    ( LinkedList
-    , nil
-    , new
-    , isNil
-    , datum
-    , next
-    , fromList
-    , toList
-    , reverseLinkedList
-    )
+  ( LinkedList
+  , nil
+  , new
+  , isNil
+  , datum
+  , next
+  , fromList
+  , toList
+  , reverseLinkedList
+  )
 where
 
 import qualified Data.Foldable as F
 
 data LinkedList a
-    = Nil
-    | Cons a (LinkedList a)
-      deriving (F.Foldable)
+  = Nil
+  | Cons a (LinkedList a)
+  deriving (F.Foldable)
 
 nil :: LinkedList a
 nil = Nil

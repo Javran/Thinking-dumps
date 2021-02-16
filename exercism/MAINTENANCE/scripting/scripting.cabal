@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 080db55867a98dfc25ecbb29a9b00ecb14ba15b79cf3ab233bc6e2990c157dd1
+-- hash: 8caed6dd331b3a2da4b2d96cfa8c7b57bd39fe1cdb9340170968fd576bbabedb
 
 name:           scripting
 version:        0.1.0.0
@@ -28,7 +28,7 @@ library
       Paths_scripting
   hs-source-dirs:
       src
-  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2
+  ghc-options: -Wall -O2 -fno-warn-unused-imports -fno-warn-unused-top-binds
   build-depends:
       base
     , containers
@@ -44,7 +44,7 @@ executable demo
       Paths_scripting
   hs-source-dirs:
       exe
-  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base
     , containers
@@ -63,7 +63,7 @@ test-suite hspec
       Paths_scripting
   hs-source-dirs:
       test
-  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2 -threaded -rtsopts -with-rtsopts=-N -main-is Spec
+  ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N -main-is Spec
   build-depends:
       QuickCheck
     , base

@@ -9,9 +9,10 @@ library:
   exposed-modules: Forth
   source-dirs: src
   ghc-options: -Wall
-  # dependencies:
-  # - foo       # List here the packages you
-  # - bar       # want to use in your solution.
+  dependencies:
+    - lens
+    - extensible-effects
+    - containers
 
 tests:
   test:

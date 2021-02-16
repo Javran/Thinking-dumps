@@ -8,10 +8,9 @@ library:
   exposed-modules: Sieve
   source-dirs: src
   ghc-options: -Wall
-  # dependencies:
-  # - foo       # List here the packages you
-  # - bar       # want to use in your solution.
-
+  dependencies:
+    - data-ordlist
+  
 tests:
   test:
     main: Tests.hs

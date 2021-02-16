@@ -1,8 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+
 module Octal
   ( showOct
   , readOct
-  ) where
+  )
+where
 
 import Data.Char
 import Data.Maybe
@@ -15,7 +17,7 @@ octDigits v = map fromIntegral (reverse (octDigitsR v))
     octDigitsR 0 = []
     octDigitsR n = r : octDigitsR q
       where
-        (q,r) = n `quotRem` 8
+        (q, r) = n `quotRem` 8
 
 -- | show @Integral@ as octal number
 showOct :: Integral a => a -> String
@@ -23,13 +25,14 @@ showOct = map (chr . (+ ord '0')) . octDigits
 
 -- | read @Integral@ from octal digit strings
 readOct :: forall a. Integral a => String -> a
-readOct xs = fromMaybe 0 $
-               -- parse then accumulate digits
-               compute <$> mapM toDigit xs
+readOct xs =
+  fromMaybe 0 $
+    -- parse then accumulate digits
+    compute <$> mapM toDigit xs
   where
     compute :: [Int] -> a
-    compute = foldl (\acc i -> acc*8 + fromIntegral i) 0
+    compute = foldl (\acc i -> acc * 8 + fromIntegral i) 0
     toDigit x =
-        if isDigit x
-          then Just (ord x - ord '0')
-          else Nothing
+      if isDigit x
+        then Just (ord x - ord '0')
+        else Nothing

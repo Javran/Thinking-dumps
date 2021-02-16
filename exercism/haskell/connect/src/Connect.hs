@@ -1,11 +1,13 @@
 {-# LANGUAGE MultiWayIf #-}
+
 module Connect
   ( resultFor
-  , Color(..)
-  ) where
+  , Color (..)
+  )
+where
 
-import qualified Data.Set as S
 import Data.Array
+import qualified Data.Set as S
 
 {-
   first of all we assume there should at most be one winner
@@ -35,34 +37,40 @@ import Data.Array
 data Color = Black | White deriving (Eq, Show)
 
 type Coord = (Int, Int)
+
 type GameBoard = Array Coord (Maybe Color)
 
 -- | calculate neighbor coordinates, note that bounds are ignored
 --   so there might be invalid coordinates in results
 neighborCoords :: Coord -> [Coord]
-neighborCoords (x,y) =
-    [            (x,y-1), (x+1,y-1)
-    , (x-1,y  ),          (x+1,y  )
-    , (x-1,y+1), (x,y+1)           ]
+neighborCoords (x, y) =
+  [ (x, y -1)
+  , (x + 1, y -1)
+  , (x -1, y)
+  , (x + 1, y)
+  , (x -1, y + 1)
+  , (x, y + 1)
+  ]
 
 -- INVARIANT: coords in todoSet must be vaild (within range, color matches)
 search :: GameBoard -> Color -> S.Set Coord -> S.Set Coord -> S.Set Coord
 search board color todoSet visitedSet
-    | S.null todoSet = visitedSet
-    | otherwise =
-        let newVisitedSet = visitedSet `S.union` todoSet
-            expandedSet = S.filter ((== Just color) . (board !))
-                        . S.filter (inRange (bounds board))
-                        . foldMap (S.fromList . neighborCoords)
-                        $ todoSet
-            freshCoords = expandedSet `S.difference` newVisitedSet
-        in search board color freshCoords newVisitedSet
+  | S.null todoSet = visitedSet
+  | otherwise =
+    let newVisitedSet = visitedSet `S.union` todoSet
+        expandedSet =
+          S.filter ((== Just color) . (board !))
+            . S.filter (inRange (bounds board))
+            . foldMap (S.fromList . neighborCoords)
+            $ todoSet
+        freshCoords = expandedSet `S.difference` newVisitedSet
+     in search board color freshCoords newVisitedSet
 
 -- | convert raw data to game board representation
 toGameBoard :: [String] -> GameBoard
-toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat raw))
+toGameBoard raw = array ((1, 1), (cols, rows)) (zip coords (map toColor $ concat raw))
   where
-    coords = [(x,y) | y <- [1..rows], x <- [1..cols]]
+    coords = [(x, y) | y <- [1 .. rows], x <- [1 .. cols]]
     cols = length (head raw)
     rows = length raw
     toColor '.' = Nothing
@@ -74,20 +82,21 @@ toGameBoard raw = array ((1,1), (cols,rows)) (zip coords (map toColor $ concat r
 --   taken into account
 sideCoordsOf :: GameBoard -> Color -> (S.Set Coord, S.Set Coord)
 sideCoordsOf board color = case color of
-    White -> (tops, bottoms)
-    Black -> (lefts, rights)
+  White -> (tops, bottoms)
+  Black -> (lefts, rights)
   where
-    ((1,1),(cols,rows)) = bounds board
-    tops = S.fromList [(x,1) | x <- [1..cols]]
-    bottoms = S.fromList [(x,rows) | x <- [1..cols]]
-    lefts = S.fromList [(1,y) | y <- [1..rows]]
-    rights = S.fromList [(cols,y) | y <- [1..rows]]
+    ((1, 1), (cols, rows)) = bounds board
+    tops = S.fromList [(x, 1) | x <- [1 .. cols]]
+    bottoms = S.fromList [(x, rows) | x <- [1 .. cols]]
+    lefts = S.fromList [(1, y) | y <- [1 .. rows]]
+    rights = S.fromList [(cols, y) | y <- [1 .. rows]]
 
 resultFor :: [String] -> Maybe Color
-resultFor raw = if
-    | not (S.null blackResult) -> Just Black
-    | not (S.null whiteResult) -> Just White
-    | otherwise -> Nothing
+resultFor raw =
+  if
+      | not (S.null blackResult) -> Just Black
+      | not (S.null whiteResult) -> Just White
+      | otherwise -> Nothing
   where
     board = toGameBoard raw
     (blackBegins, blackEnds) = sideCoordsOf board Black

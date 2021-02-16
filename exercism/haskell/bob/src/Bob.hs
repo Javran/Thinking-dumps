@@ -1,6 +1,6 @@
 module Bob
-    ( responseFor
-    )
+  ( responseFor
+  )
 where
 
 import Control.Arrow
@@ -13,16 +13,18 @@ isQuestion = ("?" `isSuffixOf`)
 
 -- | contain some alpha, and all alphas are uppers
 isYell :: String -> Bool
-isYell = (any isAlpha
-         -- ^ at least contains some alphas
-         &&& (filter isAlpha >>> all isUpper))
-         -- ^ all alphas being uppers
-         >>> uncurry (&&)
-         -- ^ both conds are required
+isYell =
+  (any isAlpha
+     --  at least contains some alphas
+     &&& (filter isAlpha >>> all isUpper))
+    -- all alphas being uppers
+    >>> uncurry (&&)
+
+-- both conds are required
 
 responseFor :: String -> String
 responseFor s
-    | all isSpace s = "Fine. Be that way!"
-    | isYell s      = "Woah, chill out!"
-    | isQuestion s  = "Sure."
-    | otherwise     = "Whatever."
+  | all isSpace s = "Fine. Be that way!"
+  | isYell s = "Whoa, chill out!"
+  | isQuestion s = "Sure."
+  | otherwise = "Whatever."

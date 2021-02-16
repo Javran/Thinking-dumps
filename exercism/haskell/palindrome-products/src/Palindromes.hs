@@ -1,12 +1,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+
 module Palindromes
   ( largestPalindrome
   , smallestPalindrome
-  ) where
+  )
+where
 
-import qualified Data.Set as S
-import Data.Ord
 import Control.Arrow
+import Data.Ord
+import qualified Data.Set as S
 
 {-
 
@@ -30,15 +32,14 @@ We have 2 approaches:
 getDown :: Down a -> a
 getDown (Down v) = v
 
-largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a,a)])
-
+largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a, a)])
 largestPalindrome = smallestPalindrome' Down getDown pred
 smallestPalindrome = smallestPalindrome' id id succ
 
 -- | test if a non-negative number is palindrome number
 isPalindrome :: Integral a => a -> Bool
 isPalindrome v =
-      and
+  and
     . take (l `quot` 2)
     . (zipWith (==) <$> id <*> reverse)
     $ xs
@@ -66,18 +67,23 @@ reversal = go 0
 -- | "smallestPalindrome' toOrd fromOrd next l r" finds the smallest palindrome product
 --   in given range (l & r), "toOrd" and "fromOrd" should convert numbers to an instance of Ord
 --   and "next" should indicate how to continue after considering current number
-smallestPalindrome' :: forall a b .(Integral a, Ord b)
-                          -- conversion from and to Ord instances
-                       => (a -> b) -> (b -> a)
-                          -- how to get "next value"
-                       -> (a -> a)
-                       -> a -> a -> (a, [(a,a)])
+smallestPalindrome'
+  :: forall a b.
+  (Integral a, Ord b)
+  => -- conversion from and to Ord instances
+  (a -> b)
+  -> (b -> a)
+  -> -- how to get "next value"
+  (a -> a)
+  -> a
+  -> a
+  -> (a, [(a, a)])
 smallestPalindrome' toOrd fromOrd next l r =
-    let l' = toOrd l
-        r' = toOrd r
-    in if l' <= r'
-         then smallestPalindromeIntern l' r'
-         else smallestPalindromeIntern r' l'
+  let l' = toOrd l
+      r' = toOrd r
+   in if l' <= r'
+        then smallestPalindromeIntern l' r'
+        else smallestPalindromeIntern r' l'
   where
     smallestPalindromeIntern vLow vHigh = (fromOrd a, map (fromOrd *** fromOrd) . S.toList $ b)
       where
@@ -86,40 +92,44 @@ smallestPalindrome' toOrd fromOrd next l r =
         -- "search" assumes a fixed v1 and try v2 through v2From to v2To
         -- list comprehension might be capable of this but we really wants performance
         -- so finer grained control is intended
-        search :: b -> b -> b
-                  -- the following type stores current best number
-                  -> Maybe (b, S.Set (b,b))
-                  -> Maybe (b, S.Set (b,b))
+        search
+          :: b
+          -> b
+          -> b
+          -> -- the following type stores current best number
+          Maybe (b, S.Set (b, b))
+          -> Maybe (b, S.Set (b, b))
         search v1 v2From v2To curBest
-              -- stop searching if we have run out of candidates
-            | v2From > v2To = curBest
-              -- check current best result, if v1*v2 cannot do any better than it
-              -- then v1*(v2+1), v1*(v2+2), ... won't either. so we can shortcut the search
-            | Just (vMin, _) <- curBest, vMin < vProd = curBest
-              -- when we find a potential candidate, update current best value if possible
-            | isPalindrome vProdI = case curBest of
-                Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-                Just (vMin, pairs) -> case vMin `compare` vProd of
-                    LT -> curBest
-                    EQ -> continueSearch (Just (vMin, S.insert (v1, v2From) pairs))
-                    GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
-            | otherwise = continueSearch curBest
+          -- stop searching if we have run out of candidates
+          | v2From > v2To = curBest
+          -- check current best result, if v1*v2 cannot do any better than it
+          -- then v1*(v2+1), v1*(v2+2), ... won't either. so we can shortcut the search
+          | Just (vMin, _) <- curBest, vMin < vProd = curBest
+          -- when we find a potential candidate, update current best value if possible
+          | isPalindrome vProdI = case curBest of
+            Nothing -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+            Just (vMin, pairs) -> case vMin `compare` vProd of
+              LT -> curBest
+              EQ -> continueSearch (Just (vMin, S.insert (v1, v2From) pairs))
+              GT -> continueSearch (Just (vProd, S.singleton (v1, v2From)))
+          | otherwise = continueSearch curBest
           where
             continueSearch = search v1 (toOrd . next . fromOrd $ v2From) v2To
             vProdI = fromOrd v1 * fromOrd v2From
             vProd = toOrd vProdI
 
         -- outer search loop, attempts v1 through v1From to v1To
-        search2 :: b -> b -> Maybe (b, S.Set (b,b)) -> Maybe (b, S.Set (b,b))
+        search2 :: b -> b -> Maybe (b, S.Set (b, b)) -> Maybe (b, S.Set (b, b))
         search2 v1From v1To curBest
-              -- stop & shortcut checks, similar to that of "search"
-            | v1From > v1To = curBest
-            | Just (vMin, _) <- curBest, vMin < vProd = curBest
-            | otherwise = search2
-                            (toOrd . next . fromOrd $ v1From)
-                            v1To
-                            (search v1From v1From vHigh curBest)
+          -- stop & shortcut checks, similar to that of "search"
+          | v1From > v1To = curBest
+          | Just (vMin, _) <- curBest, vMin < vProd = curBest
+          | otherwise =
+            search2
+              (toOrd . next . fromOrd $ v1From)
+              v1To
+              (search v1From v1From vHigh curBest)
           where
             vProd = toOrd (fromOrd v1From * fromOrd v1From)
 
-        Just (a,b) = search2 vLow vHigh Nothing
+        Just (a, b) = search2 vLow vHigh Nothing

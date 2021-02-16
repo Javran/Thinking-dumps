@@ -1,6 +1,7 @@
 module PigLatin
   ( translate
-  ) where
+  )
+where
 
 {-
   some complaints: it's really frustrating that
@@ -28,12 +29,13 @@ translate = unwords . map translateWord . words
 --   and its items are in reversed order
 splitWord :: String -> String -> (String, String)
 splitWord xsRev remaining = case remaining of
-    ('q':'u':ys) -> splitWord ('u':'q':xsRev) ys
-    (y:ys) | y `elem` "aeiou" -> (reverse xsRev, remaining)
-           | otherwise -> splitWord (y:xsRev) ys
-    [] -> error "no vowel found"
+  ('q' : 'u' : ys) -> splitWord ('u' : 'q' : xsRev) ys
+  (y : ys)
+    | y `elem` "aeiou" -> (reverse xsRev, remaining)
+    | otherwise -> splitWord (y : xsRev) ys
+  [] -> error "no vowel found"
 
 translateWord :: String -> String
 translateWord w = ys ++ xs ++ "ay"
   where
-    (xs,ys) = splitWord "" w
+    (xs, ys) = splitWord "" w

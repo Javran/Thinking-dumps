@@ -16,14 +16,13 @@ dependencies:
 - containers
 - foldl
 
-ghc-options:
-- -fno-warn-unused-imports
-- -fno-warn-unused-top-binds
 library:
   source-dirs: src
   ghc-options:
     - -Wall
     - -O2
+    - -fno-warn-unused-imports
+    - -fno-warn-unused-top-binds
 
 executables:
   demo:

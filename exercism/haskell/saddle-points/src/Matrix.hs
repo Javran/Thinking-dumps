@@ -1,21 +1,23 @@
 module Matrix
   ( saddlePoints
-  ) where
+  )
+where
 
 import Data.Array
 
 type Coord = (Int, Int)
 
 saddlePoints :: Array Coord Int -> [Coord]
-saddlePoints m = [ (rInd, cInd)
-                 | (rInd, v1) <- rowMaxs
-                 , (cInd, v2) <- colMins
-                 , v1 == v2
-                 ]
+saddlePoints m =
+  [ (rInd, cInd)
+  | (rInd, v1) <- rowMaxs
+  , (cInd, v2) <- colMins
+  , v1 == v2
+  ]
   where
     -- let's just assume lower bound is less than / equal to the upper bound
     -- in which case we know the array is not empty
-    ((rowMin, colMin), (rowMax,colMax)) = bounds m
+    ((rowMin, colMin), (rowMax, colMax)) = bounds m
 
     rowInds = [rowMin .. rowMax]
     colInds = [colMin .. colMax]

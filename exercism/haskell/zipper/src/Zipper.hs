@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds #-}
+
 module Zipper
-  ( BinTree(..)
+  ( BinTree (..)
   , Zipper
   , fromTree
   , toTree
@@ -11,26 +12,35 @@ module Zipper
   , setValue
   , setLeft
   , setRight
-  ) where
+  )
+where
 
 import Data.List
 
 -- | A binary tree.
 data BinTree a = BT
-  { btValue :: a -- ^ Value
-  , btLeft  :: Maybe (BinTree a) -- ^ Left child
-  , btRight :: Maybe (BinTree a) -- ^ Right child
-  } deriving (Eq, Show)
+  { -- | Value
+    btValue :: a
+  , -- | Left child
+    btLeft :: Maybe (BinTree a)
+  , -- | Right child
+    btRight :: Maybe (BinTree a)
+  }
+  deriving (Eq, Show)
 
 type BinTreeContext a = (a, Bool, Maybe (BinTree a))
-    -- (a, False, tree) for context: (<focus>, btValue, tree)
-    -- (a, True, tree) for context: (tree, btValue, <focus>)
+
+-- (a, False, tree) for context: (<focus>, btValue, tree)
+-- (a, True, tree) for context: (tree, btValue, <focus>)
 
 -- | A zipper for a binary tree.
 data Zipper a = Zipper
-  { zFocus :: BinTree a -- ^ the binary tree under focus
-  , zContext :: [BinTreeContext a] -- ^ a stack of contexts
-  } deriving (Eq, Show)
+  { -- | the binary tree under focus
+    zFocus :: BinTree a
+  , -- | a stack of contexts
+    zContext :: [BinTreeContext a]
+  }
+  deriving (Eq, Show)
 
 -- | Get a zipper focussed on the root node.
 fromTree :: BinTree a -> Zipper a
@@ -42,8 +52,8 @@ fromTree t = Zipper t []
 {-# ANN applyContext "HLint: ignore Use if" #-}
 applyContext :: BinTreeContext a -> BinTree a -> BinTree a
 applyContext (v, dir, t) tFocus = case dir of
-    False -> BT v (Just tFocus) t
-    True  -> BT v t (Just tFocus)
+  False -> BT v (Just tFocus) t
+  True -> BT v t (Just tFocus)
 
 -- | Get the complete tree from a zipper.
 toTree :: Zipper a -> BinTree a
@@ -55,19 +65,19 @@ value = btValue . zFocus
 
 -- | Get the left child of the focus node, if any.
 left :: Zipper a -> Maybe (Zipper a)
-left (Zipper (BT v (Just l) r) ctxt) = Just (Zipper l ((v,False,r):ctxt))
+left (Zipper (BT v (Just l) r) ctxt) = Just (Zipper l ((v, False, r) : ctxt))
 left _ = Nothing
 
 -- | Get the right child of the focus node, if any.
 right :: Zipper a -> Maybe (Zipper a)
-right (Zipper (BT v l (Just r)) ctxt) = Just (Zipper r ((v,True,l):ctxt))
+right (Zipper (BT v l (Just r)) ctxt) = Just (Zipper r ((v, True, l) : ctxt))
 right _ = Nothing
 
 -- | Get the parent of the focus node, if any.
 up :: Zipper a -> Maybe (Zipper a)
 up (Zipper t ctxt) = case ctxt of
-    [] -> Nothing
-    (x:xs) -> Just (Zipper (applyContext x t) xs)
+  [] -> Nothing
+  (x : xs) -> Just (Zipper (applyContext x t) xs)
 
 -- | Set the value of the focus node.
 setValue :: a -> Zipper a -> Zipper a

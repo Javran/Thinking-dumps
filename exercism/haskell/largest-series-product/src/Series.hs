@@ -2,7 +2,8 @@ module Series
   ( digits
   , slices
   , largestProduct
-  ) where
+  )
+where
 
 import Data.Char
 import Data.List
@@ -12,7 +13,7 @@ digits = map (subtract (ord '0') . ord)
 
 listSlices :: Int -> [a] -> [[a]]
 listSlices slen xs =
-      take nPieces
+  take nPieces
     . map (take slen)
     . tails
     $ cycle xs
@@ -25,9 +26,9 @@ slices n xs = listSlices n (digits xs)
 
 largestProduct :: Int -> String -> Int
 largestProduct n raw = case products of
-    -- this doesn't make any sense,
-    -- it's here simply because testcase wants it.
-    [] -> 1
-    _ -> maximum products
+  -- this doesn't make any sense,
+  -- it's here simply because testcase wants it.
+  [] -> 1
+  _ -> maximum products
   where
     products = map product $ slices n raw

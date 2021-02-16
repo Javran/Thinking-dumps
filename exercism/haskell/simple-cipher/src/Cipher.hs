@@ -2,10 +2,11 @@ module Cipher
   ( caesarEncode
   , caesarDecode
   , caesarEncodeRandom
-  ) where
+  )
+where
 
-import Control.Monad.Random
 import Control.Monad
+import Control.Monad.Random
 import Data.Char
 
 -- (internal) 'shiftChar ch step',
@@ -27,11 +28,11 @@ caesarEncode :: String -> String -> String
 caesarEncode ks = applyOffsets (map asOffset ks)
 
 caesarDecode :: String -> String -> String
-caesarDecode ks = applyOffsets (map (\x -> -asOffset x) ks)
+caesarDecode ks = applyOffsets (map (\x -> - asOffset x) ks)
 
 caesarEncodeRandom :: String -> IO (String, String)
 caesarEncodeRandom pt = do
-    -- key length: at least 100 chars
-    kl <- getRandomR (100,200)
-    key <- replicateM kl (getRandomR ('a','z'))
-    return (key,caesarEncode key pt)
+  -- key length: at least 100 chars
+  kl <- getRandomR (100, 200)
+  key <- replicateM kl (getRandomR ('a', 'z'))
+  return (key, caesarEncode key pt)
