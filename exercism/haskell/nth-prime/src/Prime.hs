@@ -17,9 +17,11 @@ genPrimes :: Integral a => [a] -> [a]
 genPrimes [] = undefined
 genPrimes (x : xs) = x : genPrimes (xs `orderedDiff` [x, x + x ..])
 
-primes :: [Int]
+primes :: [Integer]
 primes = genPrimes [2 ..]
 
--- | TODO: could be faster way of sieving
-nth :: Int -> Int
-nth v = primes !! (v -1)
+nth :: Int -> Maybe Integer
+nth v =
+  if v <= 0
+    then Nothing
+    else Just $ primes !! (v -1)

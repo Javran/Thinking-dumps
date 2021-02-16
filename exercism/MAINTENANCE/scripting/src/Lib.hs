@@ -44,8 +44,6 @@ runAllTests = sh $ do
           [ "robot-name"
           , "food-chain"
           , "matrix"
-          , "luhn"
-          , "pascals-triangle"
           , "house"
           , "pig-latin"
           , "sublist"
@@ -73,10 +71,8 @@ runAllTests = sh $ do
           , "hamming"
           , "meetup"
           , "roman-numerals"
-          , "clock"
           , "nucleotide-count"
           , "nth-prime"
-          , "bob"
           ]
   Just repo <- fmap fromText <$> need "HASKELL_REPO"
   exerPath <- ls repo

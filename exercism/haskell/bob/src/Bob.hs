@@ -1,3 +1,5 @@
+{-# LANGUAGE ViewPatterns #-}
+
 module Bob
   ( responseFor
   )
@@ -23,8 +25,11 @@ isYell =
 -- both conds are required
 
 responseFor :: String -> String
-responseFor s
+responseFor (dropWhileEnd isSpace -> s)
   | all isSpace s = "Fine. Be that way!"
-  | isYell s = "Whoa, chill out!"
+  | isYell s =
+    if isQuestion s
+      then "Calm down, I know what I'm doing!"
+      else "Whoa, chill out!"
   | isQuestion s = "Sure."
   | otherwise = "Whatever."

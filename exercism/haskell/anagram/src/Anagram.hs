@@ -10,7 +10,7 @@ import Data.List (sort)
 anagramsFor :: String -> [String] -> [String]
 anagramsFor x =
   map (id &&& loweredAndSorted) -- split data into: <origin, imaged>
-    >>> filter (/= (x, x')) -- exclude x itself
+    >>> filter (\(a,b) -> map toLower a /= map toLower x && x' == b) -- exclude x itself
     >>> filter ((== x') . snd) -- imaged data == imaged x
     >>> map fst -- return the origin tied to it
   where

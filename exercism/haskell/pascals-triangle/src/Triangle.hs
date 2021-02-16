@@ -1,13 +1,13 @@
 module Triangle
-  ( row
+  ( rows
   , triangle
   )
 where
 
-triangle :: Integral a => [[a]]
+triangle :: [[Integer]]
 triangle = iterate next [1]
   where
     next xs = zipWith (+) (0 : xs) (xs ++ [0])
 
-row :: Integral a => Int -> [a]
-row n = triangle !! (n -1)
+rows :: Int -> [[Integer]]
+rows n = take n triangle
