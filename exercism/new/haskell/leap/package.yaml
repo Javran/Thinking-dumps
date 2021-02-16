@@ -1,0 +1,21 @@
+name: leap
+version: 1.6.0.10
+
+dependencies:
+  - base
+
+library:
+  exposed-modules: LeapYear
+  source-dirs: src
+  ghc-options: -Wall
+  # dependencies:
+  # - foo       # List here the packages you
+  # - bar       # want to use in your solution.
+
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - leap
+      - hspec
