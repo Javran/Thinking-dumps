@@ -12,6 +12,8 @@ library:
   dependencies:
     - random
     - MonadRandom
+    - containers
+    - text
 
 tests:
   test:

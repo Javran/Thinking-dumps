@@ -3,16 +3,21 @@ module Anagram
   )
 where
 
-import Control.Arrow ((&&&), (>>>))
-import Data.Char (toLower)
-import Data.List (sort)
+import Data.Char
+import Data.List
 
 anagramsFor :: String -> [String] -> [String]
-anagramsFor x =
-  map (id &&& loweredAndSorted) -- split data into: <origin, imaged>
-    >>> filter (\(a,b) -> map toLower a /= map toLower x && x' == b) -- exclude x itself
-    >>> filter ((== x') . snd) -- imaged data == imaged x
-    >>> map fst -- return the origin tied to it
+anagramsFor x = filter isCandidate
   where
-    loweredAndSorted = sort . map toLower
-    x' = loweredAndSorted x
+    {-
+      Normalize a word so that words have same bag of characters have
+      the same projected value. In this case the projected value
+      is the lowercased and sorted word.
+     -}
+    xLow = fmap toLower x
+    x' = sort xLow
+
+    isCandidate y = y' == x' && yLow /= xLow
+      where
+        yLow = fmap toLower y
+        y' = sort yLow

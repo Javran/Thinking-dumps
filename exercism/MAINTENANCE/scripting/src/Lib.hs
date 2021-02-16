@@ -38,42 +38,7 @@ ltsUpdater = sh $ do
 
 runAllTests :: IO ()
 runAllTests = sh $ do
-  let skipping =
-        -- those need some more work, skipped for now.
-        S.fromList
-          [ "robot-name"
-          , "food-chain"
-          , "matrix"
-          , "house"
-          , "pig-latin"
-          , "sublist"
-          , "beer-song"
-          , "phone-number"
-          , "word-count"
-          , "triangle"
-          , "minesweeper"
-          , "forth"
-          , "etl"
-          , "pythagorean-triplet"
-          , "linked-list"
-          , "anagram"
-          , "connect"
-          , "gigasecond"
-          , "simple-linked-list"
-          , "largest-series-product"
-          , "binary-search-tree"
-          , "palindrome-products"
-          , "bank-account"
-          , "rna-transcription"
-          , "atbash-cipher"
-          , "pov"
-          , "robot-simulator"
-          , "hamming"
-          , "meetup"
-          , "roman-numerals"
-          , "nucleotide-count"
-          , "nth-prime"
-          ]
+  let skipping = S.empty
   Just repo <- fmap fromText <$> need "HASKELL_REPO"
   exerPath <- ls repo
   let exerName = fpToText $ filename exerPath
