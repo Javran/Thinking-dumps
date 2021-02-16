@@ -1,0 +1,21 @@
+name: wordy
+version: 1.5.0.8
+
+dependencies:
+  - base
+
+library:
+  exposed-modules: WordProblem
+  source-dirs: src
+  ghc-options: -Wall
+  # dependencies:
+  # - foo       # List here the packages you
+  # - bar       # want to use in your solution.
+
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - wordy
+      - hspec
