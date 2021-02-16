@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 080db55867a98dfc25ecbb29a9b00ecb14ba15b79cf3ab233bc6e2990c157dd1
+
+name:           scripting
+version:        0.1.0.0
+description:    description
+homepage:       https://github.com/Javran/Thinking-dumps#readme
+bug-reports:    https://github.com/Javran/Thinking-dumps/issues
+author:         Javran Cheng
+maintainer:     javran.c@gmail.com
+copyright:      Copyright: (c) 2021 Javran Cheng
+license:        BSD3
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/Javran/Thinking-dumps
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_scripting
+  hs-source-dirs:
+      src
+  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2
+  build-depends:
+      base
+    , containers
+    , foldl
+    , system-filepath
+    , text
+    , turtle
+  default-language: Haskell2010
+
+executable demo
+  main-is: Main.hs
+  other-modules:
+      Paths_scripting
+  hs-source-dirs:
+      exe
+  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , containers
+    , foldl
+    , scripting
+    , system-filepath
+    , text
+    , turtle
+  default-language: Haskell2010
+
+test-suite hspec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      DemoSpec
+      Paths_scripting
+  hs-source-dirs:
+      test
+  ghc-options: -fno-warn-unused-imports -fno-warn-unused-top-binds -Wall -O2 -threaded -rtsopts -with-rtsopts=-N -main-is Spec
+  build-depends:
+      QuickCheck
+    , base
+    , containers
+    , foldl
+    , hspec
+    , scripting
+    , system-filepath
+    , text
+    , turtle
+  default-language: Haskell2010

@@ -1,12 +1,13 @@
 {-# LANGUAGE TupleSections #-}
+
 module Scrabble
-    ( scoreLetter
-    , scoreWord
-    )
+  ( scoreLetter
+  , scoreWord
+  )
 where
 
-import Data.Char
 import qualified Data.Array.Unboxed as UA
+import Data.Char
 
 scoreLetter :: Char -> Int
 scoreLetter = value . toLower
@@ -16,22 +17,23 @@ scoreLetter = value . toLower
         then scoreArr UA.! x
         else 0
 
-scoreBnd :: (Char,Char)
-scoreBnd = ('a','z')
+scoreBnd :: (Char, Char)
+scoreBnd = ('a', 'z')
 
 scoreArr :: UA.UArray Char Int
 scoreArr = UA.array scoreBnd funcDef
   where
     inp ~= val = map (,val) inp
-    funcDef = concat
-      [ "aeioulnrst" ~= 1
-      , "dg"         ~= 2
-      , "bcmp"       ~= 3
-      , "fhvwy"      ~= 4
-      , "k"          ~= 5
-      , "jx"         ~= 8
-      , "qz"         ~= 10
-      ]
+    funcDef =
+      concat
+        [ "aeioulnrst" ~= 1
+        , "dg" ~= 2
+        , "bcmp" ~= 3
+        , "fhvwy" ~= 4
+        , "k" ~= 5
+        , "jx" ~= 8
+        , "qz" ~= 10
+        ]
 
 scoreWord :: String -> Int
 scoreWord = sum . map scoreLetter

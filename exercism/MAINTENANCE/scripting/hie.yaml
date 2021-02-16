@@ -1,0 +1,8 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "scripting:lib"
+    - path: "./exe"
+      component: "scripting:exe:demo"
+    - path: "./test"
+      component: "scripting:test:hspec"

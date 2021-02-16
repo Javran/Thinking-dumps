@@ -1,8 +1,0 @@
-cradle:
-  stack:
-    - path: "./src"
-      component: "lts-updater:lib"
-    - path: "./exe"
-      component: "lts-updater:exe:demo"
-    - path: "./test"
-      component: "lts-updater:test:hspec"

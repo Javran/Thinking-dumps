@@ -1,6 +1,6 @@
-name: lts-updater
+name: scripting
 version: 0.1.0.0
-github: Javran/lts-updater
+github: Javran/Thinking-dumps
 license: BSD3
 author: Javran Cheng
 maintainer: javran.c@gmail.com
@@ -16,6 +16,9 @@ dependencies:
 - containers
 - foldl
 
+ghc-options:
+- -fno-warn-unused-imports
+- -fno-warn-unused-top-binds
 library:
   source-dirs: src
   ghc-options:
@@ -27,7 +30,7 @@ executables:
     main: Main.hs
     source-dirs: exe
     dependencies:
-      - lts-updater
+      - scripting
     ghc-options:
       - -Wall
       - -O2
@@ -41,7 +44,7 @@ tests:
     source-dirs:
       - test
     dependencies:
-      - lts-updater
+      - scripting
       - QuickCheck
       - hspec
     ghc-options:
