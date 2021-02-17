@@ -1,41 +1,51 @@
+{-# LANGUAGE TupleSections #-}
+
 module PigLatin
   ( translate
   )
 where
 
-{-
-  some complaints: it's really frustrating that
-  an exercise have no clean rule of how the program
-  should behavior and we have to look at testcases to find out
-  what's going on.
--}
+import Control.Applicative
+import Data.List
+import qualified Data.Map.Strict as M
 
 {-
-  spreaking of rules, these 2 rules can be unified with following operation:
-  * split a word into two parts: `xs` and `ys`
-    * if it's [aeiou], stop and make remaining string `ys`
-    * if it's "qu", append it to `xs`
-      (in other words, "qu" should be treated as a single unit)
-    * otherwise, the current char to `xs`
-
-  * `ys ++ xs ++ "ay"` is the result
+  well, those are just random rules. garbage in, garbage out.
 -}
+
+-- Using custom ADT rather than Bool to avoid boolean blindness.
+data ClusterType = Consonant | Vowel deriving (Eq)
+
+getCluster :: String -> Maybe (String, ClusterType)
+getCluster xs = do
+  _ : _ <- pure xs -- xs must be non-empty
+  foldr (\k r -> fmap (k,) (clusterTable M.!? k) <|> r) (Just (take 1 xs, Consonant)) prefixes
+  where
+    {-
+      for "abc", prefixes are "abc", "ab", "a" (up to maxLen),
+      we need to lookup clusters in this particular order in order to
+      always prefer the longest prefix.
+     -}
+    prefixes = reverse . take maxLen . tail . inits $ xs
+
+    clusterTable :: M.Map String ClusterType
+    clusterTable =
+      M.fromList $ fmap (,Vowel) vowels <> fmap (,Consonant) consonants
+    maxLen = maximum $ fmap length (vowels <> consonants)
+    vowels = words "xr yt a e i o u"
+    consonants = words "sch thr ch qu th rh y"
 
 translate :: String -> String
-translate = unwords . map translateWord . words
-
--- | `splitWord acc word` splits word into (xs,ys)
---   where xs ++ ys == word, acc is used as an accumulating value
---   and its items are in reversed order
-splitWord :: String -> String -> (String, String)
-splitWord xsRev remaining = case remaining of
-  ('q' : 'u' : ys) -> splitWord ('u' : 'q' : xsRev) ys
-  (y : ys)
-    | y `elem` "aeiou" -> (reverse xsRev, remaining)
-    | otherwise -> splitWord (y : xsRev) ys
-  [] -> error "no vowel found"
+translate = unwords . fmap translateWord . words
 
 translateWord :: String -> String
-translateWord w = ys ++ xs ++ "ay"
-  where
-    (xs, ys) = splitWord "" w
+translateWord w = case getCluster w of
+  Just (_, Vowel) -> w <> "ay"
+  Just (x, Consonant)
+    | y <- drop (length x) w ->
+      case y of
+        'q' : 'u' : zs -> zs <> x <> "quay"
+        'y' : zs -> 'y' : zs <> x <> "ay"
+        _ -> drop (length x) w <> x <> "ay"
+  Nothing | x : xs <- w -> xs <> [x] <> "ay"
+  _ -> error "Unknown initial cluster."
