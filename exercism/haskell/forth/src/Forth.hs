@@ -9,7 +9,8 @@ module Forth
   , ForthState
   , evalText
   , formatStack
-  , empty
+  , emptyState
+  , toList
   )
 where
 
@@ -128,8 +129,8 @@ parseForth =
 parseForthT :: T.Text -> [ForthCommand]
 parseForthT = parseForth . T.unpack
 
-empty :: ForthState
-empty = FState [] M.empty
+emptyState :: ForthState
+emptyState = FState [] M.empty
 
 -- | evaluate a Forth program
 evalProg
@@ -146,16 +147,16 @@ evalProg fc = case fc of
   -- into lowercases and store the definition in current environment
   FDef name cmds -> do
     let normName = map toLower name
-    when (all isDigit name) (throwExc InvalidWord)
+    when (all isDigit name) (throwError InvalidWord)
     modify (& fEnv %~ M.insert normName cmds)
   FWord name ->
     -- first try evalWord, if it fails, we fallback to attempt evalPrim
     -- if primitives are not expected to be overwritten, we can simply
     -- swap the position of evalWord and evalPrim, so primitives are attempted
     -- first without looking up the environment
-    catchExc (evalWord name) $ \case
+    catchError (evalWord name) $ \case
       UnknownWord n | name == T.unpack n -> evalPrim name
-      e -> throwExc e
+      e -> throwError e
   where
     push :: Int -> Eff r ()
     push v = modify (& fStack %~ (v :))
@@ -163,7 +164,7 @@ evalProg fc = case fc of
     pop =
       ((^. fStack) <$> get)
         >>= \case
-          [] -> throwExc StackUnderflow
+          [] -> throwError StackUnderflow
           (v : xs) -> modify (& fStack .~ xs) >> return v
     -- evaluate primitive operations
     evalPrim :: String -> Eff r ()
@@ -173,7 +174,7 @@ evalProg fc = case fc of
       "*" -> liftBinOp (*)
       "/" -> do
         b <- pop
-        when (b == 0) (throwExc DivisionByZero)
+        when (b == 0) (throwError DivisionByZero)
         a <- pop
         push (a `div` b)
       -- DUP, SWAP, DROP, OVER can be implemented in terms
@@ -184,19 +185,19 @@ evalProg fc = case fc of
         stk <- (^. fStack) <$> get
         case stk of
           (x : _) -> modify (& fStack .~ (x : stk))
-          _ -> throwExc StackUnderflow
+          _ -> throwError StackUnderflow
       "swap" -> do
         stk <- (^. fStack) <$> get
         case stk of
           (a : b : xs) -> modify (& fStack .~ (b : a : xs))
-          _ -> throwExc StackUnderflow
+          _ -> throwError StackUnderflow
       "drop" -> void pop
       "over" -> do
         stk <- (^. fStack) <$> get
         case stk of
           (_ : b : _) -> modify (& fStack .~ (b : stk))
-          _ -> throwExc StackUnderflow
-      _ -> throwExc (UnknownWord (T.pack cmd))
+          _ -> throwError StackUnderflow
+      _ -> throwError (UnknownWord (T.pack cmd))
       where
         liftBinOp bin = do b <- pop; a <- pop; push (a `bin` b)
     -- evaluate a word by looking up the environment to pick
@@ -205,13 +206,13 @@ evalProg fc = case fc of
     evalWord name = do
       env <- (^. fEnv) <$> get
       case M.lookup (map toLower name) env of
-        Nothing -> throwExc (UnknownWord (T.pack name))
+        Nothing -> throwError (UnknownWord (T.pack name))
         Just cmds -> mapM_ evalProg cmds
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
 evalText rawText initState =
   run
-    . runExc -- handle exception requests
+    . runError -- handle exception requests
     . execState initState -- handle state requests
     $ program
   where
@@ -220,3 +221,5 @@ evalText rawText initState =
 
 formatStack :: ForthState -> T.Text
 formatStack = T.pack . unwords . map show . reverse . (^. fStack)
+
+toList = reverse . _fStack
