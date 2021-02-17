@@ -1,24 +1,16 @@
 module Sublist
-  ( Sublist (..)
-  , sublist
+  ( sublist
   )
 where
 
 import Data.List
 
-data Sublist
-  = Equal
-  | Sublist
-  | Superlist
-  | Unequal
-  deriving (Eq, Show)
-
-sublist :: Eq a => [a] -> [a] -> Sublist
+sublist :: Eq a => [a] -> [a] -> Maybe Ordering
 sublist xs ys
-  | xs == ys = Equal
-  | xs `isSublistOf` ys = Sublist
-  | ys `isSublistOf` xs = Superlist
-  | otherwise = Unequal
+  | xs == ys = Just EQ
+  | xs `isSublistOf` ys = Just LT
+  | ys `isSublistOf` xs = Just GT
+  | otherwise = Nothing
 
 -- | xs is a subset of ys if we can find a sublist of ys'
 -- | which satisfies ys' == xs.
