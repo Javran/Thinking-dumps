@@ -52,4 +52,4 @@ paragraphs = initParas' ++ [lastPara]
     initParas' = zipWith (++) initParas (reverse . init . tails $ endings)
 
 song :: String
-song = unlines (intercalate [""] paragraphs ++ [""])
+song = unlines (intercalate [""] paragraphs)

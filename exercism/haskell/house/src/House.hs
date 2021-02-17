@@ -4,6 +4,7 @@ module House
 where
 
 import Control.Monad.State
+import Data.List
 
 -- a Context is some text with a hole in it
 type Context = String -> String
@@ -33,7 +34,7 @@ rhymeInfos =
     -- + the item to be filled in the hole to generate current item
     -- + the transformation to be performed on current context
     --   to generate the next context
-    makeItem xs ys = (ys, (++ "\n" ++ xs ++ " " ++ ys))
+    makeItem xs ys = (ys, (<> "\n" <> xs <> " " <> ys))
 
 initContext :: Context
 initContext xs = unwords ["This is", xs, "that Jack built."]
@@ -42,6 +43,6 @@ applyTransformInfo :: TransformInfo -> State Context String
 applyTransformInfo (obj, oCtxt) = gets ($ obj) <* modify (. oCtxt)
 
 rhyme :: String
-rhyme = concatMap (++ "\n\n") parts
+rhyme = intercalate "\n\n" parts <> "\n"
   where
     parts = evalState (mapM applyTransformInfo rhymeInfos) initContext

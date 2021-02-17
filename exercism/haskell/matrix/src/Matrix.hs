@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ScopedTypeVariables, ViewPatterns #-}
 
 module Matrix
   ( Matrix
@@ -21,8 +21,8 @@ import Text.ParserCombinators.ReadP
 type Matrix a = V.Vector (V.Vector a)
 
 row, column :: Int -> Matrix a -> V.Vector a
-row i = (V.! i)
-column i = foldMap (V.singleton . (V.! i))
+row (pred -> i) = (V.! i)
+column (pred -> i) = foldMap (V.singleton . (V.! i))
 
 rows, cols :: Matrix a -> Int
 rows = fst . shape
