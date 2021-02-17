@@ -25,6 +25,11 @@ import qualified Data.Map as M
 import qualified Data.Text as T
 import Text.ParserCombinators.ReadP hiding (get)
 
+{-
+  Note: this approach won't pass "can use different words with the same name" test,
+  as that will require keeping a closure that current model does not capture.
+ -}
+
 -- | a Forth program command, words are not normalized
 --   and the interpreter is responsible for normalizing
 data ForthCommand
