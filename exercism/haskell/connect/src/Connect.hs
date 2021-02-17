@@ -1,8 +1,8 @@
 {-# LANGUAGE MultiWayIf #-}
 
 module Connect
-  ( resultFor
-  , Color (..)
+  ( winner
+  , Mark(..)
   )
 where
 
@@ -34,11 +34,11 @@ import qualified Data.Set as S
 
 -}
 
-data Color = Black | White deriving (Eq, Show)
+data Mark = Cross | Nought deriving (Eq, Show)
 
 type Coord = (Int, Int)
 
-type GameBoard = Array Coord (Maybe Color)
+type GameBoard = Array Coord (Maybe Mark)
 
 -- | calculate neighbor coordinates, note that bounds are ignored
 --   so there might be invalid coordinates in results
@@ -53,7 +53,7 @@ neighborCoords (x, y) =
   ]
 
 -- INVARIANT: coords in todoSet must be vaild (within range, color matches)
-search :: GameBoard -> Color -> S.Set Coord -> S.Set Coord -> S.Set Coord
+search :: GameBoard -> Mark -> S.Set Coord -> S.Set Coord -> S.Set Coord
 search board color todoSet visitedSet
   | S.null todoSet = visitedSet
   | otherwise =
@@ -68,22 +68,22 @@ search board color todoSet visitedSet
 
 -- | convert raw data to game board representation
 toGameBoard :: [String] -> GameBoard
-toGameBoard raw = array ((1, 1), (cols, rows)) (zip coords (map toColor $ concat raw))
+toGameBoard raw = array ((1, 1), (cols, rows)) (zip coords (map toMark $ concat raw))
   where
     coords = [(x, y) | y <- [1 .. rows], x <- [1 .. cols]]
     cols = length (head raw)
     rows = length raw
-    toColor '.' = Nothing
-    toColor 'O' = Just White
-    toColor 'X' = Just Black
-    toColor _ = error "invalid game board"
+    toMark '.' = Nothing
+    toMark 'O' = Just Nought
+    toMark 'X' = Just Cross
+    toMark _ = error "invalid game board"
 
 -- | calculate coordiates gameboard sides for each color, cell value is not yet
 --   taken into account
-sideCoordsOf :: GameBoard -> Color -> (S.Set Coord, S.Set Coord)
+sideCoordsOf :: GameBoard -> Mark -> (S.Set Coord, S.Set Coord)
 sideCoordsOf board color = case color of
-  White -> (tops, bottoms)
-  Black -> (lefts, rights)
+  Nought -> (tops, bottoms)
+  Cross -> (lefts, rights)
   where
     ((1, 1), (cols, rows)) = bounds board
     tops = S.fromList [(x, 1) | x <- [1 .. cols]]
@@ -91,23 +91,23 @@ sideCoordsOf board color = case color of
     lefts = S.fromList [(1, y) | y <- [1 .. rows]]
     rights = S.fromList [(cols, y) | y <- [1 .. rows]]
 
-resultFor :: [String] -> Maybe Color
-resultFor raw =
+winner :: [String] -> Maybe Mark
+winner raw =
   if
-      | not (S.null blackResult) -> Just Black
-      | not (S.null whiteResult) -> Just White
+      | not (S.null blackResult) -> Just Cross
+      | not (S.null whiteResult) -> Just Nought
       | otherwise -> Nothing
   where
     board = toGameBoard raw
-    (blackBegins, blackEnds) = sideCoordsOf board Black
-    (whiteBegins, whiteEnds) = sideCoordsOf board White
+    (blackBegins, blackEnds) = sideCoordsOf board Cross
+    (whiteBegins, whiteEnds) = sideCoordsOf board Nought
 
-    -- search Black side: begin with the set of valid left side cells (within bound &
+    -- search Cross side: begin with the set of valid left side cells (within bound &
     -- the cell itself is black), we expand the set of reachable coordinates that contains
-    -- Black, and see if we can reach the other side
-    blackValidBegins = S.filter (\c -> board ! c == Just Black) blackBegins
-    blackResult = search board Black blackValidBegins S.empty `S.intersection` blackEnds
+    -- Cross, and see if we can reach the other side
+    blackValidBegins = S.filter (\c -> board ! c == Just Cross) blackBegins
+    blackResult = search board Cross blackValidBegins S.empty `S.intersection` blackEnds
 
-    -- search White side again, similar to how we search for Black color
-    whiteValidBegins = S.filter (\c -> board ! c == Just White) whiteBegins
-    whiteResult = search board White whiteValidBegins S.empty `S.intersection` whiteEnds
+    -- search Nought side again, similar to how we search for Cross color
+    whiteValidBegins = S.filter (\c -> board ! c == Just Nought) whiteBegins
+    whiteResult = search board Nought whiteValidBegins S.empty `S.intersection` whiteEnds

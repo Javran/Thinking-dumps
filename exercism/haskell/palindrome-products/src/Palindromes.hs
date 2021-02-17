@@ -32,7 +32,7 @@ We have 2 approaches:
 getDown :: Down a -> a
 getDown (Down v) = v
 
-largestPalindrome, smallestPalindrome :: Integral a => a -> a -> (a, [(a, a)])
+largestPalindrome, smallestPalindrome :: Integral a => a -> a -> Maybe (a, [(a, a)])
 largestPalindrome = smallestPalindrome' Down getDown pred
 smallestPalindrome = smallestPalindrome' id id succ
 
@@ -77,7 +77,7 @@ smallestPalindrome'
   (a -> a)
   -> a
   -> a
-  -> (a, [(a, a)])
+  -> Maybe (a, [(a, a)])
 smallestPalindrome' toOrd fromOrd next l r =
   let l' = toOrd l
       r' = toOrd r
@@ -85,7 +85,9 @@ smallestPalindrome' toOrd fromOrd next l r =
         then smallestPalindromeIntern l' r'
         else smallestPalindromeIntern r' l'
   where
-    smallestPalindromeIntern vLow vHigh = (fromOrd a, map (fromOrd *** fromOrd) . S.toList $ b)
+    smallestPalindromeIntern vLow vHigh = do
+      (a, b) <- search2 vLow vHigh Nothing
+      pure (fromOrd a, map (fromOrd *** fromOrd) . S.toList $ b)
       where
         -- inner search loop, we want to find v1,v2 such that (v1*v2) is a palindrome
         -- and try to update current best result if possible
@@ -131,5 +133,3 @@ smallestPalindrome' toOrd fromOrd next l r =
               (search v1From v1From vHigh curBest)
           where
             vProd = toOrd (fromOrd v1From * fromOrd v1From)
-
-        Just (a, b) = search2 vLow vHigh Nothing

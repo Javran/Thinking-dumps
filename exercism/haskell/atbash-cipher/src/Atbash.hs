@@ -1,5 +1,6 @@
 module Atbash
   ( encode
+  , decode
   )
 where
 
@@ -32,8 +33,15 @@ normalizeInput = map toLower . filter isValid
 formatOutput :: String -> String
 formatOutput = unwords . chunksOf 5
 
+encodeNoFormat :: String -> String
+encodeNoFormat =
+  map encodeNChar
+    . normalizeInput
+
 encode :: String -> String
 encode =
   formatOutput
-    . map encodeNChar
-    . normalizeInput
+    . encodeNoFormat
+
+decode :: String -> String
+decode = encodeNoFormat . filter (/= ' ')

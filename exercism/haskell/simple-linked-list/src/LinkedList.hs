@@ -8,17 +8,17 @@ module LinkedList
   , datum
   , next
   , fromList
-  , toList
+  , toList -- no code needed, thanks to Foldable instance.
   , reverseLinkedList
   )
 where
 
-import qualified Data.Foldable as F
+import Data.Foldable
 
 data LinkedList a
   = Nil
   | Cons a (LinkedList a)
-  deriving (F.Foldable)
+  deriving (Foldable, Show, Eq)
 
 nil :: LinkedList a
 nil = Nil
@@ -41,8 +41,5 @@ next _ = error "next: empty LinkedList"
 fromList :: [a] -> LinkedList a
 fromList = foldr Cons Nil
 
-toList :: LinkedList a -> [a]
-toList = F.toList
-
 reverseLinkedList :: LinkedList a -> LinkedList a
-reverseLinkedList = F.foldl (flip Cons) Nil
+reverseLinkedList = foldl (flip Cons) Nil

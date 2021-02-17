@@ -1,10 +1,7 @@
+{-# LANGUAGE NumericUnderscores #-}
 module Gigasecond (fromDay) where
 
-import Data.Time.Calendar
+import Data.Time.Clock
 
-fromDay :: Day -> Day
-fromDay = addDays days
-  where
-    oneGs :: Double
-    oneGs = 10 ** 9 -- seconds
-    days = floor (oneGs / 3600 / 24)
+fromDay :: UTCTime -> UTCTime
+fromDay = addUTCTime 1_000_000_000

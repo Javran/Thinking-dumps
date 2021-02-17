@@ -9,6 +9,8 @@ import qualified Data.Set as S
 type MineField = S.Set (Int, Int)
 
 annotate :: [String] -> [String]
+annotate [] = []
+annotate [[]] = [[]]
 annotate xs = numOrMine
   where
     cols = length (head xs)

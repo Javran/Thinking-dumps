@@ -39,7 +39,7 @@ data Element a
 
 makeLenses ''Element
 
-type RefLens a = Simple Lens (Element a) (NodeRef a)
+type RefLens a = Lens' (Element a) (NodeRef a)
 
 mkDeque :: IO (Deque a)
 mkDeque = mfix $ \r -> newIORef (Guard r r)
@@ -80,7 +80,7 @@ dqDelete dir revDir refCurrent = do
   let refNewNext = xNode ^. dir
   atomicModifyIORef_ refCurrent (& dir .~ refNewNext)
   atomicModifyIORef_ refNewNext (& revDir .~ refCurrent)
-  return (xNode ^? eContent)
+  pure (xNode ^? eContent)
 
 unshift, push :: Deque a -> a -> IO ()
 unshift = dqInsert eNext ePrev
@@ -91,17 +91,17 @@ shift dq = do
   -- for readability
   b <- nullDeque dq
   if b
-    then return Nothing
-    else -- note that the meaning of "Maybe a" from dqDelete and that of return type "Maybe a"
+    then pure Nothing
+    else -- note that the meaning of "Maybe a" from dqDelete and that of pure type "Maybe a"
     -- from this function are different, but
     -- since at this point deque is not empty, the result of dqDelete
-    -- happens to be the correct return value of this function
+    -- happens to be the correct pure value of this function
     -- (same for "pop" function)
       dqDelete eNext ePrev dq
 pop dq = do
   b <- nullDeque dq
   if b
-    then return Nothing
+    then pure Nothing
     else dqDelete ePrev eNext dq
 
 -- a null deque contains nothing but the guard element
@@ -109,7 +109,7 @@ pop dq = do
 -- assume this deque is properly maintained, this check
 -- should be sufficient
 nullDeque :: Deque a -> IO Bool
-nullDeque dq = readIORef dq >>= \node -> return (_eNext node == dq)
+nullDeque dq = readIORef dq >>= \node -> pure (_eNext node == dq)
 
 -- | perform action on each non-guard nodes, debugging function
 visitNodes :: (a -> IO b) -> Deque a -> IO [b]
@@ -119,10 +119,10 @@ visitNodes action refGuard = do
   where
     visitNodes' refCurrent =
       if refGuard == refCurrent
-        then return []
+        then pure []
         else do
           node <- readIORef refCurrent
           result <- action (_eContent node)
           let refNext = _eNext node
           rs <- visitNodes' refNext
-          return (result : rs)
+          pure (result : rs)
