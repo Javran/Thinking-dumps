@@ -183,16 +183,19 @@ fn unpack_rank_count(rc: &RankCount) -> Vec<u8> {
 
 impl HandRank {
     fn find_straight(r: &RankFreq) -> Option<u8> {
-        // TODO: probably can dynamic programming this.
-        // Try royal flush first, then go downwards.
-        if r[1] == 1 && (10..=13).all(|i| r[i] == 1) {
-            return Some(14);
-        }
-
-        for i in (1..9).rev() {
-            if (i..=i + 4).all(|j| r[j as usize] == 1) {
-                return Some(i + 4);
+        /*
+         consecutive_count tracks number of 1s counting from current position (i)
+         towards its right side.
+        */
+        let mut consecutive_count =
+            // Treat Ace as if it was at position 14.
+            if r[1] == 1 { 1 } else { 0 };
+        for i in (1..=13).rev() {
+            let cur = if r[i] == 1 { consecutive_count + 1 } else { 0 };
+            if cur == 5 {
+                return Some((i + 4) as u8);
             }
+            consecutive_count = cur;
         }
         None
     }
