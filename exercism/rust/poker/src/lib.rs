@@ -91,7 +91,7 @@ impl<'a> Hand<'a> {
 /*
  This is achieved by:
 
- - Alternatives are aranged from lowest to highest rank,
+ - Alternatives are arranged from lowest to highest rank,
    this ensures that higher rank always beats lower rank regardless of numeric value.
 
  - Suit are dropped from this representation as it's exact value is irrelevant to
