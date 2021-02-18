@@ -12,13 +12,11 @@
 */
 
 use std::cmp::Ordering;
-use std::collections::HashMap;
 use std::collections::HashSet;
 
 /*
  Only stores 1 ~ 13, where 1 => A, 11 => J, 12 => Q, 13 => K.
 */
-#[derive(Eq, PartialEq)]
 struct Rank(u8);
 
 type Suit = u8;
@@ -92,6 +90,28 @@ impl<'a> Hand<'a> {
     }
 }
 
+/// `HandRank` establishes a total order to support sorting.
+/*
+ This is achieved by:
+
+ - Alternatives are aranged from lowest to highest rank,
+   this ensures that higher rank always beats lower rank regardless of numeric value.
+
+ - Suit are dropped from this representation as it's exact value is irrelevant to
+   this ranking method.
+
+ - Within the same alternative construct, each value represents a card rank,
+   ordered from largest count to lowest count.
+   If card count is the same, larger numeric value goes first.
+
+   For example:
+   - FourOfAKind(3,2) represents 3,3,3,3,2,2
+   - TwoPair(14,13,12) represents 14,14,13,13,12
+
+ - whenever `Vec<u8>` appears, it's always of size 5
+   (while it makes more sense to use `[u8;5]`, `Vec`'s interface is a bit more convenient).
+
+*/
 #[derive(Eq, PartialOrd, Ord, PartialEq, Debug)]
 enum HandRank {
     HighCard(Vec<u8>),
@@ -107,78 +127,95 @@ enum HandRank {
 }
 
 /*
- Use to represent rank counts, only index 1 ~ 13 are used,
- r[i] means the number of cards with rank i, where r: RankMap.
-*/
-type RankMap = [usize; 14];
+  Used to represent frequency of a rank in a hand, only index 1 ~ 13 are used,
+  r[i] means the number of cards with rank i, where r: RankFreq.
 
-// <rank, count>
-type RankCount2 = Vec<(u8, usize)>;
+  The sum of r must be 5.
+*/
+type RankFreq = [usize; 14];
+
+/*
+ Intermediate structure that store same info as RankFreq,
+ but is more convenient for Hand ranking
+ elements are (<rank>, <count>), sorted so that:
+
+ - elements with larger <count> appears first.
+ - in case <count> is the same, element with higest <rank> goes first.
+
+ Note that unlike `Rank` type, 14 might appear as <rank> representing Ace.
+*/
+type RankCount = Vec<(u8, usize)>;
+
+fn to_rank_count(r: &RankFreq) -> RankCount {
+    let mut xs: RankCount = vec![];
+    /*
+      Treat Ace as 14, this won't have correctness implication
+      as long as the resulting structure is never used to check for Straight.
+
+      The observation is: the only time Ace is treated as 1 is when
+      the hand needs it to complete a Straight.
+     */
+    if r[1] > 0 {
+        xs.push((14, r[1]));
+    }
+    for i in 2..=13 {
+        if r[i] > 0 {
+            xs.push((i as u8, r[i]));
+        }
+    }
+    xs.sort_unstable_by(|x, y| {
+        // compare count first
+        let r0 = y.1.cmp(&x.1);
+        if r0 != Ordering::Equal {
+            r0
+        } else {
+            y.0.cmp(&x.0)
+        }
+    });
+
+    xs
+}
+
+/* Unpacks RankCount to sorted 5 elements */
+fn unpack_rank_count(rc: &RankCount) -> Vec<u8> {
+    let mut xs = Vec::with_capacity(5);
+    for (r, freq) in rc {
+        for _ in 0..*freq {
+            xs.push(*r);
+        }
+    }
+    xs
+}
 
 impl HandRank {
-    fn to_rank_count2(r: &RankMap) -> RankCount2 {
-        let mut xs: RankCount2 = vec![];
-        // Treat Ace as 14.
-        if r[1] > 0 {
-            xs.push((14, r[1]));
-        }
-        for i in 2..=13 {
-            if r[i] > 0 {
-                xs.push((i as u8, r[i]));
-            }
-        }
-        xs.sort_unstable_by(|x, y| {
-            // compare count first
-            let r0 = y.1.cmp(&x.1);
-            if r0 != Ordering::Equal {
-                r0
-            } else {
-                y.0.cmp(&x.0)
-            }
-        });
-
-        xs
-    }
-
-    fn find_straight(r: &RankMap) -> Option<u8> {
+    fn find_straight(r: &RankFreq) -> Option<u8> {
+        // TODO: probably can dynamic programming this.
+        // Try royal flush first, then go downwards.
         if r[1] == 1 && (10..=13).all(|i| r[i] == 1) {
             return Some(14);
         }
 
-        for i in (1 .. 9).rev() {
-            if (i ..=i+4).all(|j| r[j as usize] == 1) {
-                return Some(i+4);
+        for i in (1..9).rev() {
+            if (i..=i + 4).all(|j| r[j as usize] == 1) {
+                return Some(i + 4);
             }
         }
         None
     }
 
-    fn to_rev_sorted(r: &RankMap) -> Vec<u8> {
-        let mut xs = vec![];
-        // Treat Ace as 14.
-        for _ in 0..r[1] {
-            xs.push(14)
-        }
-
-        for i in (2..=13).rev() {
-            for _ in 0..r[i] {
-                xs.push(i as u8);
-            }
-        }
-        xs
-    }
-
     pub fn rank(cards: Vec<Card>) -> HandRank {
+        // TODO: might not need HashSet here.
         let uniq_suits = cards.iter().map(|s| s.suit).collect::<HashSet<_>>().len();
-        let rank_counts: RankMap = {
-            let mut counts = [0; 14];
+        let rank_freq: RankFreq = {
+            let mut freq = [0; 14];
             for c in cards {
-                counts[c.rank.0 as usize] += 1;
+                freq[c.rank.0 as usize] += 1;
             }
-            counts
+            freq
         };
-        let straight = HandRank::find_straight(&rank_counts);
-        let rev_sorted = HandRank::to_rev_sorted(&rank_counts);
+        let straight = HandRank::find_straight(&rank_freq);
+        let rank_count = to_rank_count(&rank_freq);
+        let rev_sorted = unpack_rank_count(&rank_count);
 
         if uniq_suits == 1 {
             // This is a flush.
@@ -189,45 +226,40 @@ impl HandRank {
             };
         }
         if let Some(v) = straight {
-            // not a flush but a straight
+            // Not a flush but a straight
             return HandRank::Straight(v);
         }
-        let rev_sorted_uniq: Vec<u8> = {
-            let mut v = rev_sorted.clone();
-            v.dedup();
-            v
-        };
-        let rank_count2 = HandRank::to_rank_count2(&rank_counts);
-        if rank_count2.len() == 2 {
+        let rank_count = to_rank_count(&rank_freq);
+        if rank_count.len() == 2 {
             // Full house or Four of a kind
-            if rank_count2[0].1 == 4 {
-                return HandRank::FourOfAKind(rank_count2[0].0, rank_count2[1].0);
+            if rank_count[0].1 == 4 {
+                return HandRank::FourOfAKind(rank_count[0].0, rank_count[1].0);
             }
-            if rank_count2[0].1 == 3 {
-                return HandRank::FullHouse(rank_count2[0].0, rank_count2[1].0);
+            if rank_count[0].1 == 3 {
+                return HandRank::FullHouse(rank_count[0].0, rank_count[1].0);
             }
 
             panic!("unreachable");
         }
-        if rank_count2.len() == 3 {
-            if rank_count2[0].1 == 3 {
+        if rank_count.len() == 3 {
+            if rank_count[0].1 == 3 {
                 return HandRank::ThreeOfAKind(
-                    rank_count2[0].0,
-                    rank_count2[1].0,
-                    rank_count2[2].0,
+                    rank_count[0].0,
+                    rank_count[1].0,
+                    rank_count[2].0,
                 );
             }
-            if rank_count2[0].1 == 2 {
-                return HandRank::TwoPair(rank_count2[0].0, rank_count2[1].0, rank_count2[2].0);
+            if rank_count[0].1 == 2 {
+                return HandRank::TwoPair(rank_count[0].0, rank_count[1].0, rank_count[2].0);
             }
         }
 
-        if rank_count2[0].1 == 2 {
+        if rank_count[0].1 == 2 {
             return HandRank::OnePair(
-                rank_count2[0].0,
-                rank_count2[1].0,
-                rank_count2[2].0,
-                rank_count2[3].0,
+                rank_count[0].0,
+                rank_count[1].0,
+                rank_count[2].0,
+                rank_count[3].0,
             );
         }
 
@@ -248,11 +280,9 @@ pub fn winning_hands<'a>(hands_raw: &[&'a str]) -> Option<Vec<&'a str>> {
         for x in hands_raw.iter() {
             xs.push(Hand::parse(x)?);
         }
-
         xs.sort_unstable_by(|x, y| y.rank.cmp(&x.rank));
         xs
     };
-    println!("{:?}", hands);
     Some(
         hands
             .iter()
