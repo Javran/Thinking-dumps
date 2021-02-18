@@ -103,7 +103,8 @@ impl<'a> Hand<'a> {
 
    For example:
    - FourOfAKind(3,2) represents 3,3,3,3,2,2
-   - TwoPair(14,13,12) represents 14,14,13,13,12
+   - TwoPair(14,13,12) represents A,A,K,K,Q
+   - StraightFlush(14) represents A,K,Q,J,10 (a.k.a. Royal flush)
 
  - whenever `Vec<u8>` appears, it's always of size 5
    (while it makes more sense to use `[u8;5]`, `Vec`'s interface is a bit more convenient).
@@ -120,7 +121,6 @@ enum HandRank {
     FullHouse(u8, u8),
     FourOfAKind(u8, u8),
     StraightFlush(u8),
-    RoyalFlush,
 }
 
 /*
@@ -220,7 +220,6 @@ impl HandRank {
         if uniq_suits == 1 {
             // This is a flush.
             return match straight {
-                Some(14) => HandRank::RoyalFlush,
                 Some(v) => HandRank::StraightFlush(v),
                 None => HandRank::Flush(unpack_rank_count(&rank_count)),
             };
