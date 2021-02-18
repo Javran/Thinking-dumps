@@ -1,6 +1,8 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Forth
   ( ForthError (..)
@@ -15,8 +17,6 @@ where
 import Control.Applicative
 import Control.Carrier.Error.Either
 import Control.Carrier.State.Strict
-import Control.Effect.Error
-import Control.Effect.State
 import Control.Monad
 import qualified Data.Attoparsec.Text as P
 import Data.Bifunctor
@@ -29,33 +29,41 @@ data ForthError
   | StackUnderflow
   | InvalidWord
   | UnknownWord T.Text
+  | SyntaxError String
   deriving (Show, Eq)
 
 type ForthState = (Env, [Int])
 
 data Stmt
-  = Num Int
-  | Sym T.Text
-  | WordDecl T.Text [Stmt]
+  = -- | Statement that pushs a number
+    Num Int
+  | -- | Statement that involves a symbol
+    Sym T.Text
+  | -- | Word declaration, name must be in lowercase.
+    WordDecl T.Text [Stmt]
   deriving (Show)
 
 type Env = M.Map T.Text Action
 
 data Action
-  = Prim (ForthState -> Either ForthError ForthState)
-  | Closure Env [Stmt]
-
-type EvalCtx = (Env, ForthState)
+  = -- | A primitive action operates on ForthState and might raise failure through Either
+    Prim (ForthState -> Either ForthError ForthState)
+  | -- | A user-defined word with environment when this word is defined.
+    Closure Env [Stmt]
 
 emptyState :: ForthState
 emptyState = (initEnv, [])
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
-evalText text st = case run $ runError $ runState st $ mapM evalStmt parsed of
-  Left err -> Left err
-  Right (st, _) -> Right st
-  where
-    Right parsed = parseForth text
+evalText text st =
+  case parseForth text of
+    Left attoErr -> Left $ SyntaxError attoErr
+    Right stmts ->
+      bimap id fst
+        . run
+        . runError
+        . runState st
+        $ mapM_ evalStmt stmts
 
 toList :: ForthState -> [Int]
 toList = reverse . snd
@@ -63,62 +71,61 @@ toList = reverse . snd
 evalAction :: (Has (State ForthState) sig m, Has (Error ForthError) sig m) => Action -> m ()
 evalAction = \case
   Prim prim -> do
-    st <- get
-    case prim st of
+    s <- get
+    case prim s of
       Left err -> throwError err
-      Right st' -> put st'
+      Right s' -> put s'
   Closure cEnv body -> do
-    (st :: ForthState) <- get
-    let (fEnv, _) = st
-    modify (first (const cEnv) :: ForthState -> ForthState)
-    mapM evalStmt body
-    modify (first (const fEnv) :: ForthState -> ForthState)
+    fEnv <- gets @ForthState fst
+    let restore = modify @ForthState (first (const fEnv))
+    modify @ForthState (first (const cEnv))
+    -- make sure to recover environment otherwise we are exiting with closure's environment set.
+    mapM_ evalStmt body
+      `catchError` (\e -> restore >> throwError @ForthError e)
+    restore
 
 evalStmt :: (Has (State ForthState) sig m, Has (Error ForthError) sig m) => Stmt -> m ()
 evalStmt = \case
-  Num n -> modify (second (n :) :: ForthState -> ForthState)
+  Num n -> modify @ForthState (second (n :))
   Sym s -> do
-    (env :: Env) <- gets (fst :: ForthState -> Env)
+    env <- gets @ForthState fst
     case env M.!? s of
       Nothing -> throwError (UnknownWord s)
       Just action -> evalAction action
   WordDecl wName body -> do
     when (T.all isDigit wName) $
       throwError InvalidWord
-    e <- gets (fst :: ForthState -> Env)
-    let clo = Closure e body
-    modify (first (M.insert wName clo) :: ForthState -> ForthState)
+    e <- gets @ForthState fst
+    modify @ForthState (first (M.insert wName $ Closure e body))
 
 initEnv :: M.Map T.Text Action
 initEnv =
   M.fromList
-    [ declBinOp "+" (\b a st -> a + b : st)
-    , declBinOp "-" (\b a st -> a - b : st)
-    , declBinOp "*" (\b a st -> a * b : st)
-    , ( "/"
-      , Prim $ \(env, st) -> case st of
-          b : a : st1 ->
-            if b == 0
-              then Left DivisionByZero
-              else let st2 = (a `quot` b) : st1 in Right (env, st2)
-          _ -> Left StackUnderflow
-      )
-    , declUnaryOp "dup" (\a st -> a : a : st)
-    , declUnaryOp "drop" (\_a st -> st)
-    , declBinOp "swap" (\b a st -> a : b : st)
-    , declBinOp "over" (\b a st -> a : b : a : st)
+    [ declBinOp "+" (\b a st -> pure $ a + b : st)
+    , declBinOp "-" (\b a st -> pure $ a - b : st)
+    , declBinOp "*" (\b a st -> pure $ a * b : st)
+    , declBinOp
+        "/"
+        (\b a st ->
+           if b == 0
+             then Left DivisionByZero
+             else pure $ a `quot` b : st)
+    , declUnaryOp "dup" (\a st -> pure $ a : a : st)
+    , declUnaryOp "drop" (\_a st -> pure st)
+    , declBinOp "swap" (\b a st -> pure $ a : b : st)
+    , declBinOp "over" (\b a st -> pure $ a : b : a : st)
     ]
   where
     declUnaryOp sym uOp =
       ( sym
       , Prim $ \(env, st) -> case st of
-          a : st1 -> let st2 = uOp a st1 in Right (env, st2)
+          a : st1 -> let st2 = uOp a st1 in (env,) <$> st2
           _ -> Left StackUnderflow
       )
     declBinOp sym binOp =
       ( sym
       , Prim $ \(env, st) -> case st of
-          b : a : st1 -> let st2 = binOp b a st1 in Right (env, st2)
+          b : a : st1 -> let st2 = binOp b a st1 in (env,) <$> st2
           _ -> Left StackUnderflow
       )
 
