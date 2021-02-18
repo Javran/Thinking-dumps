@@ -1,51 +1,28 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell #-}
 
 module Forth
   ( ForthError (..)
   , ForthState
   , evalText
-  , formatStack
-  , emptyState
   , toList
+  , emptyState
+  , parseForth
   )
 where
 
-import Control.Eff
-import Control.Eff.Exception
-import Control.Eff.State.Strict
-import Control.Lens
+import Control.Applicative
+import Control.Carrier.Error.Either
+import Control.Carrier.State.Strict
+import Control.Effect.Error
+import Control.Effect.State
 import Control.Monad
+import qualified Data.Attoparsec.Text as P
+import Data.Bifunctor
 import Data.Char
-import Data.Functor
 import qualified Data.Map as M
 import qualified Data.Text as T
-import Text.ParserCombinators.ReadP hiding (get)
-
-{-
-  Note: this approach won't pass "can use different words with the same name" test,
-  as that will require keeping a closure that current model does not capture.
- -}
-
--- | a Forth program command, words are not normalized
---   and the interpreter is responsible for normalizing
-data ForthCommand
-  = -- | push a number onto stack
-    FNum Int
-  | -- | interpret a word
-    FWord String
-  | -- | define a word
-    FDef String [ForthCommand]
-
-data ForthState = FState
-  { _fStack :: [Int]
-  , _fEnv :: M.Map String [ForthCommand]
-  }
-
-makeLenses ''ForthState
 
 data ForthError
   = DivisionByZero
@@ -54,177 +31,114 @@ data ForthError
   | UnknownWord T.Text
   deriving (Show, Eq)
 
--- |
--- * Parsing
--- From testcases we know printable but non-space characters
--- are considered valid for this language.
---
--- Each consecutive non-space characters are considered a valid atom / token
--- for this language, additionally, there are few rules:
---
---     * there are 2 special tokens: ":" is used to mark the beginning of
---       a word definition whereas ";" marks the end of the definition
---     * if a token consists of only digits, then it is a number
---     * otherwise it's a word (referred to by name)
---
--- |
+type ForthState = (Env, [Int])
 
--- | return true if the character is non-printable or is space
-isFSpace :: Char -> Bool
-isFSpace x = not (isPrint x) || isSpace x
+data Stmt
+  = Num Int
+  | Sym T.Text
+  | WordDecl T.Text [Stmt]
+  deriving (Show)
 
--- | skip spaces in Forth
-skipFSpaces :: ReadP ()
-skipFSpaces = void (munch isFSpace)
+type Env = M.Map T.Text Action
 
--- | transforms a parser so that it consumes all following spaces
---   in addition to finish its parsing task.
-lexeme :: ReadP a -> ReadP a
-lexeme = (<* skipFSpaces)
+data Action
+  = Prim (ForthState -> Either ForthError ForthState)
+  | Closure Env [Stmt]
 
--- | parse a word or a digit, assuming the first character is not a space
-wordOrDigit :: ReadP ForthCommand
-wordOrDigit = do
-  raw <- munch1 (not . isFSpace)
-  case raw of
-    -- ":" and ";" are special case, we shouldn't treat them
-    -- as normal words
-    ":" -> pfail
-    ";" -> pfail
-    _ ->
-      return
-        (if all isDigit raw
-           then FNum (read raw)
-           else FWord raw)
-
--- | parse a definition, assuming the first character is not a space
-definition :: ReadP ForthCommand
-definition = do
-  void $ lexeme (char ':')
-  wordName <- lexeme (munch1 (not . isFSpace))
-  as <- sepBy command skipFSpaces
-  skipFSpaces
-  void $ lexeme (char ';')
-  -- despite that names are case-insensitive
-  -- we choose not to "normalize" it too early
-  -- this could benefit error messages as less modification
-  -- is introduced during parsing
-  return (FDef wordName as)
-
--- | parse a forth command, a command is either word, digits or a definition
---   it is assumed the first character is not a space
-command :: ReadP ForthCommand
-command = wordOrDigit +++ definition
-
--- | parse a complete Forth program from raw strings
-parseForth :: String -> [ForthCommand]
-parseForth =
-  getResult
-    . readP_to_S
-      (skipSpaces
-         *> sepBy command skipFSpaces
-         <* skipFSpaces
-         <* eof)
-  where
-    getResult xs = case filter (null . snd) xs of
-      (x, _) : _ -> x
-      [] -> error "error while parsing"
-
--- | parse a complete Forth program from raw texts
-parseForthT :: T.Text -> [ForthCommand]
-parseForthT = parseForth . T.unpack
+type EvalCtx = (Env, ForthState)
 
 emptyState :: ForthState
-emptyState = FState [] M.empty
-
--- | evaluate a Forth program
-evalProg
-  :: forall r.
-  ( Member (State ForthState) r
-  , Member (Exc ForthError) r
-  )
-  => ForthCommand
-  -> Eff r ()
-evalProg fc = case fc of
-  -- a number itself is a command of pushing that number
-  FNum v -> push v
-  -- for a definition, its name is first normalized by casting all characters
-  -- into lowercases and store the definition in current environment
-  FDef name cmds -> do
-    let normName = map toLower name
-    when (all isDigit name) (throwError InvalidWord)
-    modify (& fEnv %~ M.insert normName cmds)
-  FWord name ->
-    -- first try evalWord, if it fails, we fallback to attempt evalPrim
-    -- if primitives are not expected to be overwritten, we can simply
-    -- swap the position of evalWord and evalPrim, so primitives are attempted
-    -- first without looking up the environment
-    catchError (evalWord name) $ \case
-      UnknownWord n | name == T.unpack n -> evalPrim name
-      e -> throwError e
-  where
-    push :: Int -> Eff r ()
-    push v = modify (& fStack %~ (v :))
-    pop :: Eff r Int
-    pop =
-      ((^. fStack) <$> get)
-        >>= \case
-          [] -> throwError StackUnderflow
-          (v : xs) -> modify (& fStack .~ xs) >> return v
-    -- evaluate primitive operations
-    evalPrim :: String -> Eff r ()
-    evalPrim cmd = case map toLower cmd of
-      "+" -> liftBinOp (+)
-      "-" -> liftBinOp (-)
-      "*" -> liftBinOp (*)
-      "/" -> do
-        b <- pop
-        when (b == 0) (throwError DivisionByZero)
-        a <- pop
-        push (a `div` b)
-      -- DUP, SWAP, DROP, OVER can be implemented in terms
-      -- of push and pop operations,
-      -- but here we directly manipulate the whole stack instead
-      -- it's just a trade-off between efficiency and simplicity
-      "dup" -> do
-        stk <- (^. fStack) <$> get
-        case stk of
-          (x : _) -> modify (& fStack .~ (x : stk))
-          _ -> throwError StackUnderflow
-      "swap" -> do
-        stk <- (^. fStack) <$> get
-        case stk of
-          (a : b : xs) -> modify (& fStack .~ (b : a : xs))
-          _ -> throwError StackUnderflow
-      "drop" -> void pop
-      "over" -> do
-        stk <- (^. fStack) <$> get
-        case stk of
-          (_ : b : _) -> modify (& fStack .~ (b : stk))
-          _ -> throwError StackUnderflow
-      _ -> throwError (UnknownWord (T.pack cmd))
-      where
-        liftBinOp bin = do b <- pop; a <- pop; push (a `bin` b)
-    -- evaluate a word by looking up the environment to pick
-    -- the correponding sequence of commands
-    evalWord :: String -> Eff r ()
-    evalWord name = do
-      env <- (^. fEnv) <$> get
-      case M.lookup (map toLower name) env of
-        Nothing -> throwError (UnknownWord (T.pack name))
-        Just cmds -> mapM_ evalProg cmds
+emptyState = (initEnv, [])
 
 evalText :: T.Text -> ForthState -> Either ForthError ForthState
-evalText rawText initState =
-  run
-    . runError -- handle exception requests
-    . execState initState -- handle state requests
-    $ program
+evalText text st = case run $ runError $ runState st $ mapM evalStmt parsed of
+  Left err -> Left err
+  Right (st, _) -> Right st
   where
-    ast = parseForthT rawText
-    program = mapM evalProg ast
+    Right parsed = parseForth text
 
-formatStack :: ForthState -> T.Text
-formatStack = T.pack . unwords . map show . reverse . (^. fStack)
+toList :: ForthState -> [Int]
+toList = reverse . snd
 
-toList = reverse . _fStack
+evalAction :: (Has (State ForthState) sig m, Has (Error ForthError) sig m) => Action -> m ()
+evalAction = \case
+  Prim prim -> do
+    st <- get
+    case prim st of
+      Left err -> throwError err
+      Right st' -> put st'
+  Closure cEnv body -> do
+    (st :: ForthState) <- get
+    let (fEnv, _) = st
+    modify (first (const cEnv) :: ForthState -> ForthState)
+    mapM evalStmt body
+    modify (first (const fEnv) :: ForthState -> ForthState)
+
+evalStmt :: (Has (State ForthState) sig m, Has (Error ForthError) sig m) => Stmt -> m ()
+evalStmt = \case
+  Num n -> modify (second (n :) :: ForthState -> ForthState)
+  Sym s -> do
+    (env :: Env) <- gets (fst :: ForthState -> Env)
+    case env M.!? s of
+      Nothing -> throwError (UnknownWord s)
+      Just action -> evalAction action
+  WordDecl wName body -> do
+    when (T.all isDigit wName) $
+      throwError InvalidWord
+    e <- gets (fst :: ForthState -> Env)
+    let clo = Closure e body
+    modify (first (M.insert wName clo) :: ForthState -> ForthState)
+
+initEnv :: M.Map T.Text Action
+initEnv =
+  M.fromList
+    [ declBinOp "+" (\b a st -> a + b : st)
+    , declBinOp "-" (\b a st -> a - b : st)
+    , declBinOp "*" (\b a st -> a * b : st)
+    , ( "/"
+      , Prim $ \(env, st) -> case st of
+          b : a : st1 ->
+            if b == 0
+              then Left DivisionByZero
+              else let st2 = (a `quot` b) : st1 in Right (env, st2)
+          _ -> Left StackUnderflow
+      )
+    , declUnaryOp "dup" (\a st -> a : a : st)
+    , declUnaryOp "drop" (\_a st -> st)
+    , declBinOp "swap" (\b a st -> a : b : st)
+    , declBinOp "over" (\b a st -> a : b : a : st)
+    ]
+  where
+    declUnaryOp sym uOp =
+      ( sym
+      , Prim $ \(env, st) -> case st of
+          a : st1 -> let st2 = uOp a st1 in Right (env, st2)
+          _ -> Left StackUnderflow
+      )
+    declBinOp sym binOp =
+      ( sym
+      , Prim $ \(env, st) -> case st of
+          b : a : st1 -> let st2 = binOp b a st1 in Right (env, st2)
+          _ -> Left StackUnderflow
+      )
+
+parseForth :: T.Text -> Either String [Stmt]
+parseForth = P.parseOnly (P.skipSpace *> many stmt <* P.endOfInput)
+  where
+    stmt :: P.Parser Stmt
+    stmt = wordDecl <|> num <|> symbol
+      where
+        nonSpaces :: P.Parser T.Text
+        nonSpaces = P.takeWhile1 (not . isSpace) <* P.skipSpace
+        symbol = do
+          x <- nonSpaces
+          Sym (T.toLower x) <$ guard (x /= ":" && x /= ";")
+        num = Num <$> P.decimal <* P.skipSpace
+        wordDecl = do
+          ":" >> P.skipSpace
+          -- we could just reject the language here if `wName` is nothing but digits,
+          -- but it seems the intention is to reject it during evaluation.
+          wName <- nonSpaces
+          body <- many stmt
+          ";" >> P.skipSpace
+          pure $ WordDecl (T.toLower wName) body

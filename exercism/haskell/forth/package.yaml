@@ -10,8 +10,8 @@ library:
   source-dirs: src
   ghc-options: -Wall
   dependencies:
-    - lens
-    - extensible-effects
+    - attoparsec
+    - fused-effects
     - containers
 
 tests:
