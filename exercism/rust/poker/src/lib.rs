@@ -8,11 +8,8 @@
 */
 
 /*
- Ranking reference: https://en.wikipedia.org/wiki/List_of_poker_hands as of Feb 17, 2021.
+  Ranking reference: https://en.wikipedia.org/wiki/List_of_poker_hands as of Feb 17, 2021.
 */
-
-use std::cmp::Ordering;
-use std::collections::HashSet;
 
 /*
  Only stores 1 ~ 13, where 1 => A, 11 => J, 12 => Q, 13 => K.
@@ -149,34 +146,31 @@ type RankCount = Vec<(u8, usize)>;
 fn to_rank_count(r: &RankFreq) -> RankCount {
     let mut xs: RankCount = vec![];
     /*
-      Treat Ace as 14, this won't have correctness implication
-      as long as the resulting structure is never used to check for Straight.
+     Treat Ace as 14, this won't have correctness implication
+     as long as the resulting structure is never used to check for Straight.
 
-      The observation is: the only time Ace is treated as 1 is when
-      the hand needs it to complete a Straight.
-     */
+     The observation is: the only time Ace is treated as 1 is when
+     the hand needs it to complete a Straight.
+    */
     if r[1] > 0 {
         xs.push((14, r[1]));
     }
+    #[allow(clippy::needless_range_loop)]
     for i in 2..=13 {
         if r[i] > 0 {
             xs.push((i as u8, r[i]));
         }
     }
     xs.sort_unstable_by(|x, y| {
-        // compare count first
-        let r0 = y.1.cmp(&x.1);
-        if r0 != Ordering::Equal {
-            r0
-        } else {
-            y.0.cmp(&x.0)
-        }
+        // larger freq first then larger rank
+        y.1.cmp(&x.1).then(y.0.cmp(&x.0))
     });
 
     xs
 }
 
 /* Unpacks RankCount to sorted 5 elements */
+#[allow(clippy::ptr_arg)]
 fn unpack_rank_count(rc: &RankCount) -> Vec<u8> {
     let mut xs = Vec::with_capacity(5);
     for (r, freq) in rc {
@@ -204,8 +198,12 @@ impl HandRank {
     }
 
     pub fn rank(cards: Vec<Card>) -> HandRank {
-        // TODO: might not need HashSet here.
-        let uniq_suits = cards.iter().map(|s| s.suit).collect::<HashSet<_>>().len();
+        let uniq_suits = {
+            let mut xs = cards.iter().map(|c| c.suit).collect::<Vec<u8>>();
+            xs.sort_unstable();
+            xs.dedup();
+            xs.len()
+        };
         let rank_freq: RankFreq = {
             let mut freq = [0; 14];
             for c in cards {
@@ -215,14 +213,13 @@ impl HandRank {
         };
         let straight = HandRank::find_straight(&rank_freq);
         let rank_count = to_rank_count(&rank_freq);
-        let rev_sorted = unpack_rank_count(&rank_count);
 
         if uniq_suits == 1 {
             // This is a flush.
             return match straight {
                 Some(14) => HandRank::RoyalFlush,
                 Some(v) => HandRank::StraightFlush(v),
-                None => HandRank::Flush(rev_sorted),
+                None => HandRank::Flush(unpack_rank_count(&rank_count)),
             };
         }
         if let Some(v) = straight {
@@ -230,40 +227,35 @@ impl HandRank {
             return HandRank::Straight(v);
         }
         let rank_count = to_rank_count(&rank_freq);
-        if rank_count.len() == 2 {
-            // Full house or Four of a kind
-            if rank_count[0].1 == 4 {
-                return HandRank::FourOfAKind(rank_count[0].0, rank_count[1].0);
-            }
-            if rank_count[0].1 == 3 {
-                return HandRank::FullHouse(rank_count[0].0, rank_count[1].0);
-            }
 
-            panic!("unreachable");
-        }
-        if rank_count.len() == 3 {
-            if rank_count[0].1 == 3 {
-                return HandRank::ThreeOfAKind(
+        match rank_count.len() {
+            2 => {
+                // Only 2 distinct ranks, meaning Full house or Four of a kind.
+                match rank_count[0].1 {
+                    4 => HandRank::FourOfAKind(rank_count[0].0, rank_count[1].0),
+                    3 => HandRank::FullHouse(rank_count[0].0, rank_count[1].0),
+                    _ => unreachable!(),
+                }
+            }
+            3 => {
+                // Only 3 distinct ranks.
+                match rank_count[0].1 {
+                    3 => HandRank::ThreeOfAKind(rank_count[0].0, rank_count[1].0, rank_count[2].0),
+                    2 => HandRank::TwoPair(rank_count[0].0, rank_count[1].0, rank_count[2].0),
+                    _ => unreachable!(),
+                }
+            }
+            4 => {
+                // Must be exactly one pair.
+                HandRank::OnePair(
                     rank_count[0].0,
                     rank_count[1].0,
                     rank_count[2].0,
-                );
+                    rank_count[3].0,
+                )
             }
-            if rank_count[0].1 == 2 {
-                return HandRank::TwoPair(rank_count[0].0, rank_count[1].0, rank_count[2].0);
-            }
+            _ => HandRank::HighCard(unpack_rank_count(&rank_count)),
         }
-
-        if rank_count[0].1 == 2 {
-            return HandRank::OnePair(
-                rank_count[0].0,
-                rank_count[1].0,
-                rank_count[2].0,
-                rank_count[3].0,
-            );
-        }
-
-        HandRank::HighCard(rev_sorted)
     }
 }
 
@@ -272,7 +264,7 @@ impl HandRank {
 /// Note the type signature: this function should return _the same_ reference to
 /// the winning hand(s) as were passed in, not reconstructed strings which happen to be equal.
 pub fn winning_hands<'a>(hands_raw: &[&'a str]) -> Option<Vec<&'a str>> {
-    if hands_raw.len() == 0 {
+    if hands_raw.is_empty() {
         return Some(vec![]);
     }
     let hands = {
