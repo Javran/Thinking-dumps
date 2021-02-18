@@ -37,7 +37,7 @@ type ForthState = (Env, [Int])
 data Stmt
   = -- | Statement that pushs a number
     Num Int
-  | -- | Statement that involves a symbol
+  | -- | Statement that invokes a symbol
     Sym T.Text
   | -- | Word declaration, name must be in lowercase.
     WordDecl T.Text [Stmt]
@@ -76,6 +76,14 @@ evalAction = \case
       Left err -> throwError err
       Right s' -> put s'
   Closure cEnv body -> do
+    {-
+      We have a design decision to make here about whether to
+      take this potentially updated cEnv and write that back to
+      this current closure, which might require we to establish identity
+      for each created closure (which might mean to maintain more things in ForthState,
+      including a global closure counter). Won't go that extra mile though,
+      as test cases never involve topics about defining words inside definitions.
+     -}
     fEnv <- gets @ForthState fst
     let restore = modify @ForthState (first (const fEnv))
     modify @ForthState (first (const cEnv))
