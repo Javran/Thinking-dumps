@@ -1,57 +1,54 @@
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE LambdaCase #-}
+
 module BST
-  ( bstLeft
+  ( BST
+  , bstLeft
   , bstRight
   , bstValue
-  , singleton
-  , insert
+  , empty
   , fromList
-  , toList -- from Data.Foldable
+  , insert
+  , singleton
+  , toList -- exporting from Foldable.
   )
 where
 
 import Data.Foldable
-import Data.Maybe
-import Data.Monoid
 
--- from testcases, it seems this BST will always
--- contain at least one element,
--- so there is no "Nil" alternative constructor in this definition
-data BinTree a = BinTree
-  { btVal :: a
-  , btLeft :: Maybe (BinTree a)
-  , btRight :: Maybe (BinTree a)
-  }
-  deriving (Show)
+data BST a
+  = Node (BST a) a (BST a)
+  | Nil
+  deriving (Eq, Show, Foldable)
 
-bstLeft, bstRight :: BinTree a -> Maybe (BinTree a)
-bstLeft = btLeft
-bstRight = btRight
+bstAlg :: (BST a -> a -> BST a -> r) -> r -> BST a -> r
+bstAlg withNode withNil = \case
+  Nil -> withNil
+  Node l v r -> withNode l v r
 
-bstValue :: BinTree a -> a
-bstValue = btVal
+bstLeft :: BST a -> Maybe (BST a)
+bstValue :: BST a -> Maybe a
+bstRight :: BST a -> Maybe (BST a)
+(bstLeft, bstValue, bstRight) =
+  ( bstAlg (\l _ _ -> Just l) Nothing
+  , bstAlg (\_ v _ -> Just v) Nothing
+  , bstAlg (\_ _ r -> Just r) Nothing
+  )
 
-binTreeFoldMap :: Monoid m => (a -> m) -> BinTree a -> m
-binTreeFoldMap f (BinTree v l r) =
-  fromMaybe mempty (binTreeFoldMap f <$> l)
-    <> f v
-    <> fromMaybe mempty (binTreeFoldMap f <$> r)
+empty :: BST a
+empty = Nil
 
-instance Foldable BinTree where
-  foldMap = binTreeFoldMap
+insert :: Ord a => a -> BST a -> BST a
+insert x =
+  bstAlg
+    (\l v r ->
+       if x <= v
+         then Node (insert x l) v r
+         else Node l v (insert x r))
+    (singleton x)
 
-singleton :: a -> BinTree a
-singleton v = BinTree v Nothing Nothing
+singleton :: a -> BST a
+singleton x = Node Nil x Nil
 
-insert :: Ord a => a -> BinTree a -> BinTree a
-insert newV bt@(BinTree v l r) =
-  if newV <= v
-    then -- update left branch
-      bt {btLeft = Just $ maybe newLeaf (insert newV) l}
-    else -- update right branch
-      bt {btRight = Just $ maybe newLeaf (insert newV) r}
-  where
-    newLeaf = singleton newV
-
-fromList :: Ord a => [a] -> BinTree a
-fromList [] = error "source list cannot be empty"
-fromList (x : xs) = foldl (flip insert) (singleton x) xs
+fromList :: Ord a => [a] -> BST a
+fromList = foldr insert empty . reverse
