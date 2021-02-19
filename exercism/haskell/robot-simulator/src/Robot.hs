@@ -8,7 +8,7 @@ module Robot
   , mkRobot
   , bearing
   , coordinates
-  , simulate
+  , move
   )
 where
 
@@ -33,8 +33,8 @@ bearing = fst
 coordinates :: Robot -> (Int, Int)
 coordinates = snd
 
-simulate :: Robot -> String -> Robot
-simulate r xs = execState (mapM_ interpret xs) r
+move :: Robot -> String -> Robot
+move r xs = execState (mapM_ interpret xs) r
   where
     modifyBearing f = modify (& _1 %~ f)
     modifyCoord f = modify (& _2 %~ f)

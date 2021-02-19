@@ -3,8 +3,6 @@ module Roman
   )
 where
 
-import Data.Monoid
-
 {-
   we can break a number into multiple parts,
   convert them into roman-numerals separately
@@ -14,12 +12,13 @@ import Data.Monoid
 
 -}
 
-numerals :: Int -> String
+numerals :: Int -> Maybe String
 numerals n =
-  thousands !! a
-    <> hundreds !! b
-    <> tens !! c
-    <> ones !! d
+  pure $
+    thousands !! a
+      <> hundreds !! b
+      <> tens !! c
+      <> ones !! d
   where
     (n1, d) = n `quotRem` 10
     (n2, c) = n1 `quotRem` 10

@@ -1,32 +1,24 @@
 {-# LANGUAGE TupleSections #-}
 
 module DNA
-  ( count
+  ( Nucleotide (..)
   , nucleotideCounts
   )
 where
 
+import Control.Monad.Except
 import qualified Data.Map.Strict as M
 
--- | test if the given char is nucleotide
-isNucleo :: Char -> Bool
-isNucleo = (`elem` "TACGU")
+data Nucleotide = A | C | G | T deriving (Eq, Ord, Show, Read)
 
--- | count occurence of a given nucleotide
---   WARNING: will raise an error
---   if the given char is not a valid nucleotide
-count :: Char -> String -> Int
-count c
-  | isNucleo c = length . filter (== c)
-  | otherwise = error ("invalid nucleotide " ++ show c)
+-- | test if the given char is nucleotide
+getNucleotide :: Char -> Except String Nucleotide
+getNucleotide ch = case reads [ch] of
+  [(n, "")] -> pure n
+  _ -> throwError "parse error"
 
 -- | count occurences of all nucleotides given a DNA string
-nucleotideCounts :: String -> M.Map Char Int
-nucleotideCounts xs = (M.fromList . map queryToResult) "TACG"
-  where
-    queryToResult x = (x, M.findWithDefault 0 x realMap)
-    realMap =
-      (M.fromListWith (+) -- 3. accumulate
-         . map (,1) -- 2. tag with occurrence
-         . filter isNucleo) -- 1. only interested in nucleotide
-        xs
+nucleotideCounts :: String -> Either String (M.Map Nucleotide Int)
+nucleotideCounts xs = runExcept $ do
+  ns <- mapM getNucleotide xs
+  pure $ M.fromListWith (+) $ fmap (,1) ns

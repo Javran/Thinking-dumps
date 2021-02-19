@@ -9,7 +9,7 @@ class Matrix(mat: List<List<Int>>) {
         }
         val cols = mat.first().size
         val rowMaxs: List<Int> = mat.map { it.max() ?: Int.MIN_VALUE }
-        val colMins: List<Int> = (0 until cols).map { c -> mat.map { it[c] }.min() ?: Int.MAX_VALUE }
+        val colMins: List<Int> = List(cols) { c -> mat.map { it[c] }.min() ?: Int.MAX_VALUE }
 
         mat.mapIndexed { r, row ->
             row.mapIndexed { c, v ->

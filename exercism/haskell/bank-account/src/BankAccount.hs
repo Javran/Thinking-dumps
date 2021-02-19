@@ -12,7 +12,7 @@ import Data.IORef
 type BankAccount = IORef BankAccountFields
 
 data BankAccountFields = BAF
-  { _baBalance :: Int
+  { _baBalance :: Integer
   , _baIsOpen :: Bool
   }
 
@@ -27,7 +27,7 @@ closeAccount ba = atomicModifyIORef' ba closeAccount'
         then (BAF b False, ())
         else error "closing closed account"
 
-getBalance :: BankAccount -> IO (Maybe Int)
+getBalance :: BankAccount -> IO (Maybe Integer)
 getBalance x = do
   BAF b o <- readIORef x
   return $
@@ -35,7 +35,7 @@ getBalance x = do
       then Just b
       else Nothing
 
-incrementBalance :: BankAccount -> Int -> IO (Maybe Int)
+incrementBalance :: BankAccount -> Integer -> IO (Maybe Integer)
 incrementBalance x v = atomicModifyIORef' x incrementBalance'
   where
     incrementBalance' ba@(BAF b o) =

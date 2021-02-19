@@ -29,7 +29,7 @@ data Schedule
   | Fourth
   | Last
 
-meetupDay :: Schedule -> Weekday -> Int -> Int -> Day
+meetupDay :: Schedule -> Weekday -> Integer -> Int -> Day
 meetupDay sche week year month = fst $ case sche of
   Teenth -> head . filter isTeenth $ days
   First -> head days
