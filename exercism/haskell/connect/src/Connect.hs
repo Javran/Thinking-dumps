@@ -2,11 +2,11 @@
 
 module Connect
   ( winner
-  , Mark(..)
+  , Mark (..)
   )
 where
 
-import Data.Array
+import Data.Array -- TODO: probably do a Vector version of this?
 import qualified Data.Set as S
 
 {-
@@ -98,7 +98,7 @@ winner raw =
       | not (S.null whiteResult) -> Just Nought
       | otherwise -> Nothing
   where
-    board = toGameBoard raw
+    board = toGameBoard $ fmap (filter (/= ' ')) raw
     (blackBegins, blackEnds) = sideCoordsOf board Cross
     (whiteBegins, whiteEnds) = sideCoordsOf board Nought
 
