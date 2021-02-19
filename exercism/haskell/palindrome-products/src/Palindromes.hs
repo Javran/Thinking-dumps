@@ -6,7 +6,8 @@ module Palindromes
   )
 where
 
-import Control.Arrow
+import Control.Monad
+import Data.Bifunctor
 import Data.Ord
 import qualified Data.Set as S
 
@@ -78,16 +79,16 @@ smallestPalindrome'
   -> a
   -> a
   -> Maybe (a, [(a, a)])
-smallestPalindrome' toOrd fromOrd next l r =
-  let l' = toOrd l
-      r' = toOrd r
-   in if l' <= r'
-        then smallestPalindromeIntern l' r'
-        else smallestPalindromeIntern r' l'
+smallestPalindrome' toOrd fromOrd next l r = do
+  guard $ l <= r
+  let (l', r') = (toOrd l, toOrd r)
+  if l' <= r'
+    then smallestPalindromeIntern l' r'
+    else smallestPalindromeIntern r' l'
   where
     smallestPalindromeIntern vLow vHigh = do
       (a, b) <- search2 vLow vHigh Nothing
-      pure (fromOrd a, map (fromOrd *** fromOrd) . S.toList $ b)
+      pure (fromOrd a, map (bimap fromOrd fromOrd) . S.toList $ b)
       where
         -- inner search loop, we want to find v1,v2 such that (v1*v2) is a palindrome
         -- and try to update current best result if possible
