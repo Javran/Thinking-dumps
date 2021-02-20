@@ -55,8 +55,7 @@ enum Action {
     Prim(fn(&mut Forth) -> ForthResult),
     Closure {
         env: Env,
-        // ideally this can be borrowed from Stmt,
-        // but I don't want lifetime to spread everywhere.
+        // Those are usually moved from `WordDef`.
         body: Vec<Instr>,
     },
 }
@@ -210,8 +209,8 @@ impl Forth {
 
     pub fn eval(&mut self, input: &str) -> ForthResult {
         parse(input)?
-            .iter()
-            .try_for_each(|stmt| self.eval_stmt(&stmt))
+            .into_iter()
+            .try_for_each(|stmt| self.eval_stmt(stmt))
     }
 
     fn eval_action(&mut self, action: &Action) -> ForthResult {
@@ -229,25 +228,25 @@ impl Forth {
                 let tmp_env = self.env.clone();
                 self.env = env.clone();
                 let result = body
-                    .iter()
-                    .try_for_each(|instr| self.eval_stmt(&Stmt::Instr(instr.clone())));
+                    .into_iter()
+                    .try_for_each(|instr| self.eval_stmt(Stmt::Instr(instr.clone())));
                 self.env = tmp_env;
                 result
             }
         }
     }
 
-    fn eval_stmt(&mut self, stmt: &Stmt) -> ForthResult {
+    fn eval_stmt(&mut self, stmt: Stmt) -> ForthResult {
         match stmt {
             Stmt::Instr(Instr::Num(v)) => {
-                self.push(*v);
+                self.push(v);
                 Ok(())
             }
             Stmt::Instr(Instr::Op(sym)) =>
             // seems silly that this needs to be cloned
             // but I don't have a better way to work around this borrowing issue.
             {
-                match self.env.get(sym).cloned() {
+                match self.env.get(&sym).cloned() {
                     Some(action) => self.eval_action(&action),
                     None => Err(Error::UnknownWord),
                 }
