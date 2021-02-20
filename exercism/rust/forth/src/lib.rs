@@ -66,8 +66,8 @@ fn parse_stmt(tokens: &[&str]) -> FResult<Stmt> {
                     .map(|tok| parse_instr(tok))
                     .collect(),
             })
-        },
-        _ => Ok(Stmt::Instr(parse_instr(hd[0])))
+        }
+        _ => Ok(Stmt::Instr(parse_instr(hd[0]))),
     }
 }
 
@@ -102,53 +102,43 @@ impl Default for Forth {
     fn default() -> Forth {
         let env: Env = {
             let mut m = HashMap::new();
-            // TODO: macros
-            m.insert(
-                "+".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    let a = state.pop()?;
-                    state.push(a + b);
-                    Ok(())
-                }),
-            );
 
-            m.insert(
-                "-".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    let a = state.pop()?;
-                    state.push(a - b);
-                    Ok(())
-                }),
-            );
+            macro_rules! define_op {
+                ($op_name:expr, $b: ident, $a: ident, $state: ident, $body:block) => {
+                    m.insert(
+                        $op_name.to_lowercase(),
+                        Action::Prim(|$state: &mut Forth| -> ForthResult {
+                            let $b = $state.pop()?;
+                            let $a = $state.pop()?;
+                            $body
+                        }),
+                    );
+                };
+            }
 
-            m.insert(
-                "*".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    let a = state.pop()?;
-                    state.push(a * b);
-                    Ok(())
-                }),
-            );
-
-            m.insert(
-                "/".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    if b == 0 {
-                        return Err(Error::DivisionByZero);
-                    }
-                    let a = state.pop()?;
-                    state.push(a / b);
-                    Ok(())
-                }),
-            );
+            define_op!("+", b, a, state, {
+                state.push(a + b);
+                Ok(())
+            });
+            define_op!("-", b, a, state, {
+                state.push(a - b);
+                Ok(())
+            });
+            define_op!("*", b, a, state, {
+                state.push(a * b);
+                Ok(())
+            });
+            define_op!("/", b, a, state, {
+                if b == 0 {
+                    return Err(Error::DivisionByZero);
+                }
+                state.push(a / b);
+                Ok(())
+            });
 
             m.insert(
                 "dup".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
+                Action::Prim(|state: &mut Forth| -> ForthResult {
                     let a = state.pop()?;
                     state.push(a);
                     state.push(a);
@@ -157,34 +147,24 @@ impl Default for Forth {
             );
             m.insert(
                 "drop".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
+                Action::Prim(|state: &mut Forth| -> ForthResult {
                     state.pop()?;
                     Ok(())
                 }),
             );
+            define_op!("swap", b, a, state, {
+                state.push(b);
+                state.push(a);
+                Ok(())
+            });
 
-            m.insert(
-                "swap".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    let a = state.pop()?;
-                    state.push(b);
-                    state.push(a);
-                    Ok(())
-                }),
-            );
+            define_op!("over", b, a, state, {
+                state.push(a);
+                state.push(b);
+                state.push(a);
+                Ok(())
+            });
 
-            m.insert(
-                "over".to_string(),
-                Action::Prim(|state: &mut Forth| -> Result<(), Error> {
-                    let b = state.pop()?;
-                    let a = state.pop()?;
-                    state.push(a);
-                    state.push(b);
-                    state.push(a);
-                    Ok(())
-                }),
-            );
             m
         };
 
