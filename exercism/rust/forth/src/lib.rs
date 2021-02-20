@@ -48,29 +48,21 @@ fn parse_instr(raw: &str) -> Instr {
     }
 }
 
-fn parse_stmt(tokens: &[&str]) -> FResult<Stmt> {
-    // This implicitly requires that input is not empty.
-    let (hd, tl) = tokens.split_at(1);
-    match *hd.first().unwrap() {
-        ":" => {
-            // Recognize syntax: ':' <word name> <stmt>* ';'
-            if tl.len() <= 1 || tl.last() != Some(&";") {
-                panic!("Incomplete word declaration.");
-            }
-            let name = tl[0];
-            if str::parse::<Value>(name).is_ok() {
-                return Err(Error::InvalidWord);
-            }
-            Ok(Stmt::WordDef {
-                name: name.to_lowercase(),
-                body: tl[1..tl.len() - 1]
-                    .iter()
-                    .map(|tok| parse_instr(tok))
-                    .collect(),
-            })
-        }
-        _ => Ok(Stmt::Instr(parse_instr(hd[0]))),
+// Accepts a slice representing a word declaration without the surrounding ':' and ';'.
+fn parse_word_decl(tokens: &[&str]) -> FResult<Stmt> {
+    if tokens.is_empty() {
+        return Err(Error::InvalidWord);
     }
+
+    let (hd, tl) = tokens.split_at(1);
+    let name = hd[0];
+    if str::parse::<Value>(name).is_ok() {
+        return Err(Error::InvalidWord);
+    }
+    Ok(Stmt::WordDef {
+        name: name.to_lowercase(),
+        body: tl.iter().map(|tok| parse_instr(tok)).collect(),
+    })
 }
 
 fn parse(raw: &str) -> FResult<Vec<Stmt>> {
@@ -80,6 +72,9 @@ fn parse(raw: &str) -> FResult<Vec<Stmt>> {
         return Ok(vec![]);
     }
 
+    // Old fashion index manipulations.
+    // This would be more doable using iterators,
+    // should `take_while` also return the remaining iterator rather than ignoring it.
     let mut i = 0;
     while i < tokens.len() {
         if tokens[i] == ":" {
@@ -90,7 +85,7 @@ fn parse(raw: &str) -> FResult<Vec<Stmt>> {
             if j == tokens.len() {
                 return Err(Error::InvalidWord);
             }
-            stmts.push(parse_stmt(&tokens[i..=j])?);
+            stmts.push(parse_word_decl(&tokens[i + 1..j])?);
             i = j + 1;
         } else {
             stmts.push(Stmt::Instr(parse_instr(tokens[i])));
