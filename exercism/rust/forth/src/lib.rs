@@ -2,10 +2,14 @@
 use im::HashMap;
 
 pub type Value = i32;
+// More typing but less typing :)
 type FResult<R> = Result<R, Error>;
 pub type ForthResult = FResult<()>;
 
 pub struct Forth {
+    // Ideally Env should be passed around rather than being stored as a member of
+    // Forth, but the way test suite is implemented doesn't pass around
+    // any objects between `Forth::eval` calls, so all states must be kept here.
     env: Env,
     stack: Vec<Value>,
 }
@@ -20,17 +24,32 @@ pub enum Error {
 
 type Env = HashMap<String, Action>;
 
+/// `Instr` represents basic Forth instructions.
+/// Note that operation's name is always in lowercase.
 #[derive(Clone)]
 enum Instr {
     Num(Value),
     Op(String),
 }
 
+/// `Stmt` represents a Forth statement,
+/// which is either an `Instr` or a word definition (`WordDef`).
+/// Note that word name is always in lowercase.
 enum Stmt {
     Instr(Instr),
-    WordDef { name: String, body: Vec<Instr> },
+    WordDef {
+        name: String,
+        // We have this distinction between `Instr` and `Stmt`
+        // so that body doesn't have to be a `Vec<Stmt>`.
+        // It's possible, but it comes with a lot more complexity and caveats
+        // that this exercise's test suite doesn't specify.
+        body: Vec<Instr>,
+    },
 }
 
+/// `Action` stores actions available on current Forth machine.
+/// - `Prim` are primitive actions that ships with Forth's initial environment.
+/// - `Closure` represents user-defined words and the environment the word is defined in.
 #[derive(Clone)]
 enum Action {
     Prim(fn(&mut Forth) -> ForthResult),
@@ -49,7 +68,7 @@ fn parse_instr(raw: &str) -> Instr {
     }
 }
 
-// Accepts a slice representing a word declaration without the surrounding ':' and ';'.
+/// Parses a slice representing a word declaration without the surrounding ':' and ';'.
 fn parse_word_decl(tokens: &[&str]) -> FResult<Stmt> {
     if tokens.is_empty() {
         return Err(Error::InvalidWord);
@@ -97,12 +116,15 @@ fn parse(raw: &str) -> FResult<Vec<Stmt>> {
 }
 
 impl Default for Forth {
+    // clippy gets upset if I don't implement Default.
     fn default() -> Forth {
         let env: Env = {
             let mut m = HashMap::new();
 
             macro_rules! define_op {
                 // Note that operands are listed in the order they are popped.
+                // I would prefer if arguments are reversed,
+                // but I haven't found a good way to do that without hurting readablity.
                 ($op_name:expr, $state: ident, $($operand: ident,)+ $body:block) => {
                     m.insert(
                         $op_name.to_lowercase(),
@@ -173,6 +195,7 @@ impl Forth {
         }
     }
 
+    // Unless we want to put a maximum stack limit, `push` can't fail.
     fn push(&mut self, v: Value) {
         self.stack.push(v)
     }
@@ -195,6 +218,14 @@ impl Forth {
         match action {
             Action::Prim(f) => f(self),
             Action::Closure { env, body } => {
+                // The idea of a closure is that it carries its own environment,
+                // which was captured during its word definition.
+                // Here we need to swap out self.env temporarily in order to
+                // evaluate closure body correctly and then swap back self.env after it's done.
+                // Again, ideally Env should be passed around rather than being a member of Forth.
+
+                // Hopefully using an immutable data structure reduces costs of
+                // all those clonings below.
                 let tmp_env = self.env.clone();
                 self.env = env.clone();
                 let result = body
