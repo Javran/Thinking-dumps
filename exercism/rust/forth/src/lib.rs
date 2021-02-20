@@ -35,7 +35,9 @@ enum Action {
     Prim(fn(&mut Forth) -> ForthResult),
     Closure {
         env: Env,
-        body: Vec<Instr>, // TODO: perhaps just needs a reference?
+        // ideally this can be borrowed from Stmt,
+        // but I don't want lifetime to spread everywhere.
+        body: Vec<Instr>,
     },
 }
 
@@ -104,64 +106,55 @@ impl Default for Forth {
             let mut m = HashMap::new();
 
             macro_rules! define_op {
-                ($op_name:expr, $b: ident, $a: ident, $state: ident, $body:block) => {
+                // Note that operands are listed in the order they are popped.
+                ($op_name:expr, $state: ident, $($operand: ident,)+ $body:block) => {
                     m.insert(
                         $op_name.to_lowercase(),
                         Action::Prim(|$state: &mut Forth| -> ForthResult {
-                            let $b = $state.pop()?;
-                            let $a = $state.pop()?;
+                            $(
+                                let $operand = $state.pop()?;
+                            )*
                             $body
                         }),
                     );
                 };
             }
 
-            define_op!("+", b, a, state, {
-                state.push(a + b);
+            define_op!("+", st, b, a, {
+                st.push(a + b);
                 Ok(())
             });
-            define_op!("-", b, a, state, {
-                state.push(a - b);
+            define_op!("-", st, b, a, {
+                st.push(a - b);
                 Ok(())
             });
-            define_op!("*", b, a, state, {
-                state.push(a * b);
+            define_op!("*", st, b, a, {
+                st.push(a * b);
                 Ok(())
             });
-            define_op!("/", b, a, state, {
+            define_op!("/", st, b, a, {
                 if b == 0 {
                     return Err(Error::DivisionByZero);
                 }
-                state.push(a / b);
+                st.push(a / b);
+                Ok(())
+            });
+            define_op!("dup", st, a, {
+                st.push(a);
+                st.push(a);
+                Ok(())
+            });
+            define_op!("drop", st, _a, { Ok(()) });
+            define_op!("swap", st, b, a, {
+                st.push(b);
+                st.push(a);
                 Ok(())
             });
 
-            m.insert(
-                "dup".to_string(),
-                Action::Prim(|state: &mut Forth| -> ForthResult {
-                    let a = state.pop()?;
-                    state.push(a);
-                    state.push(a);
-                    Ok(())
-                }),
-            );
-            m.insert(
-                "drop".to_string(),
-                Action::Prim(|state: &mut Forth| -> ForthResult {
-                    state.pop()?;
-                    Ok(())
-                }),
-            );
-            define_op!("swap", b, a, state, {
-                state.push(b);
-                state.push(a);
-                Ok(())
-            });
-
-            define_op!("over", b, a, state, {
-                state.push(a);
-                state.push(b);
-                state.push(a);
+            define_op!("over", st, b, a, {
+                st.push(a);
+                st.push(b);
+                st.push(a);
                 Ok(())
             });
 
