@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 pub type Value = i32;
-pub type ForthResult = Result<(), Error>;
+type FResult<R> = Result<R, Error>;
+pub type ForthResult = FResult<()>;
 
 pub struct Forth {
     env: Env,
@@ -45,20 +46,17 @@ fn parse_instr(raw: &str) -> Instr {
     }
 }
 
-fn parse_stmt(tokens: &[&str]) -> Result<Stmt, Error> {
-    println!("{:?}", tokens);
+fn parse_stmt(tokens: &[&str]) -> FResult<Stmt> {
     // This implicitly requires that input is not empty.
     let (hd, tl) = tokens.split_at(1);
     match *hd.first().unwrap() {
         ":" => {
             // Recognize syntax: ':' <word name> <stmt>* ';'
-            // While we can rule out word names that consists of only digits
-            // it seems to suggest that should be interpreted as a runtime error rather than a syntactic one.
             if tl.len() <= 1 || tl.last() != Some(&";") {
                 panic!("Incomplete word declaration.");
             }
             let name = tl[0];
-            if let Ok(_) = str::parse::<Value>(name) {
+            if str::parse::<Value>(name).is_ok() {
                 return Err(Error::InvalidWord);
             }
             Ok(Stmt::WordDef {
@@ -73,7 +71,7 @@ fn parse_stmt(tokens: &[&str]) -> Result<Stmt, Error> {
     }
 }
 
-fn parse(raw: &str) -> Result<Vec<Stmt>, Error> {
+fn parse(raw: &str) -> FResult<Vec<Stmt>> {
     let tokens: Vec<&str> = raw.split(' ').collect();
     let mut stmts = vec![];
     if tokens.is_empty() {
@@ -100,19 +98,8 @@ fn parse(raw: &str) -> Result<Vec<Stmt>, Error> {
     Ok(stmts)
 }
 
-impl Forth {
-    fn pop(&mut self) -> Result<Value, Error> {
-        match self.stack.pop() {
-            Some(v) => Ok(v),
-            None => Err(Error::StackUnderflow),
-        }
-    }
-
-    fn push(&mut self, v: Value) {
-        self.stack.push(v)
-    }
-
-    pub fn new() -> Forth {
+impl Default for Forth {
+    fn default() -> Forth {
         let env: Env = {
             let mut m = HashMap::new();
             // TODO: macros
@@ -121,7 +108,8 @@ impl Forth {
                 Action::Prim(|state: &mut Forth| -> Result<(), Error> {
                     let b = state.pop()?;
                     let a = state.pop()?;
-                    Ok(state.push(a + b))
+                    state.push(a + b);
+                    Ok(())
                 }),
             );
 
@@ -130,7 +118,8 @@ impl Forth {
                 Action::Prim(|state: &mut Forth| -> Result<(), Error> {
                     let b = state.pop()?;
                     let a = state.pop()?;
-                    Ok(state.push(a - b))
+                    state.push(a - b);
+                    Ok(())
                 }),
             );
 
@@ -139,7 +128,8 @@ impl Forth {
                 Action::Prim(|state: &mut Forth| -> Result<(), Error> {
                     let b = state.pop()?;
                     let a = state.pop()?;
-                    Ok(state.push(a * b))
+                    state.push(a * b);
+                    Ok(())
                 }),
             );
 
@@ -151,7 +141,8 @@ impl Forth {
                         return Err(Error::DivisionByZero);
                     }
                     let a = state.pop()?;
-                    Ok(state.push(a / b))
+                    state.push(a / b);
+                    Ok(())
                 }),
             );
 
@@ -199,6 +190,23 @@ impl Forth {
 
         Forth { env, stack: vec![] }
     }
+}
+
+impl Forth {
+    fn pop(&mut self) -> FResult<Value> {
+        match self.stack.pop() {
+            Some(v) => Ok(v),
+            None => Err(Error::StackUnderflow),
+        }
+    }
+
+    fn push(&mut self, v: Value) {
+        self.stack.push(v)
+    }
+
+    pub fn new() -> Forth {
+        Forth::default()
+    }
 
     pub fn stack(&self) -> &[Value] {
         &self.stack
@@ -219,7 +227,7 @@ impl Forth {
                 let result = body
                     .iter()
                     .try_for_each(|instr| self.eval_stmt(&Stmt::Instr(instr.clone())));
-                self.env = genv.clone();
+                self.env = genv;
                 result
             }
         }
@@ -231,7 +239,7 @@ impl Forth {
                 self.push(*v);
                 Ok(())
             }
-            Stmt::Instr(Instr::Op(sym)) => match self.env.get(sym).map(|x| x.clone()) {
+            Stmt::Instr(Instr::Op(sym)) => match self.env.get(sym).cloned() {
                 Some(action) => self.eval_action(&action),
                 None => Err(Error::UnknownWord),
             },
