@@ -207,10 +207,15 @@ impl Forth {
                 self.push(*v);
                 Ok(())
             }
-            Stmt::Instr(Instr::Op(sym)) => match self.env.get(sym).cloned() {
-                Some(action) => self.eval_action(&action),
-                None => Err(Error::UnknownWord),
-            },
+            Stmt::Instr(Instr::Op(sym)) =>
+            // seems silly that this needs to be cloned
+            // but I don't have a better way to work around this borrowing issue.
+            {
+                match self.env.get(sym).cloned() {
+                    Some(action) => self.eval_action(&action),
+                    None => Err(Error::UnknownWord),
+                }
+            }
             Stmt::WordDef { name, body } => {
                 self.env.insert(
                     name.clone(),
