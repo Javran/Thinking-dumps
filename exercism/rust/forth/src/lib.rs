@@ -228,7 +228,7 @@ impl Forth {
                 let tmp_env = self.env.clone();
                 self.env = env.clone();
                 let result = body
-                    .into_iter()
+                    .iter()
                     .try_for_each(|instr| self.eval_stmt(Stmt::Instr(instr.clone())));
                 self.env = tmp_env;
                 result
@@ -253,7 +253,7 @@ impl Forth {
             }
             Stmt::WordDef { name, body } => {
                 self.env.insert(
-                    name.clone(),
+                    name,
                     Action::Closure {
                         env: self.env.clone(),
                         body: body.to_vec(),
