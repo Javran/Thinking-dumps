@@ -2,3 +2,6 @@
 edition = "2018"
 name = "forth"
 version = "1.7.0"
+
+[dependencies]
+im = "15.0.0"

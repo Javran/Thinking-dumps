@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+// Using immutable data structure to reduce cloning cost on `Env` (see below).
+use im::HashMap;
 
 pub type Value = i32;
 type FResult<R> = Result<R, Error>;
@@ -134,18 +135,22 @@ impl Default for Forth {
                 st.push(a / b);
                 Ok(())
             });
+            define_op!("drop", st, _a, { Ok(()) });
+
+            // For `dup`: While it could be more performant
+            // if we treat Forth stack as a vector rather than using stack interfaces,
+            // I don't feel it's necessary to go that extra mile.
+            // Same applies to `swap` and `over`.
             define_op!("dup", st, a, {
                 st.push(a);
                 st.push(a);
                 Ok(())
             });
-            define_op!("drop", st, _a, { Ok(()) });
             define_op!("swap", st, b, a, {
                 st.push(b);
                 st.push(a);
                 Ok(())
             });
-
             define_op!("over", st, b, a, {
                 st.push(a);
                 st.push(b);
@@ -190,12 +195,12 @@ impl Forth {
         match action {
             Action::Prim(f) => f(self),
             Action::Closure { env, body } => {
-                let genv = self.env.clone();
+                let tmp_env = self.env.clone();
                 self.env = env.clone();
                 let result = body
                     .iter()
                     .try_for_each(|instr| self.eval_stmt(&Stmt::Instr(instr.clone())));
-                self.env = genv;
+                self.env = tmp_env;
                 result
             }
         }
