@@ -1,5 +1,5 @@
 .stack-work/
-lts-updater.cabal
+scripting.cabal
 stack.yaml.lock
 *~
 

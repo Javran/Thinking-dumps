@@ -15,6 +15,7 @@ dependencies:
 - text
 - containers
 - foldl
+- process
 
 library:
   source-dirs: src
