@@ -16,6 +16,7 @@ dependencies:
 - containers
 - foldl
 - process
+- SafeSemaphore
 
 library:
   source-dirs: src

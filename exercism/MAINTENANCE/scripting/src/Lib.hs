@@ -1,16 +1,16 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports -fno-warn-unused-top-binds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -Wno-unused-local-binds #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports -fno-warn-unused-top-binds #-}
 
 module Lib
   ( main
   )
 where
 
-import Control.Concurrent
 import Control.Applicative
+import qualified Control.Concurrent.MSem as MSem
 import qualified Control.Foldl as Fold
 import Control.Monad
 import Data.Maybe
@@ -20,12 +20,12 @@ import qualified Data.Text.IO as T
 import Filesystem.Path.CurrentOS hiding (null)
 import System.Environment
 import System.Exit hiding (die)
+import qualified System.IO
 import qualified System.Process as Process
 import Turtle.Pattern
 import Turtle.Prelude
 import Turtle.Shell
 import Prelude hiding (FilePath)
-import qualified System.IO
 
 fpToText :: FilePath -> T.Text
 fpToText = either id id . Filesystem.Path.CurrentOS.toText
@@ -60,8 +60,8 @@ runAllTests = sh $ do
              then pure $ Just (exerName, exerPath)
              else pure Nothing)
   liftIO $ putStrLn $ "Found " <> show (length exers) <> " exercises."
-  cap <- liftIO getNumCapabilities
-  let testExercise (exerName, exerPath) = do
+  let testExercise (exerName, exerPath) sem = do
+        liftIO $ MSem.wait sem
         let mkCp cmd args =
               (Process.proc cmd args)
                 { Process.cwd = Just (encodeString exerPath)
@@ -69,20 +69,18 @@ runAllTests = sh $ do
         -- ignore formatting result even if it fails.
         _ <- systemStrictWithErr (mkCp "ew" ["fmt"]) ""
         result@(ec, _, _) <- systemStrictWithErr (mkCp "ew" ["test"]) ""
+        liftIO $ MSem.signal sem
         liftIO $ do
           putStr (if ec == ExitSuccess then "." else "!")
           System.IO.hFlush System.IO.stdout
         pure (exerName, result)
-  -- I'm trying to reduce max-in-flight `stack` calls here, which doesn't seem to help much
-  liftIO $ setNumCapabilities (min cap 6)
+  sem <- liftIO $ MSem.new (10 :: Int)
   tasks <- forM exers $ \p ->
-    fork (testExercise p)
+    fork (testExercise p sem)
   results <- mapM wait tasks
-  liftIO $ do
-    putStrLn "\n"
-    setNumCapabilities cap
+  liftIO $ putStrLn "\nall done."
   let failedResults = filter (\(_, (ec, _, _)) -> ec /= ExitSuccess) results
-  liftIO$
+  liftIO $
     unless (null failedResults) $ do
       putStrLn $ "Found " <> show (length failedResults) <> " failed results, in following exercises:"
       forM_ failedResults $ \(exerName, (ec, _, _)) -> do
