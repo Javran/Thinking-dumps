@@ -22,7 +22,7 @@ findFewestCoins target (nubSort -> coins) =
           | n == 0 -> pure ([], 0 :: Int)
           | otherwise ->
             let alts = do
-                  c <- coins
+                  c <- takeWhile (<= n) coins
                   (xs, l) <- f (n - c)
                   pure (c : xs, l + 1)
              in [minimumBy (comparing snd) alts | not (null alts)]
