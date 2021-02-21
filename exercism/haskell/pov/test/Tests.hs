@@ -114,9 +114,7 @@ toEdges (Node r ts) = map ((r,) . rootLabel) ts ++ concatMap toEdges ts
 -- Trees used in the tests.
 
 singleton, simple, flat, kids, nested, cousins :: Tree String
-
 singleton', simple', flat', kids', nested', cousins' :: Tree String
-
 singleton = leaf "x"
 
 singleton' = leaf "x"
