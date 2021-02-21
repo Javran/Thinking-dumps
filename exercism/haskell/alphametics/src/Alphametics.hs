@@ -150,7 +150,10 @@ solve raw = do
   let getMsds n =
         maybe S.empty S.singleton (pMsd n)
       {-
-        An example, if we have:
+        lhsNeedsPre is a list of sets representing Chars needed
+        for evaluating that column (least significant digit is the head).
+
+        For example, if we have:
 
         >     HE
         > + SEES
@@ -166,13 +169,10 @@ solve raw = do
         are no longer checked:
 
         initLhsNeeds will be: [{E,S}, {H}, {T}, {}]
-
-        TODO: we might want to cut down that final unnecessary empty set,
-        but that is not the focus for now.
-
        -}
       _lhsResults :: (S.Set Char, Elemwise (S.Set Char))
       _lhsResults@(lhsNonZeros, Elemwise lhsNeedsPre) =
+        -- `instance Semigroup (_,_)` to save us from traversing the tree multiple times.
         substExpr (const (<>)) const num pzLhs
         where
           {-
@@ -197,7 +197,14 @@ solve raw = do
               ( S.difference x alreadyNeeded
               , (xs, S.union alreadyNeeded x)
               )
-  let verify assignments unusedDigits mayUpToCol = do
+  let {-
+        Evaluates LHS (with an optiional column limit)
+        and matches it against corresponding parts of the RHS.
+
+        Updates the assignments from a successful match result.
+       -}
+      verify :: CharAssign -> IS.IntSet -> Maybe Int -> [] (CharAssign, IS.IntSet)
+      verify assignments unusedDigits mayUpToCol = do
         lhsVal <- maybeToList $ evalExpr mayUpToCol assignments pzLhs
         let truncatedLhsVal =
               (case mayUpToCol of
@@ -214,7 +221,7 @@ solve raw = do
               MMerge.mergeA
                 -- preserve existing elememts
                 MMerge.preserveMissing
-                -- remove new element from usedDigits, and preserve it
+                -- remove new element from unusedDigits, and preserve it
                 (MMerge.traverseMissing $ \k x -> do
                    guard $ S.notMember k nonZeros || x /= 0
                    True <- gets (IS.member x)
@@ -226,15 +233,21 @@ solve raw = do
                 expectedAssigns
         runStateT performMerge unusedDigits
 
-      -- Note: `assignments` is authoritative on what digits are unused,
-      -- and `unusedDigits` should be kept in sync with it.
+      {-
+        Note: `assignments` is authoritative on what digits are unused,
+        and `unusedDigits` should be kept in sync with it.
+       -}
+      dfs :: CharAssign -> [S.Set Char] -> IS.IntSet -> Int -> [] CharAssign
       dfs assignments lhsNeeds unusedDigits curCol =
         case lhsNeeds of
           [] -> do
-            (assignments', _) <- verify assignments unusedDigits Nothing
+            (assignments', _unusedDigits) <- verify assignments unusedDigits Nothing
             pure assignments'
           needs : lhsNeeds' ->
-            -- just extracting a random value
+            {-
+              extracting a random value, being minimum is not required,
+              just using this nice destructing interface.
+             -}
             case S.minView needs of
               Nothing -> do
                 -- all needed digits are set for curCol
