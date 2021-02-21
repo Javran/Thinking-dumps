@@ -127,7 +127,7 @@ cases =
             , ('T', 9)
             ]
       }
-  {-, Case
+  , Case
       { description = "puzzle with multiplication"
       , puzzle = "IF * DR == DORI"
       , expected = Just [('I', 8), ('F', 2), ('D', 3), ('R', 9), ('O', 1)]
@@ -136,7 +136,7 @@ cases =
       { description = "puzzle with exponents"
       , puzzle = "PI * R ^ 2 == AREA"
       , expected = Just [('P', 9), ('I', 6), ('R', 7), ('A', 4), ('E', 0)]
-      }-}
+      }
   ]
 
 -- e81dfbc925571473b7f2ffd44790b834ae30a073
