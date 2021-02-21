@@ -19,9 +19,12 @@ data BowlingError
 type M = RWST () (Sum Int) Game (Except BowlingError)
 
 data Game = Game
-  { gFrame :: Int -- game starts at Frame 1
-  , gIndex :: Int -- keeps track of rollIndex for error reporting
-  , gScores :: [Int] -- current front for current frame
+  { -- | Game starts at Frame 1
+    gFrame :: Int
+  , -- | keeps track of rollIndex for error reporting
+    gIndex :: Int
+  , -- | current front roll scores aligned with current frame
+    gScores :: [Int]
   }
 
 score :: [Int] -> Either BowlingError Int
@@ -41,16 +44,29 @@ score rolls =
 scoreNextFrame :: M ()
 scoreNextFrame = do
   frame <- gets gFrame
-  unless (frame <= 10) $
+  when (frame > 10) $
     throwError $ InvalidGameState "no more than 10 frames"
   let recordScore = tell . Sum
+      invalidRoll v = do
+        rInd <- gets gIndex
+        throwError $ InvalidRoll rInd v
+      invalidRoll' v = do
+        {-
+          somewhat arbitrarily, test suite decides that,
+          if a and b looks fine but a+b exceeds 10,
+          the blame is on a's index and b's rollValue,
+          which makes as much sense as having two `invalidRoll` functions.
+         -}
+        rInd <- gets gIndex
+        throwError $ InvalidRoll (rInd -1) v
+      -- consumes and verifies next roll.
       nextRoll = do
-        Game {gScores = scores, gIndex = rInd} <- get
+        Game {gScores = scores} <- get
         case scores of
           [] -> throwError IncompleteGame
           x : _ ->
             if x < 0 || x > 10
-              then throwError $ InvalidRoll rInd x
+              then invalidRoll x
               else do
                 modify
                   (\g@Game {gScores = _ : gScores', gIndex} ->
@@ -64,19 +80,13 @@ scoreNextFrame = do
       when (frame == 10) $ do
         a <- nextRoll
         b <- nextRoll
-        when (a /= 10 && a + b > 10) $ do
-          rInd <- gets gIndex
-          {-
-            somewhat arbitrarily, test suite decides that,
-            if a and b looks fine but a+b exceeds 10, it's a's fault.
-           -}
-          throwError $ InvalidRoll (rInd -1) b
+        when (a /= 10 && a + b > 10) $
+          invalidRoll' b
       recordScore $ 10 + bonus
     _ -> do
       y <- nextRoll
-      when (x + y > 10) $ do
-        rInd <- gets gIndex
-        throwError $ InvalidRoll (rInd -1) y
+      when (x + y > 10) $
+        invalidRoll' y
       if x + y == 10
         then do
           -- a spare
@@ -90,6 +100,5 @@ scoreNextFrame = do
   when (frame == 10) $ do
     sc <- gets gScores
     unless (null sc) $ do
-      rInd <- gets gIndex
-      throwError $ InvalidRoll rInd (head sc)
+      invalidRoll (head sc)
   modify (\g@Game {gFrame} -> g {gFrame = gFrame + 1})
