@@ -50,6 +50,27 @@ func ToRomanNumeral(val int) (string, error) {
 		return "", errors.New("input out of representable range")
 	}
 
+	var result []rune
+	base := 1000
+	for _, rep := range []romanRepresent{thousandRep, hundredRep, tenRep, oneRep} {
+		result = append(result, singleDigit(rep, val/base)...)
+		val %= base
+		base /= 10
+	}
+	return string(result), nil
+}
+
+// ToRomanNumeralAlt is an alternative implementation of ToRomanNumeral.
+func ToRomanNumeralAlt(val int) (string, error) {
+	if val <= 0 || val > 3000 {
+		return "", errors.New("input out of representable range")
+	}
+
+	// - Extracting from least significant digit has the advantage that we don't
+	//   need to update base number, but at the same time appending in this way
+	//   wouldn't be very desirable in a performance critical setting.
+	// - Certainly the following section can be refactored into a loop,
+	//   but perhaps for such a small loop there won't be much benefits to it.
 	result := singleDigit(oneRep, val%10)
 
 	val /= 10
