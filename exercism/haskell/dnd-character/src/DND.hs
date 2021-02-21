@@ -1,5 +1,6 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE RecursiveDo #-}
+
 module DND
   ( Character (..)
   , ability
@@ -9,6 +10,7 @@ module DND
 where
 
 import Control.Monad
+import Data.Semigroup
 import Test.QuickCheck
 
 data Character = Character
@@ -28,7 +30,10 @@ modifier = (`div` 2) . subtract 10
 ability :: Gen Int
 ability = do
   xs <- replicateM 4 (choose (1, 6))
-  pure $ sum xs - minimum xs
+  pure $
+    let (Sum a, Min b) =
+          foldMap ((,) <$> Sum <*> Min) xs
+     in a - b
 
 character :: Gen Character
 character = mdo
