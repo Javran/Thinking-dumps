@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+
 module Phone
   ( number
   )
@@ -18,5 +19,5 @@ nanpNum = do
 -- 'badNumber' will be returned if the number given is bad.
 number :: String -> Maybe String
 number (filter isDigit -> xs) = do
-    [(s, "")] <- pure $ readP_to_S (nanpNum <* eof) xs
-    pure s
+  [(s, "")] <- pure $ readP_to_S (nanpNum <* eof) xs
+  pure s

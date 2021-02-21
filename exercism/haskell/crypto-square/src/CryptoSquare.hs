@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+
 module CryptoSquare
   ( normalizePlaintext
   , squareSize

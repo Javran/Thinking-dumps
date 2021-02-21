@@ -1,4 +1,5 @@
 {-# LANGUAGE NumericUnderscores #-}
+
 module Gigasecond (fromDay) where
 
 import Data.Time.Clock
