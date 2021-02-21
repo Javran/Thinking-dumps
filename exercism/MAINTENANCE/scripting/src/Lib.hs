@@ -42,8 +42,7 @@ runAllTests = sh $ do
   Just repo <- fmap fromText <$> need "HASKELL_REPO"
   exerPath <- ls repo
   let exerName = fpToText $ filename exerPath
-  marker <- testfile $ exerPath </> "MIGRATION_MARKER"
-  when (marker && S.notMember exerName skipping) $ do
+  when (not ("." `T.isPrefixOf` exerName )&& S.notMember exerName skipping) $ do
     pushd exerPath
     liftIO $ T.putStrLn $ "Testing " <> exerName
     _ <- procStrict "ew" ["fmt"] ""
@@ -56,5 +55,5 @@ main :: IO ()
 main =
   getArgs >>= \case
     "ltsupdate" : _ -> ltsUpdater
-    "testmigrate" : _ -> runAllTests
+    "testall" : _ -> runAllTests
     _ -> pure ()
