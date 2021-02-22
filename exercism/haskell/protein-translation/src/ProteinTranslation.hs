@@ -18,13 +18,13 @@ codons = M.fromList $ do
       , ("UAA UAG UGA", Nothing)
       ]
   x <- words xs
-  pure (x,y)
+  pure (x, y)
 
 proteins :: String -> Maybe [String]
 proteins [] = pure []
 proteins xs = do
-    let (cs,xs') = splitAt 3 xs
-    mayCodon <- codons M.!? cs
-    case mayCodon of
-      Nothing -> pure []
-      Just x -> (x:) <$> proteins xs'
+  let (cs, xs') = splitAt 3 xs
+  mayCodon <- codons M.!? cs
+  case mayCodon of
+    Nothing -> pure []
+    Just x -> (x :) <$> proteins xs'
