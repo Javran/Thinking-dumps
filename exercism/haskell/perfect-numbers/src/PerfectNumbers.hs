@@ -1,21 +1,29 @@
+{-# LANGUAGE PatternSynonyms #-}
+
 module PerfectNumbers
   ( classify
-  , Classification (..)
+  , Classification
+  , pattern Deficient
+  , pattern Perfect
+  , pattern Abundant
   )
 where
 
 import Control.Monad
-import Unsafe.Coerce (unsafeCoerce)
+import Data.Coerce
 
-data Classification
-  = Deficient
-  | Perfect
-  | Abundant
-  deriving (Eq, Show)
+newtype Classification = Cls Ordering deriving (Show, Eq)
+
+-- bidirectional patterns observing the isomorphism.
+pattern Deficient = Cls LT
+
+pattern Perfect = Cls EQ
+
+pattern Abundant = Cls GT
 
 classify :: Int -> Maybe Classification
 classify x = do
   guard (x > 0)
-  Just . unsafeCoerce $ compare (sum aliquot) x
+  Just . coerce $ compare (sum aliquot) x
   where
     aliquot = [y | y <- [1 .. x -1], x `rem` y == 0]

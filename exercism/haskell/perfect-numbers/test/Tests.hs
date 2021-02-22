@@ -1,7 +1,7 @@
 {-# LANGUAGE RecordWildCards #-}
 
 import Data.Foldable (for_)
-import PerfectNumbers (Classification (Abundant, Deficient, Perfect), classify)
+import PerfectNumbers
 import Test.Hspec (Spec, describe, it, shouldBe)
 import Test.Hspec.Runner (configFastFail, defaultConfig, hspecWith)
 
