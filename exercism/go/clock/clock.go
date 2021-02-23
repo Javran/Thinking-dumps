@@ -5,8 +5,11 @@ import (
 )
 
 // Clock represents a clock that only has hour and minute components within a day.
-// internally it stores as an int `v`, which is limited to `0 <= v < 24 * 60` at all time.
-type Clock int
+// internally is is stored as a single field limited to `0 <= min < 24 * 60` at all time,
+// to represent minutes relative to start of a day.
+type Clock struct {
+	min int
+}
 
 // New creates a new Clock.
 func New(hour, minute int) Clock {
@@ -15,21 +18,19 @@ func New(hour, minute int) Clock {
 	if m < 0 {
 		m += 24 * 60
 	}
-	return Clock(m)
+	return Clock{min: m}
 }
 
 // Add returns a new Clock which is `m` minutes in advance.
 func (c Clock) Add(minutes int) Clock {
-	return New(0, int(c)+minutes)
+	return New(0, c.min+minutes)
 }
 
 // Subtract returns a new Clock which is `m` minutes early.
 func (c Clock) Subtract(minutes int) Clock {
-	return New(0, int(c)-minutes)
+	return New(0, c.min-minutes)
 }
 
 func (c Clock) String() string {
-	tick := int(c)
-	q, r := tick/60, tick%60
-	return fmt.Sprintf("%02d:%02d", q, r)
+	return fmt.Sprintf("%02d:%02d", c.min/60, c.min%60)
 }
