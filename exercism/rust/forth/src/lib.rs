@@ -225,12 +225,12 @@ impl Forth {
 
                 // Hopefully using an immutable data structure reduces costs of
                 // all those clonings below.
-                let tmp_env = self.env.clone();
-                self.env = env.clone();
+                let mut clo_env = env.clone();
+                std::mem::swap(&mut clo_env, &mut self.env);
                 let result = body
                     .iter()
                     .try_for_each(|instr| self.eval_stmt(Stmt::Instr(instr.clone())));
-                self.env = tmp_env;
+                std::mem::swap(&mut clo_env, &mut self.env);
                 result
             }
         }
