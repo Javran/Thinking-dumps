@@ -53,7 +53,7 @@ func encodeOne(input uint32) []byte {
 	if input == 0 {
 		return []byte{0}
 	}
-	reserve := int32(math.Ceil(float64(32-bits.LeadingZeros32(input)) / 7.0))
+	reserve := int32(math.Ceil(float64(bits.Len32(input)) / 7.0))
 	result := make([]byte, reserve)
 	for i := reserve - 1; i >= 0; i-- {
 		result[i] = byte(input & 0b111_1111)
