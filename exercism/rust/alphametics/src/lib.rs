@@ -12,7 +12,7 @@ type SymbolNum = Vec<char>;
 #[derive(Debug)]
 struct Puzzle {
     /// Each element represents a freqency count of symbols for that digit.
-    lhs_accumulated: Vec<HashMap<char, u8>>,
+    lhs_digits: Vec<HashMap<char, u8>>,
     /// Right Hand Side of the equation
     rhs: SymbolNum,
     /// Each element represents a set of symbols so that when all of those symbols
@@ -21,10 +21,13 @@ struct Puzzle {
     /// Represents search order, and each `search(_, _, depth, _)` call
     /// assigns a possible value to symbol in `ordered_symbols[depth]`.
     ordered_symbols: Vec<char>,
+
+    lhs_needs: Vec<Vec<char>>,
+    non_zeros: HashSet<char>,
 }
 
 /// A partial solution to the corresponding puzzle.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct PartialSolution {
     /// All not-yet-assigned digits in 0..9.
     unassigned_digits: HashSet<u8>,
@@ -52,10 +55,10 @@ fn parse_and_prepare(input: &str) -> Option<(Puzzle, PartialSolution)> {
     if vlen > rhs.len() {
         return None;
     }
-    let mut lhs_accumulated = vec![HashMap::new(); rhs.len()];
+    let mut lhs_digits = vec![HashMap::new(); rhs.len()];
     lhs.iter().for_each(|num: &SymbolNum| {
         num.iter().enumerate().for_each(|(i, ch)| {
-            lhs_accumulated[i]
+            lhs_digits[i]
                 .entry(*ch)
                 .and_modify(|e| *e += 1)
                 .or_insert(1);
@@ -88,11 +91,36 @@ fn parse_and_prepare(input: &str) -> Option<(Puzzle, PartialSolution)> {
         });
         vs
     };
+
+    let lhs_needs: Vec<Vec<char>> = {
+        let mut needs_acc: HashSet<char> = HashSet::new();
+        lhs_digits
+            .iter()
+            .map(|ds| {
+                let s = ds
+                    .keys()
+                    .filter(|k| !needs_acc.contains(&k))
+                    .copied()
+                    .collect::<Vec<char>>();
+                s.iter().for_each(|ch| {
+                    needs_acc.insert(*ch);
+                });
+                s
+            })
+            .collect()
+    };
+    let non_zeros: HashSet<char> = {
+        let mut nz = lhs.iter().map(|s| *s.last().unwrap() ).collect::<HashSet<char>>();
+        nz.insert(*rhs.last().unwrap());
+        nz
+    };
     let puzzle = Puzzle {
-        lhs_accumulated,
+        lhs_digits,
         rhs,
         symbol_sets,
         ordered_symbols,
+        lhs_needs,
+        non_zeros,
     };
 
     let solution = {
@@ -155,7 +183,7 @@ fn verify(
         if symbols.iter().all(|s| sol.solved_assigns.contains_key(s)) {
             // we now have all necessary symbols assigned for this position.
             let lhs_cur = carry
-                + puzzle.lhs_accumulated[i]
+                + puzzle.lhs_digits[i]
                     .iter()
                     .map(|(ch, count)| {
                         (*sol.solved_assigns.get(&ch).unwrap() as u64) * (*count as u64)
