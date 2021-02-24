@@ -1,19 +1,37 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 /// Represents a unknown number represented by a sequence of symbols
-/// with least significant digit first.
+/// with the least significant digit as first element.
 /// so if it's "ABCD" in the original puzzle, it's represented "DCBA" here.
 type SymbolNum = Vec<char>;
 
 /// Parsed puzzle representation.
+/// All Vec in this structure represents least significant digit as first element.
 #[derive(Debug)]
 struct Puzzle {
     /// Each element represents a freqency count of symbols for that digit.
     lhs_digits: Vec<HashMap<char, u8>>,
-    /// Right Hand Side of the equation
+    /// Right Hand Side of the equation.
     rhs: SymbolNum,
-
+    /// Represents symbol assigning order.
+    /// lhs_needs[i] is a Vec of chars so that when those chars are all assigned a value,
+    /// we can evaluate LHS from least siginificant digit
+    /// to the i-th digit counting from the least significant one.
+    ///
+    /// example:
+    ///    HE
+    ///  SEES
+    /// + THE
+    /// -----
+    /// LIGHT
+    ///
+    /// will first produce:
+    /// [{E,S}, {H, E}, {E, T}, {S}]
+    /// since there is no need of visiting already assigned values, we can remove elements
+    /// that has already show up in previous arrays, resulting in:
+    /// [{E,S}, {H}, {T}, {}]
     lhs_needs: Vec<Vec<char>>,
+    /// a set of chars that should not be assigned 0 in this puzzle.
     non_zeros: HashSet<char>,
 }
 
@@ -135,6 +153,9 @@ fn verify(puzzle: &Puzzle, sol: &PartialSolution, depth: Option<usize>) -> Optio
     Some(result)
 }
 
+/// Depth-first searches a digit to assign to `puzzle.lhs_needs[depth][i]`
+/// and verifies that the resulting partial solution works.
+/// The verification process might produce extra value bindings as a consequence of matching against RHS.
 fn search(puzzle: &Puzzle, sol: &mut PartialSolution, depth: usize, i: usize) -> Option<PartialSolution>{
     if depth == puzzle.lhs_needs.len() {
         let sol_v = verify(puzzle, sol, None)?;
