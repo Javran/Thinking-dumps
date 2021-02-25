@@ -12,15 +12,13 @@ func CollatzConjecture(x int) (int, error) {
 		return 0, errors.New("input number must be positive")
 	}
 
-	next := func(v int) int {
-		if v%2 == 0 {
-			return v / 2
-		}
-		return v*3 + 1
-	}
-
 	count := 0
-	for ; x != 1; x = next(x) {
+	for x != 1 {
+		if x%2 == 0 {
+			x /= 2
+		} else {
+			x = x*3 + 1
+		}
 		count++
 	}
 	return count, nil
