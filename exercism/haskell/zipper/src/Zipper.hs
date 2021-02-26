@@ -1,3 +1,4 @@
+{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE PatternSynonyms #-}
 
@@ -37,12 +38,11 @@ pattern LBranch = Dir False
 pattern RBranch :: Dir
 pattern RBranch = Dir True
 
-{-# COMPLETE LBranch, RBranch  #-}
+{-# COMPLETE LBranch, RBranch #-}
 
+-- (a, LBranch, tree) for context: (<focus>, btValue, tree)
+-- (a, RBranch, tree) for context: (tree, btValue, <focus>)
 type BinTreeContext a = (a, Dir, Maybe (BinTree a))
-
--- (a, False, tree) for context: (<focus>, btValue, tree)
--- (a, True, tree) for context: (tree, btValue, <focus>)
 
 -- | A zipper for a binary tree.
 data Zipper a = Zipper
@@ -72,19 +72,21 @@ value = btValue . zFocus
 
 -- | Get the left child of the focus node, if any.
 left :: Zipper a -> Maybe (Zipper a)
-left (Zipper (BT v (Just l) r) ctxt) = Just (Zipper l ((v, LBranch, r) : ctxt))
-left _ = Nothing
+left Zipper {zFocus=BT v ml mr, zContext} = do
+  l <- ml
+  pure $ Zipper l ((v, LBranch, mr) : zContext)
 
 -- | Get the right child of the focus node, if any.
 right :: Zipper a -> Maybe (Zipper a)
-right (Zipper (BT v l (Just r)) ctxt) = Just (Zipper r ((v, RBranch, l) : ctxt))
-right _ = Nothing
+right Zipper {zFocus=BT v ml mr, zContext} = do
+  r <- mr
+  pure $ Zipper r ((v, RBranch, ml) : zContext)
 
 -- | Get the parent of the focus node, if any.
 up :: Zipper a -> Maybe (Zipper a)
-up (Zipper t ctxt) = case ctxt of
-  [] -> Nothing
-  (x : xs) -> Just (Zipper (applyContext x t) xs)
+up (Zipper t ctxt) = do
+  (x : xs) <- pure ctxt
+  pure $ Zipper (applyContext x t) xs
 
 -- | Set the value of the focus node.
 setValue :: a -> Zipper a -> Zipper a
