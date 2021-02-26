@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-binds #-}
+{-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE PatternSynonyms #-}
 
 module Zipper
   ( BinTree (..)
@@ -28,7 +29,17 @@ data BinTree a = BT
   }
   deriving (Eq, Show)
 
-type BinTreeContext a = (a, Bool, Maybe (BinTree a))
+newtype Dir = Dir Bool deriving (Eq, Show) via Bool
+
+pattern LBranch :: Dir
+pattern LBranch = Dir False
+
+pattern RBranch :: Dir
+pattern RBranch = Dir True
+
+{-# COMPLETE LBranch, RBranch  #-}
+
+type BinTreeContext a = (a, Dir, Maybe (BinTree a))
 
 -- (a, False, tree) for context: (<focus>, btValue, tree)
 -- (a, True, tree) for context: (tree, btValue, <focus>)
@@ -46,14 +57,10 @@ data Zipper a = Zipper
 fromTree :: BinTree a -> Zipper a
 fromTree t = Zipper t []
 
--- I'm using case-expression on purpose
--- because here Bool values are used as markers
--- rather than expression true or false
-{-# ANN applyContext "HLint: ignore Use if" #-}
 applyContext :: BinTreeContext a -> BinTree a -> BinTree a
 applyContext (v, dir, t) tFocus = case dir of
-  False -> BT v (Just tFocus) t
-  True -> BT v t (Just tFocus)
+  LBranch -> BT v (Just tFocus) t
+  RBranch -> BT v t (Just tFocus)
 
 -- | Get the complete tree from a zipper.
 toTree :: Zipper a -> BinTree a
@@ -65,12 +72,12 @@ value = btValue . zFocus
 
 -- | Get the left child of the focus node, if any.
 left :: Zipper a -> Maybe (Zipper a)
-left (Zipper (BT v (Just l) r) ctxt) = Just (Zipper l ((v, False, r) : ctxt))
+left (Zipper (BT v (Just l) r) ctxt) = Just (Zipper l ((v, LBranch, r) : ctxt))
 left _ = Nothing
 
 -- | Get the right child of the focus node, if any.
 right :: Zipper a -> Maybe (Zipper a)
-right (Zipper (BT v l (Just r)) ctxt) = Just (Zipper r ((v, True, l) : ctxt))
+right (Zipper (BT v l (Just r)) ctxt) = Just (Zipper r ((v, RBranch, l) : ctxt))
 right _ = Nothing
 
 -- | Get the parent of the focus node, if any.
