@@ -20,11 +20,10 @@
   (fields env body))
 
 (define (forth-state-pop! state)
-  (match
-   (forth-state-stack state)
-   [(hd . tl)
-    (forth-state-stack-set! state tl)
-    hd]))
+  (match (forth-state-stack state)
+         [(hd . tl)
+          (forth-state-stack-set! state tl)
+          hd]))
 
 (define (forth-state-push! state x)
   (forth-state-stack-set!
@@ -74,34 +73,30 @@
 
 ;; Parses list of tokens.
 (define (parse tokens)
-  (cond
-   [(null? tokens) '()]
-   [(list? tokens)
-    (let* ([hd (car tokens)]
-           [hd-as-num (string->number hd)]
-           [tl (cdr tokens)])
-      (cond
-       [(string=? hd ":")
-        (call-with-values
-            (lambda () (span (lambda (x) (not (string=? x ";"))) tl))
-          (lambda (ls rs)
-            (if (and
-                 (not (null? ls))
-                 (not (null? rs))
-                 (string=? (car rs) ";"))
-                (if (string->number (car ls))
-                    (raise 'cannot-redefine-numbers)
-                    (cons
-                     (make-word-def
-                    (string->symbol (string-downcase (car ls)))
-                    (parse (cdr ls)))
-                     (parse (cdr rs))))
-                (raise 'incomplete-word-def))))]
-       [hd-as-num (cons hd-as-num (parse tl))]
-       [else
-        (cons
-         (string->symbol (string-downcase hd))
-         (parse tl))]))]))
+  (match tokens
+         [() '()]
+         [(":") (raise 'incomplete-word-def)]
+         [(":" name . rest)
+          (if (string->number name)
+              (raise 'cannot-redefine-numbers)
+              (call-with-values
+                  (lambda () (span (lambda (x) (not (string=? x ";"))) rest))
+                (lambda (body rs)
+                  (match rs
+                         [(";" . after)
+                          (cons
+                           (make-word-def
+                            (string->symbol (string-downcase name))
+                            (parse body))
+                           (parse after))]
+                         [_ (raise 'incomplete-word-def)]))))]
+         [(hd . tl)
+          (let* ([hd-as-num (string->number hd)])
+            (if hd-as-num
+                (cons hd-as-num (parse tl))
+                (cons
+                 (string->symbol (string-downcase hd))
+                 (parse tl))))]))
 
 (define (perform-action! state action)
   (cond
