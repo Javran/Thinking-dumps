@@ -1,29 +1,31 @@
 (import (rnrs))
 
+(use-modules ((srfi srfi-1)
+              #:select (span)))
+
 (define (tokenize line)
   (string-split line #\space))
 
+(let ([xs '(1 2 3 4)])
+  (call-with-values (lambda ()
+                      (span (lambda (x) (< x 3)) '(1 2 3 4)))
+    (lambda (a b) (write a) (write b)))
+  (write xs))
+
 ;; Splits xs into (ys . zs)
 ;; where (equal? xs (append ys zs)) and ys are elements satisfying pred.
-(define (span pred xs)
+(define (span1 pred xs)
   (cond
    [(null? xs) '(() . ())]
    [(list? xs)
     (let ([hd (car xs)]
           [tl (cdr xs)])
       (if (pred hd)
-          (let* ([result (span pred tl)]
+          (let* ([result (span1 pred tl)]
                  [l (car result)]
                  [r (cdr result)])
             (cons (cons hd l) r))
           (cons '() xs)))]))
-
-(define (all pred xs)
-  (if (null? xs)
-      #t
-      (and
-       (pred (car xs))
-       (all pred (cdr xs)))))
 
 (define-record-type word-def
   (fields name body))
@@ -90,7 +92,7 @@
            [tl (cdr tokens)])
       (cond
        [(string=? hd ":")
-        (let* ([result (span (lambda (x) (not (string=? x ";"))) tl)]
+        (let* ([result (span1 (lambda (x) (not (string=? x ";"))) tl)]
                [ls (car result)]
                [rs (cdr result)])
           (if (and
