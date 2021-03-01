@@ -3,6 +3,7 @@
 (use-modules
  ((srfi srfi-1)
   #:select (append-map span)))
+(use-modules (ice-9 match))
 
 (define (tokenize line)
   (string-split line #\space))
@@ -19,9 +20,11 @@
   (fields env body))
 
 (define (forth-state-pop! state)
-  (let ([st (forth-state-stack state)])
-    (forth-state-stack-set! state (cdr st))
-    (car st)))
+  (match
+   (forth-state-stack state)
+   [(hd . tl)
+    (forth-state-stack-set! state tl)
+    hd]))
 
 (define (forth-state-push! state x)
   (forth-state-stack-set!
