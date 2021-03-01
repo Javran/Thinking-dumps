@@ -6,27 +6,6 @@
 (define (tokenize line)
   (string-split line #\space))
 
-(let ([xs '(1 2 3 4)])
-  (call-with-values (lambda ()
-                      (span (lambda (x) (< x 3)) '(1 2 3 4)))
-    (lambda (a b) (write a) (write b)))
-  (write xs))
-
-;; Splits xs into (ys . zs)
-;; where (equal? xs (append ys zs)) and ys are elements satisfying pred.
-(define (span1 pred xs)
-  (cond
-   [(null? xs) '(() . ())]
-   [(list? xs)
-    (let ([hd (car xs)]
-          [tl (cdr xs)])
-      (if (pred hd)
-          (let* ([result (span1 pred tl)]
-                 [l (car result)]
-                 [r (cdr result)])
-            (cons (cons hd l) r))
-          (cons '() xs)))]))
-
 (define-record-type word-def
   (fields name body))
 
@@ -92,21 +71,21 @@
            [tl (cdr tokens)])
       (cond
        [(string=? hd ":")
-        (let* ([result (span1 (lambda (x) (not (string=? x ";"))) tl)]
-               [ls (car result)]
-               [rs (cdr result)])
-          (if (and
-               (not (null? ls))
-               (not (null? rs))
-               (string=? (car rs) ";"))
-              (if (string->number (car ls))
-                  (raise 'cannot-redefine-numbers)
-                  (cons
-                   (make-word-def
+        (call-with-values
+            (lambda () (span (lambda (x) (not (string=? x ";"))) tl))
+          (lambda (ls rs)
+            (if (and
+                 (not (null? ls))
+                 (not (null? rs))
+                 (string=? (car rs) ";"))
+                (if (string->number (car ls))
+                    (raise 'cannot-redefine-numbers)
+                    (cons
+                     (make-word-def
                     (string->symbol (string-downcase (car ls)))
                     (parse (cdr ls)))
-                   (parse (cdr rs))))
-              (raise 'incomplete-word-def)))]
+                     (parse (cdr rs))))
+                (raise 'incomplete-word-def))))]
        [hd-as-num (cons hd-as-num (parse tl))]
        [else
         (cons
