@@ -1,7 +1,8 @@
 (import (rnrs))
 
-(use-modules ((srfi srfi-1)
-              #:select (span)))
+(use-modules
+ ((srfi srfi-1)
+  #:select (append-map span)))
 
 (define (tokenize line)
   (string-split line #\space))
@@ -27,12 +28,19 @@
    state
    (cons x (forth-state-stack state))))
 
+;; An env is an assoc with values being one of:
+;; - procedure? that takes forth-state? as argument and mutates it.
+;; - forth-closure? that stores user-defined words.
 (define (make-initial-env)
-  (let ([bin-op (lambda (f)
-                  (lambda (state)
-                    (let* ([b (forth-state-pop! state)]
-                           [a (forth-state-pop! state)])
-                      (f b a state))))])
+  (let ([;; shorthand for defining functions that pop two elements.
+         bin-op
+         (lambda (f)
+           (lambda (state)
+             (let* ([b (forth-state-pop! state)]
+                    [a (forth-state-pop! state)])
+               ;; note that b and a are reversed
+               ;; to make it looks like how stack is organized.
+               (f b a state))))])
     (list
      (cons '+ (bin-op
                (lambda (b a state)
@@ -94,14 +102,18 @@
 
 (define (perform-action! state action)
   (cond
-   [(procedure? action)
-    (action state)]
+   [(procedure? action) (action state)]
    [(forth-closure? action)
-    (let ([clo-state
+    (let ([;; make a new forth-state for closure to be executed in isolated environment.
+           clo-state
            (make-forth-state
             (forth-state-stack state)
             (forth-closure-env action))])
       (interpret-all clo-state (forth-closure-body action))
+      ;; while it's possible the one might define words inside a word definition,
+      ;; in which case env in clo-state might be updated,
+      ;; but test suite doesn't specify what to do in that case.
+      ;; here I choose to simply ignore (potentially updated) env from clo-state.
       (forth-state-stack-set! state (forth-state-stack clo-state)))]))
 
 (define (interpret state stmt)
@@ -119,14 +131,13 @@
        state
        (cons (cons (word-def-name stmt) clo)
              cur-env)))]
-    [else (raise 'unknown-statment)]))
+    [else (raise 'unknown-statement)]))
 
 (define (interpret-all state stmts)
   (for-each (lambda (stmt) (interpret state stmt)) stmts))
 
 (define (forth program)
-  (let* ([tokens (apply append (map tokenize program))]
-         [stmts (parse tokens)]
-         [state (make-forth-state '() (make-initial-env))])
+  (let ([stmts (parse (append-map tokenize program))]
+        [state (make-forth-state '() (make-initial-env))])
     (interpret-all state stmts)
     (forth-state-stack state)))
