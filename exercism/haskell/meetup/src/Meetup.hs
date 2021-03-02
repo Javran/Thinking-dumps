@@ -5,7 +5,6 @@ module Meetup
   )
 where
 
-import Control.Lens
 import Data.Ix
 import Data.Time.Calendar
 import Data.Time.Calendar.MonthDay
@@ -56,4 +55,4 @@ meetupDay sche week year month = fst $ case sche of
         . toWeekDate
         $ x
     isTeenth :: (Day, a) -> Bool
-    isTeenth = inRange (13, 19) . view _3 . toGregorian . fst
+    isTeenth = inRange (13, 19) . (\(_, _, x) -> x) . toGregorian . fst

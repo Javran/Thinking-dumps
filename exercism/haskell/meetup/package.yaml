@@ -9,8 +9,6 @@ library:
   exposed-modules: Meetup
   source-dirs: src
   ghc-options: -Wall
-  dependencies:
-    - lens
 
 tests:
   test:
