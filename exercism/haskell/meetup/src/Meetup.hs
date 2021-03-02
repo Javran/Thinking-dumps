@@ -5,7 +5,9 @@ module Meetup
   )
 where
 
+import Control.Monad
 import Data.Ix
+import Data.Maybe
 import Data.Time.Calendar
 import Data.Time.Calendar.MonthDay
 import Data.Time.Calendar.WeekDate
@@ -37,22 +39,13 @@ meetupDay sche week year month = fst $ case sche of
   Fourth -> days !! 3
   Last -> last days
   where
-    mLen = monthLength (isLeapYear . fromIntegral $ year) month
-    allDays :: [(Day, Weekday)]
-    -- e.g. [(1th,Tuesday), (2nd,Wednesday) ...]
-    allDays =
-      take mLen
-        . map
-          (dayOfWeekPair
-             . fromGregorian
-               (fromIntegral year)
-               month)
-        $ [1 ..]
-    days = filter ((== week) . snd) allDays -- only valid days
+    days :: [(Day, Weekday)]
+    days = mapMaybe (\p@(_, w) -> p <$ guard (w == week)) allDays -- only valid days
+      where
+        -- e.g. [(1st,Tuesday), (2nd,Wednesday) ...]
+        allDays = map (dayOfWeekPair . fromGregorian year month) [1 .. mLen]
+        mLen = monthLength (isLeapYear year) month
     dayOfWeekPair :: Day -> (Day, Weekday)
-    dayOfWeekPair x =
-      (\(_, _, w) -> (x, toEnum . (`mod` 7) $ w))
-        . toWeekDate
-        $ x
+    dayOfWeekPair x = (\(_, _, w) -> (x, toEnum (w `rem` 7))) . toWeekDate $ x
     isTeenth :: (Day, a) -> Bool
     isTeenth = inRange (13, 19) . (\(_, _, x) -> x) . toGregorian . fst
