@@ -7,7 +7,7 @@
            [fv
             (let ([v (make-vector (+ len 1))])
               (let fill ([i 0])
-               (if (< i len)
+               (if (<= i len)
                    (begin
                      (vector-set! v i (make-vector (+ capacity 1) 0))
                      (fill (+ i 1)))
@@ -21,17 +21,18 @@
                 (if (> w capacity)
                     (loopi (+ i 1))
                     (begin
-                      (vector-set! (vector-ref fv i) w
+                      (vector-set! (vector-ref fv (+ i 1)) w
                                    (if (> item-weight w)
-                                       (if (> i 0) (vector-ref (vector-ref fv (- i 1)) w) 0)
-                                       (if (> i 0)
-                                           (max
-                                            (vector-ref (vector-ref fv (- i 1)) w)
-                                            (+ (vector-ref (vector-ref fv (- i 1)) (- w item-weight)) item-value))
-                                           (max
-                                            0
-                                            item-value))))
+                                       (vector-ref (vector-ref fv i) w)
+                                       (max
+                                        (vector-ref (vector-ref fv i) w)
+                                        (+ (vector-ref (vector-ref fv i) (- w item-weight)) item-value))))
                       (loopw (+ w 1))))))))
       (if (= len 0)
           0
-          (vector-ref (vector-ref fv (- len 1)) capacity)))))
+          (vector-ref (vector-ref fv len) capacity)))))
+
+(display
+ (knapsack 10 '(2 2 2 2 10) '(5 5 5 5 21)))
+(display
+ (knapsack 100 '() '()))
