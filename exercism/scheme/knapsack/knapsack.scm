@@ -5,7 +5,7 @@
         [vs (list->vector values)])
     (let* ([len (vector-length ws)]
            [fv
-            (let ([v (make-vector len)])
+            (let ([v (make-vector (+ len 1))])
               (let fill ([i 0])
                (if (< i len)
                    (begin
@@ -21,16 +21,16 @@
                 (if (> w capacity)
                     (loopi (+ i 1))
                     (begin
-                      (if (> item-weight w)
-                          (vector-set! (vector-ref fv i) w (if (> i 0)
-                                                               (vector-ref (vector-ref fv (- i 1)) w) 0))
-                          (vector-set! (vector-ref fv i) w (if (> i 0)
-                                                               (max
-                                                                (vector-ref (vector-ref fv (- i 1)) w)
-                                                                (+ (vector-ref (vector-ref fv (- i 1)) (- w item-weight)) item-value))
-                                                               (max
-                                                                0
-                                                                item-value))))
+                      (vector-set! (vector-ref fv i) w
+                                   (if (> item-weight w)
+                                       (if (> i 0) (vector-ref (vector-ref fv (- i 1)) w) 0)
+                                       (if (> i 0)
+                                           (max
+                                            (vector-ref (vector-ref fv (- i 1)) w)
+                                            (+ (vector-ref (vector-ref fv (- i 1)) (- w item-weight)) item-value))
+                                           (max
+                                            0
+                                            item-value))))
                       (loopw (+ w 1))))))))
       (if (= len 0)
           0
