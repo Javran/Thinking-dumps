@@ -3,19 +3,7 @@ module WordProblem
   )
 where
 
-import Data.Char
-import Data.Maybe
 import Text.ParserCombinators.ReadP
-
-answer :: String -> Maybe Integer
-answer = parse question
-
-number :: ReadP Integer
-number = do
-  -- an optional sign is parsed as a function that
-  -- transforms the number immediately followed
-  sgnF <- option id (char '-' *> return negate)
-  sgnF . read <$> munch1 isDigit
 
 -- | reads operation (consumes leading and following consecutive spaces)
 --   and produce the corresponding operation
@@ -23,20 +11,17 @@ operation :: ReadP (Integer -> Integer -> Integer)
 operation = skipSpaces *> op <* skipSpaces
   where
     op =
-      (string "plus" *> return (+))
-        +++ (string "minus" *> return (-))
-        +++ (string "multiplied by" *> return (*))
-        +++ (string "divided by" *> return div)
+      ((+) <$ string "plus")
+        <++ ((-) <$ string "minus")
+        <++ ((*) <$ string "multiplied by")
+        <++ (div <$ string "divided by")
 
--- | parse the question, calculate results as parser runs
-question :: ReadP Integer
-question =
-  string "What is "
-    *> chainl1 number operation <* char '?'
-
-parse :: ReadP a -> String -> Maybe a
-parse rp inp =
-  listToMaybe
-    . map fst
-    . filter (null . snd)
-    $ readP_to_S (rp <* eof) inp
+answer :: String -> Maybe Integer
+answer inp = do
+  [(v, "")] <- pure $ readP_to_S (question <* eof) inp
+  pure v
+  where
+    question :: ReadP Integer
+    question =
+      string "What is "
+        *> chainl1 (readS_to_P reads) operation <* char '?'
