@@ -9,7 +9,7 @@
              [rst-1 (cons b '(0 . 1))])
     (match
      (cons rst-0 rst-1)
-     [((r0 . (s0 . t0)) . (r1 . (s1 . t1)))
+     [((r0 s0 . t0) . (r1 s1 . t1))
       (if (zero? r1)
           rst-0
           (let ([q (quotient r0 r1)]
@@ -98,17 +98,3 @@
          (lambda (_) #f)))
       (list->string (filter-map decode-char (string->list text)))]
      [_ (raise 'not-a-coprime)])]))
-
-(define debug #f)
-
-(if debug
-    (begin
-      (display
-       (decode '(25 . 7) "odpoz ub123 odpoz ub")) (newline)
-      (display
-       (decode '(17 . 33) "swxtj npvyk lruol iejdc blaxk swxmh qzglf")) (newline)
-      (display
-       (encode
-        '(17 . 33)
-        "12234 The quick brown fox jumps over the lazy dog."))
-      (newline)))
