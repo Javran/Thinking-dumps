@@ -34,20 +34,24 @@
       (when-digit ch)]
      [else (otherwise ch)])))
 
+;; allow a function to operate a lowercase char as if it's an int in 0..25
+(define int-over-lower-char
+  (let ([base (char->integer #\a)])
+    (lambda (modify)
+      (lambda (ch)
+        ;; assuming ch is a lowercase char
+        (let ([val (- (char->integer ch) base)])
+          (integer->char (+ (modify val) base)))))))
+
 (define (encode key text)
-  ;; encode rules are annoying random, but whatever.
-  ;; keep only alpha and num, convert alpha, keep num intact
-  ;; and then break into groups of 5
   (match
    key
    [(a . b)
     (define encode-char
       (destruct-char
        ;; when-lower
-       (lambda (ch)
-         (let* ([val (- (char->integer ch) (char->integer #\a))]
-                [encoded (modulo (+ (* a val) b) 26)])
-           (integer->char (+ (char->integer #\a) encoded))))
+       (int-over-lower-char
+        (lambda (val) (modulo (+ (* a val) b) 26)))
        ;; when-digit
        (lambda (ch) ch)
        ;; when-space
@@ -55,6 +59,7 @@
        ;; otherwise
        (lambda (_) #f)))
     (define (group chars)
+      ;; implements 5 letter group size.
       (let loop ([result ""]
              [xs chars])
         (define (pack-new-item cs)
@@ -83,17 +88,14 @@
       (define decode-char
         (destruct-char
          ;; when-lower
-         (lambda (ch)
-           (let* ([val (- (char->integer ch) (char->integer #\a))]
-                  [decoded (modulo (* s (- val b)) 26)])
-             (integer->char (+ (char->integer #\a) decoded))))
+         (int-over-lower-char
+          (lambda (val) (modulo (* s (- val b)) 26)))
          ;; when-digit
          (lambda (ch) ch)
          ;; when-space
          #f
          ;; otherwise
          (lambda (_) #f)))
-
       (list->string (filter-map decode-char (string->list text)))]
      [_ (raise 'not-a-coprime)])]))
 
