@@ -58,14 +58,37 @@
             (map encode-char (string->list (string-downcase text)))))]))
 
 (define (decode key text)
-  ;; decode: remove spaces, convert alpha, keep num.
-  'implement-me!)
+  (match
+   key
+   [(a . b)
+    (match
+     (extended-gcd a 26)
+     [(1 . (s . _))
+      (define (decode-char ch)
+        (cond
+         [(char=? ch #\space) #f]
+         [(char-set-contains? char-set:digit ch) ch]
+         [(char-set-contains? char-set:lower-case ch)
+          (let* ([val (- (char->integer ch) (char->integer #\a))]
+                 [fk-s (let ([fk (remainder s 26)])
+                           (if (< fk 0)
+                               (+ fk 26)
+                               fk))]
+                 [decoded (remainder (* fk-s (+ val 26 (- (remainder b 26)))) 26)])
+            (integer->char (+ (char->integer #\a) decoded)))]
+         [else #f]))
+      (list->string (filter (lambda (x) x) (map decode-char (string->list text))))]
+     [_ (raise 'not-a-coprime)])]))
 
 
-(define debug #t)
+(define debug #f)
 
 (if debug
     (begin
+      (display
+       (decode '(25 . 7) "odpoz ub123 odpoz ub")) (newline)
+      (display
+       (decode '(17 . 33) "swxtj npvyk lruol iejdc blaxk swxmh qzglf")) (newline)
       (display "<")(display (group (string->list "fasdfe12345"))) (display ">") (newline)
       (display
        (encode
