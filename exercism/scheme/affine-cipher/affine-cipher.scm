@@ -1,6 +1,6 @@
 (import (rnrs))
 
-(use-modules ((srfi srfi-1) #:select (split-at)))
+(use-modules ((srfi srfi-1) #:select (filter-map split-at)))
 (use-modules (ice-9 match))
 
 (define (extended-gcd a b)
@@ -50,12 +50,11 @@
        [(char-set-contains? char-set:digit ch) ch]
        [(char-set-contains? char-set:lower-case ch)
         (let* ([val (- (char->integer ch) (char->integer #\a))]
-               [encoded (remainder (+ (* a val) b) 26)])
+               [encoded (modulo (+ (* a val) b) 26)])
           (integer->char (+ (char->integer #\a) encoded)))]
        [else #f]))
     (group
-     (filter (lambda (x) x)
-            (map encode-char (string->list (string-downcase text)))))]))
+     (filter-map encode-char (string->list (string-downcase text))))]))
 
 (define (decode key text)
   (match
@@ -70,16 +69,11 @@
          [(char-set-contains? char-set:digit ch) ch]
          [(char-set-contains? char-set:lower-case ch)
           (let* ([val (- (char->integer ch) (char->integer #\a))]
-                 [fk-s (let ([fk (remainder s 26)])
-                           (if (< fk 0)
-                               (+ fk 26)
-                               fk))]
-                 [decoded (remainder (* fk-s (+ val 26 (- (remainder b 26)))) 26)])
+                 [decoded (modulo (* s (- val b)) 26)])
             (integer->char (+ (char->integer #\a) decoded)))]
          [else #f]))
-      (list->string (filter (lambda (x) x) (map decode-char (string->list text))))]
+      (list->string (filter-map decode-char (string->list text)))]
      [_ (raise 'not-a-coprime)])]))
-
 
 (define debug #f)
 
