@@ -20,22 +20,19 @@
                rst-1
                (cons r2 (cons s2 t2))))))])))
 
-(define (group chars)
-  (let loop ([result ""]
-             [xs chars])
+(define (destruct-char
+         when-lower
+         when-digit
+         when-space
+         otherwise)
+  (lambda (ch)
     (cond
-     [(null? xs) result]
-     [(< (length xs) 5)
-      (if (string=? result "")
-          (list->string xs)
-          (string-append result " " (list->string xs)))]
-     [else (call-with-values (lambda () (split-at xs 5))
-             (lambda (ys zs)
-               (loop
-                (if (string=? result "")
-                    (list->string ys)
-                    (string-append result " " (list->string ys)))
-                zs)))])))
+     [(char=? ch #\space) when-space]
+     [(char-set-contains? char-set:lower-case ch)
+      (when-lower ch)]
+     [(char-set-contains? char-set:digit ch)
+      (when-digit ch)]
+     [else (otherwise ch)])))
 
 (define (encode key text)
   ;; encode rules are annoying random, but whatever.
@@ -44,15 +41,35 @@
   (match
    key
    [(a . b)
-    (define (encode-char ch)
-      ;; returns #f if the char cannot be encoded.
-      (cond
-       [(char-set-contains? char-set:digit ch) ch]
-       [(char-set-contains? char-set:lower-case ch)
-        (let* ([val (- (char->integer ch) (char->integer #\a))]
-               [encoded (modulo (+ (* a val) b) 26)])
-          (integer->char (+ (char->integer #\a) encoded)))]
-       [else #f]))
+    (define encode-char
+      (destruct-char
+       ;; when-lower
+       (lambda (ch)
+         (let* ([val (- (char->integer ch) (char->integer #\a))]
+                [encoded (modulo (+ (* a val) b) 26)])
+           (integer->char (+ (char->integer #\a) encoded))))
+       ;; when-digit
+       (lambda (ch) ch)
+       ;; when-space
+       #f
+       ;; otherwise
+       (lambda (_) #f)))
+    (define (group chars)
+      (let loop ([result ""]
+             [xs chars])
+        (define (pack-new-item cs)
+          (if (null? cs)
+              result
+              ;; pack cs and generate a new result string, taking into account spaces.
+              (let ([packed (list->string cs)])
+                (if (string=? result "")
+                    packed
+                    (string-append result " " packed)))))
+        (if (< (length xs) 5)
+            (pack-new-item xs)
+            (call-with-values (lambda () (split-at xs 5))
+              (lambda (ys zs)
+                (loop (pack-new-item ys) zs))))))
     (group
      (filter-map encode-char (string->list (string-downcase text))))]))
 
@@ -63,15 +80,20 @@
     (match
      (extended-gcd a 26)
      [(1 . (s . _))
-      (define (decode-char ch)
-        (cond
-         [(char=? ch #\space) #f]
-         [(char-set-contains? char-set:digit ch) ch]
-         [(char-set-contains? char-set:lower-case ch)
-          (let* ([val (- (char->integer ch) (char->integer #\a))]
-                 [decoded (modulo (* s (- val b)) 26)])
-            (integer->char (+ (char->integer #\a) decoded)))]
-         [else #f]))
+      (define decode-char
+        (destruct-char
+         ;; when-lower
+         (lambda (ch)
+           (let* ([val (- (char->integer ch) (char->integer #\a))]
+                  [decoded (modulo (* s (- val b)) 26)])
+             (integer->char (+ (char->integer #\a) decoded))))
+         ;; when-digit
+         (lambda (ch) ch)
+         ;; when-space
+         #f
+         ;; otherwise
+         (lambda (_) #f)))
+
       (list->string (filter-map decode-char (string->list text)))]
      [_ (raise 'not-a-coprime)])]))
 
@@ -83,7 +105,6 @@
        (decode '(25 . 7) "odpoz ub123 odpoz ub")) (newline)
       (display
        (decode '(17 . 33) "swxtj npvyk lruol iejdc blaxk swxmh qzglf")) (newline)
-      (display "<")(display (group (string->list "fasdfe12345"))) (display ">") (newline)
       (display
        (encode
         '(17 . 33)
