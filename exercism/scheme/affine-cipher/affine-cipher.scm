@@ -34,8 +34,8 @@
       (when-digit ch)]
      [else (otherwise ch)])))
 
-;; allow a function to operate a lowercase char as if it's an int in 0..25
 (define int-over-lower-char
+  ;; allow a function to operate a lowercase char as if it's an int in 0..25
   (let ([base (char->integer #\a)])
     (lambda (modify)
       (lambda (ch)
