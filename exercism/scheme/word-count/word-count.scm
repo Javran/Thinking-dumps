@@ -1,6 +1,7 @@
 (import (rnrs))
 
 (use-modules ((srfi srfi-1) #:select (span break filter-map)))
+(use-modules ((srfi srfi-13)))
 
 (define (word-split sentence)
   (define stage-0
@@ -25,11 +26,7 @@
     ;; remove surrounding quotes and empty words
     (let* ([l (string-length word)]
            [word-1
-            (if (and (>= l 2)
-                     (eq? (string-ref word 0) #\')
-                     (eq? (string-ref word (- l 1)) #\'))
-                (string-copy word 1 (- l 1))
-                word)])
+            (string-trim-both word (lambda (ch) (eq? ch #\')))])
       (if (= (string-length word-1) 0)
           #f
           word-1)))
