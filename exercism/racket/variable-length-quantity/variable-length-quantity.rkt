@@ -9,41 +9,51 @@
 (define (encode-one n)
   (if (zero? n)
       '(0)
-      (let loop ([last-bit #t]
+      (let loop ([mask 0]
                  [x n]
                  [xs '()])
         (if (zero? x)
             xs
-            (let ([cur-byte (bitwise-ior (if last-bit 0 top-mask)
-                                         (bitwise-and x payload-mask))])
-              (loop #f (arithmetic-shift x -7) (cons cur-byte xs)))))))
-              
+            (let ([cur-byte (bitwise-ior
+                             mask
+                             (bitwise-and x payload-mask))])
+              (loop
+               top-mask
+               (arithmetic-shift x -7)
+               (cons cur-byte xs)))))))
+
 (define (encode . nums)
   (append-map encode-one nums))
 
 (define (decode-one nums)
   (call-with-values
-   (lambda () (span (lambda (x) (not (zero? (bitwise-and top-mask x)))) nums))
+   (lambda () (span (compose1 not zero? (curry bitwise-and top-mask)) nums))
    (lambda (xs ys)
-     (if (> (length xs) 4)
-         ;; at most 32 bits are encoded into 5 elements,
-         ;; so (length xs) can be 4 at most.
-         (raise (error 'invalid))
-         (match ys
-           ['() (raise (error 'invalid))]
-           [(cons z zs)
-            (cons
-             (foldl
-              (lambda (d acc) (bitwise-ior d (arithmetic-shift acc 7)))
-              0
-              (append (map (lambda (x) (bitwise-and payload-mask x)) xs) (list z)))
-             zs)])))))
+     (cond
+       [(> (length xs) 4)
+        ;; at most 32 bits are encoded into 5 elements,
+        ;; so (length xs) can be 4 at most.
+        (raise (error 'sequence-too-long))]
+       [(and (= (length xs) 4) (> (car xs) #b10001111))
+        ;; in theory 5 bytes can encode a 35 bit integer,
+        ;; here we want to make sure that top 3 bit is not used.
+        (raise (error 'too-many-bits))]
+       [else 
+        (match ys
+          ['() (raise (error 'invalid))]
+          [(cons z zs)
+           (cons
+            (foldl
+             (lambda (d acc) (bitwise-ior d (arithmetic-shift acc 7)))
+             0
+             (append (map (curry bitwise-and payload-mask) xs) (list z)))
+            zs)])]))))
 
 (define (decode . nums)
   (let loop ([acc '()]
              [one-result (decode-one nums)])
     (match one-result
-      [(cons r remaining)
-       (if (null? remaining)
+      [(cons r rest)
+       (if (null? rest)
            (reverse (cons r acc))
-           (loop (cons r acc) (decode-one remaining)))])))
+           (loop (cons r acc) (decode-one rest)))])))
