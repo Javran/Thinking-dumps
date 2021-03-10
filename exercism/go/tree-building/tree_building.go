@@ -22,9 +22,6 @@ type Node struct {
 // ErrRootNotUnique does what its name says
 var ErrRootNotUnique = errors.New("root not unique")
 
-// ErrMissingRoot does what its name says
-var ErrMissingRoot = errors.New("missing root")
-
 // ErrParentIDHigher does what its name says
 var ErrParentIDHigher = errors.New("parent node id is higher")
 
@@ -39,7 +36,8 @@ func Build(records []Record) (*Node, error) {
 
 	// There are multiple sorting strategies, each suited for different scenarios
 	// 1. Sort input records. (current approach) This has the benefit that:
-	//    + continuous ID check is as easy as keeping track of the previous ID.
+	//    + continuous ID check is as easy as keeping track of the previous ID,
+	//      or alternatively it's just the current element index.
 	//    + parent node is always created prior to children, making children-attaching
 	//      a bit easier.
 	// 2. Build the tree first regardless ordering and sort afterwards.
@@ -60,14 +58,12 @@ func Build(records []Record) (*Node, error) {
 	sort.Slice(records, func(i, j int) bool { return records[i].ID < records[j].ID })
 
 	var root *Node
-	prevID := -1
 	m := make(map[int]*Node)
 
-	for _, r := range records {
-		if r.ID != prevID+1 {
+	for i, r := range records {
+		if r.ID != i {
 			return nil, ErrIDNotContinuous
 		}
-		prevID++
 
 		curNode := Node{ID: r.ID}
 		m[r.ID] = &curNode
@@ -85,9 +81,6 @@ func Build(records []Record) (*Node, error) {
 			parentNode := m[r.Parent]
 			parentNode.Children = append(parentNode.Children, &curNode)
 		}
-	}
-	if root == nil {
-		return nil, ErrMissingRoot
 	}
 	return root, nil
 }
