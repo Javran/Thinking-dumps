@@ -39,14 +39,14 @@
         (let ([xs (list-ref say-tys-20-to-90 (- q 2))])
           (if (zero? r)
               xs
-              (~a xs   #\- (list-ref say-0-to-19 r)))))))
+              (~a xs #\- (list-ref say-0-to-19 r)))))))
 
 (define (say-int-chunk n)
   (let-values ([(q r) (quotient/remainder n 100)])
     (let ([lo (say-0-to-99 r)])
       (if (zero? q)
           lo
-          (let ([hi (~a (list-ref say-0-to-19 q) #\space "hundred" )])
+          (let ([hi (~a (list-ref say-0-to-19 q) #\space "hundred")])
             (if (zero? r)
                 hi
                 (~a hi #\space lo)))))))
@@ -64,13 +64,12 @@
 
 (define scale-pair->string
   (match-lambda
-    [`(0 . ,_) ""]
+    [`(0 . ,_) #f]
     [(cons n w)
      (let ([xs  (say-int-chunk n)])
        (if (eq? w 'END)
            xs
            (~a xs #\space (symbol->string w))))]))
-
 
 (define (scale-paired-chunks n)
   (let* ([chunks (integer->int-chunks n)]
@@ -82,7 +81,10 @@
   (cond
     [(zero? n) "zero"]
     [(< n 0) (~a "negative " (say (- n)))]
-    [else (string-join (filter (compose1 not zero? string-length) (map scale-pair->string (scale-paired-chunks n))))]))
+    [else (string-join
+           (filter-map
+            scale-pair->string
+            (scale-paired-chunks n)))]))
 
 ;; those are horrible names, not gonna refer to any of them anywhere in impl body.
 (define step1 say-0-to-99)
