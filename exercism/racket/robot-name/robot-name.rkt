@@ -69,15 +69,14 @@
    (lambda () (gen-name-for robot))))
 
 (define (reset! robot)
-  (call/cc
-   (lambda (k)
-     (let ([n (hash-ref
-               current-names
-               robot
-               (lambda () (k 'no-need-for-reset)))])
-       (set-remove! all-names n)
-       (hash-remove! current-names robot)
-       'done))))
+  (let ([n (hash-ref
+            current-names
+            robot
+            #f)])
+    (and n
+         (begin
+           (set-remove! all-names n)
+           (hash-remove! current-names robot)))))
 
 (define (reset-name-cache!)
   ;; it is intentional that robot-count doesn't reset, this ensures the uniqueness of every robot
