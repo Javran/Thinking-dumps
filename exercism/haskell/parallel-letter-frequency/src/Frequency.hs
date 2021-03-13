@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 module Frequency
   ( frequency
   )
@@ -19,6 +17,5 @@ frequency n =
 frequency' :: T.Text -> M.Map Char Int
 frequency' =
   M.fromListWith (+)
-    . map ((,1) . toLower)
-    . filter isLetter
+    . concatMap (\ch -> [(ch, 1) | isLetter ch])
     . T.unpack
