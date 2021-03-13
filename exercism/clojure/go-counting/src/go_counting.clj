@@ -11,7 +11,7 @@
   (apply concat (map-indexed f xs)))
 
 (defn grid->hash-map [grid]
-  (apply 
+  (apply
    hash-map
    (mapcat-indexed
     (fn [j xs]
@@ -19,42 +19,47 @@
        (fn [i x] [[i j] x]) xs))
     grid)))
 
-(defn territory-hm [hm coord]
-  (loop [owners #{}
+(defn territory-hm
+  "Collects set of neighboring stone coords and the owner"
+  [hm coord]
+  (loop [;; keeps track potential owners (non-space cells near current set of coords
+         owners #{}
+         ;; set of space coords
          coords #{}
+         ;; below are standard BFS stuff
          discovered #{coord}
-         q [coord]]
-    (if (seq q)
-      (let [[cur-coord & rest] q
-            next-coords (filter
-                         (fn [x]
-                           (and
-                            (hm x false)
-                            (not (discovered x))))
-                         (coord-expand cur-coord))
-            discovered2 (set/union discovered (set next-coords))]
-        (case (hm cur-coord)
-          \B (recur
-              (conj owners :black)
-              coords
-              discovered
-              rest)
-          \W (recur
-              (conj owners :white)
-              coords
-              discovered
-              rest)
-          \space (recur
-                  owners
-                  (conj coords cur-coord)
-                  discovered2
-                  (concat rest next-coords))))
-      {:owner 
-       (if (and (seq coords)
-                (= (count owners) 1))
-         (first owners)
-         nil)
-       :stones coords})))
+         q (conj (clojure.lang.PersistentQueue/EMPTY) coord)]
+    (let [cur-coord (peek q)]
+      (if cur-coord
+        (let [rest (pop q)
+              next-coords (filter
+                           (fn [x]
+                             (and
+                              (hm x false)
+                              (not (discovered x))))
+                           (coord-expand cur-coord))]
+          (case (hm cur-coord)
+            \B (recur
+                (conj owners :black)
+                coords
+                discovered
+                rest)
+            \W (recur
+                (conj owners :white)
+                coords
+                discovered
+                rest)
+            \space (recur
+                    owners
+                    (conj coords cur-coord)
+                    (set/union discovered (set next-coords))
+                    (apply (partial conj rest) next-coords))))
+        {:owner
+         (if (and (seq coords)
+                  (= (count owners) 1))
+           (first owners)
+           nil)
+         :stones coords}))))
 
 (defn territory [grid coord]
   (territory-hm (grid->hash-map grid) coord))
@@ -85,5 +90,9 @@
 
 (def e
   (territories
-   [" W "]))
-
+   ["  B  "
+    " B B "
+    "B W B"
+    " W W "
+    "  W  "
+    "  B  "]))

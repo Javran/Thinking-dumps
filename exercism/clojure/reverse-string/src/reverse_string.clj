@@ -1,7 +1,8 @@
 (ns reverse-string)
 
 (defn reverse-string [s]
-  (apply
-   str
-   (;; reverse by constructing diff-list
-    (reduce (fn [acc i] (comp acc #(conj % i))) identity s) [])))
+  (comp
+   (partial apply str)
+   #(% [])
+   ;; reverse by constructing diff-list
+   (partial reduce (fn [acc i] (comp acc #(conj % i))) identity)))
