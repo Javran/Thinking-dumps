@@ -8,19 +8,23 @@
 ;; user=> (bigint (Math/pow 9 25))
 ;; 717897987691852600000000N
 
-(defn expt [n init-m]
+(defn expt
+  "compute n^m, where n >= 0, m > 0."
+  [n init-m]
   ;; https://en.wikipedia.org/wiki/Exponentiation_by_squaring
-  (loop [result 1N
-         m init-m
-         acc (bigint n)]
-    (if (= m 0)
-      result
-      (recur
-       (if (even? m)
-         result
-         (* result acc))
-       (quot m 2)
-       (* acc acc)))))
+  (if (zero? n)
+    0
+    (loop [result 1N
+           m init-m
+           acc (bigint n)]
+      (if (= m 0)
+        result
+        (recur
+         (if (even? m)
+           result
+           (* result acc))
+         (quot m 2)
+         (* acc acc))))))
 
 (defn armstrong? [num]
   (let [s (str num)
