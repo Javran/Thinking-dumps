@@ -1,0 +1,35 @@
+(ns armstrong-numbers)
+
+;; Regarding why not Math/pow - it's designed for double not int,
+;; and IEEE754 double doesn't have sufficient precision to produce correct results:
+;;
+;; user=> (apply * (repeat 25 9N))
+;; 717897987691852588770249N
+;; user=> (bigint (Math/pow 9 25))
+;; 717897987691852600000000N
+
+(defn expt [n init-m]
+  ;; https://en.wikipedia.org/wiki/Exponentiation_by_squaring
+  (loop [result 1N
+         m init-m
+         acc (bigint n)]
+    (if (= m 0)
+      result
+      (recur
+       (if (even? m)
+         result
+         (* result acc))
+       (quot m 2)
+       (* acc acc)))))
+
+(defn armstrong? [num]
+  (let [s (str num)
+        m (count s)
+        pows (map
+              (comp
+               #(expt % m)
+               #(- (int %) (int \0)))
+              s)]
+    (=
+     num
+     (apply + pows))))
