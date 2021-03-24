@@ -26,13 +26,19 @@
          (quot m 2)
          (* acc acc))))))
 
+;; This is the straightforward version of `expt` above.
+(defn expt-simple
+  "compute n^m, where n >= 0, m > 0."
+  [n m]
+  (apply * (repeat m (bigint n))))
+
 (defn armstrong? [num]
   (let [s (str num)
         m (count s)
         pows (map
               (comp
                #(expt % m)
-               #(- (int %) (int \0)))
+               #(Character/digit % 10))
               s)]
     (=
      num
