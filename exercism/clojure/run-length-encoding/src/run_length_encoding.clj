@@ -8,7 +8,7 @@
         cnt (count xs)]
     (if (empty? tl)
       (str hd)
-      (format "%d%s" cnt hd))))
+      (str cnt hd))))
 
 (defn run-length-encode
   "encodes a string with run-length-encoding"
