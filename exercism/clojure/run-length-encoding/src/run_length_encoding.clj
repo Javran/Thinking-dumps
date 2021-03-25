@@ -1,5 +1,4 @@
-(ns run-length-encoding
-  (:require [clojure.string :as str]))
+(ns run-length-encoding)
 
 (defn encode-chunk
   "encodes a non-empty sequence of same char"
@@ -15,25 +14,26 @@
 (defn run-length-encode
   "encodes a string with run-length-encoding"
   [plain-text]
-  (apply str (map encode-chunk (partition-by identity plain-text))))
+  (->>
+   (partition-by identity plain-text)
+   (map encode-chunk)
+   (apply str)))
 
 (defn run-length-decode
   "decodes a run-length-encoded string"
   [cipher-text]
-  (apply str
-         ((reduce
-           comp
-           identity
-           (map
-            (fn [xs]
-              (if (char-numeric? (first xs))
-                (let [cnt (Integer/parseInt (apply str xs))]
-                  (fn [[hd & tl]]
-                    (concat (repeat cnt hd) tl)))
-                #(concat xs %)))
-            (partition-by char-numeric? cipher-text)))
-          "")))
-
-(def
-  e
-  (run-length-decode "aaa2v3d12EFG"))
+  (->>
+   (partition-by char-numeric? cipher-text)
+   (map
+    (fn
+      [xs]
+      "constructs a continuation that takes the result of decoding rest of the str
+       (which is a list of `char?`) and put what `xs` decodes to in front of it"
+      (if (char-numeric? (first xs))
+        (let [cnt (Integer/parseInt (apply str xs))]
+          (fn [[hd & tl]]
+            (concat (repeat cnt hd) tl)))
+        #(concat xs %))))
+   (reduce comp identity)
+   (#(% ""))
+   (apply str)))
