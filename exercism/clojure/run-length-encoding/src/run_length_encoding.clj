@@ -17,26 +17,27 @@
 
 (defn decode-chunk
   "decodes a encoded char seq,
-  returns `(cons <result> <rest of input>)`
+  returns `[<result> <rest of input>]`
   or nil if input is empty."
   [xs]
   (if (empty? xs)
     nil
     (let [[digits ys] (split-with #(Character/isDigit %) xs)]
       (if (empty? digits)
-        (cons (str (first xs)) (rest xs))
+        [(str (first xs)) (rest xs)]
         (let [cnt (Integer/parseInt (apply str digits))
               [hd & tl] ys]
-          (cons (apply str (repeat cnt hd))
-                tl))))))
+          [(apply str (repeat cnt hd)) tl])))))
+
+(defn unfoldr
+  [step state]
+  (let [result (step state)]
+    (if result
+      (cons (first result) (unfoldr step (second result)))
+      nil)))
 
 (defn run-length-decode
   "decodes a run-length-encoded string"
   [cipher-text]
-  (loop [result-rev nil
-         xs cipher-text]
-    (let [result (decode-chunk xs)]
-      (if result
-        (let [[r & rest] result]
-          (recur (cons r result-rev) rest))
-        (str/join (reverse result-rev))))))
+  (apply str
+         (unfoldr decode-chunk cipher-text)))
