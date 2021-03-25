@@ -13,13 +13,7 @@
 (defn run-length-encode
   "encodes a string with run-length-encoding"
   [plain-text]
-  (loop [result-rev nil
-         xs plain-text]
-    (if (empty? xs)
-      (str/join (reverse result-rev))
-      (let [[hd & _] xs
-            [ys zs] (split-with #(= hd %) xs)]
-        (recur (cons (encode-chunk ys) result-rev) zs)))))
+  (apply str (map encode-chunk (partition-by identity plain-text))))
 
 (defn decode-chunk
   "decodes a encoded char seq,
