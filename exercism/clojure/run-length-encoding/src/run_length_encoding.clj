@@ -1,5 +1,9 @@
 (ns run-length-encoding)
 
+(set! *warn-on-reflection* true)
+(def char-numeric? #(Character/isDigit ^char %))
+(def str->int #(Integer/parseInt ^chars %))
+
 (defn encode-chunk
   "encodes a non-empty sequence of same char"
   [xs]
@@ -8,8 +12,6 @@
     (if (empty? tl)
       (str hd)
       (str cnt hd))))
-
-(def char-numeric? #(Character/isDigit %))
 
 (defn run-length-encode
   "encodes a string with run-length-encoding"
@@ -23,17 +25,11 @@
   "decodes a run-length-encoded string"
   [cipher-text]
   (->>
-   (partition-by char-numeric? cipher-text)
+   cipher-text
+   (re-seq #"(\d+)(.)|\D+")
    (map
-    (fn
-      [xs]
-      "constructs a continuation that takes the result of decoding rest of the str
-       (which is a list of `char?`) and put what `xs` decodes to in front of it"
-      (if (char-numeric? (first xs))
-        (let [cnt (Integer/parseInt (apply str xs))]
-          (fn [[hd & tl]]
-            (concat (repeat cnt hd) tl)))
-        #(concat xs %))))
-   (reduce comp identity)
-   (#(% ""))
+    (fn [[orig num-str ch]]
+      (if ch
+        (apply str (repeat (str->int num-str) ch))
+        orig)))
    (apply str)))
