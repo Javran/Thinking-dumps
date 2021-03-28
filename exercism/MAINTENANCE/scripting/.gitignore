@@ -1,7 +1,0 @@
-.stack-work/
-scripting.cabal
-stack.yaml.lock
-*~
-
-private/
-z*
