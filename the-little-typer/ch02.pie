@@ -19,28 +19,31 @@
   (-> U U)
   (Pair Atom U))
 
-;; I'm just trying to define a plus function:
-(claim plus (-> Nat Nat Nat))
-(define plus
+
+(claim step-+ (-> Nat Nat))
+(define step-+
+  ;; Pie seems unhappy if I just use add1 directly - so `add1` is not a function?
+  (lambda (k) (add1 k)))
+
+(claim + (-> Nat Nat Nat))
+(define +
   (lambda (m n)
     (iter-Nat m
       n
-      (lambda (r)
-        (add1 r)))))
+      step-+)))
 
 ;; (the Nat 9)
-(plus 2 7)
-(plus (plus 1 (plus 3 2)) 3)
+(+ 2 7)
+(+ (+ 1 (+ 3 2)) 3)
 
 ;; not really working.
 (claim gauss (-> Nat Nat))
 (define gauss
   (lambda (n)
-    (iter-Nat n
+    (rec-Nat n
       0
-      (lambda (r)
-        ;; note that here n is not changed,
-        ;; so we ended up computing square rather than gauss.
-        (plus n r)))))
+      (lambda (n-1 r)
+        (+ (add1 n-1) r)))))
 
-(gauss 4)
+;; (the Nat 210)
+(gauss 20)
