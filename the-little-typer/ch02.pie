@@ -18,3 +18,29 @@
 (Pair
   (-> U U)
   (Pair Atom U))
+
+;; I'm just trying to define a plus function:
+(claim plus (-> Nat Nat Nat))
+(define plus
+  (lambda (m n)
+    (iter-Nat m
+      n
+      (lambda (r)
+        (add1 r)))))
+
+;; (the Nat 9)
+(plus 2 7)
+(plus (plus 1 (plus 3 2)) 3)
+
+;; not really working.
+(claim gauss (-> Nat Nat))
+(define gauss
+  (lambda (n)
+    (iter-Nat n
+      0
+      (lambda (r)
+        ;; note that here n is not changed,
+        ;; so we ended up computing square rather than gauss.
+        (plus n r)))))
+
+(gauss 4)
