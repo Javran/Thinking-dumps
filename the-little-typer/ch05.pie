@@ -1,0 +1,23 @@
+#lang pie
+
+(claim foo
+  (List Atom))
+(define foo
+  (:: 'a (:: 'b nil)))
+(claim bar
+  (List Atom))
+(define bar
+  (:: 'c (:: 'e (:: 'f nil))))
+
+;; trying out before book tells me how to do this
+(claim append
+  (Pi ((E U))
+    (-> (List E) (List E)
+        (List E))))
+(define append
+  (lambda (E)
+    (lambda (xs ys)
+      (rec-List xs
+        ys
+        (lambda (hd tl r)
+          (:: hd r))))))
