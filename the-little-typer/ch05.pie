@@ -64,7 +64,9 @@
 (define ns123
   (:: 1 (:: 2 (:: 3 nil))))
 
-;; I'm not sure how is this the same as "append", as "concat" adds things backwards.
+;; note: see https://thelittletyper.com/errata.html
+;; this is indeed a mistake in the book, concat inserts elements from
+;; second list but backwards.
 (concat Nat ns123 ns123)
 
 (claim reverse
