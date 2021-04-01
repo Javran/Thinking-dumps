@@ -1,0 +1,71 @@
+#lang pie
+
+(claim + (-> Nat Nat Nat))
+(define +
+  (lambda (m n)
+    (iter-Nat m
+      n
+      (lambda (i) (add1 i)))))
+
+(claim incr (-> Nat Nat))
+(define incr
+  (lambda (n)
+    (iter-Nat n
+      1
+      (+ 1))))
+
+(claim incr=add1
+  (Pi ((n Nat))
+    (= Nat (incr n) (add1 n))))
+(define incr=add1
+  (lambda (n)
+    (ind-Nat
+      n
+      (lambda (i) (= Nat (incr i) (add1 i)))
+      (same 1)
+      (lambda (n-1 r-incr=add1)
+        ;; we want this whole thing to be:
+        ;; (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
+        (replace
+          ;; target
+          ;; - from: (incr n-1)
+          ;; - to: (add1 n-1)
+          r-incr=add1
+          ;; motive:
+          ;; - we want:
+          ;;   (mot <to>)
+          ;;   which is:
+          ;;   (mot (add1 n-1))
+          ;;   to be:
+          ;;   (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
+          (lambda (i) (= Nat (add1 (incr n-1)) (add1 i)))
+          ;; base is a (mot <from>)
+          ;; which is (mot (incr n-1))
+          ;; which is (= Nat (add1 (incr n-1)) (add1 (incr n-1)))
+          (same (add1 (incr n-1))))))))
+
+(incr=add1 4)
+
+;; Q: what is equivalent of (cong (= X from to) f) expressed by replace?
+;; (cong (= X from to) f) is of type (= Y (f from) (f to))
+;; where f is of type (-> X Y).
+;; so we want an expression:
+;; (replace
+;;  (= X from to)
+;;  <mot>
+;;  <base>)
+;; to have the type: (= Y (f from) (f to))
+;; so (<mot> <to>), which is (<mot> ?to)
+;; should be: (= Y (f from) (f ?to)), therefore:
+;; (replace
+;;  (= X from to)
+;;  (lambda (t) (= Y (f from) (f t)))
+;;  <base>)
+;; now what is (<mot> <from>)?
+;; (= Y (f from) (f from)) ... so <base> is just (same (f from))?
+;; (replace
+;;  (= X from to)
+;;  (lambda (t) (= Y (f from) (f t)))
+;;  (same (f from)))
+;; Note: I'm not 100% sure, but it looks about right.
+
