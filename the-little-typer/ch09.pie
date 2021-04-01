@@ -69,3 +69,86 @@
 ;;  (same (f from)))
 ;; Note: I'm not 100% sure, but it looks about right.
 
+(claim double (-> Nat Nat))
+(define double
+  (lambda (n)
+    (iter-Nat n
+      0
+      (lambda (r) (add1 (add1 r))))))
+(double 5)
+
+(claim twice (-> Nat Nat))
+(define twice
+  (lambda (n) (+ n n)))
+(twice 3)
+
+(claim twice=double
+  (Pi ((n Nat))
+    (= Nat (twice n) (double n))))
+
+(claim add1+=+add1
+  (Pi ((n Nat)
+       (m Nat))
+    (= Nat
+       (add1 (+ n m))
+       (+ n (add1 m)))))
+(define add1+=+add1
+  (lambda (n m)
+    (ind-Nat n
+      ;; motive
+      (lambda (i)
+        (= Nat (add1 (+ i m)) (+ i (add1 m))))
+      ;; base
+      (same (add1 m))
+      ;; step
+      (lambda (n-1 r-add1+=+add1)
+        ;; want: (= Nat (add1 (add1 (+ n-1 m))) (add1 (+ n-1 (add1 m))))
+        (replace
+          (the
+            (= Nat
+              ;; from
+              (add1 (+ n-1 m))
+              ;; to
+              (+ n-1 (add1 m)))
+            r-add1+=+add1)
+          (lambda (k)
+            (= Nat (add1 (add1 (+ n-1 m))) (add1 k)))
+          (same (add1 (add1 (+ n-1 m)))))))))
+
+(claim add1+=+add1-rev
+  (Pi ((n Nat)
+       (m Nat))
+    (= Nat
+       (+ n (add1 m))
+       (add1 (+ n m)))))
+(define add1+=+add1-rev
+  (lambda (n m)
+    ;; want: (= Nat (+ n (add1 m)) (add1 (+ n m)))
+    (replace
+      ;; from: (add1 (+ n m))
+      ;; to: (+ n (add1 m))
+      (add1+=+add1 n m)
+      (lambda (k) (= Nat k (add1 (+ n m))))
+      (same (add1 (+ n m))))))
+
+(define twice=double
+  (lambda (n)
+    (ind-Nat n
+      (lambda (i)
+        (= Nat (twice i) (double i)))
+      (same 0)
+      (lambda (n-1 r-twice-double)
+        (the
+          ;; want:
+          (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (double n-1))))
+          (replace
+            (the
+              (= Nat (twice n-1) (double n-1))
+              r-twice-double)
+            ;; motive
+            (lambda (k)
+              (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 k))))
+            ;; base
+            (the
+              (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (+ n-1 n-1))))
+              (cong (add1+=+add1-rev n-1 n-1) (+ 1)))))))))
