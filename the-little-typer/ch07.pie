@@ -67,3 +67,25 @@
           (tail xs))))))
 
 (last Atom 4 thing)
+
+(claim drop-last
+  (Pi ((X U)
+       (l Nat))
+    (-> (Vec X (add1 l))
+        (Vec X l))))
+(define drop-last
+  (lambda (X l)
+    (ind-Nat
+      ;; target
+      l
+      ;; motive
+      (lambda (i)
+        (-> (Vec X (add1 i))
+            (Vec X i)))
+      ;; base
+      (lambda (_) vecnil)
+      ;; step
+      (lambda (l-1 r xs)
+        (vec:: (head xs)
+          (r (tail xs)))))))
+(drop-last Atom 4 thing)
