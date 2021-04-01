@@ -1,0 +1,21 @@
+#lang pie
+
+(claim peas
+  (Pi ((count Nat))
+    (Vec Atom count)))
+
+(define peas
+  (lambda (count)
+    (ind-Nat
+      ;; target value to analyze (perform induction on)
+      count
+      ;; motive, from that number to a type (the return type)
+      (lambda (l)
+        (Vec Atom l))
+      ;; base case (zero), l=0 so we only have one construct:
+      vecnil
+      ;; step function - we can simply prepend to the recursive result.
+      (lambda (l-1 r)
+        (vec:: 'pea r)))))
+
+(peas 6)
