@@ -123,13 +123,7 @@
        (add1 (+ n m)))))
 (define add1+=+add1-rev
   (lambda (n m)
-    ;; want: (= Nat (+ n (add1 m)) (add1 (+ n m)))
-    (replace
-      ;; from: (add1 (+ n m))
-      ;; to: (+ n (add1 m))
-      (add1+=+add1 n m)
-      (lambda (k) (= Nat k (add1 (+ n m))))
-      (same (add1 (+ n m))))))
+    (symm (add1+=+add1 n m))))
 
 (define twice=double
   (lambda (n)
