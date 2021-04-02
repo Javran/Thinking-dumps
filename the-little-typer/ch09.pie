@@ -143,16 +143,6 @@
       ;; step
       (add1+=+add1-step m))))
 
-(claim add1+=+add1-rev
-  (Pi ((n Nat)
-       (m Nat))
-    (= Nat
-       (+ n (add1 m))
-       (add1 (+ n m)))))
-(define add1+=+add1-rev
-  (lambda (n m)
-    (symm (add1+=+add1 n m))))
-
 (claim twice=double-step
   (Pi ((n-1 Nat))
     (->
@@ -162,17 +152,40 @@
        ;; to
        (double n-1))
       ;; want:
-      (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (double n-1)))))))
-
+      (= Nat
+        (twice (add1 n-1))
+        (double (add1 n-1))))))
+#;
 (define twice=double-step
   (lambda (n-1 r-twice-double)
     (replace
       r-twice-double
       ;; motive
       (lambda (k)
-        (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 k))))
+        (= Nat (twice (add1 n-1)) (add1 (add1 k))))
       ;; base
-      (cong (add1+=+add1-rev n-1 n-1) (+ 1)))))
+      (cong (symm (add1+=+add1 n-1 n-1)) (+ 1)))))
+
+(define twice=double-step
+  (lambda (n-1 r-twice-double)
+    (replace
+      (the
+        (= Nat
+          ;; "rewrite" from
+          (add1 (+ n-1 n-1))
+          ;; "rewrite" to
+          (+ n-1 (add1 n-1)))
+        (add1+=+add1 n-1 n-1))
+      (lambda (k)
+        ;; k is the part that "doesn't fit"
+        (= Nat (add1 k) (double (add1 n-1))))
+      (the
+        (= Nat
+          (add1
+            ;; this part "doesn't fit".
+            (add1 (+ n-1 n-1)))
+          (double (add1 n-1)))
+        (cong r-twice-double (+ 2))))))
 
 (define twice=double
   (lambda (n)
