@@ -22,27 +22,33 @@
     (->
      (= Nat (incr n-1) (add1 n-1))
      (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
+#;
 (define incr=add1-step
-   (lambda (n-1 r-incr=add1)
-        ;; we want this whole thing to be:
-        ;; (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
-        (replace
-          ;; target
-          ;; - from: (incr n-1)
-          ;; - to: (add1 n-1)
-          r-incr=add1
-          ;; motive:
-          ;; - we want:
-          ;;   (mot <to>)
-          ;;   which is:
-          ;;   (mot (add1 n-1))
-          ;;   to be:
-          ;;   (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
-          (lambda (i) (= Nat (add1 (incr n-1)) (add1 i)))
-          ;; base is a (mot <from>)
-          ;; which is (mot (incr n-1))
-          ;; which is (= Nat (add1 (incr n-1)) (add1 (incr n-1)))
-          (same (add1 (incr n-1))))))
+  ;; this implementation works fine
+  ;; but book provides a simpler version using `cong` - see below.
+  (lambda (n-1 r-incr=add1)
+    ;; we want this whole thing to be:
+    ;; (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
+    (replace
+      ;; target
+      ;; - from: (incr n-1)
+      ;; - to: (add1 n-1)
+      r-incr=add1
+      ;; motive:
+      ;; - we want:
+      ;;   (mot <to>)
+      ;;   which is:
+      ;;   (mot (add1 n-1))
+      ;;   to be:
+      ;;   (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
+      (lambda (i) (= Nat (add1 (incr n-1)) (add1 i)))
+      ;; base is a (mot <from>)
+      ;; which is (mot (incr n-1))
+      ;; which is (= Nat (add1 (incr n-1)) (add1 (incr n-1)))
+      (same (add1 (incr n-1))))))
+(define incr=add1-step
+  (lambda (n-1 r-incr=add1)
+    (cong r-incr=add1 (+ 1))))
 
 (define incr=add1
   (lambda (n)
@@ -100,6 +106,32 @@
     (= Nat
        (add1 (+ n m))
        (+ n (add1 m)))))
+(claim add1+=+add1-step
+  ;; note that here we are putting `m` in front so that
+  ;; it is easier for currying.
+  (Pi ((m Nat)
+       (n-1 Nat))
+    (->
+     (= Nat
+       ;; from
+       (add1 (+ n-1 m))
+       ;; to
+       (+ n-1 (add1 m)))
+      (= Nat (add1 (add1 (+ n-1 m))) (add1 (+ n-1 (add1 m)))))))
+#;
+(define add1+=+add1-step
+  ;; works fine, but `conj` is simpler, see below.
+  (lambda (m n-1 r-add1+=+add1)
+    (replace
+      r-add1+=+add1
+      (lambda (k)
+        (= Nat (add1 (add1 (+ n-1 m))) (add1 k)))
+      (same (add1 (add1 (+ n-1 m)))))))
+
+(define add1+=+add1-step
+  (lambda (m n-1 r-add1+=+add1)
+    (cong r-add1+=+add1 (+ 1))))
+
 (define add1+=+add1
   (lambda (n m)
     (ind-Nat n
@@ -109,19 +141,7 @@
       ;; base
       (same (add1 m))
       ;; step
-      (lambda (n-1 r-add1+=+add1)
-        ;; want: (= Nat (add1 (add1 (+ n-1 m))) (add1 (+ n-1 (add1 m))))
-        (replace
-          (the
-            (= Nat
-              ;; from
-              (add1 (+ n-1 m))
-              ;; to
-              (+ n-1 (add1 m)))
-            r-add1+=+add1)
-          (lambda (k)
-            (= Nat (add1 (add1 (+ n-1 m))) (add1 k)))
-          (same (add1 (add1 (+ n-1 m)))))))))
+      (add1+=+add1-step m))))
 
 (claim add1+=+add1-rev
   (Pi ((n Nat)
@@ -133,24 +153,31 @@
   (lambda (n m)
     (symm (add1+=+add1 n m))))
 
+(claim twice=double-step
+  (Pi ((n-1 Nat))
+    (->
+     (= Nat
+       ;; from
+       (twice n-1)
+       ;; to
+       (double n-1))
+      ;; want:
+      (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (double n-1)))))))
+
+(define twice=double-step
+  (lambda (n-1 r-twice-double)
+    (replace
+      r-twice-double
+      ;; motive
+      (lambda (k)
+        (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 k))))
+      ;; base
+      (cong (add1+=+add1-rev n-1 n-1) (+ 1)))))
+
 (define twice=double
   (lambda (n)
     (ind-Nat n
       (lambda (i)
         (= Nat (twice i) (double i)))
       (same 0)
-      (lambda (n-1 r-twice-double)
-        (the
-          ;; want:
-          (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (double n-1))))
-          (replace
-            (the
-              (= Nat (twice n-1) (double n-1))
-              r-twice-double)
-            ;; motive
-            (lambda (k)
-              (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 k))))
-            ;; base
-            (the
-              (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (+ n-1 n-1))))
-              (cong (add1+=+add1-rev n-1 n-1) (+ 1)))))))))
+      twice=double-step)))
