@@ -17,13 +17,13 @@
 (claim incr=add1
   (Pi ((n Nat))
     (= Nat (incr n) (add1 n))))
-(define incr=add1
-  (lambda (n)
-    (ind-Nat
-      n
-      (lambda (i) (= Nat (incr i) (add1 i)))
-      (same 1)
-      (lambda (n-1 r-incr=add1)
+(claim incr=add1-step
+  (Pi ((n-1 Nat))
+    (->
+     (= Nat (incr n-1) (add1 n-1))
+     (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
+(define incr=add1-step
+   (lambda (n-1 r-incr=add1)
         ;; we want this whole thing to be:
         ;; (= Nat (add1 (incr n-1)) (add1 (add1 n-1)))
         (replace
@@ -42,9 +42,17 @@
           ;; base is a (mot <from>)
           ;; which is (mot (incr n-1))
           ;; which is (= Nat (add1 (incr n-1)) (add1 (incr n-1)))
-          (same (add1 (incr n-1))))))))
+          (same (add1 (incr n-1))))))
 
+(define incr=add1
+  (lambda (n)
+    (ind-Nat
+      n
+      (lambda (i) (= Nat (incr i) (add1 i)))
+      (same 1)
+      incr=add1-step)))
 (incr=add1 4)
+
 
 ;; Q: what is equivalent of (cong (= X from to) f) expressed by replace?
 ;; (cong (= X from to) f) is of type (= Y (f from) (f to))
