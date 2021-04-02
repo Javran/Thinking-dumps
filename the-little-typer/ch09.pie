@@ -194,3 +194,58 @@
         (= Nat (twice i) (double i)))
       (same 0)
       twice=double-step)))
+
+(claim double-Vec
+  (Pi ((X U)
+       (l Nat))
+    (-> (Vec X l)
+      ;; prefer double over twice,
+      ;; as double has (add1 (add1 _)) on top
+      ;; which is easier for induction to work.
+      (Vec X (double l)))))
+(define double-Vec
+  (lambda (X l)
+    (ind-Nat
+      l
+      ;; motive
+      (lambda (k)
+        (->
+          (Vec X k)
+          (Vec X (double k))))
+      ;; base
+      (lambda (_) vecnil)
+      ;; step
+      (lambda (l-1 r inp)
+        (vec:: (head inp)
+          (vec:: (head inp)
+            (r (tail inp))))))))
+
+(claim example
+  (Vec Atom 7))
+(define example
+  (vec:: 'e
+    (vec:: 'x
+      (vec:: 'a
+        (vec:: 'm
+          (vec:: 'p
+            (vec:: 'l
+              (vec:: 'e
+                vecnil))))))))
+(double-Vec Atom 7 example)
+
+(claim twice-Vec
+  (Pi ((X U)
+       (l Nat))
+    (-> (Vec X l)
+        (Vec X (twice l)))))
+(define twice-Vec
+  (lambda (X l)
+    (replace
+      ;; we are rewriting `double` into `twice`,
+      ;; rather than the other way around.
+      (symm (twice=double l))
+      ;; motive
+      (lambda (k) (-> (Vec X l) (Vec X k)))
+      ;; base
+      (double-Vec X l))))
+(twice-Vec Atom 7 example)
