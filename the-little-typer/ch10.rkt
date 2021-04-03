@@ -30,12 +30,6 @@ sample
   (Pi ((E U)
        (es (List E)))
     (Vec E (length E es))))
-(claim mot-list->vec
-  (Pi ((E U))
-    (-> (List E) U)))
-(define mot-list->vec
-  (lambda (E es)
-    (Vec E (length E es))))
 (define list->vec
   (lambda (E es)
     (ind-List es
