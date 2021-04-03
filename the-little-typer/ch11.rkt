@@ -121,3 +121,4 @@ foofoobar
       (mot-list->vec->list= E)
       (same nil)
       (step-list->vec->list E))))
+(list->vec->list= Atom (:: 'a (:: 'b (:: 'z nil))))
