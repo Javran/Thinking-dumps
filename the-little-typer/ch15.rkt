@@ -121,7 +121,7 @@
        ;; since 0 cannot equal to any value that has `add1` at top.
        (lambda (y 0=1+y)
          (ind-Absurd (zero-not-add1 y 0=1+y) E))
-       (lambda (k hd tl r y k=y) hd))
+       (lambda (_k hd _tl _r _y _k=y) hd))
       n (same (add1 n)))))
 
 (front Nat 2 (vec:: 1 (vec:: 2 (vec:: 3 vecnil))))
