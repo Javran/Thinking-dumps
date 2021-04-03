@@ -61,6 +61,26 @@
       n
       (lambda (i) (add1 i)))))
 
+(claim dec-add1=
+  (Pi ((x Nat)
+       (y Nat))
+    (-> (Dec (= Nat x y)) (Dec (= Nat (add1 x) (add1 y))))))
+(define dec-add1=
+  (lambda (x y dec-x=y)
+    (ind-Either dec-x=y
+      (lambda (_) (Dec (= Nat (add1 x) (add1 y))))
+      ;; when equal
+      (lambda (x=y)
+        (left (cong x=y (+ 1))))
+      ;; when not equal
+      (lambda (x=y-false)
+        (right
+          ;; the goal is to establish absurdity
+          ;; through a proof that x=y
+          (lambda (x=y)
+            (x=y-false
+              (use-Nat= (add1 x) (add1 y) x=y))))))))
+
 (claim nat=?
   (Pi ((x Nat)
        (y Nat))
@@ -86,25 +106,11 @@
            ;; nonzeros are, well, not zero.
            (right (use-Nat= (add1 x-1) 0))
            (lambda (j-1 _dec)
-             (ind-Either
+             (dec-add1=
+               x-1
+               j-1
                ;; obtain the proof that (= Nat x-1 j-1) is decidable.
-               (nat=?-x-1 j-1)
-               ;; motive
-               (lambda (_) (Dec (= Nat (add1 x-1) (add1 j-1))))
-               (lambda (x-1=j-1)
-                 ;; (_ x-1 j-1) => (_ x j)
-                 (left (cong x-1=j-1 (+ 1))))
-               (lambda (x-1=j-1-false)
-                 ;; x-1 /= j-1 so it's the right branch.
-                 (right
-                   ;; the goal is to establish absurdity
-                   ;; through a proof that x-1 = j-1
-                   (lambda (x-1=j-1)
-                     (x-1=j-1-false
-                       (use-Nat=
-                         (add1 x-1)
-                         (add1 j-1)
-                         x-1=j-1))))))))))
+               (nat=?-x-1 j-1))))))
       y)))
 
 ;; The proof that (= Nat x y) is decidable also serves
