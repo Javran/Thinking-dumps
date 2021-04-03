@@ -41,6 +41,10 @@ sample
     (ind-List es
       ;; motive
       (lambda (k)
+        ;; I made a mistake early on that
+        ;; I used `es` instead of `k` here -
+        ;; I wish that the language can tell me
+        ;; when a variable is unused.
         (Vec E (length E k)))
       ;; base
       vecnil
