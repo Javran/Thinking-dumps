@@ -147,4 +147,53 @@ example : (p → q) → (¬q → ¬p) :=
 
 end ex_1
 
+namespace ex_2
+
+open classical
+
+variables p q r s : Prop
+
+example : (p → r ∨ s) → ((p → r) ∨ (p → s)) :=
+  assume h, or.elim (em p)
+    (assume hp, or.elim (h hp)
+      (assume hr, or.intro_left _ (assume _, hr))
+      (assume hs, or.intro_right _ (assume _, hs)))
+    (assume hnp, or.intro_left _ (assume hp, absurd hp hnp))
+
+example : ¬(p ∧ q) → ¬p ∨ ¬q :=
+  or.elim (em p)
+    (assume hp, assume h1, or.intro_right _
+      (assume hq, h1 (and.intro hp hq)))
+    (assume hnp, assume h1, or.intro_left _
+      (assume hp, absurd hp hnp))
+
+example : ¬(p → q) → p ∧ ¬q :=
+  or.elim (em q)
+    (assume hq, assume h, false.elim (h (assume _, hq)))
+    (assume hnq, assume h,
+      and.intro
+        (or.elim (em p)
+          id
+          (assume hnp, false.elim (h (assume hp, absurd hp hnp))))
+        hnq)
+
+example : (p → q) → (¬p ∨ q) :=
+  assume h, or.elim (em p)
+    (assume hp, or.intro_right _ (h hp))
+    (or.intro_left _)
+
+example : (¬q → ¬p) → (p → q) :=
+  or.elim (em q)
+    (assume hq, assume _, assume _, hq)
+    (assume hnq, assume h, assume hp, absurd hp (h hnq))
+
+example : p ∨ ¬p := em p
+
+example : (((p → q) → p) → p) :=
+  or.elim (em p)
+    (assume hp, assume _, hp)
+    (assume hnp, assume h, h (assume hp, absurd hp hnp))
+
+end ex_2
+
 end ch_3
