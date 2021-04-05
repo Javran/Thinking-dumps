@@ -1,6 +1,6 @@
 namespace ch_2
 
-namespace ex_10_1
+namespace ex_1
 
 def double (x : nat) := x + x
 
@@ -15,9 +15,9 @@ def Do_Twice
 
 #eval Do_Twice do_twice double 2
 
-end ex_10_1
+end ex_1
 
-namespace ex_10_2
+namespace ex_2
 
 def curry
  (α β γ : Type*)
@@ -41,9 +41,9 @@ def uncurry
 def bar := (λ a, λ x : a, x + 2) nat
  -/
 
-end ex_10_2
+end ex_2
 
-namespace ex_10_3
+namespace ex_3
 
 universe u
 constant vec : Type u -> nat -> Type u
@@ -70,10 +70,10 @@ variables v_4 : vec α 4
 #check vec_add v_3 (cons x (cons x (cons x empty)))
 #check vec_reverse v_4
 
-end ex_10_3
+end ex_3
 
-namespace ex_10_4
-open ex_10_3
+namespace ex_4
+open ex_3
 
 universe u
 constant mat : Type u -> nat -> nat -> Type u
@@ -101,6 +101,6 @@ variables v_3 : vec α 3
 
 #check mat_mul_vec m_5x3 v_3
 
-end ex_10_4
+end ex_4
 
 end ch_2
