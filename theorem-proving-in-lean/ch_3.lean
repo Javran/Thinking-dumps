@@ -89,35 +89,61 @@ example : p ∨ (q ∧ r) ↔ (p ∨ q) ∧ (p ∨ r) :=
 -- other properties
 example : (p → (q → r)) ↔ (p ∧ q → r) :=
   iff.intro
-    sorry
-    sorry
+    (assume h : p → q → r,
+      assume h1 : p ∧ q,
+        h h1.left h1.right)
+    (assume h : p ∧ q → r,
+       assume hp : p, assume hq : q,
+         h (and.intro hp hq))
 
 example : ((p ∨ q) → r) ↔ (p → r) ∧ (q → r) :=
   iff.intro
-    sorry
-    sorry
+    (assume h : p ∨ q → r, and.intro
+      (assume hp : p, h (or.intro_left _ hp))
+      (assume hq : q, h (or.intro_right _ hq)))
+    (assume h: (p → r) ∧ (q → r), assume h1: p ∨ q, 
+      or.elim h1 h.left h.right)
 
 example : ¬(p ∨ q) ↔ ¬p ∧ ¬q :=
   iff.intro
-    sorry
-    sorry
+    (assume h, and.intro
+      (assume hp : p, h (or.intro_left _ hp))
+      (assume hq : q, h (or.intro_right _ hq)))
+    (assume h, assume h1, or.elim h1 h.left h.right)
 
-example : ¬p ∨ ¬q → ¬(p ∧ q) := sorry
-example : ¬(p ∧ ¬p) := sorry
-example : p ∧ ¬q → ¬(p → q) := sorry
-example : ¬p → (p → q) := sorry
-example : (¬p ∨ q) → (p → q) := sorry
+example : ¬p ∨ ¬q → ¬(p ∧ q) :=
+  assume h, assume h1, or.elim h
+    (assume np, np h1.left)
+    (assume nq, nq h1.right)
+
+example : ¬(p ∧ ¬p) := assume h, h.right h.left
+
+example : p ∧ ¬q → ¬(p → q) :=
+  assume h, assume h1, h.right (h1 h.left)
+
+example : ¬p → (p → q) :=
+  assume h, assume hnp, absurd hnp h
+
+example : (¬p ∨ q) → (p → q) :=
+  assume h, assume hp, or.elim h
+    (assume hnp, absurd hp hnp)
+    id
+
 example : p ∨ false ↔ p :=
   iff.intro
-    sorry
-    sorry
+    (assume h, or.elim h
+      id 
+      false.elim)
+    (or.intro_left _)
 
 example : p ∧ false ↔ false :=
   iff.intro
-    sorry
-    sorry
+    (assume h, false.elim h.right)
+    false.elim
 
-example : (p → q) → (¬q → ¬p) := sorry
+example : (p → q) → (¬q → ¬p) :=
+  assume h, assume hnq, assume hp,
+    hnq (h hp)
 
 end ex_1
 
