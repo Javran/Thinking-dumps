@@ -196,4 +196,16 @@ example : (((p → q) → p) → p) :=
 
 end ex_2
 
+namespace ex_3
+
+variables p : Prop
+
+example : ¬(p ↔ ¬p) :=
+  assume h,
+    (h.mp
+      (h.mpr (assume hp, h.mp hp hp))
+      (h.mpr (assume hp, h.mp hp hp)))
+
+end ex_3
+
 end ch_3
