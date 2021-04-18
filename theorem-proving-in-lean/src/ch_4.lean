@@ -1,5 +1,5 @@
-import init.data.int.basic
-import init.data.nat.basic
+import data.int.basic
+import data.nat.basic
 
 namespace ch_4
 
@@ -134,6 +134,25 @@ end
 end ex_3
 
 namespace ex_4
+
+open nat
+
+#check even
+
+def prime (n : ℕ) : Prop := sorry
+
+def infinitely_many_primes : Prop := sorry
+
+def Fermat_prime (n : ℕ) : Prop := sorry
+
+def infinitely_many_Fermat_primes : Prop := sorry
+
+def goldbach_conjecture : Prop := sorry
+
+def Goldbach's_weak_conjecture : Prop := sorry
+
+def Fermat's_last_theorem : Prop := sorry
+
 -- TODO
 end ex_4
 
