@@ -185,7 +185,91 @@ def Fermat's_last_theorem : Prop :=
 end ex_4
 
 namespace ex_5
--- TODO
+
+open classical
+
+variables (α : Type*) (p q : α → Prop)
+variable a : α
+variable r : Prop
+
+example : (∃ x : α, r) → r :=
+begin
+  intros h, cases h with a hr, exact hr,
+end
+
+-- I don't understand how the fuck am I going to
+-- remove the existential quantifier without an actual instance.
+example : r → (∃ x : α, r) :=
+begin
+  intros r,
+  sorry,
+end
+
+example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
+begin
+  split,
+  { intros h1, split,
+    { cases h1 with a h2, use a, exact h2.1 },
+    sorry },
+  { intros h1, cases h1, cases h1_left with a hpa,
+    use a, split; assumption },
+end
+
+example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) :=
+begin
+  split,
+  { intros h, cases h with a h1, cases h1 with h1l h1r,
+    left, use a, exact h1l,
+    right, use a, exact h1r },
+  { intros h, cases h,
+    { cases h with a hpa, use a, left, exact hpa },
+    { cases h with a hqa, use a, right, exact hqa  }
+  },
+end
+
+example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
+begin
+  split,
+  { intros h1 h2, cases h2 with a hnpa, apply hnpa, apply h1 },
+  { intros h1 a, sorry },
+end
+
+example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
+begin
+  split,
+  { intros h1 h2, cases h1 with a hpa, apply h2 a, exact hpa },
+  { intros h1, sorry },
+end
+
+example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
+begin
+  split,
+  { intros h1 x h2, apply h1, use x, exact h2 },
+  { intros h1 h2, cases h2 with a hpa, apply h1 a, exact hpa }
+end
+
+example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
+begin
+  sorry
+end
+
+
+example : (∀ x, p x → r) ↔ (∃ x, p x) → r :=
+begin
+  sorry
+end
+
+example : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
+begin
+  sorry
+end
+
+example : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
+begin
+  sorry
+end
+
+
 end ex_5
 
 namespace ex_6
