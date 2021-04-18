@@ -1,5 +1,6 @@
 import data.int.basic
 import data.nat.basic
+import data.real.basic
 
 namespace ch_4
 
@@ -201,8 +202,9 @@ end
 -- remove the existential quantifier without an actual instance.
 example : r → (∃ x : α, r) :=
 begin
-  intros r,
-  sorry,
+  intros hr,
+  have h : ∀ (x : α), r, intros, exact hr,
+  sorry
 end
 
 example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
@@ -210,7 +212,7 @@ begin
   split,
   { intros h1, split,
     { cases h1 with a h2, use a, exact h2.1 },
-    sorry },
+    { cases h1 with a h2, exact h2.2 } },
   { intros h1, cases h1, cases h1_left with a hpa,
     use a, split; assumption },
 end
@@ -250,30 +252,61 @@ end
 
 example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
 begin
-  sorry
+  split,
+  { intros h1, sorry },
+  { intros h1 h2, cases h1 with a hnpa, apply hnpa, exact h2 a },
 end
 
 
 example : (∀ x, p x → r) ↔ (∃ x, p x) → r :=
 begin
-  sorry
+  split,
+  { intros h1 h2, cases h2 with a hpa, apply h1 a, exact hpa },
+  { intros h1 a hpa, apply h1, use a, exact hpa },
 end
 
 example : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
 begin
-  sorry
+  split,
+  { intros h1 h2, cases h1 with x h3, apply h3, apply h2 x },
+  { intros h1, sorry },
 end
 
 example : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
 begin
-  sorry
+  split,
+  { intros h1 hr, cases h1 with x h2, use x, apply h2 hr },
+  { intros h1, sorry },
 end
-
 
 end ex_5
 
 namespace ex_6
--- TODO
+
+variables log exp : real → real
+variable log_exp_eq : ∀ x, log (exp x) = x
+variable exp_log_eq : ∀ {x}, x > 0 → exp (log x) = x
+variable exp_pos : ∀ x, exp x > 0
+variable exp_add : ∀ x y, exp (x + y) = exp x * exp y
+
+-- this ensures the assumptions are available in tactic proofs
+include log_exp_eq exp_log_eq exp_pos exp_add
+
+example (x y z : real) :
+  exp (x + y + z) = exp x * exp y * exp z :=
+by rw [exp_add, exp_add]
+
+example (y : real) (h : y > 0)  : exp (log y) = y :=
+exp_log_eq h
+
+theorem log_mul {x y : real} (hx : x > 0) (hy : y > 0) :
+  log (x * y) = log x + log y :=
+calc
+  log (x * y) = log (x * exp (log y)) : by rw (exp_log_eq hy)
+    ... = log (exp (log x) * exp (log y)) : by rw (exp_log_eq hx)
+    ... = log (exp (log x + log y)) : by rw exp_add
+    ... = log x + log y : by rw log_exp_eq
+
 end ex_6
 
 namespace ex_7
