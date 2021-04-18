@@ -138,22 +138,50 @@ namespace ex_4
 open nat
 
 #check even
+#check odd
 
-def prime (n : ℕ) : Prop := sorry
+def prime (n : ℕ) : Prop := 
+  ∀ (m : ℕ), m = 1 ∨ m = n ∨ (n.mod m ≠ 0)
 
-def infinitely_many_primes : Prop := sorry
+def infinitely_many_primes : Prop :=
+  ∀ n, prime n → (∃ m, m > n ∧ prime m)
 
-def Fermat_prime (n : ℕ) : Prop := sorry
+def expon_2 : ℕ → ℕ
+| zero := 1
+| (succ n) := expon_2 n + expon_2 n
 
-def infinitely_many_Fermat_primes : Prop := sorry
+example : expon_2 0 = 1 := rfl
+example : expon_2 3 = 8 := rfl
 
-def goldbach_conjecture : Prop := sorry
+def Fermat_prime (n : ℕ) : Prop :=
+  prime (expon_2 (expon_2 n))
 
-def Goldbach's_weak_conjecture : Prop := sorry
+def infinitely_many_Fermat_primes : Prop :=
+  ∀ n, Fermat_prime n → (∃ m, m > n ∧ Fermat_prime m)
 
-def Fermat's_last_theorem : Prop := sorry
+def Goldbach's_conjecture : Prop :=
+  ∀ (n : ℕ), n ≥ 5 →
+    ∃ (p0 p1 : ℕ), prime p0 ∧ prime p1 ∧ n = p0 + p1
 
--- TODO
+def Goldbach's_weak_conjecture : Prop :=
+  ∀ (n : ℕ), n ≥ 5 ∧ odd n →
+    ∃ (p0 p1 p2 : ℕ), prime p0 ∧ prime p1 ∧ prime p2 ∧ n = p0 + p1 + p2
+
+def expon (m : ℕ) : ℕ → ℕ
+| zero := 1
+| (succ n) := expon n * m
+
+theorem expon_2_eqv : ∀ (n: ℕ), expon 2 n = expon_2 n :=
+begin
+  intros n, induction n with n' ih,
+  refl,
+  rw [expon,expon_2,ih], rw nat.has_mul, simp [nat.mul]
+end
+
+def Fermat's_last_theorem : Prop :=
+    ∀ (n : ℕ), n > 2 →
+      ¬(∃ (a b c : ℕ), expon a n + expon b n = expon c n)
+
 end ex_4
 
 namespace ex_5
