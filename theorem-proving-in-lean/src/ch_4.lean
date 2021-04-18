@@ -310,8 +310,16 @@ calc
 end ex_6
 
 namespace ex_7
--- TODO
-end ex_7
 
+#check sub_self
+
+example (x : ℤ) : x * 0 = 0 :=
+calc
+  x * 0 = x * (1 - 1) : by rw sub_self
+    ... = x * 1 - x * 1 : by rw mul_sub
+    ... = x - x : by rw mul_one
+    ... = 0 : by rw sub_self
+
+end ex_7
 
 end ch_4
