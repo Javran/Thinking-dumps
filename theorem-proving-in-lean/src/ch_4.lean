@@ -124,11 +124,12 @@ variable (shaves : men → men → Prop)
 
 example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : false :=
 begin
-  have h1 : shaves barber barber ↔ ¬(shaves barber barber),
-  { exact (h barber)
-  },
+  -- have h1 : shaves barber barber ↔ ¬(shaves barber barber), exact (h barber),
+  -- cases h1 with h1l h1r,
+  have h1 : shaves barber barber ∨ ¬(shaves barber barber),
+    apply classical.em,
   cases h1 with h1l h1r,
-  -- TODO: not sure how to proceed from this.
+  sorry,
   sorry
 end
 
@@ -198,13 +199,12 @@ begin
   intros h, cases h with a hr, exact hr,
 end
 
--- I don't understand how the fuck am I going to
--- remove the existential quantifier without an actual instance.
+include a
 example : r → (∃ x : α, r) :=
 begin
   intros hr,
-  have h : ∀ (x : α), r, intros, exact hr,
-  sorry
+  existsi a,
+  exact hr,
 end
 
 example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
@@ -233,14 +233,14 @@ example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
 begin
   split,
   { intros h1 h2, cases h2 with a hnpa, apply hnpa, apply h1 },
-  { intros h1 a, sorry },
+  { intros h1 a, push_neg at h1, apply h1 },
 end
 
 example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
 begin
   split,
   { intros h1 h2, cases h1 with a hpa, apply h2 a, exact hpa },
-  { intros h1, sorry },
+  { intros h1, push_neg at h1, exact h1 },
 end
 
 example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
@@ -253,7 +253,7 @@ end
 example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
 begin
   split,
-  { intros h1, sorry },
+  { intros h1, push_neg at h1, exact h1 },
   { intros h1 h2, cases h1 with a hnpa, apply hnpa, exact h2 a },
 end
 
@@ -269,14 +269,24 @@ example : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
 begin
   split,
   { intros h1 h2, cases h1 with x h3, apply h3, apply h2 x },
-  { intros h1, sorry },
+  { intros h1, apply classical.by_contradiction,
+    intros h2, push_neg at h2,
+    have h3 : p a ∧ ¬r, apply h2,
+    apply h3.2, apply h1, intros x, exact (h2 x).1,
+   }
 end
 
 example : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
 begin
   split,
   { intros h1 hr, cases h1 with x h2, use x, apply h2 hr },
-  { intros h1, sorry },
+  { intros h1, apply classical.by_contradiction, push_neg,
+    intros h2,
+    have hr : r, apply (h2 a).1,
+    have h3 : ∃ (x : α), p x, apply h1 hr,
+    cases h3 with a1 hpa1,
+    apply (h2 a1).2,
+    exact hpa1 },
 end
 
 end ex_5
