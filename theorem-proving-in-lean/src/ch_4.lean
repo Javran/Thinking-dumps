@@ -124,13 +124,11 @@ variable (shaves : men → men → Prop)
 
 example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : false :=
 begin
-  -- have h1 : shaves barber barber ↔ ¬(shaves barber barber), exact (h barber),
-  -- cases h1 with h1l h1r,
-  have h1 : shaves barber barber ∨ ¬(shaves barber barber),
+  have h1 : shaves barber barber ∨ ¬shaves barber barber,
     apply classical.em,
   cases h1 with h1l h1r,
-  sorry,
-  sorry
+  { apply (h barber).1, exact h1l, exact h1l },
+  { apply h1r, apply (h barber).2, exact h1r }
 end
 
 end ex_3
